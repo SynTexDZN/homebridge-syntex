@@ -1,5 +1,5 @@
-# homebridge-syntex
-A plugin to control SynTex accessory and to create HTTP devices.
+# Homebridge Syntex
+A plugin to control SynTex accessory.
 
 
 # Installation
@@ -14,10 +14,8 @@ A plugin to control SynTex accessory and to create HTTP devices.
 "platforms": [
     {
         "platform": "SynTex",
-        "port": 1710,
-        "cache_directory": "./SynTex/",
-        "sensors": [],
-        "switches": []
+        "port": 1711,
+        "cache_directory": "./SynTex/"
     }
 ]
 ```
@@ -33,8 +31,7 @@ A plugin to control SynTex accessory and to create HTTP devices.
 
 
 # New in this Version
-- No need for the Webhook Plugin. I wrote my own service for that.
-- Relais / Switches
+- Plugin got seperated to webhook service and syntex device control
 
 
 # Soon
