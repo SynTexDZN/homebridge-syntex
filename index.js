@@ -29,6 +29,8 @@ function SynTexPlatform(log, config, api)
 SynTexPlatform.prototype = {
     accessories : function(callback)
     {        
+        callback(null);
+        
         var createServerCallback = (function(request, response)
         {
             var urlParts = url.parse(request.url, true);
