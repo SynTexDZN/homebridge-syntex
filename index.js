@@ -2,6 +2,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
+var webhooks = require('homebridge-syntex-webhooks');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
