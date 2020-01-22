@@ -2,7 +2,6 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
-var webhooks = require('homebridge-syntex-webhooks');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -11,7 +10,6 @@ module.exports = function(homebridge)
     Characteristic = homebridge.hap.Characteristic;
 
     homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
-    homebridge.registerPlatform("homebridge-syntex-webhooks", "SynTexWebHooks", webhooks.SynTexWebHookPlatform);
 };
 
 function SynTexPlatform(log, config, api)
