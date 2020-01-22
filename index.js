@@ -11,6 +11,7 @@ module.exports = function(homebridge)
     Characteristic = homebridge.hap.Characteristic;
 
     homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
+    homebridge.registerPlatform("homebridge-syntex-webhooks", "SynTexWebHooks", webhooks.SynTexWebHookPlatform);
 };
 
 function SynTexPlatform(log, config, api)
