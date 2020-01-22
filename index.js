@@ -1,8 +1,6 @@
 var request = require('request');
 var http = require('http');
-var https = require('https');
 var url = require('url');
-var auth = require('http-auth');
 var store = require('json-fs-store');
 var Service, Characteristic;
 
@@ -18,11 +16,11 @@ function SynTexPlatform(log, config, api)
 {
     this.configPath = api.user.storagePath();
     this.config = store(this.configPath);
+    
     this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
     this.storage = store(this.cacheDirectory);
-    this.log = log;
     
-    //this.autoConfig = config["autoConfig"] || true;
+    this.log = log;
     this.port = config["port"] || 1711;
 }
 
@@ -116,7 +114,7 @@ SynTexPlatform.prototype = {
                             
                             if(error)
                             {
-                                response.write('Error');
+                                response.write("Ein Fehler ist aufgetreten!");
                                 response.end(); 
                             }
                         });
@@ -126,6 +124,10 @@ SynTexPlatform.prototype = {
                         exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
                             console.log('Homebridge wird neu gestartet');
                         });
+                    }
+                    else
+                    {
+                        response.write("Du hast keinen Typ, Namen, Mac oder IP angegegen!");
                     }
                 }
                 else if(urlPath == '/remove-device')
@@ -158,7 +160,7 @@ SynTexPlatform.prototype = {
 
                                                     error = false;
 
-                                                    response.write("Success");
+                                                    response.write("Gerät wurde gelöscht!");
                                                     response.end(); 
                                                 }
                                             }
@@ -173,7 +175,7 @@ SynTexPlatform.prototype = {
 
                                                     error = false;
 
-                                                    response.write("Success");
+                                                    response.write("Gerät wurde gelöscht!");
                                                     response.end(); 
                                                 }
                                             }
@@ -181,7 +183,7 @@ SynTexPlatform.prototype = {
                                         
                                         if(error)
                                         {
-                                            response.write("Error");
+                                            response.write("Ein Fehler ist aufgetreten!");
                                             response.end();
                                         }
                                         
@@ -202,21 +204,21 @@ SynTexPlatform.prototype = {
                                 
                                 if(error)
                                 {
-                                    response.write("Error");
+                                    response.write("Ein Fehler ist aufgetreten!");
                                     response.end();
                                 }
                             }
                             else
                             {
                                 this.log('[ERROR] Config konnte nicht geladen werden');
-                                response.write("Error");
+                                response.write("Ein Fehler ist aufgetreten!");
                                 response.end();
                             }
                         });
                     }
                     else
                     {
-                        response.write("Error");
+                        response.write("Du hast keine Mac angegegen!");
                         response.end();
                     }
                 }
@@ -226,14 +228,6 @@ SynTexPlatform.prototype = {
                     
                     response.write("");
                     response.end();
-                }
-                else
-                {
-                    // Index
-                    
-                    this.log("Index wurde aufgerufen!");
-                    response.write("Hallo Welt!");
-                    response.end();                    
                 }
             }).bind(this));
         }).bind(this);
