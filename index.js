@@ -29,7 +29,9 @@ function SynTexPlatform(log, config, api)
 SynTexPlatform.prototype = {
     accessories : function(callback)
     {        
-        callback(null);
+        var accessories = [];
+        
+        callback(accessories);
         
         var createServerCallback = (function(request, response)
         {
