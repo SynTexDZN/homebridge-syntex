@@ -105,7 +105,7 @@ SynTexPlatform.prototype = {
                                 response.write("Das Gerät konnte nicht entfernt werden!");
                                 response.end();
                             }
-                        );
+                        });
                     }
                 }
                 else if(urlPath == '/ping')
