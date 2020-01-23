@@ -15,8 +15,7 @@ A plugin to control SynTex accessory.
 "platforms": [
     {
         "platform": "SynTex",
-        "port": 1711,
-        "cache_directory": "./SynTex/"
+        "port": 1711
     },
     {
         "platform": "SynTexWebhooks",
