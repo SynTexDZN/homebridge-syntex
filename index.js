@@ -12,6 +12,9 @@ module.exports = function(homebridge)
     homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
 };
 
+var log;
+var config;
+
 function SynTexPlatform(log, config, api)
 {
     this.configPath = api.user.storagePath();
@@ -59,7 +62,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        if(addDevice(this.config, urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
+                        if(addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
                         {
                             const { exec } = require("child_process");
 
@@ -78,7 +81,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        if(removeDevice(this.config, urlParams.mac, urlParams.type))
+                        if(removeDevice(urlParams.mac, urlParams.type))
                         {
                             const { exec } = require("child_process");
 
@@ -108,7 +111,7 @@ SynTexPlatform.prototype = {
     }
 }
 
-function addDevice(config, mac, ip, type, name)
+function addDevice(mac, ip, type, name)
 {
     var error = true;
                     
@@ -116,7 +119,7 @@ function addDevice(config, mac, ip, type, name)
 
         if(obj)
         {                            
-            this.log('Config.json geladen!');
+            log('Config.json geladen!');
 
             obj.id = 'config';
 
@@ -157,16 +160,16 @@ function addDevice(config, mac, ip, type, name)
                 }
             }
 
-            this.log('Neues Gerät wird der Config hinzugefügt');
+            log('Neues Gerät wird der Config hinzugefügt');
 
             config.add(obj, (err) => {
 
-                this.log('Config.json aktualisiert!');
+                log('Config.json aktualisiert!');
             });
         }
         else
         {
-            this.log('[ERROR] Config konnte nicht geladen werden');
+            log('[ERROR] Config konnte nicht geladen werden');
         }
 
         if(error)
@@ -180,7 +183,7 @@ function addDevice(config, mac, ip, type, name)
     });
 }
 
-function removeDevice(config, mac, type)
+function removeDevice(mac, type)
 {
     var error = true;
     
@@ -188,7 +191,7 @@ function removeDevice(config, mac, type)
           
         if(obj)
         {                            
-            this.log('Config.json geladen!');
+            log('Config.json geladen!');
 
             obj.id = 'config';
 
@@ -229,18 +232,18 @@ function removeDevice(config, mac, type)
                         }
                     }
 
-                    this.log('Gerät wurde aus der Config entfernt');
+                    log('Gerät wurde aus der Config entfernt');
 
                     config.add(obj, (err) => {
 
-                        this.log('Config.json aktualisiert!');
+                        log('Config.json aktualisiert!');
                     });
                 }
             }
         }
         else
         {
-            this.log('[ERROR] Config konnte nicht geladen werden');
+            log('[ERROR] Config konnte nicht geladen werden');
         }
         
         if(error)
