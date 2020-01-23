@@ -181,8 +181,6 @@ async function addDevice(mac, ip, type, name)
                         resolve(response);
                     }
                 });    
-                
-                resolve(false);
             }
             
             if(err || !obj)
