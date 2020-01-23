@@ -175,7 +175,7 @@ async function addDevice(mac, ip, type, name)
                     }
                     else
                     {
-                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt");
+                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt ( " + this.mac + " )");
                         
                         resolve(response);
                     }
@@ -247,7 +247,7 @@ async function removeDevice(mac, type)
                             }
                             else
                             {
-                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt");
+                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + this.mac + " )");
 
                                 resolve(response);
                             }
