@@ -118,7 +118,7 @@ SynTexPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        log("%c Data Link Server läuft auf Port '%s'.", 'background: #222; color: #bada55', this.port);
+        log("%c Data Link Server läuft auf Port '%s'.", '\x1b[33m%s\x1b[0m', this.port);
     }
 }
 
