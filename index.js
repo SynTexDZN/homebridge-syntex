@@ -59,7 +59,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        if(addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
+                        if(addDevice(config, urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
                         {
                             const { exec } = require("child_process");
 
@@ -78,7 +78,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        if(removeDevice(urlParams.mac, urlParams.type))
+                        if(removeDevice(config, urlParams.mac, urlParams.type))
                         {
                             const { exec } = require("child_process");
 
@@ -108,11 +108,11 @@ SynTexPlatform.prototype = {
     }
 }
 
-function addDevice(mac, ip, type, name)
+function addDevice(config, mac, ip, type, name)
 {
     var error = true;
                     
-    this.config.load('config', (err, obj) => {    
+    config.load('config', (err, obj) => {    
 
         if(obj)
         {                            
@@ -159,7 +159,7 @@ function addDevice(mac, ip, type, name)
 
             this.log('Neues Gerät wird der Config hinzugefügt');
 
-            this.config.add(obj, (err) => {
+            config.add(obj, (err) => {
 
                 this.log('Config.json aktualisiert!');
             });
@@ -180,11 +180,11 @@ function addDevice(mac, ip, type, name)
     });
 }
 
-function removeDevice(mac, type)
+function removeDevice(config, mac, type)
 {
     var error = true;
     
-    this.config.load('config', (err, obj) => {    
+    config.load('config', (err, obj) => {    
           
         if(obj)
         {                            
@@ -231,7 +231,7 @@ function removeDevice(mac, type)
 
                     this.log('Gerät wurde aus der Config entfernt');
 
-                    this.config.add(obj, (err) => {
+                    config.add(obj, (err) => {
 
                         this.log('Config.json aktualisiert!');
                     });
