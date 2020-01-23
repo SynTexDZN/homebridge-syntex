@@ -64,6 +64,8 @@ SynTexPlatform.prototype = {
                     {
                         addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
                         
+                            log("[ERROR] RES: " + res);
+                            
                             if(res != false)
                             {
                                 response.write((String)(res));
@@ -125,62 +127,67 @@ SynTexPlatform.prototype = {
 
 async function addDevice(mac, ip, type, name)
 {
-    var response = false;
+    return new Promise(resolve => {
+        
+        var response = false;
                     
-    config.load('config', (err, obj) => {    
+        config.load('config', (err, obj) => {    
 
-        if(obj)
-        {                            
-            log('Config.json geladen!');
+            if(obj)
+            {                            
+                log('Config.json geladen!');
 
-            obj.id = 'config';
+                obj.id = 'config';
 
-            for(const i in obj.platforms)
-            {
-                if(obj.platforms[i].platform === 'SynTexWebHooks')
+                for(const i in obj.platforms)
                 {
-                    var platform = obj.platforms[i];
-
-                    if(type == "relais" || type == "switch")
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
+                        var platform = obj.platforms[i];
 
-                        response = platform.switches.length;
-                    }
-                    else
-                    {
-                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
+                        if(type == "relais" || type == "switch")
+                        {
+                            platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
 
-                        response = platform.sensors.length;
-                    }
+                            response = platform.switches.length;
+                        }
+                        else
+                        {
+                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
 
-                    if(type == "temperature")
-                    {
-                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "H", type: "humidity"};
-                    }
+                            response = platform.sensors.length;
+                        }
 
-                    if(type == "light")
-                    {
-                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "R", type: "rain"};
+                        if(type == "temperature")
+                        {
+                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "H", type: "humidity"};
+                        }
+
+                        if(type == "light")
+                        {
+                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "R", type: "rain"};
+                        }
                     }
                 }
-            }
 
-            log('Neues Gerät wird der Config hinzugefügt');
+                log('Neues Gerät wird der Config hinzugefügt');
 
-            config.add(obj, (err) => {
+                config.add(obj, (err) => {
 
-                log('Config.json aktualisiert!');
+                    log('Config.json aktualisiert!');
+
+                    resolve(response);
+                });    
                 
-                return response;
-            });            
-        }
-        else
-        {
-            log('[ERROR] Config konnte nicht geladen werden');
-            
-            return response;
-        }
+                resolve(response);
+            }
+            else
+            {
+                log('[ERROR] Config konnte nicht geladen werden');
+
+                resolve(response);
+            }
+        });
     });
 }
 
