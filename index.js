@@ -17,13 +17,13 @@ var config;
 
 function SynTexPlatform(slog, sconfig, api)
 {
+    config = store(api.user.storagePath());
+    log = slog;
+    
     this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
     this.port = config["port"] || 1711;
     
-    this.storage = store(this.cacheDirectory);    
-    
-    config = store(api.user.storagePath());
-    log = slog;
+    this.storage = store(this.cacheDirectory);
 }
 
 SynTexPlatform.prototype = {
