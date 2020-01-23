@@ -44,7 +44,7 @@ SynTexPlatform.prototype = {
             
             request.on('error', (function(err)
             {
-                this.log("[ERROR] Reason: %s.", err);
+                log("[ERROR] Reason: %s.", err);
                 
             }).bind(this)).on('data', function(chunk)
             {
@@ -107,7 +107,7 @@ SynTexPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        this.log("Data Link Server läuft auf Port '%s'.", this.port);
+        log("Data Link Server läuft auf Port '%s'.", this.port);
     }
 }
 
