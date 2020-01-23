@@ -91,7 +91,7 @@ SynTexPlatform.prototype = {
                             log('\x1b[31m%s\x1b[0m', "[INFO]", "RES: " + res);
                             if(res)
                             {
-                                response.write("Gerät wurde gelöscht!");
+                                response.write("Success");
                                 response.end(); 
 
                                 const { exec } = require("child_process");
