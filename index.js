@@ -62,48 +62,50 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        var x = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name);
+                        var res = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(
                         
-                        log("----------[ERROR2] " + x);
-                        
-                        if(x != 0)
-                        {
-                            response.write((String)(x));
-                            response.end();
-                            
-                            const { exec } = require("child_process");
+                            if(res != false)
+                            {
+                                response.write((String)(res));
+                                response.end();
 
-                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                console.log('Homebridge wird neu gestartet');
-                            });
-                        }
-                        else
-                        {
-                            response.write("Das Gerät konnte nicht hinzugefügt werden!");
-                            response.end();
-                        }
+                                const { exec } = require("child_process");
+
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                    console.log('Homebridge wird neu gestartet');
+                                });
+                            }
+                            else
+                            {
+                                response.write("Das Gerät konnte nicht hinzugefügt werden!");
+                                response.end();
+                            }
+                        );
                     }
                 }
                 else if(urlPath == '/remove-device')
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        if(removeDevice(urlParams.mac, urlParams.type))
-                        {
-                            response.write("Gerät wurde gelöscht!");
-                            response.end(); 
-                            
-                            const { exec } = require("child_process");
+                        var res = removeDevice(urlParams.mac, urlParams.type).then(
+                        
+                            if(res)
+                            {
+                                response.write("Gerät wurde gelöscht!");
+                                response.end(); 
 
-                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                console.log('Homebridge wird neu gestartet');
-                            });
-                        }
-                        else
-                        {
-                            response.write("Das Gerät konnte nicht entfernt werden!");
-                            response.end();
-                        }
+                                const { exec } = require("child_process");
+
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                    console.log('Homebridge wird neu gestartet');
+                                });
+                            }
+                            else
+                            {
+                                response.write("Das Gerät konnte nicht entfernt werden!");
+                                response.end();
+                            }
+                        );
                     }
                 }
                 else if(urlPath == '/ping')
@@ -121,9 +123,9 @@ SynTexPlatform.prototype = {
     }
 }
 
-function addDevice(mac, ip, type, name)
+async function addDevice(mac, ip, type, name)
 {
-    var response = 0;
+    var response = false;
                     
     config.load('config', (err, obj) => {    
 
@@ -169,20 +171,20 @@ function addDevice(mac, ip, type, name)
             config.add(obj, (err) => {
 
                 log('Config.json aktualisiert!');
-            });
+                
+                return response;
+            });            
         }
         else
         {
             log('[ERROR] Config konnte nicht geladen werden');
+            
+            return response;
         }
-        
-        log("----------[ERROR] " + response);
-
-        return response;
     });
 }
 
-function removeDevice(mac, type)
+async function removeDevice(mac, type)
 {
     var response = false;
     
@@ -230,6 +232,8 @@ function removeDevice(mac, type)
                     config.add(obj, (err) => {
 
                         log('Config.json aktualisiert!');
+                        
+                        return response;
                     });
                 }
             }
@@ -237,8 +241,8 @@ function removeDevice(mac, type)
         else
         {
             log('[ERROR] Config konnte nicht geladen werden');
-        }
-        
-        return response;
+            
+            return response;
+        }        
     });
 }
