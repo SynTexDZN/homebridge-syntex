@@ -238,23 +238,28 @@ async function removeDevice(mac, type)
                             }
                         }
 
-                        config.add(obj, (err) => {
+                        if(response)
+                        {
+                            config.add(obj, (err) => {
 
-                            if(err)
-                            {
-                                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!");
+                                if(err)
+                                {
+                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!");
 
-                                resolve(false);
-                            }
-                            else
-                            {
-                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + this.mac + " )");
+                                    resolve(false);
+                                }
+                                else
+                                {
+                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
 
-                                resolve(true);
-                            }
-                        });
-                        
-                        resolve(false);
+                                    resolve(true);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            resolve(false);
+                        }
                     }
                 }
             }
