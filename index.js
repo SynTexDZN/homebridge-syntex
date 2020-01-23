@@ -65,7 +65,7 @@ SynTexPlatform.prototype = {
                             
                             if(res)
                             {
-                                response.write("Gerät wurde hinzugefügt!");
+                                response.write("Success");
                                 response.end();
 
                                 const { exec } = require("child_process");
