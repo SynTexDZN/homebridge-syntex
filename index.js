@@ -59,7 +59,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        if(addDevice(config, urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
+                        if(addDevice(this.config, urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
                         {
                             const { exec } = require("child_process");
 
@@ -78,7 +78,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        if(removeDevice(config, urlParams.mac, urlParams.type))
+                        if(removeDevice(this.config, urlParams.mac, urlParams.type))
                         {
                             const { exec } = require("child_process");
 
