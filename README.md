@@ -5,7 +5,8 @@ A plugin to control SynTex accessory.
 # Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
-3. Update your configuration file. See snippet below.
+3. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
+4. Update your configuration file. See snippet below.
 
 
 # Example Config
@@ -16,6 +17,13 @@ A plugin to control SynTex accessory.
         "platform": "SynTex",
         "port": 1711,
         "cache_directory": "./SynTex/"
+    },
+    {
+        "platform": "SynTexWebhooks",
+        "port": 1710,
+        "cache_directory": "./SynTex/",
+        "sensors": [],
+        "switches": []
     }
 ]
 ```
@@ -30,9 +38,5 @@ A plugin to control SynTex accessory.
 - Switch
 
 
-# New in this Version
-- Plugin got seperated to webhook service and syntex device control
-
-
 # Soon
-Stateless switches & other switch types.
+- LED Controller
