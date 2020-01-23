@@ -1,4 +1,4 @@
-# Homebridge Syntex
+# Homebridge SynTex
 A plugin to control SynTex accessory.
 
 

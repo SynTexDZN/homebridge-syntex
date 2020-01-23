@@ -25,6 +25,7 @@ function SynTexPlatform(log, config, api)
 }
 
 SynTexPlatform.prototype = {
+    
     accessories : function(callback)
     {        
         var accessories = [];
@@ -37,12 +38,15 @@ SynTexPlatform.prototype = {
             var urlParams = urlParts.query;
             var urlPath = urlParts.pathname;
             var body = [];
+            
             request.on('error', (function(err)
             {
                 this.log("[ERROR] Reason: %s.", err);
+                
             }).bind(this)).on('data', function(chunk)
             {
                 body.push(chunk);
+                
             }).on('end', (function()
             {
                 body = Buffer.concat(body).toString();
@@ -53,187 +57,199 @@ SynTexPlatform.prototype = {
                 
                 if(urlPath == '/add-device')
                 {
-                    var error = true;
-                    
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        config.load('config', (err, obj) => {    
-          
-                            if(obj)
-                            {                            
-                                this.log('Config.json geladen!');
+                        if(addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
+                        {
+                            const { exec } = require("child_process");
 
-                                obj.id = 'config';
-
-                                for(const i in obj.platforms)
-                                {
-                                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                                    {
-                                        var platform = obj.platforms[i];
-
-                                        if(urlParams.type == "relais" || urlParams.type == "switch")
-                                        {
-                                            platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: urlParams.mac, name: urlParams.name, on_url: "http://" + urlParams.ip + "/switch?state=1", on_method: "GET", off_url: "http://" + urlParams.ip + "/switch?state=0", off_method: "GET"};
-                                            
-                                            response.write((String)(platform.switches.length));
-                                            response.end(); 
-                                        }
-                                        else
-                                        {
-                                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: urlParams.mac, name: urlParams.name, type: urlParams.type};
-                                            
-                                            response.write((String)(platform.sensors.length));
-                                            response.end(); 
-                                        }
-
-                                        if(urlParams.type == "temperature")
-                                        {
-                                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: urlParams.mac, name: urlParams.name + "H", type: "humidity"};
-                                        }
-                                        
-                                        if(urlParams.type == "light")
-                                        {
-                                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: urlParams.mac, name: urlParams.name + "R", type: "rain"};
-                                        }
-                                        
-                                        error = false;
-                                    }
-                                }
-
-                                this.log('Neues Gerät wird der Config hinzugefügt');
-
-                                config.add(obj, (err) => {
-
-                                    this.log('Config.json aktualisiert!');
-                                });
-                            }
-                            else
-                            {
-                                this.log('[ERROR] Config konnte nicht geladen werden');
-                            }
-                            
-                            if(error)
-                            {
-                                response.write("Ein Fehler ist aufgetreten!");
-                                response.end(); 
-                            }
-                        });
-                        
-                        const { exec } = require("child_process");
-
-                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                            console.log('Homebridge wird neu gestartet');
-                        });
-                    }
-                    else
-                    {
-                        response.write("Du hast keinen Typ, Namen, Mac oder IP angegegen!");
+                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                console.log('Homebridge wird neu gestartet');
+                            });
+                        }
+                        else
+                        {
+                            response.write("Das Gerät konnte nicht hinzugefügt werden!");
+                            response.end();
+                        }
                     }
                 }
                 else if(urlPath == '/remove-device')
                 {
-                    var error = true;
-                    
-                    if(urlParams.mac)
+                    if(urlParams.mac && urlParams.type)
                     {
-                        config.load('config', (err, obj) => {    
-          
-                            if(obj)
-                            {                            
-                                this.log('Config.json geladen!');
+                        if(removeDevice(urlParams.mac, urlParams.type))
+                        {
+                            const { exec } = require("child_process");
 
-                                obj.id = 'config';
-
-                                for(const i in obj.platforms)
-                                {
-                                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                                    {
-                                        var platform = obj.platforms[i];
-                                        
-                                        if(urlParams.type == "relais" || urlParams.type == "switch")
-                                        {
-                                            for(const i in platform.switches)
-                                            {
-                                                if(platform.switches[i].mac === urlParams.mac)
-                                                {
-                                                    platform.switches.splice(i, 1);
-
-                                                    error = false;
-
-                                                    response.write("Gerät wurde gelöscht!");
-                                                    response.end(); 
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            for(const i in platform.sensors)
-                                            {
-                                                if(platform.sensors[i].mac === urlParams.mac)
-                                                {
-                                                    platform.sensors.splice(i, 1);
-
-                                                    error = false;
-
-                                                    response.write("Gerät wurde gelöscht!");
-                                                    response.end(); 
-                                                }
-                                            }
-                                        }
-                                        
-                                        if(error)
-                                        {
-                                            response.write("Ein Fehler ist aufgetreten!");
-                                            response.end();
-                                        }
-                                        
-                                        this.log('Gerät wurde aus der Config entfernt');
-
-                                        config.add(obj, (err) => {
-
-                                            this.log('Config.json aktualisiert!');
-                                        });
-                                        
-                                        const { exec } = require("child_process");
-
-                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                            console.log('Homebridge wird neu gestartet');
-                                        });
-                                    }
-                                }
-                                
-                                if(error)
-                                {
-                                    response.write("Ein Fehler ist aufgetreten!");
-                                    response.end();
-                                }
-                            }
-                            else
-                            {
-                                this.log('[ERROR] Config konnte nicht geladen werden');
-                                response.write("Ein Fehler ist aufgetreten!");
-                                response.end();
-                            }
-                        });
-                    }
-                    else
-                    {
-                        response.write("Du hast keine Mac angegegen!");
-                        response.end();
+                            exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                console.log('Homebridge wird neu gestartet');
+                            });
+                        }
+                        else
+                        {
+                            response.write("Das Gerät konnte nicht entfernt werden!");
+                            response.end();
+                        }
                     }
                 }
                 else if(urlPath == '/ping')
                 {
-                    this.log(this.configPath);
-                    
                     response.write("");
                     response.end();
                 }
             }).bind(this));
+            
         }).bind(this);
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
         this.log("Data Link Server läuft auf Port '%s'.", this.port);
     }
+}
+
+function addDevice(mac, ip, type, name)
+{
+    var error = true;
+                    
+    config.load('config', (err, obj) => {    
+
+        if(obj)
+        {                            
+            this.log('Config.json geladen!');
+
+            obj.id = 'config';
+
+            for(const i in obj.platforms)
+            {
+                if(obj.platforms[i].platform === 'SynTexWebHooks')
+                {
+                    var platform = obj.platforms[i];
+
+                    if(type == "relais" || type == "switch")
+                    {
+                        platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
+
+                        response.write((String)(platform.switches.length));
+                        response.end(); 
+                        
+                        error = false;
+                    }
+                    else
+                    {
+                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
+
+                        response.write((String)(platform.sensors.length));
+                        response.end(); 
+                        
+                        error = false;
+                    }
+
+                    if(type == "temperature")
+                    {
+                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "H", type: "humidity"};
+                    }
+
+                    if(type == "light")
+                    {
+                        platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "R", type: "rain"};
+                    }
+                }
+            }
+
+            this.log('Neues Gerät wird der Config hinzugefügt');
+
+            config.add(obj, (err) => {
+
+                this.log('Config.json aktualisiert!');
+            });
+        }
+        else
+        {
+            this.log('[ERROR] Config konnte nicht geladen werden');
+        }
+
+        if(error)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    });
+}
+
+function removeDevice(mac, type)
+{
+    var error = true;
+    
+    config.load('config', (err, obj) => {    
+          
+        if(obj)
+        {                            
+            this.log('Config.json geladen!');
+
+            obj.id = 'config';
+
+            for(const i in obj.platforms)
+            {
+                if(obj.platforms[i].platform === 'SynTexWebHooks')
+                {
+                    var platform = obj.platforms[i];
+
+                    if(type == "relais" || type == "switch")
+                    {
+                        for(const i in platform.switches)
+                        {
+                            if(platform.switches[i].mac === mac)
+                            {
+                                platform.switches.splice(i, 1);
+
+                                response.write("Gerät wurde gelöscht!");
+                                response.end(); 
+                                
+                                error = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for(const i in platform.sensors)
+                        {
+                            if(platform.sensors[i].mac === mac)
+                            {
+                                platform.sensors.splice(i, 1);
+
+                                response.write("Gerät wurde gelöscht!");
+                                response.end(); 
+                                
+                                error = false;
+                            }
+                        }
+                    }
+
+                    this.log('Gerät wurde aus der Config entfernt');
+
+                    config.add(obj, (err) => {
+
+                        this.log('Config.json aktualisiert!');
+                    });
+                }
+            }
+        }
+        else
+        {
+            this.log('[ERROR] Config konnte nicht geladen werden');
+        }
+        
+        if(error)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    });
 }
