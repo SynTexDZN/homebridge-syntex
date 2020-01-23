@@ -143,7 +143,7 @@ async function addDevice(mac, ip, type, name)
 
                         if(type == "relais" || type == "switch")
                         {
-                            platform.switches[platform.switches.length] = {mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
+                            platform.switches[platform.switches.length] = {mac: mac, name: name, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
 
                             response = true;
                         }
