@@ -18,13 +18,13 @@ var config;
 function SynTexPlatform(slog, sconfig, api)
 {
     this.configPath = api.user.storagePath();
-    config = store(this.configPath);
-    
     this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
-    this.storage = store(this.cacheDirectory);
-    
-    log = slog;
     this.port = config["port"] || 1711;
+    
+    this.storage = store(this.cacheDirectory);    
+    
+    config = store(this.configPath);
+    log = slog;
 }
 
 SynTexPlatform.prototype = {
@@ -63,12 +63,10 @@ SynTexPlatform.prototype = {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
                         addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
-                        
-                            log("[ERROR] RES: " + res);
                             
-                            if(res != false)
+                            if(res)
                             {
-                                response.write((String)(res));
+                                response.write("Gerät wurde hinzugefügt!");
                                 response.end();
 
                                 const { exec } = require("child_process");
@@ -149,13 +147,13 @@ async function addDevice(mac, ip, type, name)
                         {
                             platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
 
-                            response = platform.switches.length;
+                            response = true;
                         }
                         else
                         {
                             platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
 
-                            response = platform.sensors.length;
+                            response = true;
                         }
 
                         if(type == "temperature")
@@ -179,13 +177,13 @@ async function addDevice(mac, ip, type, name)
                     resolve(response);
                 });    
                 
-                resolve(response);
+                resolve(false);
             }
             else
             {
                 log('[ERROR] Config konnte nicht geladen werden');
 
-                resolve(response);
+                resolve(false);
             }
         });
     });
@@ -193,63 +191,68 @@ async function addDevice(mac, ip, type, name)
 
 async function removeDevice(mac, type)
 {
-    var response = false;
-    
-    config.load('config', (err, obj) => {    
-          
-        if(obj)
-        {                            
-            log('Config.json geladen!');
+    return new Promise(resolve => {
+        
+        var response = false;
 
-            obj.id = 'config';
+        config.load('config', (err, obj) => {    
 
-            for(const i in obj.platforms)
-            {
-                if(obj.platforms[i].platform === 'SynTexWebHooks')
+            if(obj)
+            {                            
+                log('Config.json geladen!');
+
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
                 {
-                    var platform = obj.platforms[i];
-
-                    if(type == "relais" || type == "switch")
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        for(const i in platform.switches)
+                        var platform = obj.platforms[i];
+
+                        if(type == "relais" || type == "switch")
                         {
-                            if(platform.switches[i].mac === mac)
+                            for(const i in platform.switches)
                             {
-                                platform.switches.splice(i, 1);
-                                
-                                response = true;
+                                if(platform.switches[i].mac === mac)
+                                {
+                                    platform.switches.splice(i, 1);
+
+                                    response = true;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        for(const i in platform.sensors)
+                        else
                         {
-                            if(platform.sensors[i].mac === mac)
+                            for(const i in platform.sensors)
                             {
-                                platform.sensors.splice(i, 1);
+                                if(platform.sensors[i].mac === mac)
+                                {
+                                    platform.sensors.splice(i, 1);
 
-                                response = true;
+                                    response = true;
+                                }
                             }
                         }
-                    }
 
-                    log('Gerät wurde aus der Config entfernt');
+                        log('Gerät wurde aus der Config entfernt');
 
-                    config.add(obj, (err) => {
+                        config.add(obj, (err) => {
 
-                        log('Config.json aktualisiert!');
+                            log('Config.json aktualisiert!');
+
+                            resolve(response);
+                        });
                         
-                        return response;
-                    });
+                        resolve(false);
+                    }
                 }
             }
-        }
-        else
-        {
-            log('[ERROR] Config konnte nicht geladen werden');
-            
-            return response;
-        }        
+            else
+            {
+                log('[ERROR] Config konnte nicht geladen werden');
+
+                resolve(false);
+            }        
+        });
     });
 }
