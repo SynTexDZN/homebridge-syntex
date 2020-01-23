@@ -132,8 +132,6 @@ async function addDevice(mac, ip, type, name)
 
             if(obj)
             {                            
-                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json geladen!");
-
                 obj.id = 'config';
 
                 for(const i in obj.platforms)
@@ -167,21 +165,29 @@ async function addDevice(mac, ip, type, name)
                     }
                 }
 
-                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wird der Config hinzugefügt");
-
                 config.add(obj, (err) => {
+                    
+                    if(err)
+                    {
+                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!");
 
-                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json aktualisiert!");
-
-                    resolve(response);
+                        resolve(false);
+                    }
+                    else
+                    {
+                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt");
+                        
+                        resolve(response);
+                    }
                 });    
                 
                 resolve(false);
             }
-            else
+            
+            if(err || !obj)
             {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config konnte nicht geladen werden");
-
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
+                
                 resolve(false);
             }
         });
@@ -198,8 +204,6 @@ async function removeDevice(mac, type)
 
             if(obj)
             {                            
-                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json geladen!");
-
                 obj.id = 'config';
 
                 for(const i in obj.platforms)
@@ -233,25 +237,33 @@ async function removeDevice(mac, type)
                             }
                         }
 
-                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt");
-
                         config.add(obj, (err) => {
 
-                            log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json aktualisiert!");
+                            if(err)
+                            {
+                                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!");
 
-                            resolve(response);
+                                resolve(false);
+                            }
+                            else
+                            {
+                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt");
+
+                                resolve(response);
+                            }
                         });
                         
                         resolve(false);
                     }
                 }
             }
-            else
+            
+            if(err || !obj)
             {
-                log('\x1b[31m%s\x1b[0m', "[v]", "Config konnte nicht geladen werden");
-
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
+                
                 resolve(false);
-            }        
+            }    
         });
     });
 }
