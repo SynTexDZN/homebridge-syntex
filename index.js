@@ -88,6 +88,7 @@ SynTexPlatform.prototype = {
                     {
                         removeDevice(urlParams.mac, urlParams.type).then(function(res) {
                         
+                            log('\x1b[31m%s\x1b[0m', "[INFO]", "RES: " + res);
                             if(res)
                             {
                                 response.write("Gerät wurde gelöscht!");
@@ -142,25 +143,25 @@ async function addDevice(mac, ip, type, name)
 
                         if(type == "relais" || type == "switch")
                         {
-                            platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
+                            platform.switches[platform.switches.length] = {mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
 
                             response = true;
                         }
                         else
                         {
-                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
+                            platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
 
                             response = true;
                         }
 
                         if(type == "temperature")
                         {
-                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "H", type: "humidity"};
+                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "H", type: "humidity"};
                         }
 
                         if(type == "light")
                         {
-                            platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 2), mac: mac, name: name + "R", type: "rain"};
+                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "R", type: "rain"};
                         }
                     }
                 }
