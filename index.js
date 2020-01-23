@@ -250,7 +250,7 @@ async function removeDevice(mac, type)
                             {
                                 log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + this.mac + " )");
 
-                                resolve(response);
+                                resolve(true);
                             }
                         });
                         
