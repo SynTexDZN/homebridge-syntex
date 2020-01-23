@@ -62,8 +62,13 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        if(addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name))
+                        var response = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name);
+                        
+                        if(response != false)
                         {
+                            response.write(response);
+                            response.end();
+                            
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
@@ -83,6 +88,9 @@ SynTexPlatform.prototype = {
                     {
                         if(removeDevice(urlParams.mac, urlParams.type))
                         {
+                            response.write("Gerät wurde gelöscht!");
+                            response.end(); 
+                            
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
@@ -113,7 +121,7 @@ SynTexPlatform.prototype = {
 
 function addDevice(mac, ip, type, name)
 {
-    var error = true;
+    var response = false;
                     
     config.load('config', (err, obj) => {    
 
@@ -133,19 +141,13 @@ function addDevice(mac, ip, type, name)
                     {
                         platform.switches[platform.switches.length] = {id: "switch" + (platform.switches.length + 1), mac: mac, name: name, on_url: "http://" + ip + "/switch?state=1", on_method: "GET", off_url: "http://" + ip + "/switch?state=0", off_method: "GET"};
 
-                        response.write((String)(platform.switches.length));
-                        response.end(); 
-                        
-                        error = false;
+                        response = platform.switches.length;
                     }
                     else
                     {
                         platform.sensors[platform.sensors.length] = {id: "sensor" + (platform.sensors.length + 1), mac: mac, name: name, type: type};
 
-                        response.write((String)(platform.sensors.length));
-                        response.end(); 
-                        
-                        error = false;
+                        response = platform.sensors.length;
                     }
 
                     if(type == "temperature")
@@ -172,20 +174,13 @@ function addDevice(mac, ip, type, name)
             log('[ERROR] Config konnte nicht geladen werden');
         }
 
-        if(error)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return response;
     });
 }
 
 function removeDevice(mac, type)
 {
-    var error = true;
+    var response = false;
     
     config.load('config', (err, obj) => {    
           
@@ -208,11 +203,8 @@ function removeDevice(mac, type)
                             if(platform.switches[i].mac === mac)
                             {
                                 platform.switches.splice(i, 1);
-
-                                response.write("Gerät wurde gelöscht!");
-                                response.end(); 
                                 
-                                error = false;
+                                response = true;
                             }
                         }
                     }
@@ -224,10 +216,7 @@ function removeDevice(mac, type)
                             {
                                 platform.sensors.splice(i, 1);
 
-                                response.write("Gerät wurde gelöscht!");
-                                response.end(); 
-                                
-                                error = false;
+                                response = true;
                             }
                         }
                     }
@@ -246,13 +235,6 @@ function removeDevice(mac, type)
             log('[ERROR] Config konnte nicht geladen werden');
         }
         
-        if(error)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return response;
     });
 }
