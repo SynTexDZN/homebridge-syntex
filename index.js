@@ -64,7 +64,7 @@ SynTexPlatform.prototype = {
                     {
                         var res = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name);
                         
-                        if(res != false)
+                        if(res != 0)
                         {
                             response.write((String)(res));
                             response.end();
@@ -121,7 +121,7 @@ SynTexPlatform.prototype = {
 
 function addDevice(mac, ip, type, name)
 {
-    var response = false;
+    var response = 0;
                     
     config.load('config', (err, obj) => {    
 
