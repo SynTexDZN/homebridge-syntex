@@ -66,7 +66,7 @@ SynTexPlatform.prototype = {
                         
                         if(res != false)
                         {
-                            response.write(res);
+                            response.write((String)(res));
                             response.end();
                             
                             const { exec } = require("child_process");
