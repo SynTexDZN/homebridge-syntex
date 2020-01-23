@@ -173,6 +173,8 @@ function addDevice(mac, ip, type, name)
         {
             log('[ERROR] Config konnte nicht geladen werden');
         }
+        
+        log("----------[ERROR] " + response);
 
         return response;
     });
