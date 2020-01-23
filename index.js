@@ -62,7 +62,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        var res = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(
+                        addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
                         
                             if(res != false)
                             {
@@ -80,14 +80,14 @@ SynTexPlatform.prototype = {
                                 response.write("Das Gerät konnte nicht hinzugefügt werden!");
                                 response.end();
                             }
-                        );
+                        });
                     }
                 }
                 else if(urlPath == '/remove-device')
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        var res = removeDevice(urlParams.mac, urlParams.type).then(
+                        removeDevice(urlParams.mac, urlParams.type).then(function(res) {
                         
                             if(res)
                             {
