@@ -43,7 +43,7 @@ SynTexPlatform.prototype = {
             
             request.on('error', (function(err)
             {
-                log("[ERROR] Reason: %s.", err);
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Reason: ", err);
                 
             }).bind(this)).on('data', function(chunk)
             {
@@ -71,7 +71,7 @@ SynTexPlatform.prototype = {
                                 const { exec } = require("child_process");
 
                                 exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                    console.log('Homebridge wird neu gestartet');
+                                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
                                 });
                             }
                             else
@@ -96,7 +96,7 @@ SynTexPlatform.prototype = {
                                 const { exec } = require("child_process");
 
                                 exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                    console.log('Homebridge wird neu gestartet');
+                                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
                                 });
                             }
                             else
@@ -118,7 +118,7 @@ SynTexPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        log('\x1b[33m%s\x1b[0m', "Data Link Server läuft auf Port '", this.port, "'");
+        log('\x1b[33m%s\x1b[0m', "[INFO]", "Data Link Server läuft auf Port ", "'" + this.port + "'");
     }
 }
 
@@ -132,7 +132,7 @@ async function addDevice(mac, ip, type, name)
 
             if(obj)
             {                            
-                log('Config.json geladen!');
+                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json geladen!");
 
                 obj.id = 'config';
 
@@ -167,11 +167,11 @@ async function addDevice(mac, ip, type, name)
                     }
                 }
 
-                log('Neues Gerät wird der Config hinzugefügt');
+                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wird der Config hinzugefügt");
 
                 config.add(obj, (err) => {
 
-                    log('Config.json aktualisiert!');
+                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json aktualisiert!");
 
                     resolve(response);
                 });    
@@ -180,7 +180,7 @@ async function addDevice(mac, ip, type, name)
             }
             else
             {
-                log('[ERROR] Config konnte nicht geladen werden');
+                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config konnte nicht geladen werden");
 
                 resolve(false);
             }
@@ -198,7 +198,7 @@ async function removeDevice(mac, type)
 
             if(obj)
             {                            
-                log('Config.json geladen!');
+                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json geladen!");
 
                 obj.id = 'config';
 
@@ -233,11 +233,11 @@ async function removeDevice(mac, type)
                             }
                         }
 
-                        log('Gerät wurde aus der Config entfernt');
+                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt");
 
                         config.add(obj, (err) => {
 
-                            log('Config.json aktualisiert!');
+                            log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Config.json aktualisiert!");
 
                             resolve(response);
                         });
@@ -248,7 +248,7 @@ async function removeDevice(mac, type)
             }
             else
             {
-                log('[ERROR] Config konnte nicht geladen werden');
+                log('\x1b[31m%s\x1b[0m', "[v]", "Config konnte nicht geladen werden");
 
                 resolve(false);
             }        
