@@ -112,7 +112,7 @@ function addDevice(mac, ip, type, name)
 {
     var error = true;
                     
-    config.load('config', (err, obj) => {    
+    this.config.load('config', (err, obj) => {    
 
         if(obj)
         {                            
@@ -159,7 +159,7 @@ function addDevice(mac, ip, type, name)
 
             this.log('Neues Gerät wird der Config hinzugefügt');
 
-            config.add(obj, (err) => {
+            this.config.add(obj, (err) => {
 
                 this.log('Config.json aktualisiert!');
             });
@@ -184,7 +184,7 @@ function removeDevice(mac, type)
 {
     var error = true;
     
-    config.load('config', (err, obj) => {    
+    this.config.load('config', (err, obj) => {    
           
         if(obj)
         {                            
@@ -231,7 +231,7 @@ function removeDevice(mac, type)
 
                     this.log('Gerät wurde aus der Config entfernt');
 
-                    config.add(obj, (err) => {
+                    this.config.add(obj, (err) => {
 
                         this.log('Config.json aktualisiert!');
                     });
