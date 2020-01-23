@@ -62,11 +62,13 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        var res = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name);
+                        var x = addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name);
                         
-                        if(res != 0)
+                        log("----------[ERROR2] " + x);
+                        
+                        if(x != 0)
                         {
-                            response.write((String)(res));
+                            response.write((String)(x));
                             response.end();
                             
                             const { exec } = require("child_process");
