@@ -15,15 +15,15 @@ module.exports = function(homebridge)
 var log;
 var config;
 
-function SynTexPlatform(log, config, api)
+function SynTexPlatform(slog, sconfig, api)
 {
     this.configPath = api.user.storagePath();
-    this.config = store(this.configPath);
+    config = store(this.configPath);
     
     this.cacheDirectory = config["cache_directory"] || "./.node-persist/storage";
     this.storage = store(this.cacheDirectory);
     
-    this.log = log;
+    log = slog;
     this.port = config["port"] || 1711;
 }
 
