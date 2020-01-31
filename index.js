@@ -2,6 +2,7 @@ var request = require('request');
 var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
+var fs = require('fs');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -104,6 +105,18 @@ SynTexPlatform.prototype = {
                             }
                         });
                     }
+                }
+                else if(urlPath == '/test')
+                {
+                    fs.readFile('/var/www/html/index.php', function (err, data)
+                    {
+                        if(err)
+                        {
+                            throw err; 
+                        }
+                        
+                        response.write(data.toString());
+                    });
                 }
                 else if(urlPath == '/ping')
                 {
