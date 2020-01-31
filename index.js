@@ -109,7 +109,7 @@ SynTexPlatform.prototype = {
                 }
                 else if(urlPath == '/test')
                 {
-                    let pathname = path.join(__dirname, "test.php");
+                    var pathname = path.join(__dirname, "test.php");
                     
                     fs.exists(pathname, function (exist)
                     {
@@ -135,7 +135,7 @@ SynTexPlatform.prototype = {
                             else
                             {
                                 const ext = path.parse(pathname).ext;
-                                let pathname = path.join(__dirname, "test.php");
+                                pathname = path.join(__dirname, "head.php");
                     
                                 fs.exists(pathname, function (exist)
                                 {
@@ -148,7 +148,7 @@ SynTexPlatform.prototype = {
 
                                     if(fs.statSync(pathname).isDirectory())
                                     {
-                                        pathname += '/head.html';
+                                        pathname += '/index.html';
                                     }
 
                                     fs.readFile(pathname, function(err, head)
