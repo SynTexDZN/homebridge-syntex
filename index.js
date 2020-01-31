@@ -133,7 +133,7 @@ SynTexPlatform.prototype = {
                                 // based on the URL path, extract the file extention. e.g. .js, .doc, ...
                                 const ext = path.parse(pathname).ext;
                                 // if the file is found, set Content-type and send data
-                                response.setHeader('Content-type', 'text/plain');
+                                response.setHeader('Content-type', 'text/html');
                                 response.end(data);
                             }
                         });
