@@ -157,6 +157,9 @@ SynTexPlatform.prototype = {
                                         "css": "text/css"
                                     };
                                     
+                                    log(path.parse(urlPath).ext);
+                                    log(mimeType[path.parse(urlPath).ext]);
+                                    
                                     response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
                                     response.end(data);
                                 }
