@@ -1,5 +1,17 @@
 <html>
-    <?php include("includes/head.php"); ?>
+    <script>
+    
+        $.ajax(
+        {
+            type: 'GET',
+            url: 'includes/head.html',
+            success: function(data)
+            {                
+                document.getElementsByTagName('head')[0].innerHTML = data;
+            }
+        });
+    
+    </script>
     <title></title>
     <body>
         <div id="welcome">
