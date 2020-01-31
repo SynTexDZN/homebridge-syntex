@@ -1,3 +1,8 @@
+<?php
+
+echo "Hi!";
+
+?>
 <!DOCTYPE html>
 <html>
     <body>
