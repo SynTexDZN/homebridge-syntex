@@ -107,41 +107,6 @@ SynTexPlatform.prototype = {
                         });
                     }
                 }
-                else if(urlPath == '/test')
-                {
-                    let pathname = path.join(__dirname, "test.php");
-                    
-                    fs.exists(pathname, function (exist)
-                    {
-                        if(!exist)
-                        {
-                            response.statusCode = 404;
-                            response.end(`File ${pathname} not found!`);
-                            return;
-                        }
-
-                        if(fs.statSync(pathname).isDirectory())
-                        {
-                            pathname += '/index.php';
-                        }
-
-                        fs.readFile(pathname, function(err, data)
-                        {
-                            if(err)
-                            {
-                                response.statusCode = 500;
-                                response.end(`Error getting the file: ${err}.`);
-                            }
-                            else
-                            {
-                                const ext = path.parse(pathname).ext;
-                                
-                                response.setHeader('Content-type', 'text/html');
-                                response.end(data);
-                            }
-                        });
-                    });           
-                }
                 else if(urlPath == '/ping')
                 {
                     response.write("");
@@ -165,30 +130,38 @@ SynTexPlatform.prototype = {
                         if(!exist)
                         {
                             response.statusCode = 404;
-                            response.end(`File ${pathname} not found!`);
-                            return;
+                            response.end('Die Seite ' + pathname + ' wurde nicht gefunden!');
                         }
-
-                        if(fs.statSync(pathname).isDirectory())
+                        else
                         {
-                            pathname += '/index.php';
+                            if(fs.statSync(pathname).isDirectory())
+                            {
+                                pathname += '/index.html';
+                            }
+
+                            fs.readFile(pathname, function(err, data)
+                            {
+                                if(err)
+                                {
+                                    response.statusCode = 500;
+                                    response.end('Die Seite konnte nicht geladen werden: ' + err);
+                                }
+                                else
+                                {
+                                    var mimeTypes = {
+                                        "html": "text/html",
+                                        "jpeg": "image/jpeg",
+                                        "jpg": "image/jpeg",
+                                        "png": "image/png",
+                                        "js": "text/javascript",
+                                        "css": "text/css"
+                                    };
+                                    
+                                    response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
+                                    response.end(data);
+                                }
+                            });
                         }
-
-                        fs.readFile(pathname, function(err, data)
-                        {
-                            if(err)
-                            {
-                                response.statusCode = 500;
-                                response.end(`Error getting the file: ${err}.`);
-                            }
-                            else
-                            {
-                                const ext = path.parse(pathname).ext;
-                                
-                                response.setHeader('Content-type', 'text/html');
-                                response.end(data);
-                            }
-                        });
                     });
                 }
             }).bind(this));
