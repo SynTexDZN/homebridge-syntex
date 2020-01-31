@@ -109,7 +109,7 @@ SynTexPlatform.prototype = {
                 }
                 else if(urlPath == '/test')
                 {
-                    var pathname = path.join(__dirname, "test.php");
+                    let pathname = path.join(__dirname, "test.php");
                     
                     fs.exists(pathname, function (exist)
                     {
@@ -135,46 +135,59 @@ SynTexPlatform.prototype = {
                             else
                             {
                                 const ext = path.parse(pathname).ext;
-                                pathname = path.join(__dirname, "head.html");
-                    
-                                fs.exists(pathname, function (exist)
-                                {
-                                    if(!exist)
-                                    {
-                                        response.statusCode = 404;
-                                        response.end(`File ${pathname} not found!`);
-                                        return;
-                                    }
-
-                                    if(fs.statSync(pathname).isDirectory())
-                                    {
-                                        pathname += '/index.html';
-                                    }
-
-                                    fs.readFile(pathname, function(err, head)
-                                    {
-                                        if(err)
-                                        {
-                                            response.statusCode = 500;
-                                            response.end(`Error getting the file: ${err}.`);
-                                        }
-                                        else
-                                        {
-                                            const ext = path.parse(pathname).ext;
-                                            response.setHeader('Content-type', 'text/html');
-                                            response.end(head + data);
-                                        }
-                                    });
-                                });
+                                
+                                response.setHeader('Content-type', 'text/html');
+                                response.end(data);
                             }
                         });
-                    });
-                                      
+                    });           
                 }
                 else if(urlPath == '/ping')
                 {
                     response.write("");
                     response.end();
+                }
+                else
+                {
+                    if(path.parse(urlPath).ext == 'html')
+                    {
+                        let pathname = path.join(__dirname, urlPath.substring(1) + '.html');
+                    }
+                    else
+                    {
+                        let pathname = path.join(__dirname, urlPath.substring(1) + '.' + path.parse(urlPath).ext);
+                    }
+                    
+                    fs.exists(pathname, function (exist)
+                    {
+                        if(!exist)
+                        {
+                            response.statusCode = 404;
+                            response.end(`File ${pathname} not found!`);
+                            return;
+                        }
+
+                        if(fs.statSync(pathname).isDirectory())
+                        {
+                            pathname += '/index.php';
+                        }
+
+                        fs.readFile(pathname, function(err, data)
+                        {
+                            if(err)
+                            {
+                                response.statusCode = 500;
+                                response.end(`Error getting the file: ${err}.`);
+                            }
+                            else
+                            {
+                                const ext = path.parse(pathname).ext;
+                                
+                                response.setHeader('Content-type', 'text/html');
+                                response.end(data);
+                            }
+                        });
+                    });
                 }
             }).bind(this));
             
