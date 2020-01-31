@@ -1,15 +1,16 @@
 <html>
+    <script async src="http://syntex.local:1711/js/jquery.js"></script>
     <script async>
         
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', 'includes/head.html');
-        
-        client.onreadystatechange = function() {
-            document.getElementsByTagName('head')[0].innerHTML = client.responseText;
-        }
-        
-        client.send();
+        $.ajax(
+        {
+            type: 'GET',
+            url: 'includes/head.html',
+            success: function(data)
+            {                
+                document.getElementsByTagName('head')[0].innerHTML = data;
+            }
+        });
     
     </script>
     <title></title>
@@ -69,7 +70,7 @@
         </div>
     </body>
 </html>
-<script>
+<script defer>
     
     var ping = false;
     
