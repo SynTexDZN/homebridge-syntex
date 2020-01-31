@@ -135,7 +135,7 @@ SynTexPlatform.prototype = {
                             else
                             {
                                 const ext = path.parse(pathname).ext;
-                                pathname = path.join(__dirname, "head.php");
+                                pathname = path.join(__dirname, "head.html");
                     
                                 fs.exists(pathname, function (exist)
                                 {
