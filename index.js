@@ -3,6 +3,7 @@ var http = require('http');
 var url = require('url');
 var store = require('json-fs-store');
 var fs = require('fs');
+var path = require('path');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
