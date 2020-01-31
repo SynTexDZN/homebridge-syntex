@@ -1,0 +1,324 @@
+@font-face { font-family: OstrichSans; font-weight: bold; src: url('http://syntex.local/style/ostrich-sans-black.ttf'); }
+@font-face { font-family: OstrichSans; font-weight: 400; src: url('http://syntex.local/style/ostrich-sans-dashed.ttf'); }
+@font-face { font-family: OstrichSans; font-weight: 100; src: url('http://syntex.local/style/ostrich-sans-light.ttf'); }
+@font-face { font-family: OstrichSans; font-weight: 200; src: url('http://syntex.local/style/ostrich-sans-regular.ttf'); }
+@font-face { font-family: OstrichSans; font-weight: 300; src: url('http://syntex.local/style/ostrich-sans-rounded.ttf'); }
+
+@font-face { font-family: Rubik; font-weight: 500; src: url('http://syntex.local/style/Rubik-Black.ttf'); }
+@font-face { font-family: Rubik; font-weight: 400; src: url('http://syntex.local/style/Rubik-Bold.ttf'); }
+@font-face { font-family: Rubik; font-weight: 100; src: url('http://syntex.local/style/Rubik-Light.ttf'); }
+@font-face { font-family: Rubik; font-weight: 300; src: url('http://syntex.local/style/Rubik-Medium.ttf'); }
+@font-face { font-family: Rubik; font-weight: 200; src: url('http://syntex.local/style/Rubik-Regular.ttf'); }
+
+*
+{
+    font-family: Rubik;
+}
+
+body
+{
+    margin: 0;
+    padding: 50px 25px;
+    background: rgb(20, 20, 30);
+}
+
+.main
+{
+    min-width: 60%;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+}
+
+b
+{
+    font-weight: 300;
+}
+
+input
+{
+    height: 50px;
+    width: 100%!important;
+    background: transparent;
+    color: rgb(245, 245, 255);
+    outline: none;
+    border: 3px solid rgb(245, 245, 255);
+    border-radius: 16px;
+    font-size: 16px;
+    transition: .2s ease-out;
+    /*font-family: Rubik;*/
+    font-weight: 200;
+    letter-spacing: 3px;
+    box-sizing: border-box;
+}
+
+input:hover:not(.control-panel)
+{
+    background: rgb(245, 245, 255)!important;
+    color: rgb(20, 20, 30);
+    border-color: rgba(245, 245, 255, 0);
+}
+
+input:active:not(.control-panel)
+{
+    letter-spacing: 0px;
+}
+
+input[type='text'], input[type='password']
+{
+    padding-left: 20px;
+}
+
+input[type='button']:disabled
+{
+    background: rgb(245, 245, 255);
+    color: rgb(20, 20, 30);
+    opacity: 1!important;
+}
+
+input[type='radio']
+{
+    width: 20px!important;
+    height: 20px!important;
+    margin: 0;
+    margin-right: 20px;
+}
+
+label
+{
+    display: flex!important;
+}
+
+h1, h2
+{
+    font-weight: 300;
+    display: inline-block;
+    width: min-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1
+{
+    border-bottom: 4px solid white;
+    padding-bottom: 15px;
+}
+
+p, a, label
+{
+    font-weight: 200;
+}
+
+h1, h2, p, a, label
+{
+    text-align: center;
+    font-size: 48px;
+    /*font-family: monospace;*/
+    /*font-weight: bolder;*/
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: keep-all;
+}
+
+h1, p, a, label
+{
+    font-style: italic;
+}
+
+a
+{
+    text-decoration: none;
+    color: hsl(210, 80%, 65%)!important;
+    margin: 0!important;
+    text-align: left;
+}
+
+h1, p, label
+{
+    color: rgb(245, 245, 255);
+}
+
+p, a, label
+{
+    font-size: 16px;
+}
+
+h2
+{
+    font-size: 28px;
+    font-weight: 200;
+    text-align: left;
+    /*margin-left: 15px;*/
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-width: 3px;
+    /*font-style: normal;*/
+    background: rgb(245, 245, 255);
+    color: rgb(20, 20, 30);
+    border-radius: 50px;
+    padding: 8.5px 20px;
+    padding-right: 10px;
+}
+
+.indicator
+{
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    border: 2px solid rgb(245, 245, 255);
+    margin: auto 20px auto 20px;
+    transition: .3s ease;
+}
+
+.indicator.red
+{
+    background: hsl(350, 75%, 50%);
+}
+
+.indicator.green
+{
+    background: hsl(150, 75%, 50%);
+}
+
+.control-container, .status-container
+{
+    min-width: 60%;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+    top: -50px;
+    margin-top: 50px;
+    position: relative;
+}
+
+.control-panel, .status-panel
+{
+    color: rgb(20, 20, 30);
+    background-image: linear-gradient(to top, rgb(245, 245, 255) 0%, rgb(205, 205, 215) 100%);
+    border-width: 0;
+    height: 200px;
+    border-radius: 35px;
+    font-size: 48px;
+    letter-spacing: 20px;
+    font-weight: 400;
+}
+
+.status-panel
+{
+    margin-top: 20px;
+}
+
+@media(prefers-color-scheme: light)
+{
+    body
+    {
+        background: rgb(220, 220, 230);
+    }
+
+    input
+    {
+        color: rgb(45, 45, 55);
+        border: 3px solid rgb(45, 45, 55);
+    }
+
+    input:hover
+    {
+        background: rgb(45, 45, 55);
+        color: rgb(220, 220, 230);
+        border-color: rgba(45, 45, 55, 0);
+    }
+
+    h1, p, label
+    {
+        color: rgb(45, 45, 55);
+    }
+    
+    h2
+    {
+        color: rgb(245, 245, 255);
+        background: rgb(45, 45, 55);
+    }
+
+    .control-panel, .status-panel
+    {
+        color: rgb(220, 220, 230);
+        background-image: linear-gradient(to top, rgb(45, 45, 55) 0%, rgb(25, 25, 35) 100%);
+    }
+
+    h1, h2
+    {
+        border-color: rgb(45, 45, 55);
+    }
+    
+    input[type='button']:disabled
+    {
+        background: rgb(45, 45, 55);
+        color: rgb(245, 245, 255);
+    }
+}
+
+@media only screen and (max-width: 1176px)
+{
+    *
+    {
+        -webkit-appearance: none;
+    }
+
+    h1
+    {
+        font-size: 38px;
+    }
+    
+    h2
+    {
+        font-size: 24px;
+        margin-top: 30px;
+    }
+
+    body
+    {
+        min-height: calc(100% - 100px);
+    }
+
+    .main
+    {
+        max-width: 100%;
+    }
+
+    .control-panel, .status-panel
+    {
+        border-radius: 0!important;
+        max-width: 100%!important;
+        white-space: normal;
+        font-size: 46px!important;
+    }
+
+    .control-container, .status-container
+    {
+        width: calc(100% + 50px)!important;
+        left: -25px;
+        margin-top: 0;
+        min-width: none;
+        max-width: none;
+    }
+    
+    .status-container
+    {
+        margin-top: 50px;
+        bottom: 0;
+        margin-bottom: -100px;
+    }
+
+    input
+    {
+        font-size: 18px;
+        font-weight: 300;
+        height: 60px;
+        border-radius: 30px;
+    }
+}
