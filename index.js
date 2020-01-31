@@ -149,16 +149,13 @@ SynTexPlatform.prototype = {
                                 else
                                 {
                                     var mimeType = {
-                                        "html": "text/html",
-                                        "jpeg": "image/jpeg",
-                                        "jpg": "image/jpeg",
-                                        "png": "image/png",
-                                        "js": "text/javascript",
-                                        "css": "text/css"
+                                        ".html": "text/html",
+                                        ".jpeg": "image/jpeg",
+                                        ".jpg": "image/jpeg",
+                                        ".png": "image/png",
+                                        ".js": "text/javascript",
+                                        ".css": "text/css"
                                     };
-                                    
-                                    log(path.parse(urlPath).ext);
-                                    log(mimeType[path.parse(urlPath).ext]);
                                     
                                     response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
                                     response.end(data);
