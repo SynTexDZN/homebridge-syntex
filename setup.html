@@ -1,16 +1,16 @@
 <html>
-    <script async src="http://syntex.local:1711/js/jquery.js"></script>
     <script async>
         
-        $.ajax(
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'includes/head.html');
+        
+        client.onreadystatechange = function()
         {
-            type: 'GET',
-            url: 'includes/head.html',
-            success: function(data)
-            {                
-                document.getElementsByTagName('head')[0].innerHTML = data;
-            }
-        });
+            document.getElementsByTagName('head')[0].innerHTML = client.responseText;
+        }
+        
+        client.send();
     
     </script>
     <title></title>
@@ -80,29 +80,36 @@
     {
         if(ping == false)
         {
-            $.ajax(
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://192.168.4.1/');
+
+            client.onreadystatechange = function()
             {
-                type: 'GET',
-                url: 'http://192.168.4.1/',
-                success: function(data)
-                {
-                    ping = true;
-                    //alert("ESP Gefunden");
-                    document.getElementById('wifiConfig').style.display = "";
-                    setTimeout(function()
-                    {
-                        scanWifi();
-                    }, 2000);
-                    document.getElementById('welcome').style.display = "none";
-                },
-                error: function()
-                {
-                    setTimeout(function()
-                    {
-                        pingESP();
-                    }, 2000);
-                }
-            });
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {  
+                        ping = true;
+                        //alert("ESP Gefunden");
+                        document.getElementById('wifiConfig').style.display = "";
+                        setTimeout(function()
+                        {
+                            scanWifi();
+                        }, 2000);
+                        document.getElementById('welcome').style.display = "none";
+                    }
+                    else
+                    {  
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 2000);
+                    }  
+                }  
+            }
+
+            client.send();
         }        
     }    
         
@@ -110,81 +117,93 @@
     {            
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
-        $.ajax(
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://192.168.4.1/wifi');
+
+        client.onreadystatechange = function()
         {
-            type: 'GET',
-            url: 'http://192.168.4.1/wifi',
-            success: function(data)
-            {                
-                document.getElementById('networks').innerHTML = '';
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {  
+                    document.getElementById('networks').innerHTML = '';
                 
-                var json = JSON.parse(data);
-                
-                for(var i = 0; i < json.length; i++)
-                {
-                    var label = document.createElement('label');
-                    var input = document.createElement('input');
+                    var json = JSON.parse(client.responseText);
 
-                    label.setAttribute('for', json[i]);
-                    label.setAttribute('style', 'margin-bottom: 20px');
+                    for(var i = 0; i < json.length; i++)
+                    {
+                        var label = document.createElement('label');
+                        var input = document.createElement('input');
 
-                    input.setAttribute('type', "radio");
-                    input.setAttribute('name', "wifissid");
-                    input.setAttribute('value', json[i]);        
+                        label.setAttribute('for', json[i]);
+                        label.setAttribute('style', 'margin-bottom: 20px');
 
-                    label.appendChild(input);
-                    label.innerHTML += json[i];
+                        input.setAttribute('type', "radio");
+                        input.setAttribute('name', "wifissid");
+                        input.setAttribute('value', json[i]);        
 
-                    document.getElementById('networks').appendChild(label);
+                        label.appendChild(input);
+                        label.innerHTML += json[i];
+
+                        document.getElementById('networks').appendChild(label);
+                    }
+
+                    if(client.responseText == "")
+                    {
+                        document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
+                    }
                 }
-                
-                if(data == "")
-                {
-                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
-                }
-            }
-        });
+            }  
+        }
+
+        client.send();
     }
     
     var success = false;
     
     function checkDB(mac)
     {
+        var client = new XMLHttpRequest();
         
-        
-        $.ajax(
+        client.open('GET', 'http://syntex.local/serverside/check-device.php?mac=' + mac);
+
+        client.onreadystatechange = function()
         {
-            type: 'GET',
-            url: 'http://syntex.local/serverside/check-device.php?mac=' + mac,
-            success: function(data)
-            {
-                console.log(data);
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {  
+                    console.log(client.responseText);
                 
-                if(data == 'Success')
-                {
-                    //TODO: Erfolg
-                    
-                    success = true;
-                    
-                    //alert("Success");
-                    
-                    document.getElementById('success').style.display = "";
-                    document.getElementById('connecting').style.display = "none";
-                    
-                    setTimeout(function()
+                    if(client.responseText == 'Success')
                     {
-                        //window.location.href = 'http://syntex.local/';
-                    }, 10000);                    
-                }
-                else
-                {
-                    setTimeout(function()
+                        //TODO: Erfolg
+
+                        success = true;
+
+                        //alert("Success");
+
+                        document.getElementById('success').style.display = "";
+                        document.getElementById('connecting').style.display = "none";
+
+                        setTimeout(function()
+                        {
+                            //window.location.href = 'http://syntex.local/';
+                        }, 10000);                    
+                    }
+                    else
                     {
-                        checkDB(mac);
-                    }, 2000);
+                        setTimeout(function()
+                        {
+                            checkDB(mac);
+                        }, 2000);
+                    }
                 }
-            }
-        });
+            }  
+        }
+
+        client.send();
     }
     
     var timeRemaining = 0;
@@ -199,13 +218,13 @@
             setTimer(timeRemaining);
         }, 100);
     }
-    
+    /*
     $('form').submit(function(event)
     {
         /*
         if(event.target.getAttribute("name") == "chat")
         {
-        */
+        
         event.preventDefault();
         
         $.ajax(
@@ -266,5 +285,6 @@
             }
         });
     })
+    */
 
 </script>
