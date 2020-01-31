@@ -135,8 +135,37 @@ SynTexPlatform.prototype = {
                             else
                             {
                                 const ext = path.parse(pathname).ext;
-                                response.setHeader('Content-type', 'text/html');
-                                response.end(data);
+                                let pathname = path.join(__dirname, "test.php");
+                    
+                                fs.exists(pathname, function (exist)
+                                {
+                                    if(!exist)
+                                    {
+                                        response.statusCode = 404;
+                                        response.end(`File ${pathname} not found!`);
+                                        return;
+                                    }
+
+                                    if(fs.statSync(pathname).isDirectory())
+                                    {
+                                        pathname += '/head.html';
+                                    }
+
+                                    fs.readFile(pathname, function(err, head)
+                                    {
+                                        if(err)
+                                        {
+                                            response.statusCode = 500;
+                                            response.end(`Error getting the file: ${err}.`);
+                                        }
+                                        else
+                                        {
+                                            const ext = path.parse(pathname).ext;
+                                            response.setHeader('Content-type', 'text/html');
+                                            response.end(head + data);
+                                        }
+                                    });
+                                });
                             }
                         });
                     });

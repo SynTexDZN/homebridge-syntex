@@ -4,7 +4,7 @@
         <script>
         
             var client = new XMLHttpRequest();
-            client.open('GET', __dirname + 'head.html');
+            client.open('GET', './head.html');
             client.onreadystatechange = function() {
                 document.getElementsByTagName('head').innerHTML = client.responseText;
             }
