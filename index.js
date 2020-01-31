@@ -108,7 +108,7 @@ SynTexPlatform.prototype = {
                 }
                 else if(urlPath == '/test')
                 {
-                    fs.readFile('/var/www/html/index.php', function (err, data)
+                    fs.readFile(__dirname + '/test.php', function (err, data)
                     {
                         if(err)
                         {
