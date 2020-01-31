@@ -6,7 +6,7 @@
             var client = new XMLHttpRequest();
             client.open('GET', './head.html');
             client.onreadystatechange = function() {
-                document.getElementsByTagName('head').innerHTML = client.responseText;
+                document.getElementsByTagName('head')[0].innerHTML = client.responseText;
             }
             client.send();
             

@@ -148,7 +148,7 @@ SynTexPlatform.prototype = {
                                 }
                                 else
                                 {
-                                    var mimeTypes = {
+                                    var mimeType = {
                                         "html": "text/html",
                                         "jpeg": "image/jpeg",
                                         "jpg": "image/jpeg",
