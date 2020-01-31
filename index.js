@@ -149,13 +149,15 @@ SynTexPlatform.prototype = {
                 }
                 else
                 {
+                    var pathname;
+                    
                     if(path.parse(urlPath).ext == 'html')
                     {
-                        let pathname = path.join(__dirname, urlPath.substring(1) + '.html');
+                        pathname = path.join(__dirname, urlPath.substring(1) + '.html');
                     }
                     else
                     {
-                        let pathname = path.join(__dirname, urlPath.substring(1) + '.' + path.parse(urlPath).ext);
+                        pathname = path.join(__dirname, urlPath.substring(1) + '.' + path.parse(urlPath).ext);
                     }
                     
                     fs.exists(pathname, function (exist)
