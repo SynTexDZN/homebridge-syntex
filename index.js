@@ -109,26 +109,26 @@ SynTexPlatform.prototype = {
                 }
                 else if(urlPath == '/test')
                 {
-                    let pathname = path.join(__dirname, "index.php");
+                    let pathname = path.join(__dirname, "test.php");
 
                     fs.exists(pathname, function (exist) {
                         if(!exist) {
                             // if the file is not found, return 404
-                            res.statusCode = 404;
-                            res.end(`File ${pathname} not found!`);
+                            response.statusCode = 404;
+                            response.end(`File ${pathname} not found!`);
                             return;
                         }
 
                         // if is a directory, then look for index.html
                         if (fs.statSync(pathname).isDirectory()) {
-                            pathname += '/index.html';
+                            pathname += '/index.php';
                         }
 
                         // read file from file system
                         fs.readFile(pathname, function(err, data){
                             if(err){
-                                res.statusCode = 500;
-                                res.end(`Error getting the file: ${err}.`);
+                                response.statusCode = 500;
+                                response.end(`Error getting the file: ${err}.`);
                             } else {
                                 // based on the URL path, extract the file extention. e.g. .js, .doc, ...
                                 const ext = path.parse(pathname).ext;
