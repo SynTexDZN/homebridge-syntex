@@ -1,0 +1,257 @@
+<html>
+    <?php include("includes/head.php"); ?>
+    <title></title>
+    <body>
+        <div id="welcome">
+            <h1>Gerät Hinzufügen</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <img src="img/wifi.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
+            </div>
+            <div class="main" style="">
+                <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
+            </div>
+        </div>
+        <div id="wifiConfig" style="display: none;">
+            <h1>Gerät Hinzufügen</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <form action="http://192.168.4.1/settings" method="POST">
+                    <div id="networks" style="margin-bottom: 100px">
+                        <p>Laden ..</p>
+                    </div>
+                    <input type="password" name="wifipass" placeholder="Netzwerk Passwort" style="margin-bottom: 20px" required>
+                    <br>
+                    <input type="submit" value="Verbinden">
+                </form>
+            </div>
+            <div class="main" style="">
+                <div style="display: flex">
+                    <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
+                    <input style="margin-left: 20px;" type="button" value="Scan" onclick="scanWifi()">
+                </div>
+            </div>
+        </div>
+        <div id="connecting" style="display: none;">
+            <h1>Verbinden</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <img src="img/connecting.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
+                    <div class="progress" style="background: hsl(210, 85%, 65%); width: 0%; height: 10px; border-radius: 5px"></div>
+                </div>
+                <p>Das Gerät versucht<br>sich im WLAN anzumelden</p>
+            </div>
+        </div>
+        <div id="success" style="display: none;">
+            <h1>Erfolgreich Verbunden</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <img src="img/success.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
+            </div>
+        </div>
+        <div id="error" style="display: none;">
+            <h1>Fehler beim Verbinden</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <img src="img/error.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <p>Bitte versuche es erneut!<br><br>Dein WLAN-Passwort<br>war nicht korrekt<br>oder etwas anderes<br>ist schief gegangen</p>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    
+    var ping = false;
+    
+    pingESP();
+    
+    function pingESP()
+    {
+        if(ping == false)
+        {
+            $.ajax(
+            {
+                type: 'GET',
+                url: 'http://192.168.4.1/',
+                success: function(data)
+                {
+                    ping = true;
+                    //alert("ESP Gefunden");
+                    document.getElementById('wifiConfig').style.display = "";
+                    setTimeout(function()
+                    {
+                        scanWifi();
+                    }, 2000);
+                    document.getElementById('welcome').style.display = "none";
+                },
+                error: function()
+                {
+                    setTimeout(function()
+                    {
+                        pingESP();
+                    }, 2000);
+                }
+            });
+        }        
+    }    
+        
+    function scanWifi()
+    {            
+        document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
+        
+        $.ajax(
+        {
+            type: 'GET',
+            url: 'http://192.168.4.1/wifi',
+            success: function(data)
+            {                
+                document.getElementById('networks').innerHTML = '';
+                
+                var json = JSON.parse(data);
+                
+                for(var i = 0; i < json.length; i++)
+                {
+                    var label = document.createElement('label');
+                    var input = document.createElement('input');
+
+                    label.setAttribute('for', json[i]);
+                    label.setAttribute('style', 'margin-bottom: 20px');
+
+                    input.setAttribute('type', "radio");
+                    input.setAttribute('name', "wifissid");
+                    input.setAttribute('value', json[i]);        
+
+                    label.appendChild(input);
+                    label.innerHTML += json[i];
+
+                    document.getElementById('networks').appendChild(label);
+                }
+                
+                if(data == "")
+                {
+                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
+                }
+            }
+        });
+    }
+    
+    var success = false;
+    
+    function checkDB(mac)
+    {
+        
+        
+        $.ajax(
+        {
+            type: 'GET',
+            url: 'http://syntex.local/serverside/check-device.php?mac=' + mac,
+            success: function(data)
+            {
+                console.log(data);
+                
+                if(data == 'Success')
+                {
+                    //TODO: Erfolg
+                    
+                    success = true;
+                    
+                    //alert("Success");
+                    
+                    document.getElementById('success').style.display = "";
+                    document.getElementById('connecting').style.display = "none";
+                    
+                    setTimeout(function()
+                    {
+                        //window.location.href = 'http://syntex.local/';
+                    }, 10000);                    
+                }
+                else
+                {
+                    setTimeout(function()
+                    {
+                        checkDB(mac);
+                    }, 2000);
+                }
+            }
+        });
+    }
+    
+    var timeRemaining = 0;
+    
+    function setTimer(time)
+    {
+        timeRemaining = time - 100;
+        
+        setTimeout(function()
+        {
+            document.getElementById('connecting').getElementsByClassName('progress')[0].style.width = (time / 600) + "%";
+            setTimer(timeRemaining);
+        }, 100);
+    }
+    
+    $('form').submit(function(event)
+    {
+        /*
+        if(event.target.getAttribute("name") == "chat")
+        {
+        */
+        event.preventDefault();
+        
+        $.ajax(
+        {
+            type: 'POST',
+            url: 'http://192.168.4.1/settings',
+            data: $(this).serialize(),
+            success: function(data)
+            {
+                document.getElementById('wifiConfig').style.display = "none";
+                document.getElementById('connecting').style.display = "";
+                
+                setTimer(60000);
+                
+                var ping = false;
+                
+                setTimeout(function()
+                {
+                    $.ajax(
+                    {
+                        type: 'GET',
+                        url: 'http://syntex.local/setup.php',
+                        success: function(data)
+                        {
+                            ping = true;
+                        }
+                    });
+                }, 20000);
+                
+                setTimeout(function()
+                {
+                    if(ping == false)
+                    {
+                        document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
+                    }
+                }, 30000);
+                
+                setTimeout(function()
+                {
+                    if(success == false)
+                    {
+                        //TODO: Verbinden Fehlgeschlagen
+                        
+                        //alert("Error");
+                        document.getElementById('error').style.display = "";
+                        document.getElementById('connecting').style.display = "none";
+                        
+                        setTimeout(function()
+                        {
+                            //window.location.href = 'http://syntex.local/setup.php';
+                        }, 10000); 
+                    }
+                }, 60000);
+                
+                console.log(data);
+                
+                checkDB(data);
+            }
+        });
+    })
+
+</script>
