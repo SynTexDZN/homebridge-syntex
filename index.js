@@ -87,7 +87,6 @@ SynTexPlatform.prototype = {
                     {
                         removeDevice(urlParams.mac, urlParams.type).then(function(res) {
                         
-                            log('\x1b[31m%s\x1b[0m', "[INFO]", "RES: " + res);
                             if(res)
                             {
                                 response.write("Success");
@@ -227,7 +226,7 @@ async function addDevice(mac, ip, type, name)
                     }
                     else
                     {
-                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt ( " + this.mac + " )");
+                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt ( " + mac + " )");
                         
                         resolve(response);
                     }
