@@ -28,7 +28,7 @@
         <div id="wifiConfig" style="display: none;">
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <form onsubmit="return sendWifiSettings();">
+                <form onsubmit="event.preventDefault(); sendWifiSettings();">
                     <div id="networks" style="margin-bottom: 100px">
                         <p>Laden ..</p>
                     </div>
@@ -241,6 +241,8 @@
 
                     setTimeout(function()
                     {
+                        client = new XMLHttpRequest();
+        
                         client.open('GET', 'http://syntex.local:1711/setup');
 
                         client.onreadystatechange = function()
@@ -253,6 +255,8 @@
                                 }
                             }
                         }
+                        
+                        client.send();
                     }, 20000);
 
                     setTimeout(function()
@@ -288,7 +292,8 @@
         };
         
         client.send(new FormData(formElement));
-
+        
+        return false;
     }
 
 </script>
