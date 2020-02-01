@@ -11,6 +11,7 @@ A plugin to control SynTex accessory.
 
 # Example Config
 **INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+`sudo chown -R homebridge:homebridge ./SynTex/`
 
 ```
 "platforms": [
