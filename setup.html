@@ -176,7 +176,7 @@
                 {  
                     console.log(client.responseText);
                 
-                    if(client.responseText == 'Success')
+                    if(client.responseText != 'Error')
                     {
                         //TODO: Erfolg
 
@@ -189,7 +189,14 @@
 
                         setTimeout(function()
                         {
-                            window.location.href = 'http://syntex.local/';
+                            if(client.responseText == 'relais' || client.responseText == 'switch')
+                            {
+                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '.php?mac=' + mac;
+                            }
+                            else
+                            {
+                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor.php?mac=' + mac;
+                            }
                         }, 10000);                    
                     }
                     else
