@@ -241,15 +241,18 @@
 
                     setTimeout(function()
                     {
-                        $.ajax(
+                        client.open('GET', 'http://syntex.local:1711/setup');
+
+                        client.onreadystatechange = function()
                         {
-                            type: 'GET',
-                            url: 'http://syntex.local/setup.php',
-                            success: function(data)
-                            {
-                                ping = true;
+                            if(client.readyState === 4)
+                            {  
+                                if(client.status === 200)
+                                {
+                                    ping = true;
+                                }
                             }
-                        });
+                        }
                     }, 20000);
 
                     setTimeout(function()
@@ -277,9 +280,9 @@
                         }
                     }, 60000);
 
-                    console.log(data);
+                    console.log(client.responseText);
 
-                    checkDB(data);
+                    checkDB(client.responseText);
                 }
             }
         };
