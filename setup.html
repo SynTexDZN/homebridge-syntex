@@ -28,7 +28,7 @@
         <div id="wifiConfig" style="display: none;">
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <form action="http://192.168.4.1/settings" method="POST">
+                <form onsubmit="return sendWifiSettings();">
                     <div id="networks" style="margin-bottom: 100px">
                         <p>Laden ..</p>
                     </div>
@@ -218,73 +218,74 @@
             setTimer(timeRemaining);
         }, 100);
     }
-    /*
-    $('form').submit(function(event)
+    
+    function sendWifiSettings()
     {
-        /*
-        if(event.target.getAttribute("name") == "chat")
-        {
+        var client = new XMLHttpRequest();
+        var formElement = document.querySelector("form");
         
-        event.preventDefault();
-        
-        $.ajax(
+        client.open('POST', 'http://192.168.4.1/settings');
+
+        client.onreadystatechange = function()
         {
-            type: 'POST',
-            url: 'http://192.168.4.1/settings',
-            data: $(this).serialize(),
-            success: function(data)
-            {
-                document.getElementById('wifiConfig').style.display = "none";
-                document.getElementById('connecting').style.display = "";
-                
-                setTimer(60000);
-                
-                var ping = false;
-                
-                setTimeout(function()
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
                 {
-                    $.ajax(
+                    document.getElementById('wifiConfig').style.display = "none";
+                    document.getElementById('connecting').style.display = "";
+
+                    setTimer(60000);
+
+                    var ping = false;
+
+                    setTimeout(function()
                     {
-                        type: 'GET',
-                        url: 'http://syntex.local/setup.php',
-                        success: function(data)
+                        $.ajax(
                         {
-                            ping = true;
+                            type: 'GET',
+                            url: 'http://syntex.local/setup.php',
+                            success: function(data)
+                            {
+                                ping = true;
+                            }
+                        });
+                    }, 20000);
+
+                    setTimeout(function()
+                    {
+                        if(ping == false)
+                        {
+                            document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
                         }
-                    });
-                }, 20000);
-                
-                setTimeout(function()
-                {
-                    if(ping == false)
+                    }, 30000);
+
+                    setTimeout(function()
                     {
-                        document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
-                    }
-                }, 30000);
-                
-                setTimeout(function()
-                {
-                    if(success == false)
-                    {
-                        //TODO: Verbinden Fehlgeschlagen
-                        
-                        //alert("Error");
-                        document.getElementById('error').style.display = "";
-                        document.getElementById('connecting').style.display = "none";
-                        
-                        setTimeout(function()
+                        if(success == false)
                         {
-                            //window.location.href = 'http://syntex.local/setup.php';
-                        }, 10000); 
-                    }
-                }, 60000);
-                
-                console.log(data);
-                
-                checkDB(data);
+                            //TODO: Verbinden Fehlgeschlagen
+
+                            //alert("Error");
+                            document.getElementById('error').style.display = "";
+                            document.getElementById('connecting').style.display = "none";
+
+                            setTimeout(function()
+                            {
+                                //window.location.href = 'http://syntex.local/setup.php';
+                            }, 10000); 
+                        }
+                    }, 60000);
+
+                    console.log(data);
+
+                    checkDB(data);
+                }
             }
-        });
-    })
-    */
+        };
+        
+        client.send(new FormData(formElement));
+
+    }
 
 </script>
