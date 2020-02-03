@@ -220,7 +220,7 @@ async function addDevice(mac, ip, type, name)
                     
                     if(err)
                     {
-                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!");
+                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!", err);
 
                         resolve(false);
                     }
