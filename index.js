@@ -4,7 +4,7 @@ var url = require('url');
 var store = require('json-fs-store');
 var fs = require('fs');
 var path = require('path');
-var sd = require('string_decoder').StringDecoder;
+var { StringDecoder } = require('string_decoder');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -159,8 +159,8 @@ SynTexPlatform.prototype = {
                                     
                                     response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
                                     
-                                    var d = new sd('utf8');
-                                    var b = Buffer(data);
+                                    var d = new StringDecoder('utf8');
+                                    var b = Buffer("GERÃ¤T HINZUFÃ¼GEN");
                                     
                                     response.end(d.write(b));
                                 }
