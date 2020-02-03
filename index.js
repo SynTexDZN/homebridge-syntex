@@ -160,8 +160,9 @@ SynTexPlatform.prototype = {
                                     response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
                                     
                                     var d = new sd('utf8');
+                                    var b = Buffer(data);
                                     
-                                    response.end(d.write(data));
+                                    response.end(d.write(b));
                                 }
                             });
                         }
