@@ -157,7 +157,7 @@ SynTexPlatform.prototype = {
                                     };
                                     
                                     response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
-                                    response.end(decodeURIComponent(escape(data)));
+                                    response.end(decodeURI(escape(data)));
                                 }
                             });
                         }
