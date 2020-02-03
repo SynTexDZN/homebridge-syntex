@@ -20,7 +20,7 @@ A plugin to control SynTex accessory.
         "port": 1711
     },
     {
-        "platform": "SynTexWebhooks",
+        "platform": "SynTexWebHooks",
         "port": 1710,
         "cache_directory": "./SynTex/",
         "sensors": [],
