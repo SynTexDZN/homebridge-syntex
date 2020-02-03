@@ -1,3 +1,4 @@
+//test 2
 var request = require('request');
 var http = require('http');
 var url = require('url');
@@ -157,12 +158,10 @@ SynTexPlatform.prototype = {
                                         ".css": "text/css"
                                     };
                                     
-                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
+                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
                                     
-                                    var d = new StringDecoder('utf8');
-                                    var b = Buffer("GERÃ¤T HINZUFÃ¼GEN");
-                                    
-                                    response.end(d.write(b));
+                                    response.write(data);
+                                    response.end();
                                 }
                             });
                         }
