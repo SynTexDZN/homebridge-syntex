@@ -157,7 +157,8 @@ SynTexPlatform.prototype = {
                                     };
                                     
                                     response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
-                                    response.end(decodeURI(escape(data)));
+                                    response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
+                                    response.end(decodeURI(escape(data)), 'uft8');
                                 }
                             });
                         }
