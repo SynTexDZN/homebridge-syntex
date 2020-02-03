@@ -4,6 +4,7 @@ var url = require('url');
 var store = require('json-fs-store');
 var fs = require('fs');
 var path = require('path');
+var sd = require('string_decoder').StringDecoder;
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -156,9 +157,11 @@ SynTexPlatform.prototype = {
                                         ".css": "text/css"
                                     };
                                     
-                                    response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
-                                    response.setHeader('Content-type', mimeType[path.parse(urlPath).ext] || 'text/html');
-                                    response.end(data, 'uft8');
+                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
+                                    
+                                    var d = new sd('utf8');
+                                    
+                                    response.end(d.write(data));
                                 }
                             });
                         }
