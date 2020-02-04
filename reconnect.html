@@ -13,10 +13,11 @@
         client.send();
     
     </script>
-    <title>Setup</title>
+    <title>Neu Verbinden</title>
     <body>
         <div id="welcome">
-            <h1>Gerät Hinzufügen</h1>
+            <h1>Gerät Übertragen</h1>
+            <p>Übertrage ein Gerät aus einem anderen WLAN Netz</p>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/wifi.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
@@ -26,9 +27,9 @@
             </div>
         </div>
         <div id="wifiConfig" style="display: none;">
-            <h1>Gerät Hinzufügen</h1>
+            <h1>Gerät Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <form onsubmit="event.preventDefault(); sendWifiSettings();">
+                <form method="POST">
                     <div id="networks" style="margin-bottom: 100px">
                         <p>Laden ..</p>
                     </div>
@@ -55,24 +56,21 @@
             </div>
         </div>
         <div id="success" style="display: none;">
-            <h1>Erfolgreich Verbunden</h1>
+            <h1>Daten Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/success.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
-                <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
-            </div>
-        </div>
-        <div id="error" style="display: none;">
-            <h1>Fehler beim Verbinden</h1>
-            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <img src="img/error.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
-                <p>Bitte versuche es erneut!<br><br>Dein WLAN-Passwort<br>war nicht korrekt<br>oder etwas anderes<br>ist schief gegangen</p>
+                <p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
             </div>
         </div>
     </body>
 </html>
-<script defer>
+<script>
     
     var ping = false;
+    var ip = 'http://192.168.4.1/';
+    var url = new URL(window.location.href);
+    var ipp = url.searchParams.get("ip");
+    var client, client2;
     
     pingESP();
     
@@ -80,7 +78,8 @@
     {
         if(ping == false)
         {
-            var client = new XMLHttpRequest();
+            client = new XMLHttpRequest();
+            client2 = new XMLHttpRequest();
         
             client.open('GET', 'http://192.168.4.1/');
 
@@ -102,14 +101,50 @@
                     {  
                         setTimeout(function()
                         {
-                            pingESP();
+                            if(client2.readyState === 4)
+                            {
+                                pingESP();
+                            }
                         }, 2000);
                     }  
                 }  
             }
 
             client.send();
-        }        
+        
+            client2.open('GET', 'http://' + ipp + '/');
+
+            client2.onreadystatechange = function()
+            {
+                if(client2.readyState === 4)
+                {  
+                    if(client2.status === 200)
+                    {  
+                        ping = true;
+                        document.getElementById('wifiConfig').style.display = "";
+                        setTimeout(function()
+                        {
+                            scanWifi();
+                        }, 2000);
+                        document.getElementById('welcome').style.display = "none";
+                        
+                        ip = ipp;
+                    }
+                    else
+                    {  
+                        setTimeout(function()
+                        {
+                            if(client.readyState === 4)
+                            {
+                                pingESP();
+                            }
+                        }, 2000);
+                    }  
+                }  
+            }
+
+            client.send();
+        }
     }    
         
     function scanWifi()
@@ -118,7 +153,7 @@
         
         var client = new XMLHttpRequest();
         
-        client.open('GET', 'http://192.168.4.1/wifi');
+        client.open('GET', ip + 'wifi');
 
         client.onreadystatechange = function()
         {
@@ -151,59 +186,6 @@
                     if(client.responseText == "")
                     {
                         document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
-                    }
-                }
-            }  
-        }
-
-        client.send();
-    }
-    
-    var success = false;
-    
-    function checkDB(mac)
-    {
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', 'http://syntex.local/serverside/check-device.php?mac=' + mac);
-
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
-            {  
-                if(client.status === 200)
-                {  
-                    console.log(client.responseText);
-                
-                    if(client.responseText != 'Error')
-                    {
-                        //TODO: Erfolg
-
-                        success = true;
-
-                        //alert("Success");
-
-                        document.getElementById('success').style.display = "";
-                        document.getElementById('connecting').style.display = "none";
-
-                        setTimeout(function()
-                        {
-                            if(client.responseText == 'relais' || client.responseText == 'switch')
-                            {
-                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '.php?mac=' + mac;
-                            }
-                            else
-                            {
-                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor.php?mac=' + mac;
-                            }
-                        }, 10000);                    
-                    }
-                    else
-                    {
-                        setTimeout(function()
-                        {
-                            checkDB(mac);
-                        }, 2000);
                     }
                 }
             }  
@@ -292,7 +274,20 @@
 
                     console.log(client.responseText);
 
-                    checkDB(client.responseText);
+                    document.getElementById('success').style.display = "";
+                    document.getElementById('connecting').style.display = "none";
+
+                    setTimeout(function()
+                    {
+                        if(client.responseText == 'relais' || client.responseText == 'switch')
+                        {
+                            window.location.href = 'http://syntex.local/devices/' + client.responseText + '.php?mac=' + mac;
+                        }
+                        else
+                        {
+                            window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor.php?mac=' + mac;
+                        }
+                    }, 10000);             
                 }
             }
         };
