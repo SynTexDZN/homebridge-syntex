@@ -4,7 +4,6 @@ var url = require('url');
 var store = require('json-fs-store');
 var fs = require('fs');
 var path = require('path');
-var { StringDecoder } = require('string_decoder');
 var Service, Characteristic;
 
 module.exports = function(homebridge)
@@ -24,6 +23,48 @@ function SynTexPlatform(slog, sconfig, api)
     log = slog;
 
     this.port = sconfig["port"] || 1711;
+}
+
+async function checkName(name)
+{
+    return new Promise(resolve => {
+        
+        config.load('config', (err, obj) => {    
+
+            if(obj)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    {
+                        var platform = obj.platforms[i];
+                        
+                        for(const i in platform.switches)
+                        {
+                            if(platform.sensors[i].name === name)
+                            {
+                                resolve(false);
+                            }
+                        }
+                        
+                        for(const i in platform.sensors)
+                        {
+                            if(platform.sensors[i].name === name)
+                            {
+                                resolve(false);
+                            }
+                        }
+                        
+                        resolve(true);
+                    }
+                }
+            }
+            
+            resolve(false);
+        });
+    });
 }
 
 SynTexPlatform.prototype = {
@@ -61,22 +102,33 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
+                        checkName(urlParams.name).then(function(res) {
                             
                             if(res)
                             {
-                                response.write("Success");
-                                response.end();
+                                addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
+                            
+                                    if(res)
+                                    {
+                                        response.write("Success");
+                                        response.end();
 
-                                const { exec } = require("child_process");
+                                        const { exec } = require("child_process");
 
-                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                            log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                                        });
+                                    }
+                                    else
+                                    {
+                                        response.write("Das Gerät konnte nicht hinzugefügt werden!");
+                                        response.end();
+                                    }
                                 });
                             }
                             else
                             {
-                                response.write("Das Gerät konnte nicht hinzugefügt werden!");
+                                response.write("Der Name ist bereits vergeben!");
                                 response.end();
                             }
                         });
