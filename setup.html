@@ -1,17 +1,18 @@
 <html>
     <script async>
-        
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', 'includes/head.html');
-        
-        client.onreadystatechange = function()
+
+        var c = new XMLHttpRequest();
+
+        c.open('GET', '/includes/head.html');
+
+        c.onreadystatechange = function()
         {
-            document.getElementsByTagName('head')[0].innerHTML = client.responseText;
+            console.log(c.responseText);
+            document.getElementsByTagName('head')[0].innerHTML = c.responseText;
         }
-        
-        client.send();
-    
+
+        c.send();
+
     </script>
     <title>Setup</title>
     <body>

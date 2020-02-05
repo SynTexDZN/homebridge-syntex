@@ -1,70 +1,24 @@
 var request = require('request');
 var http = require('http');
 var url = require('url');
-var store = require('json-fs-store');
 var fs = require('fs');
 var path = require('path');
-var Service, Characteristic;
+var DeviceManager = require('./core/device-manager');
 
 module.exports = function(homebridge)
 {
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
-
     homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
 };
 
 var log;
-var config;
 
-function SynTexPlatform(slog, sconfig, api)
+function SynTexPlatform(slog, config, api)
 {
-    config = store(api.user.storagePath());
     log = slog;
+    
+    DeviceManager.SETUP(api.user.storagePath(), log);
 
-    this.port = sconfig["port"] || 1711;
-}
-
-async function checkName(name)
-{
-    return new Promise(resolve => {
-        
-        config.load('config', (err, obj) => {    
-
-            if(obj)
-            {                            
-                obj.id = 'config';
-
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        var platform = obj.platforms[i];
-                        
-                        for(const i in platform.switches)
-                        {
-                            if(platform.sensors[i].name === name)
-                            {
-                                resolve(false);
-                            }
-                        }
-                        
-                        for(const i in platform.sensors)
-                        {
-                            if(platform.sensors[i].name === name)
-                            {
-                                resolve(false);
-                            }
-                        }
-                        
-                        resolve(true);
-                    }
-                }
-            }
-            
-            resolve(false);
-        });
-    });
+    this.port = config["port"] || 1711;
 }
 
 SynTexPlatform.prototype = {
@@ -102,11 +56,11 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
                     {
-                        checkName(urlParams.name).then(function(res) {
+                        DeviceManager.checkName(urlParams.name).then(function(res) {
                             
                             if(res)
                             {
-                                addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
+                                DeviceManager.addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
                             
                                     if(res)
                                     {
@@ -138,7 +92,7 @@ SynTexPlatform.prototype = {
                 {
                     if(urlParams.mac && urlParams.type)
                     {
-                        removeDevice(urlParams.mac, urlParams.type).then(function(res) {
+                        DeviceManager.removeDevice(urlParams.mac, urlParams.type).then(function(res) {
                         
                             if(res)
                             {
@@ -166,29 +120,26 @@ SynTexPlatform.prototype = {
                 }
                 else
                 {
-                    var pathname;
+                    var pathname = path.join(__dirname, urlPath.substring(1));
+                    
+                    var noext = false;
                     
                     if(path.parse(urlPath).ext == '')
                     {
-                        pathname = path.join(__dirname, urlPath.substring(1) + '.html');
+                        noext = true;
                     }
-                    else
-                    {
-                        pathname = path.join(__dirname, urlPath.substring(1));
-                    }
-                    
+  
                     fs.exists(pathname, function (exist)
                     {
-                        if(!exist)
+                        if(exist || noext)
                         {
-                            response.statusCode = 404;
-                            response.end('Die Seite ' + pathname + ' wurde nicht gefunden!');
-                        }
-                        else
-                        {
-                            if(fs.statSync(pathname).isDirectory())
+                            if(exist && fs.statSync(pathname).isDirectory())
                             {
                                 pathname += '/index.html';
+                            }
+                            else if(noext)
+                            {
+                                pathname += '.html';
                             }
 
                             fs.readFile(pathname, function(err, data)
@@ -216,8 +167,14 @@ SynTexPlatform.prototype = {
                                 }
                             });
                         }
+                        else
+                        {
+                            response.statusCode = 404;
+                            response.end('Die Seite ' + pathname + ' wurde nicht gefunden!');
+                        }
                     });
                 }
+                
             }).bind(this));
             
         }).bind(this);
@@ -226,153 +183,4 @@ SynTexPlatform.prototype = {
            
         log('\x1b[33m%s\x1b[0m', "[INFO]", "Data Link Server läuft auf Port ", "'" + this.port + "'");
     }
-}
-
-async function addDevice(mac, ip, type, name)
-{
-    return new Promise(resolve => {
-        
-        var response = false;
-                    
-        config.load('config', (err, obj) => {    
-
-            if(obj)
-            {                            
-                obj.id = 'config';
-
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        var platform = obj.platforms[i];
-
-                        if(type == "relais" || type == "switch")
-                        {
-                            platform.switches[platform.switches.length] = {mac: mac, name: name, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
-
-                            response = true;
-                        }
-                        else
-                        {
-                            platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
-
-                            response = true;
-                        }
-
-                        if(type == "temperature")
-                        {
-                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "H", type: "humidity"};
-                        }
-
-                        if(type == "light")
-                        {
-                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "R", type: "rain"};
-                        }
-                    }
-                }
-
-                config.add(obj, (err) => {
-                    
-                    if(err)
-                    {
-                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!", err);
-
-                        resolve(false);
-                    }
-                    else
-                    {
-                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt ( " + mac + " )");
-                        
-                        resolve(response);
-                    }
-                });    
-            }
-            
-            if(err || !obj)
-            {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
-                
-                resolve(false);
-            }
-        });
-    });
-}
-
-async function removeDevice(mac, type)
-{
-    return new Promise(resolve => {
-        
-        var response = false;
-
-        config.load('config', (err, obj) => {    
-
-            if(obj)
-            {                            
-                obj.id = 'config';
-
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        var platform = obj.platforms[i];
-
-                        if(type == "relais" || type == "switch")
-                        {
-                            for(const i in platform.switches)
-                            {
-                                if(platform.switches[i].mac === mac)
-                                {
-                                    platform.switches.splice(i, 1);
-
-                                    response = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for(const i in platform.sensors)
-                            {
-                                if(platform.sensors[i].mac === mac)
-                                {
-                                    platform.sensors.splice(i, 1);
-
-                                    response = true;
-                                }
-                            }
-                        }
-
-                        if(response)
-                        {
-                            config.add(obj, (err) => {
-
-                                if(err)
-                                {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!", err);
-
-                                    resolve(false);
-                                }
-                                else
-                                {
-                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
-
-                                    resolve(true);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            resolve(false);
-                        }
-                    }
-                }
-            }
-            
-            if(err || !obj)
-            {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
-                
-                resolve(false);
-            }    
-        });
-    });
 }

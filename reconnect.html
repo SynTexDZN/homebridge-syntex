@@ -1,17 +1,18 @@
 <html>
     <script async>
-        
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', 'includes/head.html');
-        
-        client.onreadystatechange = function()
+
+        var c = new XMLHttpRequest();
+
+        c.open('GET', '/includes/head.html');
+
+        c.onreadystatechange = function()
         {
-            document.getElementsByTagName('head')[0].innerHTML = client.responseText;
+            console.log(c.responseText);
+            document.getElementsByTagName('head')[0].innerHTML = c.responseText;
         }
-        
-        client.send();
-    
+
+        c.send();
+
     </script>
     <title>Neu Verbinden</title>
     <body>
@@ -64,7 +65,7 @@
         </div>
     </body>
 </html>
-<script>
+<script defer>
     
     var ping = false;
     var ip = 'http://192.168.4.1/';
@@ -78,8 +79,7 @@
     {
         if(ping == false)
         {
-            client = new XMLHttpRequest();
-            client2 = new XMLHttpRequest();
+            var client = new XMLHttpRequest();
         
             client.open('GET', 'http://192.168.4.1/');
 
@@ -101,51 +101,15 @@
                     {  
                         setTimeout(function()
                         {
-                            if(client2.readyState === 4)
-                            {
-                                pingESP();
-                            }
+                            pingESP();
                         }, 2000);
                     }  
                 }  
             }
 
             client.send();
-        
-            client2.open('GET', 'http://' + ipp + '/');
-
-            client2.onreadystatechange = function()
-            {
-                if(client2.readyState === 4)
-                {  
-                    if(client2.status === 200)
-                    {  
-                        ping = true;
-                        document.getElementById('wifiConfig').style.display = "";
-                        setTimeout(function()
-                        {
-                            scanWifi();
-                        }, 2000);
-                        document.getElementById('welcome').style.display = "none";
-                        
-                        ip = ipp;
-                    }
-                    else
-                    {  
-                        setTimeout(function()
-                        {
-                            if(client.readyState === 4)
-                            {
-                                pingESP();
-                            }
-                        }, 2000);
-                    }  
-                }  
-            }
-
-            client.send();
-        }
-    }    
+        }        
+    } 
         
     function scanWifi()
     {            
