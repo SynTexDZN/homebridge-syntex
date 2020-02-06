@@ -15,10 +15,11 @@ var log;
 function SynTexPlatform(slog, config, api)
 {
     log = slog;
-    
-    DeviceManager.SETUP(api.user.storagePath(), log);
 
+    this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
     this.port = config["port"] || 1711;
+    
+    DeviceManager.SETUP(api.user.storagePath(), log, this.cacheDirectory);
 }
 
 SynTexPlatform.prototype = {
@@ -52,38 +53,22 @@ SynTexPlatform.prototype = {
                 response.setHeader('Content-Type', 'application/json');
                 response.setHeader('Access-Control-Allow-Origin', 'http://syntex.local');
                 
-                if(urlPath == '/add-device')
+                if(urlPath == '/init')
                 {
-                    if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip)
+                    if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh)
                     {
-                        DeviceManager.checkName(urlParams.name).then(function(res) {
-                            
-                            if(res)
+                        DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh).then(function(res) {
+
+                            response.write(res[1]);
+                            response.end();
+
+                            if(res[0] == "Init")
                             {
-                                DeviceManager.addDevice(urlParams.mac, urlParams.ip, urlParams.type, urlParams.name).then(function(res) {
-                            
-                                    if(res)
-                                    {
-                                        response.write("Success");
-                                        response.end();
+                                const { exec } = require("child_process");
 
-                                        const { exec } = require("child_process");
-
-                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                            log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
-                                        });
-                                    }
-                                    else
-                                    {
-                                        response.write("Das Gerät konnte nicht hinzugefügt werden!");
-                                        response.end();
-                                    }
+                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
                                 });
-                            }
-                            else
-                            {
-                                response.write("Der Name ist bereits vergeben!");
-                                response.end();
                             }
                         });
                     }

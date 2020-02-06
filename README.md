@@ -17,6 +17,7 @@ A plugin to control SynTex accessory.
 "platforms": [
     {
         "platform": "SynTex",
+        "cache_directory": "./SynTex/data",
         "port": 1711
     },
     {
