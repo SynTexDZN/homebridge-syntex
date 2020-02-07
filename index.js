@@ -4,6 +4,7 @@ var url = require('url');
 var fs = require('fs');
 var path = require('path');
 var DeviceManager = require('./core/device-manager');
+var HTMLQuery = require('./core/html-query');
 
 module.exports = function(homebridge)
 {
@@ -20,6 +21,7 @@ function SynTexPlatform(slog, config, api)
     this.port = config["port"] || 1711;
     
     DeviceManager.SETUP(api.user.storagePath(), log, this.cacheDirectory);
+    HTMLQuery.SETUP(log);
 }
 
 SynTexPlatform.prototype = {
@@ -147,7 +149,7 @@ SynTexPlatform.prototype = {
                                     
                                     response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
                                     
-                                    response.write(data);
+                                    response.write(HTMLQuery.send(data, {}));
                                     response.end();
                                 }
                             });
