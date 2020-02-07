@@ -103,7 +103,7 @@
             {  
                 if(client.status === 200)
                 {  
-                    if(data != version)
+                    if(client.responseText != version)
                     {
                         document.getElementById(ip).style.background = 'hsl(150, 75%, 45%)';
                         document.getElementById(ip).value = 'Update Erfolgreich!';
@@ -202,14 +202,14 @@
                 {  
                     if(client.status === 200)
                     {  
-                        console.log(data);
+                        console.log(client.responseText);
 
-                        if(data > device.getAttribute('version'))
+                        if(client.responseText > device.getAttribute('version'))
                         {
                             var update = document.createElement('input');
 
                             update.setAttribute('type', 'button');
-                            update.setAttribute('value', 'v' + data);
+                            update.setAttribute('value', 'v' + client.responseText);
                             update.setAttribute('style', 'max-width: 175px; margin: 0; margin-left: 20px;');
                             update.setAttribute('ip', device.getAttribute('id'));
                             update.setAttribute('onclick', 'updateDevice("' + device.getAttribute('id') + '")');
@@ -281,7 +281,7 @@
                 {  
                     if(client.status === 200)
                     {  
-                        if(data == 'Das Update wird installiert ..')
+                        if(client.responseText == 'Das Update wird installiert ..')
                         {
                             updatingDevices.push(ip);
 
