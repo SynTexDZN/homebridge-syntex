@@ -152,7 +152,7 @@ SynTexPlatform.prototype = {
                                             ".png": "image/png",
                                             ".js": "text/javascript",
                                             ".css": "text/css",
-                                            ".ttf": "font/opentype"
+                                            ".ttf": "font/ttf"
                                         };
 
                                         log(urlPath);
