@@ -292,8 +292,15 @@ async function getDevice(mac)
     return new Promise(resolve => {
         
         storage.load(mac, (err, obj) => {  
-
-            resolve(obj);
+            
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
+            {
+                resolve(obj);
+            }
         });
     });
 }
@@ -304,7 +311,14 @@ async function getDevices()
         
         storage.list(mac, (err, objs) => {  
 
-            resolve(objs);
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
+            {
+                resolve(objs);
+            }
         });
     });
 }

@@ -2,7 +2,7 @@ var log;
 
 function send(html, params)
 {
-    log(params);
+    return html;
 }
 
 function SETUP(slog)

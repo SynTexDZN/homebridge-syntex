@@ -116,7 +116,7 @@ SynTexPlatform.prototype = {
                         noext = true;
                     }
   
-                    fs.exists(pathname, function (exist)
+                    fs.exists(pathname, function(exist)
                     {
                         if(exist || noext)
                         {
@@ -149,8 +149,33 @@ SynTexPlatform.prototype = {
                                     
                                     response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
                                     
-                                    response.write(HTMLQuery.send(data, {}));
-                                    response.end();
+                                    log(urlPath);
+                                    
+                                    if(urlPath.startsWith('/devices/') && urlParams.mac)
+                                    {
+                                        DeviceManager.getDevice(urlParams.mac).then(function(res) {
+
+                                            log(res);
+
+                                            response.write(HTMLQuery.send(data, res));
+                                            response.end();
+                                        });
+                                    }
+                                    else if(urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
+                                    {
+                                        DeviceManager.getDevices().then(function(res) {
+
+                                            log(res);
+
+                                            response.write(HTMLQuery.send(data, res));
+                                            response.end();
+                                        });
+                                    }
+                                    else
+                                    {
+                                        response.write(data);
+                                        response.end();
+                                    }
                                 }
                             });
                         }
