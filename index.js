@@ -151,7 +151,8 @@ SynTexPlatform.prototype = {
                                             ".jpg": "image/jpeg",
                                             ".png": "image/png",
                                             ".js": "text/javascript",
-                                            ".css": "text/css"
+                                            ".css": "text/css",
+                                            ".ttf": "font/opentype"
                                         };
 
                                         log(urlPath);
