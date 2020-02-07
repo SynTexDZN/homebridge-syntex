@@ -138,45 +138,53 @@ SynTexPlatform.prototype = {
                                 }
                                 else
                                 {
-                                    var mimeType = {
-                                        ".html": "text/html",
-                                        ".jpeg": "image/jpeg",
-                                        ".jpg": "image/jpeg",
-                                        ".png": "image/png",
-                                        ".js": "text/javascript",
-                                        ".css": "text/css"
-                                    };
-                                    
-                                    log(urlPath);
-                                    log(urlPath.startsWith('/index'));
-                                    
-                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
-                                    
-                                    if(urlPath.startsWith('/devices/') && urlParams.mac)
-                                    {
-                                        DeviceManager.getDevice(urlParams.mac).then(function(res) {
+                                    fs.readFile(__dirname + '/includes/head.html', function(err, head)
+                                    {                                        
+                                        if(!head)
+                                        {
+                                            head = "";
+                                        }
+                                        
+                                        var mimeType = {
+                                            ".html": "text/html",
+                                            ".jpeg": "image/jpeg",
+                                            ".jpg": "image/jpeg",
+                                            ".png": "image/png",
+                                            ".js": "text/javascript",
+                                            ".css": "text/css"
+                                        };
 
-                                            log(res);
+                                        log(urlPath);
+                                        log(urlPath.startsWith('/index'));
 
-                                            response.write(HTMLQuery.send(data, 'device', JSON.stringify(res)));
+                                        response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
+
+                                        if(urlPath.startsWith('/devices/') && urlParams.mac)
+                                        {
+                                            DeviceManager.getDevice(urlParams.mac).then(function(res) {
+
+                                                log(res);
+
+                                                response.write(HTMLQuery.send(head + data, 'device', JSON.stringify(res)));
+                                                response.end();
+                                            });
+                                        }
+                                        else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
+                                        {
+                                            DeviceManager.getDevices().then(function(res) {
+
+                                                log(res);
+
+                                                response.write(HTMLQuery.send(head + data, 'devices', JSON.stringify(res)));
+                                                response.end();
+                                            });
+                                        }
+                                        else
+                                        {
+                                            response.write(head + data);
                                             response.end();
-                                        });
-                                    }
-                                    else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
-                                    {
-                                        DeviceManager.getDevices().then(function(res) {
-
-                                            log(res);
-
-                                            response.write(HTMLQuery.send(data, 'devices', JSON.stringify(res)));
-                                            response.end();
-                                        });
-                                    }
-                                    else
-                                    {
-                                        response.write(data);
-                                        response.end();
-                                    }
+                                        }
+                                    });
                                 }
                             });
                         }

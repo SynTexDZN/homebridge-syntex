@@ -8,6 +8,8 @@ function send(html, param, value)
 
     res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
     
+    log(res);
+    
     return res;
 }
 

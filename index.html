@@ -1,23 +1,4 @@
 <html>
-    <script async>
-
-        var c = new XMLHttpRequest();
-
-        c.open('GET', '/includes/head.html');
-
-        c.onreadystatechange = function()
-        {
-            console.log(c.responseText);
-            document.getElementsByTagName('head')[0].innerHTML = c.responseText;
-        }
-
-        c.send();
-        
-        var devices = JSON.parse('<%devices%>');
-        
-        console.log(devices);
-
-    </script>
     <title>Dashboard</title>
     <body>
         <h1 style="margin-bottom: 0;">Dashboard</h1>
@@ -42,6 +23,10 @@
 </html>
 <script>
 
+    var devices = JSON.parse('<%devices%>');
+        
+    console.log(devices);
+    
     document.getElementsByTagName('p')[0].innerHTML = devices.length + ' Gerät(e) konfiguriert';
     
     var temp = "";
