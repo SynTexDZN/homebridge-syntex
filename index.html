@@ -1,0 +1,103 @@
+<html>
+    <script async>
+
+        var c = new XMLHttpRequest();
+
+        c.open('GET', '/includes/head.html');
+
+        c.onreadystatechange = function()
+        {
+            console.log(c.responseText);
+            document.getElementsByTagName('head')[0].innerHTML = c.responseText;
+        }
+
+        c.send();
+        
+        var devices = JSON.parse('<%devices%>');
+        
+        console.log(devices);
+
+    </script>
+    <title>Dashboard</title>
+    <body>
+        <h1 style="margin-bottom: 0;">Dashboard</h1>
+        <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: table">
+            <p style="margin-bottom: 100px;">Laden ..</p>
+            <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
+                <input style="margin-right: 20px;" type="button" value="Geräte" onclick="window.location.href='http://syntex.local/'" disabled>
+                <input style="" type="button" value="Bridge" onclick="window.location.href='http://syntex.local/bridge.php'">
+            </div>
+            <div id="devices">
+                <h2 style="width: fit-content">Smart Lock</h2>
+                <div style="display: flex; margin-bottom: 20px">
+                    <input type="button" style="text-align: left; padding-left: 15px" onclick="window.location.href='http://syntex.local/smartlock.php" value="Smart Lock">
+                </div>
+            </div>
+        </div>
+        <div style="margin: 0 auto; width: 100%; max-width: 400px">
+            <input style="margin-bottom: 20px;" type="button" value="Schnelles Bearbeiten" onclick="window.location.href='http://syntex.local/settings.php'">
+            <input style="" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='http://syntex.local:1711/setup'">
+        </div>
+    </body>
+</html>
+<script>
+
+    document.getElementsByTagName('p')[0].innerHTML = devices.length + ' Gerät(e) konfiguriert';
+    
+    var temp = "";
+    var counter = 0;
+    
+    for(const i in devices)
+    {
+        var device = document.createElement('div');
+        
+        if(counter == devices.length - 1)
+        {
+            device.setAttribute('style', 'display: flex');
+        }
+        else
+        {
+            device.setAttribute('style', 'display: flex; margin-bottom: 20px');
+            counter++;
+        }
+
+        if(temp != devices[i].type)
+        {
+            var title = document.createElement('h2');
+            title.setAttribute('style', 'width: fit-content');
+            title.innerHTML = devices[i].type;
+            
+            document.getElementById('devices').appendChild(title);
+        }
+
+        var button = document.createElement('input');
+        button.setAttribute('type', 'button');
+        button.setAttribute('value', devices[i].name);
+        button.setAttribute('sensortype', devices[i].type);
+        button.setAttribute('version', devices[i].version);
+        button.setAttribute('id', devices[i].ip);
+        button.setAttribute('class', 'device');
+        button.setAttribute('style', 'text-align: left; padding-left: 15px');
+        
+        var url = 'http://' + devices[i].ip;
+        
+        if(devices[i].type != 'relais' && devices[i].type != 'switch' && devices[i].type != 'lock')
+        {
+            url = 'http://syntex.local/devices/' + devices[i].type + '-sensor.php?mac=' + devices[i].id;
+        }
+        else if(devices[i].type == 'relais' || devices[i].type == 'switch')
+        {
+            url = 'http://syntex.local/devices/' + devices[i].type + '.php?mac=' + devices[i].id;
+        }
+        
+        button.setAttribute('onclick', "window.location.href='" + url + "'");
+        button.setAttribute('name', devices[i].name);
+
+        device.appendChild(button);
+
+        document.getElementById('devices').appendChild(device);
+        
+        temp = devices[i].type;
+    }
+
+</script>

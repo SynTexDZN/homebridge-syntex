@@ -1,8 +1,14 @@
 var log;
 
-function send(html, params)
+function send(html, param, value)
 {
-    return html;
+    var res = html.toString();
+    
+    log(value);
+
+    res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
+    
+    return res;
 }
 
 function SETUP(slog)

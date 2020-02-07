@@ -147,9 +147,10 @@ SynTexPlatform.prototype = {
                                         ".css": "text/css"
                                     };
                                     
-                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
-                                    
                                     log(urlPath);
+                                    log(urlPath.startsWith('/index'));
+                                    
+                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
                                     
                                     if(urlPath.startsWith('/devices/') && urlParams.mac)
                                     {
@@ -157,7 +158,7 @@ SynTexPlatform.prototype = {
 
                                             log(res);
 
-                                            response.write(HTMLQuery.send(data, res));
+                                            response.write(HTMLQuery.send(data, 'device', JSON.stringify(res)));
                                             response.end();
                                         });
                                     }
@@ -167,7 +168,7 @@ SynTexPlatform.prototype = {
 
                                             log(res);
 
-                                            response.write(HTMLQuery.send(data, res));
+                                            response.write(HTMLQuery.send(data, 'devices', JSON.stringify(res)));
                                             response.end();
                                         });
                                     }

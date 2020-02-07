@@ -309,9 +309,9 @@ async function getDevices()
 {
     return new Promise(resolve => {
         
-        storage.list(mac, (err, objs) => {  
+        storage.list((err, objs) => {  
 
-            if(!obj || err)
+            if(!objs || err)
             {
                 resolve(false);
             }
