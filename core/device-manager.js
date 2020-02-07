@@ -287,6 +287,28 @@ async function getValue(mac, param)
     });
 }
 
+async function getDevice(mac)
+{
+    return new Promise(resolve => {
+        
+        storage.load(mac, (err, obj) => {  
+
+            resolve(obj);
+        });
+    });
+}
+
+async function getDevices()
+{
+    return new Promise(resolve => {
+        
+        storage.list(mac, (err, objs) => {  
+
+            resolve(objs);
+        });
+    });
+}
+
 async function setValue(mac, param, value)
 {
     return new Promise(resolve => {
@@ -325,6 +347,8 @@ function SETUP(configPath, slog, storagePath)
 module.exports = {
     SETUP,
     getValue,
+    getDevice,
+    getDevices,
     setValue,
     exists,
     initDevice,
