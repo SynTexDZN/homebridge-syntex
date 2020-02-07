@@ -1,6 +1,6 @@
 var log;
 
-function send(html, param, value)
+function sendValue(html, param, value)
 {
     var res = html.toString();
 
@@ -9,7 +9,7 @@ function send(html, param, value)
     return res;
 }
 
-function send(html, obj)
+function sendValues(html, obj)
 {
     var res = html.toString();
 
@@ -28,5 +28,6 @@ function SETUP(slog)
 
 module.exports = {
     SETUP,
-    send
+    sendValue,
+    sendValues
 };

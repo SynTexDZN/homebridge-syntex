@@ -1,4 +1,3 @@
-//var request = require('request');
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
@@ -118,8 +117,6 @@ SynTexPlatform.prototype = {
                         {
                             pathname += '.html';
                         }
-                        
-                        log('Pathname', pathname);
 
                         fs.readFile(pathname, function(err, data)
                         {
@@ -129,17 +126,13 @@ SynTexPlatform.prototype = {
                                 response.end('Die Seite konnte nicht geladen werden: ' + err);
                             }
                             else
-                            {
-                                log('dirname', __dirname + '/includes/head.html');
-                                
+                            {                                
                                 fs.readFile(__dirname + '/includes/head.html', function(err, head)
                                 {                                        
                                     if(!head)
                                     {
                                         head = "";
                                     }
-                                    
-                                    //log('head', head.toString())
 
                                     var mimeType = {
                                         ".html": "text/html",
@@ -151,32 +144,21 @@ SynTexPlatform.prototype = {
                                         ".ttf": "font/ttf"
                                     };
 
-                                    log(urlPath);
-                                    log(urlPath.startsWith('/index'));
-
                                     response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
 
                                     if(urlPath.startsWith('/devices/') && urlParams.mac)
                                     {
                                         DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
-                                            //log(res);
-
-                                            log(4);
-                                            
-                                            response.write(HTMLQuery.send(head + data, 'device', JSON.stringify(res)));
+                                            response.write(HTMLQuery.sendValue(head + data, 'device', JSON.stringify(res)));
                                             response.end();
                                         });
                                     }
                                     else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
                                     {
-                                        log(3);
-                                        
                                         DeviceManager.getDevices().then(function(res) {
 
-                                            //log(res);
-
-                                            response.end(HTMLQuery.send(head + data, 'devices', JSON.stringify(res)));
+                                            response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(res)));
                                             response.end();
                                         });
                                     }
@@ -201,20 +183,16 @@ SynTexPlatform.prototype = {
                                             version: pjson.version
                                         };
 
-                                        response.write(HTMLQuery.send(head + data, obj));
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
                                         response.end();
                                     }
                                     else if(path.parse(urlPath).ext == '.html')
                                     {
-                                        log(2);
-                                        
                                         response.write(head + data);
                                         response.end();
                                     }
                                     else
                                     {
-                                        log(1);
-                                        
                                         response.write(data);
                                         response.end();
                                     }
