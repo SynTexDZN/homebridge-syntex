@@ -162,7 +162,7 @@ SynTexPlatform.prototype = {
                                             response.end();
                                         });
                                     }
-                                    else if(urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
+                                    else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
                                     {
                                         DeviceManager.getDevices().then(function(res) {
 
