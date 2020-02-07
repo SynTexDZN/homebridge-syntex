@@ -317,6 +317,8 @@ async function getDevices()
             }
             else
             {
+                objs.sort((a, b) => (a.type > b.type) ? 1 : ((b.type > a.type) ? -1 : 0));
+                
                 resolve(objs);
             }
         });
