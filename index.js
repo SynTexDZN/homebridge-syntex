@@ -180,9 +180,14 @@ SynTexPlatform.prototype = {
                                                 response.end();
                                             });
                                         }
-                                        else
+                                        else if(path.parse(urlPath).ext == '.html')
                                         {
                                             response.write(head + data);
+                                            response.end();
+                                        }
+                                        else
+                                        {
+                                            response.write(data);
                                             response.end();
                                         }
                                     });
