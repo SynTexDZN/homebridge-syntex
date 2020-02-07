@@ -180,6 +180,30 @@ SynTexPlatform.prototype = {
                                                 response.end();
                                             });
                                         }
+                                        if(urlPath.startsWith('/bridge'))
+                                        {
+                                            var pjson = require('./package.json');
+                                            var ifaces = require('os').networkInterfaces();
+                                            var address;
+                                            
+                                            for (var dev in ifaces)
+                                            {
+                                                var iface = ifaces[dev].filter(function(details)
+                                                {
+                                                    return details.family === 'IPv4' && details.internal === false;
+                                                });
+
+                                                if(iface.length > 0) address = iface[0].address;
+                                            }
+                                            
+                                            var obj = {
+                                                ip: address,
+                                                version: pjson.version
+                                            };
+                                            
+                                            response.write(HTMLQuery.send(head + data, obj));
+                                            response.end();
+                                        }
                                         else if(path.parse(urlPath).ext == '.html')
                                         {
                                             response.write(head + data);
