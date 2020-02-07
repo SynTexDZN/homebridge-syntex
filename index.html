@@ -86,3 +86,227 @@
     }
 
 </script>
+<script>
+    
+    var devices = document.getElementsByClassName('device');
+    var updatingDevices = [];
+    
+    function checkUpdate(ip, name, version)
+    {
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://' + ip + '/version');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {  
+                    if(data != version)
+                    {
+                        document.getElementById(ip).style.background = 'hsl(150, 75%, 45%)';
+                        document.getElementById(ip).value = 'Update Erfolgreich!';
+                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.children[1]);
+                    }
+                    else
+                    {
+                        document.getElementById(ip).style.background = 'hsl(350, 85%, 55%)';
+                        document.getElementById(ip).value = 'Update Fehlgeschlagen!';
+                    }
+
+                    setTimeout(function()
+                    {
+                        document.getElementById(ip).style.background = 'transparent';
+                        document.getElementById(ip).value = name;
+                        updatingDevices.splice(updatingDevices.indexOf(ip), 1);
+                    }, 5000);
+
+                    setTimeout(function()
+                    {
+                        pingESP(document.getElementById(ip));
+                    }, 10000);
+                } 
+            }  
+        }
+
+        client.send();
+    }
+        
+    function pingESP(device)
+    {
+        if(updatingDevices.includes(device.getAttribute('id')))
+        {
+            var version = device.getAttribute('version');
+            var ip = device.getAttribute('id');
+            var name = device.getAttribute('name');
+
+            checkUpdate(ip, name, version);
+        }
+        else
+        {
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://' + device.getAttribute('id') + '/');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {  
+                        document.getElementById(device.getAttribute('id')).style.background = 'transparent';
+                    
+                        setTimeout(function()
+                        {
+                            pingESP(device);
+                        }, 10000);
+                    }
+                    else
+                    {  
+                        if(document.getElementById(device.getAttribute('id')).style.background == 'transparent' || document.getElementById(device.getAttribute('id')).style.background == "")
+                        {
+                           document.getElementById(device.getAttribute('id')).style.background = 'hsl(350, 85%, 55%)';
+                        }
+
+                        setTimeout(function()
+                        {
+                            pingESP(device);
+                        }, 10000);
+                    }  
+                }  
+            }
+
+            client.send();
+        }
+    }
+    
+    for(var i = 0; i < devices.length; i++)
+    {
+        pingESP(devices[i]);
+    }
+    
+    var updateCount = 0;
+    
+    async function checkUpdates(device)
+    {
+        return new Promise(resolve => {
+            
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'));
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {  
+                        console.log(data);
+
+                        if(data > device.getAttribute('version'))
+                        {
+                            var update = document.createElement('input');
+
+                            update.setAttribute('type', 'button');
+                            update.setAttribute('value', 'v' + data);
+                            update.setAttribute('style', 'max-width: 175px; margin: 0; margin-left: 20px;');
+                            update.setAttribute('ip', device.getAttribute('id'));
+                            update.setAttribute('onclick', 'updateDevice("' + device.getAttribute('id') + '")');
+                            update.setAttribute('class', 'update');
+
+                            device.parentElement.appendChild(update);
+
+                            updateCount++;
+                        }
+
+                        resolve(true);
+                    }
+                    else
+                    {  
+                        resolve(false);
+                    }  
+                }  
+            }
+
+            client.send();
+        });
+    }
+    
+    var count = 0;
+
+    for(var i = 0; i < devices.length; i++)
+    {
+        checkUpdates(devices[i]).then(function(res) {
+
+            count++;
+
+            if(count == devices.length - 1)
+            {
+                if(updateCount > 0)
+                {            
+                    var update = document.createElement('input');
+
+                    update.setAttribute('type', 'button');
+                    if(updateCount == 1)
+                    {
+                        update.setAttribute('value', updateCount + ' Update installieren!');
+                    }
+                    else
+                    {
+                        update.setAttribute('value', updateCount + ' Updates installieren!');
+                    }
+                            
+                    
+                    update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
+                    update.setAttribute('onclick', 'installAllUpdates();');
+
+                    document.getElementsByTagName('body')[0].children[2].insertBefore(update, document.getElementsByTagName('body')[0].children[2].children[0]);
+                }
+            }
+        });
+    }
+    
+    function updateDevice(ip)
+    {
+        if(!updatingDevices.includes(ip))
+        {
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://' + ip + '/update');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {  
+                        if(data == 'Das Update wird installiert ..')
+                        {
+                            updatingDevices.push(ip);
+
+                            document.getElementById(ip).style.background = 'hsl(270, 85%, 55%)';
+                        }
+                    }
+                }  
+            }
+
+            client.send();
+        }
+    }
+
+    function installAllUpdates()
+    {
+        var devices = document.getElementsByClassName('update');
+
+        for(var i = 0; i < devices.length; i++)
+        {
+            var ip = devices[i].getAttribute('ip');
+            console.log(ip);
+            updateDevice(ip);
+        }        
+        
+        console.log(devices.length);
+    }
+
+</script>
