@@ -121,12 +121,12 @@
                         document.getElementById(ip).value = name;
                         updatingDevices.splice(updatingDevices.indexOf(ip), 1);
                     }, 5000);
-
-                    setTimeout(function()
-                    {
-                        pingESP(document.getElementById(ip));
-                    }, 10000);
-                } 
+                }
+                
+                setTimeout(function()
+                {
+                    pingESP(document.getElementById(ip));
+                }, 10000);
             }  
         }
 
@@ -156,11 +156,6 @@
                     if(client.status === 200)
                     {  
                         document.getElementById(device.getAttribute('id')).style.background = 'transparent';
-                    
-                        setTimeout(function()
-                        {
-                            pingESP(device);
-                        }, 10000);
                     }
                     else
                     {  
@@ -168,12 +163,12 @@
                         {
                            document.getElementById(device.getAttribute('id')).style.background = 'hsl(350, 85%, 55%)';
                         }
-
-                        setTimeout(function()
-                        {
-                            pingESP(device);
-                        }, 10000);
                     }  
+                    
+                    setTimeout(function()
+                    {
+                        pingESP(device);
+                    }, 10000);
                 }  
             }
 
