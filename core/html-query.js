@@ -31,7 +31,7 @@ function read(reqpath)
 
         var noext = false;
 
-        if(path.parse(urlPath).ext == '')
+        if(path.parse(reqpath).ext == '')
         {
             noext = true;
         }
