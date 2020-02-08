@@ -205,6 +205,8 @@ SynTexPlatform.prototype = {
                                         {
                                             log(i);
                                             log(json[i]);
+                                            
+                                            DeviceManager.setValue(mac, param, value)(urlParams.mac, i, json[i]);
                                         }
                                         
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
