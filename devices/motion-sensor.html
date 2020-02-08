@@ -1,0 +1,118 @@
+<html>
+    <title>Bewegungs Sensor</title>
+    <body>
+        <div id="infos">
+            <div class="control-container" style="">
+                <input id="motion" class="control-panel" style="" type="button" value="LADEN .." id="switch">
+            </div>
+            <h1>Laden ..</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <p><b>MAC: </b>Laden ..</p>
+                <p><b>IP: </b>Laden ..</p>
+                <p><b>Typ: </b>Laden ..</p>
+                <p><b>Version: </b>Laden ..</p>
+                <p><b>Delay: </b>Laden ..</p>
+                <p><b>LED: </b>Laden ..</p>
+            </div>
+            <div class="main">
+                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
+                <div style="display: flex">
+                    <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local:1711/'">
+                    <input style="margin-left: 20px;" type="button" value="Einstellungen" onclick="openSettings()">
+                </div>
+            </div>
+        </div>
+        <div id="settings" style="display: none;">
+            <h1>Einstellungen</h1>
+            <p>Laden ..</p>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
+                <p>Name: <input name="sensorname" type="text" style="max-width: 325px"></p>
+                <p>Delay: <input name="interval" type="text" style="max-width: 150px"></p>
+                <p>LED: <input name="led" type="text" style="max-width: 150px"></p>
+            </div>
+            <div class="main" style="">
+                <input id="reset-btn" style="margin-bottom: 20px;" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
+                <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
+                <div style="display: flex">
+                    <input style="" type="button" value="Zurück" onclick="closeSettings()">
+                    <input id="savebtn" style="margin-left: 20px;" type="button" value="Speichern" onclick="saveConfig()">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+
+    var device = JSON.parse('<%device%>');
+        
+    console.log(device);
+    
+    document.getElementsByTagName('h1')[0].innerHTML = device.name;
+    
+    document.getElementsByClassName('main')[0].children[0].innerHTML = '<b>MAC: </b>' + device.id;
+    document.getElementsByClassName('main')[0].children[1].innerHTML = '<b>IP: </b>' + device.ip;
+    document.getElementsByClassName('main')[0].children[2].innerHTML = '<b>Typ: </b>' + device.type;
+    document.getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + device.version;
+    document.getElementsByClassName('main')[0].children[4].innerHTML = '<b>Delay: </b>' + device.refresh;
+    document.getElementsByClassName('main')[0].children[5].innerHTML = '<b>LED: </b>' + device.led;
+    
+    document.getElementsByClassName('main')[1].setAttribute('type', device.type);
+    document.getElementsByClassName('main')[1].setAttribute('version', device.version);
+    
+    function openSettings()
+    {
+        document.getElementById('infos').setAttribute('style', 'display: none');
+        document.getElementById('settings').removeAttribute('style');
+    }
+    
+    function closeSettings()
+    {
+        document.getElementById('infos').removeAttribute('style');
+        document.getElementById('settings').setAttribute('style', 'display: none');
+    }
+    
+    function fetchState()
+    {        
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id);
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(client.responseText == 'true') 
+                    {
+                        document.getElementById('motion').value = 'BEWEGUNG';
+                        document.getElementById('motion').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
+                    }
+                    else if(client.responseText == 'false')
+                    {
+                        document.getElementById('motion').value = 'BEREIT';
+                        document.getElementById('motion').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                    }
+                    console.log(client.responseText);
+                }
+            }
+        }
+        
+        client.send();
+    }
+
+</script>
+<script>
+
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+    document.getElementById('settings').getElementsByTagName('input')[0].value = device.name;
+    document.getElementById('settings').getElementsByTagName('input')[1].value = device.refresh;
+    document.getElementById('settings').getElementsByTagName('input')[2].value = device.led;
+    
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+    
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='http://syntex.local:1711/reconnect?ip=" + device.ip + "'");
+
+</script>
