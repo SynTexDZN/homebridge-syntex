@@ -196,7 +196,7 @@ SynTexPlatform.prototype = {
                                             }
                                             else
                                             {
-                                                response.write(HTMLQuery.sendValue(data, 'found', res.type));
+                                                response.write(HTMLQuery.sendValue(data, 'found', res.type)); 
                                             }
                                             
                                             response.end();
