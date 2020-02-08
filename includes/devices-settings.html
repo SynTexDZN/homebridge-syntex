@@ -55,6 +55,11 @@
     
     function saveConfig()
     {
+        var settings = {
+            mac: device.id,
+            name: 'test'
+        };
+        
         let formData = new FormData();
         
         var form = document.getElementById('settings').getElementsByClassName('main')[0];
@@ -158,7 +163,7 @@
             }
         }
 
-        client.send({hallo: 'welt'});
+        client.send(settings);
     }
     
     function redirect()
