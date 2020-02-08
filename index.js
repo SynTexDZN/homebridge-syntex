@@ -128,7 +128,7 @@ SynTexPlatform.prototype = {
                                             response.write(HTMLQuery.sendValue(head + data + devicesJS + devicesSettingsJS, 'device', JSON.stringify(res)));
                                             response.end();
                                         });
-                                    }   
+                                    });   
                                 });
                             }
                             else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
