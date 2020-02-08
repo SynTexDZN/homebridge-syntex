@@ -34,6 +34,8 @@ function exists(reqPath)
         if(path.parse(pathname).ext == '')
         {
             noext = true;
+            
+            log('NOEXT');
         }
 
         fs.exists(pathname, function(exist)
@@ -45,6 +47,10 @@ function exists(reqPath)
             else if(exist)
             {
                 resolve(pathname);
+            }
+            else if(noext)
+            {
+                resolve(exists(reqPath + '.html'));
             }
             else
             {
@@ -59,7 +65,11 @@ function read(reqPath)
     return new Promise(resolve => {
         
         fs.readFile(reqPath, function(err, res)
-        {                                        
+        {          
+            log('RES', res);
+            
+            log('ERR', err);
+            
             if(!res || err)
             {
                 res = "";

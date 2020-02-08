@@ -96,7 +96,9 @@ SynTexPlatform.prototype = {
             else
             {
                 HTMLQuery.exists(urlPath.substring(1)).then(function(relPath)
-                {                              
+                {                  
+                    log(relPath);
+                    
                     if(!relPath)
                     {
                         
@@ -105,10 +107,10 @@ SynTexPlatform.prototype = {
                     {
                         HTMLQuery.read(relPath).then(function(data)
                         {
-                            HTMLQuery.read('includes/head.html').then(function(head)
+                            HTMLQuery.read(__dirname + '/includes/head.html').then(function(head)
                             {
                                 var mimeType = {
-                                    ".html": "text/html",
+                                    ".html": "text/html; charset=utf-8",
                                     ".jpeg": "image/jpeg",
                                     ".jpg": "image/jpeg",
                                     ".png": "image/png",
@@ -116,14 +118,19 @@ SynTexPlatform.prototype = {
                                     ".css": "text/css",
                                     ".ttf": "font/ttf"
                                 };
+                                
+                                log(head);
+                                
+                                log('MIME', mimeType[path.parse(relPath).ext]);
+                                log('URLPATH', urlPath);
 
                                 response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
 
                                 if(urlPath.startsWith('/devices/') && urlParams.mac)
                                 {
-                                    HTMLQuery.read('includes/devices.html').then(function(devicesJS)
+                                    HTMLQuery.read(__dirname + '/includes/devices.html').then(function(devicesJS)
                                     {
-                                        HTMLQuery.read('includes/devices-settings.html').then(function(devicesSettingsJS)
+                                        HTMLQuery.read(__dirname + '/includes/devices-settings.html').then(function(devicesSettingsJS)
                                         {
                                             DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
@@ -181,7 +188,7 @@ SynTexPlatform.prototype = {
                                         response.end();
                                     });
                                 }
-                                else if(path.parse(pathname).ext == '.html')
+                                else if(path.parse(relPath).ext == '.html')
                                 {
                                     response.write(head + data);
                                     response.end();
