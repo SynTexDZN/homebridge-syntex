@@ -23,11 +23,11 @@ function sendValues(html, obj)
     return res;
 }
 
-function read(path)
+function read(reqpath)
 {
     return new Promise(resolve => {
         
-        var pathname = path.join(__dirname, path);
+        var pathname = path.join(__dirname, reqpath);
 
         var noext = false;
 
