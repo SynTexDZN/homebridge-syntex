@@ -193,7 +193,15 @@ SynTexPlatform.prototype = {
                                     var post = '';
                                     request.on('data', function(data) {
                                         post += data;
-                                        log('Data', data.toString());
+                                        
+                                        for(const i in data)
+                                        {
+                                            log('i', i);
+                                            log('data', data[i]);
+                                            
+                                            log('i', i.toString());
+                                            log('data', data[i].toString());
+                                        }
                                     });
                                     request.on('end', function() {
                                         log('name', post['name']);
