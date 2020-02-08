@@ -20,7 +20,7 @@
                     {  
                         if(client.status === 200)
                         {
-                            console.log(data);
+                            console.log(client.responseText);
                         
                             document.getElementById('reset-btn').value = 'Reset Erfolgreich!';
 
@@ -100,28 +100,33 @@
             {  
                 if(client.status === 200)
                 {
-                    console.log(data);
-                    if(data == 'Success')
+                    console.log(client.responseText);
+                    if(client.responseText == 'Success')
                     {
                         var error = '';
 
-                        $.ajax(
+                        var client2 = new XMLHttpRequest();
+        
+                        client2.open('GET', 'http://' + form.getAttribute('ip') + '/loadcfg');
+
+                        client2.onreadystatechange = function()
                         {
-                            type: 'GET',
-                            url: 'http://' + form.getAttribute('ip') + '/loadcfg',
-                            success: function(data)
-                            {
-                                console.log(data);
-                                if(data != "Success")
+                            if(client2.readyState === 4)
+                            {  
+                                if(client2.status === 200)
                                 {
-                                    error = 'true';
-                                }
-                                else
-                                {
-                                    error = 'false';
+                                    console.log(client2.responseText);
+                                    if(client2.responseText != "Success")
+                                    {
+                                        error = 'true';
+                                    }
+                                    else
+                                    {
+                                        error = 'false';
+                                    }
                                 }
                             }
-                        });
+                        }
 
                         setTimeout(function()
                         {
