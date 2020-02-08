@@ -201,18 +201,23 @@ SynTexPlatform.prototype = {
                                         
                                         log('post', json);
                                         
+                                        var mac = json['mac'];
+                                        
                                         for(const i in json)
                                         {
                                             log(i);
                                             log(json[i]);
                                             
-                                            DeviceManager.setValue(urlParams.mac, i, json[i]).then(function(res)
+                                            if(i != 'mac')
                                             {
-                                                if(!res)
+                                                DeviceManager.setValue(mac, i, json[i]).then(function(res)
                                                 {
-                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", urlParams.mac + ".json konnte nicht aktualisiert werden!", err);
-                                                }
-                                            });
+                                                    if(!res)
+                                                    {
+                                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", urlParams.mac + ".json konnte nicht aktualisiert werden!", err);
+                                                    }
+                                                });
+                                            }
                                         }
                                         
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
