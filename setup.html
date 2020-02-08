@@ -134,10 +134,14 @@
                         document.getElementById('networks').appendChild(label);
                     }
 
-                    if(client.responseText == "")
+                    if(client.responseText == "" || client.responseText == "[]")
                     {
                         document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
                     }
+                }
+                else
+                {
+                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
                 }
             }  
         }
