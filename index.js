@@ -208,7 +208,7 @@ SynTexPlatform.prototype = {
                                             log(i);
                                             log(json[i]);
                                             
-                                            if(i != 'mac' && i != 'name')
+                                            if(i != 'mac' && i != 'sensorname')
                                             {
                                                 DeviceManager.setValue(mac, i, json[i]).then(function(res)
                                                 {
