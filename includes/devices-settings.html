@@ -122,27 +122,18 @@
                                     }
                                     else
                                     {
+                                        document.getElementById("savebtn").value = "Gespeichert!";
+
+                                        setTimeout(function()
+                                        {
+                                            redirect();
+                                        }, 1000);
+                                        
                                         error = 'false';
                                     }
                                 }
                             }
                         }
-
-                        setTimeout(function()
-                        {
-                            if(error == 'false')
-                            {
-                                redirect();
-                            }
-                        }, 1000);
-
-                        setTimeout(function()
-                        {
-                            if(error == 'false')
-                            {
-                                redirect();
-                            }
-                        }, 2000);
 
                         setTimeout(function()
                         {
