@@ -193,12 +193,13 @@ SynTexPlatform.prototype = {
                                     var post = '';
                                     request.on('data', function(data) {
                                         post += data;
+                                        log('Data', data);
                                     });
                                     request.on('end', function() {
-                                        log(post['name']);
-                                        log(post['mac']);
-                                        log(post);
-                                        log(post.toString());
+                                        log('name', post['name']);
+                                        log('mac', post['mac']);
+                                        log('post', post);
+                                        log('post.toString()', post.toString());
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
                                         response.end();
                                     });
