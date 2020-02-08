@@ -195,8 +195,11 @@ SynTexPlatform.prototype = {
                                         post += data;
                                     });
                                     request.on('end', function() {
-                                        log('post', post);
-                                        log('post', JSON.parse(post));
+                                        
+                                        var json = JSON.parse(post);
+                                        
+                                        log('post', json);
+                                        log('post', json['mac']);
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
                                         response.end();
                                     });
