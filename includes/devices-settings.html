@@ -56,11 +56,8 @@
     function saveConfig()
     {
         var settings = {
-            mac: device.id,
-            name: 'test'
+            mac: device.id
         };
-        
-        let formData = new FormData();
         
         var form = document.getElementById('settings').getElementsByClassName('main')[0];
         
@@ -70,28 +67,28 @@
             {
                 if(device.type == 'temperature')
                 {
-                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
+                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
                 }
                 else if(device.type == 'motion')
                 {
-                    formData.append(form.children[i].children[0].getAttribute('name'), (form.children[i].children[0].value - 1.5) * 1000);
+                    settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
                 }
                 else if(device.type == 'light')
                 {
-                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
+                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
                 }
                 else
                 {
-                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value);
+                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
                 }
             }
             else
             {
-                formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value);
+                settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
             }
         }
 
-        formData.append('mac', device.id);
+        //formData.append('mac', device.id);
 
         document.getElementById("savebtn").value = "Hochladen ..";
 
