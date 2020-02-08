@@ -1,5 +1,6 @@
 var http = require('http');
 var url = require('url');
+var path = require('path');
 var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
 
