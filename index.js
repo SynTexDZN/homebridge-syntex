@@ -38,8 +38,6 @@ SynTexPlatform.prototype = {
             var body = [];
             
             body = Buffer.concat(body).toString();
-            
-            log('BODY', body);
 
             response.statusCode = 200;
             response.setHeader('Content-Type', 'application/json');
@@ -183,7 +181,7 @@ SynTexPlatform.prototype = {
                                         response.end();
                                     });
                                 }
-                                else if(urlPath.startsWith('/serverside/save-config'))
+                                else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
                                 {
                                     /*
                                     DeviceManager.setValue(urlParams.mac).then(function(res) {
@@ -192,8 +190,14 @@ SynTexPlatform.prototype = {
                                         response.end();
                                     });
                                     */
-                                    response.write(HTMLQuery.sendValue(data, 'result', 'test')); 
-                                    response.end();
+                                    var post = '';
+                                    request.on('data', function(data) {
+                                        post += data;
+                                    });
+                                    request.on('end', function(data) {
+                                        response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
+                                        response.end();
+                                    });
                                 }
                                 else if(path.parse(relPath).ext == '.html')
                                 {
