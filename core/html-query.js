@@ -72,5 +72,5 @@ module.exports = {
     SETUP,
     sendValue,
     sendValues,
-    include
+    read
 };
