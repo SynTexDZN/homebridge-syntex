@@ -1,0 +1,201 @@
+<script>
+    
+    var device = JSON.parse('<%device%>');
+
+    var restart = false;
+    var updating = false;
+    
+    function restartDevice(btn)
+    {
+        if(document.getElementById('restart-btn').value == 'Gerät Neustarten')
+        {
+            document.getElementById('restart-btn').value = 'Neustart ..';
+            restart = true;
+            
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://' + device.ip + '/restart');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status !== 200)
+                    {
+                        document.getElementById('restart-btn').value = 'Neustart Fehlgeschlagen!';
+                    
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-btn').value = 'Gerät Neustarten';
+                        }, 2000);
+                    }
+                }
+            }
+            
+            client.send();
+        }
+    }
+    
+    function checkUpdate(ip, name, version)
+    {
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://' + ip + '/version');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(data != version)
+                    {
+                        document.getElementById('update-btn').style.background = 'hsl(150, 75%, 45%)';
+                        document.getElementById('update-btn').value = 'Update Erfolgreich!';
+                    }
+                    else
+                    {
+                        document.getElementById('update-btn').style.background = 'hsl(350, 85%, 55%)';
+                        document.getElementById('update-btn').value = 'Update Fehlgeschlagen!';
+                    }
+
+                    updating = false;
+
+                    setTimeout(function()
+                    {
+                        location.reload();
+                    }, 5000);
+                }
+            }
+        }
+        
+        client.send();
+    }
+    
+    setTimeout(function()
+    {
+        pingESP();
+    }, 500);
+    
+    function pingESP()
+    {
+        if(updating)
+        {
+            checkUpdate(device.ip, device.name, device.version);
+        }
+        else
+        {
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://' + device.ip + '/');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        console.log("ESP Gefunden");
+
+                        if(restart == true)
+                        {
+                            document.getElementById('restart-btn').value = 'Neustart Erfolgreich!';
+
+                            setTimeout(function()
+                            {
+                                document.getElementById('restart-btn').value = 'Gerät Neustarten';
+                            }, 2000);
+
+                            restart = false;
+                        }
+
+                        for(var i = 0; i <= 4000; i+=1000)
+                        {
+                            setTimeout(function()
+                            {
+                                fetchState();
+                            }, i);
+                        }
+
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 5000);
+                    }
+                    else
+                    {
+                        document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                        document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+                        
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 500);
+                    }
+                }
+            }
+            
+            client.send();
+        }
+    }    
+    
+    function updateDevice()
+    {        
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://' + device.ip + '/update');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(data == 'Das Update wird installiert ..')
+                    {
+                        updating = true;
+
+                        document.getElementById('update-btn').style.background = 'hsl(270, 85%, 55%)';
+                        document.getElementById('update-btn').value = 'Update Wird Installiert ..'
+                    }
+                }
+            }
+        }
+
+        client.send();
+    }
+    
+    function checkUpdates()
+    {
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'));
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(data > document.getElementsByClassName('main')[1].getAttribute('version'))
+                    {
+                        var update = document.createElement('input');
+
+                        update.setAttribute('type', 'button');
+                        update.setAttribute('value', 'Update Installieren ( v' + data + ' )');
+                        update.setAttribute('style', 'margin-bottom: 20px;');
+                        update.setAttribute('onclick', 'updateDevice()');
+                        update.setAttribute('id', 'update-btn');
+
+                        document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
+                    }
+                }
+            }
+        }
+
+        client.send();
+    }
+    
+    checkUpdates();
+
+</script>

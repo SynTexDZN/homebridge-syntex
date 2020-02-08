@@ -148,10 +148,18 @@ SynTexPlatform.prototype = {
 
                                     if(urlPath.startsWith('/devices/') && urlParams.mac)
                                     {
-                                        DeviceManager.getDevice(urlParams.mac).then(function(res) {
+                                        fs.readFile(__dirname + '/includes/devices.html', function(err, devicesJS)
+                                        {                                        
+                                            if(!devicesJS)
+                                            {
+                                                devicesJS = "";
+                                            }
+                                            
+                                            DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
-                                            response.write(HTMLQuery.sendValue(head + data, 'device', JSON.stringify(res)));
-                                            response.end();
+                                                response.write(HTMLQuery.sendValue(head + data + devicesJS, 'device', JSON.stringify(res)));
+                                                response.end();
+                                            });
                                         });
                                     }
                                     else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
