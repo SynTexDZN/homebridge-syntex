@@ -1,5 +1,5 @@
 var store = require('json-fs-store');
-var config, storage, log;
+var config, storage, dataStorage, log;
     
 async function removeDevice(mac, type)
 {
@@ -68,7 +68,21 @@ async function removeDevice(mac, type)
                                         {
                                             log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
                                             
-                                            resolve(true);
+                                            store().remove(mac, (err) => {
+                                        
+                                                if(err)
+                                                {
+                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht entfernt werden!", err);
+
+                                                    resolve(false);
+                                                }
+                                                else
+                                                {
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
+
+                                                    resolve(true);
+                                                }
+                                            });
                                         }
                                     });
                                 }
@@ -357,6 +371,7 @@ function SETUP(configPath, slog, storagePath)
 {
     config = store(configPath);
     storage = store(storagePath);
+    dataStorage = store(storagePath.replace('/data', '/'));
     log = slog;
 };
 
