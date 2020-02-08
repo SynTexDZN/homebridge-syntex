@@ -27,7 +27,7 @@ function read(reqpath)
 {
     return new Promise(resolve => {
         
-        var pathname = path.join(__dirname, reqpath);
+        var pathname = path.join(__dirname, '../' + reqpath);
 
         var noext = false;
 
@@ -42,13 +42,15 @@ function read(reqpath)
             {
                 if(exist && fs.statSync(pathname).isDirectory())
                 {
-                    pathname += '/index.html';
+                    pathname += 'index.html';
                 }
                 else if(noext)
                 {
                     pathname += '.html';
                 }
             }
+            
+            log(pathname);
             
             fs.readFile(pathname, function(err, res)
             {                                        
