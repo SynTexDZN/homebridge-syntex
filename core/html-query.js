@@ -34,8 +34,6 @@ function exists(reqPath)
         if(path.parse(pathname).ext == '')
         {
             noext = true;
-            
-            log('NOEXT');
         }
 
         fs.exists(pathname, function(exist)
@@ -66,10 +64,6 @@ function read(reqPath)
         
         fs.readFile(reqPath, function(err, res)
         {          
-            log('RES', res);
-            
-            log('ERR', err);
-            
             if(!res || err)
             {
                 res = "";

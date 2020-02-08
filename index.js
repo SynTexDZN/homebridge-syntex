@@ -97,8 +97,6 @@ SynTexPlatform.prototype = {
             {
                 HTMLQuery.exists(urlPath.substring(1)).then(function(relPath)
                 {                  
-                    log(relPath);
-                    
                     if(!relPath)
                     {
                         
@@ -118,11 +116,6 @@ SynTexPlatform.prototype = {
                                     ".css": "text/css",
                                     ".ttf": "font/ttf"
                                 };
-                                
-                                log(head);
-                                
-                                log('MIME', mimeType[path.parse(relPath).ext]);
-                                log('URLPATH', urlPath);
 
                                 response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
 
