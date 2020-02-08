@@ -95,95 +95,105 @@ SynTexPlatform.prototype = {
             }
             else
             {
-                HTMLQuery.read(urlPath.substring(1)).then(function(data)
+                HTMLQuery.exists(urlPath.substring(1)).then(function(relPath)
                 {                              
-                    HTMLQuery.read('includes/head.html').then(function(head)
+                    if(!relPath)
                     {
-                        var mimeType = {
-                            ".html": "text/html",
-                            ".jpeg": "image/jpeg",
-                            ".jpg": "image/jpeg",
-                            ".png": "image/png",
-                            ".js": "text/javascript",
-                            ".css": "text/css",
-                            ".ttf": "font/ttf"
-                        };
-
-                        response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
-
-                        if(urlPath.startsWith('/devices/') && urlParams.mac)
+                        
+                    }
+                    else
+                    {
+                        HTMLQuery.read(relPath).then(function(data)
                         {
-                            HTMLQuery.read('includes/devices.html').then(function(devicesJS)
+                            HTMLQuery.read('includes/head.html').then(function(head)
                             {
-                                HTMLQuery.read('includes/devices-settings.html').then(function(devicesSettingsJS)
+                                var mimeType = {
+                                    ".html": "text/html",
+                                    ".jpeg": "image/jpeg",
+                                    ".jpg": "image/jpeg",
+                                    ".png": "image/png",
+                                    ".js": "text/javascript",
+                                    ".css": "text/css",
+                                    ".ttf": "font/ttf"
+                                };
+
+                                response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+
+                                if(urlPath.startsWith('/devices/') && urlParams.mac)
+                                {
+                                    HTMLQuery.read('includes/devices.html').then(function(devicesJS)
+                                    {
+                                        HTMLQuery.read('includes/devices-settings.html').then(function(devicesSettingsJS)
+                                        {
+                                            DeviceManager.getDevice(urlParams.mac).then(function(res) {
+
+                                                response.write(HTMLQuery.sendValue(head + data + devicesJS + devicesSettingsJS, 'device', JSON.stringify(res)));
+                                                response.end();
+                                            });
+                                        });   
+                                    });
+                                }
+                                else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
+                                {
+                                    DeviceManager.getDevices().then(function(res) {
+
+                                        response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(res)));
+                                        response.end();
+                                    });
+                                }
+                                else if(urlPath.startsWith('/bridge'))
+                                {
+                                    var pjson = require('./package.json');
+                                    var ifaces = require('os').networkInterfaces();
+                                    var address;
+
+                                    for (var dev in ifaces)
+                                    {
+                                        var iface = ifaces[dev].filter(function(details)
+                                        {
+                                            return details.family === 'IPv4' && details.internal === false;
+                                        });
+
+                                        if(iface.length > 0) address = iface[0].address;
+                                    }
+
+                                    var obj = {
+                                        ip: address,
+                                        version: pjson.version
+                                    };
+
+                                    response.write(HTMLQuery.sendValues(head + data, obj));
+                                    response.end();
+                                }
+                                else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
                                 {
                                     DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
-                                        response.write(HTMLQuery.sendValue(head + data + devicesJS + devicesSettingsJS, 'device', JSON.stringify(res)));
+                                        if(!res)
+                                        {
+                                            response.write(HTMLQuery.sendValue(data, 'found', 'Error'));
+                                        }
+                                        else
+                                        {
+                                            response.write(HTMLQuery.sendValue(data, 'found', res.type)); 
+                                        }
+
                                         response.end();
                                     });
-                                });   
-                            });
-                        }
-                        else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
-                        {
-                            DeviceManager.getDevices().then(function(res) {
-
-                                response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(res)));
-                                response.end();
-                            });
-                        }
-                        else if(urlPath.startsWith('/bridge'))
-                        {
-                            var pjson = require('./package.json');
-                            var ifaces = require('os').networkInterfaces();
-                            var address;
-
-                            for (var dev in ifaces)
-                            {
-                                var iface = ifaces[dev].filter(function(details)
+                                }
+                                else if(path.parse(pathname).ext == '.html')
                                 {
-                                    return details.family === 'IPv4' && details.internal === false;
-                                });
-
-                                if(iface.length > 0) address = iface[0].address;
-                            }
-
-                            var obj = {
-                                ip: address,
-                                version: pjson.version
-                            };
-
-                            response.write(HTMLQuery.sendValues(head + data, obj));
-                            response.end();
-                        }
-                        else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
-                        {
-                            DeviceManager.getDevice(urlParams.mac).then(function(res) {
-
-                                if(!res)
-                                {
-                                    response.write(HTMLQuery.sendValue(data, 'found', 'Error'));
+                                    response.write(head + data);
+                                    response.end();
                                 }
                                 else
                                 {
-                                    response.write(HTMLQuery.sendValue(data, 'found', res.type)); 
+                                    response.write(data);
+                                    response.end();
                                 }
-
-                                response.end();
                             });
-                        }
-                        else if(path.parse(pathname).ext == '.html')
-                        {
-                            response.write(head + data);
-                            response.end();
-                        }
-                        else
-                        {
-                            response.write(data);
-                            response.end();
-                        }
-                    });
+                        });
+                    }
                 });
             }
             

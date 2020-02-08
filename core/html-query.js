@@ -23,44 +23,49 @@ function sendValues(html, obj)
     return res;
 }
 
-function read(reqpath)
+function exists(reqPath)
 {
     return new Promise(resolve => {
         
-        var pathname = path.join(__dirname, '../' + reqpath);
+        var pathname = path.join(__dirname, '../' + reqPath);
 
         var noext = false;
 
-        if(path.parse(reqpath).ext == '')
+        if(path.parse(pathname).ext == '')
         {
             noext = true;
         }
 
         fs.exists(pathname, function(exist)
         {
-            if(exist || noext)
+            if(exist && fs.statSync(pathname).isDirectory())
             {
-                if(exist && fs.statSync(pathname).isDirectory())
-                {
-                    pathname += 'index.html';
-                }
-                else if(noext)
-                {
-                    pathname += '.html';
-                }
+                resolve(exists(reqPath + 'index.html'));
             }
-            
-            log(pathname);
-            
-            fs.readFile(pathname, function(err, res)
-            {                                        
-                if(!res || err)
-                {
-                    res = "";
-                }
+            else if(exist)
+            {
+                resolve(pathname);
+            }
+            else
+            {
+                resolve(false);
+            }
+        });
+    });
+}
 
-                resolve(res);
-            });
+function read(reqPath)
+{
+    return new Promise(resolve => {
+        
+        fs.readFile(reqPath, function(err, res)
+        {                                        
+            if(!res || err)
+            {
+                res = "";
+            }
+
+            resolve(res);
         });
     });
 }
@@ -74,5 +79,6 @@ module.exports = {
     SETUP,
     sendValue,
     sendValues,
-    read
+    read,
+    exists
 };
