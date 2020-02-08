@@ -60,25 +60,23 @@ async function removeDevice(mac, type)
                                         
                                         if(err)
                                         {
-                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht entfernt werden!", err);
+                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht aus der Settings Storage entfernt werden!", err);
                                             
                                             resolve(false);
                                         }
                                         else
                                         {
-                                            log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
-                                            
                                             dataStorage.remove(mac, (err) => {
                                         
                                                 if(err)
                                                 {
-                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht entfernt werden!", err);
+                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht aus der Data Storage entfernt werden!", err);
 
                                                     resolve(false);
                                                 }
                                                 else
                                                 {
-                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
+                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus dem System entfernt ( " + mac + " )");
 
                                                     resolve(true);
                                                 }
@@ -245,7 +243,7 @@ async function initDevice(mac, ip, name, type, version, refresh)
                                             }
                                             else
                                             {
-                                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde der Config hinzugefügt ( " + mac + " )");
+                                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
                                                 resolve(['Init', '{"name": "' + name + '", "interval": "' + refresh + '", "led": "1", "scenecontrol": "0"}']);
                                             }
