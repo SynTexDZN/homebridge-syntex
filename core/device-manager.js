@@ -68,7 +68,7 @@ async function removeDevice(mac, type)
                                         {
                                             log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus der Config entfernt ( " + mac + " )");
                                             
-                                            store().remove(mac, (err) => {
+                                            dataStorage.remove(mac, (err) => {
                                         
                                                 if(err)
                                                 {
