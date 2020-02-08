@@ -57,21 +57,21 @@
     {
         let formData = new FormData();
         
-        var form = document.getElementsByClassName('main')[0];
+        var form = document.getElementById('settings').getElementsByClassName('main')[0];
         
         for(var i = 0; i < form.childElementCount; i++)
         {
             if(form.children[i].children[0].getAttribute('name') == 'interval')
             {
-                if(form.getAttribute('type') == 'temperature')
+                if(device.type == 'temperature')
                 {
                     formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
                 }
-                else if(form.getAttribute('type') == 'motion')
+                else if(device.type == 'motion')
                 {
                     formData.append(form.children[i].children[0].getAttribute('name'), (form.children[i].children[0].value - 1.5) * 1000);
                 }
-                else if(form.getAttribute('type') == 'light')
+                else if(device.type == 'light')
                 {
                     formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
                 }
@@ -86,7 +86,7 @@
             }
         }
 
-        formData.append('mac', form.getAttribute('mac'));
+        formData.append('mac', device.mac);
 
         document.getElementById("savebtn").value = "Hochladen ..";
 
