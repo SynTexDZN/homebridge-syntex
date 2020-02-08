@@ -1,22 +1,40 @@
 <html>
     <title>Kontakt Sensor</title>
     <body>
-        <div class="control-container" style="">
-            <input id="contact" class="control-panel" style="" type="button" value="LADEN .." id="switch">
+        <div id="infos">
+            <div class="control-container" style="">
+                <input id="contact" class="control-panel" style="" type="button" value="LADEN .." id="switch">
+            </div>
+            <h1>Laden ..</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <p><b>MAC: </b>Laden ..</p>
+                <p><b>IP: </b>Laden ..</p>
+                <p><b>Typ: </b>Laden ..</p>
+                <p><b>Version: </b>Laden ..</p>
+                <p><b>LED: </b>Laden ..</p>
+            </div>
+            <div class="main">
+                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
+                <div style="display: flex">
+                    <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local:1711/'">
+                    <input style="margin-left: 20px;" type="button" value="Einstellungen" onclick="openSettings()">
+                </div>
+            </div>
         </div>
-        <h1>Laden ..</h1>
-        <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-            <p><b>MAC: </b>Laden ..</p>
-            <p><b>IP: </b>Laden ..</p>
-            <p><b>Typ: </b>Laden ..</p>
-            <p><b>Version: </b>Laden ..</p>
-            <p><b>LED: </b>Laden ..</p>
-        </div>
-        <div class="main">
-            <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
-            <div style="display: flex">
-                <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local:1711/'">
-                <input style="margin-left: 20px;" type="button" value="Einstellungen" onclick="openSettings()">
+        <div id="settings" style="display: none;">
+            <h1>Einstellungen</h1>
+            <p>Laden ..</p>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
+                <p>Name: <input name="sensorname" type="text" style="max-width: 325px"></p>
+                <p>LED: <input name="led" type="text" style="max-width: 150px"></p>
+            </div>
+            <div class="main" style="">
+                <input id="reset-btn" style="margin-bottom: 20px;" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
+                <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
+                <div style="display: flex">
+                    <input style="" type="button" value="Zurück" onclick="closeSettings()">
+                    <input id="savebtn" style="margin-left: 20px;" type="button" value="Speichern" onclick="saveConfig()">
+                </div>
             </div>
         </div>
     </body>
@@ -40,7 +58,14 @@
     
     function openSettings()
     {
-        
+        document.getElementById('infos').setAttribute('style', 'display: none');
+        document.getElementById('settings').removeAttribute('style');
+    }
+    
+    function closeSettings()
+    {
+        document.getElementById('infos').removeAttribute('style');
+        document.getElementById('settings').setAttribute('style', 'display: none');
     }
     
     function fetchState()
@@ -74,4 +99,16 @@
     }
 
 </script>
+<script>
 
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+    document.getElementById('settings').getElementsByTagName('input')[0].value = '( ' + device.name + ' )';
+    document.getElementById('settings').getElementsByTagName('input')[0].value = '( ' + device.led + ' )';
+    
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+    
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='http://syntex.local:1710/reconnect?ip=" + device.ip + "'");
+
+</script>

@@ -1,0 +1,168 @@
+<script>
+
+    var reset = false;
+    
+    function resetDevice()
+    {
+        if(document.getElementById('reset-btn').value == 'Gerät Zurücksetzen' || document.getElementById('reset-btn').value == 'Löschen Bestätigen?')
+        {
+           if(reset)
+            {
+                document.getElementById('reset-btn').value = 'Zurücksetzen ..';
+                
+                var client = new XMLHttpRequest();
+        
+                client.open('GET', 'http://' + device.ip + '/reset');
+
+                client.onreadystatechange = function()
+                {
+                    if(client.readyState === 4)
+                    {  
+                        if(client.status === 200)
+                        {
+                            console.log(data);
+                        
+                            document.getElementById('reset-btn').value = 'Reset Erfolgreich!';
+
+                            setTimeout(function()
+                            {
+                                window.location.href = 'http://syntex.local:1711/';
+                            }, 2000);
+                        }
+                        else
+                        {
+                            document.getElementById('reset-btn').value = 'Reset Fehlgeschlagen!';
+
+                            setTimeout(function()
+                            {
+                                document.getElementById('reset-btn').value = 'Gerät Zurücksetzen';
+                                reset = false;
+                            }, 2000);
+                        }
+                    }
+                }
+
+                client.send();
+            }
+            else
+            {
+                document.getElementById('reset-btn').value = 'Löschen Bestätigen?';
+
+                reset = true;
+            }
+        }
+    }
+    
+    function saveConfig()
+    {
+        let formData = new FormData();
+        
+        var form = document.getElementsByClassName('main')[0];
+        
+        for(var i = 0; i < form.childElementCount; i++)
+        {
+            if(form.children[i].children[0].getAttribute('name') == 'interval')
+            {
+                if(form.getAttribute('type') == 'temperature')
+                {
+                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
+                }
+                else if(form.getAttribute('type') == 'motion')
+                {
+                    formData.append(form.children[i].children[0].getAttribute('name'), (form.children[i].children[0].value - 1.5) * 1000);
+                }
+                else if(form.getAttribute('type') == 'light')
+                {
+                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value * 1000);
+                }
+                else
+                {
+                    formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value);
+                }
+            }
+            else
+            {
+                formData.append(form.children[i].children[0].getAttribute('name'), form.children[i].children[0].value);
+            }
+        }
+
+        formData.append('mac', form.getAttribute('mac'));
+
+        document.getElementById("savebtn").value = "Hochladen ..";
+
+        var client = new XMLHttpRequest();
+        
+        client.open('POST', 'http://syntex.local/serverside/save-config.php');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    console.log(data);
+                    if(data == 'Success')
+                    {
+                        var error = '';
+
+                        $.ajax(
+                        {
+                            type: 'GET',
+                            url: 'http://' + form.getAttribute('ip') + '/loadcfg',
+                            success: function(data)
+                            {
+                                console.log(data);
+                                if(data != "Success")
+                                {
+                                    error = 'true';
+                                }
+                                else
+                                {
+                                    error = 'false';
+                                }
+                            }
+                        });
+
+                        setTimeout(function()
+                        {
+                            if(error == 'false')
+                            {
+                                redirect();
+                            }
+                        }, 1000);
+
+                        setTimeout(function()
+                        {
+                            if(error == 'false')
+                            {
+                                redirect();
+                            }
+                        }, 2000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById("savebtn").value = "Gespeichert!";
+
+                            setTimeout(function()
+                            {
+                                redirect();
+                            }, 1000);
+                        }, 5000);
+                    }
+                    else
+                    {
+                        console.log("ERROR");
+                    }
+                }
+            }
+        }
+
+        client.send(formData);
+    }
+    
+    function redirect()
+    {
+        window.location.href = window.location.href.replace('&settings', '');
+    }
+
+</script>
