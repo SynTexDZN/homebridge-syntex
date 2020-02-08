@@ -191,15 +191,22 @@ SynTexPlatform.prototype = {
                                     });
                                     */
                                     var post = '';
-                                    request.on('data', function(data) {
+                                    request.on('data', function(data)
+                                    {
                                         post += data;
                                     });
-                                    request.on('end', function() {
-                                        
+                                    request.on('end', function()
+                                    {
                                         var json = JSON.parse(post);
                                         
                                         log('post', json);
-                                        log('post', json['mac']);
+                                        
+                                        for(const i in json)
+                                        {
+                                            log(i);
+                                            log(json[i]);
+                                        }
+                                        
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
                                         response.end();
                                     });
