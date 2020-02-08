@@ -195,7 +195,7 @@ SynTexPlatform.prototype = {
                                         post += data;
                                     });
                                     request.on('end', function() {
-                                        log(post);
+                                        log(post['hallo']);
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
                                         response.end();
                                     });
