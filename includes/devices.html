@@ -48,7 +48,7 @@
             {  
                 if(client.status === 200)
                 {
-                    if(data != version)
+                    if(client.responseText != version)
                     {
                         document.getElementById('update-btn').style.background = 'hsl(150, 75%, 45%)';
                         document.getElementById('update-btn').value = 'Update Erfolgreich!';
@@ -151,7 +151,7 @@
             {  
                 if(client.status === 200)
                 {
-                    if(data == 'Das Update wird installiert ..')
+                    if(client.responseText == 'Das Update wird installiert ..')
                     {
                         updating = true;
 
@@ -177,12 +177,12 @@
             {  
                 if(client.status === 200)
                 {
-                    if(data > document.getElementsByClassName('main')[1].getAttribute('version'))
+                    if(client.responseText > document.getElementsByClassName('main')[1].getAttribute('version'))
                     {
                         var update = document.createElement('input');
 
                         update.setAttribute('type', 'button');
-                        update.setAttribute('value', 'Update Installieren ( v' + data + ' )');
+                        update.setAttribute('value', 'Update Installieren ( v' + client.responseText + ' )');
                         update.setAttribute('style', 'margin-bottom: 20px;');
                         update.setAttribute('onclick', 'updateDevice()');
                         update.setAttribute('id', 'update-btn');
