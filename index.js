@@ -144,7 +144,7 @@ SynTexPlatform.prototype = {
                                         ".ttf": "font/ttf"
                                     };
 
-                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html');
+                                    response.setHeader('Content-Type', mimeType[path.parse(urlPath).ext] || 'text/html; charset=utf-8');
 
                                     if(urlPath.startsWith('/devices/') && urlParams.mac)
                                     {
@@ -202,7 +202,7 @@ SynTexPlatform.prototype = {
                                             response.end();
                                         });
                                     }
-                                    else if(path.parse(urlPath).ext == '.html')
+                                    else if(path.parse(pathname).ext == '.html')
                                     {
                                         response.write(head + data);
                                         response.end();
