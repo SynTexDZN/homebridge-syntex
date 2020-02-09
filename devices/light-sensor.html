@@ -12,6 +12,7 @@
                 <p><b>Typ: </b>Laden ..</p>
                 <p><b>Version: </b>Laden ..</p>
                 <p><b>Interval: </b>Laden ..</p>
+                <p><b>Szenenkontrolle: </b>Laden ..</p>
             </div>
             <div class="main">
                 <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
@@ -27,6 +28,7 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
                 <p>Name: <input name="name" type="text" style="max-width: 325px"></p>
                 <p>Interval: <input name="interval" type="text" style="max-width: 150px"></p>
+                <p>Szenenkontrolle: <input name="scenecontrol" type="text" style="max-width: 150px"></p>
             </div>
             <div class="main" style="">
                 <input id="reset-btn" style="margin-bottom: 20px;" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
@@ -52,6 +54,7 @@
     document.getElementsByClassName('main')[0].children[2].innerHTML = '<b>Typ: </b>' + device.type;
     document.getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + device.version;
     document.getElementsByClassName('main')[0].children[4].innerHTML = '<b>Interval: </b>' + device.interval / 1000 + ' sek';
+    document.getElementsByClassName('main')[0].children[5].innerHTML = '<b>Szenenkontrolle: </b>' + device.scenecontrol;
     
     document.getElementsByClassName('main')[1].setAttribute('type', device.type);
     document.getElementsByClassName('main')[1].setAttribute('version', device.version);
@@ -80,7 +83,7 @@
             {  
                 if(client.status === 200)
                 {
-                    document.getElementById('temp').value = ((Math.round(client.responseText * 10.0)) / 10.0) + ' °C' + ' - ' + document.getElementById('temp').value.split(' - ')[1];
+                    document.getElementById('temp').value = Math.round(client.responseText) + ' LUX' + ' - ' + document.getElementById('temp').value.split(' - ')[1];
                     console.log(client.responseText);
                 }
             }
@@ -98,20 +101,17 @@
             {  
                 if(client2.status === 200)
                 {
-                    if(client2.responseText > 40 && client2.responseText < 70)
+                    if(client2.responseText == false)
                     {
-                        document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                        document.getElementById('temp').value = document.getElementById('temp').value.split(' - ')[0] + ' - TROCKEN';
+                        document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
                     }
-                    else if(client2.responseText < 20 || client2.responseText > 85)
+                    else if(client2.responseText == true)
                     {
-                        document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
+                        document.getElementById('temp').value = document.getElementById('temp').value.split(' - ')[0] + ' - REGEN';
+                        document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
                     }
-                    else
-                    {
-                        document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                    }
-
-                    document.getElementById('temp').value = document.getElementById('temp').value.split(' - ')[0] + ' - ' + client2.responseText + ' %';
+                    
                     console.log(client2.responseText);
                 }
             }
@@ -126,6 +126,7 @@
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
     document.getElementById('settings').getElementsByTagName('input')[0].value = device.name;
     document.getElementById('settings').getElementsByTagName('input')[1].value = device.interval / 1000;
+    document.getElementById('settings').getElementsByTagName('input')[2].value = device.scenecontrol;
     
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
