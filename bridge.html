@@ -8,11 +8,13 @@
                 <input style="margin-right: 20px;" type="button" value="Geräte" onclick="window.location.href='http://syntex.local/'">
                 <input type="button" value="Bridge" onclick="window.location.href='http://syntex.local/bridge'" disabled>
             </div>
-            <div id="infos">
+            <div id="infos" style="margin-bottom: 100px">
                 <p>Laden ..</p>
                 <p>Laden ..</p>
                 <p>Laden ..</p>
             </div>
+            <input type="button" value="Bridge Neustarten" onclick="restartBridge()">
+            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="updateBridge()">
         </div>
     </body>
 </html>
@@ -32,8 +34,93 @@
         
         updateBTN.setAttribute('type', 'button');
         updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
+        updateBTN.setAttribute('onclick', 'updateBridge()');
+        updateBTN.setAttribute('style', 'margin-top: 20px');
         
         document.getElementsByClassName('main')[0].appendChild(updateBTN);
+    }
+    
+    function updateBridge()
+    {
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://syntex.local/update');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {  
+                    console.log(client.responseText);
+                }
+            }  
+        }
+
+        client.send();
+    }
+    
+    function restartBridge()
+    {
+        if(document.getElementById('restart-btn').value == 'Gerät Neustarten')
+        {
+            document.getElementById('restart-btn').value = 'Neustart ..';
+            
+            var client = new XMLHttpRequest();
+        
+            client.open('GET', 'http://syntex.local/restart');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status !== 200 || (client.status === 200 && client.responseText == 'Error'))
+                    {
+                        document.getElementById('restart-btn').value = 'Neustart Fehlgeschlagen!';
+                    
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-btn').value = 'Gerät Neustarten';
+                        }, 2000);
+                    }
+                    else
+                    {
+                        pingBridge();
+                    }
+                }
+            }
+            
+            client.send();
+        }
+    }
+    
+    function pingBridge()
+    {
+        var client = new XMLHttpRequest();
+        
+        client.open('GET', 'http://syntex.local/ping');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    document.getElementById('restart-btn').value = 'Neustart Erfolgreich!';
+
+                    setTimeout(function()
+                    {
+                        document.getElementById('restart-btn').value = 'Gerät Neustarten';
+                    }, 2000);
+                }
+                else
+                {
+                    pingBridge();
+                }
+            }
+        }
+
+        client.send();
     }
 
 </script>
