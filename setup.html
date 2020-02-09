@@ -8,7 +8,7 @@
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main" style="">
-                <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local:1711/'">
+                <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
             </div>
         </div>
         <div id="wifiConfig" style="display: none;">
@@ -25,7 +25,7 @@
             </div>
             <div class="main" style="">
                 <div style="display: flex">
-                    <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local:1711/'">
+                    <input style="" type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
                     <input style="margin-left: 20px;" type="button" value="Scan" onclick="scanWifi()">
                 </div>
             </div>
@@ -155,7 +155,7 @@
     {
         var client = new XMLHttpRequest();
         
-        client.open('GET', 'http://syntex.local:1711/serverside/check-device?mac=' + mac);
+        client.open('GET', 'http://syntex.local/serverside/check-device?mac=' + mac);
 
         client.onreadystatechange = function()
         {
@@ -180,11 +180,11 @@
                         {
                             if(client.responseText == 'relais' || client.responseText == 'switch')
                             {
-                                window.location.href = 'http://syntex.local:1711/devices/' + client.responseText + '?mac=' + mac;
+                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '?mac=' + mac;
                             }
                             else
                             {
-                                window.location.href = 'http://syntex.local:1711/devices/' + client.responseText + '-sensor?mac=' + mac;
+                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor?mac=' + mac;
                             }
                         }, 10000);                    
                     }
@@ -246,7 +246,7 @@
                     {
                         client = new XMLHttpRequest();
         
-                        client.open('GET', 'http://syntex.local:1711/setup');
+                        client.open('GET', 'http://syntex.local/setup');
 
                         client.onreadystatechange = function()
                         {
@@ -282,7 +282,7 @@
 
                             setTimeout(function()
                             {
-                                window.location.href = 'http://syntex.local:1711/setup';
+                                window.location.href = 'http://syntex.local/setup';
                             }, 10000); 
                         }
                     }, 60000);

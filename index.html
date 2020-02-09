@@ -5,8 +5,8 @@
         <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: table">
             <p style="margin-bottom: 100px; margin-top: 16px">Laden ..</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-                <input style="margin-right: 20px;" type="button" value="Geräte" onclick="window.location.href='http://syntex.local:1711/'" disabled>
-                <input style="" type="button" value="Bridge" onclick="window.location.href='http://syntex.local:1711/bridge'">
+                <input style="margin-right: 20px;" type="button" value="Geräte" onclick="window.location.href='http://syntex.local/'" disabled>
+                <input style="" type="button" value="Bridge" onclick="window.location.href='http://syntex.local/bridge'">
             </div>
             <div id="devices">
                 <h2 style="width: fit-content">Smart Lock</h2>
@@ -17,7 +17,7 @@
         </div>
         <div style="margin: 0 auto; width: 100%; max-width: 400px">
             <input style="margin-bottom: 20px;" type="button" value="Schnelles Bearbeiten" onclick="window.location.href='http://syntex.local/settings.php'">
-            <input style="" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='http://syntex.local:1711/setup'">
+            <input style="" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='http://syntex.local/setup'">
         </div>
     </body>
 </html>
@@ -68,11 +68,11 @@
         
         if(devices[i].type != 'relais' && devices[i].type != 'switch' && devices[i].type != 'lock')
         {
-            url = 'http://syntex.local:1711/devices/' + devices[i].type + '-sensor?mac=' + devices[i].id;
+            url = 'http://syntex.local/devices/' + devices[i].type + '-sensor?mac=' + devices[i].id;
         }
         else if(devices[i].type == 'relais' || devices[i].type == 'switch')
         {
-            url = 'http://syntex.local:1711/devices/' + devices[i].type + '?mac=' + devices[i].id;
+            url = 'http://syntex.local/devices/' + devices[i].type + '?mac=' + devices[i].id;
         }
         
         button.setAttribute('onclick', "window.location.href='" + url + "'");
