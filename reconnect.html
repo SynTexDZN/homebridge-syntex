@@ -93,6 +93,39 @@
             }
 
             client.send();
+            
+            var client2 = new XMLHttpRequest();
+        
+            client2.open('GET', 'http://' + ipp + '/');
+
+            client2.onreadystatechange = function()
+            {
+                if(client2.readyState === 4)
+                {  
+                    if(client2.status === 200)
+                    {  
+                        ping = true;
+                        ip = 'http://' + ipp + '/';
+                        document.getElementById('wifiConfig').style.display = "";
+                        setTimeout(function()
+                        {
+                            scanWifi();
+                        }, 2000);
+                        document.getElementById('welcome').style.display = "none";
+                    }
+                    else
+                    {  
+                        /*
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 2000);
+                        */
+                    }  
+                }  
+            }
+
+            client2.send();
         }        
     } 
         
