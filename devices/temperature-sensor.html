@@ -88,21 +88,21 @@
         
         client.send();
         
-        client = new XMLHttpRequest();
+        var client2 = new XMLHttpRequest();
         
-        client.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id + '&type=humidity');
+        client2.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id + '&type=humidity');
 
-        client.onreadystatechange = function()
+        client2.onreadystatechange = function()
         {
-            if(client.readyState === 4)
+            if(client2.readyState === 4)
             {  
-                if(client.status === 200)
+                if(client2.status === 200)
                 {
-                    if(client.responseText > 40 && client.responseText < 70)
+                    if(client2.responseText > 40 && client2.responseText < 70)
                     {
                         document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
-                    else if(client.responseText < 20 || client.responseText > 85)
+                    else if(client2.responseText < 20 || client2.responseText > 85)
                     {
                         document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
                     }
@@ -111,13 +111,13 @@
                         document.getElementById('temp').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
                     }
 
-                    document.getElementById('temp').value = document.getElementById('temp').value.split(' - ')[0] + ' - ' + client.responseText + ' %';
-                    console.log(client.responseText);
+                    document.getElementById('temp').value = document.getElementById('temp').value.split(' - ')[0] + ' - ' + client2.responseText + ' %';
+                    console.log(client2.responseText);
                 }
             }
         }
         
-        client.send();
+        client2.send();
     }
 
 </script>
