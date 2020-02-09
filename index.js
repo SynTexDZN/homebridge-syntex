@@ -157,6 +157,8 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
                                     
+                                    const { exec } = require("child_process");
+                                    
                                     exec("sudo npm view homebridge-syntex version", (error, stdout, stderr) => {
                                         log('Out', stdout);
                                         log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
