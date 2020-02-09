@@ -160,17 +160,18 @@ SynTexPlatform.prototype = {
                                     const { exec } = require("child_process");
                                     
                                     exec("sudo npm view homebridge-syntex version", (error, stdout, stderr) => {
+                                        
                                         log('Out', stdout);
-                                        log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+
+                                        var obj = {
+                                            ip: address,
+                                            version: pjson.version,
+                                            newest: stdout
+                                        };
+
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
+                                        response.end();
                                     });
-
-                                    var obj = {
-                                        ip: address,
-                                        version: pjson.version
-                                    };
-
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
                                 }
                                 else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
                                 {
