@@ -375,7 +375,10 @@ async function setValues(values)
             {
                 for(const i in values)
                 {
-                    obj[i] = values[i];
+                    if(i != 'mac')
+                    {
+                        obj[i] = values[i];
+                    }
                 }                
                 
                 storage.add(obj, (err) => {
