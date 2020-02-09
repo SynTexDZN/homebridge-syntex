@@ -88,6 +88,46 @@ SynTexPlatform.prototype = {
                     });
                 }
             }
+            else if(urlPath == '/restart')
+            {
+                const { exec } = require("child_process");
+
+                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+
+                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+
+                    if(!error)
+                    {
+                        response.write('Success');
+                    }
+                    else
+                    {
+                        response.write('Error');
+                    }
+
+                    response.end();
+                });
+            }
+            else if(urlPath == '/update')
+            {
+                const { exec } = require("child_process");
+
+                exec("sudo npm install homebridge-syntex@latest -g", (error, stdout, stderr) => {
+
+                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird aktualisiert ..");
+
+                    if(!error)
+                    {
+                        response.write('Success');
+                    }
+                    else
+                    {
+                        response.write('Error');
+                    }
+
+                    response.end();
+                });
+            }
             else if(urlPath == '/ping')
             {
                 response.write("");
@@ -216,46 +256,6 @@ SynTexPlatform.prototype = {
                                         });
                                         
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/restart'))
-                                {
-                                    const { exec } = require("child_process");
-                                    
-                                    exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-
-                                        log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
-                                        
-                                        if(!error)
-                                        {
-                                            response.write('Success');
-                                        }
-                                        else
-                                        {
-                                            response.write('Error');
-                                        }
-                                        
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/update'))
-                                {
-                                    const { exec } = require("child_process");
-                                    
-                                    exec("sudo npm install homebridge-syntex@latest -g", (error, stdout, stderr) => {
-
-                                        log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird aktualisiert ..");
-                                        
-                                        if(!error)
-                                        {
-                                            response.write('Success');
-                                        }
-                                        else
-                                        {
-                                            response.write('Error');
-                                        }
-                                        
                                         response.end();
                                     });
                                 }
