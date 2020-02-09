@@ -146,7 +146,7 @@ async function checkName(name)
     });
 }
 
-async function initDevice(mac, ip, name, type, version, refresh)
+async function initDevice(mac, ip, name, type, version, interval)
 {
     return new Promise(resolve => {
         
@@ -155,7 +155,7 @@ async function initDevice(mac, ip, name, type, version, refresh)
             if(res)
             {
                 var dbName = await getValue(mac, 'name');
-                var dbInterval = await getValue(mac, 'refresh');
+                var dbInterval = await getValue(mac, 'interval');
                 var dbLED = await getValue(mac, 'led');
                 var dbSceneControl = await getValue(mac, 'scenecontrol');
                 var dbIP = await getValue(mac, 'ip');
@@ -185,7 +185,7 @@ async function initDevice(mac, ip, name, type, version, refresh)
                             name: name,
                             type: type,
                             version: version,
-                            refresh: refresh,
+                            interval: interval,
                             led: 1,
                             scenecontrol: 0
                         };
@@ -245,7 +245,7 @@ async function initDevice(mac, ip, name, type, version, refresh)
                                             {
                                                 log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                                resolve(['Init', '{"name": "' + name + '", "interval": "' + refresh + '", "led": "1", "scenecontrol": "0"}']);
+                                                resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "scenecontrol": "0"}']);
                                             }
                                         });    
                                     }
