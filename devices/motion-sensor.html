@@ -53,7 +53,7 @@
     document.getElementsByClassName('main')[0].children[1].innerHTML = '<b>IP: </b>' + device.ip;
     document.getElementsByClassName('main')[0].children[2].innerHTML = '<b>Typ: </b>' + device.type;
     document.getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + device.version;
-    document.getElementsByClassName('main')[0].children[4].innerHTML = '<b>Delay: </b>' + (device.refresh / 1000 + 1.5) + ' sek';
+    document.getElementsByClassName('main')[0].children[4].innerHTML = '<b>Delay: </b>' + (device.interval / 1000 + 1.5) + ' sek';
     document.getElementsByClassName('main')[0].children[5].innerHTML = '<b>LED: </b>' + device.led;
     
     document.getElementsByClassName('main')[1].setAttribute('type', device.type);
@@ -106,7 +106,7 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
     document.getElementById('settings').getElementsByTagName('input')[0].value = device.name;
-    document.getElementById('settings').getElementsByTagName('input')[1].value = device.refresh / 1000 + 1.5;
+    document.getElementById('settings').getElementsByTagName('input')[1].value = device.interval / 1000 + 1.5;
     document.getElementById('settings').getElementsByTagName('input')[2].value = device.led;
     
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
