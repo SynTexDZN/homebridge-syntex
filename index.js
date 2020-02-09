@@ -160,17 +160,11 @@ SynTexPlatform.prototype = {
                                     const { exec } = require("child_process");
                                     
                                     exec("sudo npm view homebridge-syntex version", (error, stdout, stderr) => {
-                                        
-                                        log('Out', stdout.replace(/\s/g, ''));
-                                        log('Out', stdout.replace(/\n/g, ''));
-                                        log('Out', stdout.replace(/\r/g, ''));
 
                                         var obj = {
                                             ip: address,
                                             version: pjson.version,
-                                            newest1: stdout.replace(/\s/g, ''),
-                                            newest2: stdout.replace(/\n/g, ''),
-                                            newest3: stdout.replace(/\r/g, '')
+                                            newest: stdout.replace(/\s/g, '')
                                         };
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
