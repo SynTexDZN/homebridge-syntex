@@ -8,9 +8,32 @@
                 <input style="margin-right: 20px;" type="button" value="Geräte" onclick="window.location.href='http://syntex.local/'">
                 <input type="button" value="Bridge" onclick="window.location.href='http://syntex.local/bridge'" disabled>
             </div>
-            <p><b>IP: </b><%ip%></p>
-            <p><b>Version: </b><%version%></p>
-            <p><b>Neuste Version: </b><%newest%></p>
+            <div id="infos">
+                <p>Laden ..</p>
+                <p>Laden ..</p>
+                <p>Laden ..</p>
+            </div>
         </div>
     </body>
 </html>
+<script>
+
+    var ip = '<%ip%>';
+    var version = '<%version%>';
+    var newest = '<%newest%>';
+    
+    document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
+    document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
+    document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
+    
+    if(newest != version)
+    {
+        var updateBTN = document.createElement('input');
+        
+        updateBTN.setAttribute('type', 'button');
+        updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
+        
+        document.getElementsByClassName('main')[0].appendChild(updateBTN);
+    }
+
+</script>
