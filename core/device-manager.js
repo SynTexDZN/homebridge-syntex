@@ -365,6 +365,37 @@ async function setValue(mac, param, value)
     });
 }
 
+async function setValues(values)
+{
+    return new Promise(resolve => {
+        
+        storage.load(values.mac, (err, obj) => {  
+
+            if(obj && !err)
+            {
+                for(const i in values)
+                {
+                    obj[i] = values[i];
+                }                
+                
+                storage.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        log('\x1b[31m%s\x1b[0m', "[ERROR]", mac + ".json konnte nicht aktualisiert werden!", err);
+
+                        resolve(false);
+                    }
+                    else
+                    {
+                        resolve(true);
+                    }
+                });
+            }
+        });
+    });
+}
+
 function SETUP(configPath, slog, storagePath)
 {
     config = store(configPath);
@@ -379,6 +410,7 @@ module.exports = {
     getDevice,
     getDevices,
     setValue,
+    setValues,
     exists,
     initDevice,
     removeDevice,
