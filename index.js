@@ -168,7 +168,9 @@ SynTexPlatform.prototype = {
                                         var obj = {
                                             ip: address,
                                             version: pjson.version,
-                                            newest: stdout
+                                            newest1: stdout.replace(/\s/g, ''),
+                                            newest2: stdout.replace(/\n/g, ''),
+                                            newest3: stdout.replace(/\r/g, '')
                                         };
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
