@@ -1,9 +1,9 @@
 <html>
-    <title>Temperatur Sensor</title>
+    <title>Switch</title>
     <body>
         <div id="infos">
             <div class="control-container" style="">
-                <input id="light" class="control-panel" style="" type="button" value="LADEN .." id="switch">
+                <input id="switch" class="control-panel" style="" type="button" value="LADEN .." id="switch" onclick="switchRelais(this)">
             </div>
             <h1>Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
@@ -11,8 +11,7 @@
                 <p><b>IP: </b>Laden ..</p>
                 <p><b>Typ: </b>Laden ..</p>
                 <p><b>Version: </b>Laden ..</p>
-                <p><b>Interval: </b>Laden ..</p>
-                <p><b>Szenenkontrolle: </b>Laden ..</p>
+                <p><b>LED: </b>Laden ..</p>
             </div>
             <div class="main">
                 <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
@@ -27,8 +26,7 @@
             <p>Laden ..</p>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
                 <p>Name: <input name="name" type="text" style="max-width: 325px"></p>
-                <p>Interval: <input name="interval" type="text" style="max-width: 150px"></p>
-                <p>Szenenkontrolle: <input name="scenecontrol" type="text" style="max-width: 150px"></p>
+                <p>LED: <input name="led" type="text" style="max-width: 150px"></p>
             </div>
             <div class="main" style="">
                 <input id="reset-btn" style="margin-bottom: 20px;" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
@@ -53,8 +51,7 @@
     document.getElementsByClassName('main')[0].children[1].innerHTML = '<b>IP: </b>' + device.ip;
     document.getElementsByClassName('main')[0].children[2].innerHTML = '<b>Typ: </b>' + device.type;
     document.getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + device.version;
-    document.getElementsByClassName('main')[0].children[4].innerHTML = '<b>Interval: </b>' + device.interval / 1000 + ' sek';
-    document.getElementsByClassName('main')[0].children[5].innerHTML = '<b>Szenenkontrolle: </b>' + device.scenecontrol;
+    document.getElementsByClassName('main')[0].children[5].innerHTML = '<b>LED: </b>' + device.led;
     
     document.getElementsByClassName('main')[1].setAttribute('type', device.type);
     document.getElementsByClassName('main')[1].setAttribute('version', device.version);
@@ -71,11 +68,13 @@
         document.getElementById('settings').setAttribute('style', 'display: none');
     }
     
+    var temp = null;
+    
     function fetchState()
     {        
         var client = new XMLHttpRequest();
         
-        client.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id + '&type=light');
+        client.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id);
 
         client.onreadystatechange = function()
         {
@@ -83,41 +82,56 @@
             {  
                 if(client.status === 200)
                 {
-                    document.getElementById('light').value = Math.round(client.responseText) + ' LUX' + ' - ' + document.getElementById('light').value.split(' - ')[1];
+                    if(client.responseText != tmp)
+                    {
+                        if(client.responseText == true)
+                        {
+                            document.getElementById('switch').value = 'AN';
+                            document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                        }
+                        else if(client.responseText == false)
+                        {
+                            document.getElementById('switch').value = 'AUS';
+                            document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                        }
+
+                        tmp = client.responseText;
+                    }
                     console.log(client.responseText);
                 }
             }
         }
         
         client.send();
+    }
+    
+    function switchRelais(btn)
+    {
+        var client = new XMLHttpRequest();
         
-        var client2 = new XMLHttpRequest();
-        
-        client2.open('GET', 'http://syntex.local:1710/devices?mac=' + device.id + '&type=rain');
+        client.open('GET', 'http://' + device.ip + '/switch');
 
-        client2.onreadystatechange = function()
+        client.onreadystatechange = function()
         {
-            if(client2.readyState === 4)
+            if(client.readyState === 4)
             {  
-                if(client2.status === 200)
+                if(client.status === 200)
                 {
-                    if(client2.responseText == false)
+                    if(client.responseText == true)
                     {
-                        document.getElementById('light').value = document.getElementById('light').value.split(' - ')[0] + ' - TROCKEN';
-                        document.getElementById('light').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
+                        document.getElementById('switch').value = 'AN';
+                        document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
                     }
-                    else if(client2.responseText == true)
+                    else if(client.responseText == false)
                     {
-                        document.getElementById('light').value = document.getElementById('light').value.split(' - ')[0] + ' - REGEN';
-                        document.getElementById('light').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
+                        document.getElementById('switch').value = 'AUS';
+                        document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
                     }
-                    
-                    console.log(client2.responseText);
                 }
             }
         }
         
-        client2.send();
+        client.send();
     }
 
 </script>
@@ -125,8 +139,7 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
     document.getElementById('settings').getElementsByTagName('input')[0].value = device.name;
-    document.getElementById('settings').getElementsByTagName('input')[1].value = device.interval / 1000;
-    document.getElementById('settings').getElementsByTagName('input')[2].value = device.scenecontrol;
+    document.getElementById('settings').getElementsByTagName('input')[2].value = device.led;
     
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
