@@ -180,11 +180,11 @@
                         {
                             if(client.responseText == 'relais' || client.responseText == 'switch')
                             {
-                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '.php?mac=' + mac;
+                                window.location.href = 'http://syntex.local:1711/devices/' + client.responseText + '?mac=' + mac;
                             }
                             else
                             {
-                                window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor.php?mac=' + mac;
+                                window.location.href = 'http://syntex.local:1711/devices/' + client.responseText + '-sensor?mac=' + mac;
                             }
                         }, 10000);                    
                     }

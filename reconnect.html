@@ -232,14 +232,7 @@
 
                     setTimeout(function()
                     {
-                        if(client.responseText == 'relais' || client.responseText == 'switch')
-                        {
-                            window.location.href = 'http://syntex.local/devices/' + client.responseText + '.php?mac=' + mac;
-                        }
-                        else
-                        {
-                            window.location.href = 'http://syntex.local/devices/' + client.responseText + '-sensor.php?mac=' + mac;
-                        }
+                        window.location.href = 'http://syntex.local:1711/';
                     }, 10000);             
                 }
             }
