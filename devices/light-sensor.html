@@ -101,12 +101,12 @@
             {  
                 if(client2.status === 200)
                 {
-                    if(client2.responseText == false)
+                    if(client2.responseText == 'false')
                     {
                         document.getElementById('light').value = document.getElementById('light').value.split(' - ')[0] + ' - TROCKEN';
                         document.getElementById('light').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
                     }
-                    else if(client2.responseText == true)
+                    else if(client2.responseText == 'true')
                     {
                         document.getElementById('light').value = document.getElementById('light').value.split(' - ')[0] + ' - REGEN';
                         document.getElementById('light').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
