@@ -161,7 +161,9 @@ SynTexPlatform.prototype = {
                                     
                                     exec("sudo npm view homebridge-syntex version", (error, stdout, stderr) => {
                                         
-                                        log('Out', stdout);
+                                        log('Out', stdout.replace(/\s/g, ''));
+                                        log('Out', stdout.replace(/\n/g, ''));
+                                        log('Out', stdout.replace(/\r/g, ''));
 
                                         var obj = {
                                             ip: address,
