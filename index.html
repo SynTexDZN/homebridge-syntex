@@ -119,7 +119,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
-                            }, 1);
+                            }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
                         }
@@ -142,7 +142,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
-                            }, 1);
+                            }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
@@ -222,7 +222,7 @@
 
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', device.getAttribute('id') + '-offline');
-                            overlay.setAttribute('style', 'opacity: 0; margin-right: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
+                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px; position: fixed; left: ' + document.getElementById(device.getAttribute('id')).offsetLeft + 'px; top: ' + document.getElementById(device.getAttribute('id')).offsetTop + 'px');
                             overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( Offline )');
 
                             document.getElementById(device.getAttribute('id')).parentElement.insertBefore(overlay, document.getElementById(device.getAttribute('id')));
@@ -230,7 +230,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
-                            }, 1);
+                            }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
@@ -367,7 +367,7 @@
                                 setTimeout(function()
                                 {
                                     overlay.style.opacity = 1;
-                                }, 1);
+                                }, 10);
                                 
                                 overlay.style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
                             }
