@@ -158,9 +158,9 @@
                 {  
                     if(client.status === 200)
                     {  
-                        if(document.getElementById(device.getAttribute('id') + '-offline') == null)
+                        if(document.getElementById(device.getAttribute('id') + '-offline') != null)
                         {
-                            document.getElementById(device.getAttribute('id')).parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                            device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
                         }
                     }
                     else
