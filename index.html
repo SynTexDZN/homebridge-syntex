@@ -62,7 +62,7 @@
         button.setAttribute('version', devices[i].version);
         button.setAttribute('id', devices[i].ip);
         button.setAttribute('class', 'device');
-        button.setAttribute('style', 'text-align: left; padding-left: 15px');
+        button.setAttribute('style', 'text-align: left; padding-left: 15px; position: relative');
         
         var url = 'http://' + devices[i].ip;
         
@@ -158,20 +158,33 @@
                 {  
                     if(client.status === 200)
                     {  
-                        document.getElementById(device.getAttribute('id')).style.background = '';
+                        document.getElementById(device.getAttribute('id')).parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
                     }
                     else
                     {  
                         if(document.getElementById(device.getAttribute('id')).style.background == 'transparent' || document.getElementById(device.getAttribute('id')).style.background == "")
                         {
-                            //document.getElementById(device.getAttribute('id')).style.borderWidth = 0;
-                            document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
+                            var overlay = document.createElement('input');
+
+                            overlay.setAttribute('type', 'button');
+                            overlay.setAttribute('id', device.getAttribute('id') + '-offline');
+                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px;');
+                            overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( Offline )');
+
+                            document.getElementById(device.getAttribute('id')).parentElement.appendChild(overlay);
+
+                            setTimeout(function()
+                            {
+                                overlay.style.opacity = 1;
+                            }, 1);
+                            
+                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
                     }  
                     
                     setTimeout(function()
                     {
-                        pingESP(device);
+                        pingESP(clone);
                     }, 10000);
                 }  
             }
