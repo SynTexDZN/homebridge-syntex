@@ -34,10 +34,10 @@ input
 {
     height: 50px;
     width: 100%!important;
-    background: transparent;
-    color: rgb(245, 245, 255);
+    background: rgb(245, 245, 255);
+    color: rgb(20, 20, 30);
     outline: none;
-    border: 3px solid rgb(245, 245, 255);
+    border: 0px solid rgb(245, 245, 255);
     border-radius: 16px;
     font-size: 16px;
     transition: .2s ease-out;
@@ -47,7 +47,7 @@ input
     box-sizing: border-box;
 }
 
-input:hover:not(.control-panel)
+input:hover:not(.control-panel):not(::disabled)
 {
     background: rgb(245, 245, 255)!important;
     color: rgb(20, 20, 30);
@@ -66,8 +66,9 @@ input[type='text'], input[type='password']
 
 input[type='button']:disabled
 {
-    background: rgb(245, 245, 255);
-    color: rgb(20, 20, 30);
+    background: transparent;
+    border: 4px solid rgb(245, 245, 255);
+    color: rgb(245, 245, 255);
     opacity: 1!important;
 }
 
@@ -153,8 +154,9 @@ h2
     margin-bottom: 20px;
     border-width: 3px;
     /*font-style: normal;*/
-    background: rgb(245, 245, 255);
-    color: rgb(20, 20, 30);
+    /*background: rgb(245, 245, 255);*/
+    color: rgb(245, 245, 255);
+    border: 4px solid rgb(245, 245, 255);
     border-radius: 50px;
     padding: 8.5px 20px;
     padding-right: 10px;
@@ -217,8 +219,9 @@ h2
 
     input
     {
-        color: rgb(45, 45, 55);
-        border: 3px solid rgb(45, 45, 55);
+        color: rgb(245, 245, 255);
+        /*border: 3px solid rgb(45, 45, 55);*/
+        background: rgb(45, 45, 55);
     }
 
     input:hover
@@ -252,8 +255,8 @@ h2
     
     input[type='button']:disabled
     {
-        background: rgb(45, 45, 55);
-        color: rgb(245, 245, 255);
+        color: rgb(45, 45, 55);
+        border-color: rgb(45, 45, 55);
     }
 }
 
