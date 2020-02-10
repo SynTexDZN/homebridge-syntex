@@ -161,8 +161,22 @@
                     {  
                         if(document.getElementById(device.getAttribute('id')).style.background == 'rgb(245, 245, 255)' || document.getElementById(device.getAttribute('id')).style.background == "")
                         {
-                           //document.getElementById(device.getAttribute('id')).style.background = 'hsl(350, 85%, 55%)';
-                           document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
+                            document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
+                            
+                            setTimeout(function()
+                            {
+                                document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
+                            }, 10000);
+
+                            setTimeout(function()
+                            {
+                                document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
+                            }, 20000);
+
+                            setTimeout(function()
+                            {
+                                document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(350, 85%, 55%) 0%, hsl(360, 95%, 60%) 100%)';
+                            }, 30000);
                         }
                     }  
                     
