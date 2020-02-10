@@ -105,23 +105,56 @@
                 {  
                     if(client.responseText != version)
                     {
-                        //document.getElementById(ip).style.borderWidth = 0;
-                        document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
-                        document.getElementById(ip).value = 'Update Erfolgreich!';
-                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.children[1]);
+                        if(document.getElementById(ip + '-update-result') == null)
+                        {
+                            var overlay = document.createElement('input');
+
+                            overlay.setAttribute('type', 'button');
+                            overlay.setAttribute('id', ip + '-update-result');
+                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px; border-width: 0');
+                            overlay.setAttribute('value', 'Update Erfolgreich!');
+
+                            document.getElementById(ip).parentElement.appendChild(overlay);
+
+                            setTimeout(function()
+                            {
+                                overlay.style.opacity = 1;
+                            }, 1);
+                            
+                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
+                        }
+
+                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update'));
                     }
                     else
                     {
-                        //document.getElementById(ip).style.borderWidth = 0;
-                        document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
-                        document.getElementById(ip).value = 'Update Fehlgeschlagen!';
+                        if(document.getElementById(ip + '-update-result') == null)
+                        {
+                            var overlay = document.createElement('input');
+
+                            overlay.setAttribute('type', 'button');
+                            overlay.setAttribute('id', ip + '-update-result');
+                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px; border-width: 0');
+                            overlay.setAttribute('value', 'Update Fehlgeschlagen!');
+
+                            document.getElementById(ip).parentElement.appendChild(overlay);
+
+                            setTimeout(function()
+                            {
+                                overlay.style.opacity = 1;
+                            }, 1);
+                            
+                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
+                        }
                     }
 
                     setTimeout(function()
                     {
-                        //document.getElementById(ip).style.borderWidth = 3;
-                        document.getElementById(ip).style.background = '';
-                        document.getElementById(ip).value = name;
+                        if(document.getElementById(ip + '-update-result') != null)
+                        {
+                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-update-result'));
+                        }
+
                         updatingDevices.splice(updatingDevices.indexOf(ip), 1);
                     }, 5000);
                 }
@@ -160,7 +193,12 @@
                     {  
                         if(document.getElementById(device.getAttribute('id') + '-offline') != null)
                         {
-                            device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                            document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 1;
+
+                            setTimeout(function()
+                            {
+                                device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                            }, 300);
                         }
                     }
                     else
@@ -171,7 +209,7 @@
 
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', device.getAttribute('id') + '-offline');
-                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px;');
+                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px; border-width: 0');
                             overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( Offline )');
 
                             document.getElementById(device.getAttribute('id')).parentElement.appendChild(overlay);
@@ -302,8 +340,24 @@
                         {
                             updatingDevices.push(ip);
 
-                            //document.getElementById(ip).style.borderWidth = 0;
-                            document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
+                            if(document.getElementById(ip + '-updating') == null)
+                            {
+                                var overlay = document.createElement('input');
+
+                                overlay.setAttribute('type', 'button');
+                                overlay.setAttribute('id', ip + '-updating');
+                                overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; padding-left: 15px; border-width: 0');
+                                overlay.setAttribute('value', document.getElementById(ip).getAttribute('name') + ' ( Update wird installiert .. )');
+
+                                document.getElementById(ip).parentElement.appendChild(overlay);
+
+                                setTimeout(function()
+                                {
+                                    overlay.style.opacity = 1;
+                                }, 1);
+                                
+                                overlay.style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
+                            }
                         }
                     }
                 }  
