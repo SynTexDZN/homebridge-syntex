@@ -111,10 +111,10 @@
 
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', ip + '-update-result');
-                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
+                            overlay.setAttribute('style', 'opacity: 0; margin-right: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
                             overlay.setAttribute('value', 'Update Erfolgreich!');
 
-                            document.getElementById(ip).parentElement.appendChild(overlay);
+                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
                             setTimeout(function()
                             {
@@ -134,10 +134,10 @@
 
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', ip + '-update-result');
-                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
+                            overlay.setAttribute('style', 'opacity: 0; margin-right: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
                             overlay.setAttribute('value', 'Update Fehlgeschlagen!');
 
-                            document.getElementById(ip).parentElement.appendChild(overlay);
+                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
                             setTimeout(function()
                             {
@@ -214,10 +214,10 @@
 
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', device.getAttribute('id') + '-offline');
-                            overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
+                            overlay.setAttribute('style', 'opacity: 0; margin-right: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
                             overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( Offline )');
 
-                            document.getElementById(device.getAttribute('id')).parentElement.appendChild(overlay);
+                            document.getElementById(device.getAttribute('id')).parentElement.insertBefore(overlay, document.getElementById(device.getAttribute('id')));
 
                             setTimeout(function()
                             {
@@ -351,10 +351,10 @@
 
                                 overlay.setAttribute('type', 'button');
                                 overlay.setAttribute('id', ip + '-updating');
-                                overlay.setAttribute('style', 'opacity: 0; margin-left: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
+                                overlay.setAttribute('style', 'opacity: 0; margin-right: -100%; z-index: 1; text-align: left; border-width: 0; padding: 4px 9px 4px 18px');
                                 overlay.setAttribute('value', document.getElementById(ip).getAttribute('name') + ' ( Update wird installiert .. )');
 
-                                document.getElementById(ip).parentElement.appendChild(overlay);
+                                document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
                                 setTimeout(function()
                                 {
