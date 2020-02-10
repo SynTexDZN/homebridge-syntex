@@ -109,7 +109,19 @@ SynTexPlatform.prototype = {
 
                 exec("sudo npm install homebridge-syntex@latest -g", (error, stdout, stderr) => {
 
-                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird aktualisiert ..");
+                    if(error || stderr)
+                    {
+                        log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge konnte nicht aktualisiert werden!");
+                    }
+                    else
+                    {
+                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Die Homebridge wurde aktualisiert!");
+                        
+                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+
+                            log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                        });
+                    }
                 });
             }
             else if(urlPath == '/ping')

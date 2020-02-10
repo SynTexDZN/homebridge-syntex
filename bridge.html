@@ -27,7 +27,7 @@
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
     document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
     
-    if(newest != version)
+    if(newest > version)
     {
         var updateBTN = document.createElement('input');
         
@@ -51,7 +51,7 @@
             {  
                 if(client.status === 200)
                 {  
-                    console.log(client.responseText);
+                    alert('Das Update wurde angestoßen ..');
                 }
             }  
         }
@@ -86,43 +86,14 @@
                     {
                         setTimeout(function()
                         {
-                            pingBridge();
-                        }, 5000);
+                            document.getElementById('restart-btn').value = 'Bridge Neustarten';
+                        }, 10000);
                     }
                 }
             }
             
             client.send();
         }
-    }
-    
-    function pingBridge()
-    {
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', 'http://syntex.local/ping');
-
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
-            {  
-                if(client.status === 200)
-                {
-                    document.getElementById('restart-btn').value = 'Neustart Erfolgreich!';
-
-                    setTimeout(function()
-                    {
-                        document.getElementById('restart-btn').value = 'Bridge Neustarten';
-                    }, 2000);
-                }
-                else
-                {
-                    pingBridge();
-                }
-            }
-        }
-
-        client.send();
     }
 
 </script>
