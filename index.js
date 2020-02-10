@@ -96,7 +96,7 @@ SynTexPlatform.prototype = {
 
                     log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
                     
-                    if(error || stderr)
+                    if(error || stderr.includes('ERR!'))
                     {
                         log('ERROR', error);
                         log('STDERROR', stderr);
@@ -117,7 +117,7 @@ SynTexPlatform.prototype = {
                 
                 exec("sudo npm install homebridge-syntex@latest -g", (error, stdout, stderr) => {
 
-                    if(error || stderr)
+                    if(error || stderr.includes('ERR!'))
                     {
                         log('ERROR', error);
                         log('STDERROR', stderr);
