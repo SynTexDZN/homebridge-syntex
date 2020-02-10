@@ -158,7 +158,10 @@
                 {  
                     if(client.status === 200)
                     {  
-                        document.getElementById(device.getAttribute('id')).parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                        if(document.getElementById(device.getAttribute('id') + '-offline') == null)
+                        {
+                            document.getElementById(device.getAttribute('id')).parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                        }
                     }
                     else
                     {  
