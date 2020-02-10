@@ -35,12 +35,16 @@
         updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
         updateBTN.setAttribute('onclick', 'updateBridge()');
         updateBTN.setAttribute('style', 'margin-top: 20px');
+        updateBTN.setAttribute('id', 'update-btn');
         
         document.getElementsByClassName('main')[0].appendChild(updateBTN);
     }
     
     function updateBridge()
     {
+        document.getElementById('update-btn').style.background = 'hsl(270, 85%, 55%)';
+        document.getElementById('update-btn').value = 'Update Wird Installiert ..';
+        
         var client = new XMLHttpRequest();
         
         client.open('GET', 'http://syntex.local/update');
@@ -49,9 +53,26 @@
         {
             if(client.readyState === 4)
             {  
-                if(client.status === 200)
-                {  
-                    alert('Das Update wurde angestoßen ..');
+                if(client.status !== 200 || client.responseText == 'Error')
+                {
+                    document.getElementById('update-btn').style.background = 'hsl(350, 85%, 55%)';
+                    document.getElementById('update-btn').value = 'Update Fehlgeschlagen!';
+                    
+                    setTimeout(function()
+                    {
+                        document.getElementById('update-btn').style.background = 'transparent';
+                        document.getElementById('update-btn').value = 'Bridge Aktualisieren ( v' + newest + ' )';
+                    }, 5000);
+                }
+                else if(client.responseText == 'Success')
+                {
+                    document.getElementById('update-btn').style.background = 'hsl(150, 75%, 45%)';
+                    document.getElementById('update-btn').value = 'Update Erfolgreich!';
+                    
+                    setTimeout(function()
+                    {
+                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
+                    }, 5000);
                 }
             }  
         }
@@ -73,7 +94,7 @@
             {
                 if(client.readyState === 4)
                 {  
-                    if(client.status !== 200)
+                    if(client.status !== 200 || client.responseText == 'Error')
                     {
                         document.getElementById('restart-btn').value = 'Neustart Fehlgeschlagen!';
                     
@@ -82,7 +103,7 @@
                             document.getElementById('restart-btn').value = 'Bridge Neustarten';
                         }, 2000);
                     }
-                    else
+                    else if(client.responseText == 'Success')
                     {
                         setTimeout(function()
                         {
