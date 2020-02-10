@@ -162,7 +162,7 @@
                     }
                     else
                     {  
-                        if(document.getElementById(device.getAttribute('id')).style.background == 'transparent' || document.getElementById(device.getAttribute('id')).style.background == "")
+                        if(document.getElementById(device.getAttribute('id') + '-offline') == null)
                         {
                             var overlay = document.createElement('input');
 
@@ -184,7 +184,7 @@
                     
                     setTimeout(function()
                     {
-                        pingESP(overlay);
+                        pingESP(device);
                     }, 10000);
                 }  
             }
