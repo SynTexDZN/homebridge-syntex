@@ -105,21 +105,21 @@
                 {  
                     if(client.responseText != version)
                     {
-                        document.getElementById(ip).style.borderWidth = 0;
+                        //document.getElementById(ip).style.borderWidth = 0;
                         document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
                         document.getElementById(ip).value = 'Update Erfolgreich!';
                         document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.children[1]);
                     }
                     else
                     {
-                        document.getElementById(ip).style.borderWidth = 0;
+                        //document.getElementById(ip).style.borderWidth = 0;
                         document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         document.getElementById(ip).value = 'Update Fehlgeschlagen!';
                     }
 
                     setTimeout(function()
                     {
-                        document.getElementById(ip).style.borderWidth = 3;
+                        //document.getElementById(ip).style.borderWidth = 3;
                         document.getElementById(ip).style.background = 'transparent';
                         document.getElementById(ip).value = name;
                         updatingDevices.splice(updatingDevices.indexOf(ip), 1);
@@ -164,7 +164,7 @@
                     {  
                         if(document.getElementById(device.getAttribute('id')).style.background == 'transparent' || document.getElementById(device.getAttribute('id')).style.background == "")
                         {
-                            document.getElementById(device.getAttribute('id')).style.borderWidth = 0;
+                            //document.getElementById(device.getAttribute('id')).style.borderWidth = 0;
                             document.getElementById(device.getAttribute('id')).style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
                     }  
@@ -286,7 +286,7 @@
                         {
                             updatingDevices.push(ip);
 
-                            document.getElementById(ip).style.borderWidth = 0;
+                            //document.getElementById(ip).style.borderWidth = 0;
                             document.getElementById(ip).style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
                         }
                     }
