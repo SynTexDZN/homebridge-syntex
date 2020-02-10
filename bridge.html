@@ -27,7 +27,7 @@
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
     document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
     
-    if(newest > version)
+    if(newest > version || (version.includes('-') && newest >= version.split('-')[0]))
     {
         var updateBTN = document.createElement('input');
         

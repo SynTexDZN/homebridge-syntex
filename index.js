@@ -98,8 +98,6 @@ SynTexPlatform.prototype = {
                     
                     if(error || stderr.includes('ERR!'))
                     {
-                        log('ERROR', error);
-                        log('STDERROR', stderr);
                         response.write('Error');
                     }
                     else
@@ -119,8 +117,6 @@ SynTexPlatform.prototype = {
 
                     if(error || stderr.includes('ERR!'))
                     {
-                        log('ERROR', error);
-                        log('STDERROR', stderr);
                         response.write('Error');
                         
                         log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge konnte nicht aktualisiert werden!");
