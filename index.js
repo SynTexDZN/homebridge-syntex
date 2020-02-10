@@ -92,21 +92,12 @@ SynTexPlatform.prototype = {
             {
                 const { exec } = require("child_process");
                 
+                response.write('Success');
+                response.end();
+                
                 exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
                     log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
-                    
-                    if(error || stderr.includes('ERR!'))
-                    {
-                        response.write('Error');
-                    }
-                    else
-                    {
-                        response.write('Success');
-                    }
-                    
-                    response.end();
-                    
                 });
             }
             else if(urlPath == '/update')
