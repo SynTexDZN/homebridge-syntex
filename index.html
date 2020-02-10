@@ -119,6 +119,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
+                                document.getElementById(ip).style.opacity = 0;
                             }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
@@ -142,6 +143,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
+                                document.getElementById(ip).style.opacity = 0;
                             }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
@@ -161,6 +163,7 @@
                         if(document.getElementById(ip + '-update-result') != null)
                         {
                             document.getElementById(ip + '-update-result').style.opacity = 0;
+                            document.getElementById(ip).style.opacity = 1;
 
                             setTimeout(function()
                             {
@@ -207,6 +210,7 @@
                         if(document.getElementById(device.getAttribute('id') + '-offline') != null)
                         {
                             document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 0;
+                            document.getElementById(device.getAttribute('id')).style.opacity = 1;
 
                             setTimeout(function()
                             {
@@ -230,6 +234,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
+                                document.getElementById(device.getAttribute('id')).style.opacity = 0;
                             }, 10);
                             
                             overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
@@ -367,6 +372,7 @@
                                 setTimeout(function()
                                 {
                                     overlay.style.opacity = 1;
+                                    document.getElementById(ip).style.opacity = 0;
                                 }, 10);
                                 
                                 overlay.style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
