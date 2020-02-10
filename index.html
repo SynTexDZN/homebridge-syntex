@@ -150,6 +150,14 @@
 
                     setTimeout(function()
                     {
+                        if(document.getElementById(ip + '-updating') != null)
+                        {
+                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-updating'));
+                        }
+                    }, 300);
+
+                    setTimeout(function()
+                    {
                         if(document.getElementById(ip + '-update-result') != null)
                         {
                             document.getElementById(ip + '-update-result').style.opacity = 0;
