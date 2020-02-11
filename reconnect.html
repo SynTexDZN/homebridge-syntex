@@ -87,11 +87,15 @@ function searchLoop()
             if(countdown.value.split('( ')[1].split(' )')[0] > 0)
             {
                 countdown.value = 'Zum Dashboard ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
-                redirectCountdown();
-            }
-            else
-            {
-                window.location.href = '/';
+
+                if(countdown.value.split('( ')[1].split(' )')[0] > 0)
+                {
+                    redirectCountdown();
+                }
+                else
+                {
+                    window.location.href = '/';
+                }
             }
         }, 1000);
     }
