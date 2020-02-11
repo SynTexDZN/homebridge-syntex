@@ -4,9 +4,9 @@
     
     function resetDevice()
     {
-        if(document.getElementById('reset-btn').value == 'Gerät Zurücksetzen' || document.getElementById('reset-btn').value == 'Löschen Bestätigen?')
+        if((document.getElementById('reset-btn').value == 'Gerät Zurücksetzen' || document.getElementById('reset-btn').value == 'Löschen Bestätigen?') && document.getElementById('reset-result') == null)
         {
-           if(reset)
+            if(reset)
             {
                 document.getElementById('reset-btn').value = 'Zurücksetzen ..';
                 
@@ -24,12 +24,36 @@
                         {
                             console.log(client.responseText);
                         
-                            document.getElementById('reset-btn').value = 'Reset Erfolgreich!';
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'reset-result');
+                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                            rOverlay.setAttribute('value', 'Reset Erfolgreich!');
+                            rOverlay.setAttribute('class', 'gradient-green');
+
+                            document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 1;
+                            }, 10);
+                        
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 0;
+                                document.getElementById('reset-btn').style.opacity = 1;
+                            }, 5000);
+
+                            setTimeout(function()
+                            {
+                                document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
+                            }, 5300);
 
                             setTimeout(function()
                             {
                                 window.location.href = '/';
-                            }, 2000);
+                            }, 5600);
                         }
                         else
                         {
@@ -57,114 +81,179 @@
     
     function saveConfig()
     {
-        var settings = {
-            mac: device.id
-        };
-        
-        var form = document.getElementById('settings').getElementsByClassName('main')[0];
-        
-        for(var i = 0; i < form.childElementCount; i++)
+        if(document.getElementById('saving') == null && document.getElementById('save-result') == null)
         {
-            if(form.children[i].children[0].getAttribute('name') == 'interval')
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'saving');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Hochladen ..');
+            overlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('save-btn').parentElement.insertBefore(overlay, document.getElementById('save-btn'));
+
+            setTimeout(function()
             {
-                if(device.type == 'temperature')
+                overlay.style.opacity = 1;
+                document.getElementById('save-btn').style.opacity = 0;
+            }, 10);
+
+            var settings = {
+                mac: device.id
+            };
+            
+            var form = document.getElementById('settings').getElementsByClassName('main')[0];
+            
+            for(var i = 0; i < form.childElementCount; i++)
+            {
+                if(form.children[i].children[0].getAttribute('name') == 'interval')
                 {
-                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
-                }
-                else if(device.type == 'motion')
-                {
-                    settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
-                }
-                else if(device.type == 'light')
-                {
-                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                    if(device.type == 'temperature')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                    }
+                    else if(device.type == 'motion')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
+                    }
+                    else if(device.type == 'light')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                    }
+                    else
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                    }
                 }
                 else
                 {
                     settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
                 }
             }
-            else
+            
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+            
+            client.open('POST', '/serverside/save-config');
+
+            client.onreadystatechange = function()
             {
-                settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
-            }
-        }
-        
-        document.getElementById("savebtn").value = "Hochladen ..";
-
-        var client = new XMLHttpRequest();
-
-        client.timeout = 10000;
-        
-        client.open('POST', '/serverside/save-config');
-
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
-            {  
-                if(client.status === 200)
-                {
-                    console.log(client.responseText);
-                    if(client.responseText == 'Success')
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
                     {
-                        var error = '';
-
-                        var client2 = new XMLHttpRequest();
-
-                        client2.timeout = 10000;
-        
-                        client2.open('GET', 'http://' + device.ip + '/loadcfg');
-
-                        client2.onreadystatechange = function()
+                        console.log(client.responseText);
+                        if(client.responseText == 'Success')
                         {
-                            if(client2.readyState === 4)
-                            {  
-                                if(client2.status === 200)
-                                {
-                                    console.log(client2.responseText);
-                                    if(client2.responseText != "Success")
-                                    {
-                                        error = 'true';
-                                    }
-                                    else
-                                    {
-                                        document.getElementById("savebtn").value = "Gespeichert!";
+                            var error = '';
 
-                                        console.log('RESPONSE');
-                                        
-                                        setTimeout(function()
+                            var client2 = new XMLHttpRequest();
+
+                            client2.timeout = 10000;
+            
+                            client2.open('GET', 'http://' + device.ip + '/loadcfg');
+
+                            client2.onreadystatechange = function()
+                            {
+                                if(client2.readyState === 4)
+                                {  
+                                    if(client2.status === 200)
+                                    {
+                                        console.log(client2.responseText);
+                                        if(client2.responseText != "Success")
                                         {
-                                            redirect();
-                                            console.log('REDIRECT');
-                                        }, 1000);
+                                            error = 'true';
+                                        }
+                                        else
+                                        {
+                                            var rOverlay = document.createElement('input');
+
+                                            rOverlay.setAttribute('type', 'button');
+                                            rOverlay.setAttribute('id', 'save-result');
+                                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                            rOverlay.setAttribute('value', 'Gespeichert!');
+                                            rOverlay.setAttribute('class', 'gradient-green');
+
+                                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                            setTimeout(function()
+                                            {
+                                                rOverlay.style.opacity = 1;
+                                            }, 10);
                                         
-                                        error = 'false';
+                                            setTimeout(function()
+                                            {
+                                                rOverlay.style.opacity = 0;
+                                                document.getElementById('save-btn').style.opacity = 1;
+                                            }, 5000);
+
+                                            setTimeout(function()
+                                            {
+                                                document.getElementById('save-btn').parentElement.removeChild(rOverlay);
+                                            }, 5300);
+
+                                            console.log('RESPONSE');
+                                            
+                                            setTimeout(function()
+                                            {
+                                                redirect();
+                                                console.log('REDIRECT');
+                                            }, 1000);
+                                            
+                                            error = 'false';
+                                        }
                                     }
                                 }
-                            }
-                        } 
-                        
-                        client2.send();
-
-                        setTimeout(function()
-                        {
-                            document.getElementById("savebtn").value = "Gespeichert!";
+                            } 
+                            
+                            client2.send();
 
                             setTimeout(function()
                             {
-                                redirect();
-                            }, 1000);
-                        }, 5000);
-                    }
-                    else
-                    {
-                        console.log("ERROR");
+                                var rOverlay = document.createElement('input');
+
+                                rOverlay.setAttribute('type', 'button');
+                                rOverlay.setAttribute('id', 'save-result');
+                                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                rOverlay.setAttribute('value', 'Gespeichert!');
+                                rOverlay.setAttribute('class', 'gradient-green');
+
+                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 1;
+                                }, 10);
+                            
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 0;
+                                    document.getElementById('save-btn').style.opacity = 1;
+                                }, 5000);
+
+                                setTimeout(function()
+                                {
+                                    document.getElementById('save-btn').parentElement.removeChild(rOverlay);
+                                }, 5300);
+
+                                setTimeout(function()
+                                {
+                                    redirect();
+                                }, 1000);
+                            }, 5000);
+                        }
+                        else
+                        {
+                            console.log("ERROR");
+                        }
                     }
                 }
             }
-        }
 
-        client.send(JSON.stringify(settings));
+            client.send(JSON.stringify(settings));
+        }
     }
     
     function redirect()
