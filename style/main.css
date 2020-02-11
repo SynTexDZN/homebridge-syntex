@@ -51,7 +51,12 @@ input
                 0 4px 8px rgba(0,0,0,0.10);
 }
 
-input:hover:not(.control-panel):not(:disabled)
+input[type='text']::placeholder, input[type='password']::placeholder
+{
+    color: rgb(160, 160, 170);
+}
+
+input:hover:not(.control-panel):not(:disabled), input[type='text']:focus, input[type='password']:focus
 {
     background: rgb(245, 245, 255);
     color: rgb(20, 20, 30);
@@ -68,12 +73,17 @@ input[type='text'], input[type='password']
     padding-left: 20px;
 }
 
-input[type='button']
+input[type='button'], input[type='submit']
 {
     background: rgb(60, 60, 75);
     border-width: 0;
     color: rgb(20, 20, 30);
     font-weight: 200;
+}
+
+input[type='submit']
+{
+    background-image: linear-gradient(to right, hsl(150, 85%, 50%) 0%, hsl(170, 85%, 50%) 100%);
 }
 
 input[type='button'].white
@@ -106,7 +116,7 @@ h1, h2
 {
     font-weight: 300;
     display: inline-block;
-    width: min-content;
+    width: fit-content;
     margin-left: auto;
     margin-right: auto;
 }
