@@ -5,10 +5,14 @@
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/wifi.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <input class="gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="search-loop" type="button" value="Nach Geräten suchen .">
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main">
-                <input  type="button" value="Zurück" onclick="window.location.href='/'">
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input style="margin-left: 20px" type="button" value="Gerät Schon Registriert?" onclick="window.location.href='/reconnect'">
+                </div>
             </div>
         </div>
         <div id="wifiConfig" style="display: none;">
@@ -60,6 +64,45 @@
     </body>
 </html>
 <script defer>
+
+    function searchLoop()
+    {
+        setTimeout(function()
+        {
+            var loop = document.getElementById('search-loop');
+
+            if(loop.value != 'Nach Geräten suchen ...')
+            {
+                loop.value += '.';
+            }
+            else
+            {
+                loop.value = 'Nach Geräten suchen .';
+            }
+
+            searchLoop();
+        }, 1000);
+    }
+
+    searchLoop();
+
+    function redirectCountdown(url)
+    {
+        setTimeout(function()
+        {
+            var countdown = document.getElementById('redirect-countdown');
+
+            if(countdown.value.split('( ')[1].split(' )')[0] > 0)
+            {
+                countdown.value = 'Zum Gerät ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
+                redirectCountdown(url);
+            }
+            else
+            {
+                window.location.href = url;
+            }
+        }, 1000);
+    }
     
     var ping = false;
     
@@ -188,17 +231,14 @@
                         document.getElementById('success').style.display = "";
                         document.getElementById('connecting').style.display = "none";
 
-                        setTimeout(function()
+                        if(client.responseText == 'relais' || client.responseText == 'switch')
                         {
-                            if(client.responseText == 'relais' || client.responseText == 'switch')
-                            {
-                                window.location.href = '/devices/' + client.responseText + '?mac=' + mac;
-                            }
-                            else
-                            {
-                                window.location.href = '/devices/' + client.responseText + '-sensor?mac=' + mac;
-                            }
-                        }, 5000);                    
+                            redirectCountdown('/devices/' + client.responseText + '?mac=' + mac);
+                        }
+                        else
+                        {
+                            redirectCountdown('/devices/' + client.responseText + '-sensor?mac=' + mac);
+                        }    
                     }
                     else
                     {
