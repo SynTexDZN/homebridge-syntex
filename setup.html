@@ -30,7 +30,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input id="scan-btn" class="gradient-blue" style="margin-left: 20px" type="button" value="Suchen" onclick="scanWifi()">
+                    <input id="scan-btn" class="gradient-blue" style="margin-left: 20px" type="button" value="Bitte Warten .." onclick="scanWifi()">
                 </div>
             </div>
         </div>
@@ -96,11 +96,15 @@
             if(countdown.value.split('( ')[1].split(' )')[0] > 0)
             {
                 countdown.value = 'Zum Gerät ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
-                redirectCountdown(url);
-            }
-            else
-            {
-                window.location.href = url;
+
+                if(countdown.value.split('( ')[1].split(' )')[0] > 0)
+                {
+                    redirectCountdown(url);
+                }
+                else
+                {
+                    window.location.href = url;
+                }
             }
         }, 1000);
     }
@@ -235,12 +239,12 @@
                         if(client.responseText == 'relais' || client.responseText == 'switch')
                         {
                             redirectCountdown('/devices/' + client.responseText + '?mac=' + mac);
-                            document.getElementById('redirect-countdown').setAttribute('onclick', '/devices/' + client.responseText + '?mac=' + mac);
+                            document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + client.responseText + "?mac=" + mac + "'");
                         }
                         else
                         {
                             redirectCountdown('/devices/' + client.responseText + '-sensor?mac=' + mac);
-                            document.getElementById('redirect-countdown').setAttribute('onclick', '/devices/' + client.responseText + '-sensor?mac=' + mac);
+                            document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + client.responseText + "-sensor?mac=" + mac + "'");
                         }    
                     }
                     else
