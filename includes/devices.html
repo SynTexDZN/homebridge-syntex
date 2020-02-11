@@ -51,6 +51,7 @@
 
                         setTimeout(function()
                         {
+                            overlay.style.opacity = 0;
                             rOverlay.style.opacity = 1;
                         }, 10);
                     
@@ -63,6 +64,7 @@
                         setTimeout(function()
                         {
                             document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
                         }, 5300);
                     }
                 }
@@ -114,6 +116,7 @@
                             document.getElementById('update-btn').parentElement.removeChild(rOverlay);
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
                         }, 5300);
                     }
                     else
@@ -144,6 +147,7 @@
                         {
                             document.getElementById('update-btn').parentElement.removeChild(rOverlay);
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
                         }, 5300);
                     }
 
@@ -215,6 +219,7 @@
                             {
                                 document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
                                 document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
+                                document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
                             }, 5300);
 
                             restart = false;
@@ -252,8 +257,24 @@
     
     function updateDevice()
     {        
-        if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
+        if(document.getElementById('updating') == null && document.getElementById('waiting') == null && document.getElementById('update-result') == null)
         {
+            var wOverlay = document.createElement('input');
+
+            wOverlay.setAttribute('type', 'button');
+            wOverlay.setAttribute('id', 'waiting');
+            wOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+            wOverlay.setAttribute('value', 'Bitte Warten ..');
+            wOverlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('update-btn').parentElement.insertBefore(wOverlay, document.getElementById('update-btn'));
+
+            setTimeout(function()
+            {
+                wOverlay.style.opacity = 1;
+                document.getElementById('update-btn').style.opacity = 0;
+            }, 10);
+
             var client = new XMLHttpRequest();
 
             client.timeout = 10000;
@@ -283,7 +304,7 @@
                             setTimeout(function()
                             {
                                 overlay.style.opacity = 1;
-                                document.getElementById('update-btn').style.opacity = 0;
+                                wOverlay.style.opacity = 0;
                             }, 10);
                         }
                     }
@@ -302,7 +323,7 @@
                         setTimeout(function()
                         {
                             rOverlay.style.opacity = 1;
-                            overlay.style.opacity = 0;
+                            wOverlay.style.opacity = 0;
                         }, 10);
                     
                         setTimeout(function()
@@ -314,6 +335,7 @@
                         setTimeout(function()
                         {
                             document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(wOverlay);
                             document.getElementById('update-btn').parentElement.removeChild(overlay);
                         }, 5300);
                     }
