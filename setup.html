@@ -26,7 +26,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input class="gradient-blue" style="margin-left: 20px" type="button" value="Scan" onclick="scanWifi()">
+                    <input id="scan-btn" class="gradient-blue" style="margin-left: 20px" type="button" value="Suchen" onclick="scanWifi()">
                 </div>
             </div>
         </div>
@@ -101,7 +101,8 @@
     }    
         
     function scanWifi()
-    {            
+    {           
+        document.getElementById('scan-btn').value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
         var client = new XMLHttpRequest();
@@ -140,13 +141,15 @@
 
                     if(client.responseText == "" || client.responseText == "[]")
                     {
-                        document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
+                        document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Suchen'";
                     }
                 }
                 else
                 {
-                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Scan'";
+                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Suchen'";
                 }
+
+                document.getElementById('scan-btn').value = 'Suchen'; 
             }  
         }
 
