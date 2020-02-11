@@ -56,10 +56,10 @@ input[type='text']::placeholder, input[type='password']::placeholder
     color: rgb(160, 160, 170);
 }
 
-input[type='text']:focus, input[type='password']:focus/*, input[type='button']:hover:not(.control-panel):not(:disabled):not()*/
+input[type='text']:focus, input[type='password']:focus, input[type='text']:hover, input[type='password']:hover/*, input[type='button']:hover:not(.control-panel):not(:disabled):not()*/
 {
     background: rgb(245, 245, 255);
-    /*color: rgb(20, 20, 30);*/
+    color: rgb(20, 20, 30);
     /*border-color: rgba(245, 245, 255, 0);*/
 }
 
@@ -125,7 +125,7 @@ h1, h2
 {
     font-weight: 300;
     display: inline-block;
-    width: fit-content;
+    width: min-content;
     margin-left: auto;
     margin-right: auto;
 }
@@ -247,6 +247,31 @@ h2
     margin-top: 20px;
 }
 
+.gradient-red
+{
+    background-image: linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)!important;
+}
+
+.gradient-green
+{
+    background-image: linear-gradient(to right, hsl(150, 85%, 50%) 0%, hsl(170, 85%, 50%) 100%)!important;
+}
+
+.gradient-blue
+{
+    background-image: linear-gradient(to right, hsl(200, 85%, 55%) 0%, hsl(220, 95%, 60%) 100%)!important;
+}
+
+.gradient-blue-green
+{
+    background-image: linear-gradient(to left, hsl(170, 90%, 50%) 0%, hsl(205, 95%, 60%) 100%)!important;
+}
+
+.gradient-purple
+{
+    background-image: linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)!important;
+}
+
 @media(prefers-color-scheme: light)
 {
     body
@@ -299,6 +324,18 @@ h2
     {
         color: rgb(45, 45, 55);
         border: 3px solid rgb(45, 45, 55);
+    }
+
+    input[type='text']:focus, input[type='password']:focus/*, input[type='button']:hover:not(.control-panel):not(:disabled):not()*/
+    {
+        background: rgb(45, 45, 55);
+        color: rgb(220, 220, 230);
+        /*border-color: rgba(245, 245, 255, 0);*/
+    }
+
+    .gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-purple, input[type='submit']
+    {
+        color: rgb(20, 20, 30)!important;
     }
 }
 

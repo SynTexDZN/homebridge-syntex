@@ -17,7 +17,7 @@
         </div>
         <div style="margin: 0 auto; width: 100%; max-width: 400px">
             <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href='http://syntex.local:8000/settings.php'">
-            <input type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='http://syntex.local/setup'" style="background-image: linear-gradient(to left, hsl(170, 90%, 50%) 0%, hsl(205, 95%, 60%) 100%);" >
+            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='http://syntex.local/setup'">
         </div>
     </body>
 </html>
@@ -113,6 +113,7 @@
                             overlay.setAttribute('id', ip + '-update-result');
                             overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
                             overlay.setAttribute('value', 'Update Erfolgreich!');
+                            overlay.setAttribute('class', 'gradient-green');
 
                             document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
@@ -121,8 +122,6 @@
                                 overlay.style.opacity = 1;
                                 document.getElementById(ip).style.opacity = 0;
                             }, 10);
-                            
-                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(150, 85%, 55%) 0%, hsl(160, 95%, 60%) 100%)';
                         }
 
                         document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update'));
@@ -137,6 +136,7 @@
                             overlay.setAttribute('id', ip + '-update-result');
                             overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
                             overlay.setAttribute('value', 'Update Fehlgeschlagen!');
+                            overlay.setAttribute('class', 'gradient-red');
 
                             document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
@@ -145,8 +145,6 @@
                                 overlay.style.opacity = 1;
                                 document.getElementById(ip).style.opacity = 0;
                             }, 10);
-                            
-                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
                     }
 
@@ -227,7 +225,9 @@
                             overlay.setAttribute('type', 'button');
                             overlay.setAttribute('id', device.getAttribute('id') + '-offline');
                             overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(device.getAttribute('id')).offsetLeft + 'px; top: ' + document.getElementById(device.getAttribute('id')).offsetTop + 'px; width: ' + document.getElementById(device.getAttribute('id')).offsetWidth + 'px!important');
-                            overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( Offline )');
+                            overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( OFFLINE )');
+                            overlay.setAttribute('onclick', device.getAttribute('onclick'));
+                            overlay.setAttribute('class', 'gradient-red');
 
                             document.getElementById(device.getAttribute('id')).parentElement.insertBefore(overlay, document.getElementById(device.getAttribute('id')));
 
@@ -236,8 +236,6 @@
                                 overlay.style.opacity = 1;
                                 document.getElementById(device.getAttribute('id')).style.opacity = 0;
                             }, 10);
-                            
-                            overlay.style.backgroundImage = 'linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)';
                         }
                     }  
                     
@@ -366,6 +364,7 @@
                                 overlay.setAttribute('id', ip + '-updating');
                                 overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
                                 overlay.setAttribute('value', 'Update wird installiert ..');
+                                overlay.setAttribute('class', 'gradient-purple');
 
                                 document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
@@ -374,8 +373,6 @@
                                     overlay.style.opacity = 1;
                                     document.getElementById(ip).style.opacity = 0;
                                 }, 10);
-                                
-                                overlay.style.backgroundImage = 'linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)';
                             }
                         }
                     }
