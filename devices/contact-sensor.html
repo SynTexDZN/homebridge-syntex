@@ -16,7 +16,7 @@
             <div class="main">
                 <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
                 <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
                     <input class="gradient-blue" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
                 </div>
             </div>
@@ -109,6 +109,6 @@
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
     
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='http://syntex.local/reconnect?ip=" + device.ip + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "'");
 
 </script>

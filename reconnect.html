@@ -9,7 +9,7 @@
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main">
-                <input type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
+                <input type="button" value="Zurück" onclick="window.location.href='/'">
             </div>
         </div>
         <div id="wifiConfig" style="display: none;">
@@ -26,7 +26,7 @@
             </div>
             <div class="main">
                 <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='http://syntex.local/'">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
                     <input style="margin-left: 20px;" type="button" value="Scan" onclick="scanWifi()">
                 </div>
             </div>
@@ -217,7 +217,7 @@
                     {
                         client = new XMLHttpRequest();
         
-                        client.open('GET', 'http://syntex.local/setup');
+                        client.open('GET', '/setup');
 
                         client.onreadystatechange = function()
                         {
@@ -253,7 +253,7 @@
 
                             setTimeout(function()
                             {
-                                window.location.href = 'http://syntex.local/setup';
+                                window.location.href = '/setup';
                             }, 10000); 
                         }
                     }, 60000);
@@ -265,7 +265,7 @@
 
                     setTimeout(function()
                     {
-                        window.location.href = 'http://syntex.local/';
+                        window.location.href = '/';
                     }, 10000);             
                 }
             }
