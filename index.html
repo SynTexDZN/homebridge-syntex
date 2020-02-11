@@ -94,6 +94,8 @@
     function checkUpdate(ip, name, version)
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', 'http://' + ip + '/version');
 
@@ -196,6 +198,8 @@
         else
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://' + device.getAttribute('id') + '/');
 
@@ -262,6 +266,8 @@
         return new Promise(resolve => {
             
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'));
 
@@ -340,6 +346,8 @@
         if(!updatingDevices.includes(ip))
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://' + ip + '/update');
 

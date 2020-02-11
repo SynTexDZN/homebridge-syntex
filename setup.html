@@ -67,6 +67,8 @@
         if(ping == false)
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 2000;
         
             client.open('GET', 'http://192.168.4.1/');
 
@@ -103,6 +105,8 @@
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', 'http://192.168.4.1/wifi');
 
@@ -154,6 +158,8 @@
     function checkDB(mac)
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', '/serverside/check-device?mac=' + mac);
 
@@ -225,6 +231,9 @@
     function sendWifiSettings()
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
+
         var formElement = document.querySelector("form");
         
         client.open('POST', 'http://192.168.4.1/settings');

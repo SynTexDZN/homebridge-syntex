@@ -74,6 +74,8 @@
     function fetchState()
     {        
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id);
 

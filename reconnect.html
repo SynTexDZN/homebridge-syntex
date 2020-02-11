@@ -65,6 +65,8 @@
         if(ping == false)
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 2000;
         
             client.open('GET', 'http://192.168.4.1/');
 
@@ -95,6 +97,8 @@
             client.send();
             
             var client2 = new XMLHttpRequest();
+
+            client2.timeout = 2000;
         
             client2.open('GET', 'http://' + ipp + '/');
 
@@ -134,6 +138,8 @@
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', ip + 'wifi');
 
@@ -196,6 +202,9 @@
     function sendWifiSettings()
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
+
         var formElement = document.querySelector("form");
         
         client.open('POST', ip + 'settings');

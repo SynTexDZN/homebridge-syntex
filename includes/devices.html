@@ -12,6 +12,8 @@
             restart = true;
             
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://' + device.ip + '/restart');
 
@@ -75,6 +77,8 @@
     function checkUpdate(ip, name, version)
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', 'http://' + ip + '/version');
 
@@ -172,6 +176,8 @@
         else
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://' + device.ip + '/');
 
@@ -251,6 +257,8 @@
         if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
             var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
         
             client.open('GET', 'http://' + device.ip + '/update');
 
@@ -286,12 +294,12 @@
                         var rOverlay = document.createElement('input');
 
                         rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'restart-result');
-                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
                         rOverlay.setAttribute('value', 'Keine Verbindung zum Gerät!');
                         rOverlay.setAttribute('class', 'gradient-red');
 
-                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
 
                         setTimeout(function()
                         {
@@ -302,13 +310,13 @@
                         setTimeout(function()
                         {
                             rOverlay.style.opacity = 0;
-                            document.getElementById('restart-btn').style.opacity = 1;
+                            document.getElementById('update-btn').style.opacity = 1;
                         }, 5000);
 
                         setTimeout(function()
                         {
-                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(overlay);
                         }, 5300);
                     }
                 }
@@ -321,6 +329,8 @@
     function checkUpdates()
     {
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'));
 

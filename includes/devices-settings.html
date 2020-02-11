@@ -11,6 +11,8 @@
                 document.getElementById('reset-btn').value = 'Zurücksetzen ..';
                 
                 var client = new XMLHttpRequest();
+
+                client.timeout = 10000;
         
                 client.open('GET', 'http://' + device.ip + '/reset');
 
@@ -91,6 +93,8 @@
         document.getElementById("savebtn").value = "Hochladen ..";
 
         var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
         
         client.open('POST', '/serverside/save-config');
 
@@ -106,6 +110,8 @@
                         var error = '';
 
                         var client2 = new XMLHttpRequest();
+
+                        client2.timeout = 10000;
         
                         client2.open('GET', 'http://' + device.ip + '/loadcfg');
 
