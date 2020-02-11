@@ -1,8 +1,8 @@
-@font-face { font-family: Rubik; font-weight: 500; src: url('http://syntex.local/style/Rubik-Black.ttf'); }
-@font-face { font-family: Rubik; font-weight: 400; src: url('http://syntex.local/style/Rubik-Bold.ttf'); }
-@font-face { font-family: Rubik; font-weight: 100; src: url('http://syntex.local/style/Rubik-Light.ttf'); }
-@font-face { font-family: Rubik; font-weight: 300; src: url('http://syntex.local/style/Rubik-Medium.ttf'); }
-@font-face { font-family: Rubik; font-weight: 200; src: url('http://syntex.local/style/Rubik-Regular.ttf'); }
+@font-face { font-family: Rubik; font-weight: 500; src: url('/style/Rubik-Black.ttf'); }
+@font-face { font-family: Rubik; font-weight: 400; src: url('/style/Rubik-Bold.ttf'); }
+@font-face { font-family: Rubik; font-weight: 100; src: url('/style/Rubik-Light.ttf'); }
+@font-face { font-family: Rubik; font-weight: 300; src: url('/style/Rubik-Medium.ttf'); }
+@font-face { font-family: Rubik; font-weight: 200; src: url('/style/Rubik-Regular.ttf'); }
 
 *
 {
@@ -46,6 +46,36 @@ input
     letter-spacing: 3px;
     box-sizing: border-box;
 }
+
+/* New Stuff */
+
+input[type='button']
+{
+    background: rgb(80, 80, 90);
+    border-width: 0;
+    color: rgb(20, 20, 30);
+    font-weight: 300;
+    box-shadow: 0 0px 1px rgba(0,0,0,0.04), 
+                0 1px 2px rgba(0,0,0,0.06), 
+                0 2px 4px rgba(0,0,0,0.08), 
+                0 4px 8px rgba(0,0,0,0.10);
+}
+
+input[type='button']:disabled
+{
+    background: transparent!important;
+    color: rgb(80, 80, 90)!important;
+    border: 3px solid rgb(80, 80, 90)!important;
+}
+/*
+h2
+{
+    background: transparent!important;
+    color: rgb(245, 245, 255)!important;
+    border: 3px solid rgb(245, 245, 255);
+}
+*/
+/* ENDE */
 
 input:hover:not(.control-panel):not(:disabled)
 {
