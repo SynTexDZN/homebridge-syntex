@@ -63,9 +63,9 @@ input[type='text']:focus, input[type='password']:focus/*, input[type='button']:h
     /*border-color: rgba(245, 245, 255, 0);*/
 }
 
-input[type='button']:not(:disabled):hover, input[type='submit']:not(:disabled):hover
+input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover
 {
-    filter: brightness(70%);
+    filter: brightness(75%);
 }
 
 input[type='button']:active:not(.control-panel), input[type='submit']:active
@@ -78,13 +78,18 @@ input[type='text'], input[type='password']
     padding-left: 20px;
 }
 
+input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):not(.control-panel)
+{
+    cursor: pointer;
+}
+
 input[type='button'], input[type='submit']
 {
     cursor: pointer;
     background: rgb(60, 60, 75);
     border-width: 0;
     color: rgb(20, 20, 30);
-    font-weight: 200;
+    font-weight: 300;
 }
 
 input[type='submit']
