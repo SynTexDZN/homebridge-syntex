@@ -75,7 +75,7 @@
     {        
         var client = new XMLHttpRequest();
         
-        client.open('GET', '../:1710/devices?mac=' + device.id);
+        client.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id);
 
         client.onreadystatechange = function()
         {
