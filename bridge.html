@@ -42,49 +42,118 @@
     
     function updateBridge()
     {
-        document.getElementById('update-btn').style.background = 'hsl(270, 85%, 55%)';
-        document.getElementById('update-btn').value = 'Update Wird Installiert ..';
-        
-        var client = new XMLHttpRequest();
-        
-        client.open('GET', '/update');
-
-        client.onreadystatechange = function()
+        if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
-            if(client.readyState === 4)
-            {  
-                if(client.status !== 200 || client.responseText == 'Error')
-                {
-                    document.getElementById('update-btn').style.background = 'hsl(350, 85%, 55%)';
-                    document.getElementById('update-btn').value = 'Update Fehlgeschlagen!';
-                    
-                    setTimeout(function()
-                    {
-                        document.getElementById('update-btn').style.background = 'transparent';
-                        document.getElementById('update-btn').value = 'Bridge Aktualisieren ( v' + newest + ' )';
-                    }, 5000);
-                }
-                else if(client.responseText == 'Success')
-                {
-                    document.getElementById('update-btn').style.background = 'hsl(150, 75%, 45%)';
-                    document.getElementById('update-btn').value = 'Update Erfolgreich!';
-                    
-                    setTimeout(function()
-                    {
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
-                    }, 5000);
-                }
-            }  
-        }
+            var overlay = document.createElement('input');
 
-        client.send();
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'updating');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Update Wird Installiert ..');
+            overlay.setAttribute('class', 'gradient-purple');
+
+            document.getElementById('update-btn').parentElement.insertBefore(overlay, document.getElementById('update-btn'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 1;
+                document.getElementById('update-btn').style.opacity = 0;
+            }, 10);
+            
+            var client = new XMLHttpRequest();
+            
+            client.open('GET', '/update');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status !== 200 || client.responseText == 'Error')
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Update Fehlgeschlagen!');
+                        rOverlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            overlay.style.opacity = 0;
+                        }, 10);
+                        
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('update-btn').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(overlay);
+                        }, 5300);
+                    }
+                    else if(client.responseText == 'Success')
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Update Erfolgreich!');
+                        rOverlay.setAttribute('class', 'gradient-green');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            overlay.style.opacity = 0;
+                        }, 10);
+                        
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(overlay);
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
+                        }, 5300);
+                    }
+                }  
+            }
+
+            client.send();
+        }
     }
     
     function restartBridge()
     {
-        if(document.getElementById('restart-btn').value == 'Bridge Neustarten')
+        if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null)
         {
-            document.getElementById('restart-btn').value = 'Neustart ..';
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'restarting');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Neustart ..');
+            overlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 1;
+                document.getElementById('restart-btn').style.opacity = 0;
+            }, 10);
             
             var client = new XMLHttpRequest();
         
@@ -96,19 +165,63 @@
                 {  
                     if(client.status !== 200 || client.responseText == 'Error')
                     {
-                        document.getElementById('restart-btn').value = 'Neustart Fehlgeschlagen!';
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'restart-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Neustart Fehlgeschlagen!');
+                        rOverlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            overlay.style.opacity = 0;
+                        }, 10);
                     
                         setTimeout(function()
                         {
-                            document.getElementById('restart-btn').value = 'Bridge Neustarten';
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('restart-btn').style.opacity = 1;
                         }, 2000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                        }, 2300);
                     }
                     else if(client.responseText == 'Success')
                     {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'restart-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
+                        rOverlay.setAttribute('class', 'gradient-green');
+
+                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
                         setTimeout(function()
                         {
-                            document.getElementById('restart-btn').value = 'Bridge Neustarten';
-                        }, 10000);
+                            rOverlay.style.opacity = 1;
+                            overlay.style.opacity = 0;
+                        }, 16000);
+                    
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('restart-btn').style.opacity = 1;
+                        }, 18000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                        }, 18300);
                     }
                 }
             }
