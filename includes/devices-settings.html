@@ -1,82 +1,125 @@
 <script>
 
-    var reset = false;
-    
     function resetDevice()
     {
-        if((document.getElementById('reset-btn').value == 'Gerät Zurücksetzen' || document.getElementById('reset-btn').value == 'Löschen Bestätigen?') && document.getElementById('reset-result') == null)
+        var overlay = document.createElement('input');
+
+        overlay.setAttribute('type', 'button');
+        overlay.setAttribute('id', 'reset-confirm');
+        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+        overlay.setAttribute('value', 'Löschen Bestätigen?');
+        overlay.setAttribute('class', 'gradient-red');
+        overlay.setAttribute('onclick', 'resetConfirm()');
+
+        document.getElementById('reset-btn').parentElement.insertBefore(overlay, document.getElementById('reset-btn'));
+
+        setTimeout(function()
         {
-            if(reset)
-            {
-                document.getElementById('reset-btn').value = 'Zurücksetzen ..';
-                
-                var client = new XMLHttpRequest();
+            overlay.style.opacity = 1;
+            document.getElementById('reset-btn').style.opacity = 0;
+        }, 10);
+    }
+    
+    function resetConfirm()
+    {
+        document.getElementById('reset-confirm').style.opacity = 0;
 
-                client.timeout = 10000;
+        var zOverlay = document.createElement('input');
+
+        zOverlay.setAttribute('type', 'button');
+        zOverlay.setAttribute('id', 'reset-result');
+        zOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+        zOverlay.setAttribute('value', 'Zurücksetzen ..');
+        zOverlay.setAttribute('class', 'gradient-blue');
+
+        document.getElementById('reset-btn').parentElement.insertBefore(zOverlay, document.getElementById('reset-btn'));
+
+        setTimeout(function()
+        {
+            zOverlay.style.opacity = 1;
+        }, 10);
         
-                client.open('GET', 'http://' + device.ip + '/reset');
+        var client = new XMLHttpRequest();
 
-                client.onreadystatechange = function()
+        client.timeout = 10000;
+
+        client.open('GET', 'http://' + device.ip + '/reset');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
                 {
-                    if(client.readyState === 4)
-                    {  
-                        if(client.status === 200)
-                        {
-                            console.log(client.responseText);
-                        
-                            var rOverlay = document.createElement('input');
+                    console.log(client.responseText);
+                
+                    var rOverlay = document.createElement('input');
 
-                            rOverlay.setAttribute('type', 'button');
-                            rOverlay.setAttribute('id', 'reset-result');
-                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
-                            rOverlay.setAttribute('value', 'Reset Erfolgreich!');
-                            rOverlay.setAttribute('class', 'gradient-green');
+                    rOverlay.setAttribute('type', 'button');
+                    rOverlay.setAttribute('id', 'reset-result');
+                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                    rOverlay.setAttribute('value', 'Reset Erfolgreich!');
+                    rOverlay.setAttribute('class', 'gradient-green');
 
-                            document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+                    document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
 
-                            setTimeout(function()
-                            {
-                                rOverlay.style.opacity = 1;
-                            }, 10);
-                        
-                            setTimeout(function()
-                            {
-                                rOverlay.style.opacity = 0;
-                                document.getElementById('reset-btn').style.opacity = 1;
-                            }, 5000);
+                    setTimeout(function()
+                    {
+                        zOverlay.style.opacity = 0;
+                        rOverlay.style.opacity = 1;
+                    }, 10);
+                
+                    setTimeout(function()
+                    {
+                        rOverlay.style.opacity = 0;
+                        document.getElementById('reset-btn').style.opacity = 1;
+                    }, 5000);
 
-                            setTimeout(function()
-                            {
-                                document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
-                            }, 5300);
+                    setTimeout(function()
+                    {
+                        document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
+                        document.getElementById('reset-btn').parentElement.removeChild(zOverlay);
+                    }, 5300);
 
-                            setTimeout(function()
-                            {
-                                window.location.href = '/';
-                            }, 5600);
-                        }
-                        else
-                        {
-                            document.getElementById('reset-btn').value = 'Reset Fehlgeschlagen!';
-
-                            setTimeout(function()
-                            {
-                                document.getElementById('reset-btn').value = 'Gerät Zurücksetzen';
-                                reset = false;
-                            }, 2000);
-                        }
-                    }
+                    setTimeout(function()
+                    {
+                        window.location.href = '/';
+                    }, 5600);
                 }
+                else
+                {
+                    var rOverlay = document.createElement('input');
 
-                client.send();
-            }
-            else
-            {
-                document.getElementById('reset-btn').value = 'Löschen Bestätigen?';
+                    rOverlay.setAttribute('type', 'button');
+                    rOverlay.setAttribute('id', 'reset-result');
+                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                    rOverlay.setAttribute('value', 'Reset Fehlgeschlagen!');
+                    rOverlay.setAttribute('class', 'gradient-red');
 
-                reset = true;
+                    document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+
+                    setTimeout(function()
+                    {
+                        zOverlay.style.opacity = 0;
+                        rOverlay.style.opacity = 1;
+                    }, 10);
+                
+                    setTimeout(function()
+                    {
+                        rOverlay.style.opacity = 0;
+                        document.getElementById('reset-btn').style.opacity = 1;
+                    }, 5000);
+
+                    setTimeout(function()
+                    {
+                        document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
+                        document.getElementById('reset-btn').parentElement.removeChild(zOverlay);
+                    }, 5300);
+                }
             }
         }
+
+        client.send();
     }
     
     function saveConfig()
