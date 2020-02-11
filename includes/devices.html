@@ -10,6 +10,22 @@
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null )
         {
             restart = true;
+
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'restarting');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Neustart ..');
+            overlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 1;
+                document.getElementById('restart-btn').style.opacity = 0;
+            }, 10);
             
             var client = new XMLHttpRequest();
 
@@ -21,25 +37,7 @@
             {
                 if(client.readyState === 4)
                 {  
-                    if(client.status === 200)
-                    {
-                        var overlay = document.createElement('input');
-
-                        overlay.setAttribute('type', 'button');
-                        overlay.setAttribute('id', 'restarting');
-                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
-                        overlay.setAttribute('value', 'Neustart ..');
-                        overlay.setAttribute('class', 'gradient-blue');
-
-                        document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
-
-                        setTimeout(function()
-                        {
-                            overlay.style.opacity = 1;
-                            document.getElementById('restart-btn').style.opacity = 0;
-                        }, 10);
-                    }
-                    else
+                    if(client.status !== 200)
                     {
                         var rOverlay = document.createElement('input');
 
