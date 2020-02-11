@@ -38,7 +38,12 @@
         {
             zOverlay.style.opacity = 1;
         }, 10);
-        
+
+        setTimeout(function()
+        {
+            document.getElementById('reset-btn').parentElement.removeChild(document.getElementById('reset-confirm'));
+        }, 300);
+
         var client = new XMLHttpRequest();
 
         client.timeout = 10000;
