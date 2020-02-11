@@ -11,7 +11,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input style="margin-left: 20px" type="button" value="Gerät Schon Registriert?" onclick="window.location.href='/reconnect'">
+                    <input style="margin-left: 20px" type="button" value="Gerät Registriert?" onclick="window.location.href='/reconnect'">
                 </div>
             </div>
         </div>
@@ -48,6 +48,7 @@
             <h1>Erfolgreich Verbunden</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/success.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Gerät ( 5 )">
                 <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
             </div>
         </div>
@@ -234,10 +235,12 @@
                         if(client.responseText == 'relais' || client.responseText == 'switch')
                         {
                             redirectCountdown('/devices/' + client.responseText + '?mac=' + mac);
+                            document.getElementById('redirect-countdown').setAttribute('onclick', '/devices/' + client.responseText + '?mac=' + mac);
                         }
                         else
                         {
                             redirectCountdown('/devices/' + client.responseText + '-sensor?mac=' + mac);
+                            document.getElementById('redirect-countdown').setAttribute('onclick', '/devices/' + client.responseText + '-sensor?mac=' + mac);
                         }    
                     }
                     else

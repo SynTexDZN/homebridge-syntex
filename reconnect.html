@@ -49,7 +49,7 @@
             <h1>Daten Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/success.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
-                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Gerät ( 5 )">
+                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Dashboard ( 5 )" onclick="window.location.href='/'">
                 <p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
             </div>
         </div>
@@ -86,7 +86,7 @@ function searchLoop()
 
             if(countdown.value.split('( ')[1].split(' )')[0] > 0)
             {
-                countdown.value = 'Zum Gerät ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
+                countdown.value = 'Zum Dashboard ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
                 redirectCountdown();
             }
             else
