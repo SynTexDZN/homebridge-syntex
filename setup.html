@@ -53,6 +53,9 @@
                 <img src="img/error.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
                 <p>Bitte versuche es erneut!<br><br>Dein WLAN-Passwort<br>war nicht korrekt<br>oder etwas anderes<br>ist schief gegangen</p>
             </div>
+            <div class="main">
+                <input type="button" value="Zurück" onclick="window.location.href='/setup'">
+            </div>
         </div>
     </body>
 </html>
@@ -195,7 +198,7 @@
                             {
                                 window.location.href = '/devices/' + client.responseText + '-sensor?mac=' + mac;
                             }
-                        }, 10000);                    
+                        }, 5000);                    
                     }
                     else
                     {
@@ -291,11 +294,6 @@
                             //alert("Error");
                             document.getElementById('error').style.display = "";
                             document.getElementById('connecting').style.display = "none";
-
-                            setTimeout(function()
-                            {
-                                window.location.href = '/setup';
-                            }, 10000); 
                         }
                     }, 60000);
 
