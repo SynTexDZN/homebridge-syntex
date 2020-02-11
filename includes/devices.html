@@ -9,22 +9,6 @@
     {
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null )
         {
-            var overlay = document.createElement('input');
-
-            overlay.setAttribute('type', 'button');
-            overlay.setAttribute('id', 'restarting');
-            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
-            overlay.setAttribute('value', 'Neustart ..');
-            overlay.setAttribute('class', 'gradient-blue');
-
-            document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
-
-            setTimeout(function()
-            {
-                overlay.style.opacity = 1;
-                document.getElementById('restart-btn').style.opacity = 0;
-            }, 10);
-
             restart = true;
             
             var client = new XMLHttpRequest();
@@ -35,35 +19,23 @@
             {
                 if(client.readyState === 4)
                 {  
-                    if(client.status !== 200)
+                    if(client.status === 200)
                     {
-                        var rOverlay = document.createElement('input');
+                        var overlay = document.createElement('input');
 
-                        rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'restart-result');
-                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
-                        rOverlay.setAttribute('value', 'Neustart Fehlgeschlagen!');
-                        rOverlay.setAttribute('class', 'gradient-red');
+                        overlay.setAttribute('type', 'button');
+                        overlay.setAttribute('id', 'restarting');
+                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                        overlay.setAttribute('value', 'Neustart ..');
+                        overlay.setAttribute('class', 'gradient-blue');
 
-                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+                        document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
 
                         setTimeout(function()
                         {
-                            rOverlay.style.opacity = 1;
-                            overlay.style.opacity = 0;
+                            overlay.style.opacity = 1;
+                            document.getElementById('restart-btn').style.opacity = 0;
                         }, 10);
-                    
-                        setTimeout(function()
-                        {
-                            rOverlay.style.opacity = 0;
-                            document.getElementById('restart-btn').style.opacity = 1;
-                        }, 5000);
-
-                        setTimeout(function()
-                        {
-                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
-                        }, 5300);
                     }
                     else
                     {
@@ -80,7 +52,6 @@
                         setTimeout(function()
                         {
                             rOverlay.style.opacity = 1;
-                            overlay.style.opacity = 0;
                         }, 10);
                     
                         setTimeout(function()
@@ -92,7 +63,6 @@
                         setTimeout(function()
                         {
                             document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
                         }, 5300);
                     }
                 }
