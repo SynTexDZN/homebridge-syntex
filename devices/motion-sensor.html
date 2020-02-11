@@ -77,10 +77,6 @@
         
         client.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id);
 
-        console.log(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id);
-        console.log(window.location.protocol + '//' + window.location.hostname.substring(1) + ':1710/devices?mac=' + device.id);
-        console.log(window.location.protocol + '//' + window.location.hostname.slice(0, -1) + ':1710/devices?mac=' + device.id);
-
         client.onreadystatechange = function()
         {
             if(client.readyState === 4)
