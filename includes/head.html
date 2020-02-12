@@ -34,7 +34,7 @@
             top: 0; left: 0;
             bottom: 0; right: 0;
             margin: auto;
-            background: rgb(230, 230, 240);
+            background: rgb(245, 245, 255);
             border-radius: 50%;
             -webkit-animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
                     animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
@@ -89,7 +89,7 @@
             margin: auto;
             height: 12px;
             width: 12px;
-            background: rgb(230, 230, 240);
+            background: rgb(245, 245, 255);
             border-radius: 50%;
             -webkit-animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
                     animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
@@ -141,6 +141,31 @@
             0%   { opacity: 0; }
             50%  { opacity: 0; }
             100% { opacity: 1; }
+        }
+
+        @media(prefers-color-scheme: light)
+        {
+            #preloader
+            {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgb(220, 220, 230);
+                transition: .3s opacity cubic-bezier(0, 0, 0.2, 1);
+                z-index: 10000;
+            }
+
+            .loader-4::after
+            {
+                background: rgb(45, 45, 55);
+            }
+
+            .loader-4 span::before, .loader-4 span::after
+            {
+                background: rgb(45, 45, 55);
+            }
         }
     
     </style>
