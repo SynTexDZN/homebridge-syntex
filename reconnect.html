@@ -57,8 +57,8 @@
 </html>
 <script defer>
 
-    var urlMac = window.location.href.searchParams.get("mac");
-    var urlType = window.location.href.searchParams.get("type");
+    var urlMac = (new URL(window.location.href)).searchParams.get("mac");
+    var urlType = (new URL(window.location.href)).searchParams.get("type");
 
     if(urlType == 'relais' || urlType == 'switch')
     {
@@ -114,7 +114,7 @@
     
     var ping = false;
     var ip = 'http://192.168.4.1/';
-    var ipp = window.location.href.searchParams.get("ip");
+    var ipp = (new URL(window.location.href)).searchParams.get("ip");
     var client, client2;
     
     pingESP();
