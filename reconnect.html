@@ -11,7 +11,7 @@
             </div>
             <div class="main">
                 <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input id="back-btn" type="button" value="Zurück" onclick="window.location.href='/'">
                     <input style="margin-left: 20px" type="button" value="Gerät Neu Gekauft?" onclick="window.location.href='/setup'">
                 </div>
             </div>
@@ -30,7 +30,7 @@
             </div>
             <div class="main">
                 <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input type="button" value="Zurück" onclick="location.reload">
                     <input id="scan-btn" class="gradient-blue" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi()">
                 </div>
             </div>
@@ -49,13 +49,27 @@
             <h1>Daten Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img src="img/success.png" class="setup-png">
-                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Dashboard ( 5 )" onclick="window.location.href='/'">
+                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Gerät ( 5 )">
                 <p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
             </div>
         </div>
     </body>
 </html>
 <script defer>
+
+    var urlMac = window.location.href.searchParams.get("mac");
+    var urlType = window.location.href.searchParams.get("type");
+
+    if(urlType == 'relais' || urlType == 'switch')
+    {
+        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/devices/" + urlType + "?mac=" + urlMac + "'");
+        document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + urlType + "?mac=" + urlMac + "'");
+    }
+    else
+    {
+        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/devices/" + urlType + "-sensor?mac=" + urlMac + "'");
+        document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + urlType + "-sensor?mac=" + urlMac + "'");
+    }    
 
     function searchLoop()
     {
@@ -100,8 +114,7 @@
     
     var ping = false;
     var ip = 'http://192.168.4.1/';
-    var url = new URL(window.location.href);
-    var ipp = url.searchParams.get("ip");
+    var ipp = window.location.href.searchParams.get("ip");
     var client, client2;
     
     pingESP();

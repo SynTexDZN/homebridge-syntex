@@ -115,6 +115,6 @@
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
     
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "&type=" + device.type + "'");
 
 </script>
