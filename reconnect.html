@@ -5,7 +5,7 @@
             <h1>Gerät Übertragen</h1>
             <p>Übertrage ein Gerät aus einem anderen WLAN Netz</p>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <img src="img/wifi.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <img src="img/wifi.png" class="setup-png">
                 <input class="gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="search-loop" type="button" value="Nach Geräten suchen .">
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
@@ -38,7 +38,7 @@
         <div id="connecting" style="display: none;">
             <h1>Verbinden</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <img src="img/connecting.png" style="width: 200px; height: 200px; filter: invert(100%); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <img src="img/connecting.png" class="setup-png">
                 <div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
                     <div class="progress" style="background: hsl(210, 85%, 65%); width: 0%; height: 10px; border-radius: 5px"></div>
                 </div>
@@ -48,7 +48,7 @@
         <div id="success" style="display: none;">
             <h1>Daten Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <img src="img/success.png" style="width: 200px; height: 200px; filter: brightness(4); margin: 0 auto; margin-bottom: 100px; display: block;">
+                <img src="img/success.png" class="setup-png">
                 <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-countdown" type="button" value="Zum Dashboard ( 5 )" onclick="window.location.href='/'">
                 <p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
             </div>
@@ -57,7 +57,7 @@
 </html>
 <script defer>
 
-function searchLoop()
+    function searchLoop()
     {
         setTimeout(function()
         {
@@ -78,23 +78,21 @@ function searchLoop()
 
     searchLoop();
 
-    function redirectCountdown()
+    function redirectCountdown(countdown, url)
     {
         setTimeout(function()
         {
-            var countdown = document.getElementById('redirect-countdown');
-
             if(countdown.value.split('( ')[1].split(' )')[0] > 0)
             {
-                countdown.value = 'Zum Dashboard ( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
+                countdown.value = countdown.value.split('( ')[0] + '( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
 
                 if(countdown.value.split('( ')[1].split(' )')[0] > 0)
                 {
-                    redirectCountdown();
+                    redirectCountdown(countdown, url);
                 }
                 else
                 {
-                    window.location.href = '/';
+                    window.location.href = url;
                 }
             }
         }, 1000);
@@ -323,7 +321,7 @@ function searchLoop()
                     document.getElementById('success').style.display = "";
                     document.getElementById('connecting').style.display = "none";
 
-                    redirectCountdown();           
+                    redirectCountdown(document.getElementById('redirect-success'), '/');           
                 }
             }
         };
