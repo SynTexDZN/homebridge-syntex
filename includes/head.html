@@ -1,4 +1,147 @@
 <head>
+    <style>
+
+        #preloader
+        {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: rgb(20, 20, 30);
+            transition: .3s opacity cubic-bezier(0, 0, 0.2, 1);
+            z-index: 10000;
+        }
+    
+        .loader-4
+        {
+            opacity: 1;
+            height: 32px;
+            width: 32px;
+            animation: loader-4-5 2s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+        }
+
+        .loader-4::after
+        {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            bottom: 0; right: 0;
+            margin: auto;
+            width: 12px;
+            height: 12px;
+            top: 0; left: 0;
+            bottom: 0; right: 0;
+            margin: auto;
+            background: rgb(230, 230, 240);
+            border-radius: 50%;
+            -webkit-animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+                    animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+        }
+
+        @-webkit-keyframes loader-4-1
+        {
+            0%   { -webkit-transform: scale(0); opacity: 0; }
+            50%  { -webkit-transform: scale(1); opacity: 1; }
+            100% { -webkit-transform: scale(0); opacity: 0; }
+        }
+
+        @keyframes loader-4-1 {
+            0%   { transform: scale(0); opacity: 0; }
+            50%  { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .loader-4 span
+        {
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            bottom: 0; right: 0;
+            margin: auto;
+            height: 32px;
+            width: 32px;
+            -webkit-animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+                    animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+        }
+
+        @-webkit-keyframes loader-4-2
+        {
+            0%   { -webkit-transform: rotate(0deg); }
+            50%  { -webkit-transform: rotate(180deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes loader-4-2
+        {
+            0%   { transform: rotate(0deg); }
+            50%  { transform: rotate(180deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-4 span::before, .loader-4 span::after
+        {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            bottom: 0; right: 0;
+            margin: auto;
+            height: 12px;
+            width: 12px;
+            background: rgb(230, 230, 240);
+            border-radius: 50%;
+            -webkit-animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+                    animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+        }
+
+        @-webkit-keyframes loader-4-3
+        {
+            0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+            50%  { -webkit-transform: translate3d(-16px, 0, 0) scale(.5); }
+            100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+        }
+
+        @keyframes loader-4-3
+        {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            50%  { transform: translate3d(-16px, 0, 0) scale(.5); }
+            100% { transform: translate3d(0, 0, 0) scale(1); }
+        }
+        
+        .loader-4 span::after
+        {
+            -webkit-animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+                    animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+        }
+
+        @-webkit-keyframes loader-4-4
+        {
+            0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+            50%  { -webkit-transform: translate3d(16px, 0, 0) scale(.5); }
+            100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+        }
+
+        @keyframes loader-4-4 
+        {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            50%  { transform: translate3d(16px, 0, 0) scale(.5); }
+            100% { transform: translate3d(0, 0, 0) scale(1); }
+        }
+    
+        @-webkit-keyframes loader-4-5
+        {
+            0%   { opacity: 0; }
+            50%  { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes loader-4-5
+        {
+            0%   { opacity: 0; }
+            50%  { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    
+    </style>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html">
     <meta name="mobile-web-app-capable" content="yes">
@@ -12,4 +155,8 @@
     <link rel="apple-touch-startup-image" href="https://syntex.sytes.net/img/splashscreen.png" media="(min-device-width: 1024px) and (max-device-width: 2048) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+    <script async src="https://syntex.sytes.net/js/loading.js"></script>
 </head>
+<div id="preloader">
+    <div class="loader-4"><span></span></div>
+</div>
