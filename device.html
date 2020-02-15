@@ -1,0 +1,978 @@
+<html>
+    <title>Kontakt-Sensor</title>
+    <body>
+        <div id="infos">
+            <div class="control-container">
+                <input id="status" class="control-panel" type="button" value="LADEN ..">
+            </div>
+            <h1>Laden ..</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table"></div>
+            <div class="main">
+                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
+                </div>
+            </div>
+        </div>
+        <div id="settings" style="display: none;">
+            <h1>Einstellungen</h1>
+            <p>Laden ..</p>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
+            <div class="main">
+                <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
+                <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="closeSettings()">
+                    <input id="save-btn" style="margin-left: 20px;" type="submit" value="Speichern" onclick="saveConfig()">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+
+    var device = JSON.parse('<%device%>');
+    var settings = [];
+
+    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
+    {
+        settings.push({
+            index: 'led',
+            name: 'LED'
+        });
+    }
+
+    if(device.type == 'motion')
+    {
+        settings.push({
+            index: 'interval',
+            name: 'Delay'
+        });
+    }
+
+    if(device.type == 'light' || device.type == 'temperature')
+    {
+        settings.push({
+            index: 'interval',
+            name: 'Interval'
+        });
+    }
+
+    if(device.type == 'light')
+    {
+        settings.push({
+            index: 'scenecontrol',
+            name: 'Szenen'
+        });
+    }
+
+    console.log(device);
+
+    document.getElementsByTagName('title')[0].innerHTML = device.name;
+    document.getElementsByTagName('h1')[0].innerHTML = device.name;
+
+    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
+    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
+    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+
+    for(const i in settings)
+    {
+        if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+        }
+        else if((device.type == 'motion') && settings[i].index == 'interval')
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+        }
+        else
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+        }
+    }
+
+    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
+    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('version', device.version);
+
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "&type=" + device.type + "'");
+
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+
+    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>Name: <input value="' + device.name + '" name="name" type="text" style="max-width: 325px"></p>';
+
+    for(const i in settings)
+    {
+        if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+        }
+        else if((device.type == 'motion') && settings[i].index == 'interval')
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+        }
+        else
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></p>';
+        }
+    }
+
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+
+</script>
+<script>
+
+    function openSettings()
+    {
+        document.getElementById('infos').setAttribute('style', 'display: none');
+        document.getElementById('settings').removeAttribute('style');
+        document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+    }
+    
+    function closeSettings()
+    {
+        document.getElementById('infos').removeAttribute('style');
+        document.getElementById('settings').setAttribute('style', 'display: none');
+        document.getElementsByTagName('title')[0].innerHTML = device.name;
+    }
+    
+    function fetchState()
+    {        
+        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
+        {
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+            
+            client.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id);
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        if(device.type == 'contact')
+                        {
+                            if(client.responseText == 'true') 
+                            {
+                                document.getElementById('status').value = 'ZU';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                            }
+                            else if(client.responseText == 'false')
+                            {
+                                document.getElementById('status').value = 'GEÖFFNET';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                            }
+                        }
+                        else if(device.type == 'motion')
+                        {
+                            if(client.responseText == 'true') 
+                            {
+                                document.getElementById('status').value = 'BEWEGUNG';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
+                            }
+                            else if(client.responseText == 'false')
+                            {
+                                document.getElementById('status').value = 'BEREIT';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                            }
+                        }
+                        else if(device.type == 'relais' || device.type == 'switch')
+                        {
+                            if(client.responseText == 'true')
+                            {
+                                document.getElementById('status').value = 'AN';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                            }
+                            else if(client.responseText == 'false')
+                            {
+                                document.getElementById('status').value = 'AUS';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                            }
+                        }
+                        
+                        console.log(client.responseText);
+                    }
+                }
+            }
+            
+            client.send();
+        }
+        else if(device.type == 'light' || device.type == 'temperature')
+        {
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+            
+            client.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=' + device.type);
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        if(device.type == 'light')
+                        {
+                            document.getElementById('status').value = Math.round(client.responseText) + ' LUX' + ' - ' + document.getElementById('status').value.split(' - ')[1];
+                        }
+                        else if(device.type == 'temperature')
+                        {
+                            document.getElementById('status').value = ((Math.round(client.responseText * 10.0)) / 10.0) + ' °C' + ' - ' + document.getElementById('status').value.split(' - ')[1];
+                        }
+
+                        console.log(client.responseText);
+                    }
+                }
+            }
+            
+            client.send();
+            
+            var client2 = new XMLHttpRequest();
+
+            client2.timeout = 10000;
+            
+            if(device.type == 'light')
+            {
+                client2.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=rain');
+            }
+            else if(device.type == 'temperature')
+            {
+                client2.open('GET', window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=humidity');
+            }
+
+            client2.onreadystatechange = function()
+            {
+                if(client2.readyState === 4)
+                {  
+                    if(client2.status === 200)
+                    {
+                        if(device.type == 'light')
+                        {
+                            if(client2.responseText == 'false')
+                            {
+                                document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - TROCKEN';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
+                            }
+                            else if(client2.responseText == 'true')
+                            {
+                                document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - REGEN';
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
+                            }
+                        }
+                        else if(device.type == 'temperature')
+                        {
+                            if(client2.responseText > 40 && client2.responseText < 70)
+                            {
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                            }
+                            else if(client2.responseText < 20 || client2.responseText > 85)
+                            {
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
+                            }
+                            else
+                            {
+                                document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                            }
+
+                            document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - ' + client2.responseText + ' %';
+                        }
+
+                        console.log(client2.responseText);
+                    }
+                }
+            }
+            
+            client2.send();
+        }
+    }
+
+</script>
+<script>
+    
+    var device = JSON.parse('<%device%>');
+
+    var restart = false;
+    var updating = false;
+    
+    function restartDevice(btn)
+    {
+        if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null )
+        {
+            restart = true;
+
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'restarting');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Neustart ..');
+            overlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 1;
+                document.getElementById('restart-btn').style.opacity = 0;
+            }, 10);
+            
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+        
+            client.open('GET', 'http://' + device.ip + '/restart');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status !== 200)
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'restart-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Keine Verbindung zum Gerät!');
+                        rOverlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
+                        setTimeout(function()
+                        {
+                            overlay.style.opacity = 0;
+                            rOverlay.style.opacity = 1;
+                        }, 10);
+                    
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('restart-btn').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                        }, 5300);
+                    }
+                }
+            }
+            
+            client.send();
+        }
+    }
+    
+    function checkUpdate(ip, name, version)
+    {
+        var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
+        
+        client.open('GET', 'http://' + ip + '/version');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(client.responseText != version)
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Update Erfolgreich!');
+                        rOverlay.setAttribute('class', 'gradient-green');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            document.getElementById('updating').style.opacity = 0;
+                        }, 10);
+                        
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
+                        }, 5300);
+                    }
+                    else
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Update Fehlgeschlagen!');
+                        rOverlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            document.getElementById('updating').style.opacity = 0;
+                        }, 10);
+                        
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('update-btn').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
+                            document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
+                        }, 5300);
+                    }
+
+                    updating = false;
+
+                    setTimeout(function()
+                    {
+                        location.reload();
+                    }, 5600);
+                }
+            }
+        }
+        
+        client.send();
+    }
+    
+    setTimeout(function()
+    {
+        pingESP();
+    }, 500);
+    
+    function pingESP()
+    {
+        if(updating)
+        {
+            checkUpdate(device.ip, device.name, device.version);
+        }
+        else
+        {
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+        
+            client.open('GET', 'http://' + device.ip + '/');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        console.log("ESP Gefunden");
+
+                        if(restart == true)
+                        {
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'restart-result');
+                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                            rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
+                            rOverlay.setAttribute('class', 'gradient-green');
+
+                            document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 1;
+                                document.getElementById('restarting').style.opacity = 0;
+                            }, 10);
+                        
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 0;
+                                document.getElementById('restart-btn').style.opacity = 1;
+                            }, 5000);
+
+                            setTimeout(function()
+                            {
+                                document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                                document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
+                                document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
+                            }, 5300);
+
+                            restart = false;
+                        }
+
+                        for(var i = 0; i <= 4000; i+=1000)
+                        {
+                            setTimeout(function()
+                            {
+                                fetchState();
+                            }, i);
+                        }
+
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 5000);
+                    }
+                    else
+                    {
+                        document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                        document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+                        
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 500);
+                    }
+                }
+            }
+            
+            client.send();
+        }
+    }    
+    
+    function updateDevice()
+    {        
+        if(document.getElementById('updating') == null && document.getElementById('waiting') == null && document.getElementById('update-result') == null)
+        {
+            var wOverlay = document.createElement('input');
+
+            wOverlay.setAttribute('type', 'button');
+            wOverlay.setAttribute('id', 'waiting');
+            wOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+            wOverlay.setAttribute('value', 'Bitte Warten ..');
+            wOverlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('update-btn').parentElement.insertBefore(wOverlay, document.getElementById('update-btn'));
+
+            setTimeout(function()
+            {
+                wOverlay.style.opacity = 1;
+                document.getElementById('update-btn').style.opacity = 0;
+            }, 10);
+
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+        
+            client.open('GET', 'http://' + device.ip + '/update');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        if(client.responseText == 'Das Update wird installiert ..')
+                        {
+                            updating = true;
+
+                            var overlay = document.createElement('input');
+
+                            overlay.setAttribute('type', 'button');
+                            overlay.setAttribute('id', 'updating');
+                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                            overlay.setAttribute('value', 'Update Wird Installiert ..');
+                            overlay.setAttribute('class', 'gradient-purple');
+
+                            document.getElementById('update-btn').parentElement.insertBefore(overlay, document.getElementById('update-btn'));
+
+                            setTimeout(function()
+                            {
+                                overlay.style.opacity = 1;
+                                wOverlay.style.opacity = 0;
+                            }, 10);
+                        }
+                    }
+                    else
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result');
+                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        rOverlay.setAttribute('value', 'Keine Verbindung zum Gerät!');
+                        rOverlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 1;
+                            wOverlay.style.opacity = 0;
+                        }, 10);
+                    
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('update-btn').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(wOverlay);
+                            document.getElementById('update-btn').parentElement.removeChild(overlay);
+                        }, 5300);
+                    }
+                }
+            }
+
+            client.send();
+        }
+    }
+    
+    function checkUpdates()
+    {
+        var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
+        
+        client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'));
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    if(client.responseText > document.getElementsByClassName('main')[1].getAttribute('version'))
+                    {
+                        var update = document.createElement('input');
+
+                        update.setAttribute('type', 'button');
+                        update.setAttribute('value', 'Update Installieren ( v' + client.responseText + ' )');
+                        update.setAttribute('style', 'margin-bottom: 20px;');
+                        update.setAttribute('onclick', 'updateDevice()');
+                        update.setAttribute('id', 'update-btn');
+
+                        document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
+                    }
+                }
+            }
+        }
+
+        client.send();
+    }
+    
+    checkUpdates();
+
+</script>
+<script>
+
+    function resetDevice()
+    {
+        var overlay = document.createElement('input');
+
+        overlay.setAttribute('type', 'button');
+        overlay.setAttribute('id', 'reset-confirm');
+        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+        overlay.setAttribute('value', 'Löschen Bestätigen?');
+        overlay.setAttribute('class', 'gradient-red');
+        overlay.setAttribute('onclick', 'resetConfirm()');
+
+        document.getElementById('reset-btn').parentElement.insertBefore(overlay, document.getElementById('reset-btn'));
+
+        setTimeout(function()
+        {
+            overlay.style.opacity = 1;
+            document.getElementById('reset-btn').style.opacity = 0;
+        }, 10);
+    }
+    
+    function resetConfirm()
+    {
+        document.getElementById('reset-confirm').style.opacity = 0;
+
+        var zOverlay = document.createElement('input');
+
+        zOverlay.setAttribute('type', 'button');
+        zOverlay.setAttribute('id', 'reset-result');
+        zOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+        zOverlay.setAttribute('value', 'Zurücksetzen ..');
+        zOverlay.setAttribute('class', 'gradient-blue');
+
+        document.getElementById('reset-btn').parentElement.insertBefore(zOverlay, document.getElementById('reset-btn'));
+
+        setTimeout(function()
+        {
+            zOverlay.style.opacity = 1;
+        }, 10);
+
+        setTimeout(function()
+        {
+            document.getElementById('reset-btn').parentElement.removeChild(document.getElementById('reset-confirm'));
+        }, 300);
+
+        var client = new XMLHttpRequest();
+
+        client.timeout = 10000;
+
+        client.open('GET', 'http://' + device.ip + '/reset');
+
+        client.onreadystatechange = function()
+        {
+            if(client.readyState === 4)
+            {  
+                if(client.status === 200)
+                {
+                    console.log(client.responseText);
+                
+                    var rOverlay = document.createElement('input');
+
+                    rOverlay.setAttribute('type', 'button');
+                    rOverlay.setAttribute('id', 'reset-result');
+                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                    rOverlay.setAttribute('value', 'Reset Erfolgreich!');
+                    rOverlay.setAttribute('class', 'gradient-green');
+
+                    document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+
+                    setTimeout(function()
+                    {
+                        zOverlay.style.opacity = 0;
+                        rOverlay.style.opacity = 1;
+                    }, 10);
+
+                    setTimeout(function()
+                    {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+                else
+                {
+                    var rOverlay = document.createElement('input');
+
+                    rOverlay.setAttribute('type', 'button');
+                    rOverlay.setAttribute('id', 'reset-result');
+                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                    rOverlay.setAttribute('value', 'Reset Fehlgeschlagen!');
+                    rOverlay.setAttribute('class', 'gradient-red');
+
+                    document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+
+                    setTimeout(function()
+                    {
+                        zOverlay.style.opacity = 0;
+                        rOverlay.style.opacity = 1;
+                    }, 10);
+                
+                    setTimeout(function()
+                    {
+                        rOverlay.style.opacity = 0;
+                        document.getElementById('reset-btn').style.opacity = 1;
+                    }, 5000);
+
+                    setTimeout(function()
+                    {
+                        document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
+                        document.getElementById('reset-btn').parentElement.removeChild(zOverlay);
+                    }, 5300);
+                }
+            }
+        }
+
+        client.send();
+    }
+    
+    function saveConfig()
+    {
+        if(document.getElementById('saving') == null && document.getElementById('save-result') == null)
+        {
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'saving');
+            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+            overlay.setAttribute('value', 'Hochladen ..');
+            overlay.setAttribute('class', 'gradient-blue');
+
+            document.getElementById('save-btn').parentElement.insertBefore(overlay, document.getElementById('save-btn'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 1;
+                document.getElementById('save-btn').style.opacity = 0;
+            }, 10);
+
+            var settings = {
+                mac: device.id
+            };
+            
+            var form = document.getElementById('settings').getElementsByClassName('main')[0];
+            
+            for(var i = 0; i < form.childElementCount; i++)
+            {
+                if(form.children[i].children[0].getAttribute('name') == 'interval')
+                {
+                    if(device.type == 'temperature')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                    }
+                    else if(device.type == 'motion')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
+                    }
+                    else if(device.type == 'light')
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                    }
+                    else
+                    {
+                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                    }
+                }
+                else
+                {
+                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                }
+            }
+            
+            var client = new XMLHttpRequest();
+
+            client.timeout = 10000;
+            
+            client.open('POST', '/serverside/save-config');
+
+            client.onreadystatechange = function()
+            {
+                if(client.readyState === 4)
+                {  
+                    if(client.status === 200)
+                    {
+                        console.log(client.responseText);
+                        if(client.responseText == 'Success')
+                        {
+                            var error = '';
+
+                            var client2 = new XMLHttpRequest();
+
+                            client2.timeout = 10000;
+            
+                            client2.open('GET', 'http://' + device.ip + '/loadcfg');
+
+                            client2.onreadystatechange = function()
+                            {
+                                if(client2.readyState === 4)
+                                {  
+                                    if(client2.status === 200)
+                                    {
+                                        console.log(client2.responseText);
+                                        if(client2.responseText != "Success")
+                                        {
+                                            error = 'true';
+                                        }
+                                        else
+                                        {
+                                            var rOverlay = document.createElement('input');
+
+                                            rOverlay.setAttribute('type', 'button');
+                                            rOverlay.setAttribute('id', 'save-result');
+                                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                            rOverlay.setAttribute('value', 'Gespeichert!');
+                                            rOverlay.setAttribute('class', 'gradient-green');
+
+                                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                            setTimeout(function()
+                                            {
+                                                rOverlay.style.opacity = 1;
+                                            }, 10);
+                                        
+                                            setTimeout(function()
+                                            {
+                                                rOverlay.style.opacity = 0;
+                                                document.getElementById('save-btn').style.opacity = 1;
+                                            }, 5000);
+
+                                            setTimeout(function()
+                                            {
+                                                document.getElementById('save-btn').parentElement.removeChild(rOverlay);
+                                            }, 5300);
+
+                                            console.log('RESPONSE');
+                                            
+                                            setTimeout(function()
+                                            {
+                                                redirect();
+                                                console.log('REDIRECT');
+                                            }, 1000);
+                                            
+                                            error = 'false';
+                                        }
+                                    }
+                                }
+                            } 
+                            
+                            client2.send();
+
+                            setTimeout(function()
+                            {
+                                var rOverlay = document.createElement('input');
+
+                                rOverlay.setAttribute('type', 'button');
+                                rOverlay.setAttribute('id', 'save-result');
+                                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                rOverlay.setAttribute('value', 'Gespeichert!');
+                                rOverlay.setAttribute('class', 'gradient-green');
+
+                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 1;
+                                }, 10);
+                            
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 0;
+                                    document.getElementById('save-btn').style.opacity = 1;
+                                }, 5000);
+
+                                setTimeout(function()
+                                {
+                                    document.getElementById('save-btn').parentElement.removeChild(rOverlay);
+                                }, 5300);
+
+                                setTimeout(function()
+                                {
+                                    redirect();
+                                }, 1000);
+                            }, 5000);
+                        }
+                        else
+                        {
+                            console.log("ERROR");
+                        }
+                    }
+                }
+            }
+
+            client.send(JSON.stringify(settings));
+        }
+    }
+    
+    function redirect()
+    {
+        location.reload();
+    }
+
+</script>

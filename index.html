@@ -56,6 +56,7 @@
         }
 
         var button = document.createElement('input');
+
         button.setAttribute('type', 'button');
         button.setAttribute('value', devices[i].name);
         button.setAttribute('sensortype', devices[i].type);
@@ -64,20 +65,7 @@
         button.setAttribute('class', 'device white');
         button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
         
-        var url = 'http://' + devices[i].ip;
-        
-        /*
-        if(devices[i].type != 'relais' && devices[i].type != 'switch' && devices[i].type != 'lock')
-        {
-            url = '/devices/' + devices[i].type + '-sensor?mac=' + devices[i].id;
-        }
-        else if(devices[i].type == 'relais' || devices[i].type == 'switch')
-        {
-            url = '/devices/' + devices[i].type + '?mac=' + devices[i].id;
-        }
-        */
-
-        url = '/devices/all?mac=' + devices[i].id;
+        var url = '/device?mac=' + devices[i].id;
         
         button.setAttribute('onclick', "window.location.href='" + url + "'");
         button.setAttribute('name', devices[i].name);
