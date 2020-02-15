@@ -79,7 +79,18 @@
 
     for(const i in settings)
     {
-        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+        if(device.type == 'light' || device.type == 'temperature')
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+        }
+        else if(device.type == 'motion')
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+        }
+        else
+        {
+            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+        }
     }
 
     document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
@@ -93,7 +104,18 @@
 
     for(const i in settings)
     {
-        document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></p>';
+        if(device.type == 'light' || device.type == 'temperature')
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+        }
+        else if(device.type == 'motion')
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+        }
+        else
+        {
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></p>';
+        }
     }
 
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
