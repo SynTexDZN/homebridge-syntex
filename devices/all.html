@@ -79,11 +79,11 @@
 
     for(const i in settings)
     {
-        if(device.type == 'light' || device.type == 'temperature')
+        if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
             document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
-        else if(device.type == 'motion')
+        else if((device.type == 'motion') && settings[i].index == 'interval')
         {
             document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
         }
@@ -104,11 +104,11 @@
 
     for(const i in settings)
     {
-        if(device.type == 'light' || device.type == 'temperature')
+        if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
             document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
         }
-        else if(device.type == 'motion')
+        else if((device.type == 'motion') && settings[i].index == 'interval')
         {
             document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
         }
