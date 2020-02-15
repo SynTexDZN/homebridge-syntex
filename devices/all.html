@@ -33,7 +33,27 @@
 <script>
 
     var device = JSON.parse('<%device%>');
-    var settings = ['LED'];
+    var settings = [];
+
+    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
+    {
+        settings.push('LED');
+    }
+
+    if(device.type == 'motion')
+    {
+        settings.push('Delay');
+    }
+
+    if(device.type == 'light' || device.type == 'temperature')
+    {
+        settings.push('Interval');
+    }
+
+    if(device.type == 'light')
+    {
+        settings.push('Scenecontrol');
+    }
 
     console.log(device);
 
