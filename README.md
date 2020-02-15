@@ -11,7 +11,8 @@ A plugin to control SynTex accessory.
 
 # Example Config
 **INFO:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge:homebridge ./SynTex/`
+- `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
+- `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 
 ```
 "platforms": [
@@ -25,7 +26,8 @@ A plugin to control SynTex accessory.
         "port": 1710,
         "cache_directory": "./SynTex/",
         "sensors": [],
-        "switches": []
+        "switches": [],
+        "lights": []
     }
 ]
 ```
@@ -38,7 +40,4 @@ A plugin to control SynTex accessory.
 - Contact Sensor
 - Relais
 - Switch
-
-
-# Soon
 - LED Controller
