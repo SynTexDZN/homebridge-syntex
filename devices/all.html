@@ -47,17 +47,17 @@
 
     for(const i in settings)
     {
-        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[i] + '</p>';
+        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[i.toLowerCase()] + '</p>';
     }
 
-    document.getElementById('infos').document.getElementsByClassName('main')[1].setAttribute('type', device.type);
-    document.getElementById('infos').document.getElementsByClassName('main')[1].setAttribute('version', device.version);
+    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
+    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('version', device.version);
 
     document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>Name: <input value="' + device.name + '" name="name" type="text" style="max-width: 325px"></p>';
 
     for(const i in settings)
     {
-        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[i] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
+        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[i.toLowerCase()] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
     }
 
 </script>
