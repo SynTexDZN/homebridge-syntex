@@ -47,12 +47,12 @@
 
     for(const i in settings)
     {
-        var lower = i.toLowerCase();
+        var lower = settings[i].toLowerCase();
         console.log(lower);
         console.log(device[lower]);
         console.log(device.lower);
 
-        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[i.toLowerCase()] + '</p>';
+        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[settings[i].toLowerCase()] + '</p>';
     }
 
     document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
@@ -62,7 +62,7 @@
 
     for(const i in settings)
     {
-        document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[i.toLowerCase()] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
+        document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[settings[i].toLowerCase()] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
     }
 
 </script>
