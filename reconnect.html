@@ -58,18 +58,9 @@
 <script defer>
 
     var urlMac = (new URL(window.location.href)).searchParams.get("mac");
-    var urlType = (new URL(window.location.href)).searchParams.get("type");
 
-    if(urlType == 'relais' || urlType == 'switch')
-    {
-        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/devices/" + urlType + "?mac=" + urlMac + "'");
-        document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + urlType + "?mac=" + urlMac + "'");
-    }
-    else
-    {
-        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/devices/" + urlType + "-sensor?mac=" + urlMac + "'");
-        document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/devices/" + urlType + "-sensor?mac=" + urlMac + "'");
-    }    
+    document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
+    document.getElementById('redirect-countdown').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");  
 
     function searchLoop()
     {
