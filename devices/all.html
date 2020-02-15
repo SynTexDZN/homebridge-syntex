@@ -47,16 +47,15 @@
 
     for(const i in settings)
     {
-        var lower = settings[i].toLowerCase();
-        console.log(lower);
-        console.log(device[lower]);
-        console.log(device.lower);
-
         document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[settings[i].toLowerCase()] + '</p>';
     }
 
     document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
     document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('version', device.version);
+
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "&type=" + device.type + "'");
+
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
     document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>Name: <input value="' + device.name + '" name="name" type="text" style="max-width: 325px"></p>';
 
@@ -65,6 +64,10 @@
         document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[settings[i].toLowerCase()] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
     }
 
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
+    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+
 </script>
 <script>
 
@@ -72,12 +75,14 @@
     {
         document.getElementById('infos').setAttribute('style', 'display: none');
         document.getElementById('settings').removeAttribute('style');
+        document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
     }
     
     function closeSettings()
     {
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
+        document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
     
     function fetchState()
@@ -96,13 +101,13 @@
                 {
                     if(client.responseText == 'true') 
                     {
-                        document.getElementById('contact').value = 'ZU';
-                        document.getElementById('contact').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                        document.getElementById('status').value = 'ZU';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
                     else if(client.responseText == 'false')
                     {
-                        document.getElementById('contact').value = 'GEÖFFNET';
-                        document.getElementById('contact').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                        document.getElementById('status').value = 'GEÖFFNET';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
                     }
                     console.log(client.responseText);
                 }
@@ -111,18 +116,5 @@
         
         client.send();
     }
-
-</script>
-<script>
-
-    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
-    document.getElementById('settings').getElementsByTagName('input')[0].value = device.name;
-    document.getElementById('settings').getElementsByTagName('input')[1].value = device.led;
-    
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
-    
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "&type=" + device.type + "'");
 
 </script>
