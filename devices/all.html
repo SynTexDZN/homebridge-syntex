@@ -116,26 +116,26 @@
                     {
                         if(client.responseText == 'true') 
                         {
-                            document.getElementById('motion').value = 'BEWEGUNG';
-                            document.getElementById('motion').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
+                            document.getElementById('status').value = 'BEWEGUNG';
+                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
                         }
                         else if(client.responseText == 'false')
                         {
-                            document.getElementById('motion').value = 'BEREIT';
-                            document.getElementById('motion').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                            document.getElementById('status').value = 'BEREIT';
+                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                         }
                     }
                     else if(device.type == 'relais' || device.type == 'switch')
                     {
                         if(client.responseText == 'true')
                         {
-                            document.getElementById('switch').value = 'AN';
-                            document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                            document.getElementById('status').value = 'AN';
+                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
                         }
                         else if(client.responseText == 'false')
                         {
-                            document.getElementById('switch').value = 'AUS';
-                            document.getElementById('switch').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                            document.getElementById('status').value = 'AUS';
+                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
                         }
                     }
                     
