@@ -31,6 +31,18 @@ async function removeDevice(mac, type)
                                 }
                             }
                         }
+                        else if(type == "rgb" || type == "rgbw")
+                        {
+                            for(const i in platform.lights)
+                            {
+                                if(platform.lights[i].mac === mac)
+                                {
+                                    platform.lights.splice(i, 1);
+
+                                    response = true;
+                                }
+                            }
+                        }
                         else
                         {
                             for(const i in platform.sensors)
@@ -214,7 +226,11 @@ async function initDevice(mac, ip, name, type, version, interval)
 
                                                 if(type == "relais" || type == "switch")
                                                 {
-                                                    platform.switches[platform.switches.length] = {mac: mac, name: name, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
+                                                    platform.switches[platform.switches.length] = {mac: mac, name: name, type: type, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
+                                                }
+                                                else if(type == "rgb" || type == "rgb2")
+                                                {
+                                                    platform.switches[platform.switches.length] = {mac: mac, ip: ip, name: name, type: type};
                                                 }
                                                 else
                                                 {
