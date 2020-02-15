@@ -37,22 +37,34 @@
 
     if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
     {
-        settings.push('LED');
+        settings.push({
+            index: 'led',
+            name: 'LED'
+        });
     }
 
     if(device.type == 'motion')
     {
-        settings.push('Delay');
+        settings.push({
+            index: 'interval',
+            name: 'Delay'
+        });
     }
 
     if(device.type == 'light' || device.type == 'temperature')
     {
-        settings.push('Interval');
+        settings.push({
+            index: 'interval',
+            name: 'Interval'
+        });
     }
 
     if(device.type == 'light')
     {
-        settings.push('Scenecontrol');
+        settings.push({
+            index: 'scenecontrol',
+            name: 'Szenen'
+        });
     }
 
     console.log(device);
@@ -67,7 +79,7 @@
 
     for(const i in settings)
     {
-        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].toUpperCase() + ': </b>' + device[settings[i].toLowerCase()] + '</p>';
+        document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
     }
 
     document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
@@ -81,7 +93,7 @@
 
     for(const i in settings)
     {
-        document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].toUpperCase() + ': <input value="' + device[settings[i].toLowerCase()] + '" name="' + settings[i].toLowerCase() + '" type="text" style="max-width: 150px"></p>';
+        document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></p>';
     }
 
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
