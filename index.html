@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <div style="margin: 0 auto; width: 100%; max-width: 400px">
+        <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
             <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href='http://syntex.local:8000/settings.php'">
             <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='/setup'">
         </div>
@@ -327,7 +327,7 @@
                     update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
                     update.setAttribute('onclick', 'installAllUpdates();');
 
-                    document.getElementsByTagName('body')[0].children[2].insertBefore(update, document.getElementsByTagName('body')[0].children[2].children[0]);
+                    document.getElementsByClassName('bottom')[0].insertBefore(update, document.getElementsByClassName('bottom')[0].children[0]);
                 }
             }
         });
