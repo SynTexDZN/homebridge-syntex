@@ -35,9 +35,9 @@ SynTexPlatform.prototype = {
             var urlParts = url.parse(request.url, true);
             var urlParams = urlParts.query;
             var urlPath = urlParts.pathname;
-            var body = [];
+            //var body = [];
             
-            body = Buffer.concat(body).toString();
+            //body = Buffer.concat(body).toString();
 
             response.statusCode = 200;
             response.setHeader('Content-Type', 'application/json');
