@@ -117,8 +117,6 @@
                                 document.getElementById(ip).style.opacity = 0;
                             }, 10);
                         }
-
-                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update')[0]);
                     }
                     else
                     {
@@ -155,10 +153,12 @@
                         if(document.getElementById(ip + '-update-result') != null)
                         {
                             document.getElementById(ip + '-update-result').style.opacity = 0;
+                            document.getElementById(ip).parentElement.getElementsByClassName('update')[0].style.opacity = 0;;
                             document.getElementById(ip).style.opacity = 1;
 
                             setTimeout(function()
                             {
+                                document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update')[0]);
                                 document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-update-result'));
                             }, 300);
                         }
