@@ -118,7 +118,7 @@
                             }, 10);
                         }
 
-                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update'));
+                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update')[0]);
                     }
                     else
                     {
@@ -351,7 +351,7 @@
                     {  
                         console.log(client.responseText);
                         
-                        if(client.responseText == 'Das Update wird installiert ..')
+                        if(client.responseText == 'Success')
                         {
                             updatingDevices.push(ip);
 

@@ -579,28 +579,25 @@
             {
                 if(client.readyState === 4)
                 {  
-                    if(client.status === 200)
+                    if(client.status === 200 && client.responseText == 'Success')
                     {
-                        if(client.responseText == 'Das Update wird installiert ..')
+                        updating = true;
+
+                        var overlay = document.createElement('input');
+
+                        overlay.setAttribute('type', 'button');
+                        overlay.setAttribute('id', 'updating');
+                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
+                        overlay.setAttribute('value', 'Update Wird Installiert ..');
+                        overlay.setAttribute('class', 'gradient-purple');
+
+                        document.getElementById('update-btn').parentElement.insertBefore(overlay, document.getElementById('update-btn'));
+
+                        setTimeout(function()
                         {
-                            updating = true;
-
-                            var overlay = document.createElement('input');
-
-                            overlay.setAttribute('type', 'button');
-                            overlay.setAttribute('id', 'updating');
-                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn').offsetLeft + 'px; top: ' + document.getElementById('update-btn').offsetTop + 'px; width: ' + document.getElementById('update-btn').offsetWidth + 'px!important');
-                            overlay.setAttribute('value', 'Update Wird Installiert ..');
-                            overlay.setAttribute('class', 'gradient-purple');
-
-                            document.getElementById('update-btn').parentElement.insertBefore(overlay, document.getElementById('update-btn'));
-
-                            setTimeout(function()
-                            {
-                                overlay.style.opacity = 1;
-                                wOverlay.style.opacity = 0;
-                            }, 10);
-                        }
+                            overlay.style.opacity = 1;
+                            wOverlay.style.opacity = 0;
+                        }, 10);
                     }
                     else
                     {
