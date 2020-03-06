@@ -188,12 +188,13 @@
 
                     if(client.responseText == "" || client.responseText == "[]")
                     {
-                        document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Suchen'";
+                        document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
                     }
                 }
                 else
                 {
-                    document.getElementById('networks').children[0].innerHTML = "Bitte drücke auf 'Suchen'";
+                    document.getElementById('networks').innerHTML = '';
+                    document.getElementById('networks').children[0].innerHTML = "</p>Bitte drücke auf 'Suchen'</p>";
                 }
 
                 document.getElementById('scan-btn').value = 'Suchen'; 
