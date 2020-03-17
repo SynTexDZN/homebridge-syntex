@@ -183,7 +183,7 @@ async function initDevice(mac, ip, name, type, version, interval)
                     setValue(mac, 'version', version);
                 }
 
-                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "scenecontrol": "' + dbSceneControl + '"}']);
+                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "scenecontrol": [' + dbSceneControl + ']}']);
             }
             else
             {
