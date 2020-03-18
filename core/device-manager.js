@@ -1,5 +1,5 @@
 var store = require('json-fs-store');
-var config, storage, dataStorage, log;
+var config, storage, dataStorage, logger;
     
 async function removeDevice(mac, type)
 {
@@ -62,7 +62,7 @@ async function removeDevice(mac, type)
 
                                 if(err)
                                 {
-                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!", err);
+                                    logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
 
                                     resolve(false);
                                 }
@@ -72,7 +72,7 @@ async function removeDevice(mac, type)
                                         
                                         if(err)
                                         {
-                                            log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht aus der Settings Storage entfernt werden!", err);
+                                            logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden!" + err);
                                             
                                             resolve(false);
                                         }
@@ -82,13 +82,13 @@ async function removeDevice(mac, type)
                                         
                                                 if(err)
                                                 {
-                                                    log('\x1b[31m%s\x1b[0m', "[ERROR]", "Das Gerät konnte nicht aus der Data Storage entfernt werden!", err);
+                                                    logger.log('error', "Das Gerät konnte nicht aus der Data Storage entfernt werden!" + err);
 
                                                     resolve(false);
                                                 }
                                                 else
                                                 {
-                                                    log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Gerät wurde aus dem System entfernt ( " + mac + " )");
+                                                    logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
 
                                                     resolve(true);
                                                 }
@@ -108,7 +108,7 @@ async function removeDevice(mac, type)
 
             if(err || !obj)
             {
-                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
+                logger.log('error', "Config.json konnte nicht geladen werden!");
 
                 resolve(false);
             }    
@@ -206,7 +206,7 @@ async function initDevice(mac, ip, name, type, version, interval)
 
                             if(err)
                             {
-                                log('\x1b[31m%s\x1b[0m', "[ERROR]", mac + ".json konnte nicht aktualisiert werden!", err);
+                                logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
 
                                 resolve(['Error', '']);
                             }
@@ -253,13 +253,13 @@ async function initDevice(mac, ip, name, type, version, interval)
 
                                             if(err)
                                             {
-                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht aktualisiert werden!", err);
+                                                logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
 
                                                 resolve(['Error', '']);
                                             }
                                             else
                                             {
-                                                log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+                                                logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
                                                 resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "scenecontrol": "0"}']);
                                             }
@@ -268,7 +268,7 @@ async function initDevice(mac, ip, name, type, version, interval)
 
                                     if(err || !obj)
                                     {
-                                        log('\x1b[31m%s\x1b[0m', "[ERROR]", "Config.json konnte nicht geladen werden!");
+                                        logger.log('error', "Config.json konnte nicht geladen werden!");
 
                                         resolve(['Error', '']);
                                     }
@@ -367,7 +367,7 @@ async function setValue(mac, param, value)
 
                     if(err)
                     {
-                        log('\x1b[31m%s\x1b[0m', "[ERROR]", mac + ".json konnte nicht aktualisiert werden!", err);
+                        logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
 
                         resolve(false);
                     }
@@ -401,7 +401,7 @@ async function setValues(values)
 
                     if(err)
                     {
-                        log('\x1b[31m%s\x1b[0m', "[ERROR]", mac + ".json konnte nicht aktualisiert werden!", err);
+                        logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
 
                         resolve(false);
                     }
@@ -420,7 +420,7 @@ function SETUP(configPath, slog, storagePath)
     config = store(configPath);
     storage = store(storagePath);
     dataStorage = store(storagePath.replace('/data', '/'));
-    log = slog;
+    logger = slog;
 };
 
 module.exports = {

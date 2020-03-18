@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var log;
+var logger;
 
 function sendValue(html, param, value)
 {
@@ -76,7 +76,7 @@ function read(reqPath)
 
 function SETUP(slog)
 {
-    log = slog;
+    logger = slog;
 };
 
 module.exports = {

@@ -3,6 +3,7 @@ var url = require('url');
 var path = require('path');
 var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
+var logger = require('./logger');
 
 module.exports = function(homebridge)
 {
@@ -17,9 +18,11 @@ function SynTexPlatform(slog, config, api)
 
     this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
     this.port = config["port"] || 1711;
+
+    logger.create("SynTex");
     
-    DeviceManager.SETUP(api.user.storagePath(), log, this.cacheDirectory);
-    HTMLQuery.SETUP(log);
+    DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory);
+    HTMLQuery.SETUP(logger);
 }
 
 SynTexPlatform.prototype = {
@@ -57,7 +60,7 @@ SynTexPlatform.prototype = {
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                                logger.log('warn', "Die Homebridge wird neu gestartet ..");
                             });
                         }
                     });
@@ -77,7 +80,7 @@ SynTexPlatform.prototype = {
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                                logger.log('warn', "Die Homebridge wird neu gestartet ..");
                             });
                         }
                         else
@@ -97,7 +100,7 @@ SynTexPlatform.prototype = {
                 
                 exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                    log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
                 });
             }
             else if(urlPath == '/update')
@@ -110,17 +113,17 @@ SynTexPlatform.prototype = {
                     {
                         response.write('Error');
                         
-                        log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge konnte nicht aktualisiert werden!");
+                        logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
                     }
                     else
                     {
                         response.write('Success');
                         
-                        log('\x1b[32m%s\x1b[0m', "[SUCCESS]", "Die Homebridge wurde aktualisiert!");
+                        logger.log('success', "Die Homebridge wurde aktualisiert!");
                         
                         exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                            log('\x1b[31m%s\x1b[0m', "[WARNING]", "Die Homebridge wird neu gestartet ..");
+                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
                         });
                     }
                     
@@ -238,13 +241,13 @@ SynTexPlatform.prototype = {
                                     {
                                         var json = JSON.parse(post);
                                         
-                                        log('post', json);
+                                        logger.log('info', "post" + json);
                                         
                                         DeviceManager.setValues(json).then(function(res)
                                         {
                                             if(!res)
                                             {
-                                                log('\x1b[31m%s\x1b[0m', "[ERROR]", urlParams.mac + ".json konnte nicht aktualisiert werden!", err);
+                                                logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!" + err);
                                             }
                                         });
                                         
@@ -272,6 +275,6 @@ SynTexPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        log('\x1b[33m%s\x1b[0m', "[INFO]", "Data Link Server läuft auf Port ", "'" + this.port + "'");
+        log('info', "Data Link Server läuft auf Port " + "'" + this.port + "'");
     }
 }
