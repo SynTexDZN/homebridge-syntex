@@ -10,16 +10,13 @@ module.exports = function(homebridge)
     homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
 };
 
-var log;
-
-function SynTexPlatform(slog, config, api)
+function SynTexPlatform(log, config, api)
 {
-    log = slog;
-
     this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
+    this.logDirectory = sconfig["log_directory"] || "./SynTex/log";
     this.port = config["port"] || 1711;
 
-    logger.create("SynTex");
+    logger.create("SynTex", this.logDirectory);
     
     DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory);
     HTMLQuery.SETUP(logger);
