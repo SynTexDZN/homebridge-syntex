@@ -24,81 +24,124 @@ logger.log = function(level, message)
 
         if(level == 'success')
         {
-            color = '[' + prefix + '] \x1b[32m%s\x1b[0m', "[SUCCESS]";
+            color = '[' + prefix + '] \x1b[32m%s\x1b[0m';
         }
         else if(level == 'update')
         {
-            color = '[' + prefix + '] \x1b[36m%s\x1b[0m', "[UPDATE]";
+            color = '[' + prefix + '] \x1b[36m%s\x1b[0m';
         }
         else if(level == 'read')
         {
-            color = '[' + prefix + '] \x0b[36m%s\x1b[0m', "[READ]";
+            color = '[' + prefix + '] \x0b[36m%s\x1b[0m';
         }
         else if(level == 'info')
         {
-            color = '[' + prefix + '] \x1b[33m%s\x1b[0m', "[INFO]";
+            color = '[' + prefix + '] \x1b[33m%s\x1b[0m';
         }
         else if(level == 'warn')
         {
-            color = '[' + prefix + '] \x0b[33m%s\x1b[0m', "[WARN]";
+            color = '[' + prefix + '] \x0b[33m%s\x1b[0m';
         }
         else
         {
-            color = '[' + prefix + '] \x1b[31m%s\x1b[0m', "[ERROR]";
+            color = '[' + prefix + '] \x1b[31m%s\x1b[0m';
         }
 
+        var d = new Date();
+        var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+
         console.log(color, "[" + level.toUpperCase() + "]", message);
-        saveLog("[" + level.toUpperCase() + "] " + message);
+        saveLog(time + " > [" + level.toUpperCase() + "] " + message);
     }
 }
 
+var inWork = false;
+var que = [];
+
 function saveLog(log)
 {
-    var d = new Date();
-
-    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-    logs.load(date, (err, device) => {    
-
-        if(device && !err)
-        {    
-            device.logs[device.logs.length] = log;
-
-            logs.add(device, (err) => {
-
-                if(err)
-                {
-                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    //resolve(false);
-                }
-                else
-                {
-                    //resolve(true);
-                }
-            });
-        }
-
-        if(err || !device)
+    if(inWork)
+    {
+        if(!que.includes(log))
         {
-            var entry = {
-                id: date,
-                logs: [
-                    log
-                ]
-            };
-
-            logs.add(entry, (err) => {
-
-                if(err)
-                {
-                    logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
-                    //resolve(false);
-                }
-                else
-                {
-                    //resolve(true);
-                }
-            });
+            que.push(log);
         }
-    });
+
+        console.log("QUEEEEE", que);
+    }
+    else
+    {
+        inWork = true;
+
+        if(que.includes(log))
+        {
+            que.shift();
+
+            console.log("QUEEEEE DELETED", log);
+        }
+
+        var d = new Date();
+
+        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
+        logs.load(date, (err, device) => {    
+
+            if(device && !err)
+            {    
+                device.logs[device.logs.length] = log;
+
+                logs.add(device, (err) => {
+
+                    inWork = false;
+
+                    if(err)
+                    {
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        //resolve(false);
+                    }
+                    else
+                    {
+                        //resolve(true);
+                    }
+
+                    if(que.length != 0)
+                    {
+                        console.log("QUEEEEE STARTED", log);
+                        saveLog(que[0]);
+                    }
+                });
+            }
+
+            if(err || !device)
+            {
+                var entry = {
+                    id: date,
+                    logs: [
+                        log
+                    ]
+                };
+
+                logs.add(entry, (err) => {
+
+                    inWork = false;
+
+                    if(err)
+                    {
+                        logger.log('error', date + ".json konnte nicht aktualisiert werden!" + err);
+                        //resolve(false);
+                    }
+                    else
+                    {
+                        //resolve(true);
+                    }
+
+                    if(que.length != 0)
+                    {
+                        console.log("QUEEEEE STARTED", log);
+                        saveLog(que[0]);
+                    }
+                });
+            }
+        });
+    }
 }
