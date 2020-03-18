@@ -13,7 +13,7 @@ module.exports = function(homebridge)
 function SynTexPlatform(log, config, api)
 {
     this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
-    this.logDirectory = sconfig["log_directory"] || "./SynTex/log";
+    this.logDirectory = config["log_directory"] || "./SynTex/log";
     this.port = config["port"] || 1711;
 
     logger.create("SynTex", this.logDirectory);
