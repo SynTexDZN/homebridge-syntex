@@ -18,13 +18,15 @@ A plugin to control SynTex accessory.
 "platforms": [
     {
         "platform": "SynTex",
-        "cache_directory": "./SynTex/data",
+        "cache_directory": "./SynTex/database",
+        "log_directory": "./SynTex/log/SynTex",
         "port": 1711
     },
     {
         "platform": "SynTexWebHooks",
         "port": 1710,
-        "cache_directory": "./SynTex/",
+        "cache_directory": "./SynTex/devices",
+        "log_directory": "./SynTex/log/SynTexWebHooks",
         "sensors": [],
         "switches": [],
         "lights": []
