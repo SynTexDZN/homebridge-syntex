@@ -238,8 +238,6 @@ SynTexPlatform.prototype = {
                                     {
                                         var json = JSON.parse(post);
                                         
-                                        logger.log('info', "post" + json);
-                                        
                                         DeviceManager.setValues(json).then(function(res)
                                         {
                                             if(!res)
