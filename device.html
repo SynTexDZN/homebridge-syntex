@@ -293,10 +293,11 @@
 
     var restart = false;
     var updating = false;
+    var saving = false;
     
     function restartDevice(btn)
     {
-        if(!restart && !updating)
+        if(!restart && !updating && !saving)
         {
             restart = true;
 
@@ -468,6 +469,13 @@
         if(updating && document.getElementById('updating') != null)
         {
             checkUpdate(device.ip, device.name, device.version);
+        }
+        else if(saving || restart)
+        {
+            setTimeout(function()
+            {
+                pingESP();
+            }, 500);
         }
         else
         {
@@ -793,8 +801,10 @@
     
     function saveConfig()
     {
-        if(document.getElementById('saving') == null && document.getElementById('save-result') == null)
+        if(!saving)
         {
+            saving = true;
+
             var overlay = document.createElement('input');
 
             overlay.setAttribute('type', 'button');
@@ -929,9 +939,10 @@
                     }
                     else
                     {
-                        if(saveTries < 3)
+                        if(saveTries < 1)
                         {
                             saveTries++;
+                            saving = false;
                             saveConfig();
                         }
                         else
