@@ -820,7 +820,10 @@
                 overlay.style.opacity = 1;
                 document.getElementById('save-btn').style.opacity = 0;
             }, 10);
+        }
 
+        if(!saving || saveTries == 1)
+        {
             var settings = {
                 mac: device.id
             };
@@ -942,7 +945,7 @@
                         if(saveTries < 1)
                         {
                             saveTries++;
-                            saving = false;
+                            console.log("Tries: " + saveTries);
                             saveConfig();
                         }
                         else
