@@ -523,7 +523,10 @@
                         {
                             setTimeout(function()
                             {
-                                fetchState();
+                                if(!document.getElementById('settings').hasAttribute('style'))
+                                {
+                                    fetchState();
+                                }
                             }, i);
                         }
 
