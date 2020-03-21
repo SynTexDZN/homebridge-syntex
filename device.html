@@ -470,14 +470,7 @@
         {
             checkUpdate(device.ip, device.name, device.version);
         }
-        else if(saving || restart)
-        {
-            setTimeout(function()
-            {
-                pingESP();
-            }, 500);
-        }
-        else
+        else if(!saving)
         {
             var client = new XMLHttpRequest();
 
@@ -956,6 +949,11 @@
                     }
                     else
                     {
+                        setTimeout(function()
+                        {
+                            pingESP();
+                        }, 500);
+
                         console.log("ERROR"); // Add Overlay RED
                     }
                 }
