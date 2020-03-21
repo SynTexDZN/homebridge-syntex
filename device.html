@@ -24,7 +24,7 @@
                 <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="closeSettings()">
-                    <input id="save-btn" style="margin-left: 20px;" type="submit" value="Speichern" onclick="saveConfig()">
+                    <input id="save-btn" style="margin-left: 20px;" type="submit" value="Speichern" onclick="saveConfig(false)">
                 </div>
             </div>
         </div>
@@ -799,11 +799,11 @@
 
     var saveTries = 0;
     
-    function saveConfig()
+    function saveConfig(upload)
     {
-        if(!saving)
+        if(!upload && !saving)
         {
-            saving = true;
+            upload = true;
 
             var overlay = document.createElement('input');
 
@@ -822,7 +822,7 @@
             }, 10);
         }
 
-        if(!saving || saveTries == 1)
+        if(upload)
         {
             var settings = {
                 mac: device.id
@@ -944,9 +944,7 @@
                     {
                         if(saveTries < 1)
                         {
-                            saveTries++;
-                            console.log("Tries: " + saveTries);
-                            saveConfig();
+                            saveConfig(true);
                         }
                         else
                         {
