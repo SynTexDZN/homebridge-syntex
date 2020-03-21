@@ -804,6 +804,7 @@
         if(!upload && !saving)
         {
             upload = true;
+            saving = true;
 
             var overlay = document.createElement('input');
 
@@ -867,119 +868,95 @@
             {
                 if(client.readyState === 4)
                 {  
-                    if(client.status === 200)
+                    if(client.status === 200 && client.responseText == 'Success')
                     {
                         console.log(client.responseText);
-                        if(client.responseText == 'Success')
+
+                        var error = '';
+
+                        var client2 = new XMLHttpRequest();
+
+                        client2.timeout = 10000;
+        
+                        client2.open('GET', 'http://' + device.ip + '/refresh');
+
+                        client2.onreadystatechange = function()
                         {
-                            var error = '';
-
-                            var client2 = new XMLHttpRequest();
-
-                            client2.timeout = 10000;
-            
-                            client2.open('GET', 'http://' + device.ip + '/refresh');
-
-                            client2.onreadystatechange = function()
-                            {
-                                if(client2.readyState === 4)
-                                {  
-                                    if(client2.status === 200)
+                            if(client2.readyState === 4)
+                            {  
+                                if(client2.status === 200)
+                                {
+                                    console.log(client2.responseText);
+                                    if(client2.responseText != "Success")
                                     {
-                                        console.log(client2.responseText);
-                                        if(client2.responseText != "Success")
-                                        {
-                                            error = 'true';
-                                        }
-                                        else
-                                        {
-                                            var rOverlay = document.createElement('input');
-
-                                            rOverlay.setAttribute('type', 'button');
-                                            rOverlay.setAttribute('id', 'save-result');
-                                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
-                                            rOverlay.setAttribute('value', 'Gespeichert!');
-                                            rOverlay.setAttribute('class', 'gradient-green');
-
-                                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                                            setTimeout(function()
-                                            {
-                                                rOverlay.style.opacity = 1;
-                                            }, 10);
-                                        
-                                            setTimeout(function()
-                                            {
-                                                rOverlay.style.opacity = 0;
-                                                document.getElementById('save-btn').style.opacity = 1;
-                                            }, 5000);
-
-                                            setTimeout(function()
-                                            {
-                                                document.getElementById('save-btn').parentElement.removeChild(rOverlay);
-                                            }, 5300);
-
-                                            console.log('RESPONSE');
-                                            
-                                            setTimeout(function()
-                                            {
-                                                redirect();
-                                                console.log('REDIRECT');
-                                            }, 1000);
-                                            
-                                            error = 'false';
-                                        }
+                                        error = 'true';
                                     }
                                     else
                                     {
-                                        if(saveTries == 0)
+                                        var rOverlay = document.createElement('input');
+
+                                        rOverlay.setAttribute('type', 'button');
+                                        rOverlay.setAttribute('id', 'save-result');
+                                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                        rOverlay.setAttribute('value', 'Gespeichert!');
+                                        rOverlay.setAttribute('class', 'gradient-green');
+
+                                        document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                        setTimeout(function()
                                         {
-                                            saveTries++;
-                                            saveConfig(true);
-                                        }
-                                        else
-                                        {
-                                            var rOverlay = document.createElement('input');
+                                            rOverlay.style.opacity = 1;
+                                        }, 10);
 
-                                            rOverlay.setAttribute('type', 'button');
-                                            rOverlay.setAttribute('id', 'save-result');
-                                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
-                                            rOverlay.setAttribute('value', 'Gespeichert! (Offline)');
-                                            rOverlay.setAttribute('class', 'gradient-green');
-
-                                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                                            setTimeout(function()
-                                            {
-                                                rOverlay.style.opacity = 1;
-                                            }, 10);
+                                        console.log('RESPONSE');
                                         
-                                            setTimeout(function()
-                                            {
-                                                rOverlay.style.opacity = 0;
-                                                document.getElementById('save-btn').style.opacity = 1;
-                                            }, 5000);
-
-                                            setTimeout(function()
-                                            {
-                                                document.getElementById('save-btn').parentElement.removeChild(rOverlay);
-                                            }, 5300);
-
-                                            setTimeout(function()
-                                            {
-                                                redirect();
-                                            }, 5600);
-                                        }
+                                        setTimeout(function()
+                                        {
+                                            redirect();
+                                            console.log('REDIRECT');
+                                        }, 2000);
+                                        
+                                        error = 'false';
                                     }
                                 }
-                            } 
-                            
-                            client2.send();
-                        }
-                        else
-                        {
-                            console.log("ERROR");
-                        }
+                                else
+                                {
+                                    if(saveTries == 0)
+                                    {
+                                        saveTries++;
+                                        saveConfig(true);
+                                    }
+                                    else
+                                    {
+                                        var rOverlay = document.createElement('input');
+
+                                        rOverlay.setAttribute('type', 'button');
+                                        rOverlay.setAttribute('id', 'save-result');
+                                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                                        rOverlay.setAttribute('value', 'Gespeichert! (Offline)');
+                                        rOverlay.setAttribute('class', 'gradient-green');
+
+                                        document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                        setTimeout(function()
+                                        {
+                                            rOverlay.style.opacity = 1;
+                                        }, 10);
+
+                                        setTimeout(function()
+                                        {
+                                            redirect();
+                                        }, 2000);
+                                    }
+                                }
+                            }
+                        } 
+                        
+                        client2.send();
+                    }
+                    else
+                    {
+                        console.log("ERROR"); // Add Overlay RED
                     }
                 }
             }
