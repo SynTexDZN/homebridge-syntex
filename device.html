@@ -134,6 +134,8 @@
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
         document.getElementsByTagName('title')[0].innerHTML = device.name;
+
+        pingESP();
     }
     
     function fetchState()
@@ -470,7 +472,7 @@
         {
             checkUpdate(device.ip, device.name, device.version);
         }
-        else if(!saving)
+        else if(!saving && document.getElementById('settings').hasAttribute('style'))
         {
             var client = new XMLHttpRequest();
 
