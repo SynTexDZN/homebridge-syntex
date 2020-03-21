@@ -76,11 +76,11 @@
 
     for(const i in settings)
     {
-        if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
+        if(settings[i].index == 'interval' && (device.type == 'light' || device.type == 'temperature'))
         {
             document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
-        else if((device.type == 'motion') && settings[i].index == 'interval')
+        else if(settings[i].index == 'interval' && (device.type == 'motion'))
         {
             document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
         }
@@ -290,15 +290,13 @@
 
 </script>
 <script>
-    
-    var device = JSON.parse('<%device%>');
 
     var restart = false;
     var updating = false;
     
     function restartDevice(btn)
     {
-        if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null )
+        if(!restart && !updating)
         {
             restart = true;
 
@@ -356,6 +354,7 @@
                         {
                             document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
                             document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                            restart = false;
                         }, 5300);
                     }
                 }
@@ -408,6 +407,7 @@
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
+                            updating = false;y
                         }, 5300);
                     }
                     else
@@ -439,15 +439,18 @@
                             document.getElementById('update-btn').parentElement.removeChild(rOverlay);
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
                             document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
+                            updating = false;
                         }, 5300);
                     }
-
-                    updating = false;
 
                     setTimeout(function()
                     {
                         location.reload();
                     }, 5600);
+                }
+                else
+                {
+                    pingESP();
                 }
             }
         }
@@ -462,7 +465,7 @@
     
     function pingESP()
     {
-        if(updating)
+        if(updating && document.getElementById('updating') != null)
         {
             checkUpdate(device.ip, device.name, device.version);
         }
@@ -510,10 +513,9 @@
                             {
                                 document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
                                 document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
+                                restart = false;
                                 //document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
                             }, 5300);
-
-                            restart = false;
                         }
 
                         for(var i = 0; i <= 4000; i += 1000)
@@ -548,8 +550,10 @@
     
     function updateDevice()
     {        
-        if(document.getElementById('updating') == null && document.getElementById('waiting') == null && document.getElementById('update-result') == null)
+        if(!updating && !restart)
         {
+            updating = true;
+
             var wOverlay = document.createElement('input');
 
             wOverlay.setAttribute('type', 'button');
@@ -578,8 +582,6 @@
                 {  
                     if(client.status === 200 && client.responseText == 'Success')
                     {
-                        updating = true;
-
                         var overlay = document.createElement('input');
 
                         overlay.setAttribute('type', 'button');
@@ -786,6 +788,8 @@
 
         client.send();
     }
+
+    var saveTries = 0;
     
     function saveConfig()
     {
@@ -917,44 +921,51 @@
                             } 
                             
                             client2.send();
-
-                            setTimeout(function()
-                            {
-                                var rOverlay = document.createElement('input');
-
-                                rOverlay.setAttribute('type', 'button');
-                                rOverlay.setAttribute('id', 'save-result');
-                                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
-                                rOverlay.setAttribute('value', 'Gespeichert!');
-                                rOverlay.setAttribute('class', 'gradient-green');
-
-                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                                setTimeout(function()
-                                {
-                                    rOverlay.style.opacity = 1;
-                                }, 10);
-                            
-                                setTimeout(function()
-                                {
-                                    rOverlay.style.opacity = 0;
-                                    document.getElementById('save-btn').style.opacity = 1;
-                                }, 5000);
-
-                                setTimeout(function()
-                                {
-                                    document.getElementById('save-btn').parentElement.removeChild(rOverlay);
-                                }, 5300);
-
-                                setTimeout(function()
-                                {
-                                    redirect();
-                                }, 1000);
-                            }, 5000);
                         }
                         else
                         {
                             console.log("ERROR");
+                        }
+                    }
+                    else
+                    {
+                        if(saveTries < 3)
+                        {
+                            saveTries++;
+                            saveConfig();
+                        }
+                        else
+                        {
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'save-result');
+                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('save-btn').offsetLeft + 'px; top: ' + document.getElementById('save-btn').offsetTop + 'px; width: ' + document.getElementById('save-btn').offsetWidth + 'px!important');
+                            rOverlay.setAttribute('value', 'Gespeichert! (Offline)');
+                            rOverlay.setAttribute('class', 'gradient-green');
+
+                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 1;
+                            }, 10);
+                        
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 0;
+                                document.getElementById('save-btn').style.opacity = 1;
+                            }, 5000);
+
+                            setTimeout(function()
+                            {
+                                document.getElementById('save-btn').parentElement.removeChild(rOverlay);
+                            }, 5300);
+
+                            setTimeout(function()
+                            {
+                                redirect();
+                            }, 5600);
                         }
                     }
                 }
