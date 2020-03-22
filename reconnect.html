@@ -12,7 +12,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input id="back-btn" type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input style="margin-left: 20px" type="button" value="Gerät Neu Gekauft?" onclick="window.location.href='/setup'">
+                    <input id="setup-btn" style="margin-left: 20px" type="button" value="Gerät Neu Gekauft?" onclick="window.location.href='/setup'">
                 </div>
             </div>
         </div>
@@ -64,7 +64,8 @@
     {
         document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
         document.getElementById('back-btn-wifi').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
-        document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");  
+        document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
+        document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
     }
 
     function searchLoop()
