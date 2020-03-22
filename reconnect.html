@@ -114,7 +114,7 @@
     {
         if(ping == false)
         {
-            fetch('http://192.168.4.1/', 2000).then(function(res) {
+            fetchURL('http://192.168.4.1/', 2000).then(function(res) {
 
                 if(res != null)
                 {  
@@ -135,7 +135,7 @@
                 } 
             });
 
-            fetch('http://' + ipp + '/', 2000).then(function(res) {
+            fetchURL('http://' + ipp + '/', 2000).then(function(res) {
 
                 if(res != null)
                 {  
@@ -166,7 +166,7 @@
         document.getElementById('scan-btn').value = 'Bitte warten ..'; 
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
-        fetch(ip + 'wifi', 10000).then(function(res) {
+        fetchURL(ip + 'wifi', 10000).then(function(res) {
 
             if(res != null)
             {  
@@ -223,7 +223,7 @@
     {
         var formElement = document.querySelector("form");
 
-        fetch(ip + 'settings', 10000, new FormData(formElement)).then(function(res) {
+        fetchURL(ip + 'settings', 10000, new FormData(formElement)).then(function(res) {
 
             if(res != null)
             {
@@ -236,9 +236,9 @@
 
                 setTimeout(function()
                 {
-                    fetch('/setup', 10000).then(function(res) {
+                    fetchURL('/setup', 10000).then(function(res2) {
 
-                        if(res != null)
+                        if(res2 != null)
                         {
                             ping = true;
                         }

@@ -113,7 +113,7 @@
     {
         if(ping == false)
         {
-            fetch('http://192.168.4.1/', 2000).then(function(res) {
+            fetchURL('http://192.168.4.1/', 2000).then(function(res) {
 
                 if(res != null)
                 {  
@@ -141,7 +141,7 @@
         document.getElementById('scan-btn').value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
 
-        fetch('http://192.168.4.1/wifi', 10000).then(function(res) {
+        fetchURL('http://192.168.4.1/wifi', 10000).then(function(res) {
 
             if(res != null)
             {  
@@ -185,7 +185,7 @@
     
     function checkDB(mac)
     {
-        fetch('/serverside/check-device?mac=' + mac, 10000).then(function(res) {
+        fetchURL('/serverside/check-device?mac=' + mac, 10000).then(function(res) {
 
             if(res != null)
             {  
@@ -238,7 +238,7 @@
     {
         var formElement = document.querySelector("form");
 
-        fetch('http://192.168.4.1/settings', 10000, new FormData(formElement)).then(function(res) {
+        fetchURL('http://192.168.4.1/settings', 10000, new FormData(formElement)).then(function(res) {
 
             if(res != null)
             {
@@ -251,7 +251,7 @@
 
                 setTimeout(function()
                 {
-                    fetch('/setup', 10000).then(function(res2) {
+                    fetchURL('/setup', 10000).then(function(res2) {
 
                         if(res2 != null)
                         {

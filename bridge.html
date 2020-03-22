@@ -60,7 +60,7 @@
                 document.getElementById('update-btn').style.opacity = 0;
             }, 10);
 
-            fetch('/update', 10000).then(function(res) {
+            fetchURL('/update', 10000).then(function(res) {
 
                 if(res != null)
                 {
@@ -179,7 +179,7 @@
                 document.getElementById('restart-btn').style.opacity = 0;
             }, 10);
 
-            fetch('/restart', 10000).then(function(res) {
+            fetchURL('/restart', 10000).then(function(res) {
 
                 if(res == null || res == 'Error')
                 {

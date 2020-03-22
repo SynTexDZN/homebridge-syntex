@@ -85,7 +85,7 @@
     
     function checkUpdate(ip, name, version)
     {
-        fetch('http://' + ip + '/version', 10000).then(function(res) {
+        fetchURL('http://' + ip + '/version', 10000).then(function(res) {
 
             if(res != null)
             {  
@@ -178,7 +178,7 @@
         }
         else
         {
-            fetch('http://' + device.getAttribute('id') + '/', 10000).then(function(res) {
+            fetchURL('http://' + device.getAttribute('id') + '/', 10000).then(function(res) {
 
                 if(res != null)
                 {  
@@ -235,7 +235,7 @@
     {
         return new Promise(resolve => {
             
-            fetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000).then(function(res) {
+            fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000).then(function(res) {
 
                 if(res != null)
                 {  
@@ -304,7 +304,7 @@
     {
         if(!updatingDevices.includes(ip))
         {
-            fetch('http://' + ip + '/update', 10000).then(function(res) {
+            fetchURL('http://' + ip + '/update', 10000).then(function(res) {
 
                 if(res != null)
                 {  
