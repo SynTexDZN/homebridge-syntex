@@ -1,4 +1,4 @@
-async function fetch(url)
+async function fetchURL(url)
 {
     return new Promise(resolve => {
         
@@ -27,7 +27,7 @@ async function fetch(url)
     });
 }
 
-async function fetch(url, timeout)
+async function fetchURL(url, timeout)
 {
     return new Promise(resolve => {
         
@@ -56,7 +56,7 @@ async function fetch(url, timeout)
     });
 }
 
-async function fetch(url, timeout, post)
+async function fetchURL(url, timeout, post)
 {
     return new Promise(resolve => {
         

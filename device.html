@@ -140,7 +140,7 @@
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
         {
-            fetch(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id, 10000).then(function(res) {
+            fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id, 10000).then(function(res) {
 
                 if(res)
                 {
@@ -190,7 +190,7 @@
         }
         else if(device.type == 'light' || device.type == 'temperature')
         {
-            fetch(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
+            fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
 
                 if(res)
                 {
@@ -209,7 +209,7 @@
             
             if(device.type == 'light')
             {
-                fetch(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
+                fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
 
                     if(res)
                     {
@@ -230,7 +230,7 @@
             }
             else if(device.type == 'temperature')
             {
-                fetch(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
+                fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
 
                     if(res)
                     {
@@ -285,7 +285,7 @@
                 document.getElementById('restart-btn').style.opacity = 0;
             }, 10);
 
-            fetch('http://' + device.ip + '/restart', 10000).then(function(res) {
+            fetchURL('http://' + device.ip + '/restart', 10000).then(function(res) {
 
                 if(!res)
                 {
@@ -324,7 +324,7 @@
     
     function checkUpdate(ip, name, version)
     {
-        fetch('http://' + ip + '/version', 10000).then(function(res) {
+        fetchURL('http://' + ip + '/version', 10000).then(function(res) {
 
             if(res)
             {
@@ -418,7 +418,7 @@
         }
         else if(!saving && document.getElementById('settings').hasAttribute('style'))
         {
-            fetch('http://' + device.ip + '/', 10000).then(function(res) {
+            fetchURL('http://' + device.ip + '/', 10000).then(function(res) {
 
                 if(res)
                 {
@@ -516,7 +516,7 @@
                 document.getElementById('update-btn').style.opacity = 0;
             }, 10);
 
-            fetch('http://' + device.ip + '/update', 10000).then(function(res) {
+            fetchURL('http://' + device.ip + '/update', 10000).then(function(res) {
 
                 if(res && res == 'Success')
                 {
@@ -573,7 +573,7 @@
     
     function checkUpdates()
     {
-        fetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000).then(function(res) {
+        fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000).then(function(res) {
 
             if(res)
             {
@@ -642,7 +642,7 @@
             document.getElementById('reset-btn').parentElement.removeChild(document.getElementById('reset-confirm'));
         }, 300);
 
-        fetch('http://' + device.ip + '/reset', 10000).then(function(res) {
+        fetchURL('http://' + device.ip + '/reset', 10000).then(function(res) {
 
             if(res)
             {
@@ -763,7 +763,7 @@
                 }
             }
 
-            fetch('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
+            fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
 
                 if(res && res == 'Success')
                 {
@@ -771,7 +771,7 @@
 
                     var error = '';
 
-                    fetch('http://' + device.ip + '/refresh', 10000).then(function(res2) {
+                    fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
 
                         if(res2)
                         {
