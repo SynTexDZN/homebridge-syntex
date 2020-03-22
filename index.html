@@ -280,33 +280,36 @@
 
     for(var i = 0; i < devices.length; i++)
     {
-        checkUpdates(devices[i]).then(function(res) {
+        setTimeout(function()
+        {
+            checkUpdates(devices[i]).then(function(res) {
 
-            count++;
+                count++;
 
-            if(count == devices.length)
-            {
-                if(updateCount > 0)
-                {            
-                    var update = document.createElement('input');
+                if(count == devices.length)
+                {
+                    if(updateCount > 0)
+                    {            
+                        var update = document.createElement('input');
 
-                    update.setAttribute('type', 'button');
-                    if(updateCount == 1)
-                    {
-                        update.setAttribute('value', updateCount + ' Update installieren!');
+                        update.setAttribute('type', 'button');
+                        if(updateCount == 1)
+                        {
+                            update.setAttribute('value', updateCount + ' Update installieren!');
+                        }
+                        else
+                        {
+                            update.setAttribute('value', updateCount + ' Updates installieren!');
+                        }
+                        
+                        update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
+                        update.setAttribute('onclick', 'installAllUpdates();');
+
+                        document.getElementsByClassName('bottom')[0].insertBefore(update, document.getElementsByClassName('bottom')[0].children[0]);
                     }
-                    else
-                    {
-                        update.setAttribute('value', updateCount + ' Updates installieren!');
-                    }
-                    
-                    update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
-                    update.setAttribute('onclick', 'installAllUpdates();');
-
-                    document.getElementsByClassName('bottom')[0].insertBefore(update, document.getElementsByClassName('bottom')[0].children[0]);
                 }
-            }
-        });
+            });
+        }, 500);
     }
     
     function updateDevice(ip)
