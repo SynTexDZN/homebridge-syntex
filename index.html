@@ -161,13 +161,11 @@
             
             setTimeout(function()
             {
+                console.log(1);
                 pingESP(document.getElementById(ip));
             }, 10000);
         });
     }
-
-</script>
-<script defer>
         
     function pingESP(device)
     {
@@ -221,6 +219,7 @@
                 
                 setTimeout(function()
                 {
+                    console.log(2);
                     pingESP(device);
                 }, 10000);
             });
@@ -231,6 +230,7 @@
     {
         setTimeout(function()
         {
+            console.log(3);
             pingESP(devices[i]);
         }, 500);
     }
