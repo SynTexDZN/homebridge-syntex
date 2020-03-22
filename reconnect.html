@@ -107,7 +107,6 @@
     var ping = false;
     var ip = 'http://192.168.4.1/';
     var ipp = (new URL(window.location.href)).searchParams.get("ip");
-    var client, client2;
     
     pingESP();
     
@@ -115,72 +114,50 @@
     {
         if(ping == false)
         {
-            var client = new XMLHttpRequest();
+            fetch('http://192.168.4.1/', 2000).then(function(res) {
 
-            client.timeout = 2000;
-        
-            client.open('GET', 'http://192.168.4.1/');
-
-            client.onreadystatechange = function()
-            {
-                if(client.readyState === 4)
+                if(res != null)
                 {  
-                    if(client.status === 200)
-                    {  
-                        ping = true;
-                        document.getElementById('wifiConfig').style.display = "";
-                        setTimeout(function()
-                        {
-                            scanWifi();
-                        }, 2000);
-                        document.getElementById('welcome').style.display = "none";
-                    }
-                    else
-                    {  
-                        setTimeout(function()
-                        {
-                            pingESP();
-                        }, 2000);
-                    }  
-                }  
-            }
-
-            client.send();
-            
-            var client2 = new XMLHttpRequest();
-
-            client2.timeout = 2000;
-        
-            client2.open('GET', 'http://' + ipp + '/');
-
-            client2.onreadystatechange = function()
-            {
-                if(client2.readyState === 4)
+                    ping = true;
+                    document.getElementById('wifiConfig').style.display = "";
+                    setTimeout(function()
+                    {
+                        scanWifi();
+                    }, 2000);
+                    document.getElementById('welcome').style.display = "none";
+                }
+                else
                 {  
-                    if(client2.status === 200)
-                    {  
-                        ping = true;
-                        ip = 'http://' + ipp + '/';
-                        document.getElementById('wifiConfig').style.display = "";
-                        setTimeout(function()
-                        {
-                            scanWifi();
-                        }, 2000);
-                        document.getElementById('welcome').style.display = "none";
-                    }
-                    else
-                    {  
-                        /*
-                        setTimeout(function()
-                        {
-                            pingESP();
-                        }, 2000);
-                        */
-                    }  
-                }  
-            }
+                    setTimeout(function()
+                    {
+                        pingESP();
+                    }, 2000);
+                } 
+            });
 
-            client2.send();
+            fetch('http://' + ipp + '/', 2000).then(function(res) {
+
+                if(res != null)
+                {  
+                    ping = true;
+                    ip = 'http://' + ipp + '/';
+                    document.getElementById('wifiConfig').style.display = "";
+                    setTimeout(function()
+                    {
+                        scanWifi();
+                    }, 2000);
+                    document.getElementById('welcome').style.display = "none";
+                }
+                else
+                {  
+                    /*
+                    setTimeout(function()
+                    {
+                        pingESP();
+                    }, 2000);
+                    */
+                } 
+            });
         }        
     } 
         
@@ -189,55 +166,44 @@
         document.getElementById('scan-btn').value = 'Bitte warten ..'; 
         document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
         
-        var client = new XMLHttpRequest();
+        fetch(ip + 'wifi', 10000).then(function(res) {
 
-        client.timeout = 10000;
-        
-        client.open('GET', ip + 'wifi');
-
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
+            if(res != null)
             {  
-                if(client.status === 200)
-                {  
-                    document.getElementById('networks').innerHTML = '';
-                
-                    var json = JSON.parse(client.responseText);
+                document.getElementById('networks').innerHTML = '';
+            
+                var json = JSON.parse(res);
 
-                    for(var i = 0; i < json.length; i++)
-                    {
-                        var label = document.createElement('label');
-                        var input = document.createElement('input');
-
-                        label.setAttribute('for', json[i]);
-                        label.setAttribute('style', 'margin-bottom: 20px');
-
-                        input.setAttribute('type', "radio");
-                        input.setAttribute('name', "wifissid");
-                        input.setAttribute('value', json[i]);        
-
-                        label.appendChild(input);
-                        label.innerHTML += json[i];
-
-                        document.getElementById('networks').appendChild(label);
-                    }
-
-                    if(client.responseText == "" || client.responseText == "[]")
-                    {
-                        document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-                    }
-                }
-                else
+                for(var i = 0; i < json.length; i++)
                 {
-                    document.getElementById('networks').innerHTML = "</p>Bitte drücke auf 'Suchen'</p>";
+                    var label = document.createElement('label');
+                    var input = document.createElement('input');
+
+                    label.setAttribute('for', json[i]);
+                    label.setAttribute('style', 'margin-bottom: 20px');
+
+                    input.setAttribute('type', "radio");
+                    input.setAttribute('name', "wifissid");
+                    input.setAttribute('value', json[i]);        
+
+                    label.appendChild(input);
+                    label.innerHTML += json[i];
+
+                    document.getElementById('networks').appendChild(label);
                 }
 
-                document.getElementById('scan-btn').value = 'Suchen'; 
-            }  
-        }
+                if(res == "" || res == "[]")
+                {
+                    document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
+                }
+            }
+            else
+            {
+                document.getElementById('networks').innerHTML = "</p>Bitte drücke auf 'Suchen'</p>";
+            }
 
-        client.send();
+            document.getElementById('scan-btn').value = 'Suchen'; 
+        });
     }
     
     var timeRemaining = 0;
@@ -255,84 +221,64 @@
     
     function sendWifiSettings()
     {
-        var client = new XMLHttpRequest();
-
-        client.timeout = 10000;
-
         var formElement = document.querySelector("form");
-        
-        client.open('POST', ip + 'settings');
 
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
-            {  
-                if(client.status === 200)
+        fetch(ip + 'settings', 10000, new FormData(formElement)).then(function(res) {
+
+            if(res != null)
+            {
+                document.getElementById('wifiConfig').style.display = "none";
+                document.getElementById('connecting').style.display = "";
+
+                setTimer(60000);
+
+                var ping = false;
+
+                setTimeout(function()
                 {
-                    document.getElementById('wifiConfig').style.display = "none";
-                    document.getElementById('connecting').style.display = "";
+                    fetch('/setup', 10000).then(function(res) {
 
-                    setTimer(60000);
-
-                    var ping = false;
-
-                    setTimeout(function()
-                    {
-                        client = new XMLHttpRequest();
-        
-                        client.open('GET', '/setup');
-
-                        client.onreadystatechange = function()
+                        if(res != null)
                         {
-                            if(client.readyState === 4)
-                            {  
-                                if(client.status === 200)
-                                {
-                                    ping = true;
-                                }
-                            }
+                            ping = true;
                         }
-                        
-                        client.send();
-                    }, 20000);
+                    });
+                }, 20000);
 
-                    setTimeout(function()
+                setTimeout(function()
+                {
+                    if(ping == false)
                     {
-                        if(ping == false)
-                        {
-                            document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
-                        }
-                    }, 30000);
+                        document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
+                    }
+                }, 30000);
 
-                    setTimeout(function()
+                setTimeout(function()
+                {
+                    if(success == false)
                     {
-                        if(success == false)
+                        //TODO: Verbinden Fehlgeschlagen
+
+                        //alert("Error");
+                        document.getElementById('error').style.display = "";
+                        document.getElementById('connecting').style.display = "none";
+
+                        setTimeout(function()
                         {
-                            //TODO: Verbinden Fehlgeschlagen
+                            window.location.href = '/setup';
+                        }, 10000); 
+                    }
+                }, 60000);
 
-                            //alert("Error");
-                            document.getElementById('error').style.display = "";
-                            document.getElementById('connecting').style.display = "none";
+                console.log(res);
 
-                            setTimeout(function()
-                            {
-                                window.location.href = '/setup';
-                            }, 10000); 
-                        }
-                    }, 60000);
+                document.getElementById('success').style.display = "";
+                document.getElementById('connecting').style.display = "none";
 
-                    console.log(client.responseText);
-
-                    document.getElementById('success').style.display = "";
-                    document.getElementById('connecting').style.display = "none";
-
-                    redirectCountdown(document.getElementById('redirect-success'), '/device?mac=' + client.responseText);     
-                    document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + client.responseText + "'");        
-                }
+                redirectCountdown(document.getElementById('redirect-success'), '/device?mac=' + res);     
+                document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + res + "'");        
             }
-        };
-        
-        client.send(new FormData(formElement));
+        });
         
         return false;
     }
