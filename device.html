@@ -140,6 +140,51 @@
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
         {
+            fetch(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id, 10000).then(function(res) {
+
+                if(device.type == 'contact')
+                {
+                    if(client.responseText == 'true') 
+                    {
+                        document.getElementById('status').value = 'ZU';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                    }
+                    else if(client.responseText == 'false')
+                    {
+                        document.getElementById('status').value = 'GEÖFFNET';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                    }
+                }
+                else if(device.type == 'motion')
+                {
+                    if(client.responseText == 'true') 
+                    {
+                        document.getElementById('status').value = 'BEWEGUNG';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
+                    }
+                    else if(client.responseText == 'false')
+                    {
+                        document.getElementById('status').value = 'BEREIT';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                    }
+                }
+                else if(device.type == 'relais' || device.type == 'switch')
+                {
+                    if(client.responseText == 'true')
+                    {
+                        document.getElementById('status').value = 'AN';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                    }
+                    else if(client.responseText == 'false')
+                    {
+                        document.getElementById('status').value = 'AUS';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                    }
+                }
+                
+                console.log(client.responseText);
+            });
+            /*
             var client = new XMLHttpRequest();
 
             client.timeout = 10000;
@@ -198,6 +243,7 @@
             }
             
             client.send();
+            */
         }
         else if(device.type == 'light' || device.type == 'temperature')
         {
