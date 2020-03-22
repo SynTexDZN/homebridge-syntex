@@ -229,7 +229,10 @@
     
     for(var i = 0; i < devices.length; i++)
     {
-        pingESP(devices[i]);
+        setTimeout(function()
+        {
+            pingESP(devices[i]);
+        }, 500);
     }
 
 </script>
