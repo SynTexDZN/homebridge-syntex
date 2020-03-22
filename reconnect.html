@@ -30,7 +30,7 @@
             </div>
             <div class="main">
                 <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="location.reload()">
+                    <input id="back-btn-wifi" type="button" value="Zurück" onclick="location.reload()">
                     <input id="scan-btn" class="gradient-blue" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi()">
                 </div>
             </div>
@@ -60,8 +60,12 @@
 
     var urlMac = (new URL(window.location.href)).searchParams.get("mac");
 
-    document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
-    document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");  
+    if(urlMac)
+    {
+        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
+        document.getElementById('back-btn-wifi').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
+        document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");  
+    }
 
     function searchLoop()
     {
