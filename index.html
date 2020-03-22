@@ -275,9 +275,9 @@
     
     var count = 0;
 
-    for(var i = 0; i < devices.length; i++)
+    setTimeout(function()
     {
-        setTimeout(function()
+        for(var i = 0; i < devices.length; i++)
         {
             checkUpdates(devices[i]).then(function(res) {
 
@@ -306,8 +306,8 @@
                     }
                 }
             });
-        }, 500);
-    }
+        }
+    }, 500);
     
     function updateDevice(ip)
     {
