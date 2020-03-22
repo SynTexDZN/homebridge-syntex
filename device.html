@@ -144,12 +144,12 @@
 
                 if(device.type == 'contact')
                 {
-                    if(client.responseText == 'true') 
+                    if(res == 'true') 
                     {
                         document.getElementById('status').value = 'ZU';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
-                    else if(client.responseText == 'false')
+                    else if(res == 'false')
                     {
                         document.getElementById('status').value = 'GEÖFFNET';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
@@ -157,12 +157,12 @@
                 }
                 else if(device.type == 'motion')
                 {
-                    if(client.responseText == 'true') 
+                    if(res == 'true') 
                     {
                         document.getElementById('status').value = 'BEWEGUNG';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
                     }
-                    else if(client.responseText == 'false')
+                    else if(res == 'false')
                     {
                         document.getElementById('status').value = 'BEREIT';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
@@ -170,19 +170,19 @@
                 }
                 else if(device.type == 'relais' || device.type == 'switch')
                 {
-                    if(client.responseText == 'true')
+                    if(res == 'true')
                     {
                         document.getElementById('status').value = 'AN';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
                     }
-                    else if(client.responseText == 'false')
+                    else if(res == 'false')
                     {
                         document.getElementById('status').value = 'AUS';
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
                     }
                 }
                 
-                console.log(client.responseText);
+                console.log(res);
             });
             /*
             var client = new XMLHttpRequest();
