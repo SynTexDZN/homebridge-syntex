@@ -18,7 +18,7 @@ async function fetchURL(url)
                 }
                 else
                 {
-                    resolve(false);
+                    resolve(null);
                 }
             }
         }
@@ -47,7 +47,7 @@ async function fetchURL(url, timeout)
                 }
                 else
                 {
-                    resolve(false);
+                    resolve(null);
                 }
             }
         }
@@ -76,7 +76,7 @@ async function fetchURL(url, timeout, post)
                 }
                 else
                 {
-                    resolve(false);
+                    resolve(null);
                 }
             }
         }
