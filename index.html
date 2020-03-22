@@ -80,7 +80,7 @@
 </script>
 <script>
     
-    var devicesDiv = document.getElementsByClassName('device');
+    var devices = document.getElementsByClassName('device');
     var updatingDevices = [];
     
     function checkUpdate(ip, name, version)
@@ -161,7 +161,6 @@
             
             setTimeout(function()
             {
-                console.log(1);
                 pingESP(document.getElementById(ip));
             }, 10000);
         });
@@ -219,22 +218,22 @@
                 
                 setTimeout(function()
                 {
-                    console.log(2);
                     pingESP(device);
                 }, 10000);
             });
         }
     }
     
-    for(var i = 0; i < devicesDiv.length; i++)
+    setTimeout(function()
     {
-        setTimeout(function()
+        for(var i = 0; i < devices.length; i++)
         {
-            console.log(3);
-            console.log(devices[i]);
             pingESP(devices[i]);
-        }, 500);
-    }
+        }
+    }, 500);
+
+</script>
+<script defer>
     
     var updateCount = 0;
     
@@ -276,15 +275,15 @@
     
     var count = 0;
 
-    for(var i = 0; i < devicesDiv.length; i++)
+    for(var i = 0; i < devices.length; i++)
     {
         setTimeout(function()
         {
-            checkUpdates(devicesDiv[i]).then(function(res) {
+            checkUpdates(devices[i]).then(function(res) {
 
                 count++;
 
-                if(count == devicesDiv.length)
+                if(count == devices.length)
                 {
                     if(updateCount > 0)
                     {            
