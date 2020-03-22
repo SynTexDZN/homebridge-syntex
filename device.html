@@ -142,7 +142,7 @@
         {
             fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id, 10000).then(function(res) {
 
-                if(res)
+                if(res != null)
                 {
                     if(device.type == 'contact')
                     {
@@ -192,7 +192,7 @@
         {
             fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
 
-                if(res)
+                if(res != null)
                 {
                     if(device.type == 'light')
                     {
@@ -211,7 +211,7 @@
             {
                 fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
 
-                    if(res)
+                    if(res != null)
                     {
                         if(res == 'false')
                         {
@@ -232,7 +232,7 @@
             {
                 fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
 
-                    if(res)
+                    if(res != null)
                     {
                         if(res > 40 && res < 70)
                         {
@@ -287,7 +287,7 @@
 
             fetchURL('http://' + device.ip + '/restart', 10000).then(function(res) {
 
-                if(!res)
+                if(res == null)
                 {
                     var rOverlay = document.createElement('input');
 
@@ -326,7 +326,7 @@
     {
         fetchURL('http://' + ip + '/version', 10000).then(function(res) {
 
-            if(res)
+            if(res != null)
             {
                 if(res != version)
                 {
@@ -578,7 +578,7 @@
     {
         fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000).then(function(res) {
 
-            if(res)
+            if(res != null)
             {
                 if(res > document.getElementsByClassName('main')[1].getAttribute('version'))
                 {
@@ -647,7 +647,7 @@
 
         fetchURL('http://' + device.ip + '/reset', 10000).then(function(res) {
 
-            if(res)
+            if(res != null)
             {
                 console.log(res);
                 
