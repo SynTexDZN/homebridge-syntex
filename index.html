@@ -85,96 +85,85 @@
     
     function checkUpdate(ip, name, version)
     {
-        var client = new XMLHttpRequest();
+        fetch('http://' + ip + '/version', 10000).then(function(res) {
 
-        client.timeout = 10000;
-        
-        client.open('GET', 'http://' + ip + '/version');
-
-        client.onreadystatechange = function()
-        {
-            if(client.readyState === 4)
+            if(res != null)
             {  
-                if(client.status === 200)
-                {  
-                    if(client.responseText != version)
+                if(res != version)
+                {
+                    if(document.getElementById(ip + '-update-result') == null)
                     {
-                        if(document.getElementById(ip + '-update-result') == null)
+                        var overlay = document.createElement('input');
+
+                        overlay.setAttribute('type', 'button');
+                        overlay.setAttribute('id', ip + '-update-result');
+                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
+                        overlay.setAttribute('value', 'Update Erfolgreich!');
+                        overlay.setAttribute('class', 'gradient-green');
+
+                        document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
+
+                        setTimeout(function()
                         {
-                            var overlay = document.createElement('input');
-
-                            overlay.setAttribute('type', 'button');
-                            overlay.setAttribute('id', ip + '-update-result');
-                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
-                            overlay.setAttribute('value', 'Update Erfolgreich!');
-                            overlay.setAttribute('class', 'gradient-green');
-
-                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                            setTimeout(function()
-                            {
-                                overlay.style.opacity = 1;
-                                document.getElementById(ip).style.opacity = 0;
-                            }, 10);
-                        }
+                            overlay.style.opacity = 1;
+                            document.getElementById(ip).style.opacity = 0;
+                        }, 10);
                     }
-                    else
-                    {
-                        if(document.getElementById(ip + '-update-result') == null)
-                        {
-                            var overlay = document.createElement('input');
-
-                            overlay.setAttribute('type', 'button');
-                            overlay.setAttribute('id', ip + '-update-result');
-                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
-                            overlay.setAttribute('value', 'Update Fehlgeschlagen!');
-                            overlay.setAttribute('class', 'gradient-red');
-
-                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                            setTimeout(function()
-                            {
-                                overlay.style.opacity = 1;
-                                document.getElementById(ip).style.opacity = 0;
-                            }, 10);
-                        }
-                    }
-
-                    setTimeout(function()
-                    {
-                        if(document.getElementById(ip + '-updating') != null)
-                        {
-                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-updating'));
-                        }
-                    }, 300);
-
-                    setTimeout(function()
-                    {
-                        if(document.getElementById(ip + '-update-result') != null)
-                        {
-                            document.getElementById(ip + '-update-result').style.opacity = 0;
-                            document.getElementById(ip).parentElement.getElementsByClassName('update')[0].style.opacity = 0;;
-                            document.getElementById(ip).style.opacity = 1;
-
-                            setTimeout(function()
-                            {
-                                document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update')[0]);
-                                document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-update-result'));
-                            }, 300);
-                        }
-
-                        updatingDevices.splice(updatingDevices.indexOf(ip), 1);
-                    }, 5000);
                 }
-                
+                else
+                {
+                    if(document.getElementById(ip + '-update-result') == null)
+                    {
+                        var overlay = document.createElement('input');
+
+                        overlay.setAttribute('type', 'button');
+                        overlay.setAttribute('id', ip + '-update-result');
+                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
+                        overlay.setAttribute('value', 'Update Fehlgeschlagen!');
+                        overlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
+
+                        setTimeout(function()
+                        {
+                            overlay.style.opacity = 1;
+                            document.getElementById(ip).style.opacity = 0;
+                        }, 10);
+                    }
+                }
+
                 setTimeout(function()
                 {
-                    pingESP(document.getElementById(ip));
-                }, 10000);
-            }  
-        }
+                    if(document.getElementById(ip + '-updating') != null)
+                    {
+                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-updating'));
+                    }
+                }, 300);
 
-        client.send();
+                setTimeout(function()
+                {
+                    if(document.getElementById(ip + '-update-result') != null)
+                    {
+                        document.getElementById(ip + '-update-result').style.opacity = 0;
+                        document.getElementById(ip).parentElement.getElementsByClassName('update')[0].style.opacity = 0;;
+                        document.getElementById(ip).style.opacity = 1;
+
+                        setTimeout(function()
+                        {
+                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip).parentElement.getElementsByClassName('update')[0]);
+                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-update-result'));
+                        }, 300);
+                    }
+
+                    updatingDevices.splice(updatingDevices.indexOf(ip), 1);
+                }, 5000);
+            }
+            
+            setTimeout(function()
+            {
+                pingESP(document.getElementById(ip));
+            }, 10000);
+        });
     }
         
     function pingESP(device)
@@ -189,60 +178,49 @@
         }
         else
         {
-            var client = new XMLHttpRequest();
+            fetch('http://' + device.getAttribute('id') + '/', 10000).then(function(res) {
 
-            client.timeout = 10000;
-        
-            client.open('GET', 'http://' + device.getAttribute('id') + '/');
-
-            client.onreadystatechange = function()
-            {
-                if(client.readyState === 4)
+                if(res != null)
                 {  
-                    if(client.status === 200)
-                    {  
-                        if(document.getElementById(device.getAttribute('id') + '-offline') != null)
-                        {
-                            document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 0;
-                            document.getElementById(device.getAttribute('id')).style.opacity = 1;
-
-                            setTimeout(function()
-                            {
-                                device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
-                            }, 300);
-                        }
-                    }
-                    else
-                    {  
-                        if(document.getElementById(device.getAttribute('id') + '-offline') == null)
-                        {
-                            var overlay = document.createElement('input');
-
-                            overlay.setAttribute('type', 'button');
-                            overlay.setAttribute('id', device.getAttribute('id') + '-offline');
-                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(device.getAttribute('id')).offsetLeft + 'px; top: ' + document.getElementById(device.getAttribute('id')).offsetTop + 'px; width: ' + document.getElementById(device.getAttribute('id')).offsetWidth + 'px!important');
-                            overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( OFFLINE )');
-                            overlay.setAttribute('onclick', device.getAttribute('onclick'));
-                            overlay.setAttribute('class', 'gradient-red');
-
-                            document.getElementById(device.getAttribute('id')).parentElement.insertBefore(overlay, document.getElementById(device.getAttribute('id')));
-
-                            setTimeout(function()
-                            {
-                                overlay.style.opacity = 1;
-                                document.getElementById(device.getAttribute('id')).style.opacity = 0;
-                            }, 10);
-                        }
-                    }  
-                    
-                    setTimeout(function()
+                    if(document.getElementById(device.getAttribute('id') + '-offline') != null)
                     {
-                        pingESP(device);
-                    }, 10000);
-                }  
-            }
+                        document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 0;
+                        document.getElementById(device.getAttribute('id')).style.opacity = 1;
 
-            client.send();
+                        setTimeout(function()
+                        {
+                            device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
+                        }, 300);
+                    }
+                }
+                else
+                {  
+                    if(document.getElementById(device.getAttribute('id') + '-offline') == null)
+                    {
+                        var overlay = document.createElement('input');
+
+                        overlay.setAttribute('type', 'button');
+                        overlay.setAttribute('id', device.getAttribute('id') + '-offline');
+                        overlay.setAttribute('style', 'opacity: 0; z-index: 1; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(device.getAttribute('id')).offsetLeft + 'px; top: ' + document.getElementById(device.getAttribute('id')).offsetTop + 'px; width: ' + document.getElementById(device.getAttribute('id')).offsetWidth + 'px!important');
+                        overlay.setAttribute('value', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' ( OFFLINE )');
+                        overlay.setAttribute('onclick', device.getAttribute('onclick'));
+                        overlay.setAttribute('class', 'gradient-red');
+
+                        document.getElementById(device.getAttribute('id')).parentElement.insertBefore(overlay, document.getElementById(device.getAttribute('id')));
+
+                        setTimeout(function()
+                        {
+                            overlay.style.opacity = 1;
+                            document.getElementById(device.getAttribute('id')).style.opacity = 0;
+                        }, 10);
+                    }
+                }  
+                
+                setTimeout(function()
+                {
+                    pingESP(device);
+                }, 10000);
+            });
         }
     }
     
@@ -257,46 +235,35 @@
     {
         return new Promise(resolve => {
             
-            var client = new XMLHttpRequest();
+            fetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000).then(function(res) {
 
-            client.timeout = 10000;
-        
-            client.open('GET', 'http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'));
-
-            client.onreadystatechange = function()
-            {
-                if(client.readyState === 4)
+                if(res != null)
                 {  
-                    if(client.status === 200)
-                    {  
-                        console.log(client.responseText);
+                    console.log(res);
 
-                        if(client.responseText > device.getAttribute('version'))
-                        {
-                            var update = document.createElement('input');
+                    if(res > device.getAttribute('version'))
+                    {
+                        var update = document.createElement('input');
 
-                            update.setAttribute('type', 'button');
-                            update.setAttribute('value', 'v' + client.responseText);
-                            update.setAttribute('style', 'max-width: 175px; margin: 0; margin-left: 20px;');
-                            update.setAttribute('ip', device.getAttribute('id'));
-                            update.setAttribute('onclick', 'updateDevice("' + device.getAttribute('id') + '")');
-                            update.setAttribute('class', 'update');
+                        update.setAttribute('type', 'button');
+                        update.setAttribute('value', 'v' + res);
+                        update.setAttribute('style', 'max-width: 175px; margin: 0; margin-left: 20px;');
+                        update.setAttribute('ip', device.getAttribute('id'));
+                        update.setAttribute('onclick', 'updateDevice("' + device.getAttribute('id') + '")');
+                        update.setAttribute('class', 'update');
 
-                            device.parentElement.appendChild(update);
+                        device.parentElement.appendChild(update);
 
-                            updateCount++;
-                        }
-
-                        resolve(true);
+                        updateCount++;
                     }
-                    else
-                    {  
-                        resolve(false);
-                    }  
-                }  
-            }
 
-            client.send();
+                    resolve(true);
+                }
+                else
+                {  
+                    resolve(false);
+                } 
+            });
         });
     }
     
@@ -337,48 +304,37 @@
     {
         if(!updatingDevices.includes(ip))
         {
-            var client = new XMLHttpRequest();
+            fetch('http://' + ip + '/update', 10000).then(function(res) {
 
-            client.timeout = 10000;
-        
-            client.open('GET', 'http://' + ip + '/update');
-
-            client.onreadystatechange = function()
-            {
-                if(client.readyState === 4)
+                if(res != null)
                 {  
-                    if(client.status === 200)
-                    {  
-                        console.log(client.responseText);
-                        
-                        if(client.responseText == 'Success')
+                    console.log(res);
+                    
+                    if(res == 'Success')
+                    {
+                        updatingDevices.push(ip);
+
+                        if(document.getElementById(ip + '-updating') == null)
                         {
-                            updatingDevices.push(ip);
+                            var overlay = document.createElement('input');
 
-                            if(document.getElementById(ip + '-updating') == null)
+                            overlay.setAttribute('type', 'button');
+                            overlay.setAttribute('id', ip + '-updating');
+                            overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
+                            overlay.setAttribute('value', 'Update wird installiert ..');
+                            overlay.setAttribute('class', 'gradient-purple');
+
+                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
+
+                            setTimeout(function()
                             {
-                                var overlay = document.createElement('input');
-
-                                overlay.setAttribute('type', 'button');
-                                overlay.setAttribute('id', ip + '-updating');
-                                overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
-                                overlay.setAttribute('value', 'Update wird installiert ..');
-                                overlay.setAttribute('class', 'gradient-purple');
-
-                                document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                                setTimeout(function()
-                                {
-                                    overlay.style.opacity = 1;
-                                    document.getElementById(ip).style.opacity = 0;
-                                }, 10);
-                            }
+                                overlay.style.opacity = 1;
+                                document.getElementById(ip).style.opacity = 0;
+                            }, 10);
                         }
                     }
-                }  
-            }
-
-            client.send();
+                }
+            });
         }
     }
 
