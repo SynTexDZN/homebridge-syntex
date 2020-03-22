@@ -80,7 +80,7 @@
 </script>
 <script>
     
-    var devices = document.getElementsByClassName('device');
+    var devicesDiv = document.getElementsByClassName('device');
     var updatingDevices = [];
     
     function checkUpdate(ip, name, version)
@@ -226,7 +226,7 @@
         }
     }
     
-    for(var i = 0; i < devices.length; i++)
+    for(var i = 0; i < devicesDiv.length; i++)
     {
         setTimeout(function()
         {
@@ -276,15 +276,15 @@
     
     var count = 0;
 
-    for(var i = 0; i < devices.length; i++)
+    for(var i = 0; i < devicesDiv.length; i++)
     {
         setTimeout(function()
         {
-            checkUpdates(devices[i]).then(function(res) {
+            checkUpdates(devicesDiv[i]).then(function(res) {
 
                 count++;
 
-                if(count == devices.length)
+                if(count == devicesDiv.length)
                 {
                     if(updateCount > 0)
                     {            
