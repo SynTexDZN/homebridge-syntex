@@ -11,10 +11,10 @@
             </div>
             <div id="infos" style="margin-bottom: 100px">
                 <p class="loading-loop"><b>IP: </b>Laden ..</p>
-                <h2>SynTex Bridge</h2>
+                <h2 style="width: fit-content">• SynTex Bridge •</h2>
                 <p class="loading-loop"><b>Version: </b>Laden ..</p>
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
-                <h2>SynTex WebHooks</h2>
+                <h2 style="width: fit-content">• SynTex WebHooks •</h2>
                 <p class="loading-loop"><b>Version: </b>Laden ..</p>
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
             </div>
@@ -56,6 +56,39 @@
                 document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
+
+        fetchURL('http://syntex.local:1710/version', 10000).then(function(res) {
+
+            if(res != null)
+            {
+                document.getElementById('infos').children[5].innerHTML = '<p><b>Version: </b>' + res + '</p>';
+            }
+        });
+
+        fetchURL('http://syntex.sytes.net/smarthome/check-version?device=syntex-webhooks', 10000).then(function(res) {
+
+            if(res != null)
+            {
+                document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
+
+                if(res > version || (version.includes('-') && res >= version.split('-')[0]))
+                {
+                    var updateBTN = document.createElement('input');
+
+                    updateBTN.setAttribute('type', 'button');
+                    updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + res + ' )');
+                    updateBTN.setAttribute('onclick', 'updateBridge()');
+                    updateBTN.setAttribute('style', 'margin-top: 20px');
+                    updateBTN.setAttribute('id', 'update-btn');
+
+                    document.getElementsByClassName('main')[0].appendChild(updateBTN);  
+                }
+            }
+            else
+            {
+                document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+            }
+            });
     }, 500);
     
     function updateBridge()
