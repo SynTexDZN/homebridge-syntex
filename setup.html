@@ -5,7 +5,7 @@
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img class="setup-png" src="img/wifi.png">
-                <input class="gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="search-loop" type="button" value="Nach Geräten suchen .">
+                <input class="search-loop gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen .">
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main">
@@ -68,15 +68,18 @@
     {
         setTimeout(function()
         {
-            var loop = document.getElementById('search-loop');
+            var loop = document.getElementsByClassName('search-loop');
 
-            if(loop.value != 'Nach Geräten suchen ...')
+            for(var i = 0; i < loop.length; i++)
             {
-                loop.value += '.';
-            }
-            else
-            {
-                loop.value = 'Nach Geräten suchen .';
+                if((loop.value.match(/./g) || []).length < 3)
+                {
+                    loop.value += '.';
+                }
+                else
+                {
+                    loop.value.replace('/...', '');
+                }
             }
 
             searchLoop();
