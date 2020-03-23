@@ -109,12 +109,14 @@ SynTexPlatform.prototype = {
                     if(error || stderr.includes('ERR!'))
                     {
                         response.write('Error');
+                        response.end();
                         
                         logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
                     }
                     else
                     {
                         response.write('Success');
+                        response.end();
                         
                         logger.log('success', "Die Homebridge wurde aktualisiert!");
                         
@@ -123,8 +125,6 @@ SynTexPlatform.prototype = {
                             logger.log('warn', "Die Homebridge wird neu gestartet ..");
                         });
                     }
-                    
-                    response.end();
                 });
             }
             else if(urlPath == '/ping')
