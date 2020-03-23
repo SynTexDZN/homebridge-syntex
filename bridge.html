@@ -41,7 +41,7 @@
 
                 var intVersionB = 0;
 
-                for(var i = 0; i < (bridgeVersion.match(/\./g) || []).length; i++)
+                for(var i = (bridgeVersion.match(/\./g) || []).length; i > 0; i--)
                 {
                     if(bridgeVersion.includes('-'))
                     {
@@ -90,7 +90,7 @@
 
                 var intVersionW = 0;
 
-                for(var i = 0; i < (webhooksVersion.match(/\./g) || []).length; i++)
+                for(var i = (webhooksVersion.match(/\./g) || []).length; i > 0; i--)
                 {
                     if(webhooksVersion.includes('-'))
                     {
