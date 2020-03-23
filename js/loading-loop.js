@@ -4,7 +4,7 @@ function searchLoop()
 
     for(var i = 0; i < loop.length; i++)
     {
-        if(loop[i].hasAttribute('value'))
+        if(loop[i].hasAttribute('value') && loop[i].value.substring(loop[i].value.length - 1) == ' .')
         {
             if((loop[i].value.match(/\./g) || []).length < 3)
             {
