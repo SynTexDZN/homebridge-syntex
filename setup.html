@@ -72,18 +72,18 @@
 
             for(var i = 0; i < loop.length; i++)
             {
-                console.log((loop[i].value.match(/./g) || []).length);
+                console.log((loop[i].value.match(/\./g) || []).length);
 
-                if((loop[i].value.match(/./g) || []).length < 3)
+                if((loop[i].value.match(/\./g) || []).length < 3)
                 {
                     loop[i].value += '.';
                 }
                 else
                 {
-                    loop[i].value.replace('/...', '.');
+                    loop[i].value.replace('...', '.');
                 }
             }
-
+            
             searchLoop();
         }, 1000);
     }
