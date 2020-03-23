@@ -6,7 +6,6 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img class="setup-png" src="img/wifi.png">
                 <input class="loading-loop gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen .">
-                <p class="loading-loop">Laden ..</p>
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main">
@@ -21,7 +20,7 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <form onsubmit="event.preventDefault(); sendWifiSettings();">
                     <div id="networks" style="margin-bottom: 100px">
-                        <p>Laden ..</p>
+                        <p class="loading-loop">Laden ..</p>
                     </div>
                     <input type="password" name="wifipass" placeholder="Netzwerk Passwort" style="margin-bottom: 20px" required>
                     <br>
@@ -31,7 +30,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input id="scan-btn" class="gradient-blue" style="margin-left: 20px" type="button" value="Bitte Warten .." onclick="scanWifi()">
+                    <input id="scan-btn loading-loop" class="gradient-blue" style="margin-left: 20px" type="button" value="Bitte Warten .." onclick="scanWifi()">
                 </div>
             </div>
         </div>
@@ -64,48 +63,6 @@
     </body>
 </html>
 <script defer>
-
-    function searchLoop()
-    {
-        setTimeout(function()
-        {
-            var loop = document.getElementsByClassName('loading-loop');
-
-            for(var i = 0; i < loop.length; i++)
-            {
-                if(loop[i].hasAttribute('value'))
-                {
-                    if((loop[i].value.match(/\./g) || []).length < 3)
-                    {
-                        loop[i].value += '.';
-                    }
-                    else
-                    {
-                        loop[i].value = loop[i].value.replace('...', '.');
-                    }
-                }
-                else if(loop[i].innerHTML.includes('.'))
-                {
-                    if((loop[i].innerHTML.match(/\./g) || []).length < 3)
-                    {
-                        loop[i].innerHTML += '.';
-                    }
-                    else
-                    {
-                        loop[i].innerHTML = loop[i].innerHTML.replace('...', '.');
-                    }
-                }
-                else
-                {
-                    console.error('Falsches Eingabeformat');
-                }
-            }
-
-            searchLoop();
-        }, 1000);
-    }
-
-    searchLoop();
 
     function redirectCountdown(countdown, url)
     {
