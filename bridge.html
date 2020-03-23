@@ -25,10 +25,11 @@
 <script>
 
     var ip = '<%ip%>';
-    var version = '<%version%>';
+    var bridgeVersion = '<%version%>';
+    var webhooksVersion = '';
 
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
-    document.getElementById('infos').children[2].innerHTML = '<p><b>Version: </b>' + version + '</p>';
+    document.getElementById('infos').children[2].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
     setTimeout(function()
     {
@@ -38,7 +39,7 @@
             {
                 document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                if(res > version || (version.includes('-') && res >= version.split('-')[0]))
+                if(res > bridgeVersion || (bridgeVersion.includes('-') && res >= bridgeVersion.split('-')[0]))
                 {
                     var updateBTN = document.createElement('input');
 
@@ -61,7 +62,9 @@
 
             if(res != null)
             {
-                document.getElementById('infos').children[5].innerHTML = '<p><b>Version: </b>' + res + '</p>';
+                webhooksVersion = res;
+
+                document.getElementById('infos').children[5].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
             }
         });
 
@@ -71,7 +74,7 @@
             {
                 document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                if(res > version || (version.includes('-') && res >= version.split('-')[0]))
+                if(res > webhooksVersion || (webhooksVersion.includes('-') && res >= webhooksVersion.split('-')[0]))
                 {
                     var updateBTN = document.createElement('input');
 
