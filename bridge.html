@@ -39,21 +39,11 @@
             {
                 document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                var intVersionB = 0;
+                var intVersionB = versionCount(bridgeVersion);
 
-                for(var i = (bridgeVersion.match(/\./g) || []).length; i > 0; i--)
-                {
-                    if(bridgeVersion.includes('-'))
-                    {
-                        intVersionB += bridgeVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
-                    }
-                    else
-                    {
-                        intVersionB += bridgeVersion.split('.')[i] * Math.pow(100, i);
-                    }
-                }
+                console.log(versionCount(res), intVersionB);
                     
-                if(res > intVersionB)
+                if(versionCount(res) > intVersionB)
                 {
                     var updateBTN = document.createElement('input');
 
@@ -88,21 +78,9 @@
             {
                 document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                var intVersionW = 0;
+                var intVersionW = versionCount(webhooksVersion);
 
-                for(var i = (webhooksVersion.match(/\./g) || []).length; i > 0; i--)
-                {
-                    if(webhooksVersion.includes('-'))
-                    {
-                        intVersionW += webhooksVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
-                    }
-                    else
-                    {
-                        intVersionW += webhooksVersion.split('.')[i] * Math.pow(100, i);
-                    }
-                }
-
-                if(res > intVersionW)
+                if(versionCount(res) > intVersionW)
                 {
                     var updateBTN = document.createElement('input');
 
@@ -121,6 +99,25 @@
             }
             });
     }, 500);
+
+    function versionCount(version)
+    {
+        var intVersion = 0;
+
+        for(var i = (webhooksVersion.match(/\./g) || []).length; i > 0; i--)
+        {
+            if(webhooksVersion.includes('-'))
+            {
+                intVersion += webhooksVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
+            }
+            else
+            {
+                intVersion += webhooksVersion.split('.')[i] * Math.pow(100, i);
+            }
+        }
+
+        return intVersion;
+    }
     
     function updateBridge()
     {
