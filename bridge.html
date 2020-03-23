@@ -23,32 +23,36 @@
     var version = '<%version%>';
     var newest = '';
 
-    fetchURL('https://registry.npmjs.org/homebridge-syntex/latest', 10000).then(function(res) {
-
-        if(res != null)
-        {
-            newest = res.version;
-        }
-    });
-
-    console.log(res);
-    
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
-    document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
-    
-    if(newest > version || (version.includes('-') && newest >= version.split('-')[0]))
+
+    setTimeout(function()
     {
-        var updateBTN = document.createElement('input');
-        
-        updateBTN.setAttribute('type', 'button');
-        updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
-        updateBTN.setAttribute('onclick', 'updateBridge()');
-        updateBTN.setAttribute('style', 'margin-top: 20px');
-        updateBTN.setAttribute('id', 'update-btn');
-        
-        document.getElementsByClassName('main')[0].appendChild(updateBTN);
-    }
+        fetchURL('https://registry.npmjs.org/homebridge-syntex/latest', 10000).then(function(res) {
+
+            if(res != null)
+            {
+                newest = res.version;
+            }
+        });
+
+        console.log(res);
+
+        document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
+
+        if(newest > version || (version.includes('-') && newest >= version.split('-')[0]))
+        {
+            var updateBTN = document.createElement('input');
+
+            updateBTN.setAttribute('type', 'button');
+            updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
+            updateBTN.setAttribute('onclick', 'updateBridge()');
+            updateBTN.setAttribute('style', 'margin-top: 20px');
+            updateBTN.setAttribute('id', 'update-btn');
+
+            document.getElementsByClassName('main')[0].appendChild(updateBTN);  
+        }
+    }, 500);
     
     function updateBridge()
     {
