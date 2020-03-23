@@ -69,24 +69,37 @@
     document.getElementsByTagName('title')[0].innerHTML = device.name;
     document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
-    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
-    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
-    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
-    document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+    var infos = document.getElementById('infos').getElementsByClassName('main')[0];
+
+    infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
+    infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+    infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
+    infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
 
     for(const i in settings)
     {
         if(settings[i].index == 'interval' && (device.type == 'light' || device.type == 'temperature'))
         {
-            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
         else if(settings[i].index == 'interval' && (device.type == 'motion'))
         {
-            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+        }
+        else if(settings[i].index == 'led')
+        {
+            if(device[settings[i].index] == 1)
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
+            }
+            else
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
+            }
         }
         else
         {
-            document.getElementById('infos').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
         }
     }
 
