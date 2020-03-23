@@ -26,19 +26,15 @@ function searchLoop()
                 loop[i].innerHTML = loop[i].innerHTML.replace('...', '.');
             }
         }
-        else
-        {
-            console.error('Falsches Eingabeformat');
-        }
     }
 
     setTimeout(function()
     {
         searchLoop();
-    }, 1000);
+    }, 500);
 }
 
 setTimeout(function()
 {
     searchLoop();
-}, 1000);
+}, 500);
