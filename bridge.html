@@ -10,9 +10,9 @@
                 <input type="button" value="Bridge" onclick="window.location.href='/bridge'" disabled>
             </div>
             <div id="infos" style="margin-bottom: 100px">
-                <p>Laden ..</p>
-                <p>Laden ..</p>
-                <p>Laden ..</p>
+                <p><b>IP: </b>Laden ..</p>
+                <p><b>Version: </b>Laden ..</p>
+                <p><b>Neuste Version: </b>Laden ..</p>
             </div>
             <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge()">
         </div>
@@ -22,7 +22,6 @@
 
     var ip = '<%ip%>';
     var version = '<%version%>';
-    var newest = '';
 
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
@@ -33,15 +32,14 @@
 
             if(res != null)
             {
-                newest = res;
-                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
+                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                if(newest > version || (version.includes('-') && newest >= version.split('-')[0]))
+                if(res > version || (version.includes('-') && res >= version.split('-')[0]))
                 {
                     var updateBTN = document.createElement('input');
 
                     updateBTN.setAttribute('type', 'button');
-                    updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + newest + ' )');
+                    updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + res + ' )');
                     updateBTN.setAttribute('onclick', 'updateBridge()');
                     updateBTN.setAttribute('style', 'margin-top: 20px');
                     updateBTN.setAttribute('id', 'update-btn');
