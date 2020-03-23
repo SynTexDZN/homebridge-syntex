@@ -190,19 +190,13 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
                                     
-                                    const { exec } = require("child_process");
-                                    
-                                    exec("sudo npm view homebridge-syntex version", (error, stdout, stderr) => {
+                                    var obj = {
+                                        ip: address,
+                                        version: pjson.version
+                                    };
 
-                                        var obj = {
-                                            ip: address,
-                                            version: pjson.version,
-                                            newest: stdout.replace(/\s/g, '')
-                                        };
-
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
-                                    });
+                                    response.write(HTMLQuery.sendValues(head + data, obj));
+                                    response.end();
                                 }
                                 else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
                                 {

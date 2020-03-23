@@ -21,7 +21,17 @@
 
     var ip = '<%ip%>';
     var version = '<%version%>';
-    var newest = '<%newest%>';
+    var newest = '';
+
+    fetchURL('https://registry.npmjs.org/homebridge-syntex/latest', 10000).then(function(res) {
+
+        if(res != null)
+        {
+            newest = res.version;
+        }
+    });
+
+    console.log(res);
     
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
