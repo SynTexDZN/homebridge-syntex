@@ -104,16 +104,18 @@
     {
         var intVersion = 0;
 
-        for(var i = (webhooksVersion.match(/\./g) || []).length; i > 0; i--)
+        for(var i = (version.match(/\./g) || []).length; i > 0; i--)
         {
-            if(webhooksVersion.includes('-'))
+            if(version.includes('-'))
             {
-                intVersion += webhooksVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
+                intVersion += version.split('-')[0].split('.')[i] * Math.pow(100, i);
             }
             else
             {
-                intVersion += webhooksVersion.split('.')[i] * Math.pow(100, i);
+                intVersion += version.split('.')[i] * Math.pow(100, i);
             }
+
+            console.log(i, intVersion);
         }
 
         return intVersion;
