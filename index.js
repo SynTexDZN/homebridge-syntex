@@ -102,9 +102,6 @@ SynTexPlatform.prototype = {
             }
             else if(urlPath == '/update')
             {
-                response.setHeader('Connection', 'Keep-Alive');
-                response.setHeader('Keep-Alive', 'timeout=120 max=1000');
-
                 const { exec } = require("child_process");
                 
                 exec("sudo npm install homebridge-syntex@latest -g", (error, stdout, stderr) => {
