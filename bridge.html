@@ -33,7 +33,7 @@
 
             if(res != null)
             {
-                newest = res.version;
+                newest = res;
                 document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + newest + '</p>';
 
                 if(newest > version || (version.includes('-') && newest >= version.split('-')[0]))
