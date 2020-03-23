@@ -72,13 +72,13 @@
 
             for(var i = 0; i < loop.length; i++)
             {
-                if((loop.value.match(/./g) || []).length < 3)
+                if((loop[i].value.match(/./g) || []).length < 3)
                 {
-                    loop.value += '.';
+                    loop[i].value += '.';
                 }
                 else
                 {
-                    loop.value.replace('/...', '');
+                    loop[i].value.replace('/...', '');
                 }
             }
 
