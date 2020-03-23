@@ -17,7 +17,7 @@ function searchLoop()
                     loop[i].value = loop[i].value.replace('...', '.');
                 }
             }
-            else if(loop[i].innerHTML.includes('.'))
+            else if(loop[i].innerHTML.substring(loop[i].innerHTML.length - 1) == '.')
             {
                 if((loop[i].innerHTML.match(/\./g) || []).length < 3)
                 {
