@@ -39,10 +39,21 @@
             {
                 document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                console.log(res > bridgeVersion, res, bridgeVersion);
-                console.log((bridgeVersion.includes('-') && res >= bridgeVersion.split('-')[0]), bridgeVersion.includes('-'), res >= bridgeVersion.split('-')[0]);
+                var intVersionB = 0;
+
+                for(var i = 0; i < (bridgeVersion.match(/\./g) || []).length; i++)
+                {
+                    if(bridgeVersion.includes('-'))
+                    {
+                        intVersionB += bridgeVersion.split('-')[0].split('.')[i];
+                    }
+                    else
+                    {
+                        intVersionB += bridgeVersion.split('.')[i];
+                    }
+                }
                     
-                if(res > bridgeVersion || (bridgeVersion.includes('-') && res >= bridgeVersion.split('-')[0]))
+                if(res > intVersionB)
                 {
                     var updateBTN = document.createElement('input');
 
@@ -77,7 +88,21 @@
             {
                 document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
-                if(res > webhooksVersion || (webhooksVersion.includes('-') && res >= webhooksVersion.split('-')[0]))
+                var intVersionW = 0;
+
+                for(var i = 0; i < (webhooksVersion.match(/\./g) || []).length; i++)
+                {
+                    if(webhooksVersion.includes('-'))
+                    {
+                        intVersionW += webhooksVersion.split('-')[0].split('.')[i];
+                    }
+                    else
+                    {
+                        intVersionW += webhooksVersion.split('.')[i];
+                    }
+                }
+
+                if(res > intVersionW)
                 {
                     var updateBTN = document.createElement('input');
 
