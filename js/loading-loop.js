@@ -4,7 +4,7 @@ function searchLoop()
 
     for(var i = 0; i < loop.length; i++)
     {
-        if(loop[i].hasAttribute('value') && loop[i].value.substring(loop[i].value.length - 1) == ' .')
+        if(loop[i].hasAttribute('value') && loop[i].value.substring(loop[i].value.length - 3) == ' ..')
         {
             if((loop[i].value.match(/\./g) || []).length < 3)
             {
@@ -15,7 +15,7 @@ function searchLoop()
                 loop[i].value = loop[i].value.replace('...', '.');
             }
         }
-        else if(loop[i].innerHTML.substring(loop[i].innerHTML.length - 1) == ' .')
+        else if(loop[i].innerHTML.substring(loop[i].innerHTML.length - 3) == ' ..')
         {
             if((loop[i].innerHTML.match(/\./g) || []).length < 3)
             {
