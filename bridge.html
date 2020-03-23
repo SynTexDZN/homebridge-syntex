@@ -39,6 +39,9 @@
             {
                 document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
+                console.log(res > bridgeVersion, res, bridgeVersion);
+                console.log((bridgeVersion.includes('-') && res >= bridgeVersion.split('-')[0]), bridgeVersion.includes('-'), res >= bridgeVersion.split('-')[0]);
+                    
                 if(res > bridgeVersion || (bridgeVersion.includes('-') && res >= bridgeVersion.split('-')[0]))
                 {
                     var updateBTN = document.createElement('input');
@@ -79,7 +82,7 @@
                     var updateBTN = document.createElement('input');
 
                     updateBTN.setAttribute('type', 'button');
-                    updateBTN.setAttribute('value', 'Webhooks Aktualisieren ( v' + res + ' )');
+                    updateBTN.setAttribute('value', 'WebHooks Aktualisieren ( v' + res + ' )');
                     updateBTN.setAttribute('onclick', 'updateWebhooks()');
                     updateBTN.setAttribute('style', 'margin-top: 20px');
                     updateBTN.setAttribute('id', 'update-btn-webhooks');
