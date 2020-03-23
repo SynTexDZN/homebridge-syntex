@@ -12,8 +12,6 @@ function versionCount(version)
         {
             intVersion += version.split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
         }
-
-        console.log(i, intVersion);
     }
 
     return intVersion;
