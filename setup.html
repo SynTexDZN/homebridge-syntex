@@ -5,7 +5,7 @@
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <img class="setup-png" src="img/wifi.png">
-                <input class="loading-loop gradient-blue" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen .">
+                <input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen ..">
                 <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
             </div>
             <div class="main">
@@ -127,7 +127,7 @@
     function scanWifi()
     {           
         document.getElementById('scan-btn').value = 'Bitte Warten ..'; 
-        document.getElementById('networks').innerHTML = '<p>Laden ..</p>';
+        document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
         fetchURL('http://192.168.4.1/wifi', 10000).then(function(res) {
 

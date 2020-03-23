@@ -3,7 +3,7 @@
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
         <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: table">
-            <p style="margin-bottom: 100px; margin-top: 16px">Laden ..</p>
+            <p class="loading-loop" style="margin-bottom: 100px; margin-top: 16px">Laden ..</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
                 <input style="margin-right: 20px" type="button" value="Geräte" onclick="window.location.href='/'" disabled>
                 <input class="white" type="button" value="Bridge" onclick="window.location.href='/bridge'">
@@ -331,7 +331,7 @@
                             overlay.setAttribute('id', ip + '-updating');
                             overlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; text-align: left; padding-left: 18px; border-width: 0; position: absolute; left: ' + document.getElementById(ip).offsetLeft + 'px; top: ' + document.getElementById(ip).offsetTop + 'px; width: ' + document.getElementById(ip).offsetWidth + 'px!important');
                             overlay.setAttribute('value', 'Update wird installiert ..');
-                            overlay.setAttribute('class', 'gradient-purple');
+                            overlay.setAttribute('class', 'gradient-purple loading-loop');
 
                             document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
 
