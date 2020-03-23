@@ -45,11 +45,11 @@
                 {
                     if(bridgeVersion.includes('-'))
                     {
-                        intVersionB += bridgeVersion.split('-')[0].split('.')[i];
+                        intVersionB += bridgeVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
                     }
                     else
                     {
-                        intVersionB += bridgeVersion.split('.')[i];
+                        intVersionB += bridgeVersion.split('.')[i] * Math.pow(100, i);
                     }
                 }
                     
@@ -94,11 +94,11 @@
                 {
                     if(webhooksVersion.includes('-'))
                     {
-                        intVersionW += webhooksVersion.split('-')[0].split('.')[i];
+                        intVersionW += webhooksVersion.split('-')[0].split('.')[i] * Math.pow(100, i);
                     }
                     else
                     {
-                        intVersionW += webhooksVersion.split('.')[i];
+                        intVersionW += webhooksVersion.split('.')[i] * Math.pow(100, i);
                     }
                 }
 
