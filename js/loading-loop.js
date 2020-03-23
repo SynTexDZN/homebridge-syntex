@@ -41,4 +41,4 @@ function searchLoop()
 setTimeout(function()
 {
     searchLoop();
-}, 500);
+}, 1000);
