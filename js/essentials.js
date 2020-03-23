@@ -2,7 +2,7 @@ function versionCount(version)
 {
     var intVersion = 0;
 
-    for(var i = (version.match(/\./g) || []).length; i > 0; i--)
+    for(var i = (version.match(/\./g) || []).length; i >= 0; i--)
     {
         if(version.includes('-'))
         {
