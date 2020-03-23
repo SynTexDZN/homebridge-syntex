@@ -1,6 +1,13 @@
 function versionCount(version)
 {
-    var intVersion = 0;
+    if(version.includes('-'))
+    {
+        var intVersion = -1;
+    }
+    else
+    {
+        var intVersion = 0;
+    }
 
     for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
     {
