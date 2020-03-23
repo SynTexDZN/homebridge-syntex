@@ -11,6 +11,10 @@
             </div>
             <div id="infos" style="margin-bottom: 100px">
                 <p class="loading-loop"><b>IP: </b>Laden ..</p>
+                <h2>SynTex Bridge</h2>
+                <p class="loading-loop"><b>Version: </b>Laden ..</p>
+                <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
+                <h2>SynTex WebHooks</h2>
                 <p class="loading-loop"><b>Version: </b>Laden ..</p>
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
             </div>
@@ -24,7 +28,7 @@
     var version = '<%version%>';
 
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
-    document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
+    document.getElementById('infos').children[2].innerHTML = '<p><b>Version: </b>' + version + '</p>';
 
     setTimeout(function()
     {
@@ -32,7 +36,7 @@
 
             if(res != null)
             {
-                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
+                document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
                 if(res > version || (version.includes('-') && res >= version.split('-')[0]))
                 {
@@ -49,7 +53,7 @@
             }
             else
             {
-                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
     }, 500);
