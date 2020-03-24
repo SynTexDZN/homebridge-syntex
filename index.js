@@ -227,15 +227,15 @@ SynTexPlatform.prototype = {
                                                                 if(device && !err)
                                                                 {    
                                                                     var obj = {
-                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"'),
-                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
+                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']"'),
+                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']"')
                                                                     };
                                                                 }
                                                     
                                                                 if(err || !device)
                                                                 {
                                                                     var obj = {
-                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"'),
+                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']"'),
                                                                         wLog: []
                                                                     };
                                                                 }
@@ -253,7 +253,7 @@ SynTexPlatform.prototype = {
                                                                 {    
                                                                     var obj = {
                                                                         bLog: [],
-                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
+                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']"')
                                                                     };
                                                                 }
                                                     
