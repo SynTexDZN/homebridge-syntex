@@ -209,7 +209,7 @@ SynTexPlatform.prototype = {
                                         if(device && !err)
                                         {    
                                             var obj = {
-                                                log: device.logs
+                                                log: JSON.stringify(device.logs)
                                             };
                                         }
                             
