@@ -18,6 +18,8 @@ function sendValues(html, obj)
     for(const i in obj)
     {
         res = res.replace(new RegExp('<%' + i + '%>', 'g'), obj[i]);
+
+        console.log(obj[i]);
     }
     
     return res;
