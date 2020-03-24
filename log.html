@@ -49,7 +49,7 @@
         element.setAttribute('level', wLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         //element.setAttribute('style', 'border: ');
-        element.innerHTML = wLogJSON[i].split(']')[0] + ']<br>' + wLogJSON[i].split('] ')[1];
+        element.innerHTML = wLogJSON[i].split(']')[0] + ']<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '');
 
         if(i != wLogJSON.length - 1)
         {
