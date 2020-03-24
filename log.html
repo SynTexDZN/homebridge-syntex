@@ -46,6 +46,8 @@
             for(var i = 0; i < logs.length; i++)
             {
                 console.log(logs[i].innerHTML.toUpperCase());
+                console.log(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()));
+                console.log(logs[i].hasAttribute('hidden'));
 
                 if(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()) && logs[i].hasAttribute('hidden'))
                 {
