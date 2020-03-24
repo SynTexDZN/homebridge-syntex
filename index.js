@@ -209,7 +209,7 @@ SynTexPlatform.prototype = {
                                         if(device && !err)
                                         {    
                                             var obj = {
-                                                log: JSON.stringify(device.logs).replace(" '", ' [').replace("' ", '] ').replace(/\'\"/g, ']"')
+                                                log: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
                                             };
                                         }
                             
