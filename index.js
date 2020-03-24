@@ -198,6 +198,15 @@ SynTexPlatform.prototype = {
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
                                 }
+                                else if(urlPath.startsWith('/log'))
+                                {
+                                    var obj = {
+                                        log: logger.logs
+                                    };
+
+                                    response.write(HTMLQuery.sendValues(head + data, obj));
+                                    response.end();
+                                }
                                 else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
                                 {
                                     DeviceManager.getDevice(urlParams.mac).then(function(res) {

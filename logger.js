@@ -1,12 +1,12 @@
 var logger = exports, prefix;
 var store = require('json-fs-store');
-var logs;
+logger.logs;
 logger.debugLevel = 'success';
 
 logger.create = function(pluginName, logDirectory)
 {
     prefix = pluginName;
-    logs = store(logDirectory);
+    logger.logs = store(logDirectory);
 };
 
 logger.log = function(level, message)
@@ -80,13 +80,13 @@ function saveLog(log)
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-        logs.load(date, (err, device) => {    
+        logger.logs.load(date, (err, device) => {    
 
             if(device && !err)
             {    
                 device.logs[device.logs.length] = log;
 
-                logs.add(device, (err) => {
+                logger.logs.add(device, (err) => {
 
                     inWork = false;
 
@@ -111,7 +111,7 @@ function saveLog(log)
                     ]
                 };
 
-                logs.add(entry, (err) => {
+                logger.logs.add(entry, (err) => {
 
                     inWork = false;
 
