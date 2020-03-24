@@ -30,7 +30,17 @@
         element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         element.setAttribute('style', '');
-        element.innerHTML = bLogJSON[i].split(']')[0] + ']<br>' + bLogJSON[i].split('] ')[1];
+        
+        var log = bLogJSON[i].split(']')[0] + ']';
+
+        if(bLogJSON[i].includes('(') && bLogJSON[i].includes(')'))
+        {
+            log += ' (' + bLogJSON[i].split('(')[1].split(')')[0] + ')';
+        }
+
+        log += '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
+
+        element.innerHTML = log;
 
         if(i != bLogJSON.length - 1)
         {
@@ -49,7 +59,17 @@
         element.setAttribute('level', wLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         //element.setAttribute('style', 'border: ');
-        element.innerHTML = wLogJSON[i].split(']')[0] + ']<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '');
+
+        var log = wLogJSON[i].split(']')[0] + ']';
+
+        if(wLogJSON[i].includes('(') && wLogJSON[i].includes(')'))
+        {
+            log += ' (' + wLogJSON[i].split('(')[1].split(')')[0] + ')';
+        }
+
+        log += '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
+
+        element.innerHTML = log;
 
         if(i != wLogJSON.length - 1)
         {
