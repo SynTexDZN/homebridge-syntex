@@ -12,32 +12,53 @@
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
             </div>
             <div class="main" style="margin-bottom: 100px">
-                <div class="outline" id="log"></div>
+                <div class="outline" id="bLog"></div>
+                <div class="outline" id="wLog"></div>
             </div>
         </div>
     </body>
 </html>
 <script>
 
-    var logJSON = JSON.parse('<%log%>');
+    var bLogJSON = JSON.parse('<%bLog%>');
+    var wLogJSON = JSON.parse('<%wLog%>');
 
-    console.log(logJSON);
+    console.log(bLogJSON);
 
-    for(var i = 0; i < logJSON.length; i++)
+    for(var i = 0; i < bLogJSON.length; i++)
     {
         var element = document.createElement('div');
 
-        element.setAttribute('level', logJSON[i].split('[')[1].split(']')[0]);
+        element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         //element.setAttribute('style', 'border: ');
-        element.innerHTML = logJSON[i];
+        element.innerHTML = bLogJSON[i];
 
-        if(i != logJSON.length - 1)
+        if(i != bLogJSON.length - 1)
         {
             element.setAttribute('style', element.getAttribute('style') + '; margin-bottom: 20px');
         }
 
-        document.getElementById('log').appendChild(element);
+        document.getElementById('bLog').appendChild(element);
+    }
+
+    console.log(wLogJSON);
+
+    for(var i = 0; i < wLogJSON.length; i++)
+    {
+        var element = document.createElement('div');
+
+        element.setAttribute('level', wLogJSON[i].split('[')[1].split(']')[0]);
+        //element.setAttribute('class', 'white');
+        //element.setAttribute('style', 'border: ');
+        element.innerHTML = wLogJSON[i];
+
+        if(i != wLogJSON.length - 1)
+        {
+            element.setAttribute('style', element.getAttribute('style') + '; margin-bottom: 20px');
+        }
+
+        document.getElementById('wLog').appendChild(element);
     }
 
 </script>

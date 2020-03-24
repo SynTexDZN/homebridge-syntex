@@ -4,6 +4,8 @@ var path = require('path');
 var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
 var logger = require('./logger');
+var store = require('json-fs-store');
+var config;
 
 module.exports = function(homebridge)
 {
@@ -15,6 +17,8 @@ function SynTexPlatform(log, config, api)
     this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
     this.logDirectory = config["log_directory"] || "./SynTex/log";
     this.port = config["port"] || 1711;
+
+    config = store(api.user.storagePath());
 
     logger.create("SynTex", this.logDirectory);
     
@@ -200,28 +204,75 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    var d = new Date();
+                                    config.load('config', (err, obj) => {    
 
-                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-                                    logger.logs.load(date, (err, device) => {    
-
-                                        if(device && !err)
-                                        {    
-                                            var obj = {
-                                                log: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
-                                            };
-                                        }
+                                        if(obj)
+                                        {                            
+                                            obj.id = 'config';
                             
-                                        if(err || !device)
-                                        {
-                                            var obj = {
-                                                log: []
-                                            };
-                                        }
+                                            for(const i in obj.platforms)
+                                            {
+                                                if(obj.platforms[i].platform === 'SynTexWebHooks')
+                                                {
+                                                    var d = new Date();
 
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
+                                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
+                                                    logger.logs.load(date, (err, device) => {    
+
+                                                        if(device && !err)
+                                                        {    
+                                                            store(obj.platforms[i].log_directory).load(date, (err, device2) => {    
+
+                                                                if(device && !err)
+                                                                {    
+                                                                    var obj = {
+                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"'),
+                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
+                                                                    };
+                                                                }
+                                                    
+                                                                if(err || !device)
+                                                                {
+                                                                    var obj = {
+                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"'),
+                                                                        wLog: []
+                                                                    };
+                                                                }
+
+                                                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                                                response.end();
+                                                            });
+                                                        }
+                                            
+                                                        if(err || !device)
+                                                        {
+                                                            store(obj.platforms[i].log_directory).load(date, (err, device2) => {    
+
+                                                                if(device && !err)
+                                                                {    
+                                                                    var obj = {
+                                                                        bLog: [],
+                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"')
+                                                                    };
+                                                                }
+                                                    
+                                                                if(err || !device)
+                                                                {
+                                                                    var obj = {
+                                                                        bLog: [],
+                                                                        wLog: []
+                                                                    };
+                                                                }
+
+                                                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                                                response.end();
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
                                     });
                                 }
                                 else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
