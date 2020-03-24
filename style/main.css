@@ -295,6 +295,29 @@ h2
     display: block;
 }
 
+::-webkit-scrollbar-track
+{
+    background: transparent;
+    border-radius: 0 30px 30px 0!important;
+    overflow: hidden;
+}
+
+textarea::-webkit-scrollbar-track, .textarea::-webkit-scrollbar-track, .select-items::-webkit-scrollbar-track
+{
+    margin: 20px 0;
+}
+
+::-webkit-scrollbar-thumb
+{
+    border-radius: 18px!important;
+}
+
+::-webkit-scrollbar
+{
+    /*width: 10px;*/
+    overflow: hidden;
+}
+
 @media(prefers-color-scheme: light)
 {
     body
@@ -426,7 +449,11 @@ h2
     {
         font-size: 18px;
         font-weight: 300!important;
-        height: 60px;
         border-radius: 30px;
+    }
+
+    input
+    {
+        height: 60px;
     }
 }
