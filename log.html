@@ -30,7 +30,7 @@
         element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         element.setAttribute('style', '');
-        element.innerHTML = bLogJSON[i];
+        element.innerHTML = bLogJSON[i].split(']')[0] + ']<br>' + bLogJSON[i].split('] ')[1];
 
         if(i != bLogJSON.length - 1)
         {
@@ -49,7 +49,7 @@
         element.setAttribute('level', wLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
         //element.setAttribute('style', 'border: ');
-        element.innerHTML = wLogJSON[i];
+        element.innerHTML = wLogJSON[i].split(']')[0] + ']<br>' + wLogJSON[i].split('] ')[1];
 
         if(i != wLogJSON.length - 1)
         {
