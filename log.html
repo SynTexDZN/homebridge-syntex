@@ -157,7 +157,7 @@
         counter++;
     }
 
-    for(var i = 0; i < wLogJSON.length; i++)
+    for(var i = wLogJSON.length - 1; i < 0; i--)
     {
         var element = document.createElement('div');
 
@@ -187,13 +187,10 @@
 
         counter++;
     }
-
-    setTimeout(function()
-    {
-        document.getElementById('bLog').scrollTop = 10000000;
-        document.getElementById('wLog').scrollTop = 10000000;
-    }, 5000);
-
+    /*
+    document.getElementById('bLog').scrollTo(0, document.getElementById('bLog').scrollHeight);
+    document.getElementById('wLog').scrollTo(0, document.getElementById('wLog').scrollHeight);
+    */
     document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
 
 </script>
