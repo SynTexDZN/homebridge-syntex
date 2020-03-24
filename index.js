@@ -193,14 +193,44 @@ SynTexPlatform.prototype = {
 
                                         if(iface.length > 0) address = iface[0].address;
                                     }
-                                    
-                                    var obj = {
-                                        ip: address,
-                                        version: pjson.version
-                                    };
 
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
+                                    var d = new Date();
+
+                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
+                                    logger.logs.load(date, (err, device) => {    
+
+                                        if(device && !err)
+                                        {    
+                                            var found = false;
+
+                                            for(var i = 0; i < device.logs.length; i++)
+                                            {
+                                                if(device.logs[device.logs.length - i].includes('[INFO] Data') && !found)
+                                                {
+                                                    var obj = {
+                                                        ip: address,
+                                                        version: pjson.version,
+                                                        restart: device.logs[device.logs.length - i].split(' >')[0]
+                                                    };
+
+                                                    found = true;
+                                                }
+                                            }
+                                        }
+                            
+                                        if(err || !device)
+                                        {
+                                            var obj = {
+                                                ip: address,
+                                                version: pjson.version,
+                                                restart: ''
+                                            };
+                                        }
+
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
+                                        response.end();
+                                    });
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {

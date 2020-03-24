@@ -20,7 +20,7 @@
             <input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px">
             <input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
         </div>
-        <p id="log-counter" class="loading-loop" style="margin-bottom: 32px"><b>Angezeigte Elemente: </b>Laden ..</p>
+        <p id="log-counter" class="loading-loop" style="margin-bottom: 32px"><b>Gefundene Elemente: </b>Laden ..</p>
         <div class="main" style="display: table">
             <h2 style="width: fit-content">• Bridge Log •</h2>
             <div class="outline" id="bLog" style="margin-bottom: 100px;"></div>
@@ -115,7 +115,7 @@
             }
         }
 
-        document.getElementById('log-counter').innerHTML = '<b>Angezeigte Elemente: </b>' + counter;
+        document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
         document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
     }
 
@@ -191,6 +191,6 @@
     document.getElementById('bLog').scrollTo(0, document.getElementById('bLog').scrollHeight);
     document.getElementById('wLog').scrollTo(0, document.getElementById('wLog').scrollHeight);
 
-    document.getElementById('log-counter').innerHTML = '<b>Angezeigte Elemente: </b>' + counter;
+    document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
 
 </script>
