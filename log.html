@@ -29,7 +29,12 @@
 
     for(var i = 0; i < logJSON.length; i++)
     {
-        document.getElementById('log').innerHTML += '<p>' + logJSON[i] + '</p>';
+        document.getElementById('log').innerHTML += logJSON[i];
+
+        if(i != logJSON.length - 1)
+        {
+            document.getElementById('log').innerHTML += '\n';
+        }
     }
 
 </script>
