@@ -208,8 +208,6 @@ SynTexPlatform.prototype = {
 
                                         if(device && !err)
                                         {    
-                                            device.logs[device.logs.length] = log;
-
                                             var obj = {
                                                 log: device.logs
                                             };
