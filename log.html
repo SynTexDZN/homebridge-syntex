@@ -12,7 +12,7 @@
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
             </div>
             <div class="main" style="margin-bottom: 100px">
-                <div id="log"></div>
+                <div class="outline" id="log"></div>
             </div>
         </div>
     </body>
@@ -25,15 +25,16 @@
 
     for(var i = 0; i < logJSON.length; i++)
     {
-        var element = document.createElement('div');
+        var element = document.createElement('h2');
 
         element.setAttribute('level', logJSON[i].split('[')[1].split(']')[0]);
-        element.setAttribute('class', 'white');
+        //element.setAttribute('class', 'white');
+        //element.setAttribute('style', 'border: ');
         element.innerHTML = logJSON[i];
 
         if(i != logJSON.length - 1)
         {
-            element.setAttribute('style', 'margin-bottom: 20px');
+            element.setAttribute('style', element.setAttribute('style') + '; margin-bottom: 20px');
         }
 
         document.getElementById('log').appendChild(element);
