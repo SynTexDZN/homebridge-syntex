@@ -41,22 +41,17 @@
         }
         else
         {
-            console.log(params.toUpperCase());
-
             for(var i = 0; i < logs.length; i++)
             {
-                console.log(logs[i].innerHTML.toUpperCase());
-                console.log(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()));
-                console.log(logs[i].hasAttribute('hidden'));
-
-                if(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()) && logs[i].hasAttribute('hidden'))
+                if(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()))
                 {
-                    console.log("NO HIDE");
-                    logs[i].removeAttribute('hidden');
+                    if(logs[i].hasAttribute('hidden'))
+                    {
+                        logs[i].removeAttribute('hidden');
+                    }
                 }
                 else
                 {
-                    console.log("HIDE");
                     logs[i].setAttribute('hidden', '');
                 }
             }
