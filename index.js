@@ -200,12 +200,27 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    var obj = {
-                                        log: JSON.stringify(logger.logs)
-                                    };
+                                    logger.logs.load(date, (err, device) => {    
 
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
+                                        if(device && !err)
+                                        {    
+                                            device.logs[device.logs.length] = log;
+
+                                            var obj = {
+                                                log: device.logs
+                                            };
+                                        }
+                            
+                                        if(err || !device)
+                                        {
+                                            var obj = {
+                                                log: []
+                                            };
+                                        }
+
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
+                                        response.end();
+                                    });
                                 }
                                 else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
                                 {
