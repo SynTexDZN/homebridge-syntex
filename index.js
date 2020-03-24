@@ -5,7 +5,7 @@ var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
 var logger = require('./logger');
 var store = require('json-fs-store');
-var config;
+var conf;
 
 module.exports = function(homebridge)
 {
@@ -18,7 +18,7 @@ function SynTexPlatform(log, config, api)
     this.logDirectory = config["log_directory"] || "./SynTex/log";
     this.port = config["port"] || 1711;
 
-    config = store(api.user.storagePath());
+    conf = store(api.user.storagePath());
 
     logger.create("SynTex", this.logDirectory);
     
@@ -204,7 +204,7 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    config.load('config', (err, obj) => {    
+                                    conf.load('config', (err, obj) => {    
 
                                         if(obj)
                                         {                            
