@@ -200,6 +200,10 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
+                                    var d = new Date();
+
+                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
                                     logger.logs.load(date, (err, device) => {    
 
                                         if(device && !err)
