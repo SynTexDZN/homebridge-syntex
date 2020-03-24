@@ -19,7 +19,7 @@ function sendValues(html, obj)
     {
         res = res.replace(new RegExp('<%' + i + '%>', 'g'), obj[i]);
 
-        console.log(obj[i]);
+        console.log(res);
     }
     
     return res;
