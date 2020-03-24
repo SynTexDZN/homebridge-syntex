@@ -51,10 +51,12 @@
 
                 if(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()) && logs[i].hasAttribute('hidden'))
                 {
+                    console.log("NO HIDE");
                     logs[i].removeAttribute('hidden');
                 }
                 else
                 {
+                    console.log("HIDE");
                     logs[i].setAttribute('hidden', '');
                 }
             }
