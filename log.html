@@ -23,16 +23,20 @@
 
     console.log(logJSON);
 
-    document.getElementById('log').innerHTML = '';
-
     for(var i = 0; i < logJSON.length; i++)
     {
-        document.getElementById('log').innerHTML += logJSON[i];
+        var element = document.createElement('div');
+
+        element.setAttribute('level', logJSON[i].split('[')[1].split(']')[0]);
+        element.setAttribute('class', 'white');
+        element.innerHTML = logJSON[i];
 
         if(i != logJSON.length - 1)
         {
-            document.getElementById('log').innerHTML += '\n';
+            element.setAttribute('style', 'margin-bottom: 20px');
         }
+
+        document.getElementById('log').appendChild(element);
     }
 
 </script>
