@@ -12,9 +12,13 @@
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
             </div>
         </div>
-        <div class="main" style="margin-bottom: 32px; display: flex">
-            <input id="search-params" type="text" placeholder="Suchparameter" style="margin-right: 20px">
+        <div class="main" style="margin-bottom: 20px; display: flex">
+            <input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
             <input type="button" class="gradient-blue" value="Suchen" onclick="searchLog()" style="max-width: 250px">
+        </div>
+        <div class="main" style="margin-bottom: 32px; display: flex">
+            <input id="search-level" type="text" placeholder="Level" style="margin-right: 20px">
+            <input type="button" value="Suche Beenden" onclick="clearSearch()" style="max-width: 250px">
         </div>
         <div class="main" style="margin-bottom: 32px; display: table">
             <h2 style="width: fit-content">• Bridge Log •</h2>
@@ -26,12 +30,20 @@
 </html>
 <script>
 
+    function clearSearch()
+    {
+        document.getElementById('search-params').value = '';
+        document.getElementById('search-level').value = '';
+
+        searchLog();
+    }
+
     function searchLog()
     {
         var params = document.getElementById('search-params').value;
         var logs = document.getElementsByClassName('log-entry');
 
-        if(params == '')
+        if(params == '' && level == '')
         {
             for(var i = 0; i < logs.length; i++)
             {
@@ -45,16 +57,47 @@
         {
             for(var i = 0; i < logs.length; i++)
             {
-                if(logs[i].innerHTML.toUpperCase().includes(params.toUpperCase()))
+                if(level != '' && params != '')
                 {
-                    if(logs[i].hasAttribute('hidden'))
+                    if(logs[i].innerHTML.split('[')[1].split(']')[0].includes(level.toUpperCase()) && logs[i].innerHTML.split('<br>')[1].toUpperCase().includes(params.toUpperCase()))
                     {
-                        logs[i].removeAttribute('hidden');
+                        if(logs[i].hasAttribute('hidden'))
+                        {
+                            logs[i].removeAttribute('hidden');
+                        }
+                    }
+                    else
+                    {
+                        logs[i].setAttribute('hidden', '');
                     }
                 }
-                else
+                else if(params != '')
                 {
-                    logs[i].setAttribute('hidden', '');
+                    if(logs[i].innerHTML.split('<br>')[1].toUpperCase().includes(params.toUpperCase()))
+                    {
+                        if(logs[i].hasAttribute('hidden'))
+                        {
+                            logs[i].removeAttribute('hidden');
+                        }
+                    }
+                    else
+                    {
+                        logs[i].setAttribute('hidden', '');
+                    }
+                }
+                else if(level != '')
+                {
+                    if(logs[i].innerHTML.split('[')[1].split(']')[0].toUpperCase().includes(level.toUpperCase()))
+                    {
+                        if(logs[i].hasAttribute('hidden'))
+                        {
+                            logs[i].removeAttribute('hidden');
+                        }
+                    }
+                    else
+                    {
+                        logs[i].setAttribute('hidden', '');
+                    }
                 }
             }
         }
