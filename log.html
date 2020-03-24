@@ -11,10 +11,8 @@
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
             </div>
-            <div class="main">
-                <div class="outline" id="bLog" style="margin-bottom: 100px;"></div>
-                <div class="outline" id="wLog"></div>
-            </div>
+            <div class="outline" id="bLog" style="margin-bottom: 100px;"></div>
+            <div class="outline" id="wLog"></div>
         </div>
     </body>
 </html>
@@ -31,7 +29,7 @@
 
         element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
         //element.setAttribute('class', 'white');
-        //element.setAttribute('style', 'border: ');
+        element.setAttribute('style', '');
         element.innerHTML = bLogJSON[i];
 
         if(i != bLogJSON.length - 1)
