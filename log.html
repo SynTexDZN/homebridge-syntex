@@ -21,8 +21,6 @@
     var bLogJSON = JSON.parse('<%bLog%>');
     var wLogJSON = JSON.parse('<%wLog%>');
 
-    console.log(bLogJSON);
-
     for(var i = 0; i < bLogJSON.length; i++)
     {
         var element = document.createElement('div');
@@ -35,11 +33,13 @@
 
         if(bLogJSON[i].includes('(') && bLogJSON[i].includes(')'))
         {
-            log += ' (' + bLogJSON[i].split('(')[1].split(')')[0] + ')';
+            log += ' > ' + bLogJSON[i].split('(')[1].split(')')[0] + '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
         }
-
-        log += '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
-
+        else
+        {
+            log += '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '');
+        }
+        
         element.innerHTML = log;
 
         if(i != bLogJSON.length - 1)
@@ -49,8 +49,6 @@
 
         document.getElementById('bLog').appendChild(element);
     }
-
-    console.log(wLogJSON);
 
     for(var i = 0; i < wLogJSON.length; i++)
     {
@@ -64,7 +62,11 @@
 
         if(wLogJSON[i].includes('(') && wLogJSON[i].includes(')'))
         {
-            log += ' (' + wLogJSON[i].split('(')[1].split(')')[0] + ')';
+            log += ' > ' + wLogJSON[i].split('(')[1].split(')')[0] + '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
+        }
+        else
+        {
+            log += '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '');
         }
 
         log += '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
