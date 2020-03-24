@@ -2,7 +2,7 @@
     <title>Dashboard: Log</title>
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
-        <div class="main" style="margin-top: 10px; margin-bottom: 32px; display: table">
+        <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: table">
             <p style="margin-bottom: 100px; margin-top: 16px">Log</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
                 <input class="white" type="button" value="Geräte" onclick="window.location.href='/'" style="margin-right: 20px">
@@ -16,8 +16,46 @@
             <h2 style="width: fit-content">• WebHook Log •</h2>
             <div class="outline" id="wLog"></div>
         </div>
+        <div class="main" style="margin-bottom: 32px; display: flex">
+            <input id="search-params" type="text" placeholder="Suchparameter" style="margin-right: 20px">
+            <input type="button" value="Suchen" onclick="searchLog()">
+        </div>
     </body>
 </html>
+<script>
+
+    function searchLog()
+    {
+        var params = document.getElementById('search-params').value;
+        var logs = document.getElementsByClassName('log-entry');
+
+        if(params == '')
+        {
+            for(var i = 0; i < logs.length; i++)
+            {
+                if(logs[i].hasAttribute('hidden'))
+                {
+                    logs[i].removeAttribute('hidden');
+                }
+            }
+        }
+        else
+        {
+            for(var i = 0; i < logs.length; i++)
+            {
+                if(logs[i].innerHTML.toLowerCase().includes(params.toLowerCase()) && logs[i].hasAttribute('hidden'))
+                {
+                    logs[i].removeAttribute('hidden');
+                }
+                else
+                {
+                    logs[i].setAttribute('hidden', '');
+                }
+            }
+        }
+    }
+
+</script>
 <script>
 
     var bLogJSON = JSON.parse('<%bLog%>');
@@ -28,7 +66,7 @@
         var element = document.createElement('div');
 
         element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
-        //element.setAttribute('class', 'white');
+        element.setAttribute('class', 'log-entry');
         element.setAttribute('style', '');
         
         var log = bLogJSON[i].split(']')[0] + ']';
@@ -57,8 +95,8 @@
         var element = document.createElement('div');
 
         element.setAttribute('level', wLogJSON[i].split('[')[1].split(']')[0]);
-        //element.setAttribute('class', 'white');
-        //element.setAttribute('style', 'border: ');
+        element.setAttribute('class', 'log-entry');
+        element.setAttribute('style', '');
 
         var log = wLogJSON[i].split(']')[0] + ']';
 
