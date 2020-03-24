@@ -204,7 +204,7 @@ SynTexPlatform.prototype = {
                                         {    
                                             var found = false;
 
-                                            for(var i = 0; i < device.logs.length; i++)
+                                            for(var i = 1; i < device.logs.length + 1; i++)
                                             {
                                                 if(device.logs[device.logs.length - i].includes('[INFO] Data') && !found)
                                                 {
