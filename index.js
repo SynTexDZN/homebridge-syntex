@@ -201,7 +201,7 @@ SynTexPlatform.prototype = {
                                 else if(urlPath.startsWith('/log'))
                                 {
                                     var obj = {
-                                        log: logger.logs
+                                        log: JSON.stringify(logger.logs)
                                     };
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
