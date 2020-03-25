@@ -191,11 +191,7 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
 
-                                    var d = new Date();
-
-                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-                                    logger.find('SynTex', date, '[INFO] Data').then(function(res) {
+                                    findRestart(new Date()).then(function(res) {
 
                                         if(res != null)
                                         {
@@ -210,13 +206,14 @@ SynTexPlatform.prototype = {
                                             var obj = {
                                                 ip: address,
                                                 version: pjson.version,
-                                                restart: 'Vor Heute'
+                                                restart: 'Keine Daten Vorhanden'
                                             };
                                         }
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
                                         response.end();
-                                    });
+                                    });;
+
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
@@ -337,4 +334,27 @@ SynTexPlatform.prototype = {
            
         logger.log('info', "Data Link Server läuft auf Port " + "'" + this.port + "'");
     }
+}
+
+async function findRestart(d)
+{
+    return new Promise(resolve => {
+
+        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
+        logger.find('SynTex', date, '[INFO] Data').then(function(res) {
+
+            if(res != null)
+            {
+                resolve(res);
+            }
+            else
+            {
+                findRestart(d.getDate() - 1);
+            }
+
+            response.write(HTMLQuery.sendValues(head + data, obj));
+            response.end();
+        });
+    });
 }
