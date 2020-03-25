@@ -361,7 +361,7 @@ async function findRestart(d)
                 var yesterday = new Date();
                 yesterday.setDate(d.getDate() - 1);
 
-                findRestart(yesterday);
+                resolve(findRestart(yesterday));
             }
         });
     });
