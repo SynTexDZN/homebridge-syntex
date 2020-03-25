@@ -195,15 +195,24 @@ SynTexPlatform.prototype = {
 
                                     findRestart(date).then(function(res) {
 
-                                        console.log('Restart:', res);
-
                                         if(res != null)
                                         {
-                                            var obj = {
-                                                ip: address,
-                                                version: pjson.version,
-                                                restart: res.split(' >')[0]
-                                            };
+                                            if(res[0].getDate() < date.getDate())
+                                            {
+                                                var obj = {
+                                                    ip: address,
+                                                    version: pjson.version,
+                                                    restart: res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' - ' + res[1].split(' >')[0]
+                                                };
+                                            }
+                                            else
+                                            {
+                                                var obj = {
+                                                    ip: address,
+                                                    version: pjson.version,
+                                                    restart: 'Heute - ' + res[1].split(' >')[0]
+                                                };
+                                            }
                                         }
                                         else
                                         {
@@ -342,8 +351,6 @@ SynTexPlatform.prototype = {
 
 async function findRestart(d)
 {
-    console.log(d.getDate());
-
     return new Promise(resolve => {
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
@@ -352,9 +359,7 @@ async function findRestart(d)
 
             if(res != null)
             {
-                console.log('Found', res);
-
-                resolve(res);
+                resolve([d, res]);
             }
             else
             {
