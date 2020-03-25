@@ -252,9 +252,9 @@ SynTexPlatform.prototype = {
 
                                                         if(device && !err)
                                                         {    
-                                                            store(obj.platforms[i].log_directory).load(date, (err, device2) => {    
+                                                            store(obj.platforms[i].log_directory).load(date, (err2, device2) => {    
 
-                                                                if(device && !err)
+                                                                if(device2 && !err2)
                                                                 {    
                                                                     var obj = {
                                                                         bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
@@ -262,11 +262,11 @@ SynTexPlatform.prototype = {
                                                                     };
                                                                 }
                                                     
-                                                                if(err || !device)
+                                                                if(err2 || !device2)
                                                                 {
                                                                     var obj = {
                                                                         bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                                        wLog: []
+                                                                        wLog: '[]'
                                                                     };
                                                                 }
 
@@ -277,21 +277,21 @@ SynTexPlatform.prototype = {
                                             
                                                         if(err || !device)
                                                         {
-                                                            store(obj.platforms[i].log_directory).load(date, (err, device2) => {    
+                                                            store(obj.platforms[i].log_directory).load(date, (err2, device2) => {    
 
-                                                                if(device && !err)
+                                                                if(device2 && !err2)
                                                                 {    
                                                                     var obj = {
-                                                                        bLog: [],
+                                                                        bLog: '[]',
                                                                         wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
                                                                     };
                                                                 }
                                                     
-                                                                if(err || !device)
+                                                                if(err2 || !device2)
                                                                 {
                                                                     var obj = {
-                                                                        bLog: [],
-                                                                        wLog: []
+                                                                        bLog: '[]',
+                                                                        wLog: '[]'
                                                                     };
                                                                 }
 
