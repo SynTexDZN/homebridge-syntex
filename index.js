@@ -191,7 +191,9 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
 
-                                    findRestart(new Date()).then(function(res) {
+                                    var date = new Date();
+
+                                    findRestart(date).then(function(res) {
 
                                         if(res != null)
                                         {
@@ -350,11 +352,11 @@ async function findRestart(d)
             }
             else
             {
-                findRestart(d.getDate() - 1);
-            }
+                var yesterday = new Date();
+                yesterday.setDate(d.getDate() - 1);
 
-            response.write(HTMLQuery.sendValues(head + data, obj));
-            response.end();
+                findRestart(yesterday);
+            }
         });
     });
 }
