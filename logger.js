@@ -61,22 +61,32 @@ logger.find = function(pluginName, date, param)
 {
     return new Promise(resolve => {
 
-        store(getLogPath(pluginName)).load(date, (err, obj) => {    
+        getLogPath(pluginName).then(function(res) {
 
-            if(obj && !err)
-            {    
-                for(var i = 1; i < obj.logs.length + 1; i++)
-                {
-                    if(obj.logs[obj.logs.length - i].includes(param))
-                    {
-                        resolve(device.logs[obj.logs.length - i]);
+            if(res != null)
+            {
+                store(res).load(date, (err, obj) => {    
+
+                    if(obj && !err)
+                    {    
+                        for(var i = 1; i < obj.logs.length + 1; i++)
+                        {
+                            if(obj.logs[obj.logs.length - i].includes(param))
+                            {
+                                resolve(device.logs[obj.logs.length - i]);
+                            }
+                        }
+        
+                        resolve(null);
                     }
-                }
-
-                resolve(null);
+        
+                    if(err || !obj)
+                    {
+                        resolve(null);
+                    }
+                });
             }
-
-            if(err || !obj)
+            else
             {
                 resolve(null);
             }
@@ -88,16 +98,24 @@ logger.load = function(pluginName, date)
 {
     return new Promise(resolve => {
         
-        console.log(getLogPath(pluginName));
+        getLogPath(pluginName).then(function(res) {
 
-        store(getLogPath(pluginName)).load(date, (err, obj) => {    
+            if(res != null)
+            {
+                store(res).load(date, (err, obj) => {    
 
-            if(obj && !err)
-            {    
-                resolve(device);
+                    if(obj && !err)
+                    {    
+                        resolve(obj);
+                    }
+        
+                    if(err || !obj)
+                    {
+                        resolve(null);
+                    }
+                });
             }
-
-            if(err || !obj)
+            else
             {
                 resolve(null);
             }
