@@ -224,7 +224,7 @@ SynTexPlatform.prototype = {
                                             var obj = {
                                                 ip: address,
                                                 version: pjson.version,
-                                                restart: ''
+                                                restart: 'Vor Heute'
                                             };
                                         }
 
