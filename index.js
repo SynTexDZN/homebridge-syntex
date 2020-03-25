@@ -350,6 +350,8 @@ async function findRestart(d)
 
             if(res != null)
             {
+                console.log('Found', res);
+
                 resolve(res);
             }
             else
