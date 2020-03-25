@@ -1,11 +1,13 @@
 var logger = exports, prefix;
 var store = require('json-fs-store');
+var conf;
 logger.logs;
 logger.debugLevel = 'success';
 
-logger.create = function(pluginName, logDirectory)
+logger.create = function(pluginName, logDirectory, config)
 {
     prefix = pluginName;
+    conf = config;
     logger.logs = store(logDirectory);
 };
 
@@ -53,6 +55,81 @@ logger.log = function(level, message)
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
         saveLog(time + " > [" + level.toUpperCase() + "] " + message);
     }
+}
+
+logger.find = function(pluginName, date, param)
+{
+    return new Promise(resolve => {
+
+        store(getLogPath(pluginName)).load(date, (err, obj) => {    
+
+            if(obj && !err)
+            {    
+                for(var i = 1; i < obj.logs.length + 1; i++)
+                {
+                    if(obj.logs[obj.logs.length - i].includes(param))
+                    {
+                        resolve(device.logs[obj.logs.length - i]);
+                    }
+                }
+
+                resolve(null);
+            }
+
+            if(err || !obj)
+            {
+                resolve(null);
+            }
+        });
+    });
+}
+
+logger.load = function(pluginName, date)
+{
+    return new Promise(resolve => {
+        
+        store(getLogPath(pluginName)).load(date, (err, obj) => {    
+
+            if(obj && !err)
+            {    
+                resolve(device);
+            }
+
+            if(err || !obj)
+            {
+                resolve(null);
+            }
+        });
+    });
+}
+
+async function getLogPath(pluginName)
+{
+    return new Promise(resolve => {
+        
+        conf.load('config', (err, obj) => {    
+
+            if(obj && !err)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === pluginName)
+                    {
+                        resolve(obj.platforms[i].log_directory);
+                    }
+                }
+
+                resolve(null);
+            }
+
+            if(err || !obj)
+            {
+                resolve(null);
+            }
+        });
+    });
 }
 
 var inWork = false;

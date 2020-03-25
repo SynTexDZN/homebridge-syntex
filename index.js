@@ -20,7 +20,7 @@ function SynTexPlatform(log, config, api)
 
     conf = store(api.user.storagePath());
 
-    logger.create("SynTex", this.logDirectory);
+    logger.create("SynTex", this.logDirectory, conf);
     
     DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory);
     HTMLQuery.SETUP(logger);
@@ -39,9 +39,6 @@ SynTexPlatform.prototype = {
             var urlParts = url.parse(request.url, true);
             var urlParams = urlParts.query;
             var urlPath = urlParts.pathname;
-            //var body = [];
-            
-            //body = Buffer.concat(body).toString();
 
             response.statusCode = 200;
             response.setHeader('Content-Type', 'application/json');
@@ -198,28 +195,17 @@ SynTexPlatform.prototype = {
 
                                     var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-                                    logger.logs.load(date, (err, device) => {    
+                                    logger.find('SynTex', date, '[INFO] Data').then(function(res) {
 
-                                        if(device && !err)
-                                        {    
-                                            var found = false;
-
-                                            for(var i = 1; i < device.logs.length + 1; i++)
-                                            {
-                                                if(device.logs[device.logs.length - i].includes('[INFO] Data') && !found)
-                                                {
-                                                    var obj = {
-                                                        ip: address,
-                                                        version: pjson.version,
-                                                        restart: device.logs[device.logs.length - i].split(' >')[0]
-                                                    };
-
-                                                    found = true;
-                                                }
-                                            }
+                                        if(res != null)
+                                        {
+                                            var obj = {
+                                                ip: address,
+                                                version: pjson.version,
+                                                restart: res.split(' >')[0]
+                                            };
                                         }
-                            
-                                        if(err || !device)
+                                        else
                                         {
                                             var obj = {
                                                 ip: address,
@@ -234,74 +220,57 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    conf.load('config', (err, obj) => {    
+                                    var d = new Date();
 
-                                        if(obj)
-                                        {                            
-                                            obj.id = 'config';
-                            
-                                            for(const i in obj.platforms)
-                                            {
-                                                if(obj.platforms[i].platform === 'SynTexWebHooks')
-                                                {
-                                                    var d = new Date();
+                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-                                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+                                    logger.load('SynTex', date).then(function(res) {  
 
-                                                    logger.logs.load(date, (err, device) => {    
+                                        if(res != null)
+                                        {    
+                                            logger.load('SynTexWebHooks', date).then(function(res2) {   
 
-                                                        if(device && !err)
-                                                        {    
-                                                            store(obj.platforms[i].log_directory).load(date, (err2, device2) => {    
-
-                                                                if(device2 && !err2)
-                                                                {    
-                                                                    var obj = {
-                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
-                                                                    };
-                                                                }
-                                                    
-                                                                if(err2 || !device2)
-                                                                {
-                                                                    var obj = {
-                                                                        bLog: JSON.stringify(device.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                                        wLog: '[]'
-                                                                    };
-                                                                }
-
-                                                                response.write(HTMLQuery.sendValues(head + data, obj));
-                                                                response.end();
-                                                            });
-                                                        }
-                                            
-                                                        if(err || !device)
-                                                        {
-                                                            store(obj.platforms[i].log_directory).load(date, (err2, device2) => {    
-
-                                                                if(device2 && !err2)
-                                                                {    
-                                                                    var obj = {
-                                                                        bLog: '[]',
-                                                                        wLog: JSON.stringify(device2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
-                                                                    };
-                                                                }
-                                                    
-                                                                if(err2 || !device2)
-                                                                {
-                                                                    var obj = {
-                                                                        bLog: '[]',
-                                                                        wLog: '[]'
-                                                                    };
-                                                                }
-
-                                                                response.write(HTMLQuery.sendValues(head + data, obj));
-                                                                response.end();
-                                                            });
-                                                        }
-                                                    });
+                                                if(res2 != null)
+                                                {    
+                                                    var obj = {
+                                                        bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
+                                                        wLog: JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
+                                                    };
                                                 }
-                                            }
+                                                else
+                                                {
+                                                    var obj = {
+                                                        bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
+                                                        wLog: '[]'
+                                                    };
+                                                }
+
+                                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                                response.end();
+                                            });
+                                        }
+                                        else
+                                        {
+                                            logger.load('SynTexWebHooks', date).then(function(res2) {  
+
+                                                if(res2 != null)
+                                                {    
+                                                    var obj = {
+                                                        bLog: '[]',
+                                                        wLog: JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
+                                                    };
+                                                }
+                                                else
+                                                {
+                                                    var obj = {
+                                                        bLog: '[]',
+                                                        wLog: '[]'
+                                                    };
+                                                }
+
+                                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                                response.end();
+                                            });
                                         }
                                     });
                                 }
@@ -323,18 +292,13 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
                                 {
-                                    /*
-                                    DeviceManager.setValue(urlParams.mac).then(function(res) {
-
-                                        response.write(HTMLQuery.sendValue(data, 'result', res)); 
-                                        response.end();
-                                    });
-                                    */
                                     var post = '';
+
                                     request.on('data', function(data)
                                     {
                                         post += data;
                                     });
+
                                     request.on('end', function()
                                     {
                                         var json = JSON.parse(post);
