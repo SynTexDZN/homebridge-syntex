@@ -73,7 +73,7 @@ logger.find = function(pluginName, date, param)
                         {
                             if(obj.logs[obj.logs.length - i].includes(param))
                             {
-                                resolve(device.logs[obj.logs.length - i]);
+                                resolve(obj.logs[obj.logs.length - i]);
                             }
                         }
         
