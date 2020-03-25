@@ -58,6 +58,7 @@ SynTexPlatform.prototype = {
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                
                                 logger.log('warn', "Die Homebridge wird neu gestartet ..");
                             });
                         }
@@ -72,6 +73,8 @@ SynTexPlatform.prototype = {
 
                         if(res)
                         {
+                            logger.log('success', "Das Gerät wurde entfernt! (" + urlParams.mac + ")");
+
                             response.write("Success");
                             response.end(); 
 
@@ -83,6 +86,8 @@ SynTexPlatform.prototype = {
                         }
                         else
                         {
+                            logger.log('error', "Das Gerät konnte nicht entfernt werden! (" + urlParams.mac + ")");
+
                             response.write("Das Gerät konnte nicht entfernt werden!");
                             response.end();
                         }
