@@ -340,6 +340,8 @@ SynTexPlatform.prototype = {
 
 async function findRestart(d)
 {
+    console.log(d.getDate());
+
     return new Promise(resolve => {
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
