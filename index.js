@@ -195,6 +195,8 @@ SynTexPlatform.prototype = {
 
                                     findRestart(date).then(function(res) {
 
+                                        console.log('Restart:', res);
+
                                         if(res != null)
                                         {
                                             var obj = {
@@ -214,7 +216,7 @@ SynTexPlatform.prototype = {
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
                                         response.end();
-                                    });;
+                                    });
 
                                 }
                                 else if(urlPath.startsWith('/log'))
