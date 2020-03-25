@@ -88,6 +88,8 @@ logger.load = function(pluginName, date)
 {
     return new Promise(resolve => {
         
+        console.log(getLogPath(pluginName));
+
         store(getLogPath(pluginName)).load(date, (err, obj) => {    
 
             if(obj && !err)
