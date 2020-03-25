@@ -202,7 +202,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
-                                                    restart: res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' - ' + res[1].split(' >')[0]
+                                                    restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
                                                 };
                                             }
                                             else
@@ -210,7 +210,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
-                                                    restart: 'Heute - ' + res[1].split(' >')[0]
+                                                    restart: '( Heute ) ' + res[1].split(' >')[0]
                                                 };
                                             }
                                         }
