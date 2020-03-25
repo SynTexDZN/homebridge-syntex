@@ -65,7 +65,7 @@
             }
         });
 
-        fetchURL('http://syntex.local:1710/version', 10000).then(function(res) {
+        fetchURL(window.location.origin + ':1710/version', 10000).then(function(res) {
 
             if(res != null)
             {
@@ -252,7 +252,7 @@
                 document.getElementById('update-btn-webhooks').style.opacity = 0;
             }, 10);
 
-            fetchURL('http://syntex.local:1710/update', 120000).then(function(res) {
+            fetchURL(window.location.origin + ':1710/update', 120000).then(function(res) {
 
                 if(res != null)
                 {
