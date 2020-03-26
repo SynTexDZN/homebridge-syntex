@@ -1,10 +1,10 @@
 var http = require('http');
 var url = require('url');
 var path = require('path');
+var store = require('json-fs-store');
 var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
 var logger = require('./logger');
-var store = require('json-fs-store');
 var conf;
 
 module.exports = function(homebridge)
@@ -20,7 +20,7 @@ function SynTexPlatform(log, config, api)
 
     conf = store(api.user.storagePath());
 
-    logger.create("SynTex", this.logDirectory, conf);
+    logger.create("SynTex", this.logDirectory, api.user.storagePath());
     
     DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory);
     HTMLQuery.SETUP(logger);
@@ -168,7 +168,12 @@ SynTexPlatform.prototype = {
                                 {
                                     DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
-                                        response.write(HTMLQuery.sendValue(head + data, 'device', JSON.stringify(res)));
+                                        var obj = {
+                                            device: JSON.stringify(res),
+                                            wPort: getPluginConfig('SynTexWebhooks').port
+                                        };
+
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
                                         response.end();
                                     });
                                 }
@@ -207,6 +212,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
+                                                    wPort: getPluginConfig('SynTexWebhooks').port,
                                                     restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
                                                 };
                                             }
@@ -215,6 +221,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
+                                                    wPort: getPluginConfig('SynTexWebhooks').port,
                                                     restart: '( Heute ) ' + res[1].split(' >')[0]
                                                 };
                                             }
@@ -224,6 +231,7 @@ SynTexPlatform.prototype = {
                                             var obj = {
                                                 ip: address,
                                                 version: pjson.version,
+                                                wPort: getPluginConfig('SynTexWebhooks').port,
                                                 restart: 'Keine Daten Vorhanden'
                                             };
                                         }
@@ -372,6 +380,35 @@ async function findRestart(d)
                 yesterday.setDate(d.getDate() - 1);
 
                 resolve(findRestart(yesterday));
+            }
+        });
+    });
+}
+
+async function getPluginConfig(pluginName)
+{
+    return new Promise(resolve => {
+        
+        conf.load('config', (err, obj) => {    
+
+            if(obj && !err)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === pluginName)
+                    {
+                        resolve(obj.platforms[i]);
+                    }
+                }
+
+                resolve(null);
+            }
+
+            if(err || !obj)
+            {
+                resolve(null);
             }
         });
     });

@@ -7,7 +7,7 @@ logger.debugLevel = 'success';
 logger.create = function(pluginName, logDirectory, config)
 {
     prefix = pluginName;
-    conf = config;
+    conf = store(config);
     logger.logs = store(logDirectory);
 };
 

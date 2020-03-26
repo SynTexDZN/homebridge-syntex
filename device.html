@@ -153,7 +153,7 @@
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
         {
-            fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id, 10000).then(function(res) {
+            fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000).then(function(res) {
 
                 if(res != null)
                 {
@@ -203,7 +203,7 @@
         }
         else if(device.type == 'light' || device.type == 'temperature')
         {
-            fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
+            fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
 
                 if(res != null)
                 {
@@ -222,7 +222,7 @@
             
             if(device.type == 'light')
             {
-                fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
+                fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
 
                     if(res != null)
                     {
@@ -243,7 +243,7 @@
             }
             else if(device.type == 'temperature')
             {
-                fetchURL(window.location.protocol + '//' + window.location.hostname + ':1710/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
+                fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
 
                     if(res != null)
                     {
