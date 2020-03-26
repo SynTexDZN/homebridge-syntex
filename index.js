@@ -22,7 +22,14 @@ function SynTexPlatform(log, config, api)
 
     logger.create("SynTex", this.logDirectory, api.user.storagePath());
     
-    DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory);
+    getPluginConfig('SynTexWebHooks').then(function(res) {
+
+        if(res != null)
+        {
+            DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, res.port);
+        }
+    });
+
     HTMLQuery.SETUP(logger);
 }
 
