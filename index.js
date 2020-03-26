@@ -220,7 +220,7 @@ SynTexPlatform.prototype = {
 
                                         if(res2 != null)
                                         {
-                                            webhookPort = res2;
+                                            webhookPort = res2.port;
                                         }
 
                                         var date = new Date();
