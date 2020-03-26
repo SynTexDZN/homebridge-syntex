@@ -183,7 +183,7 @@ async function initDevice(mac, ip, name, type, version, interval)
                     setValue(mac, 'version', version);
                 }
 
-                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "scenecontrol": "' + dbSceneControl + '", "port", "' + webhookPort + '"}']);
+                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "scenecontrol": "' + dbSceneControl + '", "port": "' + webhookPort + '"}']);
             }
             else
             {
@@ -261,7 +261,7 @@ async function initDevice(mac, ip, name, type, version, interval)
                                             {
                                                 logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                                resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "scenecontrol": "0", "port", "' + webhookPort + '"}']);
+                                                resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "scenecontrol": "0", "port": "' + webhookPort + '"}']);
                                             }
                                         });    
                                     }
