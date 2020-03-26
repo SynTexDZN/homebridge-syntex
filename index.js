@@ -168,15 +168,18 @@ SynTexPlatform.prototype = {
                                 {
                                     DeviceManager.getDevice(urlParams.mac).then(function(res) {
 
-                                        var obj = {
-                                            device: JSON.stringify(res),
-                                            wPort: getPluginConfig('SynTexWebHooks')['port']
-                                        };
+                                        getPluginConfig('SynTexWebHooks').then(function(res2) {
 
-                                        console.log(getPluginConfig('SynTexWebHooks')['port']);
+                                            var obj = {
+                                                device: JSON.stringify(res),
+                                                wPort: res2.port
+                                            };
 
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
+                                            console.log(res2, res2.port);
+
+                                            response.write(HTMLQuery.sendValues(head + data, obj));
+                                            response.end();
+                                        });
                                     });
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
