@@ -26,7 +26,7 @@ function SynTexPlatform(log, config, api)
 
         if(res != null)
         {
-            DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, res.port);
+            DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
         }
     });
 
