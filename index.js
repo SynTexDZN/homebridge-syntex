@@ -6,6 +6,7 @@ var DeviceManager = require('./core/device-manager');
 var HTMLQuery = require('./core/html-query');
 var logger = require('./logger');
 var conf;
+var restart = true;
 
 module.exports = function(homebridge)
 {
@@ -30,6 +31,8 @@ function SynTexPlatform(log, config, api)
         {
             DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
         }
+
+        restart = false;
     });
 
     HTMLQuery.SETUP(logger);
@@ -64,6 +67,8 @@ SynTexPlatform.prototype = {
 
                         if(res[0] == "Init")
                         {
+                            restart = true;
+
                             const { exec } = require("child_process");
 
                             exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
@@ -85,7 +90,9 @@ SynTexPlatform.prototype = {
                             logger.log('success', "Das Gerät wurde entfernt! (" + urlParams.mac + ")");
 
                             response.write("Success");
-                            response.end(); 
+                            response.end();
+
+                            restart = true;
 
                             const { exec } = require("child_process");
 
@@ -105,6 +112,8 @@ SynTexPlatform.prototype = {
             }
             else if(urlPath == '/restart')
             {
+                restart = true;
+
                 const { exec } = require("child_process");
                 
                 response.write('Success');
@@ -114,6 +123,11 @@ SynTexPlatform.prototype = {
 
                     logger.log('warn', "Die Homebridge wird neu gestartet ..");
                 });
+            }
+            else if(urlPath == '/check-restart')
+            {
+                response.write(restart.toString());
+                response.end();
             }
             else if(urlPath == '/update')
             {
@@ -134,6 +148,8 @@ SynTexPlatform.prototype = {
                         response.end();
                         
                         logger.log('success', "Die Homebridge wurde aktualisiert!");
+                        
+                        restart = true;
                         
                         exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 

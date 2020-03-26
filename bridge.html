@@ -410,36 +410,57 @@
                 }
                 else if(res == 'Success')
                 {
-                    var rOverlay = document.createElement('input');
-
-                    rOverlay.setAttribute('type', 'button');
-                    rOverlay.setAttribute('id', 'restart-result');
-                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
-                    rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
-                    rOverlay.setAttribute('class', 'gradient-green');
-
-                    document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
-
                     setTimeout(function()
                     {
-                        rOverlay.style.opacity = 1;
-                        overlay.style.opacity = 0;
-                    }, 13000);
-                
-                    setTimeout(function()
-                    {
-                        rOverlay.style.opacity = 0;
-                        document.getElementById('restart-btn').style.opacity = 1;
-                    }, 18000);
-
-                    setTimeout(function()
-                    {
-                        document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                        document.getElementById('restart-btn').parentElement.removeChild(overlay);
-                    }, 18300);
+                        checkRestart();
+                    }, 3000);
                 }
             });
         }
+    }
+
+    function checkRestart()
+    {
+        fetchURL('/CHECK-restart', 3000).then(function(res) {
+
+            if(res == null && res == 'false')
+            {
+                var rOverlay = document.createElement('input');
+
+                rOverlay.setAttribute('type', 'button');
+                rOverlay.setAttribute('id', 'restart-result');
+                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
+                rOverlay.setAttribute('class', 'gradient-green');
+
+                document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
+                setTimeout(function()
+                {
+                    rOverlay.style.opacity = 1;
+                    overlay.style.opacity = 0;
+                }, 13000);
+            
+                setTimeout(function()
+                {
+                    rOverlay.style.opacity = 0;
+                    document.getElementById('restart-btn').style.opacity = 1;
+                }, 18000);
+
+                setTimeout(function()
+                {
+                    document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                    document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                }, 18300);
+            }
+            else
+            {
+                setTimeout(function()
+                {
+                    checkRestart();
+                }, 500);
+            }
+        });
     }
 
 </script>
