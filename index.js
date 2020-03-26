@@ -207,6 +207,24 @@ SynTexPlatform.prototype = {
                                         response.end();
                                     });
                                 }
+                                else if(urlPath.startsWith('/setup') || urlPath.startsWith('/reconnect'))
+                                {
+                                    var ifaces = require('os').networkInterfaces();
+                                    var address;
+
+                                    for (var dev in ifaces)
+                                    {
+                                        var iface = ifaces[dev].filter(function(details)
+                                        {
+                                            return details.family === 'IPv4' && details.internal === false;
+                                        });
+
+                                        if(iface.length > 0) address = iface[0].address;
+                                    }
+
+                                    response.write(HTMLQuery.sendValue(head + data, 'bridge-ip', address));
+                                    response.end();
+                                }
                                 else if(urlPath.startsWith('/bridge'))
                                 {
                                     var pjson = require('./package.json');

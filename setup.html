@@ -221,12 +221,17 @@
             setTimer(timeRemaining);
         }, 100);
     }
+
+    var bridgeIP = '<%bridge-ip%>';
     
     function sendWifiSettings()
     {
         var formElement = document.querySelector("form");
+        var formData = new FormData(formElement);
 
-        fetchURL('http://192.168.4.1/settings', 10000, new FormData(formElement)).then(function(res) {
+        formData.append('bridge-ip', bridgeIP);
+
+        fetchURL('http://192.168.4.1/settings', 10000, formData).then(function(res) {
 
             if(res != null)
             {
