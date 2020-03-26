@@ -423,7 +423,9 @@
     {
         fetchURL('/check-restart', 3000).then(function(res) {
 
-            if(res == null && res == 'false')
+            console.log(res);
+
+            if(res != null && res == 'false')
             {
                 var rOverlay = document.createElement('input');
 
