@@ -170,8 +170,10 @@ SynTexPlatform.prototype = {
 
                                         var obj = {
                                             device: JSON.stringify(res),
-                                            wPort: getPluginConfig('SynTexWebHooks').port
+                                            wPort: getPluginConfig('SynTexWebHooks')['port']
                                         };
+
+                                        console.log(getPluginConfig('SynTexWebHooks')['port']);
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
                                         response.end();
