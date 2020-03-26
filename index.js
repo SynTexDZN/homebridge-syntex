@@ -21,6 +21,8 @@ function SynTexPlatform(log, config, api)
     conf = store(api.user.storagePath());
 
     logger.create("SynTex", this.logDirectory, api.user.storagePath());
+
+    var cacheDirectory = this.cacheDirectory;
     
     getPluginConfig('SynTexWebHooks').then(function(res) {
 
