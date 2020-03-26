@@ -422,6 +422,11 @@ function SETUP(configPath, slog, storagePath, wPort)
     dataStorage = store(storagePath.replace('/data', '/'));
     logger = slog;
     webhookPort = wPort;
+
+    console.log(configPath);
+    console.log(slog);
+    console.log(storagePath);
+    console.log(wPort);
 };
 
 module.exports = {
