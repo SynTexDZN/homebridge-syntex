@@ -170,7 +170,7 @@ SynTexPlatform.prototype = {
 
                                         var obj = {
                                             device: JSON.stringify(res),
-                                            wPort: getPluginConfig('SynTexWebhooks').port
+                                            wPort: getPluginConfig('SynTexWebHooks').port
                                         };
 
                                         response.write(HTMLQuery.sendValues(head + data, obj));
@@ -212,7 +212,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
-                                                    wPort: getPluginConfig('SynTexWebhooks').port,
+                                                    wPort: getPluginConfig('SynTexWebHooks').port,
                                                     restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
                                                 };
                                             }
@@ -221,7 +221,7 @@ SynTexPlatform.prototype = {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
-                                                    wPort: getPluginConfig('SynTexWebhooks').port,
+                                                    wPort: getPluginConfig('SynTexWebHooks').port,
                                                     restart: '( Heute ) ' + res[1].split(' >')[0]
                                                 };
                                             }
@@ -231,7 +231,7 @@ SynTexPlatform.prototype = {
                                             var obj = {
                                                 ip: address,
                                                 version: pjson.version,
-                                                wPort: getPluginConfig('SynTexWebhooks').port,
+                                                wPort: getPluginConfig('SynTexWebHooks').port,
                                                 restart: 'Keine Daten Vorhanden'
                                             };
                                         }
