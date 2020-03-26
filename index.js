@@ -170,12 +170,20 @@ SynTexPlatform.prototype = {
 
                                         getPluginConfig('SynTexWebHooks').then(function(res2) {
 
-                                            var obj = {
-                                                device: JSON.stringify(res),
-                                                wPort: res2.port
-                                            };
-
-                                            console.log(res2, res2.port);
+                                            if(res2 != null)
+                                            {
+                                                var obj = {
+                                                    device: JSON.stringify(res),
+                                                    wPort: res2.port
+                                                };
+                                            }
+                                            else
+                                            {
+                                                var obj = {
+                                                    device: JSON.stringify(res),
+                                                    wPort: 1710
+                                                };
+                                            }
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
                                             response.end();
@@ -206,45 +214,54 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
 
-                                    var date = new Date();
+                                    getPluginConfig('SynTexWebHooks').then(function(res2) {
 
-                                    findRestart(date).then(function(res) {
+                                        var webhookPort = 1710;
 
-                                        if(res != null)
+                                        if(res2 != null)
                                         {
-                                            if(res[0].getDate() < date.getDate())
+                                            webhookPort = res2;
+                                        }
+
+                                        var date = new Date();
+
+                                        findRestart(date).then(function(res) {
+
+                                            if(res != null)
                                             {
-                                                var obj = {
-                                                    ip: address,
-                                                    version: pjson.version,
-                                                    wPort: getPluginConfig('SynTexWebHooks').port,
-                                                    restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
-                                                };
+                                                if(res[0].getDate() < date.getDate())
+                                                {
+                                                    var obj = {
+                                                        ip: address,
+                                                        version: pjson.version,
+                                                        wPort: webhookPort,
+                                                        restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
+                                                    };
+                                                }
+                                                else
+                                                {
+                                                    var obj = {
+                                                        ip: address,
+                                                        version: pjson.version,
+                                                        wPort: webhookPort,
+                                                        restart: '( Heute ) ' + res[1].split(' >')[0]
+                                                    };
+                                                }
                                             }
                                             else
                                             {
                                                 var obj = {
                                                     ip: address,
                                                     version: pjson.version,
-                                                    wPort: getPluginConfig('SynTexWebHooks').port,
-                                                    restart: '( Heute ) ' + res[1].split(' >')[0]
+                                                    wPort: webhookPort,
+                                                    restart: 'Keine Daten Vorhanden'
                                                 };
                                             }
-                                        }
-                                        else
-                                        {
-                                            var obj = {
-                                                ip: address,
-                                                version: pjson.version,
-                                                wPort: getPluginConfig('SynTexWebHooks').port,
-                                                restart: 'Keine Daten Vorhanden'
-                                            };
-                                        }
 
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
+                                            response.write(HTMLQuery.sendValues(head + data, obj));
+                                            response.end();
+                                        });
                                     });
-
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
