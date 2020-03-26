@@ -53,7 +53,7 @@ SynTexPlatform.prototype = {
             var urlPath = urlParts.pathname;
 
             response.statusCode = 200;
-            response.setHeader('Content-Type', 'application/json');
+            response.setHeader('Content-Type', 'text/html');
             response.setHeader('Access-Control-Allow-Origin', '*');
 
             if(urlPath == '/init')
