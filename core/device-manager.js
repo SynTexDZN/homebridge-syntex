@@ -70,22 +70,49 @@ async function removeDevice(mac, type)
                         }
                         else
                         {
-                            dataStorage.remove(mac, (err) => {
+                            storage.remove(mac, (err) => {
                                 
                                 if(err)
                                 {
-                                    logger.log('error', "Das Gerät konnte nicht aus der Data Storage entfernt werden!" + err);
+                                    logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden!" + err);
                                     
                                     resolve(false);
                                 }
                                 else
                                 {
-                                    storage.remove(mac, (err) => {
-                                
-                                        logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
+                                    if(type == 'temperature')
+                                    {
+                                        dataStorage.remove(mac + '-T', (err) => {
 
-                                        resolve(true);
-                                    });
+                                            dataStorage.remove(mac + '-H', (err) => {
+                                
+                                                logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
+        
+                                                resolve(true);
+                                            });
+                                        });
+                                    }
+                                    else if(type == 'light')
+                                    {
+                                        dataStorage.remove(mac + '-L', (err) => {
+
+                                            dataStorage.remove(mac + '-R', (err) => {
+                                
+                                                logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
+        
+                                                resolve(true);
+                                            });
+                                        });
+                                    }
+                                    else
+                                    {
+                                        dataStorage.remove(mac, (err) => {
+                                
+                                            logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
+    
+                                            resolve(true);
+                                        });
+                                    }
                                 }
                             });
                         }
