@@ -32,6 +32,8 @@
     var lastRestart = '<%restart%>';
     var bridgeVersion = '<%version%>';
     var webhooksVersion = '';
+    var newestBVersion = '';
+    var newestWVersion = '';
 
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
     document.getElementById('infos').children[1].innerHTML = '<p><b>Letzter Neustart: </b><br>' + lastRestart + '</p>';
@@ -44,6 +46,8 @@
             if(res != null)
             {
                 document.getElementById('infos').children[4].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
+
+                newestBVersion = res;
 
                 var intVersionB = versionCount(bridgeVersion);
 
@@ -79,6 +83,8 @@
                     if(res2 != null)
                     {
                         document.getElementById('infos').children[7].innerHTML = '<p><b>Neuste Version: </b>' + res2 + '</p>';
+
+                        newestWVersion = res2;
 
                         var intVersionW = versionCount(webhooksVersion);
 
@@ -129,7 +135,7 @@
                 document.getElementById('update-btn-bridge').style.opacity = 0;
             }, 10);
 
-            fetchURL('/update', 120000).then(function(res) {
+            fetchURL('/update?version=' + newestBVersion, 120000).then(function(res) {
 
                 if(res != null)
                 {
@@ -262,7 +268,7 @@
                 document.getElementById('update-btn-webhooks').style.opacity = 0;
             }, 10);
 
-            fetchURL(window.location.origin + ':<%wPort%>/update', 120000).then(function(res) {
+            fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000).then(function(res) {
 
                 if(res != null)
                 {
