@@ -21,6 +21,7 @@
                 <p class="loading-loop"><b>Version: </b>Laden ..</p>
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
             </div>
+            <p>Bitte bleibe während eines Updates oder Neustarts auf dieser Seite</p>
             <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge()">
         </div>
     </body>
@@ -164,38 +165,47 @@
                     }
                     else if(res == 'Success')
                     {
-                        var rOverlay = document.createElement('input');
-
-                        rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'update-result');
-                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn-bridge').offsetLeft + 'px; top: ' + document.getElementById('update-btn-bridge').offsetTop + 'px; width: ' + document.getElementById('update-btn-bridge').offsetWidth + 'px!important');
-                        rOverlay.setAttribute('value', 'Update Erfolgreich!');
-                        rOverlay.setAttribute('class', 'gradient-green');
-
-                        document.getElementById('update-btn-bridge').parentElement.insertBefore(rOverlay, document.getElementById('update-btn-bridge'));
-
                         setTimeout(function()
                         {
-                            rOverlay.style.opacity = 1;
-                            overlay.style.opacity = 0;
-                        }, 10);
-                        
-                        setTimeout(function()
-                        {
-                            rOverlay.style.opacity = 0;
-                        }, 5000);
+                            checkRestart().then(function(res) {
 
-                        setTimeout(function()
-                        {
-                            document.getElementById('update-btn-bridge').parentElement.removeChild(rOverlay);
-                            document.getElementById('update-btn-bridge').parentElement.removeChild(overlay);
-                            document.getElementById('update-btn-bridge').parentElement.removeChild(document.getElementById('update-btn-bridge'));
-                        }, 5300);
+                                if(res)
+                                {
+                                    var rOverlay = document.createElement('input');
 
-                        setTimeout(function()
-                        {
-                            location.reload();
-                        }, 5600);
+                                    rOverlay.setAttribute('type', 'button');
+                                    rOverlay.setAttribute('id', 'update-result');
+                                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn-bridge').offsetLeft + 'px; top: ' + document.getElementById('update-btn-bridge').offsetTop + 'px; width: ' + document.getElementById('update-btn-bridge').offsetWidth + 'px!important');
+                                    rOverlay.setAttribute('value', 'Update Erfolgreich!');
+                                    rOverlay.setAttribute('class', 'gradient-green');
+
+                                    document.getElementById('update-btn-bridge').parentElement.insertBefore(rOverlay, document.getElementById('update-btn-bridge'));
+
+                                    setTimeout(function()
+                                    {
+                                        rOverlay.style.opacity = 1;
+                                        overlay.style.opacity = 0;
+                                    }, 10);
+                                    
+                                    setTimeout(function()
+                                    {
+                                        rOverlay.style.opacity = 0;
+                                    }, 5000);
+
+                                    setTimeout(function()
+                                    {
+                                        document.getElementById('update-btn-bridge').parentElement.removeChild(rOverlay);
+                                        document.getElementById('update-btn-bridge').parentElement.removeChild(overlay);
+                                        document.getElementById('update-btn-bridge').parentElement.removeChild(document.getElementById('update-btn-bridge'));
+                                    }, 5300);
+
+                                    setTimeout(function()
+                                    {
+                                        location.reload();
+                                    }, 5600);
+                                }
+                            });
+                        }, 3000);
                     }
                 }
                 else
@@ -288,38 +298,47 @@
                     }
                     else if(res == 'Success')
                     {
-                        var rOverlay = document.createElement('input');
-
-                        rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'update-result');
-                        rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn-webhooks').offsetLeft + 'px; top: ' + document.getElementById('update-btn-webhooks').offsetTop + 'px; width: ' + document.getElementById('update-btn-webhooks').offsetWidth + 'px!important');
-                        rOverlay.setAttribute('value', 'Update Erfolgreich!');
-                        rOverlay.setAttribute('class', 'gradient-green');
-
-                        document.getElementById('update-btn-webhooks').parentElement.insertBefore(rOverlay, document.getElementById('update-btn-webhooks'));
-
                         setTimeout(function()
                         {
-                            rOverlay.style.opacity = 1;
-                            overlay.style.opacity = 0;
-                        }, 10);
-                        
-                        setTimeout(function()
-                        {
-                            rOverlay.style.opacity = 0;
-                        }, 5000);
+                            checkRestart().then(function(res) {
 
-                        setTimeout(function()
-                        {
-                            document.getElementById('update-btn-webhooks').parentElement.removeChild(rOverlay);
-                            document.getElementById('update-btn-webhooks').parentElement.removeChild(overlay);
-                            document.getElementById('update-btn-webhooks').parentElement.removeChild(document.getElementById('update-btn-webhooks'));
-                        }, 5300);
+                                if(res)
+                                {
+                                    var rOverlay = document.createElement('input');
 
-                        setTimeout(function()
-                        {
-                            location.reload();
-                        }, 5600);
+                                    rOverlay.setAttribute('type', 'button');
+                                    rOverlay.setAttribute('id', 'update-result');
+                                    rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('update-btn-webhooks').offsetLeft + 'px; top: ' + document.getElementById('update-btn-webhooks').offsetTop + 'px; width: ' + document.getElementById('update-btn-webhooks').offsetWidth + 'px!important');
+                                    rOverlay.setAttribute('value', 'Update Erfolgreich!');
+                                    rOverlay.setAttribute('class', 'gradient-green');
+
+                                    document.getElementById('update-btn-webhooks').parentElement.insertBefore(rOverlay, document.getElementById('update-btn-webhooks'));
+
+                                    setTimeout(function()
+                                    {
+                                        rOverlay.style.opacity = 1;
+                                        overlay.style.opacity = 0;
+                                    }, 10);
+                                    
+                                    setTimeout(function()
+                                    {
+                                        rOverlay.style.opacity = 0;
+                                    }, 5000);
+
+                                    setTimeout(function()
+                                    {
+                                        document.getElementById('update-btn-webhooks').parentElement.removeChild(rOverlay);
+                                        document.getElementById('update-btn-webhooks').parentElement.removeChild(overlay);
+                                        document.getElementById('update-btn-webhooks').parentElement.removeChild(document.getElementById('update-btn-webhooks'));
+                                    }, 5300);
+
+                                    setTimeout(function()
+                                    {
+                                        location.reload();
+                                    }, 5600);
+                                }
+                            });
+                        }, 3000);
                     }
                 }
                 else
@@ -412,7 +431,39 @@
                 {
                     setTimeout(function()
                     {
-                        checkRestart();
+                        checkRestart().then(function(res) {
+
+                            if(res)
+                            {
+                                var rOverlay = document.createElement('input');
+
+                                rOverlay.setAttribute('type', 'button');
+                                rOverlay.setAttribute('id', 'restart-result');
+                                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
+                                rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
+                                rOverlay.setAttribute('class', 'gradient-green');
+
+                                document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 1;
+                                    document.getElementById('restarting').style.opacity = 0;
+                                }, 10);
+                            
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 0;
+                                    document.getElementById('restart-btn').style.opacity = 1;
+                                }, 4000);
+
+                                setTimeout(function()
+                                {
+                                    document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                                    document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
+                                }, 4300);
+                            }
+                        });
                     }, 3000);
                 }
             });
@@ -421,47 +472,24 @@
 
     function checkRestart()
     {
-        fetchURL('/check-restart', 3000).then(function(res) {
+        return new Promise(resolve => {
 
-            console.log(res);
+            fetchURL('/check-restart', 3000).then(function(res) {
 
-            if(res != null && res == 'false')
-            {
-                var rOverlay = document.createElement('input');
+                console.log(res);
 
-                rOverlay.setAttribute('type', 'button');
-                rOverlay.setAttribute('id', 'restart-result');
-                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('restart-btn').offsetLeft + 'px; top: ' + document.getElementById('restart-btn').offsetTop + 'px; width: ' + document.getElementById('restart-btn').offsetWidth + 'px!important');
-                rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
-                rOverlay.setAttribute('class', 'gradient-green');
-
-                document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
-
-                setTimeout(function()
+                if(res != null && res == 'false')
                 {
-                    rOverlay.style.opacity = 1;
-                    document.getElementById('restarting').style.opacity = 0;
-                }, 10);
-            
-                setTimeout(function()
+                    resolve(true);
+                }
+                else
                 {
-                    rOverlay.style.opacity = 0;
-                    document.getElementById('restart-btn').style.opacity = 1;
-                }, 4000);
-
-                setTimeout(function()
-                {
-                    document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                    document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
-                }, 4300);
-            }
-            else
-            {
-                setTimeout(function()
-                {
-                    checkRestart();
-                }, 500);
-            }
+                    setTimeout(function()
+                    {
+                        resolve(checkRestart());
+                    }, 500);
+                }
+            });
         });
     }
 
