@@ -666,26 +666,35 @@
             if(res != null)
             {
                 console.log(res);
-                
-                var rOverlay = document.createElement('input');
-
-                rOverlay.setAttribute('type', 'button');
-                rOverlay.setAttribute('id', 'reset-result');
-                rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
-                rOverlay.setAttribute('value', 'Reset Erfolgreich!');
-                rOverlay.setAttribute('class', 'gradient-green');
-
-                document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
 
                 setTimeout(function()
                 {
-                    zOverlay.style.opacity = 0;
-                    rOverlay.style.opacity = 1;
-                }, 10);
+                    checkRestart().then(function(res) {
 
-                setTimeout(function()
-                {
-                    window.location.href = '/';
+                        if(res)
+                        {
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'reset-result');
+                            rOverlay.setAttribute('style', 'opacity: 0; z-index: 1; letter-spacing: 3px; position: absolute; left: ' + document.getElementById('reset-btn').offsetLeft + 'px; top: ' + document.getElementById('reset-btn').offsetTop + 'px; width: ' + document.getElementById('reset-btn').offsetWidth + 'px!important');
+                            rOverlay.setAttribute('value', 'Reset Erfolgreich!');
+                            rOverlay.setAttribute('class', 'gradient-green');
+
+                            document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+
+                            setTimeout(function()
+                            {
+                                zOverlay.style.opacity = 0;
+                                rOverlay.style.opacity = 1;
+                            }, 10);
+
+                            setTimeout(function()
+                            {
+                                window.location.href = '/';
+                            }, 3000);
+                        }
+                        });
                 }, 3000);
             }
             else

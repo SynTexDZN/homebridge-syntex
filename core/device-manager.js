@@ -55,54 +55,54 @@ async function removeDevice(mac, type)
                                 }
                             }
                         }
+                    }
+                }
 
-                        if(response)
+                if(response)
+                {
+                    config.add(obj, (err) => {
+
+                        if(err)
                         {
-                            config.add(obj, (err) => {
+                            logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
 
+                            resolve(false);
+                        }
+                        else
+                        {
+                            storage.remove(mac, (err) => {
+                                
                                 if(err)
                                 {
-                                    logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
-
+                                    logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden!" + err);
+                                    
                                     resolve(false);
                                 }
                                 else
                                 {
-                                    storage.remove(mac, (err) => {
-                                        
+                                    dataStorage.remove(mac, (err) => {
+                                
                                         if(err)
                                         {
-                                            logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden!" + err);
-                                            
+                                            logger.log('error', "Das Gerät konnte nicht aus der Data Storage entfernt werden!" + err);
+
                                             resolve(false);
                                         }
                                         else
                                         {
-                                            dataStorage.remove(mac, (err) => {
-                                        
-                                                if(err)
-                                                {
-                                                    logger.log('error', "Das Gerät konnte nicht aus der Data Storage entfernt werden!" + err);
+                                            logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
 
-                                                    resolve(false);
-                                                }
-                                                else
-                                                {
-                                                    logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
-
-                                                    resolve(true);
-                                                }
-                                            });
+                                            resolve(true);
                                         }
                                     });
                                 }
                             });
                         }
-                        else
-                        {
-                            resolve(false);
-                        }
-                    }
+                    });
+                }
+                else
+                {
+                    resolve(false);
                 }
             }
 

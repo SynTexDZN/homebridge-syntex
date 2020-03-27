@@ -104,10 +104,15 @@ SynTexPlatform.prototype = {
                         {
                             logger.log('error', "Das Gerät konnte nicht entfernt werden! (" + urlParams.mac + ")");
 
-                            response.write("Das Gerät konnte nicht entfernt werden!");
+                            response.write("Error");
                             response.end();
                         }
                     });
+                }
+                else
+                {
+                    response.write("Error");
+                    response.end();
                 }
             }
             else if(urlPath == '/restart')
