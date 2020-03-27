@@ -23,3 +23,26 @@ function versionCount(version)
 
     return intVersion;
 }
+
+function checkRestart()
+{
+    return new Promise(resolve => {
+
+        fetchURL('/check-restart', 3000).then(function(res) {
+
+            console.log(res);
+
+            if(res != null && res == 'false')
+            {
+                resolve(true);
+            }
+            else
+            {
+                setTimeout(function()
+                {
+                    resolve(checkRestart());
+                }, 500);
+            }
+        });
+    });
+}

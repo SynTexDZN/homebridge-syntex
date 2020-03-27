@@ -49,7 +49,7 @@
             <h1>Daten Übertragen</h1>
             <div class="main" style="margin-top: 100px; display: table">
                 <img src="img/success.png" class="setup-png">
-                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-success" type="button" value="Zum Gerät ( 5 )">
+                <input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
                 <p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
                 <p>Sollte es nach<br>60 Sekunden<br>immernoch offline sein<br>verbinde es erneut<br>mit deinem Netzwerk</p>
             </div>
@@ -64,28 +64,21 @@
     {
         document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
         document.getElementById('back-btn-wifi').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
-        document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
         document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
     }
 
-    function redirectCountdown(countdown, url)
+    function redirectCountdown(url)
     {
         setTimeout(function()
         {
-            if(countdown.value.split('( ')[1].split(' )')[0] > 0)
-            {
-                countdown.value = countdown.value.split('( ')[0] + '( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
+            checkRestart().then(function(res) {
 
-                if(countdown.value.split('( ')[1].split(' )')[0] > 0)
-                {
-                    redirectCountdown(countdown, url);
-                }
-                else
+                if(res)
                 {
                     window.location.href = url;
                 }
-            }
-        }, 1000);
+            });
+        }, 3000);
     }
 
 </script>
@@ -263,7 +256,13 @@
 
                         setTimeout(function()
                         {
-                            window.location.href = '/setup';
+                            checkRestart().then(function(res) {
+
+                                if(res)
+                                {
+                                    window.location.href = '/setup';
+                                }
+                            });
                         }, 10000); 
                     }
                 }, 60000);
@@ -273,8 +272,7 @@
                 document.getElementById('success').style.display = "";
                 document.getElementById('connecting').style.display = "none";
 
-                redirectCountdown(document.getElementById('redirect-success'), '/device?mac=' + res);     
-                document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + res + "'");        
+                redirectCountdown('/device?mac=' + res);     
             }
         });
         

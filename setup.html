@@ -48,7 +48,7 @@
             <h1>Erfolgreich Verbunden</h1>
             <div class="main" style="margin-top: 100px; display: table">
                 <img src="img/success.png" class="setup-png">
-                <input class="gradient-green" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-success" type="button" value="Zum Gerät ( 5 )">
+                <input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
                 <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
             </div>
         </div>
@@ -56,7 +56,7 @@
             <h1>Fehler beim Verbinden</h1>
             <div class="main" style="margin-top: 100px; display: table">
                 <img src="img/error.png" class="setup-png">
-                <input class="gradient-red" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" id="redirect-error" type="button" onclick="window.location.href='/setup'" value="Zurück ( 5 )">
+                <input class="gradient-red loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
                 <p>Bitte versuche es erneut!<br><br>Dein WLAN-Passwort<br>war nicht korrekt<br>oder etwas anderes<br>ist schief gegangen</p>
             </div>
         </div>
@@ -64,24 +64,18 @@
 </html>
 <script defer>
 
-    function redirectCountdown(countdown, url)
+    function redirectCountdown(url)
     {
         setTimeout(function()
         {
-            if(countdown.value.split('( ')[1].split(' )')[0] > 0)
-            {
-                countdown.value = countdown.value.split('( ')[0] + '( ' + (countdown.value.split('( ')[1].split(' )')[0] - 1) + ' )';
+            checkRestart().then(function(res) {
 
-                if(countdown.value.split('( ')[1].split(' )')[0] > 0)
-                {
-                    redirectCountdown(countdown, url);
-                }
-                else
+                if(res)
                 {
                     window.location.href = url;
                 }
-            }
-        }, 1000);
+            });
+        }, 3000);
     }
 
 </script>
@@ -188,8 +182,7 @@
                     document.getElementById('success').style.display = "";
                     document.getElementById('connecting').style.display = "none";
 
-                    redirectCountdown(document.getElementById('redirect-success'), '/device?mac=' + mac);
-                    document.getElementById('redirect-success').setAttribute('onclick', "window.location.href='/device?mac=" + mac + "'");  
+                    redirectCountdown('/device?mac=' + mac);
                 }
                 else
                 {
@@ -271,7 +264,7 @@
                         document.getElementById('error').style.display = "";
                         document.getElementById('connecting').style.display = "none";
 
-                        redirectCountdown(document.getElementById('redirect-error'), '/setup');
+                        redirectCountdown('/setup');
                     }
                 }, 60000);
 
