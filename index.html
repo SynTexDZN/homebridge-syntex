@@ -41,11 +41,11 @@
         
         if(counter == devices.length - 1)
         {
-            device.setAttribute('style', 'display: block');
+            device.setAttribute('style', 'display: flex');
         }
         else
         {
-            device.setAttribute('style', 'display: block; margin-bottom: 20px');
+            device.setAttribute('style', 'display: flex; margin-bottom: 20px');
             counter++;
         }
 
@@ -69,11 +69,15 @@
         button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
         
         var url = '/device?mac=' + devices[i].id;
-        
+
         button.setAttribute('onclick', "window.location.href='" + url + "'");
         button.setAttribute('name', devices[i].name);
 
-        device.appendChild(button);
+        var container = document.createElement('div');
+        container.setAttribute('style', 'display: block');
+
+        container.appendChild(button);
+        device.appendChild(container);
 
         document.getElementById('devices').appendChild(device);
         
