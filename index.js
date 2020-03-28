@@ -170,11 +170,6 @@ SynTexPlatform.prototype = {
                     }
                 });
             }
-            else if(urlPath == '/ping')
-            {
-                response.write("");
-                response.end();
-            }
             else
             {
                 HTMLQuery.exists(urlPath.substring(1)).then(function(relPath)
