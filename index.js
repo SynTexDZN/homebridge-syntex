@@ -202,19 +202,14 @@ SynTexPlatform.prototype = {
 
                                         getPluginConfig('SynTexWebHooks').then(function(res2) {
 
+                                            var obj = {
+                                                device: JSON.stringify(res),
+                                                wPort: 1710
+                                            };
+
                                             if(res2 != null)
                                             {
-                                                var obj = {
-                                                    device: JSON.stringify(res),
-                                                    wPort: res2.port
-                                                };
-                                            }
-                                            else
-                                            {
-                                                var obj = {
-                                                    device: JSON.stringify(res),
-                                                    wPort: 1710
-                                                };
+                                                obj.wPort = res2.port;
                                             }
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
@@ -277,35 +272,23 @@ SynTexPlatform.prototype = {
 
                                         findRestart(date).then(function(res) {
 
+                                            var obj = {
+                                                ip: address,
+                                                version: pjson.version,
+                                                wPort: webhookPort,
+                                                restart: 'Keine Daten Vorhanden'
+                                            };
+
                                             if(res != null)
                                             {
                                                 if(res[0].getDate() < date.getDate())
                                                 {
-                                                    var obj = {
-                                                        ip: address,
-                                                        version: pjson.version,
-                                                        wPort: webhookPort,
-                                                        restart: '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0]
-                                                    };
+                                                    obj.restart = '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0];
                                                 }
                                                 else
                                                 {
-                                                    var obj = {
-                                                        ip: address,
-                                                        version: pjson.version,
-                                                        wPort: webhookPort,
-                                                        restart: '( Heute ) ' + res[1].split(' >')[0]
-                                                    };
+                                                    obj.restart = '( Heute ) ' + res[1].split(' >')[0];
                                                 }
-                                            }
-                                            else
-                                            {
-                                                var obj = {
-                                                    ip: address,
-                                                    version: pjson.version,
-                                                    wPort: webhookPort,
-                                                    restart: 'Keine Daten Vorhanden'
-                                                };
                                             }
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
@@ -325,19 +308,14 @@ SynTexPlatform.prototype = {
                                         {    
                                             logger.load('SynTexWebHooks', date).then(function(res2) {   
 
+                                                var obj = {
+                                                    bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
+                                                    wLog: '[]'
+                                                };
+
                                                 if(res2 != null)
                                                 {    
-                                                    var obj = {
-                                                        bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                        wLog: JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
-                                                    };
-                                                }
-                                                else
-                                                {
-                                                    var obj = {
-                                                        bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                        wLog: '[]'
-                                                    };
+                                                    obj.wLog = JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
                                                 }
 
                                                 response.write(HTMLQuery.sendValues(head + data, obj));
@@ -348,19 +326,14 @@ SynTexPlatform.prototype = {
                                         {
                                             logger.load('SynTexWebHooks', date).then(function(res2) {  
 
+                                                var obj = {
+                                                    bLog: '[]',
+                                                    wLog: '[]'
+                                                };
+
                                                 if(res2 != null)
                                                 {    
-                                                    var obj = {
-                                                        bLog: '[]',
-                                                        wLog: JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:')
-                                                    };
-                                                }
-                                                else
-                                                {
-                                                    var obj = {
-                                                        bLog: '[]',
-                                                        wLog: '[]'
-                                                    };
+                                                    obj.wLog = JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
                                                 }
 
                                                 response.write(HTMLQuery.sendValues(head + data, obj));
@@ -450,7 +423,6 @@ async function findRestart(d)
             {
                 var yesterday = new Date();
                 yesterday.setDate(d.getDate() - 1);
-
                 resolve(findRestart(yesterday));
             }
         });
