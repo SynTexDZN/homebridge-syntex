@@ -45,6 +45,27 @@ async function removeDevice(mac, type)
                         }
                         else
                         {
+                            if(type == 'temperature')
+                            {
+                                for(const i in platform.sensors)
+                                {
+                                    if(platform.sensors[i].mac === mac && platform.sensors[i].type === 'humidity')
+                                    {
+                                        platform.sensors.splice(i, 1);
+                                    }
+                                }
+                            }
+                            else if(type == 'light')
+                            {
+                                for(const i in platform.sensors)
+                                {
+                                    if(platform.sensors[i].mac === mac && platform.sensors[i].type === 'rain')
+                                    {
+                                        platform.sensors.splice(i, 1);
+                                    }
+                                }
+                            }
+
                             for(const i in platform.sensors)
                             {
                                 if(platform.sensors[i].mac === mac)
