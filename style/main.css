@@ -331,13 +331,18 @@ h2
     overflow: hidden;
 }
 
-.overlay
+.overlay, .overlay-bottom
 {
     opacity: 0;
     padding-left: 18px;
     position: relative;
     top: 50px;
     margin-top: -50px;
+}
+
+.overlay-bottom
+{
+    top: 70px;
 }
 
 @media(prefers-color-scheme: light)
@@ -494,9 +499,14 @@ h2
         height: 60px;
     }
 
-    .overlay
+    .overlay, .overlay-bottom
     {
         top: 70px;
         margin-top: -70px;
+    }
+
+    .overlay-bottom
+    {
+        top: 90px;
     }
 }
