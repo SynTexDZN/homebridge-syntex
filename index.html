@@ -1,5 +1,5 @@
 <html>
-    
+    <link rel="stylesheet" type="text/css" href="/syntex/style/main.css" media="screen">
     <title>Dashboard: Geräte</title>
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
@@ -51,8 +51,8 @@
 
     var lastRestart = '<%restart%>';
     
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].children[0].value = devices.length;
-    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].children[0].value = lastRestart;
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = devices.length;
+    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].value = lastRestart;
     
     var temp = "";
     var counter = 0;
@@ -315,7 +315,7 @@
 
                 if(count == devices.length)
                 {
-                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].children[0].value = updateCount;
+                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = updateCount;
 
                     if(updateCount > 0)
                     {            
