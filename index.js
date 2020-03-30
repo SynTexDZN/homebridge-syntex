@@ -234,12 +234,7 @@ SynTexPlatform.prototype = {
                                             {
                                                 var restartDate = new Date((res2[0].getMonth() + 1) + ' ' + res2[0].getDate() + ' ' + res2[0].getFullYear() + ' ' + res2[1].split(' >')[0]);
 
-                                                logger.log('info', date.getTime());
-                                                logger.log('info', restartDate.getTime());
-                                                logger.log('info', formatTimestamp(date.getTime() - restartDate.getTime()));
-                                                logger.log('info', formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000));
-
-                                                obj.restart = formatTimestamp(date.getTime() - res2[0].getTime());
+                                                obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
                                                 /*
                                                 if(res2[0].getDate() < date.getDate())
                                                 {
@@ -502,7 +497,7 @@ function formatTimestamp(timestamp)
 {
     if(timestamp < 60)
     {
-        return timestamp + ' sek';
+        return Math.round(timestamp) + ' sek';
     }
     else if(timestamp < 60 * 60)
     {
