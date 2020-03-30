@@ -238,7 +238,7 @@ SynTexPlatform.prototype = {
                                                 }
                                                 else
                                                 {
-                                                    obj.restart = 'Heute • ' + res2[1].split(' >')[0];
+                                                    obj.restart = res2[1].split(' >')[0].split(':')[0] + ":" + res2[1].split(' >')[0].split(':')[1];
                                                 }
                                             }
 
@@ -311,6 +311,8 @@ SynTexPlatform.prototype = {
 
                                             if(res != null)
                                             {
+                                                obj.restart = formatTimestamp(date.getTime() - res[0].getTime());
+                                                /*
                                                 if(res[0].getDate() < date.getDate())
                                                 {
                                                     obj.restart = '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0];
@@ -319,6 +321,7 @@ SynTexPlatform.prototype = {
                                                 {
                                                     obj.restart = '( Heute ) ' + res[1].split(' >')[0];
                                                 }
+                                                */
                                             }
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
@@ -486,4 +489,36 @@ async function getPluginConfig(pluginName)
             }
         });
     });
+}
+
+function formatTimestamp(timestamp)
+{
+    if(timestamp < 60)
+    {
+        return timestamp + ' sek';
+    }
+    else if(timestamp < 60 * 60)
+    {
+        return round(timestamp / 60) + ' min';
+    }
+    else if(timestamp < 60 * 60 * 24)
+    {
+        return round(timestamp / 60 / 60) + ' h';
+    }
+    else if(timestamp < 60 * 60 * 24 * 7)
+    {
+        return round(timestamp / 60 / 60 / 24) + ' Tag';
+    }
+    else if(timestamp < 60 * 60 * 24 * idate('t'))
+    {
+        return round(timestamp / 60 / 60 / 24 / 7) + 'Woche';
+    }
+    else if(timestamp < 60 * 60 * 24 * 365)
+    {
+        return round(timestamp / 60 / 60 / 24 / idate('t')) + 'Monat';
+    }
+    else
+    {
+        return '> 1 Jahr';
+    }
 }
