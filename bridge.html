@@ -13,7 +13,6 @@
             </div>
             <div id="infos" style="margin-bottom: 100px">
                 <p class="loading-loop"><b>IP: </b>Laden ..</p>
-                <p class="loading-loop"><b>Letzter Neustart: </b>Laden ..</p>
                 <h2 style="width: fit-content; margin-top: 100px">• SynTex Bridge •</h2>
                 <p class="loading-loop"><b>Version: </b>Laden ..</p>
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
@@ -29,15 +28,13 @@
 <script>
 
     var ip = '<%ip%>';
-    var lastRestart = '<%restart%>';
     var bridgeVersion = '<%version%>';
     var webhooksVersion = '';
     var newestBVersion = '';
     var newestWVersion = '';
 
     document.getElementById('infos').children[0].innerHTML = '<p><b>IP: </b>' + ip + '</p>';
-    document.getElementById('infos').children[1].innerHTML = '<p><b>Letzter Neustart: </b><br>' + lastRestart + '</p>';
-    document.getElementById('infos').children[3].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
+    document.getElementById('infos').children[2].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
     setTimeout(function()
     {
@@ -45,7 +42,7 @@
 
             if(res != null)
             {
-                document.getElementById('infos').children[4].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
+                document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
 
                 newestBVersion = res;
 
@@ -66,7 +63,7 @@
             }
             else
             {
-                document.getElementById('infos').children[4].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                document.getElementById('infos').children[3].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
 
@@ -76,13 +73,13 @@
             {
                 webhooksVersion = res;
 
-                document.getElementById('infos').children[6].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
+                document.getElementById('infos').children[5].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
 
                 fetchURL('http://syntex.sytes.net/smarthome/check-version?device=syntex-webhooks', 10000).then(function(res2) {
 
                     if(res2 != null)
                     {
-                        document.getElementById('infos').children[7].innerHTML = '<p><b>Neuste Version: </b>' + res2 + '</p>';
+                        document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>' + res2 + '</p>';
 
                         newestWVersion = res2;
 
@@ -103,14 +100,14 @@
                     }
                     else
                     {
-                        document.getElementById('infos').children[7].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                        document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
                     }
                 });
             }
             else
             {
+                document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
                 document.getElementById('infos').children[6].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
-                document.getElementById('infos').children[7].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
     }, 500);

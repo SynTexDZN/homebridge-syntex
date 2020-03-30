@@ -233,18 +233,7 @@ SynTexPlatform.prototype = {
                                             if(res2 != null)
                                             {
                                                 var restartDate = new Date((res2[0].getMonth() + 1) + ' ' + res2[0].getDate() + ' ' + res2[0].getFullYear() + ' ' + res2[1].split(' >')[0]);
-
                                                 obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
-                                                /*
-                                                if(res2[0].getDate() < date.getDate())
-                                                {
-                                                    obj.restart = res2[0].getDate() + "." + (res2[0].getMonth() + 1) + "." + res2[0].getFullYear() + ' • ' + res2[1].split(' >')[0];
-                                                }
-                                                else
-                                                {
-                                                    obj.restart = res2[1].split(' >')[0].split(':')[0] + ":" + res2[1].split(' >')[0].split(':')[1];
-                                                }
-                                                */
                                             }
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
@@ -303,32 +292,14 @@ SynTexPlatform.prototype = {
                                             webhookPort = res2.port;
                                         }
 
-                                        var date = new Date();
+                                        var obj = {
+                                            ip: address,
+                                            version: pjson.version,
+                                            wPort: webhookPort
+                                        };
 
-                                        findRestart(date).then(function(res) {
-
-                                            var obj = {
-                                                ip: address,
-                                                version: pjson.version,
-                                                wPort: webhookPort,
-                                                restart: 'Keine Daten Vorhanden'
-                                            };
-
-                                            if(res != null)
-                                            {
-                                                if(res[0].getDate() < date.getDate())
-                                                {
-                                                    obj.restart = '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0];
-                                                }
-                                                else
-                                                {
-                                                    obj.restart = '( Heute ) ' + res[1].split(' >')[0];
-                                                }
-                                            }
-
-                                            response.write(HTMLQuery.sendValues(head + data, obj));
-                                            response.end();
-                                        });
+                                        response.write(HTMLQuery.sendValues(head + data, obj));
+                                        response.end();
                                     });
                                 }
                                 else if(urlPath.startsWith('/log'))
