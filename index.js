@@ -506,23 +506,23 @@ function formatTimestamp(timestamp)
     }
     else if(timestamp < 60 * 60)
     {
-        return round(timestamp / 60) + ' min';
+        return Math.round(timestamp / 60) + ' min';
     }
     else if(timestamp < 60 * 60 * 24)
     {
-        return round(timestamp / 60 / 60) + ' h';
+        return Math.round(timestamp / 60 / 60) + ' h';
     }
     else if(timestamp < 60 * 60 * 24 * 7)
     {
-        return round(timestamp / 60 / 60 / 24) + ' Tag';
+        return Math.round(timestamp / 60 / 60 / 24) + ' Tag';
     }
     else if(timestamp < 60 * 60 * 24 * idate('t'))
     {
-        return round(timestamp / 60 / 60 / 24 / 7) + 'Woche';
+        return Math.round(timestamp / 60 / 60 / 24 / 7) + 'Woche';
     }
     else if(timestamp < 60 * 60 * 24 * 365)
     {
-        return round(timestamp / 60 / 60 / 24 / idate('t')) + 'Monat';
+        return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'Monat';
     }
     else
     {
