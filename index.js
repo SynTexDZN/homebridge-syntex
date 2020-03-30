@@ -234,16 +234,13 @@ SynTexPlatform.prototype = {
                                             {
                                                 if(res2[0].getDate() < date.getDate())
                                                 {
-                                                    obj.restart = '( ' + res2[0].getDate() + "." + (res2[0].getMonth() + 1) + "." + res2[0].getFullYear() + ' ) ' + res2[1].split(' >')[0];
+                                                    obj.restart = res2[0].getDate() + "." + (res2[0].getMonth() + 1) + "." + res2[0].getFullYear() + ' • ' + res2[1].split(' >')[0];
                                                 }
                                                 else
                                                 {
-                                                    obj.restart = '( Heute ) ' + res2[1].split(' >')[0];
+                                                    obj.restart = 'Heute • ' + res2[1].split(' >')[0];
                                                 }
                                             }
-
-                                            logger.log('info', obj.devices);
-                                            logger.log('info', obj.restart);
 
                                             response.write(HTMLQuery.sendValues(head + data, obj));
                                             response.end();
