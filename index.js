@@ -223,22 +223,22 @@ SynTexPlatform.prototype = {
 
                                         var date = new Date();
 
-                                        findRestart(date).then(function(res) {
+                                        findRestart(date).then(function(res2) {
 
                                             var obj = {
                                                 devices: JSON.stringify(res),
                                                 restart: 'Keine Daten Vorhanden'
                                             };
 
-                                            if(res != null)
+                                            if(res2 != null)
                                             {
-                                                if(res[0].getDate() < date.getDate())
+                                                if(res2[0].getDate() < date.getDate())
                                                 {
-                                                    obj.restart = '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0];
+                                                    obj.restart = '( ' + res2[0].getDate() + "." + (res2[0].getMonth() + 1) + "." + res2[0].getFullYear() + ' ) ' + res2[1].split(' >')[0];
                                                 }
                                                 else
                                                 {
-                                                    obj.restart = '( Heute ) ' + res[1].split(' >')[0];
+                                                    obj.restart = '( Heute ) ' + res2[1].split(' >')[0];
                                                 }
                                             }
 
