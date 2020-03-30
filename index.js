@@ -232,6 +232,11 @@ SynTexPlatform.prototype = {
 
                                             if(res2 != null)
                                             {
+                                                logger.log('info', date.getTime());
+                                                logger.log('info', res2[0].getTime());
+                                                logger.log('info', formatTimestamp(date.getTime() - res2[0].getTime()));
+                                                logger.log('info', formatTimestamp(date.getTime() / 1000 - res2[0].getTime() / 1000));
+
                                                 obj.restart = formatTimestamp(date.getTime() - res2[0].getTime());
                                                 /*
                                                 if(res2[0].getDate() < date.getDate())
