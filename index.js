@@ -217,7 +217,37 @@ SynTexPlatform.prototype = {
                                         });
                                     });
                                 }
-                                else if(urlPath == '/' || urlPath.startsWith('/index') || urlPath.startsWith('/settings'))
+                                else if(urlPath == '/' || urlPath.startsWith('/index'))
+                                {
+                                    DeviceManager.getDevices().then(function(res) {
+
+                                        var date = new Date();
+
+                                        findRestart(date).then(function(res) {
+
+                                            var obj = {
+                                                devices: JSON.stringify(res),
+                                                restart: 'Keine Daten Vorhanden'
+                                            };
+
+                                            if(res != null)
+                                            {
+                                                if(res[0].getDate() < date.getDate())
+                                                {
+                                                    obj.restart = '( ' + res[0].getDate() + "." + (res[0].getMonth() + 1) + "." + res[0].getFullYear() + ' ) ' + res[1].split(' >')[0];
+                                                }
+                                                else
+                                                {
+                                                    obj.restart = '( Heute ) ' + res[1].split(' >')[0];
+                                                }
+                                            }
+
+                                            response.write(HTMLQuery.sendValues(head + data, obj));
+                                            response.end();
+                                        });
+                                    });
+                                }
+                                else if(urlPath.startsWith('/settings'))
                                 {
                                     DeviceManager.getDevices().then(function(res) {
 
