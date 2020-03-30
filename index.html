@@ -1,4 +1,5 @@
 <html>
+    <link rel="stylesheet" type="text/css" href="/syntex/style/main.css" media="screen">
     <title>Dashboard: Geräte</title>
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
@@ -14,10 +15,18 @@
             <div id="widgets" style="margin-bottom: 100px">
                 <div class="widget">
                     <div class="widget-left">
-                        <div>Geräte Konfiguriert</div>
+                        <input type="button" value="Geräte Konfiguriert">
                     </div>
                     <div class="widget-right">
-                        <div>16</div>
+                        <input type="button" class="gradient-blue" value="16">
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-left">
+                        <input type="button" value="Updates Verfügbar">
+                    </div>
+                    <div class="widget-right">
+                        <input type="button" class="gradient-purple" value="0">
                     </div>
                 </div>
             </div>
@@ -40,7 +49,7 @@
         
     console.log(devices);
     
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].children[0].innerHTML = devices.length;
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].children[0].value = devices.length;
     
     var temp = "";
     var counter = 0;
@@ -303,6 +312,8 @@
 
                 if(count == devices.length)
                 {
+                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].children[0].value = updateCount;
+
                     if(updateCount > 0)
                     {            
                         var update = document.createElement('input');
