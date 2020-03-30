@@ -242,6 +242,9 @@ SynTexPlatform.prototype = {
                                                 }
                                             }
 
+                                            logger.log('info', obj.devices);
+                                            logger.log('info', obj.restart);
+
                                             response.write(HTMLQuery.sendValues(head + data, obj));
                                             response.end();
                                         });
