@@ -445,6 +445,8 @@ async function findErrors(d)
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
+        console.log('FIND Error');
+
         logger.find('SynTex', date, '[Error]').then(function(res) {
 
             if(res != null)
