@@ -324,19 +324,20 @@
                         var update = document.createElement('input');
 
                         update.setAttribute('type', 'button');
+
                         if(updateCount == 1)
                         {
-                            update.setAttribute('value', updateCount + ' Update installieren!');
+                            update.setAttribute('value', 'Update installieren!');
                         }
                         else
                         {
-                            update.setAttribute('value', updateCount + ' Updates installieren!');
+                            update.setAttribute('value', 'Updates installieren!');
                         }
                         
                         update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
                         update.setAttribute('onclick', 'installAllUpdates();');
 
-                        document.getElementsByClassName('bottom')[0].insertBefore(update, document.getElementsByClassName('bottom')[0].children[0]);
+                        document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('devices'));
                     }
                 }
             });
