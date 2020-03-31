@@ -2,17 +2,17 @@
     <title>Dashboard: Log</title>
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
-        <div class="main" style="margin-top: 10px; display: table">
+        <div class="main" style="margin-top: 10px; display: table; margin-bottom: 100px">
             <p style="margin-bottom: 100px; margin-top: 16px">Log</p>
-            <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+            <div style="margin-top: 10px; margin-bottom: 20px; display: flex">
                 <input class="white" type="button" value="Geräte" onclick="window.location.href='/'" style="margin-right: 20px">
                 <input class="white" type="button" value="Bridge" onclick="window.location.href='/bridge'">
             </div>
-            <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
+            <div style="margin-top: 10px; display: flex">
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
             </div>
         </div>
-        <div class="main" style="margin-bottom: 20px; display: flex">
+        <div class="main" style="margin-bottom: 100px">
             <div id="widgets" style="margin-bottom: 20px">
                 <div class="widget">
                     <input class="widget-left" type="button" value="Fehler">
@@ -27,7 +27,7 @@
                     <input class="widget-right gradient-yellow" type="button" value="-">
                 </div>
             </div>
-            <div id="widgets" style="margin-bottom: 100px">
+            <div id="widgets">
                 <div class="widget">
                     <input class="widget-left" type="button" value="Zugriffe">
                     <input class="widget-right gradient-blue" type="button" value="-">
@@ -41,6 +41,8 @@
                     <input class="widget-right gradient-green" type="button" value="-">
                 </div>
             </div>
+        </div>
+        <div class="main" style="margin-bottom: 20px; display: flex">
             <input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
             <input class="gradient-blue loading-loop" type="button" value="Suchen" onclick="searchLog()" style="max-width: 200px">
         </div>
