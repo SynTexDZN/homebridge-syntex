@@ -225,19 +225,23 @@ SynTexPlatform.prototype = {
 
                                         findRestart(date).then(function(res2) {
 
-                                            var obj = {
-                                                devices: JSON.stringify(res),
-                                                restart: 'Keine Daten Vorhanden'
-                                            };
+                                            findErrors(date).then(function(res3) {
 
-                                            if(res2 != null)
-                                            {
-                                                var restartDate = new Date((res2[0].getMonth() + 1) + ' ' + res2[0].getDate() + ' ' + res2[0].getFullYear() + ' ' + res2[1].split(' >')[0]);
-                                                obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
-                                            }
-
-                                            response.write(HTMLQuery.sendValues(head + data, obj));
-                                            response.end();
+                                                var obj = {
+                                                    devices: JSON.stringify(res),
+                                                    restart: 'Keine Daten Vorhanden',
+                                                    errors: res3
+                                                };
+    
+                                                if(res2 != null)
+                                                {
+                                                    var restartDate = new Date((res2[0].getMonth() + 1) + ' ' + res2[0].getDate() + ' ' + res2[0].getFullYear() + ' ' + res2[1].split(' >')[0]);
+                                                    obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
+                                                }
+    
+                                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                                response.end();
+                                            });
                                         });
                                     });
                                 }
@@ -423,13 +427,33 @@ async function findRestart(d)
 
             if(res != null)
             {
-                resolve([d, res]);
+                resolve([d, res[0]]);
             }
             else
             {
                 var yesterday = new Date();
                 yesterday.setDate(d.getDate() - 1);
                 resolve(findRestart(yesterday));
+            }
+        });
+    });
+}
+
+async function findErrors(d)
+{
+    return new Promise(resolve => {
+
+        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+
+        logger.find('SynTex', date, '[Error]').then(function(res) {
+
+            if(res != null)
+            {
+                resolve(res.length);
+            }
+            else
+            {
+                resolve(0);
             }
         });
     });

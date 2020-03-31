@@ -69,15 +69,24 @@ logger.find = function(pluginName, date, param)
 
                     if(obj && !err)
                     {    
+                        var logs = {};
+
                         for(var i = 1; i < obj.logs.length + 1; i++)
                         {
                             if(obj.logs[obj.logs.length - i].includes(param))
                             {
-                                resolve(obj.logs[obj.logs.length - i]);
+                                logs[logs.length] = obj.logs[obj.logs.length - i];
                             }
                         }
         
-                        resolve(null);
+                        if(logs[0])
+                        {
+                            resolve(logs);
+                        }
+                        else
+                        {
+                            resolve(null);
+                        }
                     }
         
                     if(err || !obj)

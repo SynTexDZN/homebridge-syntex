@@ -50,8 +50,10 @@
     console.log(devices);
 
     var lastRestart = '<%restart%>';
+    var errorCount = '<%errors%>';
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = devices.length;
+    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].value = errorCount;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].value = lastRestart;
     
     var temp = "";
