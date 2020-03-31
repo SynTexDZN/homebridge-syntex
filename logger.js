@@ -76,6 +76,7 @@ logger.find = function(pluginName, date, param)
                         for(var i = 1; i < obj.logs.length + 1; i++)
                         {
                             console.log(obj.logs[obj.logs.length - i]);
+                            console.log(obj.logs[obj.logs.length - i].includes(param));
 
                             if(obj.logs[obj.logs.length - i].includes(param))
                             {

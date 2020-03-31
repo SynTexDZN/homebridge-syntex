@@ -447,7 +447,7 @@ async function findErrors(d)
 
         console.log('FIND Error');
 
-        logger.find('SynTex', date, '[Error]').then(function(res) {
+        logger.find('SynTex', date, '[ERROR]').then(function(res) {
 
             if(res != null)
             {
