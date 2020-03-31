@@ -468,11 +468,11 @@ function formatTimestamp(timestamp)
 {
     if(timestamp < 60)
     {
-        return Math.round(timestamp) + ' sek';
+        return Math.round(timestamp) + ' s';
     }
     else if(timestamp < 60 * 60)
     {
-        return Math.round(timestamp / 60) + ' min';
+        return Math.round(timestamp / 60) + ' m';
     }
     else if(timestamp < 60 * 60 * 24)
     {
@@ -480,18 +480,18 @@ function formatTimestamp(timestamp)
     }
     else if(timestamp < 60 * 60 * 24 * 7)
     {
-        return Math.round(timestamp / 60 / 60 / 24) + ' Tag';
+        return Math.round(timestamp / 60 / 60 / 24) + ' T';
     }
-    else if(timestamp < 60 * 60 * 24 * idate('t'))
+    else if(timestamp < 60 * 60 * 24 * 30.5)
     {
-        return Math.round(timestamp / 60 / 60 / 24 / 7) + 'Woche';
+        return Math.round(timestamp / 60 / 60 / 24 / 7) + 'W';
     }
     else if(timestamp < 60 * 60 * 24 * 365)
     {
-        return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'Monat';
+        return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'M';
     }
     else
     {
-        return '> 1 Jahr';
+        return '> 1 J';
     }
 }
