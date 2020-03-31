@@ -431,6 +431,8 @@ async function findRestart(d)
 
         logger.find('SynTex', date, '[INFO] Data').then(function(res) {
 
+            console.log(res);
+            
             if(res != null)
             {
                 resolve([d, res[0]]);

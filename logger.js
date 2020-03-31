@@ -78,6 +78,11 @@ logger.find = function(pluginName, date, param)
                                 logs[logs.length] = obj.logs[obj.logs.length - i];
                             }
                         }
+
+                        for(var i = 0; i < logs.length; i++)
+                        {
+                            console.log(logs[i]);
+                        }
         
                         if(logs[0] != null)
                         {
