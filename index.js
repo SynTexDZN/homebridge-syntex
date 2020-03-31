@@ -223,9 +223,15 @@ SynTexPlatform.prototype = {
 
                                         var date = new Date();
 
+                                        console.log('GET DEVICES');
+
                                         findRestart(date).then(function(res2) {
 
+                                            console.log('FIND RESTART');
+
                                             findErrors(date).then(function(res3) {
+
+                                                console.log('FIND ERRORS');
 
                                                 var obj = {
                                                     devices: JSON.stringify(res),
@@ -449,10 +455,12 @@ async function findErrors(d)
 
             if(res != null)
             {
+                console.log('FOUND', res.length);
                 resolve(res.length);
             }
             else
             {
+                console.log('NOT FOUND', 0);
                 resolve(0);
             }
         });
