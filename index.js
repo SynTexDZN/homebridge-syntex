@@ -216,11 +216,12 @@ SynTexPlatform.prototype = {
                             var date = new Date();
                             var devices = await DeviceManager.getDevices();
                             var restart = await findRestart(date);
-                            var errors = await findErrors(date);
+                            var bridgeErrors = await findErrors('SynTex', date);
+                            var webhookErrors = await findErrors('SynTexWebHooks', date);
                             var obj = {
                                 devices: JSON.stringify(devices),
                                 restart: 'Keine Daten Vorhanden',
-                                errors: errors
+                                errors: bridgeErrors + webhookErrors
                             };
 
                             if(restart != null)
@@ -328,7 +329,7 @@ SynTexPlatform.prototype = {
                                 post += data;
                             });
 
-                            request.on('end', function()
+                            request.on('end', async function()
                             {
                                 var json = JSON.parse(post);
                                 
@@ -387,13 +388,13 @@ async function findRestart(d)
     });
 }
 
-async function findErrors(d)
+async function findErrors(pluginName, d)
 {
     return new Promise(resolve => {
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-        logger.find('SynTex', date, '[ERROR]').then(function(res) {
+        logger.find(pluginName, date, '[ERROR]').then(function(res) {
 
             if(res != null)
             {
