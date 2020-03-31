@@ -172,7 +172,7 @@ SynTexPlatform.prototype = {
             }
             else
             {
-                HTMLQuery.exists(urlPath.substring(1)).then(function(relPath)
+                HTMLQuery.exists(urlPath.substring(1)).then(async function(relPath)
                 {                  
                     if(!relPath)
                     {
@@ -180,227 +180,179 @@ SynTexPlatform.prototype = {
                     }
                     else
                     {
-                        HTMLQuery.read(relPath).then(function(data)
+                        var data = await HTMLQuery.read(relPath);
+                        var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+                        var mimeType = {
+                            ".html": "text/html; charset=utf-8",
+                            ".jpeg": "image/jpeg",
+                            ".jpg": "image/jpeg",
+                            ".png": "image/png",
+                            ".js": "text/javascript",
+                            ".css": "text/css",
+                            ".ttf": "font/ttf"
+                        };
+
+                        response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+
+                        if(urlPath == '/device' && urlParams.mac)
                         {
-                            HTMLQuery.read(__dirname + '/includes/head.html').then(function(head)
+                            var device = await DeviceManager.getDevice(urlParams.mac);
+                            var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                            var obj = {
+                                device: JSON.stringify(device),
+                                wPort: 1710
+                            };
+
+                            if(webhookConfig != null)
                             {
-                                var mimeType = {
-                                    ".html": "text/html; charset=utf-8",
-                                    ".jpeg": "image/jpeg",
-                                    ".jpg": "image/jpeg",
-                                    ".png": "image/png",
-                                    ".js": "text/javascript",
-                                    ".css": "text/css",
-                                    ".ttf": "font/ttf"
-                                };
+                                obj.wPort = webhookConfig.port;
+                            }
 
-                                response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+                            response.write(HTMLQuery.sendValues(head + data, obj));
+                            response.end();
+                        }
+                        else if(urlPath == '/' || urlPath.startsWith('/index'))
+                        {
+                            var date = new Date();
+                            var devices = await DeviceManager.getDevices();
+                            var restart = await findRestart(date);
+                            var errors = await findErrors(date);
+                            var obj = {
+                                devices: JSON.stringify(devices),
+                                restart: 'Keine Daten Vorhanden',
+                                errors: errors
+                            };
 
-                                if(urlPath == '/device' && urlParams.mac)
+                            if(restart != null)
+                            {
+                                var restartDate = new Date((restart[0].getMonth() + 1) + ' ' + restart[0].getDate() + ' ' + restart[0].getFullYear() + ' ' + restart[1].split(' >')[0]);
+                                obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
+                            }
+
+                            response.write(HTMLQuery.sendValues(head + data, obj));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/settings'))
+                        {
+                            var devices = await DeviceManager.getDevices();
+
+                            response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(devices)));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/setup') || urlPath.startsWith('/reconnect'))
+                        {
+                            var ifaces = require('os').networkInterfaces();
+                            var address;
+
+                            for (var dev in ifaces)
+                            {
+                                var iface = ifaces[dev].filter(function(details)
                                 {
-                                    DeviceManager.getDevice(urlParams.mac).then(function(res) {
+                                    return details.family === 'IPv4' && details.internal === false;
+                                });
 
-                                        getPluginConfig('SynTexWebHooks').then(function(res2) {
+                                if(iface.length > 0) address = iface[0].address;
+                            }
 
-                                            var obj = {
-                                                device: JSON.stringify(res),
-                                                wPort: 1710
-                                            };
+                            response.write(HTMLQuery.sendValue(head + data, 'bridge-ip', address));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/bridge'))
+                        {
+                            var pjson = require('./package.json');
+                            var ifaces = require('os').networkInterfaces();
+                            var address;
 
-                                            if(res2 != null)
-                                            {
-                                                obj.wPort = res2.port;
-                                            }
-
-                                            response.write(HTMLQuery.sendValues(head + data, obj));
-                                            response.end();
-                                        });
-                                    });
-                                }
-                                else if(urlPath == '/' || urlPath.startsWith('/index'))
+                            for (var dev in ifaces)
+                            {
+                                var iface = ifaces[dev].filter(function(details)
                                 {
-                                    DeviceManager.getDevices().then(async function(res) {
+                                    return details.family === 'IPv4' && details.internal === false;
+                                });
 
-                                        var date = new Date();
-                                        var restart = await findRestart(date);
-                                        var errors = await findErrors(date);
+                                if(iface.length > 0) address = iface[0].address;
+                            }
 
-                                        var obj = {
-                                            devices: JSON.stringify(res),
-                                            restart: 'Keine Daten Vorhanden',
-                                            errors: errors
-                                        };
+                            var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                            var obj = {
+                                ip: address,
+                                version: pjson.version,
+                                wPort: 1710
+                            };
 
-                                        if(restart != null)
-                                        {
-                                            var restartDate = new Date((restart[0].getMonth() + 1) + ' ' + restart[0].getDate() + ' ' + restart[0].getFullYear() + ' ' + restart[1].split(' >')[0]);
-                                            obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
-                                        }
+                            if(webhookConfig != null)
+                            {
+                                obj.wPort = webhookConfig.port;
+                            }
 
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/settings'))
-                                {
-                                    DeviceManager.getDevices().then(function(res) {
+                            response.write(HTMLQuery.sendValues(head + data, obj));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/log'))
+                        {
+                            var d = new Date();
+                            var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+                            var bridgeLogs = await logger.load('SynTex', date);
+                            var webhookLogs = await logger.load('SynTexWebHooks', date);
+                            var obj = {
+                                bLog: '[]',
+                                wLog: '[]'
+                            };
 
-                                        response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(res)));
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/setup') || urlPath.startsWith('/reconnect'))
-                                {
-                                    var ifaces = require('os').networkInterfaces();
-                                    var address;
+                            if(bridgeLogs != null)
+                            {    
+                                obj.bLog = JSON.stringify(bridgeLogs.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
+                            }
 
-                                    for (var dev in ifaces)
-                                    {
-                                        var iface = ifaces[dev].filter(function(details)
-                                        {
-                                            return details.family === 'IPv4' && details.internal === false;
-                                        });
+                            if(webhookLogs != null)
+                            {    
+                                obj.wLog = JSON.stringify(webhookLogs.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
+                            }
 
-                                        if(iface.length > 0) address = iface[0].address;
-                                    }
+                            response.write(HTMLQuery.sendValues(head + data, obj));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
+                        {
+                            var device = await DeviceManager.getDevice(urlParams.mac);
 
-                                    response.write(HTMLQuery.sendValue(head + data, 'bridge-ip', address));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/bridge'))
-                                {
-                                    var pjson = require('./package.json');
-                                    var ifaces = require('os').networkInterfaces();
-                                    var address;
+                            response.write(HTMLQuery.sendValue(data, 'found', device ? device.type : 'Error'));
+                            response.end();
+                        }
+                        else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
+                        {
+                            var post = '';
 
-                                    for (var dev in ifaces)
-                                    {
-                                        var iface = ifaces[dev].filter(function(details)
-                                        {
-                                            return details.family === 'IPv4' && details.internal === false;
-                                        });
-
-                                        if(iface.length > 0) address = iface[0].address;
-                                    }
-
-                                    getPluginConfig('SynTexWebHooks').then(function(res2) {
-
-                                        var webhookPort = 1710;
-
-                                        if(res2 != null)
-                                        {
-                                            webhookPort = res2.port;
-                                        }
-
-                                        var obj = {
-                                            ip: address,
-                                            version: pjson.version,
-                                            wPort: webhookPort
-                                        };
-
-                                        response.write(HTMLQuery.sendValues(head + data, obj));
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/log'))
-                                {
-                                    var d = new Date();
-
-                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-                                    logger.load('SynTex', date).then(function(res) {  
-
-                                        if(res != null)
-                                        {    
-                                            logger.load('SynTexWebHooks', date).then(function(res2) {   
-
-                                                var obj = {
-                                                    bLog: JSON.stringify(res.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:'),
-                                                    wLog: '[]'
-                                                };
-
-                                                if(res2 != null)
-                                                {    
-                                                    obj.wLog = JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
-                                                }
-
-                                                response.write(HTMLQuery.sendValues(head + data, obj));
-                                                response.end();
-                                            });
-                                        }
-                                        else
-                                        {
-                                            logger.load('SynTexWebHooks', date).then(function(res2) {  
-
-                                                var obj = {
-                                                    bLog: '[]',
-                                                    wLog: '[]'
-                                                };
-
-                                                if(res2 != null)
-                                                {    
-                                                    obj.wLog = JSON.stringify(res2.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
-                                                }
-
-                                                response.write(HTMLQuery.sendValues(head + data, obj));
-                                                response.end();
-                                            });
-                                        }
-                                    });
-                                }
-                                else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
-                                {
-                                    DeviceManager.getDevice(urlParams.mac).then(function(res) {
-
-                                        if(!res)
-                                        {
-                                            response.write(HTMLQuery.sendValue(data, 'found', 'Error'));
-                                        }
-                                        else
-                                        {
-                                            response.write(HTMLQuery.sendValue(data, 'found', res.type)); 
-                                        }
-
-                                        response.end();
-                                    });
-                                }
-                                else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
-                                {
-                                    var post = '';
-
-                                    request.on('data', function(data)
-                                    {
-                                        post += data;
-                                    });
-
-                                    request.on('end', function()
-                                    {
-                                        var json = JSON.parse(post);
-                                        
-                                        DeviceManager.setValues(json).then(function(res)
-                                        {
-                                            if(!res)
-                                            {
-                                                logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!" + err);
-                                            }
-                                        });
-                                        
-                                        response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
-                                        response.end();
-                                    });
-                                }
-                                else if(path.parse(relPath).ext == '.html')
-                                {
-                                    response.write(head + data);
-                                    response.end();
-                                }
-                                else
-                                {
-                                    response.write(data);
-                                    response.end();
-                                }
+                            request.on('data', function(data)
+                            {
+                                post += data;
                             });
-                        });
+
+                            request.on('end', function()
+                            {
+                                var json = JSON.parse(post);
+                                
+                                var res = await DeviceManager.setValues(json);
+
+                                if(!res)
+                                {
+                                    logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!" + err);
+                                }
+                                
+                                response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
+                                response.end();
+                            });
+                        }
+                        else if(path.parse(relPath).ext == '.html')
+                        {
+                            response.write(head + data);
+                            response.end();
+                        }
+                        else
+                        {
+                            response.write(data);
+                            response.end();
+                        }
                     }
                 });
             }
