@@ -69,7 +69,7 @@ logger.find = function(pluginName, date, param)
 
                     if(obj && !err)
                     {    
-                        var logs = {};
+                        var logs = [];
 
                         for(var i = 1; i < obj.logs.length + 1; i++)
                         {
