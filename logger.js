@@ -79,7 +79,7 @@ logger.find = function(pluginName, date, param)
                             }
                         }
         
-                        if(logs[0])
+                        if(logs[0] != null)
                         {
                             resolve(logs);
                         }

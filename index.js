@@ -431,7 +431,7 @@ async function findRestart(d)
 
         logger.find('SynTex', date, '[INFO] Data').then(function(res) {
 
-            if(res[0] != null)
+            if(res != null)
             {
                 resolve([d, res[0]]);
             }
@@ -453,7 +453,7 @@ async function findErrors(d)
 
         logger.find('SynTex', date, '[Error]').then(function(res) {
 
-            if(res[0] != null)
+            if(res != null)
             {
                 console.log('FOUND', res.length);
                 resolve(res.length);
