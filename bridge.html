@@ -11,11 +11,9 @@
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'">
             </div>
-            <div id="widgets">
-                <div class="widget">
-                    <input class="widget-left" type="button" value="IP Adresse">
-                    <input class="widget-right gradient-blue" type="button" value="-">
-                </div>
+            <div class="widget">
+                <input class="widget-left" type="button" value="IP Adresse">
+                <input class="widget-right gradient-blue" type="button" value="-">
             </div>
             <div id="infos" style="margin: 100px 0">
                 <h2 style="width: fit-content">• SynTex Bridge •</h2>
@@ -38,7 +36,7 @@
     var newestBVersion = '';
     var newestWVersion = '';
 
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = ip;
+    document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].value = ip;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
     setTimeout(function()
