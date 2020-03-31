@@ -27,12 +27,12 @@
                     <input class="widget-right gradient-yellow" type="button" value="-">
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Zugriffe">
+                    <input class="widget-left" type="button" value="Lesen">
                     <input class="widget-right gradient-blue" type="button" value="-">
                 </div>
                 <div class="widget" style="margin-left: 0">
                     <input class="widget-left" type="button" value="Updates">
-                    <input class="widget-right gradient-blue-green" type="button" value="-">
+                    <input class="widget-right gradient-cyan" type="button" value="-">
                 </div>
                 <div class="widget" style="margin-left: 0">
                     <input class="widget-left" type="button" value="Erfolgreich">
@@ -152,15 +152,21 @@
 
     var bLogJSON = JSON.parse('<%bLog%>');
     var wLogJSON = JSON.parse('<%wLog%>');
+    var levelCounter = [0, 0, 0, 0, 0, 0];
     var counter = 0;
 
     for(var i = bLogJSON.length - 1; i >= 0; i--)
     {
         var element = document.createElement('div');
+        var level = bLogJSON[i].split('[')[1].split(']')[0];
 
-        element.setAttribute('level', bLogJSON[i].split('[')[1].split(']')[0]);
+        element.setAttribute('level', level);
         element.setAttribute('class', 'log-entry');
         element.setAttribute('style', '');
+
+        var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+
+        levelCounter[levels.indexOf(level.toLowerCase())]++;
         
         var log = bLogJSON[i].split(']')[0] + ']';
 
@@ -184,8 +190,6 @@
 
         counter++;
     }
-
-    var levelCounter = [0, 0, 0, 0, 0, 0];
 
     for(var i = wLogJSON.length - 1; i >= 0; i--)
     {
