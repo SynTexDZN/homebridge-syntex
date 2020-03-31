@@ -12,7 +12,7 @@
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'">
             </div>
-            <div id="widgets" style="margin-bottom: 100px">
+            <div id="widgets">
                 <div class="widget">
                     <input class="widget-left" type="button" value="Geräte">
                     <input class="widget-right gradient-blue" type="button" value="-">
@@ -30,7 +30,7 @@
                     <input class="widget-right gradient-green" type="button" value="-">
                 </div>
             </div>
-            <div id="devices">
+            <div id="devices" style="margin-top: 100px">
                 <h2 style="width: fit-content">• Smart Lock •</h2>
                 <div style="display: block; margin-bottom: 20px">
                     <input class="white" type="button" style="text-align: left; padding-left: 15px" onclick="window.location.href=window.location.origin+':8000/smartlock.php'" value="Smart Lock">
@@ -334,7 +334,7 @@
                             update.setAttribute('value', 'Updates installieren!');
                         }
                         
-                        update.setAttribute('style', 'margin-bottom: 20px; font-size: 14px;');
+                        update.setAttribute('style', 'margin-top: 20px; font-size: 14px;');
                         update.setAttribute('onclick', 'installAllUpdates();');
 
                         document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('devices'));
