@@ -59,12 +59,16 @@
 </html>
 <script>
 
+    var bLogJSON = JSON.parse('<%bLog%>');
+    var wLogJSON = JSON.parse('<%wLog%>');
+
     function clearSearch()
     {
         document.getElementById('search-params').value = '';
         document.getElementById('search-level').value = '';
 
-        searchLog();
+        createLog(document.getElementById('bLog'), bLogJSON, null);
+        createLog(document.getElementById('wLog'), wLogJSON, null);
     }
 
     function searchLog()
@@ -73,75 +77,23 @@
 
         var params = document.getElementById('search-params').value;
         var level = document.getElementById('search-level').value;
-        var logs = document.getElementsByClassName('log-entry');
-        var counter = 0;
+        var search = null;
 
-        if(params == '' && level == '')
+        if(level != '' && params != '')
         {
-            for(var i = 0; i < logs.length; i++)
-            {
-                if(logs[i].hasAttribute('hidden'))
-                {
-                    logs[i].removeAttribute('hidden');
-                }
-
-                counter++;
-            }
+            search = [level, params];
         }
-        else
+        else if(params != '')
         {
-            for(var i = 0; i < logs.length; i++)
-            {
-                if(level != '' && params != '')
-                {
-                    if(logs[i].innerHTML.split('[')[1].split(']')[0].includes(level.toUpperCase()) && logs[i].innerHTML.split('<br>')[1].toUpperCase().includes(params.toUpperCase()))
-                    {
-                        if(logs[i].hasAttribute('hidden'))
-                        {
-                            logs[i].removeAttribute('hidden');
-                        }
-
-                        counter++;
-                    }
-                    else
-                    {
-                        logs[i].setAttribute('hidden', '');
-                    }
-                }
-                else if(params != '')
-                {
-                    if(logs[i].innerHTML.split('<br>')[1].toUpperCase().includes(params.toUpperCase()))
-                    {
-                        if(logs[i].hasAttribute('hidden'))
-                        {
-                            logs[i].removeAttribute('hidden');
-                        }
-
-                        counter++;
-                    }
-                    else
-                    {
-                        logs[i].setAttribute('hidden', '');
-                    }
-                }
-                else if(level != '')
-                {
-                    if(logs[i].innerHTML.split('[')[1].split(']')[0].toUpperCase().includes(level.toUpperCase()))
-                    {
-                        if(logs[i].hasAttribute('hidden'))
-                        {
-                            logs[i].removeAttribute('hidden');
-                        }
-
-                        counter++;
-                    }
-                    else
-                    {
-                        logs[i].setAttribute('hidden', '');
-                    }
-                }
-            }
+            search = [null, params];
         }
+        else if(level != '')
+        {
+            search = [level, null];
+        }
+
+        createLog(document.getElementById('bLog'), bLogJSON, search);
+        createLog(document.getElementById('wLog'), wLogJSON, search);
 
         document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
         document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
@@ -150,82 +102,73 @@
 </script>
 <script>
 
-    var bLogJSON = JSON.parse('<%bLog%>');
-    var wLogJSON = JSON.parse('<%wLog%>');
+    var counter;
     var levelCounter = [0, 0, 0, 0, 0, 0];
-    var counter = 0;
+    var countLogs = true;
 
-    for(var i = bLogJSON.length - 1; i >= 0; i--)
+    function createLog(element, log, show)
     {
-        var element = document.createElement('div');
-        var level = bLogJSON[i].split('[')[1].split(']')[0];
+        counter = 0;
+        element.innerHTML = '';
 
-        element.setAttribute('level', level);
-        element.setAttribute('class', 'log-entry');
-        element.setAttribute('style', '');
-
-        var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
-
-        levelCounter[levels.indexOf(level.toLowerCase())]++;
-        
-        var log = bLogJSON[i].split(']')[0] + ']';
-
-        if(bLogJSON[i].includes('(') && bLogJSON[i].includes(')'))
+        for(var i = log.length - 1; i >= 0; i--)
         {
-            log += ' > ' + bLogJSON[i].split('(')[1].split(')')[0] + '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
-        }
-        else
-        {
-            log += '<br>' + bLogJSON[i].replace(bLogJSON[i].split(']')[0] + '] ', '');
-        }
-        
-        element.innerHTML = log;
+            var displayEntry = false;
 
-        if(i != 0)
-        {
-            element.setAttribute('style', element.getAttribute('style') + '; margin-bottom: 20px');
+            if(show != null)
+            {
+                var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+                var level = log[i].split('[')[1].split(']')[0];
+
+                if(show[0] != null && show[1] != '' && show[0] == level && show[1] == log[i].split(']')[0].split('[')[1])
+                {
+                    displayEntry = true;
+                }
+                else if(show[0] != null && show[0] == level)
+                {
+                    displayEntry = true;
+                }
+                else if(show[1] != null && show[1] == log[i].split(']')[0].split('[')[1])
+                {
+                    displayEntry = true;
+                }
+            }
+            else
+            {
+                displayEntry = true;
+            }
+
+            if(displayEntry)
+            {
+                element.innerHTML += log[i].split(']')[0] + ']';
+
+                if(log[i].includes('(') && log[i].includes(')'))
+                {
+                    element.innerHTML += ' > ' + log[i].split('(')[1].split(')')[0] + '<br>' + log[i].replace(log[i].split(']')[0] + '] ', '').split(' (')[0];
+                }
+                else
+                {
+                    element.innerHTML += '<br>' + log[i].replace(log[i].split(']')[0] + '] ', '');
+                }
+                
+                if(i != 0)
+                {
+                    element.innerHTML += '\n'
+                }
+
+                counter++;
+            }
+
+            if(countLogs)
+            {
+                levelCounter[levels.indexOf(level.toLowerCase())]++;
+                countLogs = false;
+            }
         }
-
-        document.getElementById('bLog').appendChild(element);
-
-        counter++;
     }
 
-    for(var i = wLogJSON.length - 1; i >= 0; i--)
-    {
-        var element = document.createElement('div');
-        var level = wLogJSON[i].split('[')[1].split(']')[0];
-
-        element.setAttribute('level', level);
-        element.setAttribute('class', 'log-entry');
-        element.setAttribute('style', '');
-
-        var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
-
-        levelCounter[levels.indexOf(level.toLowerCase())]++;
-
-        var log = wLogJSON[i].split(']')[0] + ']';
-
-        if(wLogJSON[i].includes('(') && wLogJSON[i].includes(')'))
-        {
-            log += ' > ' + wLogJSON[i].split('(')[1].split(')')[0] + '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '').split(' (')[0];
-        }
-        else
-        {
-            log += '<br>' + wLogJSON[i].replace(wLogJSON[i].split(']')[0] + '] ', '');
-        }
-
-        element.innerHTML = log;
-
-        if(i != 0)
-        {
-            element.setAttribute('style', element.getAttribute('style') + '; margin-bottom: 20px');
-        }
-
-        document.getElementById('wLog').appendChild(element);
-
-        counter++;
-    }
+    createLog(document.getElementById('bLog'), bLogJSON, null);
+    createLog(document.getElementById('wLog'), wLogJSON, null);
 
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = levelCounter[5];
     document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = levelCounter[4];
