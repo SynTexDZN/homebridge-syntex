@@ -160,23 +160,17 @@
                 counter++;
             }
 
-            console.log(countLogs, i);
-
             if(countLogs)
             {
-                console.log(levels.indexOf(level.toLowerCase()), level.toLowerCase());
                 levelCounter[levels.indexOf(level.toLowerCase())]++;
-            }
-
-            if(i == 0)
-            {
-                countLogs = false;
             }
         }
     }
 
     createLog(document.getElementById('bLog'), bLogJSON, null);
     createLog(document.getElementById('wLog'), wLogJSON, null);
+
+    countLogs = false;
 
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = levelCounter[5];
     document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = levelCounter[4];
