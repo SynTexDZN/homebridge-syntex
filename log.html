@@ -113,13 +113,12 @@
 
         for(var i = log.length - 1; i >= 0; i--)
         {
+            var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+            var level = log[i].split('[')[1].split(']')[0];
             var displayEntry = false;
 
             if(show != null)
             {
-                var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
-                var level = log[i].split('[')[1].split(']')[0];
-
                 if(show[0] != null && show[1] != '' && show[0] == level && show[1] == log[i].split(']')[0].split('[')[1])
                 {
                     displayEntry = true;
