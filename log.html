@@ -167,9 +167,12 @@
                 console.log(levels.indexOf(level.toLowerCase()), level.toLowerCase());
                 levelCounter[levels.indexOf(level.toLowerCase())]++;
             }
-        }
 
-        countLogs = false;
+            if(i != 0)
+            {
+                countLogs = false;
+            }
+        }
     }
 
     createLog(document.getElementById('bLog'), bLogJSON, null);
