@@ -271,7 +271,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                                             {
                                                 platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
                                             }
-                                            else
+                                            else if(type != "switch")
                                             {
                                                 platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
                                             }
