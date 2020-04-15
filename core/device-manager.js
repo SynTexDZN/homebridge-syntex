@@ -220,7 +220,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                 var dbName = await getValue(mac, 'name');
                 var dbInterval = await getValue(mac, 'interval');
                 var dbLED = await getValue(mac, 'led');
-                var dbSceneControl = await getValue(mac, 'scenecontrol');
+                var dbButtons = await getValue(mac, 'buttons');
                 var dbIP = await getValue(mac, 'ip');
                 var dbVersion = await getValue(mac, 'version');
                 
@@ -234,7 +234,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                     setValue(mac, 'version', version);
                 }
 
-                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "scenecontrol": "' + dbSceneControl + '", "port": "' + webhookPort + '"}']);
+                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "buttons": ' + dbButtons + ', "port": "' + webhookPort + '"}']);
             }
             else
             {
@@ -250,7 +250,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                         version: version,
                         interval: interval,
                         led: 1,
-                        scenecontrol: 0
+                        buttons: []
                     };
 
                     storage.add(device, (err) => {
@@ -298,9 +298,9 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                                                 platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
                                             }
 
-                                            if(buttons != 0)
+                                            if(buttons.length != 0)
                                             {
-                                                platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons};
+                                                platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons.length};
                                             }
                                         }
                                     }
@@ -317,7 +317,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                                         {
                                             logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                            resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "scenecontrol": "0", "port": "' + webhookPort + '"}']);
+                                            resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "buttons": [], "port": "' + webhookPort + '"}']);
                                         }
                                     });    
                                 }
@@ -365,8 +365,6 @@ async function getValue(mac, param)
         
         storage.load(mac, (err, obj) => {  
 
-            logger.log("warn", obj);
-            logger.log("warn", obj[param]);
             resolve(obj[param]);
         });
     });
