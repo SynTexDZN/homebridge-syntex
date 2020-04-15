@@ -19,13 +19,25 @@ async function removeDevice(mac, type)
                     {
                         var platform = obj.platforms[i];
 
-                        if(type == "relais" || type == "switch")
+                        if(type == "relais")
                         {
                             for(const i in platform.switches)
                             {
                                 if(platform.switches[i].mac === mac)
                                 {
                                     platform.switches.splice(i, 1);
+
+                                    response = true;
+                                }
+                            }
+                        }
+                        else if(type == "switch")
+                        {
+                            for(const i in platform.statelessswitches)
+                            {
+                                if(platform.statelessswitches[i].mac === mac)
+                                {
+                                    platform.statelessswitches.splice(i, 1);
 
                                     response = true;
                                 }
