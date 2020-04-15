@@ -365,6 +365,8 @@ async function getValue(mac, param)
         
         storage.load(mac, (err, obj) => {  
 
+            logger.log("warn", obj);
+            logger.log("warn", obj[param]);
             resolve(obj[param]);
         });
     });
