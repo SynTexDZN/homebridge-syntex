@@ -234,7 +234,7 @@ async function initDevice(mac, ip, name, type, version, interval, buttons)
                     setValue(mac, 'version', version);
                 }
 
-                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "buttons": ' + dbButtons + ', "port": "' + webhookPort + '"}']);
+                resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "buttons": [' + dbButtons + '], "port": "' + webhookPort + '"}']);
             }
             else
             {
