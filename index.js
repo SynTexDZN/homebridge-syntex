@@ -60,7 +60,7 @@ SynTexPlatform.prototype = {
             {
                 if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh)
                 {
-                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh).then(function(res) {
+                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons ? urlParams.buttons : 0).then(function(res) {
 
                         response.write(res[1]);
                         response.end();
