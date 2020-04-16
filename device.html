@@ -136,11 +136,11 @@
             var events = JSON.parse('[' + device[settings[i].index] + ']');
 
             document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ':</b></p>';
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<div>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<div style="max-width: 150px">';
 
             for(var event in events)
             {
-                document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px; margin-top: 20px">';
+                document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="margin-top: 20px">';
             }
 
             document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '</div>';
