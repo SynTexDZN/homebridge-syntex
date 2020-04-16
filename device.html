@@ -138,12 +138,23 @@
             var container = document.createElement('div');
 
             main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
-            main.setAttribute('style', 'margin-top: 32px; margin-bottom: 0; display: flex');
+            main.setAttribute('style', 'display: flex');
             container.setAttribute('style', 'max-width: 150px; margin-right: auto; display: inline-block');
 
             for(const j in events)
             {
-                container.innerHTML += '<input value="' + events[j] + '" name="' + settings[i].index + '" type="text" style="margin-bottom: 16px">';
+                var input = document.createElement('input');
+
+                input.setAttribute('value', events[j]);
+                input.setAttribute('name', settings[i].index);
+                input.setAttribute('type', 'text');
+
+                if(j != events.length - 1)
+                {
+                    input.setAttribute('style', 'margin-bottom: 16px');
+                }
+
+                container.appendChild(input);
             }
 
             main.appendChild(container);
