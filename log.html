@@ -119,15 +119,15 @@
 
             if(show != null)
             {
-                if(show[0] != null && show[1] != '' && show[0] == level && show[1] == log[i].split(']')[0].split('[')[1])
+                if(show[0] != null && show[1] != null && show[0].toUpperCase() == level && show[1] == show[1] == log[i].replace(log[i].split(']')[0] + '] ', '').includes(show[1]))
                 {
                     displayEntry = true;
                 }
-                else if(show[0] != null && show[0] == level)
+                else if(show[0] != null && show[0].toUpperCase() == level)
                 {
                     displayEntry = true;
                 }
-                else if(show[1] != null && show[1] == log[i].split(']')[0].split('[')[1])
+                else if(show[1] != null && show[1] == log[i].replace(log[i].split(']')[0] + '] ', '').includes(show[1]))
                 {
                     displayEntry = true;
                 }
