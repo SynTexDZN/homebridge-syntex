@@ -109,7 +109,7 @@
     function createLog(element, log, show)
     {
         counter = 0;
-        element.innerHTML = '';
+        var filterLog = '';
 
         for(var i = log.length - 1; i >= 0; i--)
         {
@@ -139,7 +139,7 @@
 
             if(displayEntry)
             {
-                element.innerHTML += log[i].split(']')[0] + ']';
+                filterLog += log[i].split(']')[0] + ']';
                 /*
                 if(log[i].includes('(') && log[i].includes(')'))
                 {
@@ -152,7 +152,7 @@
                 */
                 if(i != 0)
                 {
-                    element.innerHTML += '\n';
+                    filterLog += '\n';
                 }
 
                 counter++;
@@ -163,6 +163,8 @@
                 levelCounter[levels.indexOf(level.toLowerCase())]++;
             }
         }
+
+        element.innerHTML = filterLog;
     }
 
     createLog(document.getElementById('bLog'), bLogJSON, null);
