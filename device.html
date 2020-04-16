@@ -119,21 +119,32 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
-    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>Name: <input value="' + device.name + '" name="name" type="text" style="max-width: 325px"></p>';
+    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
 
     for(const i in settings)
     {
         if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if((device.type == 'motion') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+        }
+        else if(settings[i].index == 'events')
+        {
+            var events = JSON.parse('[' + device[settings[i].index] + ']');
+
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ':</b></p>';
+
+            for(var event in events)
+            {
+                document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px; margin-top: 20px">';
+            }
         }
         else
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
         }
     }
 
