@@ -134,11 +134,11 @@
         else if(settings[i].index == 'events')
         {
             var events = JSON.parse('[' + device[settings[i].index] + ']');
-            var title = document.createElement('p');
+            var main = document.createElement('div');
             var container = document.createElement('div');
 
-            title.innerHTML = '<b>' + settings[i].name + ': </b>';
-            title.setAttribute('style', 'margin-top: 32px; margin-bottom: 0');
+            main.innerHTML = '<p><b>' + settings[i].name + ': </b></p>';
+            main.setAttribute('style', 'margin-top: 32px; margin-bottom: 0');
             container.setAttribute('style', 'max-width: 150px; margin: auto; display: inline-block');
 
             for(var event in events)
@@ -146,8 +146,8 @@
                 container.innerHTML += '<input value="' + event + '" name="' + settings[i].index + '" type="text" style="margin-top: 16px">';
             }
 
-            title.appendChild(container);
-            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(title);
+            main.appendChild(container);
+            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(main);
         }
         else
         {
