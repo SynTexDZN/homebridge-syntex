@@ -821,31 +821,27 @@
                 {
                     if(device.type == 'temperature')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                        settings['interval'] = form.children[i].children[0].value * 1000;
                     }
                     else if(device.type == 'motion')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
+                        settings['interval'] = (form.children[i].children[0].value - 1.5) * 1000;
                     }
                     else if(device.type == 'light')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                        settings['interval'] = form.children[i].children[0].value * 1000;
                     }
                     else
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                        settings['interval'] = form.children[i].children[0].value;
                     }
                 }
                 else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
                 {
                     var concat = '[' + form.children[i].getElementsByTagName('input')[0].value;
 
-                    console.log(form.children[i].getElementsByTagName('input'));
-                    console.log(form.children[i].getElementsByTagName('input').length);
-
                     for(var j = 0; j < form.children[i].getElementsByTagName('input').length; j++)
                     {
-                        console.log(form.children[i].getElementsByTagName('input')[j]);
                         concat += ',' + form.children[i].getElementsByTagName('input')[j].value;
                     }
 
@@ -853,7 +849,7 @@
 
                     console.log(JSON.parse(concat));
 
-                    settings[form.children[i].children[0].getAttribute('name')] = JSON.parse(concat);
+                    settings['events'] = JSON.parse(concat);
                 }
                 else
                 {
