@@ -817,7 +817,7 @@
             
             for(var i = 0; i < form.childElementCount; i++)
             {
-                if(form.children[i].children[0].getAttribute('name') == 'interval')
+                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                 {
                     if(device.type == 'temperature')
                     {
@@ -836,9 +836,18 @@
                         settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
                     }
                 }
-                else if(form.children[i].children[0].getAttribute('name') == 'events')
+                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
                 {
-                    settings[form.children[i].children[0].getAttribute('name')] = JSON.parse('[' + form.children[i].children[0].value + ']');
+                    var concat = '[' + form.children[i].getElementsByTagName('input')[0].value;
+
+                    for(const j in form.children[i].getElementsByTagName('input'))
+                    {
+                        concat += ',' + form.children[i].getElementsByTagName('input')[j].value;
+                    }
+
+                    concat += ']';
+
+                    settings[form.children[i].children[0].getAttribute('name')] = JSON.parse(concat);
                 }
                 else
                 {
