@@ -117,8 +117,6 @@
             var level = log[i].split('[')[1].split(']')[0];
             var displayEntry = false;
 
-            console.log(log[i]);
-
             if(show != null)
             {
                 if(show[0] != null && show[1] != '' && show[0] == level && show[1] == log[i].split(']')[0].split('[')[1])
@@ -142,19 +140,19 @@
             if(displayEntry)
             {
                 filterLog += log[i].split(']')[0] + ']';
-                /*
+                
                 if(log[i].includes('(') && log[i].includes(')'))
                 {
-                    element.innerHTML += ' > ' + log[i].split('(')[1].split(')')[0] + '<br>' + log[i].replace(log[i].split(']')[0] + '] ', '').split(' (')[0];
+                    filterLog += ' > ' + log[i].split('(')[1].split(')')[0] + '\n' + log[i].replace(log[i].split(']')[0] + '] ', '').split(' (')[0];
                 }
                 else
                 {
-                    element.innerHTML += '<br>' + log[i].replace(log[i].split(']')[0] + '] ', '');
+                    filterLog += '\n' + log[i].replace(log[i].split(']')[0] + '] ', '');
                 }
-                */
+                
                 if(i != 0)
                 {
-                    filterLog += '\n';
+                    filterLog += '\n\n';
                 }
 
                 counter++;
