@@ -235,7 +235,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 setValue(mac, 'version', version);
             }
 
-            if(!eventButton && dbEvents.length != 0)
+            if(dbEvents && !eventButton && dbEvents.length != 0)
             {
                 var created = await createEventButton(mac, dbName, dbEvents.length);
 
