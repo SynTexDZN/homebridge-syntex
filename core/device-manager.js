@@ -211,9 +211,9 @@ async function checkName(name)
 
 async function initDevice(mac, ip, name, type, version, interval, events)
 {
-    return new Promise(resolve => {
+    return new Promise(async function(resolve) {
         
-        var res = exists(mac);
+        var res = await exists(mac);
         var eventButton = await checkEventButton(mac);
 
         if(res)
