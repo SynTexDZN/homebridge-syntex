@@ -137,13 +137,13 @@
             var main = document.createElement('div');
             var container = document.createElement('div');
 
-            main.innerHTML = '<p><b>' + settings[i].name + ': </b></p>';
-            main.setAttribute('style', 'margin-top: 32px; margin-bottom: 0');
-            container.setAttribute('style', 'max-width: 150px; margin: auto; display: inline-block');
+            main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
+            main.setAttribute('style', 'margin-top: 32px; margin-bottom: 0; display: flex');
+            container.setAttribute('style', 'max-width: 150px; margin-right: auto; display: inline-block');
 
-            for(var event in events)
+            for(const j in events)
             {
-                container.innerHTML += '<input value="' + event + '" name="' + settings[i].index + '" type="text" style="margin-top: 16px">';
+                container.innerHTML += '<input value="' + events[j] + '" name="' + settings[i].index + '" type="text" style="margin-bottom: 16px">';
             }
 
             main.appendChild(container);
