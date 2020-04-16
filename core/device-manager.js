@@ -215,6 +215,8 @@ async function initDevice(mac, ip, name, type, version, interval, events)
         
         exists(mac).then(async function(res)
         {
+            var eventButton = await checkEventButton();
+
             if(res)
             {
                 var dbName = await getValue(mac, 'name');
@@ -223,7 +225,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 var dbEvents = await getValue(mac, 'events');
                 var dbIP = await getValue(mac, 'ip');
                 var dbVersion = await getValue(mac, 'version');
-                
+
                 if(ip != dbIP)
                 {
                     setValue(mac, 'ip', ip);
@@ -232,6 +234,13 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 if(version != dbVersion)
                 {
                     setValue(mac, 'version', version);
+                }
+
+                logger.log("warn", dbEvents);
+
+                if(!eventButton)
+                {
+                    
                 }
 
                 resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "events": [' + dbEvents + '], "port": "' + webhookPort + '"}']);
@@ -298,9 +307,9 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                                                 platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
                                             }
 
-                                            if(events.length != 0)
+                                            if((type == "light" || type == "temperature" || type == "switch") && !eventButton)
                                             {
-                                                platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: events.length};
+                                                platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: 0};
                                             }
                                         }
                                     }
@@ -465,6 +474,104 @@ async function setValues(values)
                         resolve(true);
                     }
                 });
+            }
+        });
+    });
+}
+
+async function checkEventButton(mac)
+{
+    return new Promise(resolve => {
+
+        config.load('config', (err, obj) => {    
+
+            if(obj)
+            {                            
+                obj.id = 'config';
+
+                var found = false;
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    {
+                        for(const j in obj.platforms[i].statelessswitches)
+                        {
+                            if(obj.platforms[i].statelessswitches[j].mac === mac)
+                            {
+                                found = true;
+                            }
+                        }
+                    }
+                }
+
+                resolve(found ? true : false);
+            }
+
+            if(err || !obj)
+            {
+                logger.log('error', "Config.json konnte nicht geladen werden!");
+
+                resolve(false);
+            }
+        });
+    });
+}
+
+async function initEventButton(mac, buttons)
+{
+    return new Promise(resolve => {
+
+        config.load('config', (err, obj) => {    
+
+            if(obj)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    {
+                        var platform = obj.platforms[i];
+                        var found = false;
+
+                        for(const i in platform.switches)
+                        {
+                            if(platform.sensors[i].name === name)
+                            {
+                                found = true;
+                            }
+                        }
+
+                        if(!found && events.length != 0)
+                        {
+                            platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: events.length};
+                        }
+                    }
+                }
+
+                config.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
+
+                        resolve(false);
+                    }
+                    else
+                    {
+                        logger.log('success', "Neuer Event Button wurde dem System hinzugefügt ( " + mac + " )");
+
+                        resolve(true);
+                    }
+                });    
+            }
+
+            if(err || !obj)
+            {
+                logger.log('error', "Config.json konnte nicht geladen werden!");
+
+                resolve(false);
             }
         });
     });
