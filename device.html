@@ -840,8 +840,12 @@
                 {
                     var concat = '[' + form.children[i].getElementsByTagName('input')[0].value;
 
-                    for(const j in form.children[i].getElementsByTagName('input'))
+                    console.log(form.children[i].getElementsByTagName('input'));
+                    console.log(form.children[i].getElementsByTagName('input').length);
+
+                    for(var j = 0; j < form.children[i].getElementsByTagName('input').length; j++)
                     {
+                        console.log(form.children[i].getElementsByTagName('input')[j]);
                         concat += ',' + form.children[i].getElementsByTagName('input')[j].value;
                     }
 
