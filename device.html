@@ -817,6 +817,10 @@
             
             for(var i = 0; i < form.childElementCount; i++)
             {
+                console.log(form.children[i].children[0].getAttribute('name'));
+                console.log(form.children[i]);
+                console.log(form.children[i].children[0].value);
+
                 if(form.children[i].children[0].getAttribute('name') == 'interval')
                 {
                     if(device.type == 'temperature')
