@@ -134,16 +134,17 @@
         else if(settings[i].index == 'events')
         {
             var events = JSON.parse('[' + device[settings[i].index] + ']');
+            var container = document.createElement('div');
 
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ':</b></p>';
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<div style="max-width: 150px">';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p style="margin-top: 40px; margin-bottom: 0"><b>' + settings[i].name + ':</b></p>';
+            container.setAttribute('style', 'max-width: 150px; margin: auto');
 
             for(var event in events)
             {
-                document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="margin-top: 20px">';
+                container.innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="margin-top: 16px">';
             }
 
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '</div>';
+            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(container);
         }
         else
         {
