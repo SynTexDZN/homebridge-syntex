@@ -236,7 +236,8 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                     setValue(mac, 'version', version);
                 }
 
-                logger.log("warn", dbEvents);
+                logger.log("warn", dbEvents[0]);
+                logger.log("warn", '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "events": [' + dbEvents + '], "port": "' + webhookPort + '"}');
 
                 if(!eventButton)
                 {
@@ -506,65 +507,6 @@ async function checkEventButton(mac)
                 }
 
                 resolve(found ? true : false);
-            }
-
-            if(err || !obj)
-            {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
-
-                resolve(false);
-            }
-        });
-    });
-}
-
-async function initEventButton(mac, buttons)
-{
-    return new Promise(resolve => {
-
-        config.load('config', (err, obj) => {    
-
-            if(obj)
-            {                            
-                obj.id = 'config';
-
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        var platform = obj.platforms[i];
-                        var found = false;
-
-                        for(const i in platform.switches)
-                        {
-                            if(platform.sensors[i].name === name)
-                            {
-                                found = true;
-                            }
-                        }
-
-                        if(!found && events.length != 0)
-                        {
-                            platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: events.length};
-                        }
-                    }
-                }
-
-                config.add(obj, (err) => {
-
-                    if(err)
-                    {
-                        logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
-
-                        resolve(false);
-                    }
-                    else
-                    {
-                        logger.log('success', "Neuer Event Button wurde dem System hinzugefügt ( " + mac + " )");
-
-                        resolve(true);
-                    }
-                });    
             }
 
             if(err || !obj)
