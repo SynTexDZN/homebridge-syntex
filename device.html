@@ -817,27 +817,27 @@
             
             for(var i = 0; i < form.childElementCount; i++)
             {
-                console.log(form.children[i].children[0].getAttribute('name'));
+                console.log(form.children[i].getElementsByTagName('input')[0].getAttribute('name'));
                 console.log(form.children[i]);
-                console.log(form.children[i].children[0].value);
+                console.log(form.children[i].getElementsByTagName('input')[0].value);
 
-                if(form.children[i].children[0].getAttribute('name') == 'interval')
+                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                 {
                     if(device.type == 'temperature')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                     }
                     else if(device.type == 'motion')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = (form.children[i].children[0].value - 1.5) * 1000;
+                        settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
                     }
                     else if(device.type == 'light')
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value * 1000;
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                     }
                     else
                     {
-                        settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
                     }
                 }
                 else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
@@ -855,7 +855,7 @@
                 }
                 else
                 {
-                    settings[form.children[i].children[0].getAttribute('name')] = form.children[i].children[0].value;
+                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
                 }
             }
 
