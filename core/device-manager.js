@@ -238,7 +238,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                 if(!eventButton && dbEvents.length != 0)
                 {
-                    var created = await createEventButton(mac, dbEvents.length);
+                    var created = await createEventButton(mac, dbName, dbEvents.length);
 
                     if(created)
                     {
@@ -521,7 +521,7 @@ async function checkEventButton(mac)
     });
 }
 
-async function createEventButton(mac, buttons)
+async function createEventButton(mac, name, buttons)
 {
     return new Promise(resolve => {
 

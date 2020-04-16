@@ -59,10 +59,13 @@
             index: 'interval',
             name: 'Interval'
         });
+    }
 
+    if(device.type == 'light' || device.type == 'temperature' || device.type == 'switch')
+    {
         settings.push({
-            index: 'scenecontrol',
-            name: 'Szenen'
+            index: 'events',
+            name: 'Events'
         });
     }
 
