@@ -102,6 +102,10 @@
                 infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
             }
         }
+        else if(settings[i].index == 'events' && device[settings[i].index] == '')
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Keine</p>';
+        }
         else
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
