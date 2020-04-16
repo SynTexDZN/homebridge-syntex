@@ -134,17 +134,20 @@
         else if(settings[i].index == 'events')
         {
             var events = JSON.parse('[' + device[settings[i].index] + ']');
+            var title = document.createElement('p');
             var container = document.createElement('div');
 
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p style="margin-top: 40px; margin-bottom: 0"><b>' + settings[i].name + ':</b></p>';
-            container.setAttribute('style', 'max-width: 150px; margin: auto');
+            title.innerHTML = '<b>' + settings[i].name + ': </b>';
+            title.setAttribute('style', 'margin-top: 32px; margin-bottom: 0');
+            container.setAttribute('style', 'max-width: 150px; margin: auto; display: inline-block');
 
             for(var event in events)
             {
-                container.innerHTML += '<input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="margin-top: 16px">';
+                container.innerHTML += '<input value="' + event + '" name="' + settings[i].index + '" type="text" style="margin-top: 16px">';
             }
 
-            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(container);
+            title.appendChild(container);
+            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(title);
         }
         else
         {
