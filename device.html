@@ -805,7 +805,7 @@
                 }
                 else if(form.children[i].children[0].getAttribute('name') == 'events')
                 {
-                    settings[form.children[i].children[0].getAttribute('name')] = [form.children[i].children[0].value];
+                    settings[form.children[i].children[0].getAttribute('name')] = JSON.parse('[' + form.children[i].children[0].value + ']');
                 }
                 else
                 {
