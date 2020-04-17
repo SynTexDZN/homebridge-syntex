@@ -107,14 +107,10 @@
             createLog(document.getElementById('bLog'), bLogJSON, search);
             createLog(document.getElementById('wLog'), wLogJSON, search);
 
-            console.log(document.getElementById('bLog').innerHTML.slice(-2).match(/\r/g));
-            console.log(document.getElementById('wLog').innerHTML.slice(-2).match(/\r/g));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\r/g));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\r/g));
-            console.log(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g));
-            console.log(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\n/g));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\n/g));
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) != null);
+            console.log(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) != null);
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\n/g) != null);
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).match(/\n/g) != null);
 
             document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
             document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
@@ -164,12 +160,12 @@
                 }
                 else
                 {
-                    filterLog += '\r' + log[i].replace(log[i].split(']')[0] + '] ', '');
+                    filterLog += '\n' + log[i].replace(log[i].split(']')[0] + '] ', '');
                 }
                 
                 if(i != 0)
                 {
-                    filterLog += '\r\r';
+                    filterLog += '\n\n';
                 }
 
                 counter++;
