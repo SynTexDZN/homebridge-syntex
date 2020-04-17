@@ -308,14 +308,7 @@ async function exists(mac)
         
         storage.load(mac, (err, obj) => {  
 
-            if(obj)
-            {
-                resolve(true);
-            }
-            else
-            {
-                resolve(false);
-            }
+            resolve(obj ? true : false);
         });
     });
 }
@@ -384,13 +377,9 @@ async function setValue(mac, param, value)
                     if(err)
                     {
                         logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
+                    }
 
-                        resolve(false);
-                    }
-                    else
-                    {
-                        resolve(true);
-                    }
+                    resolve(err ? false : true);
                 });
             }
         });
@@ -418,13 +407,9 @@ async function setValues(values)
                     if(err)
                     {
                         logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
+                    }
 
-                        resolve(false);
-                    }
-                    else
-                    {
-                        resolve(true);
-                    }
+                    resolve(err ? false : true);
                 });
             }
         });
@@ -495,15 +480,13 @@ async function createEventButton(mac, name, buttons)
                     if(err)
                     {
                         logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
-
-                        resolve(false);
                     }
                     else
                     {
                         logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
-
-                        resolve(true);
                     }
+
+                    resolve(err ? false : true);
                 });    
             }
 
@@ -524,11 +507,6 @@ function SETUP(configPath, slog, storagePath, wPort)
     dataStorage = store(storagePath.replace('/data', '/'));
     logger = slog;
     webhookPort = wPort;
-
-    console.log(configPath);
-    console.log(slog);
-    console.log(storagePath);
-    console.log(wPort);
 };
 
 module.exports = {
