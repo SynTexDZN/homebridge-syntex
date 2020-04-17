@@ -109,12 +109,12 @@
 
             console.log(document.getElementById('bLog').innerHTML.slice(-2));
             console.log(document.getElementById('wLog').innerHTML.slice(-2));
-            console.log(document.getElementById('bLog').innerHTML.slice(-2) == '\r\r');
-            console.log(document.getElementById('bLog').innerHTML.slice(-2) == '\r\r');
-            console.log(document.getElementById('bLog').innerHTML.slice(-2) == '\r');
-            console.log(document.getElementById('bLog').innerHTML.slice(-2) == '\r');
-            console.log(document.getElementById('bLog').innerHTML.slice(-1) == '\r');
-            console.log(document.getElementById('bLog').innerHTML.slice(-1) == '\r');
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).indexOf('\r\r'));
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).indexOf('\r\r'));
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).indexOf('\r'));
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).indexOf('\r'));
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).indexOf('\r'));
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).indexOf('\r'));
 
             document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
             document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
