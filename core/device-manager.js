@@ -137,20 +137,16 @@ async function checkName(name)
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
                         var platform = obj.platforms[i];
-                        
-                        for(const i in platform.switches)
+                        var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
+
+                        for(const i in configContainer)
                         {
-                            if(platform.sensors[i].name === name)
+                            for(const j in configContainer[i])
                             {
-                                resolve(false);
-                            }
-                        }
-                        
-                        for(const i in platform.sensors)
-                        {
-                            if(platform.sensors[i].name === name)
-                            {
-                                resolve(false);
+                                if(configContainer[i][j].mac === mac)
+                                {
+                                    resolve(false);
+                                }
                             }
                         }
                         
