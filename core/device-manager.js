@@ -5,12 +5,12 @@ async function removeDevice(mac, type)
 {
     return new Promise(resolve => {
 
-        var response = false;
-
         config.load('config', (err, obj) => {    
 
             if(obj)
-            {                            
+            {                       
+                var configRemoved = false;
+
                 obj.id = 'config';
 
                 for(const i in obj.platforms)
@@ -18,80 +18,35 @@ async function removeDevice(mac, type)
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
                         var platform = obj.platforms[i];
+                        var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
 
-                        if(type == "relais")
+                        for(const i in configContainer)
                         {
-                            for(const i in platform.switches)
+                            for(const j in configContainer[i])
                             {
-                                if(platform.switches[i].mac === mac)
+                                if(configContainer[i][j].mac === mac)
                                 {
-                                    platform.switches.splice(i, 1);
+                                    configContainer[i].splice(j, 1);
 
-                                    response = true;
+                                    configRemoved = true;
                                 }
                             }
                         }
-                        else if(type == "switch")
-                        {
-                            for(const i in platform.statelessswitches)
-                            {
-                                if(platform.statelessswitches[i].mac === mac)
-                                {
-                                    platform.statelessswitches.splice(i, 1);
 
-                                    response = true;
-                                }
-                            }
-                        }
-                        else if(type == "rgb" || type == "rgbw")
+                        if(type == 'temperature' || type == 'light')
                         {
-                            for(const i in platform.lights)
-                            {
-                                if(platform.lights[i].mac === mac)
-                                {
-                                    platform.lights.splice(i, 1);
-
-                                    response = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if(type == 'temperature')
-                            {
-                                for(const i in platform.sensors)
-                                {
-                                    if(platform.sensors[i].mac === mac && platform.sensors[i].type === 'humidity')
-                                    {
-                                        platform.sensors.splice(i, 1);
-                                    }
-                                }
-                            }
-                            else if(type == 'light')
-                            {
-                                for(const i in platform.sensors)
-                                {
-                                    if(platform.sensors[i].mac === mac && platform.sensors[i].type === 'rain')
-                                    {
-                                        platform.sensors.splice(i, 1);
-                                    }
-                                }
-                            }
-
                             for(const i in platform.sensors)
                             {
                                 if(platform.sensors[i].mac === mac)
                                 {
                                     platform.sensors.splice(i, 1);
-
-                                    response = true;
                                 }
                             }
                         }
                     }
                 }
 
-                if(response)
+                if(configRemoved)
                 {
                     config.add(obj, (err) => {
 
@@ -535,7 +490,7 @@ async function createEventButton(mac, name, buttons)
                     {
                         var platform = obj.platforms[i];
 
-                        platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons};
+                        platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
                     }
                 }
 
