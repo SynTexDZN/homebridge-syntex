@@ -107,14 +107,18 @@
             createLog(document.getElementById('bLog'), bLogJSON, search);
             createLog(document.getElementById('wLog'), wLogJSON, search);
 
-            console.log(-(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
-            console.log(-(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            var lastCharsB = (document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length;
+            var lastCharsW = (document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length;
 
-            document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML;
-            document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML;
+            if(lastCharsB > 0)
+            {
+                document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML.slice(0, -(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            }
 
-            //document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML.slice(0, -(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
-            //document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            if(lastCharsW > 0)
+            {
+                document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            }
 
             document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
             document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
@@ -133,10 +137,6 @@
 
             if(show != null)
             {
-                console.log(show[0]);
-                console.log(level);
-                console.log(log[i]);
-
                 if(show[0] != null && show[1] != null)
                 {
                     if(show[0].toUpperCase() == level && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
@@ -158,8 +158,6 @@
                 displayEntry = true;
             }
 
-            console.log(displayEntry);
-
             if(displayEntry)
             {
                 filterLog += log[i].split(']')[0] + ']';
@@ -178,11 +176,6 @@
                     filterLog += '\n\n';
                 }
 
-                if(show != null)
-                {
-                    //console.log(filterLog);
-                }
-
                 counter++;
             }
 
@@ -192,7 +185,6 @@
             }
         }
 
-        console.log(filterLog);
         element.innerHTML = filterLog;
         document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
     }
