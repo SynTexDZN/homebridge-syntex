@@ -136,8 +136,7 @@ async function checkName(name)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        var platform = obj.platforms[i];
-                        var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
+                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
 
                         for(const i in configContainer)
                         {
@@ -164,45 +163,35 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 {
     return new Promise(async function(resolve) {
         
-        var res = await exists(mac);
         var eventButton = await checkEventButton(mac);
 
-        if(res)
+        if(await exists(mac))
         {
-            var dbName = await getValue(mac, 'name');
-            var dbInterval = (await getValue(mac, 'interval') || 0);
-            var dbLED = (await getValue(mac, 'led') || 1);
-            var dbEvents = (await getValue(mac, 'events') || []);
-            var dbIP = await getValue(mac, 'ip');
-            var dbVersion = await getValue(mac, 'version');
+            var device = await getDevice(mac);
 
-            if(ip != dbIP)
+            if(ip != device['ip'])
             {
                 setValue(mac, 'ip', ip);
             }
 
-            if(version != dbVersion)
+            if(version != device['version'])
             {
                 setValue(mac, 'version', version);
             }
 
-            if(dbEvents && !eventButton && dbEvents.length != 0)
+            if((device['events'] || []) && !eventButton && (device['events'] || []).length != 0)
             {
-                var created = await createEventButton(mac, dbName, dbEvents.length);
-
-                if(created)
+                if(await createEventButton(mac, device['name'], (device['events'] || []).length))
                 {
-                    resolve(['Init', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "events": [' + dbEvents + '], "port": "' + webhookPort + '"}']);
+                    resolve(['Init', '{"name": "' + device['name'] + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
                 }
             }
 
-            resolve(['Success', '{"name": "' + dbName + '", "interval": "' + dbInterval + '", "led": "' + dbLED + '", "events": [' + dbEvents + '], "port": "' + webhookPort + '"}']);
+            resolve(['Success', '{"name": "' + device['name'] + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
         }
         else
         {
-            var duplicate = await checkName(name);
-
-            if(duplicate)
+            if(await checkName(name))
             {
                 var device = {
                     id: mac,
@@ -319,7 +308,14 @@ async function getValue(mac, param)
         
         storage.load(mac, (err, obj) => {  
 
-            resolve(obj[param]);
+            if(!obj || err)
+            {
+                resolve(null);
+            }
+            else
+            {
+                resolve(obj[param]);
+            }
         });
     });
 }
@@ -332,7 +328,7 @@ async function getDevice(mac)
             
             if(!obj || err)
             {
-                resolve(false);
+                resolve(null);
             }
             else
             {
@@ -350,7 +346,7 @@ async function getDevices()
 
             if(!objs || err)
             {
-                resolve(false);
+                resolve(null);
             }
             else
             {
@@ -368,7 +364,11 @@ async function setValue(mac, param, value)
         
         storage.load(mac, (err, obj) => {  
 
-            if(obj && !err)
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
             {
                 obj[param] = value;
                 
@@ -392,7 +392,11 @@ async function setValues(values)
         
         storage.load(values.mac, (err, obj) => {  
 
-            if(obj && !err)
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
             {
                 for(const i in values)
                 {
@@ -422,7 +426,13 @@ async function checkEventButton(mac)
 
         config.load('config', (err, obj) => {    
 
-            if(obj)
+            if(!obj || err)
+            {
+                logger.log('error', "Config.json konnte nicht geladen werden!");
+
+                resolve(false);
+            }
+            else
             {                            
                 obj.id = 'config';
 
@@ -444,13 +454,6 @@ async function checkEventButton(mac)
 
                 resolve(found ? true : false);
             }
-
-            if(err || !obj)
-            {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
-
-                resolve(false);
-            }
         });
     });
 }
@@ -461,7 +464,13 @@ async function createEventButton(mac, name, buttons)
 
         config.load('config', (err, obj) => {    
 
-            if(obj)
+            if(!obj || err)
+            {
+                logger.log('error', "Config.json konnte nicht geladen werden!");
+
+                resolve(false);
+            }
+            else
             {                            
                 obj.id = 'config';
 
@@ -469,9 +478,7 @@ async function createEventButton(mac, name, buttons)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        var platform = obj.platforms[i];
-
-                        platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
+                        obj.platforms[i].statelessswitches[obj.platforms[i].statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
                     }
                 }
 
@@ -488,13 +495,6 @@ async function createEventButton(mac, name, buttons)
 
                     resolve(err ? false : true);
                 });    
-            }
-
-            if(err || !obj)
-            {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
-
-                resolve(false);
             }
         });
     });
