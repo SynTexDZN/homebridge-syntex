@@ -107,10 +107,10 @@
             createLog(document.getElementById('bLog'), bLogJSON, search);
             createLog(document.getElementById('wLog'), wLogJSON, search);
 
-            console.log(document.getElementById('bLog').innerHTML.slice(-2).charAt(0));
-            console.log(document.getElementById('wLog').innerHTML.slice(-2).charAt(1));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).charAt(0));
-            console.log(document.getElementById('bLog').innerHTML.slice(-1).charAt(0));
+            console.log(document.getElementById('bLog').innerHTML.slice(-2).charAt(0) == '\r');
+            console.log(document.getElementById('wLog').innerHTML.slice(-2).charAt(1) == '\r');
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).charAt(0) == '\r');
+            console.log(document.getElementById('bLog').innerHTML.slice(-1).charAt(0) == '\r');
 
             document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
             document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
