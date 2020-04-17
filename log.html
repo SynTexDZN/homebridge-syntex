@@ -107,6 +107,12 @@
             createLog(document.getElementById('bLog'), bLogJSON, search);
             createLog(document.getElementById('wLog'), wLogJSON, search);
 
+            console.log(-(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            console.log(-(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+
+            document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML;
+            document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML;
+
             //document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML.slice(0, -(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
             //document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
 
