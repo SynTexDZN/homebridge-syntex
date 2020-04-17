@@ -61,6 +61,9 @@
 
     var bLogJSON = JSON.parse('<%bLog%>');
     var wLogJSON = JSON.parse('<%wLog%>');
+    var counter = 0;
+    var levelCounter = [0, 0, 0, 0, 0, 0];
+    var countLogs = true;
 
     function clearSearch()
     {
@@ -73,6 +76,7 @@
 
     function searchLog()
     {
+        counter = 0;
         document.getElementById('search-params').parentElement.children[1].value = 'Suchen ..';
 
         var params = document.getElementById('search-params').value;
@@ -99,16 +103,8 @@
         document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
     }
 
-</script>
-<script>
-
-    var counter;
-    var levelCounter = [0, 0, 0, 0, 0, 0];
-    var countLogs = true;
-
     function createLog(element, log, show)
     {
-        counter = 0;
         var filterLog = '';
 
         for(var i = log.length - 1; i >= 0; i--)
@@ -119,9 +115,12 @@
 
             if(show != null)
             {
-                if(show[0] != null && show[1] != null && show[0].toUpperCase() == level && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                if(show[0] != null && show[1] != null)
                 {
-                    displayEntry = true;
+                    if(show[0].toUpperCase() == level && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                    {
+                        displayEntry = true;
+                    }
                 }
                 else if(show[0] != null && show[0].toUpperCase() == level)
                 {
