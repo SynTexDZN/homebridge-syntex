@@ -79,28 +79,31 @@
         counter = 0;
         document.getElementById('search-params').parentElement.children[1].value = 'Suchen ..';
 
-        var params = document.getElementById('search-params').value;
-        var level = document.getElementById('search-level').value;
-        var search = null;
-
-        if(level != '' && params != '')
+        setTimeout(function()
         {
-            search = [level, params];
-        }
-        else if(params != '')
-        {
-            search = [null, params];
-        }
-        else if(level != '')
-        {
-            search = [level, null];
-        }
+            var params = document.getElementById('search-params').value;
+            var level = document.getElementById('search-level').value;
+            var search = null;
 
-        createLog(document.getElementById('bLog'), bLogJSON, search);
-        createLog(document.getElementById('wLog'), wLogJSON, search);
+            if(level != '' && params != '')
+            {
+                search = [level, params];
+            }
+            else if(params != '')
+            {
+                search = [null, params];
+            }
+            else if(level != '')
+            {
+                search = [level, null];
+            }
 
-        document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
-        document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
+            createLog(document.getElementById('bLog'), bLogJSON, search);
+            createLog(document.getElementById('wLog'), wLogJSON, search);
+
+            document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
+            document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
+        }, 500);
     }
 
     function createLog(element, log, show)
