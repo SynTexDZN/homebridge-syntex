@@ -67,11 +67,17 @@
 
     function clearSearch()
     {
+        document.getElementById('search-params').parentElement.children[1].value = 'Suchen ..';
         document.getElementById('search-params').value = '';
         document.getElementById('search-level').value = '';
 
-        createLog(document.getElementById('bLog'), bLogJSON, null);
-        createLog(document.getElementById('wLog'), wLogJSON, null);
+        setTimeout(function()
+        {
+            createLog(document.getElementById('bLog'), bLogJSON, null);
+            createLog(document.getElementById('wLog'), wLogJSON, null);
+
+            document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
+        }, 500);
     }
 
     function searchLog()
