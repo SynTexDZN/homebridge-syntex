@@ -107,6 +107,9 @@
             createLog(document.getElementById('bLog'), bLogJSON, search);
             createLog(document.getElementById('wLog'), wLogJSON, search);
 
+            console.log(document.getElementById('bLog').innerHTML.slice(-4));
+            console.log(document.getElementById('wLog').innerHTML.slice(-4));
+
             document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
             document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
         }, 500);

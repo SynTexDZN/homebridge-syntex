@@ -292,7 +292,7 @@ SynTexPlatform.prototype = {
                         else if(urlPath.startsWith('/log'))
                         {
                             var d = new Date();
-                            var date = (d.getDate()-1) + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+                            var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
                             var bridgeLogs = await logger.load('SynTex', date);
                             var webhookLogs = await logger.load('SynTexWebHooks', date);
                             var obj = {
