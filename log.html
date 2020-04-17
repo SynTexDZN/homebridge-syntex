@@ -1,0 +1,199 @@
+<html>
+    <title>Dashboard: Log</title>
+    <body>
+        <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
+        <div class="main" style="margin-top: 10px; display: table; margin-bottom: 100px">
+            <p style="margin-bottom: 100px; margin-top: 16px">Log</p>
+            <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                <input class="white" type="button" value="Geräte" onclick="window.location.href='/'" style="margin-right: 20px">
+                <input class="white" type="button" value="Bridge" onclick="window.location.href='/bridge'">
+            </div>
+            <div class="main" style="margin-top: 10px; display: flex">
+                <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
+            </div>
+        </div>
+        <div class="main" style="margin-bottom: 100px">
+            <div id="widgets" style="margin-bottom: 20px; display: grid; grid-template-columns: calc(33% - 13px) calc(34% - 13px) calc(33% - 13px); grid-gap: 20px;">
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Fehler">
+                    <input class="widget-right gradient-red" type="button" value="-">
+                </div>
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Warnungen">
+                    <input class="widget-right gradient-orange" type="button"  value="-">
+                </div>
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Infos">
+                    <input class="widget-right gradient-yellow" type="button" value="-">
+                </div>
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Lesen">
+                    <input class="widget-right gradient-blue" type="button" value="-">
+                </div>
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Updates">
+                    <input class="widget-right gradient-cyan" type="button" value="-">
+                </div>
+                <div class="widget" style="margin-left: 0">
+                    <input class="widget-left" type="button" value="Erfolgreich">
+                    <input class="widget-right gradient-green" type="button" value="-">
+                </div>
+            </div>
+        </div>
+        <div class="main" style="margin-bottom: 20px; display: flex">
+            <input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
+            <input class="gradient-blue loading-loop" type="button" value="Suchen" onclick="searchLog()" style="max-width: 200px">
+        </div>
+        <div class="main" style="margin-bottom: 32px; display: flex">
+            <input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px">
+            <input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
+        </div>
+        <p id="log-counter" class="loading-loop" style="margin-bottom: 32px"><b>Gefundene Elemente: </b>Laden ..</p>
+        <div class="main" style="display: table">
+            <h2 style="width: fit-content">• Bridge Log •</h2>
+            <textarea id="bLog" style="margin-bottom: 100px" readonly></textarea>
+            <h2 style="width: fit-content">• WebHook Log •</h2>
+            <textarea id="wLog" readonly></textarea>
+        </div>
+    </body>
+</html>
+<script>
+
+    var bLogJSON = JSON.parse('<%bLog%>');
+    var wLogJSON = JSON.parse('<%wLog%>');
+    var counter = 0;
+    var levelCounter = [0, 0, 0, 0, 0, 0];
+    var countLogs = true;
+
+    function clearSearch()
+    {
+        document.getElementById('search-params').parentElement.children[1].value = 'Suchen ..';
+        document.getElementById('search-params').value = '';
+        document.getElementById('search-level').value = '';
+
+        setTimeout(function()
+        {
+            createLog(document.getElementById('bLog'), bLogJSON, null);
+            createLog(document.getElementById('wLog'), wLogJSON, null);
+
+            document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
+        }, 500);
+    }
+
+    function searchLog()
+    {
+        counter = 0;
+        document.getElementById('search-params').parentElement.children[1].value = 'Suchen ..';
+
+        setTimeout(function()
+        {
+            var params = document.getElementById('search-params').value;
+            var level = document.getElementById('search-level').value;
+            var search = null;
+
+            if(level != '' && params != '')
+            {
+                search = [level, params];
+            }
+            else if(params != '')
+            {
+                search = [null, params];
+            }
+            else if(level != '')
+            {
+                search = [level, null];
+            }
+
+            createLog(document.getElementById('bLog'), bLogJSON, search);
+            createLog(document.getElementById('wLog'), wLogJSON, search);
+
+            document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML.slice(0, -(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+            document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
+
+            document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
+            document.getElementById('search-params').parentElement.children[1].value = 'Suchen';
+        }, 500);
+    }
+
+    function createLog(element, log, show)
+    {
+        var filterLog = '';
+
+        for(var i = log.length - 1; i >= 0; i--)
+        {
+            var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+            var level = log[i].split('[')[1].split(']')[0];
+            var displayEntry = false;
+
+            if(show != null)
+            {
+                console.log(show[0]);
+                console.log(level);
+                console.log(show[0].toUpperCase() == level);
+                console.log(show[1]);
+
+                if(show[0] != null && show[1] != null)
+                {
+                    if(show[0].toUpperCase() == level && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                    {
+                        displayEntry = true;
+                    }
+                }
+                else if(show[0] != null && show[0].toUpperCase() == level)
+                {
+                    displayEntry = true;
+                }
+                else if(show[1] != null && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                {
+                    displayEntry = true;
+                }
+            }
+            else
+            {
+                displayEntry = true;
+            }
+
+            if(displayEntry)
+            {
+                filterLog += log[i].split(']')[0] + ']';
+                
+                if(log[i].includes('(') && log[i].includes(')'))
+                {
+                    filterLog += ' > ' + log[i].split('(')[1].split(')')[0] + '\n' + log[i].replace(log[i].split(']')[0] + '] ', '').split(' (')[0];
+                }
+                else
+                {
+                    filterLog += '\n' + log[i].replace(log[i].split(']')[0] + '] ', '');
+                }
+                
+                if(i != 0)
+                {
+                    filterLog += '\n\n';
+                }
+
+                counter++;
+            }
+
+            if(countLogs)
+            {
+                levelCounter[levels.indexOf(level.toLowerCase())]++;
+            }
+        }
+
+        element.innerHTML = filterLog;
+        document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
+    }
+
+    createLog(document.getElementById('bLog'), bLogJSON, null);
+    createLog(document.getElementById('wLog'), wLogJSON, null);
+
+    countLogs = false;
+
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = levelCounter[5];
+    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = levelCounter[4];
+    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].value = levelCounter[3];
+    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].value = levelCounter[2];
+    document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].value = levelCounter[1];
+    document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].value = levelCounter[0];
+    
+</script>
