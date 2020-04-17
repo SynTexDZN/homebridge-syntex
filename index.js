@@ -60,7 +60,7 @@ SynTexPlatform.prototype = {
             {
                 if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh)
                 {
-                    logger.log('info', 'Ein Gerät hat sich mit der Bridge verbunden! ( ' + urlParams.ip + ' | ' + urlParams.mac + ' )');
+                    logger.log('info', 'Ein Gerät hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' + urlParams.ip + ' )');
 
                     DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons ? parseInt(urlParams.buttons) : 0).then(function(res) {
 
