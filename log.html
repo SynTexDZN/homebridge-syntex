@@ -129,7 +129,6 @@
             {
                 console.log(show[0]);
                 console.log(level);
-                console.log(show[0].toUpperCase() == level);
                 console.log(log[i]);
 
                 if(show[0] != null && show[1] != null)
@@ -153,6 +152,8 @@
                 displayEntry = true;
             }
 
+            console.log(displayEntry);
+
             if(displayEntry)
             {
                 filterLog += log[i].split(']')[0] + ']';
@@ -170,6 +171,8 @@
                 {
                     filterLog += '\n\n';
                 }
+
+                console.log(filterLog);
 
                 counter++;
             }
