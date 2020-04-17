@@ -219,9 +219,9 @@ async function initDevice(mac, ip, name, type, version, interval, events)
         if(res)
         {
             var dbName = await getValue(mac, 'name');
-            var dbInterval = await getValue(mac, 'interval');
-            var dbLED = await getValue(mac, 'led');
-            var dbEvents = await getValue(mac, 'events');
+            var dbInterval = (await getValue(mac, 'interval') || 0);
+            var dbLED = (await getValue(mac, 'led') || 1);
+            var dbEvents = (await getValue(mac, 'events') || []);
             var dbIP = await getValue(mac, 'ip');
             var dbVersion = await getValue(mac, 'version');
 
@@ -259,7 +259,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                     name: name,
                     type: type,
                     version: version,
-                    interval: interval,
+                    interval: parseInt(interval),
                     led: 1,
                     events: []
                 };
