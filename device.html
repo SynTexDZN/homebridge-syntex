@@ -149,7 +149,7 @@
             controls.setAttribute('style', 'max-width: 100px; margin-right: auto');
 
             addBtn.setAttribute('value', '+');
-            addBtn.setAttribute('onclick', 'addEventInput("")');
+            addBtn.setAttribute('onclick', 'addEventInput("0")');
             addBtn.setAttribute('type', 'button');
             addBtn.setAttribute('class', 'gradient-blue-green');
             addBtn.setAttribute('id', 'add-event-btn');
@@ -189,8 +189,7 @@
 
         control.setAttribute('value', '-');
         control.setAttribute('type', 'button');
-        control.setAttribute('onclick', '');
-        control.setAttribute('class', 'gradient-red');
+        control.setAttribute('onclick', 'removeEventInput(this)');
         control.setAttribute('style', 'margin-bottom: 16px');
 
         document.getElementById('events').appendChild(input);
@@ -203,6 +202,14 @@
         {
             document.getElementById('controls').insertBefore(control, document.getElementById('add-event-btn'));
         }
+    }
+
+    function removeEventInput(button)
+    {
+        var i = Array.prototype.indexOf.call(button.parentElement.children, child);
+
+        document.getElementById('events').removeChild(document.getElementById('events').children[i]);
+        document.getElementById('controls').removeChild(button);
     }
 
 </script>
