@@ -136,27 +136,35 @@
             var events = JSON.parse('[' + device[settings[i].index] + ']');
             var main = document.createElement('div');
             var container = document.createElement('div');
+            var controls = document.createElement('div');
             var addBtn = document.createElement('input');
 
             main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
             main.setAttribute('style', 'display: flex');
-            container.setAttribute('id', 'events');
-            container.setAttribute('style', 'max-width: 150px; margin-right: auto; display: inline-block');
 
-            addBtn.setAttribute('value', '+ Event hinzufügen');
-            addBtn.setAttribute('onclick', 'events');
+            container.setAttribute('id', 'events');
+            container.setAttribute('style', 'max-width: 150px; margin-right: 16px');
+
+            controls.setAttribute('id', 'controls');
+            controls.setAttribute('style', 'max-width: 100px; margin-right: auto');
+
+            addBtn.setAttribute('value', '+ Neues Event');
+            addBtn.setAttribute('onclick', 'addEventInput("")');
             addBtn.setAttribute('type', 'button');
             addBtn.setAttribute('class', 'gradient-blue-green');
             addBtn.setAttribute('style', '');
 
             main.appendChild(container);
-            main.appendChild(addBtn);
+            main.appendChild(controls);
+            
             document.getElementById('settings').getElementsByClassName('main')[0].appendChild(main);
 
             for(const j in events)
             {
                 addEventInput(events[j]);
             }
+
+            controls.appendChild(addBtn);
         }
         else
         {
@@ -171,13 +179,20 @@
     function addEventInput(value)
     {
         var input = document.createElement('input');
+        var control = document.createElement('input');
 
         input.setAttribute('value', value);
         input.setAttribute('name', 'events');
         input.setAttribute('type', 'text');
         input.setAttribute('style', 'margin-bottom: 16px');
 
+        control.setAttribute('value', '-');
+        control.setAttribute('type', 'button');
+        control.setAttribute('onclick', '');
+        control.setAttribute('style', 'margin-bottom: 16px');
+
         document.getElementById('events').appendChild(input);
+        document.getElementById('controls').appendChild(control);
     }
 
 </script>
@@ -852,11 +867,11 @@
                 }
                 else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
                 {
-                    var concat = '[' + form.children[i].getElementsByTagName('input')[0].value;
+                    var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
 
-                    for(var j = 1; j < form.children[i].getElementsByTagName('input').length; j++)
+                    for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
                     {
-                        concat += ',' + form.children[i].getElementsByTagName('input')[j].value;
+                        concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
                     }
 
                     concat += ']';
