@@ -136,13 +136,21 @@
             var events = JSON.parse('[' + device[settings[i].index] + ']');
             var main = document.createElement('div');
             var container = document.createElement('div');
+            var addBtn = document.createElement('input');
 
             main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
             main.setAttribute('style', 'display: flex');
             container.setAttribute('id', 'events');
             container.setAttribute('style', 'max-width: 150px; margin-right: auto; display: inline-block');
 
+            addBtn.setAttribute('value', '+ Event hinzufügen');
+            addBtn.setAttribute('onclick', 'events');
+            addBtn.setAttribute('type', 'button');
+            addBtn.setAttribute('class', 'gradient-blue-green');
+            addBtn.setAttribute('style', '');
+
             main.appendChild(container);
+            main.appendChild(addBtn);
             document.getElementById('settings').getElementsByClassName('main')[0].appendChild(main);
 
             for(const j in events)
@@ -160,9 +168,6 @@
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
 
-</script>
-<script>
-
     function addEventInput(value)
     {
         var input = document.createElement('input');
@@ -174,6 +179,9 @@
 
         document.getElementById('events').appendChild(input);
     }
+
+</script>
+<script>
 
     function openSettings()
     {
