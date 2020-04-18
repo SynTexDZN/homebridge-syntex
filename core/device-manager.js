@@ -52,7 +52,7 @@ async function removeDevice(mac, type)
 
                         if(err)
                         {
-                            logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
+                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
 
                             resolve(false);
                         }
@@ -62,7 +62,7 @@ async function removeDevice(mac, type)
                                 
                                 if(err)
                                 {
-                                    logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden!" + err);
+                                    logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden! " + err);
                                     
                                     resolve(false);
                                 }
@@ -208,7 +208,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                     if(err)
                     {
-                        logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
 
                         resolve(['Error', '']);
                     }
@@ -260,7 +260,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                                     if(err)
                                     {
-                                        logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
+                                        logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
 
                                         resolve(['Error', '']);
                                     }
@@ -376,7 +376,7 @@ async function setValue(mac, param, value)
 
                     if(err)
                     {
-                        logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
                     }
 
                     resolve(err ? false : true);
@@ -410,7 +410,7 @@ async function setValues(values)
 
                     if(err)
                     {
-                        logger.log('error', values.mac + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', values.mac + ".json konnte nicht aktualisiert werden! " + err);
                     }
 
                     resolve(err ? false : true);
@@ -486,7 +486,7 @@ async function createEventButton(mac, name, buttons)
 
                     if(err)
                     {
-                        logger.log('error', "Config.json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
                     }
                     else
                     {
