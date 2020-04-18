@@ -339,7 +339,7 @@ SynTexPlatform.prototype = {
 
                                 if(!res)
                                 {
-                                    logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!" + err);
+                                    logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!");
                                 }
                                 
                                 response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
