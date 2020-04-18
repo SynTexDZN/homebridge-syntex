@@ -148,10 +148,11 @@
             controls.setAttribute('id', 'controls');
             controls.setAttribute('style', 'max-width: 100px; margin-right: auto');
 
-            addBtn.setAttribute('value', '+ Neues Event');
+            addBtn.setAttribute('value', '+');
             addBtn.setAttribute('onclick', 'addEventInput("")');
             addBtn.setAttribute('type', 'button');
             addBtn.setAttribute('class', 'gradient-blue-green');
+            addBtn.setAttribute('id', 'add-event-btn');
             addBtn.setAttribute('style', '');
 
             main.appendChild(container);
@@ -189,10 +190,19 @@
         control.setAttribute('value', '-');
         control.setAttribute('type', 'button');
         control.setAttribute('onclick', '');
+        control.setAttribute('class', 'gradient-red');
         control.setAttribute('style', 'margin-bottom: 16px');
 
         document.getElementById('events').appendChild(input);
-        document.getElementById('controls').appendChild(control);
+
+        if(document.getElementById('add-event-btn') == null)
+        {
+            document.getElementById('controls').appendChild(control);
+        }
+        else
+        {
+            document.getElementById('controls').insertBefore(control, document.getElementById('add-event-btn'));
+        }
     }
 
 </script>
