@@ -139,26 +139,16 @@
 
             main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
             main.setAttribute('style', 'display: flex');
+            container.setAttribute('id', 'events');
             container.setAttribute('style', 'max-width: 150px; margin-right: auto; display: inline-block');
-
-            for(const j in events)
-            {
-                var input = document.createElement('input');
-
-                input.setAttribute('value', events[j]);
-                input.setAttribute('name', settings[i].index);
-                input.setAttribute('type', 'text');
-
-                if(j != events.length - 1)
-                {
-                    input.setAttribute('style', 'margin-bottom: 16px');
-                }
-
-                container.appendChild(input);
-            }
 
             main.appendChild(container);
             document.getElementById('settings').getElementsByClassName('main')[0].appendChild(main);
+
+            for(const j in events)
+            {
+                addEventInput(events[j]);
+            }
         }
         else
         {
@@ -172,6 +162,18 @@
 
 </script>
 <script>
+
+    function addEventInput(value)
+    {
+        var input = document.createElement('input');
+
+        input.setAttribute('value', value);
+        input.setAttribute('name', 'events');
+        input.setAttribute('type', 'text');
+        input.setAttribute('style', 'margin-bottom: 16px');
+
+        document.getElementById('events').appendChild(input);
+    }
 
     function openSettings()
     {
@@ -782,7 +784,7 @@
     }
 
     var saveTries = 0;
-    
+
     function saveConfig(upload)
     {
         if(!upload && !saving)
