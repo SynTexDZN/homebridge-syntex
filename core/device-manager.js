@@ -410,7 +410,7 @@ async function setValues(values)
 
                     if(err)
                     {
-                        logger.log('error', mac + ".json konnte nicht aktualisiert werden!" + err);
+                        logger.log('error', values.mac + ".json konnte nicht aktualisiert werden!" + err);
                     }
 
                     resolve(err ? false : true);
