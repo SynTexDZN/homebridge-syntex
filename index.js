@@ -89,7 +89,7 @@ SynTexPlatform.prototype = {
 
                         if(res)
                         {
-                            logger.log('success', "Das Gerät wurde entfernt! (" + urlParams.mac + ")");
+                            logger.log('success', 'Das Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
 
                             response.write("Success");
                             response.end();
@@ -104,7 +104,7 @@ SynTexPlatform.prototype = {
                         }
                         else
                         {
-                            logger.log('error', "Das Gerät konnte nicht entfernt werden! (" + urlParams.mac + ")");
+                            logger.log('error', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
 
                             response.write("Error");
                             response.end();
@@ -364,7 +364,7 @@ SynTexPlatform.prototype = {
 
         http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
            
-        logger.log('info', "Data Link Server läuft auf Port " + "'" + this.port + "'");
+        logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
     }
 }
 
