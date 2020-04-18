@@ -231,7 +231,7 @@
     
     function fetchState()
     {        
-        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch' || device.type == 'rgb' || device.type == 'rgbw')
+        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'rgb' || device.type == 'rgbw')
         {
             fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000).then(function(res) {
 
@@ -263,7 +263,7 @@
                             document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                         }
                     }
-                    else if(device.type == 'relais' || device.type == 'switch')
+                    else if(device.type == 'relais')
                     {
                         if(res == 'true')
                         {
@@ -359,6 +359,11 @@
                     }
                 });
             }
+        }
+        else if(device.type == 'switch')
+        {
+            document.getElementById('status').value = 'BEREIT';
+            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
         }
     }
 
