@@ -188,12 +188,12 @@
 
     if(device.type == 'temperature' || device.type == 'light')
     {
-        document.getElementById('infobox').setAttribute('value', 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet\nNegative wenn er unterschritten wird');
+        document.getElementById('infobox').children[1].setAttribute('value', 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet\nNegative wenn er unterschritten wird');
     }
 
     if(device.type == 'switch')
     {
-        document.getElementById('infobox').setAttribute('value', 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind');
+        document.getElementById('infobox').children[1].setAttribute('value', 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind');
     }
 
     function addEventInput(value)
