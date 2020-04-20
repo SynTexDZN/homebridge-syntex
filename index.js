@@ -373,10 +373,9 @@ SynTexPlatform.prototype = {
                         });
                     }
                 }
-                catch(err)
+                catch(e)
                 {
-                    var s = (err.stack.split('(')[1].split(')')[0].match(/\//g) || []).length;
-                    logger.log('error', err.message + " '" + err.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + err.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[1] + "'");
+                    logger.err(e);
                 }
                 
             }).bind(this);
@@ -385,10 +384,9 @@ SynTexPlatform.prototype = {
             
             logger.log('info', "Data Link Server läuft auf Port '" + this.port + "'");
         }
-        catch(err)
+        catch(e)
         {
-            var s = (err.stack.split('(')[1].split(')')[0].match(/\//g) || []).length + 1;
-            logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
+            logger.err(e);
         }
     }
 }
