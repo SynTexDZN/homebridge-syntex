@@ -17,7 +17,7 @@ module.exports = function(homebridge)
     }
     catch(err)
     {
-        logger.log('error', err);
+        console.log('[ERROR]', err);
     }
 };
 
