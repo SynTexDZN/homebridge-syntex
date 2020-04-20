@@ -117,6 +117,7 @@ SynTexPlatform.prototype = {
                                     const { exec } = require("child_process");
 
                                     exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+
                                         logger.log('warn', "Die Homebridge wird neu gestartet ..");
                                     });
                                 }
@@ -167,26 +168,33 @@ SynTexPlatform.prototype = {
                         
                         exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
 
-                            if(error || stderr.includes('ERR!'))
+                            try
                             {
-                                response.write('Error');
-                                response.end();
-                                
-                                logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
-                            }
-                            else
-                            {
-                                response.write('Success');
-                                response.end();
-                                
-                                logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
-                                
-                                restart = true;
-                                
-                                exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                if(error || stderr.includes('ERR!'))
+                                {
+                                    response.write('Error');
+                                    response.end();
+                                    
+                                    logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                                }
+                                else
+                                {
+                                    response.write('Success');
+                                    response.end();
+                                    
+                                    logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
+                                    
+                                    restart = true;
+                                    
+                                    exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                });
+                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                    });
+                                }
+                            }
+                            catch(e)
+                            {
+                                logger.err(e);
                             }
                         });
                     }
@@ -465,26 +473,33 @@ async function getPluginConfig(pluginName)
         
         conf.load('config', (err, obj) => {    
 
-            WrongCodeException();
+            try
+            {
+                WrongCodeException();
 
-            if(obj && !err)
-            {                            
-                obj.id = 'config';
+                if(obj && !err)
+                {                            
+                    obj.id = 'config';
 
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === pluginName)
+                    for(const i in obj.platforms)
                     {
-                        resolve(obj.platforms[i]);
+                        if(obj.platforms[i].platform === pluginName)
+                        {
+                            resolve(obj.platforms[i]);
+                        }
                     }
+
+                    resolve(null);
                 }
 
-                resolve(null);
+                if(err || !obj)
+                {
+                    resolve(null);
+                }
             }
-
-            if(err || !obj)
+            catch(e)
             {
-                resolve(null);
+                logger.err(e);
             }
         });
     });
