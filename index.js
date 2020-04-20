@@ -373,7 +373,6 @@ SynTexPlatform.prototype = {
                             }
                             catch(e)
                             {
-                                logger.log('error', e.stack);
                                 logger.err(e);
                             }
                         });
