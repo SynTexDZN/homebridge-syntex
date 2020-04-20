@@ -74,12 +74,12 @@ input[type='text']:focus, input[type='password']:focus, input[type='text']:hover
     color: rgb(20, 20, 30);
 }
 
-input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover
+input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
 {
     filter: brightness(75%);
 }
 
-input[type='button']:active:not(.control-panel), input[type='submit']:active
+input[type='button']:active:not(.control-panel), input[type='submit']:active, button:active
 {
     letter-spacing: 1px;
 }
@@ -104,16 +104,16 @@ textarea
     white-space: pre-line;
 }
 
-input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):not(.control-panel)
+input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):not(.control-panel), button:not(:disabled):not(.control-panel)
 {
     cursor: pointer;
 }
 
-input[type='button'], input[type='submit']
+input[type='button'], input[type='submit'], button
 {
     background: rgb(60, 60, 75);
     border-width: 0;
-    color: rgb(20, 20, 30);
+    color: rgb(20, 20, 30); 
 }
 
 input[type='submit']
@@ -121,12 +121,12 @@ input[type='submit']
     background-image: linear-gradient(to right, hsl(150, 85%, 50%) 0%, hsl(170, 85%, 50%) 100%)!important;
 }
 
-input[type='button'].white
+input[type='button'].white, button.white
 {
     background: rgb(245, 245, 255);
 }
 
-input[type='button']:disabled
+input[type='button']:disabled, button:disabled
 {
     background: transparent;
     color: rgb(245, 245, 255);
@@ -454,7 +454,7 @@ h2
               0 8px 16px -2px rgba(0,0,0,0.15);
     }
 
-    input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover
+    input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
     {
         filter: brightness(80%);
     }
@@ -488,13 +488,13 @@ h2
         border-color: rgb(45, 45, 55);
     }
 
-    input[type='button']:not(:disabled), input[type='button']:not(:disabled).white
+    input[type='button']:not(:disabled), input[type='button']:not(:disabled).white, button:not(:disabled).white
     { 
         color: rgb(220, 220, 230);
         background: rgb(45, 45, 55);
     }
     
-    input[type='button']:disabled
+    input[type='button']:disabled, button:disabled
     {
         color: rgb(45, 45, 55);
         border: 3px solid rgb(45, 45, 55);

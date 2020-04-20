@@ -21,8 +21,8 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
             <div class="main">
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px" hidden>
-                    <input class="widget-left gradient-yellow" type="button" value="Infobox">
-                    <input class="widget-right" type="button" value="">
+                    <button class="widget-left gradient-yellow">Infobox</button>
+                    <button class="widget-right"></button>
                 </div>
                 <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
                 <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
@@ -188,12 +188,12 @@
 
     if(device.type == 'temperature' || device.type == 'light')
     {
-        document.getElementById('infobox').children[1].setAttribute('value', 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet\nNegative wenn er unterschritten wird');
+        document.getElementById('infobox').children[1].innerHTML = 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet<br>Negative wenn er unterschritten wird';
     }
 
     if(device.type == 'switch')
     {
-        document.getElementById('infobox').children[1].setAttribute('value', 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind');
+        document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
     }
 
     function addEventInput(value)
