@@ -489,8 +489,6 @@ async function getPluginConfig(pluginName)
 
             try
             {
-                WrongCodeException();
-
                 if(obj && !err)
                 {                            
                     obj.id = 'config';
