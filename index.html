@@ -14,20 +14,20 @@
             </div>
             <div id="widgets">
                 <div class="widget">
-                    <input class="widget-left" type="button" value="Geräte" disabled>
-                    <input class="widget-right gradient-blue" type="button" value="-" disabled>
+                    <button class="widget-left">Geräte</button>
+                    <button class="widget-right gradient-blue">-</button>
                 </div>
                 <div class="widget">
-                    <input class="widget-left" type="button" value="Updates" disabled>
-                    <input class="widget-right gradient-purple" type="button"  value="-" disabled>
+                    <button class="widget-left">Updates</button>
+                    <button class="widget-right gradient-purple">-</button>
                 </div>
                 <div class="widget">
-                    <input class="widget-left" type="button" value="Fehler" disabled>
-                    <input class="widget-right gradient-red" type="button" value="-" disabled>
+                    <button class="widget-left">Fehler</button>
+                    <button class="widget-right gradient-red">-</button>
                 </div>
                 <div class="widget">
-                    <input class="widget-left" type="button" value="Online" disabled>
-                    <input class="widget-right gradient-green" type="button" value="-" disabled>
+                    <button class="widget-left">Online</button>
+                    <button class="widget-right gradient-green">-</button>
                 </div>
             </div>
             <div id="devices" style="margin-top: 100px">
@@ -52,9 +52,9 @@
     var lastRestart = '<%restart%>';
     var errorCount = '<%errors%>';
     
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = devices.length;
-    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].value = errorCount;
-    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].value = lastRestart;
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length;
+    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = errorCount;
+    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = lastRestart;
     
     var temp = "";
     var counter = 0;
@@ -317,7 +317,7 @@
 
                 if(count == devices.length)
                 {
-                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = updateCount;
+                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
 
                     if(updateCount > 0)
                     {            
