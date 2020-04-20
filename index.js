@@ -63,8 +63,6 @@ SynTexPlatform.prototype = {
                     var urlParams = urlParts.query;
                     var urlPath = urlParts.pathname;
 
-                    WrongCodeException();
-
                     response.statusCode = 200;
                     response.setHeader('Content-Type', 'text/plain');
                     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -378,9 +376,7 @@ SynTexPlatform.prototype = {
                 catch(err)
                 {
                     var s = (err.stack.split('(')[1].split(')')[0].match(/\//g) || []).length;
-                    logger.log('error', s);
-                    logger.log('error', err.stack.split('(')[1].split(')')[0]);
-                    logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
+                    logger.log('error', err.message + " '" + err.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + err.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[1] + "'");
                 }
                 
             }).bind(this);
