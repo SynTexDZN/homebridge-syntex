@@ -137,8 +137,6 @@ SynTexPlatform.prototype = {
                         response.write('Success');
                         response.end();
 
-                        WrongCodeException();
-                        
                         exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
                             logger.log('warn', "Die Homebridge wird neu gestartet ..");
@@ -464,6 +462,8 @@ async function getPluginConfig(pluginName)
 
 function formatTimestamp(timestamp)
 {
+    WrongCodeException();
+
     if(timestamp < 60)
     {
         return Math.round(timestamp) + ' s';
