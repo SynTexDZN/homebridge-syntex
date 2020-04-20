@@ -10,7 +10,14 @@ var restart = true;
 
 module.exports = function(homebridge)
 {
-    homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
+    try
+    {
+        homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
+    }
+    catch(err)
+    {
+        logger.log('error', err);
+    }
 };
 
 function SynTexPlatform(log, config, api)
@@ -125,6 +132,8 @@ SynTexPlatform.prototype = {
                 
                 response.write('Success');
                 response.end();
+
+                WrongCodeException();
                 
                 exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
