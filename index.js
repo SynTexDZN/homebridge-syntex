@@ -43,7 +43,7 @@ function SynTexPlatform(log, config, api)
     }
     catch(err)
     {
-        logger.log('error', err);
+        logger.log('error', err.message);
     }
 }
 
