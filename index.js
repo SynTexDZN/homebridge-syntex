@@ -10,41 +10,41 @@ var restart = true;
 
 module.exports = function(homebridge)
 {
-    try
-    {
-        homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
-    }
-    catch(err)
-    {
-        console.log('[ERROR]', err);
-    }
+    homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
 };
 
 function SynTexPlatform(log, config, api)
 {
-    this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
-    this.logDirectory = config["log_directory"] || "./SynTex/log";
-    this.port = config["port"] || 1711;
+    try
+    {
+        this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
+        this.logDirectory = config["log_directory"] || "./SynTex/log";
+        this.port = config["port"] || 1711;
 
-    conf = store(api.user.storagePath());
+        conf = store(api.user.storagePath());
 
-    logger.create("SynTex", this.logDirectory, api.user.storagePath());
+        logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
-    var cacheDirectory = this.cacheDirectory;
-    
-    getPluginConfig('SynTexWebHooks').then(function(res) {
+        var cacheDirectory = this.cacheDirectory;
+        
+        getPluginConfig('SynTexWebHooks').then(function(res) {
 
-        if(res != null)
-        {
-            DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
-        }
+            if(res != null)
+            {
+                DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
+            }
 
-        restart = false;
-    });
+            restart = false;
+        });
 
-    HTMLQuery.SETUP(logger);
+        HTMLQuery.SETUP(logger);
 
-    WrongCodeException();
+        WrongCodeException();
+    }
+    catch(err)
+    {
+        logger.log('error', err);
+    }
 }
 
 SynTexPlatform.prototype = {
