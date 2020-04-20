@@ -15,28 +15,28 @@
         <div class="main" style="margin-bottom: 100px">
             <div id="widgets" style="margin-bottom: 20px; display: grid; grid-template-columns: calc(33% - 13px) calc(34% - 13px) calc(33% - 13px); grid-gap: 20px;">
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Fehler">
-                    <input class="widget-right gradient-red" type="button" value="-">
+                    <button class="widget-left" disabled>Fehler</button>
+                    <button class="widget-right gradient-red" disabled>-</button>
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Warnungen">
-                    <input class="widget-right gradient-orange" type="button"  value="-">
+                    <button class="widget-left" disabled>Warnungen</button>
+                    <button class="widget-right gradient-orange" disabled>-</button>
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Infos">
-                    <input class="widget-right gradient-yellow" type="button" value="-">
+                    <button class="widget-left" disabled>Infos</button>
+                    <button class="widget-right gradient-yellow" disabled>-</button>
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Lesen">
-                    <input class="widget-right gradient-blue" type="button" value="-">
+                    <button class="widget-left" disabled>Lesen</button>
+                    <button class="widget-right gradient-blue" disabled>-</button>
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Updates">
-                    <input class="widget-right gradient-cyan" type="button" value="-">
+                    <button class="widget-left" disabled>Updates</button>
+                    <button class="widget-right gradient-cyan" disabled>-</button>
                 </div>
                 <div class="widget" style="margin-left: 0">
-                    <input class="widget-left" type="button" value="Erfolgreich">
-                    <input class="widget-right gradient-green" type="button" value="-">
+                    <button class="widget-left" disabled>Erfolgreich</button>
+                    <button class="widget-right gradient-green" disabled>-</button>
                 </div>
             </div>
         </div>
@@ -194,11 +194,11 @@
 
     countLogs = false;
 
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].value = levelCounter[5];
-    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].value = levelCounter[4];
-    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].value = levelCounter[3];
-    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].value = levelCounter[2];
-    document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].value = levelCounter[1];
-    document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].value = levelCounter[0];
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
+    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
+    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
+    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
+    document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
+    document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
     
 </script>

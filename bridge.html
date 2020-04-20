@@ -12,8 +12,8 @@
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'">
             </div>
             <div class="widget" style="margin-left: 0">
-                <input class="widget-left" type="button" value="IP Adresse">
-                <input class="widget-right gradient-blue" type="button" value="-">
+                <button class="widget-left" disabled>IP Adresse</button>
+                <button class="widget-right gradient-blue" disabled>-</button>
             </div>
             <div id="infos" style="margin: 100px 0">
                 <h2 style="width: fit-content">• SynTex Bridge •</h2>
@@ -24,8 +24,8 @@
                 <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
             </div>
             <div class="widget" style="margin-left: 0; margin-bottom: 20px">
-                <input class="widget-left gradient-red" type="button" value="Wichtig">
-                <input class="widget-right" type="button" value="Bitte schließe während eines Updates oder Neustarts nicht diese Seite">
+                <button class="widget-left gradient-red" disabled>Wichtig</button>
+                <button class="widget-right" disabled>Bitte schließe während eines Updates oder Neustarts nicht diese Seite</button>
             </div>
             <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge()">
         </div>
@@ -39,7 +39,7 @@
     var newestBVersion = '';
     var newestWVersion = '';
 
-    document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].value = ip;
+    document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = ip;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
     setTimeout(function()
