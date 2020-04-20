@@ -383,7 +383,7 @@ SynTexPlatform.prototype = {
         }
         catch(err)
         {
-            logger.log('error', err.message + ' > ' + err.stack + ' > ' + err.line);
+            logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0]);
         }
     }
 }
