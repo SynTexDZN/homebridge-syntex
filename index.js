@@ -411,17 +411,22 @@ async function findRestart(d)
 
         logger.find('SynTex', date, '[INFO] Data').then(function(res) {
 
-            WrongCodeException();
-
-            if(res != null)
+            try
             {
-                resolve([d, res[0]]);
+                if(res != null)
+                {
+                    resolve([d, res[0]]);
+                }
+                else
+                {
+                    var yesterday = new Date();
+                    yesterday.setDate(d.getDate() - 1);
+                    resolve(findRestart(yesterday));
+                }
             }
-            else
+            catch(e)
             {
-                var yesterday = new Date();
-                yesterday.setDate(d.getDate() - 1);
-                resolve(findRestart(yesterday));
+                logger.err(e);
             }
         });
     });
@@ -435,13 +440,20 @@ async function findErrors(pluginName, d)
 
         logger.find(pluginName, date, '[ERROR]').then(function(res) {
 
-            if(res != null)
+            try
             {
-                resolve(res.length);
+                if(res != null)
+                {
+                    resolve(res.length);
+                }
+                else
+                {
+                    resolve(0);
+                }
             }
-            else
+            catch(e)
             {
-                resolve(0);
+                logger.err(e);
             }
         });
     });
@@ -452,6 +464,8 @@ async function getPluginConfig(pluginName)
     return new Promise(resolve => {
         
         conf.load('config', (err, obj) => {    
+
+            WrongCodeException();
 
             if(obj && !err)
             {                            
