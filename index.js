@@ -377,7 +377,7 @@ SynTexPlatform.prototype = {
                 }
                 catch(err)
                 {
-                    var s = (err.stack.split('(')[1].split(')')[0].match('/') || []).length;
+                    var s = (err.stack.split('(')[1].split(')')[0].match(/\//g) || []).length;
                     logger.log('error', s);
                     logger.log('error', err.stack.split('(')[1].split(')')[0]);
                     logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
@@ -391,7 +391,7 @@ SynTexPlatform.prototype = {
         }
         catch(err)
         {
-            var s = (err.stack.split('(')[1].split(')')[0].match('/') || []).length + 1;
+            var s = (err.stack.split('(')[1].split(')')[0].match(/\//g) || []).length + 1;
             logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
         }
     }
