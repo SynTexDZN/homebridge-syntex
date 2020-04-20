@@ -424,6 +424,8 @@ async function findErrors(pluginName, d)
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
+        WrongCodeException();
+
         logger.find(pluginName, date, '[ERROR]').then(function(res) {
 
             if(res != null)
@@ -469,8 +471,6 @@ async function getPluginConfig(pluginName)
 
 function formatTimestamp(timestamp)
 {
-    WrongCodeException();
-
     if(timestamp < 60)
     {
         return Math.round(timestamp) + ' s';
