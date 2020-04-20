@@ -13,7 +13,6 @@ module.exports = function(homebridge)
     try
     {
         homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
-        WrongCodeException();
     }
     catch(err)
     {
@@ -26,8 +25,6 @@ function SynTexPlatform(log, config, api)
     this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
     this.logDirectory = config["log_directory"] || "./SynTex/log";
     this.port = config["port"] || 1711;
-
-    WrongCodeException();
 
     conf = store(api.user.storagePath());
 
@@ -46,6 +43,8 @@ function SynTexPlatform(log, config, api)
     });
 
     HTMLQuery.SETUP(logger);
+
+    WrongCodeException();
 }
 
 SynTexPlatform.prototype = {
