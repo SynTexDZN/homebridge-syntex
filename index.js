@@ -82,19 +82,26 @@ SynTexPlatform.prototype = {
 
                             DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons ? parseInt(urlParams.buttons) : 0).then(function(res) {
 
-                                response.write(res[1]);
-                                response.end();
-
-                                if(res[0] == "Init")
+                                try
                                 {
-                                    restart = true;
+                                    response.write(res[1]);
+                                    response.end();
 
-                                    const { exec } = require("child_process");
+                                    if(res[0] == "Init")
+                                    {
+                                        restart = true;
 
-                                    exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                        
-                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                    });
+                                        const { exec } = require("child_process");
+
+                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                            
+                                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                        });
+                                    }
+                                }
+                                catch(e)
+                                {
+                                    logger.err(e);
                                 }
                             });
                         }
@@ -105,28 +112,35 @@ SynTexPlatform.prototype = {
                         {
                             DeviceManager.removeDevice(urlParams.mac, urlParams.type).then(function(res) {
 
-                                if(res)
+                                try
                                 {
-                                    logger.log('success', 'Das Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
+                                    if(res)
+                                    {
+                                        logger.log('success', 'Das Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
 
-                                    response.write("Success");
-                                    response.end();
+                                        response.write("Success");
+                                        response.end();
 
-                                    restart = true;
+                                        restart = true;
 
-                                    const { exec } = require("child_process");
+                                        const { exec } = require("child_process");
 
-                                    exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                    });
+                                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                        });
+                                    }
+                                    else
+                                    {
+                                        logger.log('error', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+
+                                        response.write("Error");
+                                        response.end();
+                                    }
                                 }
-                                else
+                                catch(e)
                                 {
-                                    logger.log('error', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
-
-                                    response.write("Error");
-                                    response.end();
+                                    logger.err(e);
                                 }
                             });
                         }
