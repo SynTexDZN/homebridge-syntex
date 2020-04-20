@@ -53,8 +53,6 @@ SynTexPlatform.prototype = {
         {
             var accessories = [];
 
-            WrongCodeException();
-            
             callback(accessories);
             
             var createServerCallback = (function(request, response)
