@@ -378,7 +378,7 @@ SynTexPlatform.prototype = {
                 catch(err)
                 {
                     var s = (err.stack.split('(')[1].split(')')[0].match('/') || []).length;
-                    logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].match('/').split('/')[s]);
+                    logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
                 }
                 
             }).bind(this);
@@ -390,7 +390,7 @@ SynTexPlatform.prototype = {
         catch(err)
         {
             var s = (err.stack.split('(')[1].split(')')[0].match('/') || []).length;
-            logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].match('/').split('/')[s]);
+            logger.log('error', err.message + ' > ' + err.stack.split('(')[1].split(')')[0].split('/')[s]);
         }
     }
 }
