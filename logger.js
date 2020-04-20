@@ -59,8 +59,8 @@ logger.log = function(level, message)
 
 logger.err = function(error)
 {
-    var s = (error.stack.split('(')[1].split(')')[0].match(/\//g) || []).length;
-    logger.log('error', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('(')[1].split(')')[0].split('/')[s].split(':')[1] + "' )");
+    var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
+    logger.log('error', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "' )");
 }
 
 logger.find = function(pluginName, date, param)
