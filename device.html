@@ -20,6 +20,10 @@
             <p class="loading-loop">( Laden .. )</p>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
             <div class="main">
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px" hidden>
+                    <input class="widget-left white" type="button" value="Infobox">
+                    <input class="widget-right" type="button" value="">
+                </div>
                 <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
                 <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
                 <div style="display: flex">
@@ -176,6 +180,21 @@
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
     document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+
+    if(device.type == 'temperature' || device.type == 'light' || device.type == 'switch')
+    {
+        document.getElementById('infobox').removeAttribute('hidden');
+    }
+
+    if(device.type == 'temperature' || device.type == 'light')
+    {
+        document.getElementById('infobox').setAttribute('value', 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet\nNegative wenn er unterschritten wird');
+    }
+
+    if(device.type == 'switch')
+    {
+        document.getElementById('infobox').setAttribute('value', 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind');
+    }
 
     function addEventInput(value)
     {
