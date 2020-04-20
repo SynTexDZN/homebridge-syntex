@@ -29,19 +29,26 @@ function SynTexPlatform(log, config, api)
         
         getPluginConfig('SynTexWebHooks').then(function(res) {
 
-            if(res != null)
+            try
             {
-                DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
-            }
+                if(res != null)
+                {
+                    DeviceManager.SETUP(api.user.storagePath(), logger, cacheDirectory, res.port);
+                }
 
-            restart = false;
+                restart = false;
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
         });
 
         HTMLQuery.SETUP(logger);
     }
-    catch(err)
+    catch(e)
     {
-        logger.log('error', err.message);
+        logger.err(e);
     }
 }
 
@@ -404,6 +411,8 @@ async function findRestart(d)
 
         logger.find('SynTex', date, '[INFO] Data').then(function(res) {
 
+            WrongCodeException();
+
             if(res != null)
             {
                 resolve([d, res[0]]);
@@ -423,8 +432,6 @@ async function findErrors(pluginName, d)
     return new Promise(resolve => {
 
         var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-        WrongCodeException();
 
         logger.find(pluginName, date, '[ERROR]').then(function(res) {
 
