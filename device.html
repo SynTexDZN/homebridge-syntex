@@ -20,7 +20,7 @@
             <p class="loading-loop">( Laden .. )</p>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
             <div class="main">
-                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px" hidden>
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
                     <button class="widget-right" disabled></button>
                 </div>
@@ -183,7 +183,7 @@
 
     if(device.type == 'temperature' || device.type == 'light' || device.type == 'switch')
     {
-        document.getElementById('infobox').removeAttribute('hidden');
+        document.getElementById('infobox').style.display = '';
     }
 
     if(device.type == 'temperature' || device.type == 'light')
