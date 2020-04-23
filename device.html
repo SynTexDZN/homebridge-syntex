@@ -18,7 +18,16 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
+                <p>
+                    <b>
+                        Switch: <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </b>
+                </p>
+            </div>
             <div class="main">
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
@@ -254,7 +263,7 @@
         {
             fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000).then(function(res) {
 
-                if(res != null)
+                if(res != null || res != 'Error')
                 {
                     if(device.type == 'contact')
                     {

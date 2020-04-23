@@ -437,6 +437,48 @@ h2
     display: flex;
 }
 
+.switch {
+    position: relative;
+    width: 100px;
+    height: 50px;
+}
+
+.switch input {
+    opacity: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(245, 245, 255);
+    border-radius: 18px;
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 42px;
+    width: 42px;
+    left: 4px;
+    bottom: 4px;
+    background-color: rgb(20, 20, 30);
+    border-radius: 15px;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background-color: hsl(220, 95%, 60%);
+}
+
+input:checked + .slider:before {
+    transform: translateX(50px);
+}
+
 @media(prefers-color-scheme: light)
 {
     body
