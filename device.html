@@ -939,6 +939,10 @@
 
                     settings['events'] = JSON.parse(concat);
                 }
+                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                {
+                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                }
                 else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
                 {
                     settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
