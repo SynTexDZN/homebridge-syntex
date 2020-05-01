@@ -18,7 +18,7 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></div>
+            <form onsubmit="event.preventDefault(); saveConfig(false)" class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;"></form>
             <div class="main">
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
@@ -208,6 +208,7 @@
         input.setAttribute('value', value);
         input.setAttribute('name', 'events');
         input.setAttribute('type', 'text');
+        input.setAttribute('pattern', '[0-9]');
         input.setAttribute('style', 'margin-bottom: 16px');
 
         control.setAttribute('value', '-');
