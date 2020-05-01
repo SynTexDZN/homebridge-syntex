@@ -125,17 +125,17 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
-    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9 ]+" value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
+    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9 ]+" required value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
 
     for(const i in settings)
     {
         if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if((device.type == 'motion') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if(settings[i].index == 'events')
         {
@@ -179,7 +179,7 @@
         }
         else
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
         }
     }
 
@@ -211,6 +211,7 @@
         input.setAttribute('name', 'events');
         input.setAttribute('type', 'text');
         input.setAttribute('pattern', '-?[0-9]+');
+        input.setAttribute('required', '');
         input.setAttribute('style', 'margin-bottom: 16px');
 
         control.setAttribute('value', '-');
@@ -880,6 +881,8 @@
 
     function saveConfig(upload)
     {
+        console.log(document.getElementsByTagName('form')][0].checkValidity());
+
         if(!upload && !saving)
         {
             upload = true;
