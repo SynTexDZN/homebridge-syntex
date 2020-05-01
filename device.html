@@ -124,7 +124,7 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
-    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9 ]+" required value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
+    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
     document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Aktiviert: <input value="' + (device.active == 1 ? 'An' : 'Aus') + '" name="active" type="button" class="' + (device.active == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
 
     for(const i in settings)
