@@ -19,7 +19,7 @@
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
             <form class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
-                
+                <input type="submit" value="Absenden" style="display: none">
             </form>
             <div class="main">
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
@@ -913,49 +913,48 @@
             
             for(var i = 0; i < form.childElementCount; i++)
             {
-                console.log(form.children[i].getElementsByTagName('input')[0].getAttribute('name'));
-                console.log(form.children[i]);
-                console.log(form.children[i].getElementsByTagName('input')[0].value);
-
-                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+                if(!form.children[i].hasAttribute('type'))
                 {
-                    if(device.type == 'temperature')
+                    if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                     {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        if(device.type == 'temperature')
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else if(device.type == 'motion')
+                        {
+                            settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+                        }
+                        else if(device.type == 'light')
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+                        }
                     }
-                    else if(device.type == 'motion')
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
                     {
-                        settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                    }
-                    else if(device.type == 'light')
-                    {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                    }
-                    else
-                    {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-                    }
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
-                {
-                    var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
+                        var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
 
-                    for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
-                    {
-                        concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
+                        for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
+                        {
+                            concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
+                        }
+
+                        concat += ']';
+
+                        settings['events'] = JSON.parse(concat);
                     }
-
-                    concat += ']';
-
-                    settings['events'] = JSON.parse(concat);
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
-                {
-                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
-                {
-                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+                    }
                 }
             }
 
