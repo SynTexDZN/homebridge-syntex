@@ -239,11 +239,13 @@
     {
         if(btn.hasAttribute('class') && btn.getAttribute('white'))
         {
-            btn.setAttribute('class', 'outline');
+            btn.removeAttribute('class');
+            btn.setAttribute('value', 'Aus');
         }
         else
         {
             btn.setAttribute('class', 'white');
+            btn.setAttribute('value', 'An');
         }
     }
 
