@@ -183,11 +183,11 @@ async function initDevice(mac, ip, name, type, version, interval, events)
             {
                 if(await createEventButton(mac, device['name'], (device['events'] || []).length))
                 {
-                    resolve(['Init', '{"name": "' + device['name'] + '", "active": ' + (device['active'] || 0) + ', "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
+                    resolve(['Init', '{"name": "' + device['name'] + '", "active": "' + (device['active'] || 0) + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
                 }
             }
 
-            resolve(['Success', '{"name": "' + device['name'] + '", "active": ' + (device['active'] || 0) + ', "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
+            resolve(['Success', '{"name": "' + device['name'] + '", "active": "' + (device['active'] || 0) + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "events": [' + (device['events'] || []) + '], "port": "' + webhookPort + '"}']);
         }
         else
         {
@@ -269,7 +269,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                                     {
                                         logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                        resolve(['Init', '{"name": "' + name + '", "interval": "' + interval + '", "led": "1", "events": [], "port": "' + webhookPort + '"}']);
+                                        resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "events": [], "port": "' + webhookPort + '"}']);
                                     }
                                 });    
                             }
