@@ -173,7 +173,7 @@
         }
         else if(settings[i].index == 'led')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : '') + '" onclick="switchFormButton(this)" style="max-width: 150px; cursor: pointer: "></b></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px"></b></p>';
         }
         else
         {
@@ -241,14 +241,12 @@
 
         if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
         {
-            btn.setAttribute('class', '');
-            btn.setAttribute('disabled', '');
+            btn.setAttribute('class', 'outline');
             btn.setAttribute('value', 'Aus');
         }
         else
         {
             btn.setAttribute('class', 'white');
-            btn.removeAttribute('disabled');
             btn.setAttribute('value', 'An');
         }
     }
