@@ -173,7 +173,7 @@
         }
         else if(settings[i].index == 'led')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" style="max-width: 150px"></b></p>';
+            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px"></b></p>';
         }
         else
         {
@@ -233,6 +233,18 @@
 
         document.getElementById('events').removeChild(document.getElementById('events').children[i]);
         document.getElementById('controls').removeChild(button);
+    }
+
+    function switchFormButton(btn)
+    {
+        if(btn.hasAttribute('class') && btn.getAttribute('white'))
+        {
+            btn.setAttribute('class', 'outline');
+        }
+        else
+        {
+            btn.setAttribute('class', 'white');
+        }
     }
 
 </script>
