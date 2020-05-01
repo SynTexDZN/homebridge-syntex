@@ -75,8 +75,6 @@
         });
     }
 
-    console.log(device);
-
     document.getElementsByTagName('title')[0].innerHTML = device.name;
     document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
@@ -241,8 +239,6 @@
 
     function switchFormButton(btn)
     {
-        console.log('Switch');
-
         if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
         {
             btn.setAttribute('class', 'outline');
@@ -812,8 +808,6 @@
 
             if(res != null && res == 'Success')
             {
-                console.log(res);
-
                 setTimeout(function()
                 {
                     checkRestart().then(function(res) {
@@ -964,8 +958,6 @@
 
                 if(res != null && res == 'Success')
                 {
-                    console.log(res);
-
                     var error = '';
 
                     fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
@@ -973,6 +965,7 @@
                         if(res2)
                         {
                             console.log(res2);
+                            
                             if(res2 != "Success")
                             {
                                 error = 'true';
