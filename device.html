@@ -95,6 +95,8 @@
 
     for(const i in settings)
     {
+        console.log(settings[i].index);
+
         if(settings[i].index == 'interval' && (device.type == 'light' || device.type == 'temperature'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
