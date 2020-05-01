@@ -31,7 +31,7 @@
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="closeSettings()">
                     <div style="display: block; width: 100%; margin-left: 20px">
-                        <input id="save-btn" type="submit" value="Speichern" onclick="saveConfig(false)">
+                        <input id="save-btn" type="submit" value="Speichern" onclick="document.getElementsByTagName('form')[0].requestSubmit()">
                     </div>
                 </div>
             </div>
@@ -881,181 +881,174 @@
 
     function saveConfig(upload)
     {
-        if(document.getElementsByTagName('form')[0].checkValidity())
+        if(!upload && !saving)
         {
-            if(!upload && !saving)
+            upload = true;
+            saving = true;
+
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'saving');
+            overlay.setAttribute('style', 'z-index: 1');
+            overlay.setAttribute('value', 'Hochladen ..');
+            overlay.setAttribute('class', 'overlay gradient-blue loading-loop');
+
+            document.getElementById('save-btn').parentElement.insertBefore(overlay, document.getElementById('save-btn'));
+
+            setTimeout(function()
             {
-                upload = true;
-                saving = true;
+                overlay.style.opacity = 1;
+                document.getElementById('save-btn').style.opacity = 0;
+            }, 10);
+        }
 
-                var overlay = document.createElement('input');
-
-                overlay.setAttribute('type', 'button');
-                overlay.setAttribute('id', 'saving');
-                overlay.setAttribute('style', 'z-index: 1');
-                overlay.setAttribute('value', 'Hochladen ..');
-                overlay.setAttribute('class', 'overlay gradient-blue loading-loop');
-
-                document.getElementById('save-btn').parentElement.insertBefore(overlay, document.getElementById('save-btn'));
-
-                setTimeout(function()
-                {
-                    overlay.style.opacity = 1;
-                    document.getElementById('save-btn').style.opacity = 0;
-                }, 10);
-            }
-
-            if(upload)
+        if(upload)
+        {
+            var settings = {
+                mac: device.id
+            };
+            
+            var form = document.getElementById('settings').getElementsByClassName('main')[0];
+            
+            for(var i = 0; i < form.childElementCount; i++)
             {
-                var settings = {
-                    mac: device.id
-                };
-                
-                var form = document.getElementById('settings').getElementsByClassName('main')[0];
-                
-                for(var i = 0; i < form.childElementCount; i++)
+                if(!form.children[i].hasAttribute('type'))
                 {
-                    if(!form.children[i].hasAttribute('type'))
+                    if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                     {
-                        if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+                        if(device.type == 'temperature')
                         {
-                            if(device.type == 'temperature')
-                            {
-                                settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                            }
-                            else if(device.type == 'motion')
-                            {
-                                settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                            }
-                            else if(device.type == 'light')
-                            {
-                                settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                            }
-                            else
-                            {
-                                settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-                            }
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
-                        else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                        else if(device.type == 'motion')
                         {
-                            var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
+                            settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+                        }
+                        else if(device.type == 'light')
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+                        }
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                    {
+                        var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
 
-                            for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
-                            {
-                                concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
-                            }
-
-                            concat += ']';
-
-                            settings['events'] = JSON.parse(concat);
-                        }
-                        else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                        for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
                         {
-                            settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                            concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
                         }
-                        else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
-                        {
-                            settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
-                        }
+
+                        concat += ']';
+
+                        settings['events'] = JSON.parse(concat);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
                     }
                 }
+            }
 
-                console.log(settings);
+            console.log(settings);
 
-                fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
+            fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
 
-                    if(res != null && res == 'Success')
-                    {
-                        console.log(res);
+                if(res != null && res == 'Success')
+                {
+                    console.log(res);
 
-                        var error = '';
+                    var error = '';
 
-                        fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
+                    fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
 
-                            if(res2)
+                        if(res2)
+                        {
+                            console.log(res2);
+                            if(res2 != "Success")
                             {
-                                console.log(res2);
-                                if(res2 != "Success")
-                                {
-                                    error = 'true';
-                                }
-                                else
-                                {
-                                    var rOverlay = document.createElement('input');
-
-                                    rOverlay.setAttribute('type', 'button');
-                                    rOverlay.setAttribute('id', 'save-result');
-                                    rOverlay.setAttribute('style', 'z-index: 2');
-                                    rOverlay.setAttribute('value', 'Hochgeladen!');
-                                    rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                                    document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                                    setTimeout(function()
-                                    {
-                                        rOverlay.style.opacity = 1;
-                                    }, 10);
-
-                                    console.log('RESPONSE');
-                                    
-                                    setTimeout(function()
-                                    {
-                                        redirect();
-                                        console.log('REDIRECT');
-                                    }, 2000);
-                                    
-                                    error = 'false';
-                                }
+                                error = 'true';
                             }
                             else
                             {
-                                if(saveTries == 0)
+                                var rOverlay = document.createElement('input');
+
+                                rOverlay.setAttribute('type', 'button');
+                                rOverlay.setAttribute('id', 'save-result');
+                                rOverlay.setAttribute('style', 'z-index: 2');
+                                rOverlay.setAttribute('value', 'Hochgeladen!');
+                                rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                setTimeout(function()
                                 {
-                                    saveTries++;
-                                    saveConfig(true);
-                                }
-                                else
+                                    rOverlay.style.opacity = 1;
+                                }, 10);
+
+                                console.log('RESPONSE');
+                                
+                                setTimeout(function()
                                 {
-                                    var rOverlay = document.createElement('input');
-
-                                    rOverlay.setAttribute('type', 'button');
-                                    rOverlay.setAttribute('id', 'save-result');
-                                    rOverlay.setAttribute('style', 'z-index: 2');
-                                    rOverlay.setAttribute('value', 'Gespeichert!');
-                                    rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                                    document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                                    setTimeout(function()
-                                    {
-                                        rOverlay.style.opacity = 1;
-                                    }, 10);
-
-                                    setTimeout(function()
-                                    {
-                                        redirect();
-                                    }, 2000);
-                                }
+                                    redirect();
+                                    console.log('REDIRECT');
+                                }, 2000);
+                                
+                                error = 'false';
                             }
-                        });
-                    }
-                    else
-                    {
-                        saving = false;
-
-                        setTimeout(function()
+                        }
+                        else
                         {
-                            pingESP();
-                        }, 500);
+                            if(saveTries == 0)
+                            {
+                                saveTries++;
+                                saveConfig(true);
+                            }
+                            else
+                            {
+                                var rOverlay = document.createElement('input');
 
-                        console.log("ERROR"); // Add Overlay RED
-                    }
-                });
-            }
-        }
-        else
-        {
-            document.getElementsByTagName('form')[0].requestSubmit();
+                                rOverlay.setAttribute('type', 'button');
+                                rOverlay.setAttribute('id', 'save-result');
+                                rOverlay.setAttribute('style', 'z-index: 2');
+                                rOverlay.setAttribute('value', 'Gespeichert!');
+                                rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                                setTimeout(function()
+                                {
+                                    rOverlay.style.opacity = 1;
+                                }, 10);
+
+                                setTimeout(function()
+                                {
+                                    redirect();
+                                }, 2000);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    saving = false;
+
+                    setTimeout(function()
+                    {
+                        pingESP();
+                    }, 500);
+
+                    console.log("ERROR"); // Add Overlay RED
+                }
+            });
         }
     }
     
