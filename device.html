@@ -43,6 +43,14 @@
     var device = JSON.parse('<%device%>');
     var settings = [];
 
+    if(!device.type == 'relais' && !device.type == 'rgb')
+    {
+        settings.push({
+            index: 'active',
+            name: 'Aktiv'
+        });
+    }
+
     if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
     {
         settings.push({
@@ -84,7 +92,6 @@
     infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
     infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
     infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
-    infos.innerHTML += '<p><b>Aktiviert: </b>' + device.active + '</p>';
 
     for(const i in settings)
     {
@@ -173,7 +180,7 @@
 
             controls.appendChild(addBtn);
         }
-        else if(settings[i].index == 'led')
+        else if(settings[i].index == 'led' || settings[i].index == 'active')
         {
             document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
         }
