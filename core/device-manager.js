@@ -7,155 +7,167 @@ async function removeDevice(mac, type)
 
         config.load('config', (err, obj) => {    
 
-            if(obj)
-            {                       
-                var configRemoved = false;
+            if(obj && !err)
+            {
+                var configObj = null;
 
-                obj.id = 'config';
-
-                for(const i in obj.platforms)
+                while(await existsInConfig(obj, mac))
                 {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        var platform = obj.platforms[i];
-                        var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
-
-                        for(const i in configContainer)
-                        {
-                            for(const j in configContainer[i])
-                            {
-                                if(configContainer[i][j].mac === mac)
-                                {
-                                    configContainer[i].splice(j, 1);
-
-                                    configRemoved = true;
-                                }
-                            }
-                        }
-
-                        if(type == 'temperature' || type == 'light')
-                        {
-                            for(const i in platform.sensors)
-                            {
-                                if(platform.sensors[i].mac === mac)
-                                {
-                                    platform.sensors.splice(i, 1);
-                                }
-                            }
-                        }
-                    }
+                    configObj = await removeFromConfig(obj, mac);
                 }
 
-                if(configRemoved)
+                if(configObj != null)
                 {
-                    config.add(obj, (err) => {
+                    config.add(configObj, (err) => {
 
                         if(err)
                         {
                             logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
-
+        
                             resolve(false);
                         }
                         else
                         {
-                            storage.remove(mac, (err) => {
-                                
-                                if(err)
-                                {
-                                    logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden! " + err);
-                                    
-                                    resolve(false);
-                                }
-                                else
-                                {
-                                    if(type == 'temperature')
-                                    {
-                                        dataStorage.remove(mac + '-T', (err) => {
+                            if(await removeFromSettingsStorage(mac))
+                            {
+                                await removeFromDataStorage(mac, type);
 
-                                            dataStorage.remove(mac + '-H', (err) => {
-                                
-                                                logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
-        
-                                                resolve(true);
-                                            });
-                                        });
-                                    }
-                                    else if(type == 'light')
-                                    {
-                                        dataStorage.remove(mac + '-L', (err) => {
-
-                                            dataStorage.remove(mac + '-R', (err) => {
-                                
-                                                logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
-        
-                                                resolve(true);
-                                            });
-                                        });
-                                    }
-                                    else
-                                    {
-                                        dataStorage.remove(mac, (err) => {
-                                
-                                            logger.log('success', "Gerät wurde aus dem System entfernt ( " + mac + " )");
-    
-                                            resolve(true);
-                                        });
-                                    }
-                                }
-                            });
+                                resolve(true);
+                            }
+                            else
+                            {
+                                resolve(false);
+                            }
                         }
                     });
                 }
                 else
                 {
-                    resolve(false);
+                    if(await removeFromSettingsStorage(mac))
+                    {
+                        await removeFromDataStorage(mac, type);
+
+                        resolve(true);
+                    }
+                    else
+                    {
+                        resolve(false);
+                    }
                 }
             }
-
-            if(err || !obj)
+            else
             {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
-
+                logger.log('error', "Config.json konnte nicht geladen werden! " + err);
+        
                 resolve(false);
-            }    
+            }
         });
     });
 }
 
-async function checkName(name)
+async function existsInConfig(obj, mac)
 {
     return new Promise(resolve => {
-        
-        config.load('config', (err, obj) => {    
 
-            if(obj)
-            {                            
-                obj.id = 'config';
+        for(const i in obj.platforms)
+        {
+            if(obj.platforms[i].platform === 'SynTexWebHooks')
+            {
+                var platform = obj.platforms[i];
+                var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
 
-                for(const i in obj.platforms)
+                for(const i in configContainer)
                 {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    for(const j in configContainer[i])
                     {
-                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
-
-                        for(const i in configContainer)
+                        if(configContainer[i][j].mac === mac)
                         {
-                            for(const j in configContainer[i])
-                            {
-                                if(configContainer[i][j].mac === mac)
-                                {
-                                    resolve(false);
-                                }
-                            }
+                            resolve(true);
                         }
-                        
-                        resolve(true);
                     }
                 }
             }
-            
-            resolve(false);
+        }
+
+        resolve(false);
+    });
+}
+
+async function removeFromConfig(obj, mac)
+{
+    return new Promise(resolve => {
+
+        for(const i in obj.platforms)
+        {
+            if(obj.platforms[i].platform === 'SynTexWebHooks')
+            {
+                var platform = obj.platforms[i];
+                var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
+
+                for(const i in configContainer)
+                {
+                    for(const j in configContainer[i])
+                    {
+                        if(configContainer[i][j].mac === mac)
+                        {
+                            configContainer[i].splice(j, 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        resolve(obj);
+    });
+}
+
+async function removeFromSettingsStorage(mac)
+{
+    return new Promise(resolve => {
+
+        storage.remove(mac, (err) => {
+                                
+            if(err)
+            {
+                logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden! " + err);
+            }
+
+            resolve(err ? false : true);
         });
+    });
+}
+
+async function removeFromDataStorage(mac, type)
+{
+    return new Promise(resolve => {
+
+        if(type == 'temperature')
+        {
+            dataStorage.remove(mac + '-T', (err) => {
+
+                dataStorage.remove(mac + '-H', (err) => {
+
+                    resolve();
+                });
+            });
+        }
+        else if(type == 'light')
+        {
+            dataStorage.remove(mac + '-L', (err) => {
+
+                dataStorage.remove(mac + '-R', (err) => {
+
+                    resolve();
+                });
+            });
+        }
+        else
+        {
+            dataStorage.remove(mac, (err) => {
+
+                resolve();
+            });
+        }
     });
 }
 
@@ -289,6 +301,43 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 resolve(['Error', 'Der Name ist bereits vergeben!']);
             }
         }
+    });
+}
+
+async function checkName(name)
+{
+    return new Promise(resolve => {
+        
+        config.load('config', (err, obj) => {    
+
+            if(obj)
+            {                            
+                obj.id = 'config';
+
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    {
+                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
+
+                        for(const i in configContainer)
+                        {
+                            for(const j in configContainer[i])
+                            {
+                                if(configContainer[i][j].mac === mac)
+                                {
+                                    resolve(false);
+                                }
+                            }
+                        }
+                        
+                        resolve(true);
+                    }
+                }
+            }
+            
+            resolve(false);
+        });
     });
 }
 
