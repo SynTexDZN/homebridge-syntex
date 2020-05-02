@@ -587,8 +587,6 @@ module.exports = {
     getDevices,
     setValue,
     setValues,
-    exists,
     initDevice,
-    removeDevice,
-    checkName
+    removeDevice
 };
