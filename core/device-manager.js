@@ -10,11 +10,13 @@ async function removeDevice(mac, type)
             if(obj && !err)
             {
                 var configObj = null;
-
+                /*
                 while(await existsInConfig(obj, mac))
                 {
                     configObj = await removeFromConfig(obj, mac);
                 }
+                */
+               await existsInConfig(obj, mac);
 
                 if(configObj != null)
                 {
