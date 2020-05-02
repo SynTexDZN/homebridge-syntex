@@ -176,11 +176,10 @@ async function initDevice(mac, ip, name, type, version, interval, events)
     return new Promise(async function(resolve) {
         
         var eventButton = await checkEventButton(mac);
+        var device = await getDevice(mac);
 
-        if(await exists(mac))
+        if(device != null)
         {
-            var device = await getDevice(mac);
-
             if(ip != device['ip'])
             {
                 setValue(mac, 'ip', ip);
@@ -191,116 +190,138 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 setValue(mac, 'version', version);
             }
 
-            if((device['events'] || []) && !eventButton && (device['events'] || []).length != 0)
+            var status = 'Success';
+
+            if(!eventButton && device['events'] && (device['events'] || []).length != 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
             {
-                if(await createEventButton(mac, device['name'], (device['events'] || []).length))
-                {
-                    resolve(['Init', '{"name": "' + device['name'] + '", "active": "' + (device['active'] || 0) + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "port": "' + webhookPort + '", "events": [' + (device['events'] || []) + ']}']);
-                }
+                status = 'Init';
             }
 
-            resolve(['Success', '{"name": "' + device['name'] + '", "active": "' + (device['active'] || 0) + '", "interval": "' + (device['interval'] || 0) + '", "led": "' + (device['led'] || 1) + '", "port": "' + webhookPort + '", "events": [' + (device['events'] || []) + ']}']);
+            resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + (device['active'] || 1) + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + (device['led'] || 1) + '", "port": "' + (webhookPort || 1710) + '", "events": [' + (device['events'] || events) + ']}']);
         }
         else
         {
-            if(await checkName(name))
-            {
-                var device = {
-                    id: mac,
-                    ip: ip,
-                    name: name,
-                    type: type,
-                    version: version,
-                    active: 1,
-                    interval: parseInt(interval),
-                    led: 1,
-                    events: []
-                };
+            config.load('config', async function(err, obj) {
 
-                storage.add(device, (err) => {
+                if(obj && !err)
+                {
+                    var configObj = null;
 
-                    if(err)
+                    while(await existsInConfig(obj, mac))
                     {
-                        logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
-
-                        resolve(['Error', '']);
+                        configObj = await removeFromConfig(obj, mac);
                     }
-                    else
-                    {
-                        config.load('config', (err, obj) => {    
 
-                            if(obj)
-                            {                            
-                                obj.id = 'config';
+                    configObj = await addToConfig(configObj || obj, mac, ip, name, type);
 
-                                for(const i in obj.platforms)
+                    config.add(configObj, async function(err) {
+
+                        if(err)
+                        {
+                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+
+                            resolve(['Error', '']);
+                        }
+                        else if(await checkName(name))
+                        {
+                            var device = {
+                                id: mac,
+                                ip: ip,
+                                name: name,
+                                type: type,
+                                version: version,
+                                active: 1,
+                                interval: parseInt(interval),
+                                led: 1,
+                                events: []
+                            };
+
+                            storage.add(device, (err) => {
+
+                                if(err)
                                 {
-                                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                                    {
-                                        var platform = obj.platforms[i];
+                                    logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
 
-                                        if(type == "relais")
-                                        {
-                                            platform.switches[platform.switches.length] = {mac: mac, name: name, type: type, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
-                                        }
-                                        else if(type == "rgb" || type == "rgbw")
-                                        {
-                                            platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
-                                        }
-                                        else if(type != "switch")
-                                        {
-                                            platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
-                                        }
-
-                                        if(type == "temperature")
-                                        {
-                                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-H", type: "humidity"};
-                                        }
-
-                                        if(type == "light")
-                                        {
-                                            platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
-                                        }
-
-                                        if((type == "light" || type == "temperature" || type == "switch") && !eventButton)
-                                        {
-                                            platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: 0};
-                                        }
-                                    }
+                                    resolve(['Error', '']);
                                 }
+                                else
+                                {
+                                    config.load('config', (err, obj) => {    
 
-                                config.add(obj, (err) => {
+                                        if(err || !obj)
+                                        {
+                                            logger.log('error', "Config.json konnte nicht geladen werden!");
 
-                                    if(err)
-                                    {
-                                        logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+                                            resolve(['Error', '']);
+                                        }
+                                        else
+                                        {
+                                            logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                        resolve(['Error', '']);
-                                    }
-                                    else
-                                    {
-                                        logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+                                            resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else
+                        {
+                            resolve(['Error', 'Der Name ist bereits vergeben!']);
+                        }
+                    });
+                }
+                else
+                {
+                    logger.log('error', "Config.json konnte nicht geladen werden! " + err);
 
-                                        resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
-                                    }
-                                });    
-                            }
+                    resolve(['Error', '']);
+                }
+            });
+        }
+    });
+}
 
-                            if(err || !obj)
-                            {
-                                logger.log('error', "Config.json konnte nicht geladen werden!");
+async function addToConfig(obj, mac, ip, name, type)
+{
+    return new Promise(resolve => {
 
-                                resolve(['Error', '']);
-                            }
-                        });
-                    }
-                });
-            }
-            else
+        for(const i in obj.platforms)
+        {
+            if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
-                resolve(['Error', 'Der Name ist bereits vergeben!']);
+                var platform = obj.platforms[i];
+
+                if(type == "relais")
+                {
+                    platform.switches[platform.switches.length] = {mac: mac, name: name, type: type, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
+                }
+                else if(type == "rgb" || type == "rgbw")
+                {
+                    platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
+                }
+                else if(type != "switch")
+                {
+                    platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
+                }
+
+                if(type == "temperature")
+                {
+                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-H", type: "humidity"};
+                }
+
+                if(type == "light")
+                {
+                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
+                }
+
+                if((type == "light" || type == "temperature" || type == "switch") && !eventButton)
+                {
+                    platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: 0};
+                }
             }
         }
+
+        resolve(obj);
     });
 }
 
@@ -341,7 +362,7 @@ async function checkName(name)
     });
 }
 
-async function exists(mac)
+async function existsInSettings(mac)
 {
     return new Promise(resolve => {
         
