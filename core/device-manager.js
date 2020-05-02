@@ -5,7 +5,7 @@ async function removeDevice(mac, type)
 {
     return new Promise(resolve => {
 
-        config.load('config', (err, obj) => {    
+        config.load('config', async (err, obj) => {    
 
             if(obj && !err)
             {
