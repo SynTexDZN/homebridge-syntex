@@ -5,22 +5,20 @@ async function removeDevice(mac, type)
 {
     return new Promise(resolve => {
 
-        config.load('config', async (err, obj) => {    
+        config.load('config', async function(err, obj) {
 
             if(obj && !err)
             {
                 var configObj = null;
-                /*
+
                 while(await existsInConfig(obj, mac))
                 {
                     configObj = await removeFromConfig(obj, mac);
                 }
-                */
-               await existsInConfig(obj, mac);
 
                 if(configObj != null)
                 {
-                    config.add(configObj, (err) => {
+                    config.add(configObj, async function(err) {
 
                         if(err)
                         {
