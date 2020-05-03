@@ -199,7 +199,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
             resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + (device['active'] || 1) + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + (device['led'] || 1) + '", "port": "' + (webhookPort || 1710) + '", "events": [' + (device['events'] || events) + ']}']);
         }
-        else
+        else if(await checkName(name))
         {
             config.load('config', async function(err, obj) {
 
@@ -222,7 +222,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                             resolve(['Error', '']);
                         }
-                        else if(await checkName(name))
+                        else
                         {
                             var device = {
                                 id: mac,
@@ -240,33 +240,17 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                                 if(err)
                                 {
-                                    logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
+                                    logger.log('error', mac + ".json konnte nicht erstellt werden! " + err);
 
                                     resolve(['Error', '']);
                                 }
                                 else
                                 {
-                                    config.load('config', (err, obj) => {    
+                                    logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                        if(err || !obj)
-                                        {
-                                            logger.log('error', "Config.json konnte nicht geladen werden!");
-
-                                            resolve(['Error', '']);
-                                        }
-                                        else
-                                        {
-                                            logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
-
-                                            resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
-                                        }
-                                    });
+                                    resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
                                 }
                             });
-                        }
-                        else
-                        {
-                            resolve(['Error', 'Der Name ist bereits vergeben!']);
                         }
                     });
                 }
@@ -277,6 +261,10 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                     resolve(['Error', '']);
                 }
             });
+        }
+        else
+        {
+            resolve(['Error', 'Der Name ist bereits vergeben!']);
         }
     });
 }
@@ -333,8 +321,6 @@ async function checkName(name)
 
             if(obj)
             {                            
-                obj.id = 'config';
-
                 for(const i in obj.platforms)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
@@ -351,24 +337,11 @@ async function checkName(name)
                                 }
                             }
                         }
-                        
-                        resolve(true);
                     }
                 }
             }
             
-            resolve(false);
-        });
-    });
-}
-
-async function existsInSettings(mac)
-{
-    return new Promise(resolve => {
-        
-        storage.load(mac, (err, obj) => {  
-
-            resolve(obj ? true : false);
+            resolve(true);
         });
     });
 }
@@ -505,8 +478,6 @@ async function checkEventButton(mac)
             }
             else
             {                            
-                obj.id = 'config';
-
                 var found = false;
 
                 for(const i in obj.platforms)
@@ -543,8 +514,6 @@ async function createEventButton(mac, name, buttons)
             }
             else
             {                            
-                obj.id = 'config';
-
                 for(const i in obj.platforms)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
