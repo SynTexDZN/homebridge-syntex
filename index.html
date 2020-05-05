@@ -131,7 +131,7 @@
 
         for(const i in devices)
         {
-            fetchURL('http://' + ip + '/restart', 3000).then(function(res) {
+            fetchURL('http://' + devices[i]['ip'] + '/restart', 3000).then(function(res) {
 
                 restartCounter++;
 
