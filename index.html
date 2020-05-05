@@ -131,9 +131,13 @@
 
         for(const i in devices)
         {
+            console.log(devices);
+
             fetchURL('http://' + devices[i].getAttribute('id') + '/restart', 3000).then(function(res) {
 
                 restartCounter++;
+
+                console.log(restartCounter, devices.length);
 
                 if(restartCounter >= devices.length)
                 {
