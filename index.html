@@ -33,7 +33,7 @@
             <div style="margin-top: 20px; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                 <div class="widget">
                     <button class="widget-left" disabled>Aktiv</button>
-                    <button class="widget-right gradient-red" onclick="switchAll()">Alle Aus</button>
+                    <button class="widget-right gradient-red" onclick="switchAll(this)">Alle Aus</button>
                 </div>
                 <div class="widget">
                     <button class="widget-left" disabled>Neustart</button>
@@ -128,7 +128,7 @@
     function restartAll(btn)
     {
         restartCounter = 0;
-        btn.value = 'Neustart ..';
+        btn.setAttribute('value', 'Neustart ..');
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -138,7 +138,7 @@
 
                 if(restartCounter >= devices.length)
                 {
-                    btn.value = 'Neustart Erfolgreich';
+                    btn.setAttribute('value', 'Neustart Erfolgreich');
                 }
             });
         }
