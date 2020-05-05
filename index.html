@@ -37,7 +37,7 @@
                 </div>
                 <div class="widget">
                     <button class="widget-left" disabled>Neustart</button>
-                    <button class="widget-right gradient-orange" onclick="restartAll()">Alle Neustarten</button>
+                    <button class="widget-right gradient-orange" onclick="restartAll(this)">Alle Neustarten</button>
                 </div>
             </div>
             <div id="devices" style="margin-top: 100px">
@@ -125,9 +125,10 @@
     var devices = document.getElementsByClassName('device');
     var restartCounter;
 
-    function restartAll()
+    function restartAll(btn)
     {
         restartCounter = 0;
+        btn.value = 'Neustart ..';
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -137,7 +138,7 @@
 
                 if(restartCounter >= devices.length)
                 {
-                    console.log('FINISHED RESTART');
+                    btn.value = 'Neustart Erfolgreich';
                 }
             });
         }
