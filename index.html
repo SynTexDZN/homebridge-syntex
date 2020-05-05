@@ -33,11 +33,11 @@
             <div style="margin-top: 20px; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                 <div class="widget">
                     <button class="widget-left" disabled>Aktiv</button>
-                    <button class="widget-right gradient-red">Alle Aus</button>
+                    <button class="widget-right gradient-red" onclick="switchAll()">Alle Aus</button>
                 </div>
                 <div class="widget">
                     <button class="widget-left" disabled>Neustart</button>
-                    <button class="widget-right gradient-yellow">Alle Neustarten</button>
+                    <button class="widget-right gradient-orange" onclick="restartAll()">Alle Neustarten</button>
                 </div>
             </div>
             <div id="devices" style="margin-top: 100px">
@@ -121,8 +121,31 @@
 
 </script>
 <script>
-    
+
     var devices = document.getElementsByClassName('device');
+    var restartCounter;
+
+    function restartAll()
+    {
+        restartCounter = 0;
+
+        for(const i in devices)
+        {
+            fetchURL('http://' + ip + '/restart', 3000).then(function(res) {
+
+                restartCounter++;
+
+                if(restartCounter >= devices.length)
+                {
+                    console.log('FINISHED RESTART');
+                }
+            });
+        }
+    }
+
+</script>
+<script>
+    
     var updatingDevices = [];
     
     function checkUpdate(ip, name, version)
