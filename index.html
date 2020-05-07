@@ -578,9 +578,9 @@
         }
     }
 
-    async function checkUpdateNew(ip, version)
+    function checkUpdateNew(ip, version)
     {
-        return new Promise(resolve => {
+        return new Promise(async function(resolve) {
 
             fetchURL('http://' + ip + '/version', 3000).then(function(res) {
 
