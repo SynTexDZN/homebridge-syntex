@@ -641,7 +641,7 @@
             pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
             pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
 
-            document.getElementById(device.getAttribute('ip')).parentElement.insertBefore(pendingOverlay, document.getElementById(device.getAttribute('ip')));
+            device.parentElement.insertBefore(pendingOverlay, device);
 
             setTimeout(function()
             {
@@ -673,7 +673,7 @@
 
             responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
 
-            document.getElementById(device.getAttribute('ip')).parentElement.insertBefore(responseOverlay, document.getElementById(device.getAttribute('ip')));
+            device.parentElement.insertBefore(responseOverlay, device);
                 
             setTimeout(function()
             {
