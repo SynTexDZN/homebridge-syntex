@@ -415,24 +415,24 @@
             {
                 updatingDevices.push(btn.getAttribute('ip'));
 
+                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
+
+                pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
+                pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
+
+                device.parentElement.insertBefore(pendingOverlay, device);
+
+                setTimeout(function()
+                {
+                    document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
+                    pendingOverlay.style.opacity = 1;
+                }, 10);
+
                 var device = document.getElementById(btn.getAttribute('ip'));
                 var res = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
 
                 if(res != null && res == 'Success')
                 {
-                    var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
-
-                    pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
-                    pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-                    device.parentElement.insertBefore(pendingOverlay, device);
-
-                    setTimeout(function()
-                    {
-                        document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
-                        pendingOverlay.style.opacity = 1;
-                    }, 10);
-                    
                     await newTimeout(2000);
 
                     if(await checkUpdate(btn.getAttribute('ip'), btn.getAttribute('value').split('v')[1]))
@@ -448,30 +448,34 @@
                     {
                         var responseOverlay = createErrorOverlay(btn.getAttribute('ip') + '-update-result', 'Update Fehlgeschlagen!');
                     }
-
-                    responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
-
-                    device.parentElement.insertBefore(responseOverlay, device);
-                        
-                    setTimeout(function()
-                    {
-                        pendingOverlay.style.opacity = 0;
-                        responseOverlay.style.opacity = 1;
-                    }, 10);
-
-                    setTimeout(function()
-                    {
-                        responseOverlay.style.opacity = 0;
-                        device.style.opacity = 1;
-                    }, 5000);
-
-                    setTimeout(function()
-                    {
-                        device.parentElement.removeChild(pendingOverlay);
-                        device.parentElement.removeChild(responseOverlay);
-                        updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
-                    }, 5300);
                 }
+                else
+                {
+                    var responseOverlay = createErrorOverlay(btn.getAttribute('ip') + '-update-result', 'Keine Verbindung zum Gerät!');
+                }
+
+                responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
+
+                device.parentElement.insertBefore(responseOverlay, device);
+                    
+                setTimeout(function()
+                {
+                    pendingOverlay.style.opacity = 0;
+                    responseOverlay.style.opacity = 1;
+                }, 10);
+
+                setTimeout(function()
+                {
+                    responseOverlay.style.opacity = 0;
+                    device.style.opacity = 1;
+                }, 5000);
+
+                setTimeout(function()
+                {
+                    device.parentElement.removeChild(pendingOverlay);
+                    device.parentElement.removeChild(responseOverlay);
+                    updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
+                }, 5300);
             }
             
             resolve(response);
