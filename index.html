@@ -566,32 +566,13 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            fetchURL('http://' + devices[i].getAttribute('ip') + '/update', 10000).then(async function(res) {
+            updateDeviceNew(devices[i]).then(function(res) {
 
-                if(res == null || res != 'Success')
+                updateCounter[res ? 0 : 1]++;
+
+                if(updateCounter[0] + updateCounter[1] >= devices.length)
                 {
-                    console.log('UPDATE ERROR');
-                    updateCounter[1]++;
-                }
-                else
-                {
-                    await newTimeout(2000);
-
-                    if(await checkUpdateNew(devices[i].getAttribute('ip'), devices[i].getAttribute('value').split('v')[1]))
-                    {
-                        console.log('UPDATE SUCCESS');
-                        updateCounter[0]++;
-                    }
-                    else
-                    {
-                        console.log('UPDATE ERROR');
-                        updateCounter[1]++;
-                    }
-
-                    if(updateCounter[0] + updateCounter[1] >= devices.length)
-                    {
-                        console.log('UPDATES FINISHED');
-                    }
+                    console.log('UPDATES FINISHED');
                 }
             });
         }
@@ -612,6 +593,35 @@
                     resolve(false);
                 }
             });
+        });
+    }
+
+    async function updateDeviceNew(device)
+    {
+        return new Promise(resolve => {
+
+            var res = await fetchURL('http://' + device.getAttribute('ip') + '/update', 10000);
+
+            if(res == null || res != 'Success')
+            {
+                console.log('UPDATE ERROR');
+                resolve(false);
+            }
+            else
+            {
+                await newTimeout(2000);
+
+                if(await checkUpdateNew(device.getAttribute('ip'), device.getAttribute('value').split('v')[1]))
+                {
+                    console.log('UPDATE SUCCESS');
+                    resolve(true);
+                }
+                else
+                {
+                    console.log('UPDATE ERROR');
+                    resolve(false);
+                }
+            }
         });
     }
 
