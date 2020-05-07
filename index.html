@@ -566,29 +566,35 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            console.log(devices[i]);
-            var res = await fetchURL('http://' + devices[i].getAttribute('ip') + '/update', 10000);
-            
-            if(res == null || res != 'Success')
-            {
-                console.log('UPDATE ERROR');
-            }
-            else
-            {
-                await newTimeout(2000);
+            fetchURL('http://' + devices[i].getAttribute('ip') + '/update', 10000).then(async function(res) {
 
-                if(await checkUpdateNew(devices[i].getAttribute('ip'), devices[i].getAttribute('value').split('v')[1]))
+                if(res == null || res != 'Success')
                 {
-                    console.log('UPDATE SUCCESS');
+                    console.log('UPDATE ERROR');
+                    updateCounter[1]++;
                 }
                 else
                 {
-                    console.log('UPDATE ERROR');
-                }
-            }
-        }
+                    await newTimeout(2000);
 
-        console.log('UPDATES FINISHED');
+                    if(await checkUpdateNew(devices[i].getAttribute('ip'), devices[i].getAttribute('value').split('v')[1]))
+                    {
+                        console.log('UPDATE SUCCESS');
+                        updateCounter[0]++;
+                    }
+                    else
+                    {
+                        console.log('UPDATE ERROR');
+                        updateCounter[1]++;
+                    }
+
+                    if(updateCounter[0] + updateCounter[1] >= devices.length)
+                    {
+                        console.log('UPDATES FINISHED');
+                    }
+                }
+            });
+        }
     }
 
     async function checkUpdateNew(ip, version)
