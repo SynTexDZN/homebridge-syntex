@@ -32,7 +32,7 @@
             </div>
             <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                 <div>
-                    <button switch="0" id="activate-all" onclick="switchAll(this)">Aktiv: Unterschiedlich</button>
+                    <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
                 </div>
                 <div>
                     <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
@@ -66,6 +66,7 @@
     
     var temp = "";
     var counter = 0;
+    var activationCounter = [0, 0];
     
     for(const i in devices)
     {
@@ -80,6 +81,8 @@
             device.setAttribute('style', 'display: flex; margin-bottom: 20px');
             counter++;
         }
+
+        activationCounter[devices[i].active]++;
 
         if(temp != devices[i].type)
         {
@@ -115,6 +118,24 @@
         document.getElementById('devices').appendChild(device);
         
         temp = devices[i].type;
+    }
+
+    if(activationCounter[0] == 0 && activationCounter[1] >= 0)
+    {
+        document.getElementById('activate-all').setAttribute('switch', 1);
+        document.getElementById('activate-all').setAttribute('class', 'gradient-green');
+        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
+    }
+    else if(activationCounter[0] >= 0 && activationCounter[1] == 0)
+    {
+        document.getElementById('activate-all').setAttribute('switch', 0);
+        document.getElementById('activate-all').setAttribute('class', 'gradient-red');
+        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
+    }
+    else
+    {
+        document.getElementById('activate-all').setAttribute('switch', 0);
+        document.getElementById('activate-all').innerHTML = 'Aktiv: Unterschiedlich';
     }
 
 </script>
