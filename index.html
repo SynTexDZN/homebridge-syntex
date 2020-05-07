@@ -220,6 +220,7 @@
                     }
 
                     updateCounter[0]++;
+                    console.log("Success - " + updateCounter[0]);
                 }
                 else
                 {
@@ -243,6 +244,7 @@
                     }
 
                     updateCounter[1]++;
+                    console.log("Error - " + updateCounter[1]);
                 }
 
                 setTimeout(function()
@@ -274,6 +276,7 @@
             else
             {
                 updateCounter[1]++;
+                console.log("Error - " + updateCounter[1]);
             }
             
             setTimeout(function()
@@ -509,6 +512,7 @@
                 if(await updateDevice(ip) == false)
                 {
                     updateCounter[1]++;
+                    console.log("Error - " + updateCounter[1]);
                 }
             }
             
@@ -516,6 +520,8 @@
 
             while(updateCounter[0] + updateCounter[1] < devices.length)
             {}
+
+            console.log("Finished");
 
             var rOverlay = document.createElement('input');
 
