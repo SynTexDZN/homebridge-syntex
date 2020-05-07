@@ -493,7 +493,7 @@
         for(var i = 0; i < devices.length; i++)
         {
             settings.push({
-                mac: devices[i].getAttribute('onclick').split('mac=')[1],
+                mac: devices[i].getAttribute('onclick').split('mac=')[1].split("'")[0],
                 active: btn.getAttribute('switch') == 1 ? 1 : 0
             });
         }
