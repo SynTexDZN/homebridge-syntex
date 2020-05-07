@@ -498,14 +498,16 @@
                 var ip = devices[i].getAttribute('ip');
                 var name = devices[i].getAttribute('ip');
                 var version = devices[i].getAttribute('ip');
-                
+
                 updateDevice(ip).then(async function(res) {
 
-                    console.log(res);
+                    console.log(ip, name, version);
+                    console.log("1. " + res);
                     if(res)
                     {
                         res = await checkUpdate(ip, name, version);
                     }
+                    console.log("2. " + res);
 
                     updateCounter[res ? 1 : 0]++;
 
