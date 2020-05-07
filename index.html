@@ -501,19 +501,19 @@
                 if(await updateDevice(ip) == false)
                 {
                     updateCounter[1]++;
-                    console.log("Error - " + updateCounter[1]);
+                    console.log("Error Offline - " + updateCounter[1]);
                 }
                 else
                 {
                     if(await checkUpdate(ip, name, version))
                     {
                         updateCounter[0]++;
-                        console.log("Success - " + updateCounter[0]);
+                        console.log("Success Update - " + updateCounter[0]);
                     }
                     else
                     {
                         updateCounter[1]++;
-                        console.log("Error - " + updateCounter[1]);
+                        console.log("Error Update - " + updateCounter[1]);
                     }
                 }
             }
