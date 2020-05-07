@@ -499,16 +499,16 @@
                 console.log(ip);
                 updateDevice(ip).then(function(res) {
 
-                    restartCounter[res != null ? 0 : 1]++;
+                    updateCounter[res != null ? 0 : 1]++;
 
-                    if(restartCounter[0] + restartCounter[1] >= devices.length)
+                    if(updateCounter[0] + updateCounter[1] >= devices.length)
                     {
                         var rOverlay = document.createElement('input');
 
                         rOverlay.setAttribute('type', 'button');
                         rOverlay.setAttribute('id', 'update-result-all');
                         rOverlay.setAttribute('style', 'z-index: 2');
-                        rOverlay.setAttribute('value', '(' + restartCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
+                        rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
                         rOverlay.setAttribute('class', 'overlay gradient-green');
 
                         document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
