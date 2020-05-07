@@ -492,19 +492,16 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            settings.push({
+            var settings = {
                 mac: devices[i].getAttribute('onclick').split('mac=')[1].split("'")[0],
                 active: btn.getAttribute('switch') == 1 ? 1 : 0
-            });
-        }
+            };
 
-        console.log(settings);
+            console.log(settings);
 
-        var saved = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
+            var saved = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
 
-        if(saved != null && saved == 'Success')
-        {
-            for(var i = 0; i < devices.length; i++)
+            if(saved != null && saved == 'Success')
             {
                 fetchURL('http://' + devices[i].getAttribute('id') + '/refresh', 10000).then(function (refresh) {
 
@@ -536,30 +533,33 @@
                     }
                 });
             }
-        }
-        else
-        {
-            var responseOverlay = createErrorOverlay('', 'Aktualisierung Fehlgeschlagen!');
-
-            btn.parentElement.insertBefore(responseOverlay, btn);
-                
-            setTimeout(function()
+            else
             {
-                pendingOverlay.style.opacity = 0;
-                responseOverlay.style.opacity = 1;
-            }, 10);
+                switchCounter[1]++;
+                /*
+                var responseOverlay = createErrorOverlay('', 'Aktualisierung Fehlgeschlagen!');
 
-            setTimeout(function()
-            {
-                responseOverlay.style.opacity = 0;
-                btn.style.opacity = 1;
-            }, 5000);
+                btn.parentElement.insertBefore(responseOverlay, btn);
+                    
+                setTimeout(function()
+                {
+                    pendingOverlay.style.opacity = 0;
+                    responseOverlay.style.opacity = 1;
+                }, 10);
 
-            setTimeout(function()
-            {
-                btn.parentElement.removeChild(pendingOverlay);
-                btn.parentElement.removeChild(responseOverlay);
-            }, 5300);
+                setTimeout(function()
+                {
+                    responseOverlay.style.opacity = 0;
+                    btn.style.opacity = 1;
+                }, 5000);
+
+                setTimeout(function()
+                {
+                    btn.parentElement.removeChild(pendingOverlay);
+                    btn.parentElement.removeChild(responseOverlay);
+                }, 5300);
+                */
+            }
         }
     }
 
