@@ -596,9 +596,9 @@
         });
     }
 
-    async function updateDeviceNew(device)
+    function updateDeviceNew(device)
     {
-        return new Promise(resolve => {
+        return new Promise(async function(resolve) {
 
             var res = await fetchURL('http://' + device.getAttribute('ip') + '/update', 10000);
 
