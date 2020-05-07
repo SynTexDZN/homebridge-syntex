@@ -31,8 +31,12 @@
                 </div>
             </div>
             <div style="margin-top: 20px; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
-                <button id="activate-all" class="gradient-red" onclick="switchAll(this)">Aktiv: Alle Aus</button>
-                <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
+                <div>
+                    <button id="activate-all" class="gradient-red" onclick="switchAll(this)">Aktiv: Alle Aus</button>
+                </div>
+                <div>
+                    <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
+                </div>
             </div>
             <div id="devices" style="margin-top: 100px">
                 <h2 style="width: fit-content">• Smart Lock •</h2>
@@ -146,6 +150,8 @@
                 fetchURL('http://' + devices[i].getAttribute('id') + '/restart', 3000).then(function(res) {
 
                     restartCounter[res ? 0 : 1]++;
+
+                    console.log(restartCounter[0], restartCounter[1]);
 
                     if(restartCounter[0] + restartCounter[1] >= devices.length)
                     {
