@@ -470,6 +470,7 @@
 
     async function installAllUpdates()
     {
+        /*
         if(document.getElementById('updating-all') == null && document.getElementById('update-result-all') == null)
         {
             var devices = document.getElementsByClassName('update');
@@ -553,6 +554,62 @@
                 document.getElementById('update-all').parentElement.removeChild(overlay);
             }, 5300);
         }
+        */
+       installAllUpdatesNew();
+    }
+
+    async function installAllUpdatesNew()
+    {
+        var devices = document.getElementsByClassName('update');
+
+        updateCounter = [0, 0];
+
+        for(var i = 0; i < devices.length; i++)
+        {
+            var res = await fetchURL('http://' + devices.getAttribute('id') + '/update', 10000);
+            
+            if(res == null || res != 'Success')
+            {
+                console.log('UPDATE ERROR');
+            }
+            else
+            {
+                await newTimeout(2000);
+
+                if(await checkUpdateNew(devices.getAttribute('id'), devices.getAttribute('version')))
+                {
+                    console.log('UPDATE SUCCESS');
+                }
+                else
+                {
+                    console.log('UPDATE ERROR');
+                }
+            }
+        }
+
+        console.log('UPDATES FINISHED');
+    }
+
+    async function checkUpdateNew(ip, version)
+    {
+        return new Promise(resolve => {
+
+            fetchURL('http://' + ip + '/version', 3000).then(function(res) {
+
+                if(res != null && res != version)
+                {  
+                    resolve(true);
+                }
+                else
+                {
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    function newTimeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
 </script>
