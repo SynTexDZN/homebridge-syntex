@@ -35,7 +35,7 @@
                     <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
                 </div>
                 <div>
-                    <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
+                    <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
                 </div>
             </div>
             <div id="devices" style="margin-top: 100px">
@@ -168,7 +168,7 @@
 
                     if(restartCounter[0] + restartCounter[1] >= devices.length)
                     {
-                        var responseOverlay = createSuccessOverlay('restart-result-all', '(' + restartCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
+                        var responseOverlay = createSuccessOverlay('restart-result-all', restartCounter[0] + ' / ' + devices.length + ' Geräte Neugestartet!');
 
                         btn.parentElement.insertBefore(responseOverlay, btn);
 
@@ -361,7 +361,7 @@
 
                 if(updateCounter[0] + updateCounter[1] >= devices.length)
                 {
-                    var responseOverlay = createSuccessOverlay('update-result-all', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
+                    var responseOverlay = createSuccessOverlay('update-result-all', updateCounter[0] + ' / ' + devices.length + ' Geräte Aktualisiert!');
 
                     if(updateCounter[0] == 0)
                     {
