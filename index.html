@@ -30,7 +30,7 @@
                     <button class="widget-right gradient-green" disabled>-</button>
                 </div>
             </div>
-            <div style="margin-top: 20px; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
+            <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                 <div>
                     <button id="activate-all" class="gradient-red" onclick="switchAll(this)">Aktiv: Alle Aus</button>
                 </div>
@@ -411,7 +411,6 @@
                             update.setAttribute('value', 'Alle Updates installieren');
                         }
                         
-                        update.setAttribute('style', 'margin-top: 20px');
                         update.setAttribute('onclick', 'installAllUpdates();');
 
                         document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('devices'));
