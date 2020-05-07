@@ -46,3 +46,31 @@ function checkRestart()
         });
     });
 }
+
+function createOverlay(level, id, value, color)
+{
+    var overlay = document.createElement('input');
+
+    overlay.setAttribute('type', 'button');
+    overlay.setAttribute('style', 'z-index: ' + level);
+    overlay.setAttribute('id', id);
+    overlay.setAttribute('value', value);
+    overlay.setAttribute('class', 'overlay gradient-' + color + ' loading-loop');
+
+    return overlay;
+}
+
+function createPendingOverlay(id, value)
+{
+    return createOverlay(1, id, value, 'blue');
+}
+
+function createSuccessOverlay(id, value)
+{
+    return createOverlay(2, id, value, 'green');
+}
+
+function createErrorOverlay(id, value)
+{
+    return createOverlay(2, id, value, 'red');
+}

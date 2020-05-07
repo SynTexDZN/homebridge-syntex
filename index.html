@@ -468,7 +468,7 @@
         });
     }
 
-    async function installAllUpdates()
+    async function installAllUpdatesOld()
     {
         /*
         if(document.getElementById('updating-all') == null && document.getElementById('update-result-all') == null)
@@ -555,14 +555,22 @@
             }, 5300);
         }
         */
-       installAllUpdatesNew();
     }
 
-    async function installAllUpdatesNew()
+    function installAllUpdates()
     {
         var devices = document.getElementsByClassName('update');
 
         updateCounter = [0, 0];
+
+        var pendingOverlay = createPendingOverlay('updating-all', 'Updates werden installiert ..');
+        document.getElementById('update-all').parentElement.insertBefore(pendingOverlay, document.getElementById('update-all'));
+
+        setTimeout(function()
+        {
+            document.getElementById('update-all').style.opacity = 0;
+            pendingOverlay.style.opacity = 1;
+        }, 10);
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -572,7 +580,26 @@
 
                 if(updateCounter[0] + updateCounter[1] >= devices.length)
                 {
-                    console.log('UPDATES FINISHED');
+                    var successOverlay = createSuccessOverlay('update-result-all', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
+                    document.getElementById('update-all').parentElement.insertBefore(successOverlay, document.getElementById('update-all'));
+                
+                    setTimeout(function()
+                    {
+                        pendingOverlay.style.opacity = 0;
+                        successOverlay.style.opacity = 1;
+                    }, 10);
+
+                    setTimeout(function()
+                    {
+                        successOverlay.style.opacity = 0;
+                        document.getElementById('update-all').style.opacity = 1;
+                    }, 5000);
+
+                    setTimeout(function()
+                    {
+                        document.getElementById('update-all').parentElement.removeChild(pendingOverlay);
+                        document.getElementById('update-all').parentElement.removeChild(successOverlay);
+                    }, 5300);
                 }
             });
         }
@@ -604,7 +631,6 @@
 
             if(res == null || res != 'Success')
             {
-                console.log('UPDATE ERROR');
                 resolve(false);
             }
             else
@@ -613,19 +639,18 @@
 
                 if(await checkUpdateNew(device.getAttribute('ip'), device.getAttribute('value').split('v')[1]))
                 {
-                    console.log('UPDATE SUCCESS');
                     resolve(true);
                 }
                 else
                 {
-                    console.log('UPDATE ERROR');
                     resolve(false);
                 }
             }
         });
     }
 
-    function newTimeout(ms) {
+    function newTimeout(ms)
+    {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
