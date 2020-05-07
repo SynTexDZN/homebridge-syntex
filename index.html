@@ -218,9 +218,6 @@
                             document.getElementById(ip).style.opacity = 0;
                         }, 10);
                     }
-
-                    updateCounter[0]++;
-                    console.log("Success - " + updateCounter[0]);
                 }
                 else
                 {
@@ -242,9 +239,6 @@
                             document.getElementById(ip).style.opacity = 0;
                         }, 10);
                     }
-
-                    updateCounter[1]++;
-                    console.log("Error - " + updateCounter[1]);
                 }
 
                 setTimeout(function()
@@ -272,11 +266,6 @@
 
                     updatingDevices.splice(updatingDevices.indexOf(ip), 1);
                 }, 5000);
-            }
-            else
-            {
-                updateCounter[1]++;
-                console.log("Error - " + updateCounter[1]);
             }
             
             setTimeout(function()
@@ -513,6 +502,19 @@
                 {
                     updateCounter[1]++;
                     console.log("Error - " + updateCounter[1]);
+                }
+                else
+                {
+                    if(await checkUpdate(ip, name, version))
+                    {
+                        updateCounter[0]++;
+                        console.log("Success - " + updateCounter[0]);
+                    }
+                    else
+                    {
+                        updateCounter[1]++;
+                        console.log("Error - " + updateCounter[1]);
+                    }
                 }
             }
             
