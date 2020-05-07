@@ -528,6 +528,11 @@
                             pendingOverlay.style.opacity = 0;
                             btn.style.opacity = 1;
                         }, 10);
+
+                        setTimeout(function()
+                        {
+                            btn.parentElement.removeChild(pendingOverlay);
+                        }, 310);
                     }
                 });
             }
