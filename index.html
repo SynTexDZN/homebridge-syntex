@@ -497,7 +497,13 @@
             {
                 var ip = devices[i].getAttribute('ip');
                 console.log(ip);
-                updateDevice(ip).then(function(res) {
+                updateDevice(ip).then(async function(res) {
+
+                    console.log(res);
+                    if(res)
+                    {
+                        res = await checkUpdate(ip, name, version);
+                    }
 
                     updateCounter[res ? 1 : 0]++;
 
@@ -508,7 +514,7 @@
                         rOverlay.setAttribute('type', 'button');
                         rOverlay.setAttribute('id', 'update-result-all');
                         rOverlay.setAttribute('style', 'z-index: 2');
-                        rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
+                        rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
                         rOverlay.setAttribute('class', 'overlay gradient-green');
 
                         document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
