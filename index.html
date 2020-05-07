@@ -32,7 +32,7 @@
             </div>
             <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                 <div>
-                    <button id="activate-all" onclick="switchAll(this)">Aktiv: -</button>
+                    <button switch="0" id="activate-all" onclick="switchAll(this)">Aktiv: Unterschiedlich</button>
                 </div>
                 <div>
                     <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
@@ -469,6 +469,116 @@
     function newTimeout(ms)
     {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function switchAll(btn)
+    {
+        var devices = document.getElementsByClassName('device');
+        var settings = [];
+
+        for(var i = 0; i < devices.length; i++)
+        {
+            settings.push({
+                mac: devices[i].getAttribute('onclick').split('mac=')[1],
+                active: btn.getAttribute('switch') == 1 ? 1 : 0
+            });
+        }
+
+        console.log(settings);
+
+        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
+        btn.setAttribute('value', 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus'));
+        /*
+        fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
+
+            if(res != null && res == 'Success')
+            {
+                var error = '';
+
+                fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
+
+                    if(res2)
+                    {
+                        console.log(res2);
+                        
+                        if(res2 != "Success")
+                        {
+                            error = 'true';
+                        }
+                        else
+                        {
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'save-result');
+                            rOverlay.setAttribute('style', 'z-index: 2');
+                            rOverlay.setAttribute('value', 'Hochgeladen!');
+                            rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 1;
+                            }, 10);
+
+                            console.log('RESPONSE');
+                            
+                            setTimeout(function()
+                            {
+                                redirect();
+                                console.log('REDIRECT');
+                            }, 2000);
+                            
+                            error = 'false';
+                        }
+                    }
+                    else
+                    {
+                        if(saveTries == 0)
+                        {
+                            saveTries++;
+                            saveConfig(true);
+                        }
+                        else
+                        {
+                            var rOverlay = document.createElement('input');
+
+                            rOverlay.setAttribute('type', 'button');
+                            rOverlay.setAttribute('id', 'save-result');
+                            rOverlay.setAttribute('style', 'z-index: 2');
+                            rOverlay.setAttribute('value', 'Gespeichert!');
+                            rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+
+                            setTimeout(function()
+                            {
+                                rOverlay.style.opacity = 1;
+                            }, 10);
+
+                            setTimeout(function()
+                            {
+                                redirect();
+                            }, 2000);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                saving = false;
+
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 500);
+
+                console.log("ERROR"); // Add Overlay RED
+            }
+        });
+        */
     }
 
 </script>
