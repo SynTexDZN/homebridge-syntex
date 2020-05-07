@@ -31,14 +31,8 @@
                 </div>
             </div>
             <div style="margin-top: 20px; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
-                <div class="widget">
-                    <button class="widget-left" disabled>Aktiv</button>
-                    <button class="widget-right gradient-red" onclick="switchAll(this)">Alle Aus</button>
-                </div>
-                <div class="widget">
-                    <button class="widget-left" disabled>Neustart</button>
-                    <button class="widget-right gradient-orange" onclick="restartAll(this)">Alle Neustarten</button>
-                </div>
+                <button id="activate-all" class="gradient-red" onclick="switchAll(this)">Aktiv: Alle Aus</button>
+                <button id="restart-all" onclick="restartAll(this)">Neustart: Alle</button>
             </div>
             <div id="devices" style="margin-top: 100px">
                 <h2 style="width: fit-content">• Smart Lock •</h2>
@@ -123,29 +117,67 @@
 <script>
 
     var devices = document.getElementsByClassName('device');
-    var restartCounter;
+    var restartCounter = [];
 
     function restartAll(btn)
     {
-        restartCounter = 0;
-        btn.innerHTML = 'Neustart ..';
-
-        for(var i = 0; i < devices.length; i++)
+        if(document.getElementById('restarting-all') == null && document.getElementById('restart-result-all') == null)
         {
-            fetchURL('http://' + devices[i].getAttribute('id') + '/restart', 3000).then(function(res) {
+            restartCounter = 0;
+        
+            var overlay = document.createElement('input');
 
-                restartCounter++;
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'restarting-all');
+            overlay.setAttribute('style', 'z-index: 1');
+            overlay.setAttribute('value', 'Neustart ..');
+            overlay.setAttribute('class', 'overlay gradient-blue loading-loop');
 
-                if(restartCounter >= devices.length)
-                {
-                    btn.innerHTML = 'Neustart Erfolgreich';
+            document.getElementById('restart-all').parentElement.insertBefore(overlay, document.getElementById('restart-all'));
 
-                    setTimeout(function()
+            setTimeout(function()
+            {
+                overlay.style.opacity = 0;
+            }, 10);
+
+            for(var i = 0; i < devices.length; i++)
+            {
+                fetchURL('http://' + devices[i].getAttribute('id') + '/restart', 3000).then(function(res) {
+
+                    restartCounter[res ? 0 : 1]++;
+
+                    if(restartCounter[0] + restartCounter[1] >= devices.length)
                     {
-                        btn.innerHTML = 'Alle Neustarten';
-                    }, 3000);
-                }
-            });
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'restart-result-all');
+                        rOverlay.setAttribute('style', 'z-index: 2');
+                        rOverlay.setAttribute('value', '(' + restartCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
+                        rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                        document.getElementById('restart-all').parentElement.insertBefore(rOverlay, document.getElementById('restart-all'));
+
+                        setTimeout(function()
+                        {
+                            overlay.style.opacity = 0;
+                            rOverlay.style.opacity = 1;
+                        }, 10);
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('restart-all').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('restart-all').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-all').parentElement.removeChild(overlay);
+                        }, 5300);
+                    }
+                });
+            }
         }
     }
 
