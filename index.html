@@ -415,6 +415,7 @@
             {
                 updatingDevices.push(btn.getAttribute('ip'));
 
+                var device = document.getElementById(btn.getAttribute('ip'));
                 var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
 
                 pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
@@ -428,7 +429,6 @@
                     pendingOverlay.style.opacity = 1;
                 }, 10);
 
-                var device = document.getElementById(btn.getAttribute('ip'));
                 var res = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
 
                 if(res != null && res == 'Success')
