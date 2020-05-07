@@ -634,20 +634,20 @@
 
     function updateDeviceNew(device)
     {
-        var pendingOverlay = createPendingOverlay(device.getAttribute('ip') + '-updating', 'Update wird installiert ..');
-
-        pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
-        pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-        document.getElementById(device.getAttribute('ip')).parentElement.insertBefore(pendingOverlay, document.getElementById(device.getAttribute('ip')));
-
-        setTimeout(function()
-        {
-            document.getElementById(device.getAttribute('ip')).style.opacity = 0;
-            pendingOverlay.style.opacity = 1;
-        }, 10);
-
         return new Promise(async function(resolve) {
+
+            var pendingOverlay = createPendingOverlay(device.getAttribute('ip') + '-updating', 'Update wird installiert ..');
+
+            pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
+            pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
+
+            document.getElementById(device.getAttribute('ip')).parentElement.insertBefore(pendingOverlay, document.getElementById(device.getAttribute('ip')));
+
+            setTimeout(function()
+            {
+                document.getElementById(device.getAttribute('ip')).style.opacity = 0;
+                pendingOverlay.style.opacity = 1;
+            }, 10);
 
             var res = await fetchURL('http://' + device.getAttribute('ip') + '/update', 10000);
             var response = false;
@@ -661,12 +661,6 @@
                     response = true;
                 }
             }
-
-            setTimeout(function()
-            {
-                overlay.style.opacity = 1;
-                document.getElementById(device.getAttribute('ip')).style.opacity = 0;
-            }, 10);
 
             if(response)
             {
