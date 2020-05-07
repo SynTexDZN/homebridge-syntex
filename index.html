@@ -151,8 +151,6 @@
 
                     restartCounter[res != null ? 0 : 1]++;
 
-                    console.log(res, res != null ? 0 : 1, restartCounter[0], restartCounter[1]);
-
                     if(restartCounter[0] + restartCounter[1] >= devices.length)
                     {
                         var rOverlay = document.createElement('input');
@@ -402,14 +400,15 @@
                         var update = document.createElement('input');
 
                         update.setAttribute('type', 'button');
+                        update.setAttribute('id', 'update-all');
 
                         if(updateCount == 1)
                         {
-                            update.setAttribute('value', 'Update installieren!');
+                            update.setAttribute('value', 'Update installieren');
                         }
                         else
                         {
-                            update.setAttribute('value', 'Updates installieren!');
+                            update.setAttribute('value', 'Alle Updates installieren');
                         }
                         
                         update.setAttribute('style', 'margin-top: 20px');
@@ -422,56 +421,118 @@
         }
     }, 500);
     
-    function updateDevice(ip)
+    async function updateDevice(ip)
     {
-        if(!updatingDevices.includes(ip))
-        {
-            fetchURL('http://' + ip + '/update', 10000).then(function(res) {
+        return new Promise(resolve => {
 
-                if(res != null)
-                {  
-                    console.log(res);
-                    
-                    if(res == 'Success')
-                    {
-                        updatingDevices.push(ip);
+            if(!updatingDevices.includes(ip))
+            {
+                fetchURL('http://' + ip + '/update', 10000).then(function(res) {
 
-                        if(document.getElementById(ip + '-updating') == null)
+                    if(res != null)
+                    {  
+                        console.log(res);
+                        
+                        if(res == 'Success')
                         {
-                            var overlay = document.createElement('input');
+                            updatingDevices.push(ip);
 
-                            overlay.setAttribute('type', 'button');
-                            overlay.setAttribute('id', ip + '-updating');
-                            overlay.setAttribute('style', 'z-index: 2; text-align: left');
-                            overlay.setAttribute('value', 'Update wird installiert ..');
-                            overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-                            document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                            setTimeout(function()
+                            if(document.getElementById(ip + '-updating') == null)
                             {
-                                overlay.style.opacity = 1;
-                                document.getElementById(ip).style.opacity = 0;
-                            }, 10);
+                                var overlay = document.createElement('input');
+
+                                overlay.setAttribute('type', 'button');
+                                overlay.setAttribute('id', ip + '-updating');
+                                overlay.setAttribute('style', 'z-index: 2; text-align: left');
+                                overlay.setAttribute('value', 'Update wird installiert ..');
+                                overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
+
+                                document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
+
+                                setTimeout(function()
+                                {
+                                    overlay.style.opacity = 1;
+                                    document.getElementById(ip).style.opacity = 0;
+                                }, 10);
+                            }
                         }
                     }
-                }
-            });
-        }
+
+                    resolve(res);
+                });
+            }
+        });
     }
+
+    var updateCounter;
 
     function installAllUpdates()
     {
-        var devices = document.getElementsByClassName('update');
-
-        for(var i = 0; i < devices.length; i++)
+        if(document.getElementById('updating-all') == null && document.getElementById('update-result-all') == null)
         {
-            var ip = devices[i].getAttribute('ip');
-            console.log(ip);
-            updateDevice(ip);
-        }        
-        
-        console.log(devices.length);
+            var devices = document.getElementsByClassName('update');
+
+            updateCounter = [0, 0];
+
+            var overlay = document.createElement('input');
+
+            overlay.setAttribute('type', 'button');
+            overlay.setAttribute('id', 'updating-all');
+            overlay.setAttribute('style', 'z-index: 1');
+            overlay.setAttribute('value', 'Updates werden installiert ..');
+            overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
+
+            document.getElementById('update-all').parentElement.insertBefore(overlay, document.getElementById('update-all'));
+
+            setTimeout(function()
+            {
+                document.getElementById('restart-all').style.opacity = 0;
+                overlay.style.opacity = 1;
+            }, 10);
+
+            for(var i = 0; i < devices.length; i++)
+            {
+                var ip = devices[i].getAttribute('ip');
+                console.log(ip);
+                updateDevice(ip).then(function(res) {
+
+                    restartCounter[res != null ? 0 : 1]++;
+
+                    if(restartCounter[0] + restartCounter[1] >= devices.length)
+                    {
+                        var rOverlay = document.createElement('input');
+
+                        rOverlay.setAttribute('type', 'button');
+                        rOverlay.setAttribute('id', 'update-result-all');
+                        rOverlay.setAttribute('style', 'z-index: 2');
+                        rOverlay.setAttribute('value', '(' + restartCounter[0] + '/' + devices.length + ') Geräte Neugestartet!');
+                        rOverlay.setAttribute('class', 'overlay gradient-green');
+
+                        document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
+
+                        setTimeout(function()
+                        {
+                            overlay.style.opacity = 0;
+                            rOverlay.style.opacity = 1;
+                        }, 10);
+
+                        setTimeout(function()
+                        {
+                            rOverlay.style.opacity = 0;
+                            document.getElementById('update-all').style.opacity = 1;
+                        }, 5000);
+
+                        setTimeout(function()
+                        {
+                            document.getElementById('update-all').parentElement.removeChild(rOverlay);
+                            document.getElementById('update-all').parentElement.removeChild(overlay);
+                        }, 5300);
+                    }
+                });
+            }        
+            
+            console.log(devices.length);
+        }
     }
 
 </script>
