@@ -121,13 +121,13 @@
 <script>
 
     var devices = document.getElementsByClassName('device');
-    var restartCounter = [0, 0];
+    var restartCounter;
 
     function restartAll(btn)
     {
         if(document.getElementById('restarting-all') == null && document.getElementById('restart-result-all') == null)
         {
-            restartCounter = 0;
+            restartCounter = [0, 0];
         
             var overlay = document.createElement('input');
 
