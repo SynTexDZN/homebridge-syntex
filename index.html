@@ -471,10 +471,24 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    function switchAll(btn)
+    var switchCounter = [0, 0];
+
+    async function switchAll(btn)
     {
         var devices = document.getElementsByClassName('device');
         var settings = [];
+
+        switchCounter = [0, 0];
+
+        var pendingOverlay = createPendingOverlay('', 'Hochladen ..');
+
+        device.parentElement.insertBefore(pendingOverlay, device);
+
+        setTimeout(function()
+        {
+            document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
+            pendingOverlay.style.opacity = 1;
+        }, 10);
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -486,99 +500,62 @@
 
         console.log(settings);
 
-        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
-        btn.setAttribute('value', 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus'));
-        /*
-        fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
+        var saved = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
 
-            if(res != null && res == 'Success')
+        if(saved != null && saved == 'Success')
+        {
+            for(var i = 0; i < devices.length; i++)
             {
-                var error = '';
+                fetchURL('http://' + devices[i].getAttribute('id') + '/refresh', 10000).then(function (refresh) {
 
-                fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
-
-                    if(res2)
+                    if(refresh != null && refresh == 'Success')
                     {
-                        console.log(res2);
-                        
-                        if(res2 != "Success")
-                        {
-                            error = 'true';
-                        }
-                        else
-                        {
-                            var rOverlay = document.createElement('input');
-
-                            rOverlay.setAttribute('type', 'button');
-                            rOverlay.setAttribute('id', 'save-result');
-                            rOverlay.setAttribute('style', 'z-index: 2');
-                            rOverlay.setAttribute('value', 'Hochgeladen!');
-                            rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                            setTimeout(function()
-                            {
-                                rOverlay.style.opacity = 1;
-                            }, 10);
-
-                            console.log('RESPONSE');
-                            
-                            setTimeout(function()
-                            {
-                                redirect();
-                                console.log('REDIRECT');
-                            }, 2000);
-                            
-                            error = 'false';
-                        }
+                        switchCounter[0]++;
                     }
                     else
                     {
-                        if(saveTries == 0)
+                        switchCounter[1]++;
+                    }
+
+                    if(switchCounter[0] + switchCounter[1] >= devices.length)
+                    {
+                        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+                        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
+                        btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+
+                        setTimeout(function()
                         {
-                            saveTries++;
-                            saveConfig(true);
-                        }
-                        else
-                        {
-                            var rOverlay = document.createElement('input');
-
-                            rOverlay.setAttribute('type', 'button');
-                            rOverlay.setAttribute('id', 'save-result');
-                            rOverlay.setAttribute('style', 'z-index: 2');
-                            rOverlay.setAttribute('value', 'Gespeichert!');
-                            rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                            document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
-
-                            setTimeout(function()
-                            {
-                                rOverlay.style.opacity = 1;
-                            }, 10);
-
-                            setTimeout(function()
-                            {
-                                redirect();
-                            }, 2000);
-                        }
+                            pendingOverlay.style.opacity = 0;
+                            btn.style.opacity = 1;
+                        }, 10);
                     }
                 });
             }
-            else
+        }
+        else
+        {
+            var responseOverlay = createErrorOverlay('', 'Aktualisierung Fehlgeschlagen!');
+
+            btn.parentElement.insertBefore(responseOverlay, btn);
+                
+            setTimeout(function()
             {
-                saving = false;
+                pendingOverlay.style.opacity = 0;
+                responseOverlay.style.opacity = 1;
+            }, 10);
 
-                setTimeout(function()
-                {
-                    pingESP();
-                }, 500);
+            setTimeout(function()
+            {
+                responseOverlay.style.opacity = 0;
+                btn.style.opacity = 1;
+            }, 5000);
 
-                console.log("ERROR"); // Add Overlay RED
-            }
-        });
-        */
+            setTimeout(function()
+            {
+                btn.parentElement.removeChild(pendingOverlay);
+                btn.parentElement.removeChild(responseOverlay);
+            }, 5300);
+        }
     }
 
 </script>
