@@ -190,6 +190,7 @@
 <script>
     
     var updatingDevices = [];
+    var updateCounter = [0, 0];
     
     function checkUpdate(ip, name, version)
     {
@@ -217,6 +218,8 @@
                             document.getElementById(ip).style.opacity = 0;
                         }, 10);
                     }
+
+                    updateCounter[0]++;
                 }
                 else
                 {
@@ -238,6 +241,8 @@
                             document.getElementById(ip).style.opacity = 0;
                         }, 10);
                     }
+
+                    updateCounter[1]++;
                 }
 
                 setTimeout(function()
@@ -265,6 +270,10 @@
 
                     updatingDevices.splice(updatingDevices.indexOf(ip), 1);
                 }, 5000);
+            }
+            else
+            {
+                updateCounter[1]++;
             }
             
             setTimeout(function()
@@ -467,9 +476,7 @@
         });
     }
 
-    var updateCounter;
-
-    function installAllUpdates()
+    async function installAllUpdates()
     {
         if(document.getElementById('updating-all') == null && document.getElementById('update-result-all') == null)
         {
@@ -496,55 +503,47 @@
             for(var i = 0; i < devices.length; i++)
             {
                 var ip = devices[i].getAttribute('ip');
-                var name = devices[i].getAttribute('ip');
-                var version = devices[i].getAttribute('ip');
+                var name = devices[i].getAttribute('name');
+                var version = devices[i].getAttribute('version');
 
-                updateDevice(ip).then(async function(res) {
-
-                    console.log(ip, name, version);
-                    console.log("1. " + res);
-                    if(res)
-                    {
-                        res = await checkUpdate(ip, name, version);
-                    }
-                    console.log("2. " + res);
-
-                    updateCounter[res ? 0 : 1]++;
-
-                    if(updateCounter[0] + updateCounter[1] >= devices.length)
-                    {
-                        var rOverlay = document.createElement('input');
-
-                        rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'update-result-all');
-                        rOverlay.setAttribute('style', 'z-index: 2');
-                        rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
-                        rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                        document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
-
-                        setTimeout(function()
-                        {
-                            overlay.style.opacity = 0;
-                            rOverlay.style.opacity = 1;
-                        }, 10);
-
-                        setTimeout(function()
-                        {
-                            rOverlay.style.opacity = 0;
-                            document.getElementById('update-all').style.opacity = 1;
-                        }, 5000);
-
-                        setTimeout(function()
-                        {
-                            document.getElementById('update-all').parentElement.removeChild(rOverlay);
-                            document.getElementById('update-all').parentElement.removeChild(overlay);
-                        }, 5300);
-                    }
-                });
-            }        
+                if(await updateDevice(ip) == false)
+                {
+                    updateCounter[1]++;
+                }
+            }
             
             console.log(devices.length);
+
+            while(updateCounter[0] + updateCounter[1] < devices.length)
+            {}
+
+            var rOverlay = document.createElement('input');
+
+            rOverlay.setAttribute('type', 'button');
+            rOverlay.setAttribute('id', 'update-result-all');
+            rOverlay.setAttribute('style', 'z-index: 2');
+            rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
+            rOverlay.setAttribute('class', 'overlay gradient-green');
+
+            document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
+
+            setTimeout(function()
+            {
+                overlay.style.opacity = 0;
+                rOverlay.style.opacity = 1;
+            }, 10);
+
+            setTimeout(function()
+            {
+                rOverlay.style.opacity = 0;
+                document.getElementById('update-all').style.opacity = 1;
+            }, 5000);
+
+            setTimeout(function()
+            {
+                document.getElementById('update-all').parentElement.removeChild(rOverlay);
+                document.getElementById('update-all').parentElement.removeChild(overlay);
+            }, 5300);
         }
     }
 
