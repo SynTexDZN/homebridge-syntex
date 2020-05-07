@@ -566,6 +566,7 @@
 
         for(var i = 0; i < devices.length; i++)
         {
+            console.log(devices[i]);
             var res = await fetchURL('http://' + devices[i].getAttribute('id') + '/update', 10000);
             
             if(res == null || res != 'Success')
