@@ -192,100 +192,9 @@
     var updatingDevices = [];
     var updateCounter = [0, 0];
     
-    function checkUpdate(ip, name, version)
-    {
-        fetchURL('http://' + ip + '/version', 3000).then(function(res) {
-
-            if(res != null)
-            {  
-                if(res != version)
-                {
-                    if(document.getElementById(ip + '-update-result') == null)
-                    {
-                        var overlay = document.createElement('input');
-
-                        overlay.setAttribute('type', 'button');
-                        overlay.setAttribute('id', ip + '-update-result');
-                        overlay.setAttribute('style', 'z-index: 3; text-align: left');
-                        overlay.setAttribute('value', 'Update Erfolgreich!');
-                        overlay.setAttribute('class', 'overlay gradient-green');
-
-                        document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                        setTimeout(function()
-                        {
-                            overlay.style.opacity = 1;
-                            document.getElementById(ip).style.opacity = 0;
-                        }, 10);
-                    }
-                }
-                else
-                {
-                    if(document.getElementById(ip + '-update-result') == null)
-                    {
-                        var overlay = document.createElement('input');
-
-                        overlay.setAttribute('type', 'button');
-                        overlay.setAttribute('id', ip + '-update-result');
-                        overlay.setAttribute('style', 'z-index: 3; text-align: left');
-                        overlay.setAttribute('value', 'Update Fehlgeschlagen!');
-                        overlay.setAttribute('class', 'overlay gradient-red');
-
-                        document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                        setTimeout(function()
-                        {
-                            overlay.style.opacity = 1;
-                            document.getElementById(ip).style.opacity = 0;
-                        }, 10);
-                    }
-                }
-
-                setTimeout(function()
-                {
-                    if(document.getElementById(ip + '-updating') != null)
-                    {
-                        document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-updating'));
-                    }
-                }, 300);
-
-                setTimeout(function()
-                {
-                    if(document.getElementById(ip + '-update-result') != null)
-                    {
-                        document.getElementById(ip + '-update-result').style.opacity = 0;
-                        document.getElementById(ip).parentElement.parentElement.getElementsByClassName('update')[0].style.opacity = 0;
-                        document.getElementById(ip).style.opacity = 1;
-
-                        setTimeout(function()
-                        {
-                            document.getElementById(ip).parentElement.parentElement.removeChild(document.getElementById(ip).parentElement.parentElement.getElementsByClassName('update')[0]);
-                            document.getElementById(ip).parentElement.removeChild(document.getElementById(ip + '-update-result'));
-                        }, 300);
-                    }
-
-                    updatingDevices.splice(updatingDevices.indexOf(ip), 1);
-                }, 5000);
-            }
-            
-            setTimeout(function()
-            {
-                pingESP(document.getElementById(ip));
-            }, 10000);
-        });
-    }
-        
     function pingESP(device)
     {
-        if(updatingDevices.includes(device.getAttribute('id')))
-        {
-            var version = device.getAttribute('version');
-            var ip = device.getAttribute('id');
-            var name = device.getAttribute('name');
-
-            checkUpdate(ip, name, version);
-        }
-        else
+        if(!updatingDevices.includes(device.getAttribute('id')))
         {
             fetchURL('http://' + device.getAttribute('id') + '/', 10000).then(function(res) {
 
@@ -421,142 +330,6 @@
         }
     }, 500);
     
-    async function updateDevice(ip)
-    {
-        return new Promise(resolve => {
-
-            if(!updatingDevices.includes(ip))
-            {
-                fetchURL('http://' + ip + '/update', 60000).then(function(res) {
-
-                    if(res != null)
-                    {  
-                        console.log(res);
-                        
-                        if(res == 'Success')
-                        {
-                            updatingDevices.push(ip);
-
-                            if(document.getElementById(ip + '-updating') == null)
-                            {
-                                var overlay = document.createElement('input');
-
-                                overlay.setAttribute('type', 'button');
-                                overlay.setAttribute('id', ip + '-updating');
-                                overlay.setAttribute('style', 'z-index: 2; text-align: left');
-                                overlay.setAttribute('value', 'Update wird installiert ..');
-                                overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-                                document.getElementById(ip).parentElement.insertBefore(overlay, document.getElementById(ip));
-
-                                setTimeout(function()
-                                {
-                                    overlay.style.opacity = 1;
-                                    document.getElementById(ip).style.opacity = 0;
-                                }, 10);
-                            }
-                        }
-                    }
-
-                    resolve(res == 'Success' ? true : false);
-                });
-            }
-            else
-            {
-                resolve(false);
-            }
-        });
-    }
-
-    async function installAllUpdatesOld()
-    {
-        /*
-        if(document.getElementById('updating-all') == null && document.getElementById('update-result-all') == null)
-        {
-            var devices = document.getElementsByClassName('update');
-
-            updateCounter = [0, 0];
-
-            var overlay = document.createElement('input');
-
-            overlay.setAttribute('type', 'button');
-            overlay.setAttribute('id', 'updating-all');
-            overlay.setAttribute('style', 'z-index: 1');
-            overlay.setAttribute('value', 'Updates werden installiert ..');
-            overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-            document.getElementById('update-all').parentElement.insertBefore(overlay, document.getElementById('update-all'));
-
-            setTimeout(function()
-            {
-                document.getElementById('update-all').style.opacity = 0;
-                overlay.style.opacity = 1;
-            }, 10);
-
-            for(var i = 0; i < devices.length; i++)
-            {
-                var ip = devices[i].getAttribute('ip');
-                var name = devices[i].getAttribute('name');
-                var version = devices[i].getAttribute('version');
-
-                if(await updateDevice(ip) == false)
-                {
-                    updateCounter[1]++;
-                    console.log("Error Offline - " + updateCounter[1]);
-                }
-                else
-                {
-                    if(await checkUpdate(ip, name, version))
-                    {
-                        updateCounter[0]++;
-                        console.log("Success Update - " + updateCounter[0]);
-                    }
-                    else
-                    {
-                        updateCounter[1]++;
-                        console.log("Error Update - " + updateCounter[1]);
-                    }
-                }
-            }
-            
-            console.log(devices.length);
-
-            //while(updateCounter[0] + updateCounter[1] < devices.length)
-            //{}
-
-            console.log("Finished");
-
-            var rOverlay = document.createElement('input');
-
-            rOverlay.setAttribute('type', 'button');
-            rOverlay.setAttribute('id', 'update-result-all');
-            rOverlay.setAttribute('style', 'z-index: 2');
-            rOverlay.setAttribute('value', '(' + updateCounter[0] + '/' + devices.length + ') Geräte Aktualisiert!');
-            rOverlay.setAttribute('class', 'overlay gradient-green');
-
-            document.getElementById('update-all').parentElement.insertBefore(rOverlay, document.getElementById('update-all'));
-
-            setTimeout(function()
-            {
-                overlay.style.opacity = 0;
-                rOverlay.style.opacity = 1;
-            }, 10);
-
-            setTimeout(function()
-            {
-                rOverlay.style.opacity = 0;
-                document.getElementById('update-all').style.opacity = 1;
-            }, 5000);
-
-            setTimeout(function()
-            {
-                document.getElementById('update-all').parentElement.removeChild(rOverlay);
-                document.getElementById('update-all').parentElement.removeChild(overlay);
-            }, 5300);
-        }
-        */
-    }
-
     function installAllUpdates()
     {
         var devices = document.getElementsByClassName('update');
@@ -614,7 +387,7 @@
         }
     }
 
-    function checkUpdateNew(ip, version)
+    function checkUpdate(ip, version)
     {
         return new Promise(async function(resolve) {
 
@@ -636,64 +409,71 @@
     {
         return new Promise(async function(resolve) {
 
-            var device = document.getElementById(btn.getAttribute('ip'));
-            var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
-
-            pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
-            pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-            device.parentElement.insertBefore(pendingOverlay, device);
-
-            setTimeout(function()
-            {
-                document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
-
-            var res = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
             var response = false;
 
-            if(res != null && res == 'Success')
+            if(!updatingDevices.includes(btn.getAttribute('ip')))
             {
-                await newTimeout(2000);
+                var device = document.getElementById(btn.getAttribute('ip'));
+                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
 
-                if(await checkUpdateNew(btn.getAttribute('ip'), btn.getAttribute('value').split('v')[1]))
+                pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
+                pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
+
+                device.parentElement.insertBefore(pendingOverlay, device);
+
+                setTimeout(function()
                 {
-                    response = true;
+                    document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
+                    pendingOverlay.style.opacity = 1;
+                }, 10);
+
+                updatingDevices.push(btn.getAttribute('ip'));
+
+                var res = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
+
+                if(res != null && res == 'Success')
+                {
+                    await newTimeout(2000);
+
+                    if(await checkUpdate(btn.getAttribute('ip'), btn.getAttribute('value').split('v')[1]))
+                    {
+                        response = true;
+                    }
                 }
+
+                if(response)
+                {
+                    var responseOverlay = createSuccessOverlay(btn.getAttribute('ip') + '-update-result', 'Update Erfolgreich!');
+                }
+                else
+                {
+                    var responseOverlay = createErrorOverlay(btn.getAttribute('ip') + '-update-result', 'Update Fehlgeschlagen!');
+                }
+
+                responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
+
+                device.parentElement.insertBefore(responseOverlay, device);
+                    
+                setTimeout(function()
+                {
+                    pendingOverlay.style.opacity = 0;
+                    responseOverlay.style.opacity = 1;
+                }, 10);
+
+                setTimeout(function()
+                {
+                    responseOverlay.style.opacity = 0;
+                    device.style.opacity = 1;
+                }, 5000);
+
+                setTimeout(function()
+                {
+                    device.parentElement.removeChild(pendingOverlay);
+                    device.parentElement.removeChild(responseOverlay);
+                    updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
+                }, 5300);
             }
-
-            if(response)
-            {
-                var responseOverlay = createSuccessOverlay(btn.getAttribute('ip') + '-update-result', 'Update Erfolgreich!');
-            }
-            else
-            {
-                var responseOverlay = createErrorOverlay(btn.getAttribute('ip') + '-update-result', 'Update Fehlgeschlagen!');
-            }
-
-            responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
-
-            device.parentElement.insertBefore(responseOverlay, device);
-                
-            setTimeout(function()
-            {
-                pendingOverlay.style.opacity = 0;
-                responseOverlay.style.opacity = 1;
-            }, 10);
-
-            setTimeout(function()
-            {
-                responseOverlay.style.opacity = 0;
-                device.style.opacity = 1;
-            }, 5000);
-
-            setTimeout(function()
-            {
-                device.parentElement.removeChild(pendingOverlay);
-                device.parentElement.removeChild(responseOverlay);
-            }, 5300);
-
+            
             resolve(response);
         });
     }
