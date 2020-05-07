@@ -350,7 +350,7 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            updateDeviceNew(devices[i]).then(function(res) {
+            updateDevice(devices[i]).then(function(res) {
 
                 updateCounter[res ? 0 : 1]++;
 
@@ -405,7 +405,7 @@
         });
     }
 
-    function updateDeviceNew(btn)
+    function updateDevice(btn)
     {
         return new Promise(async function(resolve) {
 
