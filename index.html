@@ -457,12 +457,12 @@
                         }
                     }
 
-                    resolve(res);
+                    resolve(res == 'Success' ? true : false);
                 });
             }
             else
             {
-                resolve(null);
+                resolve(false);
             }
         });
     }
@@ -499,7 +499,7 @@
                 console.log(ip);
                 updateDevice(ip).then(function(res) {
 
-                    updateCounter[res != null ? 0 : 1]++;
+                    updateCounter[res ? 1 : 0]++;
 
                     if(updateCounter[0] + updateCounter[1] >= devices.length)
                     {
