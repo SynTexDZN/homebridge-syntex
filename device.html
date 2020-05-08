@@ -663,7 +663,7 @@
         return new Promise(async function(resolve) {
 
             var response = false;
-            var pendingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
+            var pendingOverlay = createPendingOverlay('waiting', 'Bitte Warten ..');
 
             btn.parentElement.insertBefore(pendingOverlay, btn);
 
@@ -677,6 +677,16 @@
 
             if(res != null && res == 'Success')
             {
+                var installingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
+
+                btn.parentElement.insertBefore(pendingOverlay, btn);
+
+                setTimeout(function()
+                {
+                    pendingOverlay.style.opacity = 0;
+                    installingOverlay.style.opacity = 1;
+                }, 10);
+                
                 await newTimeout(3000);
 
                 var tries = 20;
@@ -713,6 +723,11 @@
                 
             setTimeout(function()
             {
+                if(typeof installingOverlay !== 'undefined')
+                {
+                    installingOverlay.style.opacity = 0;
+                }
+
                 pendingOverlay.style.opacity = 0;
                 responseOverlay.style.opacity = 1;
             }, 10);
@@ -725,6 +740,11 @@
 
             setTimeout(function()
             {
+                if(typeof installingOverlay !== 'undefined')
+                {
+                    btn.parentElement.removeChild(installingOverlay);
+                }
+
                 btn.parentElement.removeChild(pendingOverlay);
                 btn.parentElement.removeChild(responseOverlay);
             }, 5300);
