@@ -439,6 +439,8 @@
                 {
                     var installingOverlay = createOverlay(3, btn.getAttribute('ip') + '-updating', 'Update wird Installiert ..', 'purple');
 
+                    installingOverlay.setAttribute('style', 'z-index: 3; text-align: left');
+
                     device.parentElement.insertBefore(installingOverlay, device);
 
                     setTimeout(function()
