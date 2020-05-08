@@ -421,16 +421,13 @@
                 updatingDevices.push(btn.getAttribute('ip'));
 
                 var device = document.getElementById(btn.getAttribute('ip'));
-                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird Installiert ..');
+                var pendingOverlay = createOverlay(2, btn.getAttribute('ip') + '-waiting', 'Bitte Warten ..', 'blue');
 
-                pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
-                pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-                device.parentElement.insertBefore(pendingOverlay, device);
+                btn.parentElement.insertBefore(pendingOverlay, btn);
 
                 setTimeout(function()
                 {
-                    document.getElementById(btn.getAttribute('ip')).style.opacity = 0;
+                    btn.style.opacity = 0;
                     pendingOverlay.style.opacity = 1;
                 }, 10);
 
@@ -438,6 +435,16 @@
 
                 if(res != null && res == 'Success')
                 {
+                    var installingOverlay = createOverlay(3, 'updating', 'Update wird Installiert ..', 'purple');
+
+                    btn.parentElement.insertBefore(installingOverlay, btn);
+
+                    setTimeout(function()
+                    {
+                        pendingOverlay.style.opacity = 0;
+                        installingOverlay.style.opacity = 1;
+                    }, 10);
+
                     await newTimeout(3000);
 
                     var tries = 20;
@@ -456,6 +463,7 @@
                     else if(update)
                     {
                         var responseOverlay = createSuccessOverlay(btn.getAttribute('ip') + '-update-result', 'Update Erfolgreich!');
+                        
                         response = true;
                     }
                     else
@@ -474,6 +482,11 @@
                     
                 setTimeout(function()
                 {
+                    if(typeof installingOverlay !== 'undefined')
+                    {
+                        installingOverlay.style.opacity = 0;
+                    }
+
                     pendingOverlay.style.opacity = 0;
                     responseOverlay.style.opacity = 1;
                 }, 10);
@@ -481,11 +494,25 @@
                 setTimeout(function()
                 {
                     responseOverlay.style.opacity = 0;
-                    device.style.opacity = 1;
+
+                    if(response != true)
+                    {
+                        device.style.opacity = 1;
+                    }
                 }, 5000);
 
                 setTimeout(function()
                 {
+                    if(typeof installingOverlay !== 'undefined')
+                    {
+                        device.parentElement.removeChild(installingOverlay);
+                    }
+
+                    if(response == true)
+                    {
+                        btn.parentElement.removeChild(btn);
+                    }
+
                     device.parentElement.removeChild(pendingOverlay);
                     device.parentElement.removeChild(responseOverlay);
                     updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
