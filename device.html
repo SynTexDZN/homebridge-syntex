@@ -8,7 +8,7 @@
             <h1 class="loading-loop">Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table"></div>
             <div class="main">
-                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice()">
+                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
                     <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
@@ -433,59 +433,47 @@
         {
             restart = true;
 
-            var overlay = document.createElement('input');
+            var pendingOverlay = createPendingOverlay('restarting', 'Neustart ..');
 
-            overlay.setAttribute('type', 'button');
-            overlay.setAttribute('id', 'restarting');
-            overlay.setAttribute('style', 'z-index: 1');
-            overlay.setAttribute('value', 'Neustart ..');
-            overlay.setAttribute('class', 'overlay gradient-blue loading-loop');
-
-            document.getElementById('restart-btn').parentElement.insertBefore(overlay, document.getElementById('restart-btn'));
+            btn.parentElement.insertBefore(pendingOverlay, btn);
 
             setTimeout(function()
             {
-                overlay.style.opacity = 1;
-                document.getElementById('restart-btn').style.opacity = 0;
+                btn.style.opacity = 0;
+                pendingOverlay.style.opacity = 1;
             }, 10);
 
             fetchURL('http://' + device.ip + '/restart', 10000).then(function(res) {
 
                 if(res == null)
                 {
-                    var rOverlay = document.createElement('input');
+                    var responseOverlay = createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!');
 
-                    rOverlay.setAttribute('type', 'button');
-                    rOverlay.setAttribute('id', 'restart-result');
-                    rOverlay.setAttribute('style', 'z-index: 2');
-                    rOverlay.setAttribute('value', 'Keine Verbindung zum Gerät!');
-                    rOverlay.setAttribute('class', 'overlay gradient-red');
-
-                    document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+                    btn.parentElement.insertBefore(responseOverlay, btn);
 
                     setTimeout(function()
                     {
-                        overlay.style.opacity = 0;
-                        rOverlay.style.opacity = 1;
+                        pendingOverlay.style.opacity = 0;
+                        responseOverlay.style.opacity = 1;
                     }, 10);
                 
                     setTimeout(function()
                     {
-                        rOverlay.style.opacity = 0;
-                        document.getElementById('restart-btn').style.opacity = 1;
+                        responseOverlay.style.opacity = 0;
+                        btn.style.opacity = 1;
                     }, 5000);
 
                     setTimeout(function()
                     {
-                        document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
-                        document.getElementById('restart-btn').parentElement.removeChild(overlay);
+                        btn.parentElement.removeChild(pendingOverlay);
+                        btn.parentElement.removeChild(responseOverlay);
                         restart = false;
                     }, 5300);
                 }
             });
         }
     }
-    
+    /*
     function checkUpdate(ip, name, version)
     {
         fetchURL('http://' + ip + '/version', 3000).then(function(res) {
@@ -538,8 +526,8 @@
 
                     setTimeout(function()
                     {
-                        rOverlay.style.opacity = 1;
                         document.getElementById('updating').style.opacity = 0;
+                        rOverlay.style.opacity = 1;
                     }, 10);
                     
                     setTimeout(function()
@@ -568,7 +556,7 @@
             }
         });
     }
-    
+    */
     setTimeout(function()
     {
         pingESP();
@@ -576,11 +564,7 @@
     
     function pingESP()
     {
-        if(updating && document.getElementById('updating') != null)
-        {
-            checkUpdate(device.ip, device.name, device.version);
-        }
-        else if(!saving && document.getElementById('settings').hasAttribute('style'))
+        if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
         {
             fetchURL('http://' + device.ip + '/', 10000).then(function(res) {
 
@@ -657,77 +641,148 @@
             }, 500);
         }
     }    
+
+    function checkUpdate(ip, version)
+    {
+        return new Promise(async function(resolve) {
+
+            fetchURL('http://' + ip + '/version', 3000).then(function(res) {
+
+                if(res != null && res == version)
+                {  
+                    resolve(true);
+                }
+                else
+                {
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    function updateDevice(btn)
+    {
+        return new Promise(async function(resolve) {
+
+            var response = false;
+            var pendingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
+
+            btn.parentElement.insertBefore(pendingOverlay, btn);
+
+            setTimeout(function()
+            {
+                btn.style.opacity = 0;
+                pendingOverlay.style.opacity = 1;
+            }, 10);
+
+            var res = await fetchURL('http://' + device.ip + '/update', 10000);
+
+            if(res != null && res == 'Success')
+            {
+                await newTimeout(2000);
+
+                if(await checkUpdate(device.ip, btn.getAttribute('value').split('( v')[1].split(' )')[0]))
+                {
+                    response = true;
+                }
+
+                if(response)
+                {
+                    var responseOverlay = createSuccessOverlay('update-result', 'Update Erfolgreich!');
+                }
+                else
+                {
+                    var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
+                }
+            }
+            else
+            {
+                var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
+            }
+
+            responseOverlay.setAttribute('style', 'z-index: 3');
+
+            device.parentElement.insertBefore(responseOverlay, device);
+                
+            setTimeout(function()
+            {
+                pendingOverlay.style.opacity = 0;
+                responseOverlay.style.opacity = 1;
+            }, 10);
+
+            setTimeout(function()
+            {
+                responseOverlay.style.opacity = 0;
+                device.style.opacity = 1;
+            }, 5000);
+
+            setTimeout(function()
+            {
+                device.parentElement.removeChild(pendingOverlay);
+                device.parentElement.removeChild(responseOverlay);
+            }, 5300);
+            
+            resolve(response);
+        });
+    }
+
+    function newTimeout(ms)
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     
-    function updateDevice()
+    function updateDevice(btn)
     {        
         if(!updating && !restart)
         {
             updating = true;
 
-            var wOverlay = document.createElement('input');
+            var pendingOverlay = createPendingOverlay('waiting', 'Bitte Warten ..');
 
-            wOverlay.setAttribute('type', 'button');
-            wOverlay.setAttribute('id', 'waiting');
-            wOverlay.setAttribute('style', 'z-index: 1');
-            wOverlay.setAttribute('value', 'Bitte Warten ..');
-            wOverlay.setAttribute('class', 'overlay gradient-blue loading-loop');
-
-            document.getElementById('update-btn').parentElement.insertBefore(wOverlay, document.getElementById('update-btn'));
+            btn.parentElement.insertBefore(pendingOverlay, btn);
 
             setTimeout(function()
             {
-                wOverlay.style.opacity = 1;
-                document.getElementById('update-btn').style.opacity = 0;
+                btn.style.opacity = 0;
+                pendingOverlay.style.opacity = 1;
             }, 10);
 
             fetchURL('http://' + device.ip + '/update', 10000).then(function(res) {
 
                 if(res != null && res == 'Success')
                 {
-                    var overlay = document.createElement('input');
+                    var installingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
 
-                    overlay.setAttribute('type', 'button');
-                    overlay.setAttribute('id', 'updating');
-                    overlay.setAttribute('style', 'z-index: 2');
-                    overlay.setAttribute('value', 'Update Wird Installiert ..');
-                    overlay.setAttribute('class', 'overlay gradient-purple loading-loop');
-
-                    document.getElementById('update-btn').parentElement.insertBefore(overlay, document.getElementById('update-btn'));
+                    btn.parentElement.insertBefore(installingOverlay, btn);
 
                     setTimeout(function()
                     {
-                        overlay.style.opacity = 1;
-                        wOverlay.style.opacity = 0;
+                        installingOverlay.style.opacity = 1;
+                        pendingOverlay.style.opacity = 0;
                     }, 10);
                 }
                 else
                 {
-                    var rOverlay = document.createElement('input');
+                    var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
 
-                    rOverlay.setAttribute('type', 'button');
-                    rOverlay.setAttribute('id', 'update-result');
-                    rOverlay.setAttribute('style', 'z-index: 2');
-                    rOverlay.setAttribute('value', 'Keine Verbindung zum Gerät!');
-                    rOverlay.setAttribute('class', 'overlay gradient-red');
-
-                    document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
+                    btn.parentElement.insertBefore(responseOverlay, btn);
 
                     setTimeout(function()
                     {
-                        rOverlay.style.opacity = 1;
-                        wOverlay.style.opacity = 0;
+                        pendingOverlay.style.opacity = 0;
+                        responseOverlay.style.opacity = 1;
                     }, 10);
                 
                     setTimeout(function()
                     {
-                        rOverlay.style.opacity = 0;
-                        document.getElementById('update-btn').style.opacity = 1;
+                        responseOverlay.style.opacity = 0;
+                        btn.style.opacity = 1;
                     }, 5000);
 
                     setTimeout(function()
                     {
-                        document.getElementById('update-btn').parentElement.removeChild(rOverlay);
-                        document.getElementById('update-btn').parentElement.removeChild(wOverlay);
+                        btn.parentElement.removeChild(pendingOverlay);
+                        btn.parentElement.removeChild(responseOverlay);
                         //document.getElementById('update-btn').parentElement.removeChild(overlay);
                     }, 5300);
                 }
@@ -751,7 +806,7 @@
                     update.setAttribute('type', 'button');
                     update.setAttribute('value', 'Update Installieren ( v' + res + ' )');
                     update.setAttribute('style', 'margin-bottom: 20px;');
-                    update.setAttribute('onclick', 'updateDevice()');
+                    update.setAttribute('onclick', 'updateDevice(this)');
                     update.setAttribute('id', 'update-btn');
 
                     document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
