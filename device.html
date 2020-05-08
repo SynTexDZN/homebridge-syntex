@@ -26,7 +26,7 @@
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
                     <button class="widget-right" disabled></button>
                 </div>
-                <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice()">
+                <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
                 <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="closeSettings()">
@@ -467,90 +467,7 @@
             });
         }
     }
-    /*
-    function checkUpdate(ip, name, version)
-    {
-        fetchURL('http://' + ip + '/version', 3000).then(function(res) {
-
-            if(res != null)
-            {
-                if(res != version)
-                {
-                    var rOverlay = document.createElement('input');
-
-                    rOverlay.setAttribute('type', 'button');
-                    rOverlay.setAttribute('id', 'update-result');
-                    rOverlay.setAttribute('style', 'z-index: 3');
-                    rOverlay.setAttribute('value', 'Update Erfolgreich!');
-                    rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                    document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
-
-                    setTimeout(function()
-                    {
-                        rOverlay.style.opacity = 1;
-                        document.getElementById('updating').style.opacity = 0;
-                    }, 10);
-                    
-                    setTimeout(function()
-                    {
-                        rOverlay.style.opacity = 0;
-                    }, 5000);
-
-                    setTimeout(function()
-                    {
-                        document.getElementById('update-btn').parentElement.removeChild(rOverlay);
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('update-btn'));
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
-                        updating = false;y
-                    }, 5300);
-                }
-                else
-                {
-                    var rOverlay = document.createElement('input');
-
-                    rOverlay.setAttribute('type', 'button');
-                    rOverlay.setAttribute('id', 'update-result');
-                    rOverlay.setAttribute('style', 'z-index: 3');
-                    rOverlay.setAttribute('value', 'Update Fehlgeschlagen!');
-                    rOverlay.setAttribute('class', 'overlay gradient-red');
-
-                    document.getElementById('update-btn').parentElement.insertBefore(rOverlay, document.getElementById('update-btn'));
-
-                    setTimeout(function()
-                    {
-                        document.getElementById('updating').style.opacity = 0;
-                        rOverlay.style.opacity = 1;
-                    }, 10);
-                    
-                    setTimeout(function()
-                    {
-                        rOverlay.style.opacity = 0;
-                        document.getElementById('update-btn').style.opacity = 1;
-                    }, 5000);
-
-                    setTimeout(function()
-                    {
-                        document.getElementById('update-btn').parentElement.removeChild(rOverlay);
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('updating'));
-                        document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
-                        updating = false;
-                    }, 5300);
-                }
-
-                setTimeout(function()
-                {
-                    location.reload();
-                }, 5600);
-            }
-            else
-            {
-                pingESP();
-            }
-        });
-    }
-    */
+    
     setTimeout(function()
     {
         pingESP();
@@ -568,31 +485,25 @@
 
                     if(restart == true)
                     {
-                        var rOverlay = document.createElement('input');
+                        var responseOverlay = createSuccessOverlay('restart-result', 'Neustart Erfolgreich!');
 
-                        rOverlay.setAttribute('type', 'button');
-                        rOverlay.setAttribute('id', 'restart-result');
-                        rOverlay.setAttribute('style', 'z-index: 2');
-                        rOverlay.setAttribute('value', 'Neustart Erfolgreich!');
-                        rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                        document.getElementById('restart-btn').parentElement.insertBefore(rOverlay, document.getElementById('restart-btn'));
+                        document.getElementById('restart-btn').parentElement.insertBefore(responseOverlay, document.getElementById('restart-btn'));
 
                         setTimeout(function()
                         {
-                            rOverlay.style.opacity = 1;
+                            responseOverlay.style.opacity = 1;
                             document.getElementById('restarting').style.opacity = 0;
                         }, 10);
                     
                         setTimeout(function()
                         {
-                            rOverlay.style.opacity = 0;
+                            responseOverlay.style.opacity = 0;
                             document.getElementById('restart-btn').style.opacity = 1;
                         }, 4000);
 
                         setTimeout(function()
                         {
-                            document.getElementById('restart-btn').parentElement.removeChild(rOverlay);
+                            document.getElementById('restart-btn').parentElement.removeChild(responseOverlay);
                             document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
                             restart = false;
                             //document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
@@ -772,66 +683,6 @@
     {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    /*
-    function updateDevice(btn)
-    {        
-        if(!updating && !restart)
-        {
-            updating = true;
-
-            var pendingOverlay = createPendingOverlay('waiting', 'Bitte Warten ..');
-
-            btn.parentElement.insertBefore(pendingOverlay, btn);
-
-            setTimeout(function()
-            {
-                btn.style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
-
-            fetchURL('http://' + device.ip + '/update', 10000).then(function(res) {
-
-                if(res != null && res == 'Success')
-                {
-                    var installingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
-
-                    btn.parentElement.insertBefore(installingOverlay, btn);
-
-                    setTimeout(function()
-                    {
-                        installingOverlay.style.opacity = 1;
-                        pendingOverlay.style.opacity = 0;
-                    }, 10);
-                }
-                else
-                {
-                    var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
-
-                    btn.parentElement.insertBefore(responseOverlay, btn);
-
-                    setTimeout(function()
-                    {
-                        pendingOverlay.style.opacity = 0;
-                        responseOverlay.style.opacity = 1;
-                    }, 10);
-                
-                    setTimeout(function()
-                    {
-                        responseOverlay.style.opacity = 0;
-                        btn.style.opacity = 1;
-                    }, 5000);
-
-                    setTimeout(function()
-                    {
-                        btn.parentElement.removeChild(pendingOverlay);
-                        btn.parentElement.removeChild(responseOverlay);
-                        //document.getElementById('update-btn').parentElement.removeChild(overlay);
-                    }, 5300);
-                }
-            });
-        }
-    }
-    */
 
 </script>
 <script defer>
@@ -866,49 +717,40 @@
 </script>
 <script>
 
-    function resetDevice()
+    function resetDevice(btn)
     {
-        var overlay = document.createElement('input');
+        var overlay = createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
 
-        overlay.setAttribute('type', 'button');
-        overlay.setAttribute('id', 'reset-confirm');
-        overlay.setAttribute('style', 'z-index: 1');
-        overlay.setAttribute('value', 'Löschen Bestätigen?');
-        overlay.setAttribute('class', 'overlay gradient-red');
-        overlay.setAttribute('onclick', 'resetConfirm()');
+        overlay.setAttribute('onclick', 'resetConfirm(this)');
 
-        document.getElementById('reset-btn').parentElement.insertBefore(overlay, document.getElementById('reset-btn'));
+        btn.parentElement.insertBefore(overlay, btn);
 
         setTimeout(function()
         {
             overlay.style.opacity = 1;
-            document.getElementById('reset-btn').style.opacity = 0;
+            btn.style.opacity = 0;
         }, 10);
     }
     
-    function resetConfirm()
+    function resetConfirm(btn)
     {
-        document.getElementById('reset-confirm').style.opacity = 0;
+        btn.style.opacity = 0;
 
-        var zOverlay = document.createElement('input');
+        var pendingOverlay = createPendingOverlay('reset-result', 'Zurücksetzen ..');
 
-        zOverlay.setAttribute('type', 'button');
-        zOverlay.setAttribute('id', 'reset-result');
-        zOverlay.setAttribute('style', 'z-index: 2');
-        zOverlay.setAttribute('value', 'Zurücksetzen ..');
-        zOverlay.setAttribute('class', 'overlay gradient-blue loading-loop');
+        pendingOverlay.setAttribute('style', 'z-index: 2');
 
-        document.getElementById('reset-btn').parentElement.insertBefore(zOverlay, document.getElementById('reset-btn'));
+        btn.parentElement.insertBefore(pendingOverlay, btn);
 
         setTimeout(function()
         {
-            zOverlay.style.opacity = 1;
+            pendingOverlay.style.opacity = 1;
         }, 10);
 
         setTimeout(function()
         {
-            document.getElementById('reset-btn').parentElement.removeChild(document.getElementById('reset-confirm'));
-        }, 300);
+            btn.parentElement.removeChild(btn);
+        }, 310);
 
         fetchURL('http://' + device.ip + '/reset', 10000).then(function(res) {
 
@@ -920,20 +762,16 @@
 
                         if(res)
                         {
-                            var rOverlay = document.createElement('input');
+                            var responseOverlay = createSuccessOverlay('reset-result', 'Reset Erfolgreich!');
 
-                            rOverlay.setAttribute('type', 'button');
-                            rOverlay.setAttribute('id', 'reset-result');
-                            rOverlay.setAttribute('style', 'z-index: 3');
-                            rOverlay.setAttribute('value', 'Reset Erfolgreich!');
-                            rOverlay.setAttribute('class', 'overlay gradient-green');
+                            responseOverlay.setAttribute('style', 'z-index: 3');
 
-                            document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+                            btn.parentElement.insertBefore(responseOverlay, btn);
 
                             setTimeout(function()
                             {
-                                zOverlay.style.opacity = 0;
-                                rOverlay.style.opacity = 1;
+                                pendingOverlay.style.opacity = 0;
+                                responseOverlay.style.opacity = 1;
                             }, 10);
 
                             setTimeout(function()
@@ -941,37 +779,33 @@
                                 window.location.href = '/';
                             }, 3000);
                         }
-                        });
+                    });
                 }, 3000);
             }
             else
             {
-                var rOverlay = document.createElement('input');
+                var responseOverlay = createErrorOverlay('reset-result', 'Reset Fehlgeschlagen!');
 
-                rOverlay.setAttribute('type', 'button');
-                rOverlay.setAttribute('id', 'reset-result');
-                rOverlay.setAttribute('style', 'z-index: 3');
-                rOverlay.setAttribute('value', 'Reset Fehlgeschlagen!');
-                rOverlay.setAttribute('class', 'overlay gradient-red');
+                responseOverlay.setAttribute('style', 'z-index: 3');
 
-                document.getElementById('reset-btn').parentElement.insertBefore(rOverlay, document.getElementById('reset-btn'));
+                btn.parentElement.insertBefore(responseOverlay, btn);
 
                 setTimeout(function()
                 {
-                    zOverlay.style.opacity = 0;
-                    rOverlay.style.opacity = 1;
+                    pendingOverlay.style.opacity = 0;
+                    responseOverlay.style.opacity = 1;
                 }, 10);
             
                 setTimeout(function()
                 {
-                    rOverlay.style.opacity = 0;
-                    document.getElementById('reset-btn').style.opacity = 1;
+                    responseOverlay.style.opacity = 0;
+                    btn.style.opacity = 1;
                 }, 5000);
 
                 setTimeout(function()
                 {
-                    document.getElementById('reset-btn').parentElement.removeChild(rOverlay);
-                    document.getElementById('reset-btn').parentElement.removeChild(zOverlay);
+                    btn.parentElement.removeChild(responseOverlay);
+                    btn.parentElement.removeChild(pendingOverlay);
                 }, 5300);
             }
         });
@@ -986,19 +820,13 @@
             upload = true;
             saving = true;
 
-            var overlay = document.createElement('input');
+            var pendingOverlay = createPendingOverlay('saving', 'Hochladen ..');
 
-            overlay.setAttribute('type', 'button');
-            overlay.setAttribute('id', 'saving');
-            overlay.setAttribute('style', 'z-index: 1');
-            overlay.setAttribute('value', 'Hochladen ..');
-            overlay.setAttribute('class', 'overlay gradient-blue loading-loop');
-
-            document.getElementById('save-btn').parentElement.insertBefore(overlay, document.getElementById('save-btn'));
+            document.getElementById('save-btn').parentElement.insertBefore(pendingOverlay, document.getElementById('save-btn'));
 
             setTimeout(function()
             {
-                overlay.style.opacity = 1;
+                pendingOverlay.style.opacity = 1;
                 document.getElementById('save-btn').style.opacity = 0;
             }, 10);
         }
@@ -1078,19 +906,13 @@
                             }
                             else
                             {
-                                var rOverlay = document.createElement('input');
+                                var responseOverlay = createSuccessOverlay('save-result', 'Hochgeladen!');
 
-                                rOverlay.setAttribute('type', 'button');
-                                rOverlay.setAttribute('id', 'save-result');
-                                rOverlay.setAttribute('style', 'z-index: 2');
-                                rOverlay.setAttribute('value', 'Hochgeladen!');
-                                rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+                                document.getElementById('save-btn').parentElement.insertBefore(responseOverlay, document.getElementById('save-btn'));
 
                                 setTimeout(function()
                                 {
-                                    rOverlay.style.opacity = 1;
+                                    responseOverlay.style.opacity = 1;
                                 }, 10);
 
                                 console.log('RESPONSE');
@@ -1113,19 +935,13 @@
                             }
                             else
                             {
-                                var rOverlay = document.createElement('input');
+                                var responseOverlay = createSuccessOverlay('save-result', 'Gespeichert!');
 
-                                rOverlay.setAttribute('type', 'button');
-                                rOverlay.setAttribute('id', 'save-result');
-                                rOverlay.setAttribute('style', 'z-index: 2');
-                                rOverlay.setAttribute('value', 'Gespeichert!');
-                                rOverlay.setAttribute('class', 'overlay gradient-green');
-
-                                document.getElementById('save-btn').parentElement.insertBefore(rOverlay, document.getElementById('save-btn'));
+                                document.getElementById('save-btn').parentElement.insertBefore(responseOverlay, document.getElementById('save-btn'));
 
                                 setTimeout(function()
                                 {
-                                    rOverlay.style.opacity = 1;
+                                    responseOverlay.style.opacity = 1;
                                 }, 10);
 
                                 setTimeout(function()
