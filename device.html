@@ -755,6 +755,11 @@
                     btn.parentElement.removeChild(installingOverlay);
                 }
 
+                if(response == true)
+                {
+                    btn.parentElement.removeChild(btn);
+                }
+
                 btn.parentElement.removeChild(pendingOverlay);
                 btn.parentElement.removeChild(responseOverlay);
             }, 5300);
