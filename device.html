@@ -705,12 +705,18 @@
                 else if(update)
                 {
                     var responseOverlay = createSuccessOverlay('update-result', 'Update Erfolgreich!');
+
                     response = true;
                 }
                 else
                 {
                     var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
                 }
+
+                fetchURL('http://' + ip + '/version', 3000).then(function(version) {
+
+                    document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + version;
+                });
             }
             else
             {
@@ -735,7 +741,11 @@
             setTimeout(function()
             {
                 responseOverlay.style.opacity = 0;
-                btn.style.opacity = 1;
+
+                if(response != true)
+                {
+                    btn.style.opacity = 1;
+                }
             }, 5000);
 
             setTimeout(function()
