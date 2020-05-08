@@ -713,7 +713,7 @@
                     var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
                 }
 
-                fetchURL('http://' + ip + '/version', 3000).then(function(version) {
+                fetchURL('http://' + device.ip + '/version', 3000).then(function(version) {
 
                     document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + version;
                 });
