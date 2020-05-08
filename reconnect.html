@@ -19,7 +19,7 @@
         <div id="wifiConfig" style="display: none;">
             <h1>Gerät Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 32px; display: table">
-                <form onsubmit="event.preventDefault(); sendWifiSettings();">
+                <form onsubmit="event.preventDefault(); sendWifiSettings(this);">
                     <div id="networks" style="margin-bottom: 100px">
                         <p class="loading-loop">Laden ..</p>
                     </div>
@@ -31,7 +31,7 @@
             <div class="main">
                 <div style="display: flex">
                     <input id="back-btn-wifi" type="button" value="Zurück" onclick="location.reload()">
-                    <input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi()">
+                    <input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@
                     document.getElementById('wifiConfig').style.display = "";
                     setTimeout(function()
                     {
-                        scanWifi();
+                        scanWifi(document.getElementById('scan-btn'));
                     }, 2000);
                     document.getElementById('welcome').style.display = "none";
                 }
@@ -127,7 +127,7 @@
                     document.getElementById('wifiConfig').style.display = "";
                     setTimeout(function()
                     {
-                        scanWifi();
+                        scanWifi(document.getElementById('scan-btn'));
                     }, 2000);
                     document.getElementById('welcome').style.display = "none";
                 }
@@ -147,9 +147,9 @@
 </script>
 <script>
         
-    function scanWifi()
+    function scanWifi(btn)
     {            
-        document.getElementById('scan-btn').value = 'Bitte warten ..'; 
+        btn.value = 'Bitte warten ..';
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
         
         fetchURL(ip + 'wifi', 10000).then(function(res) {
@@ -188,7 +188,7 @@
                 document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
             }
 
-            document.getElementById('scan-btn').value = 'Suchen'; 
+            btn.value = 'Suchen'; 
         });
     }
     
@@ -207,10 +207,9 @@
 
     var bridgeIP = 'http://<%bridge-ip%>';
     
-    function sendWifiSettings()
+    function sendWifiSettings(form)
     {
-        var formElement = document.querySelector("form");
-        var formData = new FormData(formElement);
+        var formData = new FormData(form);
 
         formData.append('bridge-ip', bridgeIP);
 
