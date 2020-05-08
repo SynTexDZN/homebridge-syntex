@@ -683,9 +683,9 @@
 
             if(res != null && res == 'Success')
             {
-                await newTimeout(2000);
+                await newTimeout(3000);
 
-                var tries = 10;
+                var tries = 20;
 
                 do
                 {
@@ -694,7 +694,11 @@
                 }
                 while(update == null && tries > 0);
 
-                if(update)
+                if(update == null)
+                {
+                    var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
+                }
+                else if(update)
                 {
                     var responseOverlay = createSuccessOverlay('update-result', 'Update Erfolgreich!');
                     response = true;

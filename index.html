@@ -438,16 +438,25 @@
 
                 if(res != null && res == 'Success')
                 {
-                    await newTimeout(2000);
+                    await newTimeout(3000);
 
-                    if(await checkUpdate(btn.getAttribute('ip'), btn.getAttribute('value').split('v')[1]))
+                    var tries = 20;
+
+                    do
                     {
-                        response = true;
+                        var update = await checkUpdate(btn.getAttribute('ip'), btn.getAttribute('value').split('v')[1]);
+                        tries--;
                     }
+                    while(update == null && tries > 0);
 
-                    if(response)
+                    if(update == null)
+                    {
+                        var responseOverlay = createErrorOverlay(btn.getAttribute('ip') + '-update-result', 'Keine Verbindung zum Gerät!');
+                    }
+                    else if(update)
                     {
                         var responseOverlay = createSuccessOverlay(btn.getAttribute('ip') + '-update-result', 'Update Erfolgreich!');
+                        response = true;
                     }
                     else
                     {
