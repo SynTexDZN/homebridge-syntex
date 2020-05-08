@@ -398,6 +398,8 @@
 
             fetchURL('http://' + ip + '/version', 3000).then(function(res) {
 
+                console.log(res, version);
+
                 if(res != null && res == version)
                 {  
                     resolve(true);
