@@ -421,7 +421,9 @@
                 updatingDevices.push(btn.getAttribute('ip'));
 
                 var device = document.getElementById(btn.getAttribute('ip'));
-                var pendingOverlay = createOverlay(2, btn.getAttribute('ip') + '-waiting', 'Bitte Warten ..', 'blue');
+                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-waiting', 'Bitte Warten ..');
+
+                pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
 
                 device.parentElement.insertBefore(pendingOverlay, device);
 
