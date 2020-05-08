@@ -319,11 +319,11 @@
 
                         if(updateCount == 1)
                         {
-                            update.setAttribute('value', 'Update installieren');
+                            update.setAttribute('value', 'Update Installieren');
                         }
                         else
                         {
-                            update.setAttribute('value', 'Alle Updates installieren');
+                            update.setAttribute('value', 'Alle Updates Installieren');
                         }
                         
                         update.setAttribute('onclick', 'installAllUpdates(this)');
@@ -421,7 +421,7 @@
                 updatingDevices.push(btn.getAttribute('ip'));
 
                 var device = document.getElementById(btn.getAttribute('ip'));
-                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird installiert ..');
+                var pendingOverlay = createPendingOverlay(btn.getAttribute('ip') + '-updating', 'Update wird Installiert ..');
 
                 pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
                 pendingOverlay.setAttribute('class', 'overlay gradient-purple loading-loop');
@@ -557,29 +557,6 @@
             else
             {
                 switchCounter[1]++;
-                /*
-                var responseOverlay = createErrorOverlay('', 'Aktualisierung Fehlgeschlagen!');
-
-                btn.parentElement.insertBefore(responseOverlay, btn);
-                    
-                setTimeout(function()
-                {
-                    pendingOverlay.style.opacity = 0;
-                    responseOverlay.style.opacity = 1;
-                }, 10);
-
-                setTimeout(function()
-                {
-                    responseOverlay.style.opacity = 0;
-                    btn.style.opacity = 1;
-                }, 5000);
-
-                setTimeout(function()
-                {
-                    btn.parentElement.removeChild(pendingOverlay);
-                    btn.parentElement.removeChild(responseOverlay);
-                }, 5300);
-                */
             }
         }
     }
