@@ -423,11 +423,11 @@
                 var device = document.getElementById(btn.getAttribute('ip'));
                 var pendingOverlay = createOverlay(2, btn.getAttribute('ip') + '-waiting', 'Bitte Warten ..', 'blue');
 
-                btn.parentElement.insertBefore(pendingOverlay, btn);
+                device.parentElement.insertBefore(pendingOverlay, device);
 
                 setTimeout(function()
                 {
-                    btn.style.opacity = 0;
+                    device.style.opacity = 0;
                     pendingOverlay.style.opacity = 1;
                 }, 10);
 
@@ -435,9 +435,9 @@
 
                 if(res != null && res == 'Success')
                 {
-                    var installingOverlay = createOverlay(3, 'updating', 'Update wird Installiert ..', 'purple');
+                    var installingOverlay = createOverlay(3, btn.getAttribute('ip') + '-updating', 'Update wird Installiert ..', 'purple');
 
-                    btn.parentElement.insertBefore(installingOverlay, btn);
+                    device.parentElement.insertBefore(installingOverlay, device);
 
                     setTimeout(function()
                     {
