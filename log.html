@@ -40,7 +40,7 @@
                 </div>
             </div>
         </div>
-        <form class="main" style="margin-bottom: 32px">
+        <form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
             <input type="submit" value="Absenden" style="display: none">
             <div style="margin-bottom: 20px; display: flex">
                 <input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
@@ -203,11 +203,5 @@
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
     document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
     document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
-
-    document.getElementsByTagName('form')[0].onsubmit = function (evt) { 	
-
-        evt.preventDefault();
-        searchLog();
-    }
     
 </script>

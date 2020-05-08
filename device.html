@@ -18,7 +18,7 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <form class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
+            <form onsubmit="event.preventDefault(); saveConfig(false);" class="main" style="margin-top: 100px; margin-bottom: 132px; display: table;">
                 <input type="submit" value="Absenden" style="display: none">
             </form>
             <div class="main">
@@ -257,12 +257,6 @@
             btn.setAttribute('class', 'white');
             btn.setAttribute('value', 'An');
         }
-    }
-
-    document.getElementsByTagName('form')[0].onsubmit = function (evt) { 	
-
-        evt.preventDefault();
-        saveConfig(false);
     }
 
 </script>
