@@ -702,7 +702,7 @@
 
             responseOverlay.setAttribute('style', 'z-index: 3');
 
-            device.parentElement.insertBefore(responseOverlay, device);
+            btn.parentElement.insertBefore(responseOverlay, btn);
                 
             setTimeout(function()
             {
@@ -713,13 +713,13 @@
             setTimeout(function()
             {
                 responseOverlay.style.opacity = 0;
-                device.style.opacity = 1;
+                btn.style.opacity = 1;
             }, 5000);
 
             setTimeout(function()
             {
-                device.parentElement.removeChild(pendingOverlay);
-                device.parentElement.removeChild(responseOverlay);
+                btn.parentElement.removeChild(pendingOverlay);
+                btn.parentElement.removeChild(responseOverlay);
             }, 5300);
             
             resolve(response);
