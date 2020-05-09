@@ -628,112 +628,47 @@
         overlay.setAttribute('style', 'z-index: 1');
         overlay.setAttribute('onclick', 'resetConfirm(this)');
 
-        btn.parentElement.insertBefore(overlay, btn);
-
-        setTimeout(function()
-        {
-            overlay.style.opacity = 1;
-            btn.style.opacity = 0;
-        }, 10);
+        showOverlay(btn, overlay);
     }
     
-    function resetConfirm(btn)
+    async function resetConfirm(btn)
     {
-        btn.style.opacity = 0;
+        showOverlay(btn, createPendingOverlay(2, 'reset-result', 'Zurücksetzen ..', 'blue'));
 
-        var pendingOverlay = createPendingOverlay('reset-result', 'Zurücksetzen ..');
+        var reset = await fetchURL('http://' + device.ip + '/reset', 10000);
 
-        pendingOverlay.setAttribute('style', 'z-index: 2');
-
-        btn.parentElement.insertBefore(pendingOverlay, btn);
-
-        setTimeout(function()
+        if(reset != null && reset == 'Success')
         {
-            pendingOverlay.style.opacity = 1;
-        }, 10);
+            setTimeout(async function()
+            {
+                if(await checkRestart())
+                {
+                    showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
 
-        setTimeout(function()
+                    setTimeout(function()
+                    {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+            }, 3000);
+        }
+        else
         {
-            btn.parentElement.removeChild(btn);
-        }, 310);
-
-        fetchURL('http://' + device.ip + '/reset', 10000).then(function(res) {
-
-            if(res != null && res == 'Success')
-            {
-                setTimeout(function()
-                {
-                    checkRestart().then(function(res) {
-
-                        if(res)
-                        {
-                            var responseOverlay = createSuccessOverlay('reset-result', 'Reset Erfolgreich!');
-
-                            responseOverlay.setAttribute('style', 'z-index: 3');
-
-                            btn.parentElement.insertBefore(responseOverlay, btn);
-
-                            setTimeout(function()
-                            {
-                                pendingOverlay.style.opacity = 0;
-                                responseOverlay.style.opacity = 1;
-                            }, 10);
-
-                            setTimeout(function()
-                            {
-                                window.location.href = '/';
-                            }, 3000);
-                        }
-                    });
-                }, 3000);
-            }
-            else
-            {
-                var responseOverlay = createErrorOverlay('reset-result', 'Reset Fehlgeschlagen!');
-
-                responseOverlay.setAttribute('style', 'z-index: 3');
-
-                btn.parentElement.insertBefore(responseOverlay, btn);
-
-                setTimeout(function()
-                {
-                    pendingOverlay.style.opacity = 0;
-                    responseOverlay.style.opacity = 1;
-                }, 10);
-            
-                setTimeout(function()
-                {
-                    responseOverlay.style.opacity = 0;
-                    btn.style.opacity = 1;
-                }, 5000);
-
-                setTimeout(function()
-                {
-                    btn.parentElement.removeChild(responseOverlay);
-                    btn.parentElement.removeChild(pendingOverlay);
-                }, 5300);
-            }
-        });
+            showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
+            removeOverlaysDelay(btn, 4000, true);
+        }
     }
 
     var saveTries = 0;
 
-    function saveConfig(upload)
+    async function saveConfig(upload)
     {
         if(!upload && !saving)
         {
             upload = true;
             saving = true;
 
-            var pendingOverlay = createPendingOverlay('saving', 'Hochladen ..');
-
-            document.getElementById('save-btn').parentElement.insertBefore(pendingOverlay, document.getElementById('save-btn'));
-
-            setTimeout(function()
-            {
-                pendingOverlay.style.opacity = 1;
-                document.getElementById('save-btn').style.opacity = 0;
-            }, 10);
+            showOverlay(document.getElementById('save-btn'), createPendingOverlay('saving', 'Hochladen ..'));
         }
 
         if(upload)
@@ -793,82 +728,63 @@
 
             console.log(settings);
 
-            fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)).then(function(res) {
+            var res = fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
 
-                if(res != null && res == 'Success')
+            if(res != null && res == 'Success')
+            {
+                var error = '';
+
+                var res2 = fetchURL('http://' + device.ip + '/refresh', 10000);
+
+                if(res2)
                 {
-                    var error = '';
+                    console.log(res2);
+                    
+                    if(res2 != "Success")
+                    {
+                        error = 'true';
+                    }
+                    else
+                    {
+                        showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
 
-                    fetchURL('http://' + device.ip + '/refresh', 10000).then(function(res2) {
-
-                        if(res2)
+                        console.log('RESPONSE');
+                        
+                        setTimeout(function()
                         {
-                            console.log(res2);
-                            
-                            if(res2 != "Success")
-                            {
-                                error = 'true';
-                            }
-                            else
-                            {
-                                var responseOverlay = createSuccessOverlay('save-result', 'Hochgeladen!');
-
-                                document.getElementById('save-btn').parentElement.insertBefore(responseOverlay, document.getElementById('save-btn'));
-
-                                setTimeout(function()
-                                {
-                                    responseOverlay.style.opacity = 1;
-                                }, 10);
-
-                                console.log('RESPONSE');
-                                
-                                setTimeout(function()
-                                {
-                                    redirect();
-                                    console.log('REDIRECT');
-                                }, 2000);
-                                
-                                error = 'false';
-                            }
-                        }
-                        else
-                        {
-                            if(saveTries == 0)
-                            {
-                                saveTries++;
-                                saveConfig(true);
-                            }
-                            else
-                            {
-                                var responseOverlay = createSuccessOverlay('save-result', 'Gespeichert!');
-
-                                document.getElementById('save-btn').parentElement.insertBefore(responseOverlay, document.getElementById('save-btn'));
-
-                                setTimeout(function()
-                                {
-                                    responseOverlay.style.opacity = 1;
-                                }, 10);
-
-                                setTimeout(function()
-                                {
-                                    redirect();
-                                }, 2000);
-                            }
-                        }
-                    });
+                            redirect();
+                            console.log('REDIRECT');
+                        }, 2000);
+                        
+                        error = 'false';
+                    }
+                }
+                else if(saveTries == 0)
+                {
+                    saveTries++;
+                    saveConfig(true);
                 }
                 else
                 {
-                    saving = false;
+                    showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Gespeichert!'));
 
                     setTimeout(function()
                     {
-                        pingESP();
-                    }, 500);
-
-                    console.log("ERROR"); // Add Overlay RED
+                        redirect();
+                    }, 2000);
                 }
-            });
+            }
+            else
+            {
+                saving = false;
+
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 500);
+
+                console.log("ERROR"); // Add Overlay RED
+            }
         }
     }
     
