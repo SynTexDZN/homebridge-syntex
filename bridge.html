@@ -42,11 +42,11 @@
     document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
-    function fetchPluginUpdates(label, name, version)
+    function fetchPluginUpdates(label, index, version, name)
     {
         return new Promise(async function(resolve) {
 
-            var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + name, 10000);
+            var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000);
 
             if(newestVersion != null)
             {
@@ -59,10 +59,10 @@
                     var updateButton = document.createElement('input');
 
                     updateButton.setAttribute('type', 'button');
-                    updateButton.setAttribute('value', 'Bridge Aktualisieren ( v' + newestVersion + ' )');
-                    updateButton.setAttribute('onclick', 'updateBridge(this)');
+                    updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
+                    updateButton.setAttribute('onclick', 'update' + name + '(this)');
                     updateButton.setAttribute('style', 'margin-top: 20px');
-                    updateButton.setAttribute('id', 'update-btn-bridge');
+                    updateButton.setAttribute('id', 'update-btn-' + name.toLowerCase());
 
                     document.getElementsByClassName('main')[0].appendChild(updateButton);
                 }
@@ -78,7 +78,7 @@
 
     setTimeout(function()
     {
-        fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion).then(function(version) {
+        fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
 
             if(version != null)
             {
@@ -94,7 +94,7 @@
 
                 document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
 
-                fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex', bridgeVersion).then(function(version) {
+                fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
 
                     if(version != null)
                     {
