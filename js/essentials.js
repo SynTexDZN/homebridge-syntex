@@ -92,7 +92,7 @@ function showOverlay(btn, overlay)
     {
         btn.style.opacity = 0;
         
-        for(var i = 0; i < overlay.length; i++)
+        for(var i = 0; i < overlays.length; i++)
         {
             if(overlays[i].reference == btn)
             {
