@@ -126,10 +126,10 @@ function removeOverlays(btn, show)
 
     setTimeout(function()
     {
-        for(var i = overlays.length; i >= 0; i--)
+        for(var i = overlays.length - 1; i >= 0; i--)
         {
             console.log(i);
-            
+
             if(overlays[i].reference == btn)
             {
                 console.log(overlays.length);
