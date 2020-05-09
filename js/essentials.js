@@ -96,7 +96,7 @@ function showOverlay(btn, overlay)
         {
             if(overlays[i].reference == btn)
             {
-                overlays[i].style.opacity = 0;
+                overlays[i].overlay.style.opacity = 0;
             }
         }
 
@@ -118,7 +118,7 @@ function removeOverlays(btn)
     {
         if(overlays[i].reference == btn)
         {
-            overlays[i].style.opacity = 0;
+            overlays[i].overlay.style.opacity = 0;
         }
     }
 
@@ -130,7 +130,7 @@ function removeOverlays(btn)
         {
             if(overlays[i].reference == btn)
             {
-                btn.parentElement.removeChild(overlays[i]);
+                btn.parentElement.removeChild(overlays[i].overlay);
             }
         }
     }, 300);
