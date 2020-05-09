@@ -633,7 +633,19 @@
 
         var reset = await fetchURL('http://' + device.ip + '/reset', 10000);
 
-        if(reset != null && reset == 'Success')
+        if(reset == null)
+        {
+            showOverlay(btn, createOverlay(3, 'reset-result', 'Keine Verbindung zum Gerät!', 'red'));
+            removeOverlaysDelay(btn, 4000, true);
+            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
+        }
+        else if(reset != 'Success')
+        {
+            showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
+            removeOverlaysDelay(btn, 4000, true);
+            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
+        }
+        else
         {
             setTimeout(async function()
             {
@@ -647,12 +659,6 @@
                     }, 3000);
                 }
             }, 3000);
-        }
-        else
-        {
-            showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
-            removeOverlaysDelay(btn, 4000, true);
-            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
         }
     }
 
