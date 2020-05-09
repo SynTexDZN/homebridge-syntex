@@ -124,6 +124,8 @@ function removeOverlays(btn, show)
         btn.style.opacity = 1;
     }
 
+    console.log(overlays);
+
     setTimeout(function()
     {
         for(var i = 0; i < overlays.length; i++)
