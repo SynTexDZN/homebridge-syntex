@@ -595,26 +595,22 @@
 </script>
 <script defer>
 
-    function checkUpdates()
+    async function checkUpdates()
     {
-        fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000).then(function(res) {
+        var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000);
 
-            if(res != null)
-            {
-                if(versionCount(res) > versionCount(document.getElementsByClassName('main')[1].getAttribute('version')))
-                {
-                    var update = document.createElement('input');
+        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementsByClassName('main')[1].getAttribute('version')))
+        {
+            var update = document.createElement('input');
 
-                    update.setAttribute('type', 'button');
-                    update.setAttribute('value', 'Update Installieren ( v' + res + ' )');
-                    update.setAttribute('style', 'margin-bottom: 20px;');
-                    update.setAttribute('onclick', 'updateDevice(this)');
-                    update.setAttribute('id', 'update-btn');
+            update.setAttribute('type', 'button');
+            update.setAttribute('value', 'Update Installieren ( v' + newestVersion + ' )');
+            update.setAttribute('style', 'margin-bottom: 20px;');
+            update.setAttribute('onclick', 'updateDevice(this)');
+            update.setAttribute('id', 'update-btn');
 
-                    document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
-                }
-            }
-        });
+            document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
+        }
     }
     
     setTimeout(function()
