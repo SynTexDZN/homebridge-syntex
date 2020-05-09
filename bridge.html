@@ -33,86 +33,78 @@
 </html>
 <script>
 
-    var ip = '<%ip%>';
+    var bridgeIP = '<%ip%>';
     var bridgeVersion = '<%version%>';
     var webhooksVersion = '';
     var newestBVersion = '';
     var newestWVersion = '';
 
-    document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = ip;
+    document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
 
-    setTimeout(function()
+    function fetchPluginUpdates(label, name, version)
     {
-        fetchURL('http://syntex.sytes.net/smarthome/check-version?device=syntex', 10000).then(function(res) {
+        return new Promise(async function(resolve) {
 
-            if(res != null)
+            var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + name, 10000);
+
+            if(newestVersion != null)
             {
-                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>' + res + '</p>';
+                label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
 
-                newestBVersion = res;
+                var installedVersion = versionCount(version);
 
-                var intVersionB = versionCount(bridgeVersion);
-
-                if(versionCount(res) > intVersionB)
+                if(versionCount(newestVersion) > installedVersion)
                 {
-                    var updateBTN = document.createElement('input');
+                    var updateButton = document.createElement('input');
 
-                    updateBTN.setAttribute('type', 'button');
-                    updateBTN.setAttribute('value', 'Bridge Aktualisieren ( v' + res + ' )');
-                    updateBTN.setAttribute('onclick', 'updateBridge(this)');
-                    updateBTN.setAttribute('style', 'margin-top: 20px');
-                    updateBTN.setAttribute('id', 'update-btn-bridge');
+                    updateButton.setAttribute('type', 'button');
+                    updateButton.setAttribute('value', 'Bridge Aktualisieren ( v' + newestVersion + ' )');
+                    updateButton.setAttribute('onclick', 'updateBridge(this)');
+                    updateButton.setAttribute('style', 'margin-top: 20px');
+                    updateButton.setAttribute('id', 'update-btn-bridge');
 
-                    document.getElementsByClassName('main')[0].appendChild(updateBTN);  
+                    document.getElementsByClassName('main')[0].appendChild(updateButton);
                 }
             }
             else
             {
-                document.getElementById('infos').children[2].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                label.innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+            }
+
+            resolve(newestVersion);
+        });
+    }
+
+    setTimeout(function()
+    {
+        fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion).then(function(version) {
+
+            if(version != null)
+            {
+                newestBVersion = res;
             }
         });
 
-        fetchURL(window.location.origin + ':<%wPort%>/version', 10000).then(function(res) {
+        fetchURL(window.location.origin + ':<%wPort%>/version', 10000).then(function(version) {
 
-            if(res != null)
+            if(version != null)
             {
-                webhooksVersion = res;
+                webhooksVersion = version;
 
                 document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
 
-                fetchURL('http://syntex.sytes.net/smarthome/check-version?device=syntex-webhooks', 10000).then(function(res2) {
+                fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex', bridgeVersion).then(function(version) {
 
-                    if(res2 != null)
+                    if(version != null)
                     {
-                        document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>' + res2 + '</p>';
-
-                        newestWVersion = res2;
-
-                        var intVersionW = versionCount(webhooksVersion);
-
-                        if(versionCount(res2) > intVersionW)
-                        {
-                            var updateBTN = document.createElement('input');
-
-                            updateBTN.setAttribute('type', 'button');
-                            updateBTN.setAttribute('value', 'WebHooks Aktualisieren ( v' + res2 + ' )');
-                            updateBTN.setAttribute('onclick', 'updateWebhooks(this)');
-                            updateBTN.setAttribute('style', 'margin-top: 20px');
-                            updateBTN.setAttribute('id', 'update-btn-webhooks');
-
-                            document.getElementsByClassName('main')[0].appendChild(updateBTN);  
-                        }
-                    }
-                    else
-                    {
-                        document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                        newestWVersion = version;
                     }
                 });
             }
             else
             {
-                document.getElementById('infos').children[4].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
                 document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });

@@ -467,7 +467,7 @@
             });
         }
     }
-    
+
     setTimeout(function()
     {
         pingESP();
@@ -719,8 +719,9 @@
 
     function resetDevice(btn)
     {
-        var overlay = createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+        var overlay = createErrorOverlay('reset-confirm', 'Löschen Bestätigen?');
 
+        overlay.setAttribute('style', 'z-index: 1');
         overlay.setAttribute('onclick', 'resetConfirm(this)');
 
         btn.parentElement.insertBefore(overlay, btn);
