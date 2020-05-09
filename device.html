@@ -268,135 +268,131 @@
         document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
     
-    function fetchState()
+    async function fetchState()
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'rgb' || device.type == 'rgbw')
         {
-            fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000).then(function(res) {
+            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000);
 
-                if(res != null || res != 'Error')
+            if(state != null || state != 'Error')
+            {
+                if(device.type == 'contact')
                 {
-                    if(device.type == 'contact')
+                    if(state == 'true') 
                     {
-                        if(res == 'true') 
-                        {
-                            document.getElementById('status').value = 'ZU';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                        }
-                        else if(res == 'false')
-                        {
-                            document.getElementById('status').value = 'GEÖFFNET';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
-                        }
+                        document.getElementById('status').value = 'ZU';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
-                    else if(device.type == 'motion')
+                    else if(state == 'false')
                     {
-                        if(res == 'true') 
-                        {
-                            document.getElementById('status').value = 'BEWEGUNG';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
-                        }
-                        else if(res == 'false')
-                        {
-                            document.getElementById('status').value = 'BEREIT';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                        }
+                        document.getElementById('status').value = 'GEÖFFNET';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
                     }
-                    else if(device.type == 'relais')
-                    {
-                        if(res == 'true')
-                        {
-                            document.getElementById('status').value = 'AN';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
-                        }
-                        else if(res == 'false')
-                        {
-                            document.getElementById('status').value = 'AUS';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                        }
-                    }
-                    else if(device.type == 'rgb' || device.type == 'rgbw')
-                    {
-                        if(res.split(':')[0] == 'true')
-                        {
-                            document.getElementById('status').value = 'AN';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, rgb(' + res.split(':')[1] + ', ' + res.split(':')[2] + ', ' + res.split(':')[3] + ') 0%, rgb(' + (parseInt(res.split(':')[1]) + 60) + ', ' + (parseInt(res.split(':')[2]) + 60) + ', ' + (parseInt(res.split(':')[3]) + 60) + ') 100%)';
-                        }
-                        else if(res.split(':')[0] == 'false')
-                        {
-                            document.getElementById('status').value = 'AUS';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                        }
-                    }
-                    
-                    console.log(res);
                 }
-            });
+                else if(device.type == 'motion')
+                {
+                    if(state == 'true') 
+                    {
+                        document.getElementById('status').value = 'BEWEGUNG';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
+                    }
+                    else if(state == 'false')
+                    {
+                        document.getElementById('status').value = 'BEREIT';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
+                    }
+                }
+                else if(device.type == 'relais')
+                {
+                    if(state == 'true')
+                    {
+                        document.getElementById('status').value = 'AN';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                    }
+                    else if(state == 'false')
+                    {
+                        document.getElementById('status').value = 'AUS';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                    }
+                }
+                else if(device.type == 'rgb' || device.type == 'rgbw')
+                {
+                    if(state.split(':')[0] == 'true')
+                    {
+                        document.getElementById('status').value = 'AN';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, rgb(' + state.split(':')[1] + ', ' + state.split(':')[2] + ', ' + state.split(':')[3] + ') 0%, rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ') 100%)';
+                    }
+                    else if(state.split(':')[0] == 'false')
+                    {
+                        document.getElementById('status').value = 'AUS';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                    }
+                }
+                
+                console.log(state);
+            }
         }
         else if(device.type == 'light' || device.type == 'temperature')
         {
-            fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000).then(function(res) {
+            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
 
-                if(res != null)
+            if(state != null)
+            {
+                if(device.type == 'light')
                 {
-                    if(device.type == 'light')
-                    {
-                        document.getElementById('status').value = Math.round(res) + ' LUX' + ' - ' + document.getElementById('status').value.split(' - ')[1];
-                    }
-                    else if(device.type == 'temperature')
-                    {
-                        document.getElementById('status').value = ((Math.round(res * 10.0)) / 10.0) + ' °C' + ' - ' + document.getElementById('status').value.split(' - ')[1];
-                    }
-
-                    console.log(res);
+                    document.getElementById('status').value = Math.round(state) + ' LUX' + ' - ' + document.getElementById('status').value.split(' - ')[1];
                 }
-            });
+                else if(device.type == 'temperature')
+                {
+                    document.getElementById('status').value = ((Math.round(state * 10.0)) / 10.0) + ' °C' + ' - ' + document.getElementById('status').value.split(' - ')[1];
+                }
+
+                console.log(state);
+            }
             
             if(device.type == 'light')
             {
-                fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=rain', 10000).then(function(res) {
+                var rainState = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=rain', 10000);
 
-                    if(res != null)
+                if(rainState != null)
+                {
+                    if(rainState == 'false')
                     {
-                        if(res == 'false')
-                        {
-                            document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - TROCKEN';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
-                        }
-                        else if(res == 'true')
-                        {
-                            document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - REGEN';
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
-                        }
-
-                        console.log(res);
+                        document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - TROCKEN';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
                     }
-                });
+                    else if(rainState == 'true')
+                    {
+                        document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - REGEN';
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
+                    }
+
+                    console.log(rainState);
+                }
             }
             else if(device.type == 'temperature')
             {
-                fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=humidity', 10000).then(function(res) {
+                var humidityState = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=humidity', 10000);
 
-                    if(res != null)
+                if(humidityState != null)
+                {
+                    if(humidityState > 40 && humidityState < 70)
                     {
-                        if(res > 40 && res < 70)
-                        {
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                        }
-                        else if(res < 20 || res > 85)
-                        {
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
-                        }
-                        else
-                        {
-                            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                        }
-
-                        document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - ' + Math.round(res) + ' %';
-
-                        console.log(res);
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
-                });
+                    else if(humidityState < 20 || humidityState > 85)
+                    {
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
+                    }
+                    else
+                    {
+                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                    }
+
+                    document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - ' + Math.round(humidityState) + ' %';
+
+                    console.log(humidityState);
+                }
             }
         }
         else if(device.type == 'switch')
@@ -728,13 +724,13 @@
 
             console.log(settings);
 
-            var res = fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
+            var res = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
 
             if(res != null && res == 'Success')
             {
                 var error = '';
 
-                var res2 = fetchURL('http://' + device.ip + '/refresh', 10000);
+                var res2 = await fetchURL('http://' + device.ip + '/refresh', 10000);
 
                 if(res2)
                 {

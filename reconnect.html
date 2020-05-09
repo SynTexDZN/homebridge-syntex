@@ -67,17 +67,14 @@
         document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
     }
 
-    function redirectCountdown(url)
+    async function redirectCountdown(url)
     {
         setTimeout(function()
         {
-            checkRestart().then(function(res) {
-
-                if(res)
-                {
-                    window.location.href = url;
-                }
-            });
+            if(await checkRestart())
+            {
+                window.location.href = url;
+            }
         }, 3000);
     }
 
@@ -93,105 +90,95 @@
         pingESP();
     }, 500);
     
-    function pingESP()
+    async function pingESP()
     {
         if(ping == false)
         {
-            fetchURL('http://192.168.4.1/', 2000).then(function(res) {
+            if(await fetchURL('http://192.168.4.1/', 2000) != null)
+            {  
+                ping = true;
+                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('welcome').style.display = "none";
 
-                if(res != null)
-                {  
-                    ping = true;
-                    document.getElementById('wifiConfig').style.display = "";
-                    setTimeout(function()
-                    {
-                        scanWifi(document.getElementById('scan-btn'));
-                    }, 2000);
-                    document.getElementById('welcome').style.display = "none";
-                }
-                else
-                {  
-                    setTimeout(function()
-                    {
-                        pingESP();
-                    }, 2000);
-                } 
-            });
+                setTimeout(function()
+                {
+                    scanWifi(document.getElementById('scan-btn'));
+                }, 2000);
+            }
+            else
+            {  
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 2000);
+            } 
 
-            fetchURL('http://' + ipp + '/', 2000).then(function(res) {
+            if(await fetchURL('http://' + ipp + '/', 2000) != null)
+            {  
+                ping = true;
+                ip = 'http://' + ipp + '/';
+                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('welcome').style.display = "none";
 
-                if(res != null)
-                {  
-                    ping = true;
-                    ip = 'http://' + ipp + '/';
-                    document.getElementById('wifiConfig').style.display = "";
-                    setTimeout(function()
-                    {
-                        scanWifi(document.getElementById('scan-btn'));
-                    }, 2000);
-                    document.getElementById('welcome').style.display = "none";
-                }
-                else
-                {  
-                    /*
-                    setTimeout(function()
-                    {
-                        pingESP();
-                    }, 2000);
-                    */
-                } 
-            });
+                setTimeout(function()
+                {
+                    scanWifi(document.getElementById('scan-btn'));
+                }, 2000);
+            }
+            else
+            {  
+                /*
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 2000);
+                */
+            } 
         }        
     } 
 
 </script>
 <script>
         
-    function scanWifi(btn)
-    {            
-        btn.value = 'Bitte warten ..';
+    async function scanWifi(btn)
+    {           
+        btn.value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
+
+        var res = await fetchURL(ip + 'wifi', 10000);
+
+        if(res != null && res != "" || res != "[]")
+        {  
+            document.getElementById('networks').innerHTML = '';
         
-        fetchURL(ip + 'wifi', 10000).then(function(res) {
+            var json = JSON.parse(res);
 
-            if(res != null)
-            {  
-                document.getElementById('networks').innerHTML = '';
-            
-                var json = JSON.parse(res);
-
-                for(var i = 0; i < json.length; i++)
-                {
-                    var label = document.createElement('label');
-                    var input = document.createElement('input');
-
-                    label.setAttribute('for', json[i]);
-                    label.setAttribute('style', 'margin-bottom: 20px');
-
-                    input.setAttribute('type', "radio");
-                    input.setAttribute('name', "wifissid");
-                    input.setAttribute('value', json[i]);        
-
-                    label.appendChild(input);
-                    label.innerHTML += json[i];
-
-                    document.getElementById('networks').appendChild(label);
-                }
-
-                if(res == "" || res == "[]")
-                {
-                    document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-                }
-            }
-            else
+            for(var i = 0; i < json.length; i++)
             {
-                document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-            }
+                var label = document.createElement('label');
+                var input = document.createElement('input');
 
-            btn.value = 'Suchen'; 
-        });
+                label.setAttribute('for', json[i]);
+                label.setAttribute('style', 'margin-bottom: 20px');
+
+                input.setAttribute('type', "radio");
+                input.setAttribute('name', "wifissid");
+                input.setAttribute('value', json[i]);        
+
+                label.appendChild(input);
+                label.innerHTML += json[i];
+
+                document.getElementById('networks').appendChild(label);
+            }
+        }
+        else
+        {
+            document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
+        }
+
+        btn.value = 'Suchen';
     }
-    
+
     var timeRemaining = 0;
     
     function setTimer(time)
@@ -207,73 +194,63 @@
 
     var bridgeIP = 'http://<%bridge-ip%>';
     
-    function sendWifiSettings(form)
+    async function sendWifiSettings(form)
     {
         var formData = new FormData(form);
 
         formData.append('bridge-ip', bridgeIP);
 
-        fetchURL(ip + 'settings', 10000, formData).then(function(res) {
+        var mac = await fetchURL(ip + 'settings', 10000, formData);
 
-            if(res != null)
+        if(mac != null)
+        {
+            document.getElementById('wifiConfig').style.display = "none";
+            document.getElementById('connecting').style.display = "";
+
+            setTimer(60000);
+
+            var ping = false;
+
+            setTimeout(async function()
             {
-                document.getElementById('wifiConfig').style.display = "none";
-                document.getElementById('connecting').style.display = "";
-
-                setTimer(60000);
-
-                var ping = false;
-
-                setTimeout(function()
+                if(await fetchURL('/setup', 10000) != null)
                 {
-                    fetchURL('/setup', 10000).then(function(res2) {
+                    ping = true;
+                }
+            }, 20000);
 
-                        if(res2 != null)
+            setTimeout(function()
+            {
+                if(ping == false)
+                {
+                    document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
+                }
+            }, 30000);
+
+            setTimeout(function()
+            {
+                if(success == false)
+                {
+                    document.getElementById('error').style.display = "";
+                    document.getElementById('connecting').style.display = "none";
+
+                    setTimeout(async function()
+                    {
+                        if(await checkRestart())
                         {
-                            ping = true;
+                            window.location.href = '/setup';
                         }
-                    });
-                }, 20000);
+                    }, 10000); 
+                }
+            }, 60000);
 
-                setTimeout(function()
-                {
-                    if(ping == false)
-                    {
-                        document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
-                    }
-                }, 30000);
+            console.log(mac);
 
-                setTimeout(function()
-                {
-                    if(success == false)
-                    {
-                        //TODO: Verbinden Fehlgeschlagen
+            document.getElementById('success').style.display = "";
+            document.getElementById('connecting').style.display = "none";
 
-                        //alert("Error");
-                        document.getElementById('error').style.display = "";
-                        document.getElementById('connecting').style.display = "none";
-
-                        setTimeout(function()
-                        {
-                            checkRestart().then(function(res) {
-
-                                if(res)
-                                {
-                                    window.location.href = '/setup';
-                                }
-                            });
-                        }, 10000); 
-                    }
-                }, 60000);
-
-                console.log(res);
-
-                document.getElementById('success').style.display = "";
-                document.getElementById('connecting').style.display = "none";
-
-                redirectCountdown('/device?mac=' + res);     
-            }
-        });
+            redirectCountdown('/device?mac=' + mac);     
+        }
         
         return false;
     }

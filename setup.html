@@ -64,17 +64,14 @@
 </html>
 <script defer>
 
-    function redirectCountdown(url)
+    async function redirectCountdown(url)
     {
         setTimeout(function()
         {
-            checkRestart().then(function(res) {
-
-                if(res)
-                {
-                    window.location.href = url;
-                }
-            });
+            if(await checkRestart())
+            {
+                window.location.href = url;
+            }
         }, 3000);
     }
 
@@ -88,118 +85,97 @@
         pingESP();
     }, 500);
     
-    function pingESP()
+    async function pingESP()
     {
         if(ping == false)
         {
-            fetchURL('http://192.168.4.1/', 2000).then(function(res) {
+            if(await fetchURL('http://192.168.4.1/', 2000) != null)
+            {  
+                ping = true;
+                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('welcome').style.display = "none";
 
-                if(res != null)
-                {  
-                    ping = true;
-                    document.getElementById('wifiConfig').style.display = "";
-                    setTimeout(function()
-                    {
-                        scanWifi(document.getElementById('scan-btn'));
-                    }, 2000);
-                    document.getElementById('welcome').style.display = "none";
-                }
-                else
-                {  
-                    setTimeout(function()
-                    {
-                        pingESP();
-                    }, 2000);
-                } 
-            });
+                setTimeout(function()
+                {
+                    scanWifi(document.getElementById('scan-btn'));
+                }, 2000);
+            }
+            else
+            {  
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 2000);
+            } 
         }        
     }    
 
 </script>
 <script>
         
-    function scanWifi(btn)
+    async function scanWifi(btn)
     {           
         btn.value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
-        fetchURL('http://192.168.4.1/wifi', 10000).then(function(res) {
+        var res = await fetchURL('http://192.168.4.1/wifi', 10000);
 
-            if(res != null)
-            {  
-                document.getElementById('networks').innerHTML = '';
-            
-                var json = JSON.parse(res);
+        if(res != null && res != "" || res != "[]")
+        {  
+            document.getElementById('networks').innerHTML = '';
+        
+            var json = JSON.parse(res);
 
-                for(var i = 0; i < json.length; i++)
-                {
-                    var label = document.createElement('label');
-                    var input = document.createElement('input');
-
-                    label.setAttribute('for', json[i]);
-                    label.setAttribute('style', 'margin-bottom: 20px');
-
-                    input.setAttribute('type', "radio");
-                    input.setAttribute('name', "wifissid");
-                    input.setAttribute('value', json[i]);        
-
-                    label.appendChild(input);
-                    label.innerHTML += json[i];
-
-                    document.getElementById('networks').appendChild(label);
-                }
-
-                if(res == "" || res == "[]")
-                {
-                    document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-                }
-            }
-            else
+            for(var i = 0; i < json.length; i++)
             {
-                document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-            }
+                var label = document.createElement('label');
+                var input = document.createElement('input');
 
-            btn.value = 'Suchen';
-        });
+                label.setAttribute('for', json[i]);
+                label.setAttribute('style', 'margin-bottom: 20px');
+
+                input.setAttribute('type', "radio");
+                input.setAttribute('name', "wifissid");
+                input.setAttribute('value', json[i]);        
+
+                label.appendChild(input);
+                label.innerHTML += json[i];
+
+                document.getElementById('networks').appendChild(label);
+            }
+        }
+        else
+        {
+            document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
+        }
+
+        btn.value = 'Suchen';
     }
     
     var success = false;
     
-    function checkDB(mac)
+    async function checkDB(mac)
     {
-        fetchURL('/serverside/check-device?mac=' + mac, 10000).then(function(res) {
+        var exists = await fetchURL('/serverside/check-device?mac=' + mac, 10000);
 
-            if(res != null)
-            {  
-                console.log(res);
-            
-                if(res != 'Error')
-                {
-                    //TODO: Erfolg
+        if(exists != null && exists != 'Error')
+        {  
+            console.log(exists);
+        
+            success = true;
 
-                    success = true;
+            document.getElementById('success').style.display = "";
+            document.getElementById('connecting').style.display = "none";
 
-                    document.getElementById('success').style.display = "";
-                    document.getElementById('connecting').style.display = "none";
-
-                    redirectCountdown('/device?mac=' + mac);
-                }
-                else
-                {
-                    setTimeout(function()
-                    {
-                        checkDB(mac);
-                    }, 2000);
-                }
-            }
-            else
+            redirectCountdown('/device?mac=' + mac);
+        }
+        else
+        {
+            setTimeout(function()
             {
-                setTimeout(function()
-                {
-                    checkDB(mac);
-                }, 2000);
-            }
-        });
+                checkDB(mac);
+            }, 2000);
+        }
     }
     
     var timeRemaining = 0;
@@ -217,61 +193,54 @@
 
     var bridgeIP = 'http://<%bridge-ip%>';
     
-    function sendWifiSettings(form)
+    async function sendWifiSettings(form)
     {
         var formData = new FormData(form);
 
         formData.append('bridge-ip', bridgeIP);
 
-        fetchURL('http://192.168.4.1/settings', 10000, formData).then(function(res) {
+        var mac = await fetchURL('http://192.168.4.1/settings', 10000, formData);
 
-            if(res != null)
+        if(mac != null)
+        {
+            document.getElementById('wifiConfig').style.display = "none";
+            document.getElementById('connecting').style.display = "";
+
+            setTimer(60000);
+
+            var ping = false;
+
+            setTimeout(async function()
             {
-                document.getElementById('wifiConfig').style.display = "none";
-                document.getElementById('connecting').style.display = "";
-
-                setTimer(60000);
-
-                var ping = false;
-
-                setTimeout(function()
+                if(await fetchURL('/setup', 10000) != null)
                 {
-                    fetchURL('/setup', 10000).then(function(res2) {
+                    ping = true;
+                }
+            }, 20000);
 
-                        if(res2 != null)
-                        {
-                            ping = true;
-                        }
-                    });
-                }, 20000);
-
-                setTimeout(function()
+            setTimeout(function()
+            {
+                if(ping == false)
                 {
-                    if(ping == false)
-                    {
-                        document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
-                    }
-                }, 30000);
+                    document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
+                }
+            }, 30000);
 
-                setTimeout(function()
+            setTimeout(function()
+            {
+                if(success == false)
                 {
-                    if(success == false)
-                    {
-                        //TODO: Verbinden Fehlgeschlagen
+                    document.getElementById('error').style.display = "";
+                    document.getElementById('connecting').style.display = "none";
 
-                        //alert("Error");
-                        document.getElementById('error').style.display = "";
-                        document.getElementById('connecting').style.display = "none";
+                    redirectCountdown('/setup');
+                }
+            }, 60000);
 
-                        redirectCountdown('/setup');
-                    }
-                }, 60000);
+            console.log(mac);
 
-                console.log(res);
-
-                checkDB(res);
-            }
-        });
+            checkDB(mac);
+        }
 
         return false;
     }
