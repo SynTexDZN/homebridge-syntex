@@ -336,7 +336,9 @@
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null)
         {
             console.log('CREATE OVERLAY');
-            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
+            var o = createPendingOverlay('restarting', 'Neustart ..');
+            console.log(o);
+            showOverlay(btn, o);
 
             fetchURL('/restart', 10000).then(function(restart) {
 
