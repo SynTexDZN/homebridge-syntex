@@ -110,8 +110,8 @@ function showOverlay(btn, overlay)
         overlay.style.opacity = 1;
     }, 10);
 }
-/*
-function showOverlay(btn, overlay, delay)
+
+function showOverlayDelay(btn, overlay, delay)
 {
     console.log('X');
     setTimeout(function()
@@ -119,7 +119,7 @@ function showOverlay(btn, overlay, delay)
         showOverlay(btn, overlay);
     }, delay);
 }
-*/
+
 function removeOverlays(btn)
 {
     console.log('Y');
@@ -141,7 +141,7 @@ function removeOverlays(btn)
     }, 300);
 }
 
-function removeOverlays(btn, delay)
+function removeOverlaysDelay(btn, delay)
 {
     console.log('Z');
     setTimeout(function()

@@ -335,17 +335,14 @@
     {
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null)
         {
-            console.log('CREATE OVERLAY');
-            var o = createPendingOverlay('restarting', 'Neustart ..');
-            console.log(o);
-            showOverlay(btn, o);
+            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
 
             fetchURL('/restart', 10000).then(function(restart) {
 
                 if(restart == null || restart == 'Error')
                 {
-                    //showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
-                    //removeOverlays(btn, 4000);
+                    showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+                    removeOverlaysDelay(btn, 4000);
                 }
                 else if(restart == 'Success')
                 {
@@ -355,8 +352,8 @@
 
                             if(restartCheck)
                             {
-                                //showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                                //removeOverlays(btn, 4000);
+                                showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                                removeOverlaysDelay(btn, 4000);
                             
                                 setTimeout(function()
                                 {
