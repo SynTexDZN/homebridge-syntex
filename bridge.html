@@ -339,7 +339,7 @@
 
             if(await fetchURL('/restart', 10000) == 'Success')
             {
-                setTimeout(function()
+                setTimeout(async function()
                 {
                     if(await checkRestart())
                     {
