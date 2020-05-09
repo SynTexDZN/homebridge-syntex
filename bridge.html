@@ -331,39 +331,28 @@
 </script>
 <script>
     
-    function restartBridge(btn)
+    async function restartBridge(btn)
     {
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null)
         {
             showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
 
-            fetchURL('/restart', 10000).then(function(restart) {
-
-                if(restart == null || restart == 'Error')
+            if(await fetchURL('/restart', 10000) == 'Success')
+            {
+                setTimeout(function()
                 {
-                    showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
-                    removeOverlaysDelay(btn, 4000);
-                }
-                else if(restart == 'Success')
-                {
-                    setTimeout(function()
+                    if(await checkRestart())
                     {
-                        checkRestart().then(function(restartCheck) {
-
-                            if(restartCheck)
-                            {
-                                showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                                removeOverlaysDelay(btn, 4000);
-                            
-                                setTimeout(function()
-                                {
-                                    location.reload();
-                                }, 4600);
-                            }
-                        });
-                    }, 3000);
-                }
-            });
+                        showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                        removeOverlaysDelay(btn, 4000);
+                    }
+                }, 3000);
+            }
+            else
+            {
+                showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+                removeOverlaysDelay(btn, 4000);
+            }
         }
     }
 
