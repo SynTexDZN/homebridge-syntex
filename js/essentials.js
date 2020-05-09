@@ -74,3 +74,68 @@ function createErrorOverlay(id, value)
 {
     return createOverlay(2, id, value, 'red');
 }
+
+function showOverlay(btn, overlay)
+{
+    var otherOverlays = btn.getElementsByClassName('overlay');
+    
+    if(btn.previousElementSibling.getAttribute('class') != 'overlay-container')
+    {
+        var overlayContainer = document.createElement('div');
+
+        btn.parentElement.insertBefore(overlayContainer, btn);
+        overlayContainer.appendChild(overlay);
+    }
+    else
+    {
+        btn.previousElementSibling.appendChild(overlay);
+    }
+
+    setTimeout(function()
+    {
+        btn.style.opacity = 0;
+
+        for(var i = 0; i < otherOverlays.length; i++)
+        {
+            otherOverlays[i].style.opacity = 0;
+        }
+
+        overlay.style.opacity = 1;
+    }, 10);
+}
+
+function showOverlay(btn, overlay, delay)
+{
+    setTimeout(function()
+    {
+        showOverlay(btn, overlay);
+    }, delay);
+}
+
+function removeOverlays(btn)
+{
+    var otherOverlays = btn.getElementsByClassName('overlay');
+
+    for(var i = 0; i < otherOverlays.length; i++)
+    {
+        otherOverlays[i].style.opacity = 0;
+    }
+
+    btn.style.opacity = 1;
+
+    setTimeout(function()
+    {
+        for(var i = 0; i < otherOverlays.length; i++)
+        {
+            btn.parentElement.removeChild(otherOverlays[i]);
+        }
+    }, 300);
+}
+
+function removeOverlays(btn, delay)
+{
+    setTimeout(function()
+    {
+        removeOverlays(btn, overlay);
+    }, delay);
+}

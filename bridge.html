@@ -332,72 +332,26 @@
     {
         if(document.getElementById('restarting') == null && document.getElementById('restart-result') == null)
         {
-            var pendingOverlay = createPendingOverlay('restarting', 'Neustart ..');
+            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
 
-            btn.parentElement.insertBefore(pendingOverlay, btn);
+            fetchURL('/restart', 10000).then(function(restart) {
 
-            setTimeout(function()
-            {
-                btn.style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
-
-            fetchURL('/restart', 10000).then(function(res) {
-
-                if(res == null || res == 'Error')
+                if(restart == null || restart == 'Error')
                 {
-                    var responseOverlay = createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!');
-
-                    btn.parentElement.insertBefore(responseOverlay, btn);
-
-                    setTimeout(function()
-                    {
-                        pendingOverlay.style.opacity = 0;
-                        responseOverlay.style.opacity = 1;
-                    }, 10);
-                
-                    setTimeout(function()
-                    {
-                        responseOverlay.style.opacity = 0;
-                        btn.style.opacity = 1;
-                    }, 4000);
-
-                    setTimeout(function()
-                    {
-                        btn.parentElement.removeChild(pendingOverlay);
-                        btn.parentElement.removeChild(responseOverlay);
-                    }, 4300);
+                    showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+                    removeOverlays(btn, 4000);
                 }
-                else if(res == 'Success')
+                else if(restart == 'Success')
                 {
                     setTimeout(function()
                     {
-                        checkRestart().then(function(res) {
+                        checkRestart().then(function(restartCheck) {
 
-                            if(res)
+                            if(restartCheck)
                             {
-                                var responseOverlay = createSuccessOverlay('restart-result', 'Neustart Erfolgreich!');
-
-                                btn.parentElement.insertBefore(responseOverlay, btn);
-
-                                setTimeout(function()
-                                {
-                                    pendingOverlay.style.opacity = 0;
-                                    responseOverlay.style.opacity = 1;
-                                }, 10);
+                                showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                                removeOverlays(btn, 4000);
                             
-                                setTimeout(function()
-                                {
-                                    responseOverlay.style.opacity = 0;
-                                    btn.style.opacity = 1;
-                                }, 4000);
-
-                                setTimeout(function()
-                                {
-                                    btn.parentElement.removeChild(pendingOverlay);
-                                    btn.parentElement.removeChild(responseOverlay);
-                                }, 4300);
-
                                 setTimeout(function()
                                 {
                                     location.reload();
