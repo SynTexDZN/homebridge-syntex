@@ -338,7 +338,7 @@
 
                 pendingOverlay.setAttribute('style', 'z-index: 2; text-align: left');
 
-                showOverlay(btn, pendingOverlay);
+                showOverlay(device, pendingOverlay);
 
                 var update = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
 
@@ -348,7 +348,7 @@
 
                     installingOverlay.setAttribute('style', 'z-index: 3; text-align: left');
 
-                    showOverlay(btn, installingOverlay);
+                    showOverlay(device, installingOverlay);
 
                     await newTimeout(3000);
 
@@ -383,11 +383,24 @@
 
                 responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
 
-                showOverlay(btn, responseOverlay);
-                removeOverlaysDelay(btn, 4000, true);
+                showOverlay(device, responseOverlay);
+                removeOverlaysDelay(device, 4000, true);
                     
                 setTimeout(function()
                 {
+                    if(response == true)
+                    {
+                        btn.style.opacity = 0;
+                    }
+                }, 4000);
+
+                setTimeout(function()
+                {
+                    if(response == true)
+                    {
+                        btn.parentElement.removeChild(btn);
+                    }
+
                     updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
                 }, 4300);
             }
