@@ -51,6 +51,8 @@ function createOverlay(level, id, value, color)
 {
     var overlay = document.createElement('input');
 
+    console.log('CREATE OVERLAY PROZESS');
+
     overlay.setAttribute('type', 'button');
     overlay.setAttribute('style', 'z-index: ' + level);
     overlay.setAttribute('id', id);
@@ -111,6 +113,7 @@ function showOverlay(btn, overlay)
 
 function showOverlay(btn, overlay, delay)
 {
+    console.log('X');
     setTimeout(function()
     {
         showOverlay(btn, overlay);
@@ -119,6 +122,7 @@ function showOverlay(btn, overlay, delay)
 
 function removeOverlays(btn)
 {
+    console.log('Y');
     var otherOverlays = btn.getElementsByClassName('overlay');
 
     for(var i = 0; i < otherOverlays.length; i++)
@@ -139,6 +143,7 @@ function removeOverlays(btn)
 
 function removeOverlays(btn, delay)
 {
+    console.log('Z');
     setTimeout(function()
     {
         removeOverlays(btn, overlay);
