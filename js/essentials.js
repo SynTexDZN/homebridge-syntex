@@ -135,6 +135,8 @@ function removeOverlays(btn, show)
                 console.log('ARR Reference', overlays[i].reference);
                 console.log('ARR Overlay', overlays[i].overlay);
                 btn.parentElement.removeChild(overlays[i].overlay);
+
+                overlays.splice(overlays.indexOf(overlays[i]), 1);
             }
         }
 
