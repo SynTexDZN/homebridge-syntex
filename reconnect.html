@@ -67,9 +67,9 @@
         document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
     }
 
-    async function redirectCountdown(url)
+    function redirectCountdown(url)
     {
-        setTimeout(function()
+        setTimeout(async function()
         {
             if(await checkRestart())
             {
