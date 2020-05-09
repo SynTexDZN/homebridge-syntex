@@ -110,91 +110,80 @@
         });
     }, 500);
 
-    function updateBridge(btn)
+</script>
+<script>
+
+    async function updateBridge(btn)
     {
         if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
             showOverlay(btn, createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple'));
 
-            fetchURL('/update?version=' + newestBVersion, 120000).then(function(res) {
+            var update = await fetchURL('/update?version=' + newestBVersion, 120000);
 
-                if(res != null)
+            if(update == null)
+            {
+                showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
+                removeOverlaysDelay(btn, 4000, true);
+            }
+            else if(update == 'Error')
+            {
+                showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+                removeOverlaysDelay(btn, 4000, true);
+            }
+            else if(update == 'Success')
+            {
+                setTimeout(async function()
                 {
-                    if(res == 'Error')
+                    if(await checkRestart())
                     {
-                        showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
-                        removeOverlaysDelay(btn, 4000, true);
-                    }
-                    else if(res == 'Success')
-                    {
+                        showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                        removeOverlaysDelay(btn, 4000, false);
+
                         setTimeout(function()
                         {
-                            checkRestart().then(function(res) {
-
-                                if(res)
-                                {
-                                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-                                    removeOverlaysDelay(btn, 4000, false);
-
-                                    setTimeout(function()
-                                    {
-                                        location.reload();
-                                    }, 4600);
-                                }
-                            });
-                        }, 3000);
+                            location.reload();
+                        }, 4600);
                     }
-                }
-                else
-                {
-                    showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
-                    removeOverlaysDelay(btn, 4000, true);
-                }
-            });
+                }, 3000);
+            }
         }
     }
 
-    function updateWebhooks(btn)
+    async function updateWebhooks(btn)
     {
         if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
             showOverlay(btn, createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple'));
 
-            fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000).then(function(res) {
+            var update = await fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000);
 
-                if(res != null)
+            if(res == null)
+            {
+                showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
+                removeOverlaysDelay(btn, 4000, true);
+            }
+            else if(res == 'Error')
+            {
+                showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+                removeOverlaysDelay(btn, 4000, true);
+            }
+            else if(res == 'Success')
+            {
+                setTimeout(async function()
                 {
-                    if(res == 'Error')
+                    if(await checkRestart())
                     {
-                        showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
-                        removeOverlaysDelay(btn, 4000, true);
-                    }
-                    else if(res == 'Success')
-                    {
+                        showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                        removeOverlaysDelay(btn, 4000, false);
+
                         setTimeout(function()
                         {
-                            checkRestart().then(function(res) {
-
-                                if(res)
-                                {
-                                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-                                    removeOverlaysDelay(btn, 4000, false);
-
-                                    setTimeout(function()
-                                    {
-                                        location.reload();
-                                    }, 4600);
-                                }
-                            });
-                        }, 3000);
+                            location.reload();
+                        }, 4600);
                     }
-                }
-                else
-                {
-                    showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
-                    removeOverlaysDelay(btn, 4000, true);
-                }
-            });
+                }, 3000);
+            }
         }
     }
 
