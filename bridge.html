@@ -158,15 +158,7 @@
     {
         if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
-            var pendingOverlay = createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple');
-
-            btn.parentElement.insertBefore(pendingOverlay, btn);
-
-            setTimeout(function()
-            {
-                btn.style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
+            showOverlay(btn, createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple'));
 
             fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000).then(function(res) {
 
@@ -174,27 +166,8 @@
                 {
                     if(res == 'Error')
                     {
-                        var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
-
-                        btn.parentElement.insertBefore(responseOverlay, btn);
-
-                        setTimeout(function()
-                        {
-                            pendingOverlay.style.opacity = 0;
-                            responseOverlay.style.opacity = 1;
-                        }, 10);
-                        
-                        setTimeout(function()
-                        {
-                            responseOverlay.style.opacity = 0;
-                            btn.style.opacity = 1;
-                        }, 4000);
-
-                        setTimeout(function()
-                        {
-                            btn.parentElement.removeChild(pendingOverlay);
-                            btn.parentElement.removeChild(responseOverlay);
-                        }, 4300);
+                        showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+                        removeOverlaysDelay(btn, 4000, true);
                     }
                     else if(res == 'Success')
                     {
@@ -204,27 +177,8 @@
 
                                 if(res)
                                 {
-                                    var responseOverlay = createSuccessOverlay('update-result', 'Update Erfolgreich!');
-
-                                    btn.parentElement.insertBefore(responseOverlay, btn);
-
-                                    setTimeout(function()
-                                    {
-                                        pendingOverlay.style.opacity = 0;
-                                        responseOverlay.style.opacity = 1;
-                                    }, 10);
-                                    
-                                    setTimeout(function()
-                                    {
-                                        responseOverlay.style.opacity = 0;
-                                    }, 4000);
-
-                                    setTimeout(function()
-                                    {
-                                        btn.parentElement.removeChild(pendingOverlay);
-                                        btn.parentElement.removeChild(responseOverlay);
-                                        btn.parentElement.removeChild(btn);
-                                    }, 4300);
+                                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                                    removeOverlaysDelay(btn, 4000, false);
 
                                     setTimeout(function()
                                     {
@@ -237,27 +191,8 @@
                 }
                 else
                 {
-                    var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
-
-                    btn.parentElement.insertBefore(responseOverlay, btn);
-
-                    setTimeout(function()
-                    {
-                        pendingOverlay.style.opacity = 0;
-                        responseOverlay.style.opacity = 1;
-                    }, 10);
-                
-                    setTimeout(function()
-                    {
-                        responseOverlay.style.opacity = 0;
-                        btn.style.opacity = 1;
-                    }, 4000);
-
-                    setTimeout(function()
-                    {
-                        btn.parentElement.removeChild(pendingOverlay);
-                        btn.parentElement.removeChild(responseOverlay);
-                    }, 4300);
+                    showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
+                    removeOverlaysDelay(btn, 4000, true);
                 }
             });
         }
@@ -279,7 +214,7 @@
                     if(await checkRestart())
                     {
                         showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                        removeOverlaysDelay(btn, 4000, false);
+                        removeOverlaysDelay(btn, 4000, true);
                     }
                 }, 3000);
             }
