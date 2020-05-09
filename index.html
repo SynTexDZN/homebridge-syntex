@@ -224,7 +224,7 @@
     
     async function checkUpdates(i, device)
     {
-        var newestVersion = fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000);
+        var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000);
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(device.getAttribute('version')))
         {  
