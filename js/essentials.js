@@ -53,8 +53,6 @@ function createOverlay(level, id, value, color)
 {
     var overlay = document.createElement('input');
 
-    console.log('CREATE OVERLAY PROZESS');
-
     overlay.setAttribute('type', 'button');
     overlay.setAttribute('style', 'z-index: ' + level);
     overlay.setAttribute('id', id);
@@ -112,7 +110,7 @@ function showOverlayDelay(btn, overlay, delay)
     }, delay);
 }
 
-function removeOverlays(btn)
+function removeOverlays(btn, show)
 {
     for(var i = 0; i < overlays.length; i++)
     {
@@ -122,7 +120,10 @@ function removeOverlays(btn)
         }
     }
 
-    btn.style.opacity = 1;
+    if(show)
+    {
+        btn.style.opacity = 1;
+    }
 
     setTimeout(function()
     {
@@ -133,13 +134,18 @@ function removeOverlays(btn)
                 btn.parentElement.removeChild(overlays[i].overlay);
             }
         }
+
+        if(!show)
+        {
+            btn.parentElement.removeChild(btn);
+        }
     }, 300);
 }
 
-function removeOverlaysDelay(btn, delay)
+function removeOverlaysDelay(btn, delay, show)
 {
     setTimeout(function()
     {
-        removeOverlays(btn);
+        removeOverlays(btn, show);
     }, delay);
 }
