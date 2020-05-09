@@ -128,13 +128,9 @@ function removeOverlays(btn, show)
     {
         for(var i = overlays.length - 1; i >= 0; i--)
         {
-            console.log(i);
-
             if(overlays[i].reference == btn)
             {
-                console.log(overlays.length);
                 btn.parentElement.removeChild(overlays[i].overlay);
-
                 overlays.splice(overlays.indexOf(overlays[i]), 1);
             }
         }
@@ -143,8 +139,6 @@ function removeOverlays(btn, show)
         {
             btn.parentElement.removeChild(btn);
         }
-
-        console.log(overlays);
     }, 300);
 }
 
