@@ -110,7 +110,7 @@ function showOverlay(btn, overlay)
         overlay.style.opacity = 1;
     }, 10);
 }
-
+/*
 function showOverlay(btn, overlay, delay)
 {
     console.log('X');
@@ -119,7 +119,7 @@ function showOverlay(btn, overlay, delay)
         showOverlay(btn, overlay);
     }, delay);
 }
-
+*/
 function removeOverlays(btn)
 {
     console.log('Y');
