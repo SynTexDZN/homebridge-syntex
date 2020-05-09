@@ -221,6 +221,7 @@
 <script defer>
     
     var updateCount = 0;
+    var checkedCount = 0;
     
     async function checkUpdates(i, device)
     {
@@ -254,7 +255,9 @@
             updateCount++;
         }
 
-        if(i == devices.length - 1)
+        checkedCount++;
+
+        if(checkedCount == devices.length)
         {
             document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
