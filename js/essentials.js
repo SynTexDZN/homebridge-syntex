@@ -130,10 +130,7 @@ function removeOverlays(btn, show)
         {
             if(overlays[i].reference == btn)
             {
-                console.log('BTN', btn);
-                console.log('BTN Parent', btn.parentElement);
-                console.log('ARR Reference', overlays[i].reference);
-                console.log('ARR Overlay', overlays[i].overlay);
+                console.log(overlays.length);
                 btn.parentElement.removeChild(overlays[i].overlay);
 
                 overlays.splice(overlays.indexOf(overlays[i]), 1);
