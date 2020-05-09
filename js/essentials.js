@@ -140,6 +140,6 @@ function removeOverlaysDelay(btn, delay)
 {
     setTimeout(function()
     {
-        removeOverlays(btn, overlay);
+        removeOverlays(btn);
     }, delay);
 }
