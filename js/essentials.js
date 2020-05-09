@@ -47,6 +47,8 @@ function checkRestart()
     });
 }
 
+var overlays = [];
+
 function createOverlay(level, id, value, color)
 {
     var overlay = document.createElement('input');
@@ -79,41 +81,31 @@ function createErrorOverlay(id, value)
 
 function showOverlay(btn, overlay)
 {
-    /*
-    var otherOverlays = btn.getElementsByClassName('overlay');
-    
-    if(btn.previousElementSibling.getAttribute('class') != 'overlay-container')
-    {
-        var overlayContainer = document.createElement('div');
+    overlays.push({
+        reference: btn,
+        overlay: overlay
+    });
 
-        btn.parentElement.insertBefore(overlayContainer, btn);
-        overlayContainer.appendChild(overlay);
-    }
-    else
-    {
-        btn.previousElementSibling.appendChild(overlay);
-    }
-    */
-    console.log(overlay);
-    console.log(btn);
     btn.parentElement.insertBefore(overlay, btn);
 
     setTimeout(function()
     {
         btn.style.opacity = 0;
-        /*
-        for(var i = 0; i < otherOverlays.length; i++)
+        
+        for(var i = 0; i < overlay.length; i++)
         {
-            otherOverlays[i].style.opacity = 0;
+            if(overlays[i].reference == btn)
+            {
+                overlays[i].style.opacity = 0;
+            }
         }
-        */
+
         overlay.style.opacity = 1;
     }, 10);
 }
 
 function showOverlayDelay(btn, overlay, delay)
 {
-    console.log('X');
     setTimeout(function()
     {
         showOverlay(btn, overlay);
