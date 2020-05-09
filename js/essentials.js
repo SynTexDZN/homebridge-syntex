@@ -132,6 +132,8 @@ function removeOverlays(btn, show)
 
             if(overlays[i].reference == btn)
             {
+                console.log('Parent', btn.parentElement);
+                console.log('Reference', overlays[i].reference);
                 btn.parentElement.removeChild(overlays[i].overlay);
             }
         }
