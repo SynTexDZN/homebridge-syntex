@@ -124,8 +124,6 @@ function removeOverlays(btn, show)
         btn.style.opacity = 1;
     }
 
-    console.log(overlays);
-
     setTimeout(function()
     {
         for(var i = 0; i < overlays.length; i++)
@@ -143,6 +141,8 @@ function removeOverlays(btn, show)
         {
             btn.parentElement.removeChild(btn);
         }
+
+        console.log(overlays);
     }, 300);
 }
 
