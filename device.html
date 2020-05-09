@@ -59,19 +59,11 @@
         });
     }
 
-    if(device.type == 'motion')
+    if(device.type == 'motion' || device.type == 'light' || device.type == 'temperature')
     {
         settings.push({
             index: 'interval',
-            name: 'Delay'
-        });
-    }
-
-    if(device.type == 'light' || device.type == 'temperature')
-    {
-        settings.push({
-            index: 'interval',
-            name: 'Interval'
+            name: device.type == 'motion' ? 'Delay' : 'Interval'
         });
     }
 
@@ -421,50 +413,24 @@
     var updating = false;
     var saving = false;
     
-    function restartDevice(btn)
+    async function restartDevice(btn)
     {
         if(!restart && !updating && !saving)
         {
             restart = true;
 
-            var pendingOverlay = createPendingOverlay('restarting', 'Neustart ..');
+            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
 
-            btn.parentElement.insertBefore(pendingOverlay, btn);
-
-            setTimeout(function()
+            if(await fetchURL('http://' + device.ip + '/restart', 10000) == null)
             {
-                btn.style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
+                showOverlay(btn, createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
+                removeOverlaysDelay(btn, 4000, true);
 
-            fetchURL('http://' + device.ip + '/restart', 10000).then(function(res) {
-
-                if(res == null)
+                setTimeout(function()
                 {
-                    var responseOverlay = createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!');
-
-                    btn.parentElement.insertBefore(responseOverlay, btn);
-
-                    setTimeout(function()
-                    {
-                        pendingOverlay.style.opacity = 0;
-                        responseOverlay.style.opacity = 1;
-                    }, 10);
-                
-                    setTimeout(function()
-                    {
-                        responseOverlay.style.opacity = 0;
-                        btn.style.opacity = 1;
-                    }, 5000);
-
-                    setTimeout(function()
-                    {
-                        btn.parentElement.removeChild(pendingOverlay);
-                        btn.parentElement.removeChild(responseOverlay);
-                        restart = false;
-                    }, 5300);
-                }
-            });
+                    restart = false;
+                }, 4300);
+            }
         }
     }
 
@@ -473,70 +439,51 @@
         pingESP();
     }, 500);
     
-    function pingESP()
+    async function pingESP()
     {
         if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
         {
-            fetchURL('http://' + device.ip + '/', 10000).then(function(res) {
+            if(await fetchURL('http://' + device.ip + '/', 10000) != null)
+            {
+                console.log("ESP Gefunden");
 
-                if(res != null)
+                if(restart == true)
                 {
-                    console.log("ESP Gefunden");
-
-                    if(restart == true)
-                    {
-                        var responseOverlay = createSuccessOverlay('restart-result', 'Neustart Erfolgreich!');
-
-                        document.getElementById('restart-btn').parentElement.insertBefore(responseOverlay, document.getElementById('restart-btn'));
-
-                        setTimeout(function()
-                        {
-                            responseOverlay.style.opacity = 1;
-                            document.getElementById('restarting').style.opacity = 0;
-                        }, 10);
-                    
-                        setTimeout(function()
-                        {
-                            responseOverlay.style.opacity = 0;
-                            document.getElementById('restart-btn').style.opacity = 1;
-                        }, 4000);
-
-                        setTimeout(function()
-                        {
-                            document.getElementById('restart-btn').parentElement.removeChild(responseOverlay);
-                            document.getElementById('restart-btn').parentElement.removeChild(document.getElementById('restarting'));
-                            restart = false;
-                            //document.getElementById('update-btn').parentElement.removeChild(document.getElementById('waiting'));
-                        }, 4300);
-                    }
-
-                    for(var i = 0; i <= 4000; i += 1000)
-                    {
-                        setTimeout(function()
-                        {
-                            if(document.getElementById('settings').hasAttribute('style'))
-                            {
-                                fetchState();
-                            }
-                        }, i);
-                    }
+                    showOverlay(document.getElementById('restart-btn'), createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                    removeOverlaysDelay(document.getElementById('restart-btn'), 4000, true);
 
                     setTimeout(function()
                     {
-                        pingESP();
-                    }, 5000);
+                        restart = false;
+                    }, 4300);
                 }
-                else
+
+                for(var i = 0; i <= 4000; i += 1000)
                 {
-                    document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
-                    document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
-                    
                     setTimeout(function()
                     {
-                        pingESP();
-                    }, 500);
+                        if(document.getElementById('settings').hasAttribute('style'))
+                        {
+                            fetchState();
+                        }
+                    }, i);
                 }
-            });
+
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 5000);
+            }
+            else
+            {
+                document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+                
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 500);
+            }
         }
         else
         {
@@ -551,21 +498,20 @@
     {
         return new Promise(async function(resolve) {
 
-            fetchURL('http://' + ip + '/version', 3000).then(function(res) {
+            var update = await fetchURL('http://' + ip + '/version', 3000);
 
-                if(res != null && res == version)
-                {  
-                    resolve(true);
-                }
-                else if(res != null)
-                {
-                    resolve(false);
-                }
-                else
-                {
-                    resolve(null);
-                }
-            });
+            if(update != null && update == version)
+            {  
+                resolve(true);
+            }
+            else if(update != null)
+            {
+                resolve(false);
+            }
+            else
+            {
+                resolve(null);
+            }
         });
     }
 
@@ -574,30 +520,15 @@
         return new Promise(async function(resolve) {
 
             var response = false;
-            var pendingOverlay = createPendingOverlay('waiting', 'Bitte Warten ..');
 
-            btn.parentElement.insertBefore(pendingOverlay, btn);
+            showOverlay(btn, createPendingOverlay('waiting', 'Bitte Warten ..'));
 
-            setTimeout(function()
+            var update = await fetchURL('http://' + device.ip + '/update', 10000);
+
+            if(update != null && update == 'Success')
             {
-                btn.style.opacity = 0;
-                pendingOverlay.style.opacity = 1;
-            }, 10);
+                showOverlay(btn, createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple'));
 
-            var res = await fetchURL('http://' + device.ip + '/update', 10000);
-
-            if(res != null && res == 'Success')
-            {
-                var installingOverlay = createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple');
-
-                btn.parentElement.insertBefore(installingOverlay, btn);
-
-                setTimeout(function()
-                {
-                    pendingOverlay.style.opacity = 0;
-                    installingOverlay.style.opacity = 1;
-                }, 10);
-                
                 await newTimeout(3000);
 
                 var tries = 20;
@@ -624,10 +555,7 @@
                     var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
                 }
 
-                fetchURL('http://' + device.ip + '/version', 3000).then(function(version) {
-
-                    document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + version;
-                });
+                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await fetchURL('http://' + device.ip + '/version', 3000);
             }
             else
             {
@@ -636,44 +564,24 @@
 
             responseOverlay.setAttribute('style', 'z-index: 3');
 
-            btn.parentElement.insertBefore(responseOverlay, btn);
+            showOverlay(btn, responseOverlay);
+            removeOverlaysDelay(btn, 4000, true);
                 
             setTimeout(function()
             {
-                if(typeof installingOverlay !== 'undefined')
+                if(response == true)
                 {
-                    installingOverlay.style.opacity = 0;
+                    btn.style.opacity = 0;
                 }
-
-                pendingOverlay.style.opacity = 0;
-                responseOverlay.style.opacity = 1;
-            }, 10);
+            }, 4000);
 
             setTimeout(function()
             {
-                responseOverlay.style.opacity = 0;
-
-                if(response != true)
-                {
-                    btn.style.opacity = 1;
-                }
-            }, 5000);
-
-            setTimeout(function()
-            {
-                if(typeof installingOverlay !== 'undefined')
-                {
-                    btn.parentElement.removeChild(installingOverlay);
-                }
-
                 if(response == true)
                 {
                     btn.parentElement.removeChild(btn);
                 }
-
-                btn.parentElement.removeChild(pendingOverlay);
-                btn.parentElement.removeChild(responseOverlay);
-            }, 5300);
+            }, 4300);
             
             resolve(response);
         });
