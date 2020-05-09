@@ -277,7 +277,7 @@
 
         updateCounter = [0, 0];
 
-        showOverlay(btn, createOverlay(1, 'updating-all', 'Updates werden installiert ..', 'purple'));
+        showOverlay(btn, createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -433,7 +433,7 @@
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
                         btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
 
-                        removeOverlays(btn);
+                        removeOverlays(btn, true);
                     }
                 });
             }
