@@ -77,6 +77,7 @@ function createErrorOverlay(id, value)
 
 function showOverlay(btn, overlay)
 {
+    /*
     var otherOverlays = btn.getElementsByClassName('overlay');
     
     if(btn.previousElementSibling.getAttribute('class') != 'overlay-container')
@@ -90,16 +91,18 @@ function showOverlay(btn, overlay)
     {
         btn.previousElementSibling.appendChild(overlay);
     }
+    */
+    btn.parentElement.insertBefore(overlay, btn);
 
     setTimeout(function()
     {
         btn.style.opacity = 0;
-
+        /*
         for(var i = 0; i < otherOverlays.length; i++)
         {
             otherOverlays[i].style.opacity = 0;
         }
-
+        */
         overlay.style.opacity = 1;
     }, 10);
 }
