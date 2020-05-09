@@ -158,17 +158,17 @@
 
             var update = await fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000);
 
-            if(res == null)
+            if(update == null)
             {
                 showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
                 removeOverlaysDelay(btn, 4000, true);
             }
-            else if(res == 'Error')
+            else if(update != 'Success')
             {
                 showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
                 removeOverlaysDelay(btn, 4000, true);
             }
-            else if(res == 'Success')
+            else if(update == 'Success')
             {
                 setTimeout(async function()
                 {
