@@ -629,7 +629,7 @@
     
     async function resetConfirm(btn)
     {
-        showOverlay(btn, createPendingOverlay(2, 'reset-result', 'Zurücksetzen ..', 'blue'));
+        showOverlay(btn, createOverlay(2, 'reset-result', 'Zurücksetzen ..', 'blue'));
 
         var reset = await fetchURL('http://' + device.ip + '/reset', 10000);
 
@@ -652,6 +652,11 @@
         {
             showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
             removeOverlaysDelay(btn, 4000, true);
+
+            setTimeout(function()
+            {
+                btn.parentElement.removeChild(btn);
+            }, 300);
         }
     }
 
