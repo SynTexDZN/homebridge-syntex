@@ -92,6 +92,8 @@ function showOverlay(btn, overlay)
         btn.previousElementSibling.appendChild(overlay);
     }
     */
+    console.log(overlay);
+    console.log(btn);
     btn.parentElement.insertBefore(overlay, btn);
 
     setTimeout(function()
