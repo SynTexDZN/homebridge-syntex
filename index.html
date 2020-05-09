@@ -160,7 +160,7 @@
                 if(restartCounter[0] + restartCounter[1] >= devices.length)
                 {
                     showOverlay(btn, createSuccessOverlay('restart-result-all', restartCounter[0] + ' / ' + devices.length + ' Geräte Neugestartet!'));
-                    removeOverlaysDelay(btn);
+                    removeOverlaysDelay(btn, true);
                 }
             }
         }
@@ -293,7 +293,7 @@
                         showOverlay(btn, createSuccessOverlay('update-result-all', updateCounter[0] + ' / ' + devices.length + ' Geräte Aktualisiert!'));
                     }
 
-                    removeOverlaysDelay(btn, 4000);
+                    removeOverlaysDelay(btn, 4000, true);
                 }
             });
         }
