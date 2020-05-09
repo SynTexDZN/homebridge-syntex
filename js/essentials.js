@@ -114,28 +114,30 @@ function showOverlayDelay(btn, overlay, delay)
 
 function removeOverlays(btn)
 {
-    console.log('Y');
-    var otherOverlays = btn.getElementsByClassName('overlay');
-
-    for(var i = 0; i < otherOverlays.length; i++)
+    for(var i = 0; i < overlays.length; i++)
     {
-        otherOverlays[i].style.opacity = 0;
+        if(overlays[i].reference == btn)
+        {
+            overlays[i].style.opacity = 0;
+        }
     }
 
     btn.style.opacity = 1;
 
     setTimeout(function()
     {
-        for(var i = 0; i < otherOverlays.length; i++)
+        for(var i = 0; i < overlays.length; i++)
         {
-            btn.parentElement.removeChild(otherOverlays[i]);
+            if(overlays[i].reference == btn)
+            {
+                btn.parentElement.removeChild(overlays[i]);
+            }
         }
     }, 300);
 }
 
 function removeOverlaysDelay(btn, delay)
 {
-    console.log('Z');
     setTimeout(function()
     {
         removeOverlays(btn, overlay);
