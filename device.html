@@ -420,12 +420,14 @@
             if(await fetchURL('http://' + device.ip + '/restart', 10000) == null)
             {
                 showOverlay(btn, createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
-                removeOverlaysDelay(btn, 4000, true);
 
-                setTimeout(function()
-                {
-                    restart = false;
-                }, 4300);
+                await newTimeout(4000);
+
+                removeOverlays(btn, true);
+
+                await newTimeout(300);
+
+                restart = false;
             }
         }
     }
@@ -433,6 +435,7 @@
     setTimeout(function()
     {
         pingESP();
+        checkUpdates();
     }, 500);
     
     async function pingESP()
@@ -474,19 +477,17 @@
             {
                 document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
                 document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+
+                await newTimeout(500);
                 
-                setTimeout(function()
-                {
-                    pingESP();
-                }, 500);
+                pingESP();
             }
         }
         else
         {
-            setTimeout(function()
-            {
-                pingESP();
-            }, 500);
+            await newTimeout(500);
+                
+            pingESP();
         }
     }    
 
@@ -561,31 +562,22 @@
             responseOverlay.setAttribute('style', 'z-index: 3');
 
             showOverlay(btn, responseOverlay);
-            removeOverlaysDelay(btn, 4000, true);
-                
-            setTimeout(function()
-            {
-                if(response == true)
-                {
-                    btn.style.opacity = 0;
-                }
-            }, 4000);
 
-            setTimeout(function()
+            await newTimeout(4000);
+
+            removeOverlays(btn, true);
+                
+            if(response == true)
             {
-                if(response == true)
-                {
-                    btn.parentElement.removeChild(btn);
-                }
-            }, 4300);
+                btn.style.opacity = 0;
+
+                await newTimeout(300);
+
+                btn.parentElement.removeChild(btn);
+            }
             
             resolve(response);
         });
-    }
-
-    function newTimeout(ms)
-    {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
 </script>
@@ -609,11 +601,6 @@
         }
     }
     
-    setTimeout(function()
-    {
-        checkUpdates();
-    }, 500);
-
 </script>
 <script>
 
@@ -647,18 +634,16 @@
         }
         else
         {
-            setTimeout(async function()
-            {
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+            await newTimeout(3000);
 
-                    setTimeout(function()
-                    {
-                        window.location.href = '/';
-                    }, 3000);
-                }
-            }, 3000);
+            if(await checkRestart())
+            {
+                showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+
+                await newTimeout(3000);
+
+                window.location.href = '/';
+            }
         }
     }
 
@@ -735,31 +720,21 @@
 
             if(res != null && res == 'Success')
             {
-                var error = '';
-
                 var res2 = await fetchURL('http://' + device.ip + '/refresh', 10000);
 
                 if(res2)
                 {
                     console.log(res2);
                     
-                    if(res2 != "Success")
-                    {
-                        error = 'true';
-                    }
-                    else
+                    if(res2 == "Success")
                     {
                         showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
 
                         console.log('RESPONSE');
+
+                        await newTimeout(2000);
                         
-                        setTimeout(function()
-                        {
-                            redirect();
-                            console.log('REDIRECT');
-                        }, 2000);
-                        
-                        error = 'false';
+                        redirect();
                     }
                 }
                 else if(saveTries == 0)
@@ -771,22 +746,23 @@
                 {
                     showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Gespeichert!'));
 
-                    setTimeout(function()
-                    {
-                        redirect();
-                    }, 2000);
+                    await newTimeout(2000);
+
+                    redirect();
                 }
             }
             else
             {
+                showOverlay(document.getElementById('save-btn'), createErrorOverlay('save-result', 'Upload Fehlgeschlagen!'));
+
+                await newTimeout(4000);
+
+                removeOverlays(document.getElementById('save-btn'), true);
                 saving = false;
 
-                setTimeout(function()
-                {
-                    pingESP();
-                }, 500);
+                await newTimeout(500);
 
-                console.log("ERROR"); // Add Overlay RED
+                pingESP();
             }
         }
     }

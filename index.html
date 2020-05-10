@@ -183,10 +183,9 @@
                     document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 0;
                     device.style.opacity = 1;
 
-                    setTimeout(function()
-                    {
-                        device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
-                    }, 300);
+                    await newTimeout(300);
+
+                    device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
                 }
             }
             else
@@ -200,12 +199,11 @@
 
                     showOverlay(device, responseOverlay);
                 }
-            }  
+            }
+
+            await newTimeout(10000);
             
-            setTimeout(function()
-            {
-                pingESP(device);
-            }, 10000);
+            pingESP(device);
         }
     }
     
@@ -214,6 +212,7 @@
         for(var i = 0; i < devices.length; i++)
         {
             pingESP(devices[i]);
+            checkUpdates(i, devices[i]);
         }
     }, 500);
 
@@ -262,14 +261,6 @@
             document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
     }
-    
-    setTimeout(function()
-    {
-        for(var i = 0; i < devices.length; i++)
-        {
-            checkUpdates(i, devices[i]);
-        }
-    }, 500);
     
     function installAllUpdates(btn)
     {
@@ -384,48 +375,38 @@
                 responseOverlay.setAttribute('style', 'z-index: 3; text-align: left');
 
                 showOverlay(device, responseOverlay);
-                removeOverlaysDelay(device, 4000, true);
-                    
-                setTimeout(function()
-                {
-                    if(response == true)
-                    {
-                        btn.style.opacity = 0;
-                    }
-                }, 4000);
+
+                await newTimeout(4000);
+
+                removeOverlays(device, true);
 
                 if(response == true)
                 {
-                    setTimeout(function()
-                    {
-                        btn.style.setProperty('width', '0', 'important');
-                        btn.style.paddingLeft = 0;
-                        btn.style.paddingRight = 0;
-                        btn.style.marginLeft = 0;
-                        btn.style.marginRight = 0;
-                        btn.style.borderLeftWidth = 0;
-                        btn.style.borderRightWidth = 0;
-                    }, 4300);
+                    btn.style.opacity = 0;
                 }
 
-                setTimeout(function()
-                {
-                    if(response == true)
-                    {
-                        btn.parentElement.removeChild(btn);
-                    }
+                await newTimeout(300);
 
-                    updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
-                }, 4600);
+                if(response == true)
+                {
+                    btn.style.setProperty('width', '0', 'important');
+                    btn.style.paddingLeft = 0;
+                    btn.style.paddingRight = 0;
+                    btn.style.marginLeft = 0;
+                    btn.style.marginRight = 0;
+                    btn.style.borderLeftWidth = 0;
+                    btn.style.borderRightWidth = 0;
+
+                    await newTimeout(300);
+
+                    btn.parentElement.removeChild(btn);
+                }
+
+                updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
             }
             
             resolve(response);
         });
-    }
-
-    function newTimeout(ms)
-    {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     var switchCounter = [0, 0];

@@ -163,3 +163,8 @@ function removeOverlaysDelay(btn, delay, show)
         removeOverlays(btn, show);
     }, delay);
 }
+
+function newTimeout(ms)
+{
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -133,19 +133,20 @@
             }
             else if(update == 'Success')
             {
-                setTimeout(async function()
-                {
-                    if(await checkRestart())
-                    {
-                        showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-                        removeOverlaysDelay(btn, 4000, false);
+                await newTimeout(3000);
 
-                        setTimeout(function()
-                        {
-                            location.reload();
-                        }, 4600);
-                    }
-                }, 3000);
+                if(await checkRestart())
+                {
+                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, false);
+
+                    await newTimeout(600);
+
+                    location.reload();
+                }
             }
         }
     }
@@ -170,19 +171,20 @@
             }
             else if(update == 'Success')
             {
-                setTimeout(async function()
-                {
-                    if(await checkRestart())
-                    {
-                        showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-                        removeOverlaysDelay(btn, 4000, false);
+                await newTimeout(3000);
 
-                        setTimeout(function()
-                        {
-                            location.reload();
-                        }, 4600);
-                    }
-                }, 3000);
+                if(await checkRestart())
+                {
+                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, false);
+
+                    await newTimeout(600);
+
+                    location.reload();
+                }
             }
         }
     }
@@ -198,14 +200,13 @@
 
             if(await fetchURL('/restart', 10000) == 'Success')
             {
-                setTimeout(async function()
+                await newTimeout(3000);
+
+                if(await checkRestart())
                 {
-                    if(await checkRestart())
-                    {
-                        showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                        removeOverlaysDelay(btn, 4000, true);
-                    }
-                }, 3000);
+                    showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                    removeOverlaysDelay(btn, 4000, true);
+                }
             }
             else
             {
