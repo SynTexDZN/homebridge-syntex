@@ -124,6 +124,22 @@ function removeOverlays(btn, show)
         btn.style.opacity = 1;
     }
 
+    if(!show)
+    {
+        setTimeout(function()
+        {
+            for(var i = overlays.length - 1; i >= 0; i--)
+            {
+                if(overlays[i].reference == btn)
+                {
+                    overlays[i].overlay.style.height = 0;
+                    overlays[i].overlay.style.paddingTop = 0;
+                    overlays[i].overlay.style.paddingBottom = 0;
+                }
+            }
+        }, 300);
+    }
+
     setTimeout(function()
     {
         for(var i = overlays.length - 1; i >= 0; i--)
@@ -139,7 +155,7 @@ function removeOverlays(btn, show)
         {
             btn.parentElement.removeChild(btn);
         }
-    }, 300);
+    }, 600);
 }
 
 function removeOverlaysDelay(btn, delay, show)
