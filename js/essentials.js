@@ -159,7 +159,7 @@ function removeOverlays(btn, show)
         {
             btn.parentElement.removeChild(btn);
         }
-    }, 600);
+    }, 60000);
 }
 
 function removeOverlaysDelay(btn, delay, show)
