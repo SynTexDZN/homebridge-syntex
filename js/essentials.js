@@ -133,16 +133,8 @@ function removeOverlays(btn, show)
             btn.style.paddingBottom = 0;
             btn.style.marginTop = 0;
             btn.style.marginBottom = 0;
-            /*
-            for(var i = 0; i < overlays.length; i++)
-            {
-                if(overlays[i].reference == btn)
-                {
-                    overlays[i].overlay.style.height = 0;
-                    overlays[i].overlay.style.paddingTop = 0;
-                    overlays[i].overlay.style.paddingBottom = 0;
-                }
-            }*/
+            btn.style.borderTopWidth = 0;
+            btn.style.borderBottomWidth = 0;
         }, 300);
     }
 

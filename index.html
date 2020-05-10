@@ -396,13 +396,24 @@
 
                 setTimeout(function()
                 {
+                    btn.style.width = 0;
+                    btn.style.paddingLeft = 0;
+                    btn.style.paddingRight = 0;
+                    btn.style.marginLeft = 0;
+                    btn.style.marginRight = 0;
+                    btn.style.borderLeftWidth = 0;
+                    btn.style.borderRightWidth = 0;
+                }, 4300);
+
+                setTimeout(function()
+                {
                     if(response == true)
                     {
                         btn.parentElement.removeChild(btn);
                     }
 
                     updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
-                }, 4300);
+                }, 4600);
             }
             
             resolve(response);
