@@ -93,10 +93,9 @@ SynTexPlatform.prototype = {
 
                                         const { exec } = require("child_process");
 
-                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
-                                            
-                                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                        });
+                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
+
+                                        exec("sudo systemctl restart homebridge");
                                     }
                                 }
                                 catch(e)
@@ -125,10 +124,9 @@ SynTexPlatform.prototype = {
 
                                         const { exec } = require("child_process");
 
-                                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
 
-                                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                        });
+                                        exec("sudo systemctl restart homebridge");
                                     }
                                     else
                                     {
@@ -159,10 +157,9 @@ SynTexPlatform.prototype = {
                         response.write('Success');
                         response.end();
 
-                        exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
+                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
 
-                            logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                        });
+                        exec("sudo systemctl restart homebridge");
                     }
                     else if(urlPath == '/check-restart')
                     {
@@ -199,11 +196,10 @@ SynTexPlatform.prototype = {
                                     logger.log('success', "Die Homebridge wurde auf die Version '" + version + "' aktualisiert!");
                                     
                                     restart = true;
-                                    
-                                    exec("sudo systemctl restart homebridge", (error, stdout, stderr) => {
 
-                                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
-                                    });
+                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                    
+                                    exec("sudo systemctl restart homebridge");
                                 }
                             }
                             catch(e)

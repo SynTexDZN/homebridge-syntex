@@ -272,7 +272,7 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            updateDevice(devices[i]).then(function(update) {
+            updateDevice(devices[i]).then(async function(update) {
 
                 updateCounter[update ? 0 : 1]++;
 
@@ -287,7 +287,13 @@
                         showOverlay(btn, createSuccessOverlay('update-result-all', updateCounter[0] + ' / ' + devices.length + ' Geräte Aktualisiert!'));
                     }
 
-                    removeOverlaysDelay(btn, 4000, updateCounter[1] == 0 ? false : true);
+                    await newTimeout(4000);
+
+                    removeOverlaysDelay(btn, updateCounter[1] == 0 ? false : true);
+
+                    updateCount -= updateCounter[0];
+                    
+                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
                 }
             });
         }
