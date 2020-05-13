@@ -129,6 +129,9 @@
             else if(update == 'Error')
             {
                 showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+
+                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
+
                 removeOverlaysDelay(btn, 4000, true);
             }
             else if(update == 'Success')
@@ -139,13 +142,11 @@
                 {
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
+
                     await newTimeout(4000);
 
                     removeOverlays(btn, false);
-
-                    await newTimeout(600);
-
-                    location.reload();
                 }
             }
         }
@@ -167,6 +168,9 @@
             else if(update != 'Success')
             {
                 showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+
+                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
+
                 removeOverlaysDelay(btn, 4000, true);
             }
             else if(update == 'Success')
@@ -177,13 +181,11 @@
                 {
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
+
                     await newTimeout(4000);
 
                     removeOverlays(btn, false);
-
-                    await newTimeout(600);
-
-                    location.reload();
                 }
             }
         }
