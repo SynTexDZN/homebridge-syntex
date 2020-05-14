@@ -39,6 +39,10 @@
                     <button class="widget-right gradient-green" disabled>-</button>
                 </div>
             </div>
+            <div class="widget" id="debug-widget" style="display: none">
+                <button class="widget-left" disabled>Debug</button>
+                <button class="widget-right gradient-purple" disabled>-</button>
+            </div>
         </div>
         <form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
             <input type="submit" value="Absenden" style="display: none">
@@ -65,7 +69,7 @@
     var bLogJSON = JSON.parse('<%bLog%>');
     var wLogJSON = JSON.parse('<%wLog%>');
     var counter = 0;
-    var levelCounter = [0, 0, 0, 0, 0, 0];
+    var levelCounter = [0, 0, 0, 0, 0, 0, 0];
     var countLogs = true;
 
     async function clearSearch()
@@ -132,7 +136,7 @@
 
         for(var i = log.length - 1; i >= 0; i--)
         {
-            var levels = ['success', 'update', 'read', 'info', 'warn', 'error'];
+            var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
             var level = log[i].split('[')[1].split(']')[0];
             var displayEntry = false;
 
@@ -201,5 +205,11 @@
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
     document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
     document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
+
+    if(levelCounter[6] > 0)
+    {
+        document.getElementById('debug-widget').style.display = '';
+        document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
+    }
     
 </script>
