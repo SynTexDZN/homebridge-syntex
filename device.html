@@ -676,9 +676,7 @@
         }
         else
         {
-            var reset = await fetchURL('/remove-device?mac=' + device.mac + '&type=' + device.type, 10000);
-
-            console.log(device.mac, device.id, device.type);
+            var reset = await fetchURL('/remove-device?mac=' + device.id + '&type=' + device.type, 10000);
 
             await newTimeout(3000);
 
