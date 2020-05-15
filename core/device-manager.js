@@ -295,7 +295,7 @@ async function initSwitch(mac, name)
                         {
                             logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
 
-                            resolve(['Error', '']);
+                            resolve(['Error', 'Fehler beim Erstellen!']);
                         }
                         else
                         {
@@ -318,7 +318,7 @@ async function initSwitch(mac, name)
                                 {
                                     logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                    resolve(['Success', '']);
+                                    resolve(['Success', 'Success']);
                                 }
                             });
                         }
