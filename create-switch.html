@@ -37,6 +37,8 @@
 
         var created = await fetchURL('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000);
 
+        await newTimeout(1000);
+
         if(created == null)
         {
             showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Keine Verbindung zur Bridge!'));

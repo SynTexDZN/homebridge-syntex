@@ -273,13 +273,13 @@ async function initSwitch(mac, name)
 {
     return new Promise(async function(resolve) {
         
-        if(!await checkName(name))
-        {
-            resolve(['Error', 'Name ist bereits Vergeben!']);
-        }
-        else if(!await checkMac(mac))
+        if(!await checkMac(mac))
         {
             resolve(['Error', 'Mac ist bereits Vergeben!']);          
+        }
+        else if(!await checkName(name))
+        {
+            resolve(['Error', 'Name ist bereits Vergeben!']);
         }
         else
         {
