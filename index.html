@@ -176,7 +176,7 @@
     {
         if(!updatingDevices.includes(device.getAttribute('id')))
         {
-            if(await fetchURL('http://' + device.getAttribute('id') + '/', 10000) != null)
+            if(await fetchURL('http://' + device.getAttribute('id') + '/', 15000) != null)
             {  
                 if(document.getElementById(device.getAttribute('id') + '-offline') != null)
                 {
@@ -188,7 +188,7 @@
                     device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
                 }
             }
-            else
+            else if(device.getAttribute('ip') != undefined)
             {  
                 if(document.getElementById(device.getAttribute('id') + '-offline') == null)
                 {
