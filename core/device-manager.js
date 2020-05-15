@@ -287,7 +287,7 @@ async function initSwitch(mac, name)
 
                 if(obj && !err)
                 {
-                    var configObj = await addToConfig(obj, mac, null, name, type);
+                    var configObj = await addToConfig(obj, mac, null, name, 'switch');
 
                     config.add(configObj, async function(err) {
 
