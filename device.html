@@ -128,7 +128,7 @@
     console.log(settingsForm);
     console.log(settingsForm.getElementsByTagName('input')[0]);
 
-    settingsForm.getElementsByTagName('input')[0].value = device.name;
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 
     for(const i in settings)
     {
