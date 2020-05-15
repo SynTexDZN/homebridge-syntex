@@ -318,7 +318,7 @@ async function initSwitch(mac, name)
                                 {
                                     logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                    resolve('Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
+                                    resolve(['Success', '']);
                                 }
                             });
                         }

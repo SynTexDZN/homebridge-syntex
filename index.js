@@ -143,7 +143,7 @@ SynTexPlatform.prototype = {
                                 response.write(res[1]);
                                 response.end();
 
-                                if(res[0] == "Init")
+                                if(res[0] == "Success")
                                 {
                                     restart = true;
 
