@@ -436,10 +436,20 @@
 
     setTimeout(function()
     {
-        pingESP();
-        checkUpdates();
+        if(device.ip != undefined)
+        {
+            setTimeout(function()
+            {
+                pingESP();
+                checkUpdates();
+            }, 500);
+        }
+        else
+        {
+            fetchState();
+        }
     }, 500);
-    
+
     async function pingESP()
     {
         if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
