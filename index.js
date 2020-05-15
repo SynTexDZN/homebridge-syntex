@@ -183,6 +183,13 @@ SynTexPlatform.prototype = {
                         response.write(restart.toString());
                         response.end();
                     }
+                    else if(urlPath == '/version')
+                    {
+                        var pjson = require('./package.json');
+
+                        response.write(pjson.version);
+                        response.end();
+                    }
                     else if(urlPath == '/update')
                     {
                         var version = 'latest';
