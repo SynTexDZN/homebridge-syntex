@@ -35,7 +35,7 @@
     {
         showOverlay(document.getElementById('create-btn'), createPendingOverlay('creating', 'Erstellen ..'));
 
-        var created = await fetchURL('/initSwitch', 10000);
+        var created = await fetchURL('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].getAttribute('value') + '&name=' + form.children[1].getElementsByTagName('input')[0].getAttribute('value'), 10000);
 
         if(created == null)
         {
@@ -50,13 +50,13 @@
             document.getElementById('create').style.display = 'none';
             document.getElementById('success').style.display = '';
 
-            redirectCountdown('/device?mac=' + mac);
+            redirectCountdown('/device?mac=' + form.children[0].getElementsByTagName('input')[0].getAttribute('value'));
         }
         else
         {
             form.children[1].getElementsByTagName('input')[0].setAttribute('value', '');
 
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
+            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', created));
 
             await newTimeout(4000);
 

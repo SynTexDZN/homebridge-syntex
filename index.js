@@ -134,6 +134,37 @@ SynTexPlatform.prototype = {
                             response.end();
                         }
                     }
+                    else if(urlPath == '/init-switch')
+                    {
+                        if(urlParams.mac && urlParams.name)
+                        {
+                            DeviceManager.initDevice(urlParams.mac, urlParams.name).then(function(res) {
+
+                                response.write(res[1]);
+                                response.end();
+
+                                if(res[0] == "Init")
+                                {
+                                    restart = true;
+
+                                    const { exec } = require("child_process");
+
+                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+
+                                    exec("sudo systemctl restart homebridge");
+                                }
+                                
+                            }).catch(function(e) {
+
+                                logger.err(e);
+                            });
+                        }
+                        else
+                        {
+                            response.write("Error");
+                            response.end();
+                        }
+                    }
                     else if(urlPath == '/restart')
                     {
                         restart = true;

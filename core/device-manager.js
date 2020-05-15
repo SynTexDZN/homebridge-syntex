@@ -269,6 +269,72 @@ async function initDevice(mac, ip, name, type, version, interval, events)
     });
 }
 
+async function initSwitch(mac, name)
+{
+    return new Promise(async function(resolve) {
+        
+        if(await checkName(name))
+        {
+            resolve(['Error', 'Name ist bereits Vergeben!']);
+        }
+        else if(await checkMac(mac))
+        {
+            resolve(['Error', 'Mac ist bereits Vergeben!']);          
+        }
+        else
+        {
+            config.load('config', async function(err, obj) {
+
+                if(obj && !err)
+                {
+                    var configObj = await addToConfig(obj, mac, ip, name, type);
+
+                    config.add(configObj, async function(err) {
+
+                        if(err)
+                        {
+                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+
+                            resolve(['Error', '']);
+                        }
+                        else
+                        {
+                            var device = {
+                                id: mac,
+                                name: name,
+                                type: 'switch',
+                                active: 1
+                            };
+
+                            storage.add(device, (err) => {
+
+                                if(err)
+                                {
+                                    logger.log('error', mac + ".json konnte nicht erstellt werden! " + err);
+
+                                    resolve(['Error', '']);
+                                }
+                                else
+                                {
+                                    logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+
+                                    resolve('Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
+                                }
+                            });
+                        }
+                    });
+                }
+                else
+                {
+                    logger.log('error', "Config.json konnte nicht geladen werden! " + err);
+
+                    resolve(['Error', 'Fehler beim Erstellen!']);
+                }
+            });
+        }
+    });
+}
+
 async function addToConfig(obj, mac, ip, name, type)
 {
     return new Promise(resolve => {
@@ -314,6 +380,39 @@ async function addToConfig(obj, mac, ip, name, type)
 }
 
 async function checkName(name)
+{
+    return new Promise(resolve => {
+        
+        config.load('config', (err, obj) => {    
+
+            if(obj)
+            {                            
+                for(const i in obj.platforms)
+                {
+                    if(obj.platforms[i].platform === 'SynTexWebHooks')
+                    {
+                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
+
+                        for(const i in configContainer)
+                        {
+                            for(const j in configContainer[i])
+                            {
+                                if(configContainer[i][j].name === name)
+                                {
+                                    resolve(false);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            resolve(true);
+        });
+    });
+}
+
+async function checkMac(mac)
 {
     return new Promise(resolve => {
         
