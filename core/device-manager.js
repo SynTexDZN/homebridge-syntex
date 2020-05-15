@@ -287,7 +287,7 @@ async function addToConfig(obj, mac, ip, name, type)
                 {
                     platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
                 }
-                else if(type != "switch")
+                else if(type != "switch" && type != "statelessswitch")
                 {
                     platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
                 }
@@ -302,7 +302,7 @@ async function addToConfig(obj, mac, ip, name, type)
                     platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
                 }
 
-                if((type == "light" || type == "temperature" || type == "switch") && !eventButton)
+                if((type == "light" || type == "temperature" || type == "statelessswitch") && !eventButton)
                 {
                     platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: 0};
                 }

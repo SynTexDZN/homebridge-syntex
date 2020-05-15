@@ -51,7 +51,7 @@
         });
     }
 
-    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch')
+    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'statelessswitch')
     {
         settings.push({
             index: 'led',
@@ -67,7 +67,7 @@
         });
     }
 
-    if(device.type == 'light' || device.type == 'temperature' || device.type == 'switch')
+    if(device.type == 'light' || device.type == 'temperature' || device.type == 'statelessswitch')
     {
         settings.push({
             index: 'events',
@@ -124,9 +124,6 @@
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
     var settingsForm = document.getElementById('settings-form');
-
-    console.log(settingsForm);
-    console.log(settingsForm.getElementsByTagName('input')[0]);
 
     settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 
@@ -190,7 +187,7 @@
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', device.type);
 
-    if(device.type == 'temperature' || device.type == 'light' || device.type == 'switch')
+    if(device.type == 'temperature' || device.type == 'light' || device.type == 'statelessswitch')
     {
         document.getElementById('infobox').style.display = '';
     }
@@ -200,7 +197,7 @@
         document.getElementById('infobox').children[1].innerHTML = 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet<br>Negative wenn er unterschritten wird';
     }
 
-    if(device.type == 'switch')
+    if(device.type == 'statelessswitch')
     {
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
     }
@@ -400,7 +397,7 @@
                 }
             }
         }
-        else if(device.type == 'switch')
+        else if(device.type == 'statelessswitch')
         {
             document.getElementById('status').value = 'BEREIT';
             document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
