@@ -349,11 +349,15 @@ async function addToConfig(obj, mac, ip, name, type)
                 {
                     platform.switches[platform.switches.length] = {mac: mac, name: name, type: type, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
                 }
+                else if(type == "switch")
+                {
+                    platform.switches[platform.switches.length] = {mac: mac, name: name, type: type};
+                }
                 else if(type == "rgb" || type == "rgbw")
                 {
                     platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
                 }
-                else if(type != "switch" && type != "statelessswitch")
+                else if(type != "statelessswitch")
                 {
                     platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
                 }

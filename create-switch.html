@@ -64,4 +64,15 @@
         }
     }
 
+    function redirectCountdown(url)
+    {
+        setTimeout(async function()
+        {
+            if(await checkRestart())
+            {
+                window.location.href = url;
+            }
+        }, 3000);
+    }
+
 </script>
