@@ -26,7 +26,7 @@
 
     async function createSwitch(form)
     {
-        showOverlay(createPendingOverlay('creating', 'Erstellen ..'));
+        showOverlay(document.getElementById('create-btn'), createPendingOverlay('creating', 'Erstellen ..'));
 
         var created = await fetchURL('/initSwitch', 10000);
 
