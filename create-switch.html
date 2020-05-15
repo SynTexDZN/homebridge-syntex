@@ -37,7 +37,15 @@
 
         var created = await fetchURL('/initSwitch', 10000);
 
-        if(created != null && created == 'Success')
+        if(created == null)
+        {
+            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Keine Verbindung zur Bridge!'));
+
+            await newTimeout(4000);
+
+            removeOverlays(document.getElementById('create-btn'), true);
+        }
+        else if(created == 'Success')
         {
             document.getElementById('create').style.display = 'none';
             document.getElementById('success').style.display = '';
@@ -48,11 +56,11 @@
         {
             form.children[1].getElementsByTagName('input')[0].setAttribute('value', '');
 
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name Vergeben!'));
+            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
 
             await newTimeout(4000);
 
-            removeOverlays(document.getElementById('create-btn'));
+            removeOverlays(document.getElementById('create-btn'), true);
         }
     }
 
