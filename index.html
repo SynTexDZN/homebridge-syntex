@@ -174,7 +174,7 @@
     
     async function pingESP(device)
     {
-        if(!updatingDevices.includes(device.getAttribute('id')))
+        if(!updatingDevices.includes(device.getAttribute('id')) && device.getAttribute('id') != 'undefined')
         {
             if(await fetchURL('http://' + device.getAttribute('id') + '/', 15000) != null)
             {  
@@ -188,7 +188,7 @@
                     device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
                 }
             }
-            else if(device.getAttribute('id') != 'undefined')
+            else
             {  
                 if(document.getElementById(device.getAttribute('id') + '-offline') == null)
                 {
