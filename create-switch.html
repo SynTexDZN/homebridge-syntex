@@ -13,7 +13,9 @@
                 </div>
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input id="create-btn" type="submit" value="Erstellen" style="margin-left: 20px">
+                    <div>
+                        <input id="create-btn" type="submit" value="Erstellen" style="margin-left: 20px">
+                    </div>
                 </div>
             </form>
         </div>
@@ -44,7 +46,7 @@
         }
         else
         {
-            form.children[1].getElementsByTagName('input').setAttribute('value', '');
+            form.children[1].getElementsByTagName('input')[0].setAttribute('value', '');
 
             showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name Vergeben!'));
 
