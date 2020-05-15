@@ -312,7 +312,7 @@ async function initSwitch(mac, name)
                                 {
                                     logger.log('error', mac + ".json konnte nicht erstellt werden! " + err);
 
-                                    resolve(['Error', '']);
+                                    resolve(['Error', 'Fehler beim Erstellen!']);
                                 }
                                 else
                                 {
@@ -656,5 +656,6 @@ module.exports = {
     setValue,
     setValues,
     initDevice,
+    initSwitch,
     removeDevice
 };
