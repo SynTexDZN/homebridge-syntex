@@ -272,7 +272,7 @@
     
     async function fetchState()
     {        
-        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'rgb' || device.type == 'rgbw')
+        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch' || device.type == 'rgb' || device.type == 'rgbw')
         {
             var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id, 10000);
 
@@ -304,7 +304,7 @@
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
                     }
                 }
-                else if(device.type == 'relais')
+                else if(device.type == 'relais' || device.type == 'switch')
                 {
                     if(state == 'true')
                     {
