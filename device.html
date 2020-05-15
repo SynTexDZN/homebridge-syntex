@@ -19,10 +19,10 @@
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
             <form onsubmit="event.preventDefault(); saveConfig(false);" class="main" style="margin-top: 100px; display: table;">
-                <div id="settings-form">
+                <div id="settings-form" style="margin-bottom: 132px">
                     <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
                 </div>
-                <div class="widget" id="infobox" style="margin-left: 0; margin-top: 132px; margin-bottom: 20px; display: none">
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
                     <button class="widget-right" disabled></button>
                 </div>
@@ -123,7 +123,7 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
-    var settingsForm = document.getElementById('settings').getElementsByClassName('main')[0];
+    var settingsForm = document.getElementById('settings-form');
 
     settingsForm.children[0].value = device.name;
 
