@@ -138,7 +138,7 @@ SynTexPlatform.prototype = {
                     {
                         if(urlParams.mac && urlParams.name)
                         {
-                            DeviceManager.initDevice(urlParams.mac, urlParams.name).then(function(res) {
+                            DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
 
                                 response.write(res[1]);
                                 response.end();
