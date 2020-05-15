@@ -35,7 +35,7 @@
     {
         showOverlay(document.getElementById('create-btn'), createPendingOverlay('creating', 'Erstellen ..'));
 
-        var created = await fetchURL('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].getAttribute('value') + '&name=' + form.children[1].getElementsByTagName('input')[0].getAttribute('value'), 10000);
+        var created = await fetchURL('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000);
 
         if(created == null)
         {
@@ -50,7 +50,7 @@
             document.getElementById('create').style.display = 'none';
             document.getElementById('success').style.display = '';
 
-            redirectCountdown('/device?mac=' + form.children[0].getElementsByTagName('input')[0].getAttribute('value'));
+            redirectCountdown('/device?mac=' + form.children[0].getElementsByTagName('input')[0].value);
         }
         else
         {
