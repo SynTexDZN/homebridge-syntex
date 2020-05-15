@@ -142,11 +142,11 @@
                 {
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
-
                     await newTimeout(4000);
 
                     removeOverlays(btn, false);
+
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
                 }
             }
         }
@@ -181,11 +181,11 @@
                 {
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
-
                     await newTimeout(4000);
 
                     removeOverlays(btn, false);
+
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
                 }
             }
         }
