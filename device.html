@@ -19,6 +19,9 @@
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
             <form onsubmit="event.preventDefault(); saveConfig(false);" class="main" style="margin-top: 100px; display: table;">
+                <div id="settings-form">
+                    <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                </div>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-top: 132px; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
                     <button class="widget-right" disabled></button>
@@ -120,17 +123,19 @@
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
-    document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required value="' + device.name + '" name="name" type="text" style="max-width: 325px"></b></p>';
+    var settingsForm = document.getElementById('settings').getElementsByClassName('main')[0];
+
+    settingsForm.children[0].value = device.name;
 
     for(const i in settings)
     {
         if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if((device.type == 'motion') && settings[i].index == 'interval')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if(settings[i].index == 'events')
         {
@@ -159,7 +164,7 @@
             main.appendChild(container);
             main.appendChild(controls);
             
-            document.getElementById('settings').getElementsByClassName('main')[0].appendChild(main);
+            settingsForm.appendChild(main);
 
             for(const j in events)
             {
@@ -170,17 +175,17 @@
         }
         else if(settings[i].index == 'led' || settings[i].index == 'active')
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
         }
         else
         {
-            document.getElementById('settings').getElementsByClassName('main')[0].innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
         }
     }
 
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('mac', device.id);
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('ip', device.ip);
-    document.getElementById('settings').getElementsByClassName('main')[0].setAttribute('type', device.type);
+    settingsForm.setAttribute('mac', device.id);
+    settingsForm.setAttribute('ip', device.ip);
+    settingsForm.setAttribute('type', device.type);
 
     if(device.type == 'temperature' || device.type == 'light' || device.type == 'switch')
     {
