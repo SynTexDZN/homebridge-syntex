@@ -81,9 +81,18 @@
     var infos = document.getElementById('infos').getElementsByClassName('main')[0];
 
     infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
-    infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+
+    if(device.type != 'switch')
+    {
+        infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+    }
+    
     infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
-    infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+
+    if(device.type != 'switch')
+    {
+        infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+    }
 
     for(const i in settings)
     {
@@ -434,19 +443,24 @@
         }
     }
 
-    setTimeout(function()
+    setTimeout(async function()
     {
         if(device.ip != undefined)
         {
-            setTimeout(function()
-            {
-                pingESP();
-                checkUpdates();
-            }, 500);
+            pingESP();
+            checkUpdates();
         }
         else
         {
-            fetchState();
+            while(1 != 0)
+            {
+                if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
+                {
+                    fetchState();
+                }
+
+                await newTimeout(1000);
+            }
         }
     }, 500);
 
