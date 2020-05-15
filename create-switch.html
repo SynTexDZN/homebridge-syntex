@@ -1,14 +1,48 @@
 <html>
     <title>Schalter Erstellen</title>
     <body>
-        <h1>Schalter Erstellen</h1>
-        <p>( Virtueller Schalter zum Speichern von Zuständen )</p>
-        <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
-            <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
-            <div style="display: flex; margin-top: 100px">
-                <input type="button" value="Zurück" onclick="window.location.href='/'">
-                <input type="submit" value="Erstellen" style="margin-left: 20px">
+        <div id="create">
+            <h1>Schalter Erstellen</h1>
+            <p>( Ein virtueller Schalter )</p>
+            <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+                <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                <div style="display: flex; margin-top: 100px">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input id="create-btn" type="submit" value="Erstellen" style="margin-left: 20px">
+                </div>
+            </form>
+        </div>
+        <div id="success" style="display: none;">
+            <h1>Erfolgreich Erstellt</h1>
+            <div class="main" style="margin-top: 100px; display: table">
+                <img src="img/success.png" class="setup-png">
+                <input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
+                <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
             </div>
-        </form>
+        </div>
     </body>
 </html>
+<script>
+
+    async function createSwitch(form)
+    {
+        var created = await fetchUrl('/initSwitch', 10000);
+
+        if(created != null && created == 'Success')
+        {
+            document.getElementById('create').style.display = 'none';
+            document.getElementById('success').style.display = '';
+        }
+        else
+        {
+            form.children[0].getElementsByTagName('input').setAttribute('value', '');
+
+            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name Vergeben!'));
+
+            await newTimeout(4000);
+
+            removeOverlays(document.getElementById('create-btn'));
+        }
+    }
+
+</script>
