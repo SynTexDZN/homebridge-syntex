@@ -335,9 +335,9 @@ async function initSwitch(mac, name)
     });
 }
 
-async function addToConfig(obj, mac, ip, name, type)
+function addToConfig(obj, mac, ip, name, type)
 {
-    return new Promise(resolve => {
+    return new Promise(async function(resolve) {
 
         for(const i in obj.platforms)
         {
