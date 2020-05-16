@@ -4,7 +4,7 @@
         <div id="create">
             <h1>Name Aussuchen</h1>
             <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); setName(this);">
-                <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                <p><b>Name: <input pattern="[a-zA-Z0-9 -#()&/]+" required name="name" type="text" style="max-width: 325px"></b></p>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
                     <button class="widget-left gradient-red" disabled>Wichtig</button>
                     <button class="widget-right" disabled>Der Name muss eindeutig sein<br>Dieser kann frei gewählt werden</button>
@@ -166,7 +166,7 @@
 
         var res = await fetchURL('http://192.168.4.1/wifi', 10000);
 
-        if(res != null && res != "" || res != "[]")
+        if(res != null && res != "" && res != "[]")
         {  
             document.getElementById('networks').innerHTML = '';
         
