@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div id="wifiConfig" style="display: none;">
+        <div id="wifi" style="display: none;">
             <h1>Gerät Übertragen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 32px; display: table">
                 <form onsubmit="event.preventDefault(); sendWifiSettings(this);">
@@ -97,7 +97,7 @@
             if(await fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
-                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('wifi').style.display = "";
                 document.getElementById('welcome').style.display = "none";
 
                 setTimeout(function()
@@ -117,7 +117,7 @@
             {  
                 ping = true;
                 ip = 'http://' + ipp + '/';
-                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('wifi').style.display = "";
                 document.getElementById('welcome').style.display = "none";
 
                 setTimeout(function()
@@ -204,7 +204,7 @@
 
         if(mac != null)
         {
-            document.getElementById('wifiConfig').style.display = "none";
+            document.getElementById('wifi').style.display = "none";
             document.getElementById('connecting').style.display = "";
 
             setTimer(60000);

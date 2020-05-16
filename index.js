@@ -183,6 +183,14 @@ SynTexPlatform.prototype = {
                         response.write(restart.toString());
                         response.end();
                     }
+                    else if(urlPath == '/check-name')
+                    {
+                        if(urlParams.name)
+                        {
+                            response.write(await DeviceManager.checkName(urlParams.name) ? 'Success' : 'Error');
+                            response.end();
+                        }
+                    }
                     else if(urlPath == '/version')
                     {
                         var pjson = require('./package.json');

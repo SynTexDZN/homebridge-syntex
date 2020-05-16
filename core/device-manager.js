@@ -264,7 +264,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
         }
         else
         {
-            resolve(['Error', 'Der Name ist bereits vergeben!']);
+            resolve(['Error', 'Name ist bereits Vergeben!']);
         }
     });
 }
@@ -661,5 +661,6 @@ module.exports = {
     setValues,
     initDevice,
     initSwitch,
+    checkName,
     removeDevice
 };
