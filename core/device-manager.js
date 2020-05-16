@@ -344,6 +344,7 @@ async function addToConfig(obj, mac, ip, name, type)
             if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
                 var platform = obj.platforms[i];
+                var eventButton = await checkEventButton(mac);
 
                 if(type == "relais")
                 {
