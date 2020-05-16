@@ -377,7 +377,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
 
                 if((type == "light" || type == "temperature" || type == "statelessswitch") && !eventButton)
                 {
-                    platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: 0};
+                    platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons};
                 }
             }
         }
