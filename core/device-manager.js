@@ -178,6 +178,8 @@ async function initDevice(mac, ip, name, type, version, interval, events)
         var eventButton = await checkEventButton(mac);
         var device = await getDevice(mac);
 
+        name = name.replace('%', ' ');
+
         if(device != null)
         {
             if(ip != device['ip'])

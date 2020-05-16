@@ -5,8 +5,8 @@
             <h1>Schalter Erstellen</h1>
             <p>( Ein virtuelles Gerät )</p>
             <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
-                <p><b>Mac: <input pattern="[a-zA-Z0-9-]+" required name="mac" type="text" style="max-width: 325px"></b></p>
-                <p><b>Name: <input pattern="[a-zA-Z0-9 -#()&/]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                <p><b>Mac: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>
+                <p><b>Name: <input pattern="[a-zA-Z0-9 -#()&/]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
                     <button class="widget-left gradient-red" disabled>Wichtig</button>
                     <button class="widget-right" disabled>Mac Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>

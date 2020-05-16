@@ -20,7 +20,7 @@
             <p class="loading-loop">( Laden .. )</p>
             <form onsubmit="event.preventDefault(); saveConfig(false);" class="main" style="margin-top: 100px; display: table;">
                 <div id="settings-form" style="margin-bottom: 100px">
-                    <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                    <p><b>Name: <input pattern="[a-zA-Z0-9 -#()&/]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                 </div>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-yellow" disabled>Infobox</button>
@@ -140,11 +140,11 @@
     {
         if((device.type == 'light' || device.type == 'temperature') && settings[i].index == 'interval')
         {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if((device.type == 'motion') && settings[i].index == 'interval')
         {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
         else if(settings[i].index == 'events')
         {
@@ -220,6 +220,7 @@
         input.setAttribute('name', 'events');
         input.setAttribute('type', 'text');
         input.setAttribute('pattern', '-?[0-9]+');
+        input.setAttribute('title', 'Bitte benutze nur Zahlen');
         input.setAttribute('required', '');
         input.setAttribute('style', 'margin-bottom: 16px');
 
