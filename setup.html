@@ -15,6 +15,22 @@
                 </div>
             </div>
         </div>
+        <div id="create">
+            <h1>Name Wählen</h1>
+            <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); setName(this);">
+                <p><b>Name: <input pattern="[a-zA-Z0-9 -]+" required name="name" type="text" style="max-width: 325px"></b></p>
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
+                    <button class="widget-left gradient-red" disabled>Wichtig</button>
+                    <button class="widget-right" disabled>Der Name muss eindeutig sein<br>Dieser kann frei gewählt werden</button>
+                </div>
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <div style="display: block; width: 100%; margin-left: 20px">
+                        <input id="create-btn" type="submit" value="Weiter">
+                    </div>
+                </div>
+            </form>
+        </div>
         <div id="wifiConfig" style="display: none;">
             <h1>Gerät Hinzufügen</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 32px; display: table">
@@ -64,6 +80,12 @@
 </html>
 <script defer>
 
+    function setName(form)
+    {
+        document.getElementById('wifiConfig').style.display = "";
+        document.getElementById('create').style.display = "none";
+    }
+
     function redirectCountdown(url)
     {
         setTimeout(async function()
@@ -92,7 +114,7 @@
             if(await fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
-                document.getElementById('wifiConfig').style.display = "";
+                document.getElementById('create').style.display = "";
                 document.getElementById('welcome').style.display = "none";
 
                 setTimeout(function()
