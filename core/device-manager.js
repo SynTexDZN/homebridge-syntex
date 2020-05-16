@@ -235,7 +235,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                                 active: 1,
                                 interval: parseInt(interval),
                                 led: 1,
-                                events: []
+                                events: JSON.parse(events)
                             };
 
                             storage.add(device, (err) => {
@@ -250,7 +250,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                                 {
                                     logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
 
-                                    resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": []}']);
+                                    resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": ' + events + '}']);
                                 }
                             });
                         }
