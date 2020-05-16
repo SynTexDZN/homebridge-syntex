@@ -1,20 +1,6 @@
 <html>
     <title>Setup</title>
     <body>
-        <div id="welcome">
-            <h1>Gerät Hinzufügen</h1>
-            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <img class="setup-png" src="img/wifi.png">
-                <input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen ..">
-                <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
-            </div>
-            <div class="main">
-                <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input style="margin-left: 20px" type="button" value="Gerät Registriert?" onclick="window.location.href='/reconnect'">
-                </div>
-            </div>
-        </div>
         <div id="create" style="display: none">
             <h1>Name Aussuchen</h1>
             <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); setName(this);">
@@ -30,6 +16,20 @@
                     </div>
                 </div>
             </form>
+        </div>
+        <div id="search">
+            <h1>Gerät Hinzufügen</h1>
+            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+                <img class="setup-png" src="img/wifi.png">
+                <input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Nach Geräten suchen ..">
+                <p>Bitte Verbinde dich<br>mit dem Access Point<br>des Sensors / Schalters<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
+            </div>
+            <div class="main">
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <input style="margin-left: 20px" type="button" value="Gerät Registriert?" onclick="window.location.href='/reconnect'">
+                </div>
+            </div>
         </div>
         <div id="wifi" style="display: none">
             <h1>Netzwerk Auswählen</h1>
@@ -84,9 +84,9 @@
 
     async function setName(form)
     {
-        var nameFree = await fetchURL('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000);
+        var nameAvailable = await fetchURL('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000);
 
-        if(nameFree == null)
+        if(nameAvailable == null)
         {
             showOverlay(document.getElementById('create-btn'), createErrorOverlay('name-result', 'Keine Verbindung zur Bridge!'));
 
@@ -94,12 +94,14 @@
 
             removeOverlays(document.getElementById('create-btn'), true);
         }
-        else if(nameFree == 'Success')
+        else if(nameAvailable == 'Success')
         {
             name = form.children[0].getElementsByTagName('input')[0].value;
 
-            document.getElementById('wifi').style.display = "";
+            document.getElementById('search').style.display = "";
             document.getElementById('create').style.display = "none";
+
+            pingESP();
         }
         else
         {
@@ -127,11 +129,6 @@
     
     var ping = false;
     
-    setTimeout(function()
-    {
-        pingESP();
-    }, 500);
-    
     async function pingESP()
     {
         if(ping == false)
@@ -139,8 +136,8 @@
             if(await fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
-                document.getElementById('create').style.display = "";
-                document.getElementById('welcome').style.display = "none";
+                document.getElementById('wifi').style.display = "";
+                document.getElementById('search').style.display = "none";
 
                 setTimeout(function()
                 {

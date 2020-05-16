@@ -187,8 +187,11 @@ SynTexPlatform.prototype = {
                     {
                         if(urlParams.name)
                         {
-                            response.write((await DeviceManager.checkName(urlParams.name)) ? 'Success' : 'Error');
-                            response.end();
+                            DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
+
+                                response.write(nameAvailable ? 'Success' : 'Error');
+                                response.end();
+                            });
                         }
                     }
                     else if(urlPath == '/version')
