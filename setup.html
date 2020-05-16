@@ -80,10 +80,12 @@
 </html>
 <script defer>
 
-    var name;
+    var deviceName;
 
     async function setName(form)
     {
+        showOverlay(document.getElementById('create-btn'), createPendingOverlay('name-waiting', 'Bitte Warten ..'));
+
         var nameAvailable = await fetchURL('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000);
 
         if(nameAvailable == null)
@@ -96,7 +98,7 @@
         }
         else if(nameAvailable == 'Success')
         {
-            name = form.children[0].getElementsByTagName('input')[0].value;
+            deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
             document.getElementById('search').style.display = "";
             document.getElementById('create').style.display = "none";
@@ -242,6 +244,7 @@
         var formData = new FormData(form);
 
         formData.append('bridge-ip', bridgeIP);
+        formData.append('device-name', deviceName);
 
         var mac = await fetchURL('http://192.168.4.1/settings', 10000, formData);
 
