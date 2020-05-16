@@ -214,7 +214,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                         configObj = await removeFromConfig(obj, mac);
                     }
 
-                    configObj = await addToConfig(configObj || obj, mac, ip, name, type);
+                    configObj = await addToConfig(configObj || obj, mac, ip, name, type, JSON.parse(events).length);
 
                     config.add(configObj, async function(err) {
 
@@ -289,7 +289,7 @@ async function initSwitch(mac, name)
 
                 if(obj && !err)
                 {
-                    var configObj = await addToConfig(obj, mac, null, name, 'switch');
+                    var configObj = await addToConfig(obj, mac, null, name, 'switch', 0);
 
                     config.add(configObj, async function(err) {
 
@@ -337,7 +337,7 @@ async function initSwitch(mac, name)
     });
 }
 
-function addToConfig(obj, mac, ip, name, type)
+function addToConfig(obj, mac, ip, name, type, buttons)
 {
     return new Promise(async function(resolve) {
 
