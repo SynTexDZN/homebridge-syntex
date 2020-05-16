@@ -274,7 +274,7 @@
         {
             updateDevice(devices[i]).then(async function(update) {
 
-                updateCounter[update ? 0 : 1]++;
+                updateCounter[update == true ? 0 : 1]++;
 
                 if(updateCounter[0] + updateCounter[1] >= updateCount)
                 {
