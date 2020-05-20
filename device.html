@@ -18,7 +18,7 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <form onsubmit="event.preventDefault(); saveConfig(false);" class="main" style="margin-top: 100px; display: table;">
+            <form onsubmit="event.preventDefault(); saveConfig(this);" class="main" style="margin-top: 100px; display: table;">
                 <div id="settings-form" style="margin-bottom: 100px">
                     <p><b>Name: <input pattern="[a-zA-Z0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                 </div>
@@ -692,120 +692,90 @@
         }
     }
 
-    var saveTries = 0;
-
-    async function saveConfig(upload)
+    async function saveConfig(form)
     {
-        if(!upload && !saving)
-        {
-            upload = true;
-            saving = true;
+        showOverlay(document.getElementById('save-btn'), createPendingOverlay('saving', 'Hochladen ..'));
 
-            showOverlay(document.getElementById('save-btn'), createPendingOverlay('saving', 'Hochladen ..'));
-        }
-
-        if(upload)
+        var settings = {
+            mac: device.id
+        };
+        
+        for(var i = 0; i < form.childElementCount; i++)
         {
-            var settings = {
-                mac: device.id
-            };
-            
-            var form = document.getElementById('settings-form');
-            
-            for(var i = 0; i < form.childElementCount; i++)
+            if(!form.children[i].hasAttribute('type'))
             {
-                if(!form.children[i].hasAttribute('type'))
+                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                 {
-                    if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+                    if(device.type == 'temperature')
                     {
-                        if(device.type == 'temperature')
-                        {
-                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                        }
-                        else if(device.type == 'motion')
-                        {
-                            settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                        }
-                        else if(device.type == 'light')
-                        {
-                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                        }
-                        else
-                        {
-                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-                        }
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                     }
-                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                    else if(device.type == 'motion')
                     {
-                        var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
+                        settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+                    }
+                    else if(device.type == 'light')
+                    {
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                    }
+                    else
+                    {
+                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+                    }
+                }
+                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                {
+                    var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
 
-                        for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
-                        {
-                            concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
-                        }
-
-                        concat += ']';
-
-                        settings['events'] = JSON.parse(concat);
-                    }
-                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                    for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
                     {
-                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                        concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
                     }
-                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
-                    {
-                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
-                    }
+
+                    concat += ']';
+
+                    settings['events'] = JSON.parse(concat);
+                }
+                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                {
+                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                }
+                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+                {
+                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
                 }
             }
+        }
 
-            console.log(settings);
+        console.log(settings);
 
-            var res = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
-
-            if(res != null && res == 'Success')
+        if(await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)) == 'Success')
+        {
+            if(await fetchURL('http://' + device.ip + '/refresh', 10000) == "Success")
             {
-                var res2 = await fetchURL('http://' + device.ip + '/refresh', 10000);
-
-                console.log(res2);
-
-                if(res2 && res2 == "Success")
-                {
-                    showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
-
-                    console.log('RESPONSE');
-
-                    await newTimeout(2000);
-                    
-                    redirect();
-                }
-                else if(saveTries == 0)
-                {
-                    saveTries++;
-                    saveConfig(true);
-                }
-                else
-                {
-                    showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Gespeichert!'));
-
-                    await newTimeout(2000);
-
-                    redirect();
-                }
+                showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
             }
             else
             {
-                showOverlay(document.getElementById('save-btn'), createErrorOverlay('save-result', 'Upload Fehlgeschlagen!'));
-
-                await newTimeout(4000);
-
-                removeOverlays(document.getElementById('save-btn'), true);
-                saving = false;
-
-                await newTimeout(500);
-
-                pingESP();
+                showOverlay(document.getElementById('save-btn'), createOverlay(2, 'save-result', 'Gespeichert!', 'yellow'));
             }
+
+            await newTimeout(2000);
+                
+            redirect();
+        }
+        else
+        {
+            showOverlay(document.getElementById('save-btn'), createErrorOverlay('save-result', 'Upload Fehlgeschlagen!'));
+
+            await newTimeout(4000);
+
+            removeOverlays(document.getElementById('save-btn'), true);
+            saving = false;
+
+            await newTimeout(500);
+
+            pingESP();
         }
     }
     
