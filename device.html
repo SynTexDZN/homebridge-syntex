@@ -18,7 +18,7 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <form onsubmit="event.preventDefault(); saveConfig(this);" class="main" style="margin-top: 100px; display: table;">
+            <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px; display: table;">
                 <div id="settings-form" style="margin-bottom: 100px">
                     <p><b>Name: <input pattern="[a-zA-Z0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                 </div>
@@ -692,13 +692,15 @@
         }
     }
 
-    async function saveConfig(form)
+    async function saveConfig()
     {
         showOverlay(document.getElementById('save-btn'), createPendingOverlay('saving', 'Hochladen ..'));
 
         var settings = {
             mac: device.id
         };
+
+        var form = document.getElementById('settings-form');
         
         for(var i = 0; i < form.childElementCount; i++)
         {
