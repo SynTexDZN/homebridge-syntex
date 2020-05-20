@@ -767,20 +767,17 @@
             {
                 var res2 = await fetchURL('http://' + device.ip + '/refresh', 10000);
 
-                if(res2)
+                console.log(res2);
+
+                if(res2 && res2 == "Success")
                 {
-                    console.log(res2);
+                    showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
+
+                    console.log('RESPONSE');
+
+                    await newTimeout(2000);
                     
-                    if(res2 == "Success")
-                    {
-                        showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
-
-                        console.log('RESPONSE');
-
-                        await newTimeout(2000);
-                        
-                        redirect();
-                    }
+                    redirect();
                 }
                 else if(saveTries == 0)
                 {
