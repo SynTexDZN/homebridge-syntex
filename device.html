@@ -648,37 +648,26 @@
         if(device.ip != undefined)
         {
             var reset = await fetchURL('http://' + device.ip + '/reset', 10000);
-
-            if(reset == null)
-            {
-                showOverlay(btn, createOverlay(3, 'reset-result', 'Keine Verbindung zum Gerät!', 'red'));
-                removeOverlaysDelay(btn, 4000, true);
-                removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
-            }
-            else if(reset != 'Success')
-            {
-                showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
-                removeOverlaysDelay(btn, 4000, true);
-                removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
-            }
-            else
-            {
-                await newTimeout(3000);
-
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
-
-                    await newTimeout(3000);
-
-                    window.location.href = '/';
-                }
-            }
         }
         else
         {
             var reset = await fetchURL('/remove-device?mac=' + device.id + '&type=' + device.type, 10000);
+        }
 
+        if(reset == null)
+        {
+            showOverlay(btn, createOverlay(3, 'reset-result', 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), 'red'));
+            removeOverlaysDelay(btn, 4000, true);
+            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
+        }
+        else if(reset != 'Success')
+        {
+            showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
+            removeOverlaysDelay(btn, 4000, true);
+            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
+        }
+        else
+        {
             await newTimeout(3000);
 
             if(await checkRestart())
