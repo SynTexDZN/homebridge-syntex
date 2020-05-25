@@ -154,36 +154,33 @@
 
     async function updateWebhooks(btn)
     {
-        if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
+        var overlays = {
+            root : btn,
+            id : 'update',
+            pending : { value : 'Update wird Installiert ..', color : 'purple' },
+            executeError : { value : 'Update Fehlgeschlagen!' },
+            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+        };
+
+        var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false);
+
+        if(update == 'Success')
         {
-            var overlays = {
-                root : btn,
-                id : 'restart',
-                pending : { value : 'Update wird Installiert ..', color : 'purple' },
-                executeError : { value : 'Update Fehlgeschlagen!' },
-                connectionError : { value : 'Keine Verbinfung zur Bridge!' }
-            };
+            document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
+        }
+        else if(update != 'Success')
+        {
+            await newTimeout(3000);
 
-            var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false);
-
-            if(update != 'Success')
+            if(await checkRestart())
             {
+                showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                await newTimeout(4000);
+
+                removeOverlays(btn, false);
+
                 document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
-            }
-            else if(update == 'Success')
-            {
-                await newTimeout(3000);
-
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                    await newTimeout(4000);
-
-                    removeOverlays(btn, false);
-
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
-                }
             }
         }
     }
