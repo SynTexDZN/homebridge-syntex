@@ -135,6 +135,8 @@
 
                 removeOverlaysDelay(btn, 4000, false);
 
+                await newTimeout(2000);
+
                 document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, {}, false);
             }
         }
@@ -161,6 +163,8 @@
                 showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
                 removeOverlaysDelay(btn, 4000, false);
+
+                await newTimeout(2000);
 
                 document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, {}, false);
             }
