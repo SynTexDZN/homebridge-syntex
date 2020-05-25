@@ -24,11 +24,11 @@ function versionCount(version)
     return intVersion;
 }
 
-function checkRestart()
+function checkRestart(url)
 {
     return new Promise(async function(resolve) {
 
-        var restart = await fetchURL('/check-restart', 3000);
+        var restart = await fetchURL(url, 3000);
 
         console.log(restart);
 
@@ -40,7 +40,7 @@ function checkRestart()
         {
             setTimeout(function()
             {
-                resolve(checkRestart());
+                resolve(checkRestart(url));
             }, 500);
         }
     });

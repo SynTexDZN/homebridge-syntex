@@ -25,6 +25,8 @@ function SynTexPlatform(log, config, api)
 
         logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
+        HTMLQuery.SETUP(logger);
+
         getPluginConfig('SynTexWebHooks').then(function(config) {
 
             if(config != null)
@@ -38,8 +40,6 @@ function SynTexPlatform(log, config, api)
 
             logger.err(e);
         });
-
-        HTMLQuery.SETUP(logger);
     }
     catch(e)
     {
