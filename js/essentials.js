@@ -168,3 +168,246 @@ function newTimeout(ms)
 {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function createOverlays(url, tries, overlays)
+{
+    return new Promise(async function(resolve) {
+
+        if(overlays.root && overlays.pending)
+        {
+            var color = 'blue', z = 1;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.pending.id, overlays.pending.value, color));
+        }
+
+        do
+        {
+            var fetch = await fetchURL(url);
+            tries--;
+        }
+        while(fetch == null && tries > 0);
+
+        if(fetch == null && overlays.root && overlays.connectionError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.connectionError.id, overlays.connectionError.value, color));
+        }
+        else if(fetch != 'Success' && overlays.root && overlays.executeError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.executeError.z)
+            {
+                z = overlays.executeError.z;
+            }
+
+            if(overlays.executeError.color)
+            {
+                color = overlays.executeError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.executeError.id, overlays.executeError.value, color));
+        }
+        else if(overlays.root && overlays.success)
+        {
+            var color = 'green', z = 2;
+
+            if(overlays.success.z)
+            {
+                z = overlays.success.z;
+            }
+
+            if(overlays.success.color)
+            {
+                color = overlays.success.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.success.id, overlays.success.value, color));
+        }
+
+        resolve(fetch);
+    });
+}
+
+function createOverlays(url, timeout, tries, overlays)
+{
+    return new Promise(async function(resolve) {
+
+        if(overlays.root && overlays.pending)
+        {
+            var color = 'blue', z = 1;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending, color));
+        }
+
+        do
+        {
+            var fetch = await fetchURL(url, timeout);
+            tries--;
+        }
+        while(fetch == null && tries > 0);
+
+        if(fetch == null && overlays.root && overlays.connectionError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError, color));
+        }
+        else if(fetch != 'Success' && overlays.root && overlays.executeError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.executeError.z)
+            {
+                z = overlays.executeError.z;
+            }
+
+            if(overlays.executeError.color)
+            {
+                color = overlays.executeError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError, color));
+        }
+        else if(overlays.root && overlays.success)
+        {
+            var color = 'green', z = 2;
+
+            if(overlays.success.z)
+            {
+                z = overlays.success.z;
+            }
+
+            if(overlays.success.color)
+            {
+                color = overlays.success.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success, color));
+        }
+
+        resolve(fetch);
+    });
+}
+
+function createOverlays(url, timeout, post, tries, overlays)
+{
+    return new Promise(async function(resolve) {
+
+        if(overlays.root && overlays.pending)
+        {
+            var color = 'blue', z = 1;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.pending.id, overlays.pending.value, color));
+        }
+
+        do
+        {
+            var fetch = await fetchURL(url, timeout, post);
+            tries--;
+        }
+        while(fetch == null && tries > 0);
+
+        if(fetch == null && overlays.root && overlays.connectionError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.connectionError.z)
+            {
+                z = overlays.connectionError.z;
+            }
+
+            if(overlays.connectionError.color)
+            {
+                color = overlays.connectionError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.connectionError.id, overlays.connectionError.value, color));
+        }
+        else if(fetch != 'Success' && overlays.root && overlays.executeError)
+        {
+            var color = 'red', z = 2;
+
+            if(overlays.executeError.z)
+            {
+                z = overlays.executeError.z;
+            }
+
+            if(overlays.executeError.color)
+            {
+                color = overlays.executeError.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.executeError.id, overlays.executeError.value, color));
+        }
+        else if(overlays.root && overlays.success)
+        {
+            var color = 'green', z = 2;
+
+            if(overlays.success.z)
+            {
+                z = overlays.success.z;
+            }
+
+            if(overlays.success.color)
+            {
+                color = overlays.success.color;
+            }
+
+            showOverlay(overlays.root, createOverlay(z, overlays.success.id, overlays.success.value, color));
+        }
+
+        resolve(fetch);
+    });
+}
