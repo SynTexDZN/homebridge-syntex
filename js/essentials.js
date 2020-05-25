@@ -260,14 +260,14 @@ function createOverlays(url, timeout, tries, overlays, remove)
             {
                 var color = 'blue', z = 1;
 
-                if(overlays.connectionError.z)
+                if(overlays.pending.z)
                 {
-                    z = overlays.connectionError.z;
+                    z = overlays.pending.z;
                 }
 
-                if(overlays.connectionError.color)
+                if(overlays.pending.color)
                 {
-                    color = overlays.connectionError.color;
+                    color = overlays.pending.color;
                 }
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending.value, color));
