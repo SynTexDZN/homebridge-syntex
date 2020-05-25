@@ -221,7 +221,7 @@ SynTexPlatform.prototype = {
 
                                 if(error || stderr.includes('ERR!'))
                                 {
-                                    logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden!");
+                                    logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden! " + (error || stderr));
                                 }
                                 else
                                 {
