@@ -286,7 +286,7 @@
         {
             var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
 
-            if(state != null || state != 'Error')
+            if(state != null && state != 'Error')
             {
                 if(device.type == 'contact')
                 {
