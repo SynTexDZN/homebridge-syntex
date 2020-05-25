@@ -250,7 +250,7 @@ function createOverlays(url, tries, overlays)
     });
 }
 */
-function createOverlays(url, timeout, tries, overlays)
+function createOverlays(url, timeout, tries, overlays, remove)
 {
     if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
     {
@@ -295,6 +295,14 @@ function createOverlays(url, timeout, tries, overlays)
                 }
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
+
+                if(overlays.root)
+                {
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, true);
+                    }, 4000);
+                }
             }
             else if(fetch != 'Success' && overlays.root && overlays.executeError)
             {
@@ -311,6 +319,14 @@ function createOverlays(url, timeout, tries, overlays)
                 }
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
+
+                if(overlays.root)
+                {
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, true);
+                    }, 4000);
+                }
             }
             else if(overlays.root && overlays.success)
             {
@@ -327,14 +343,14 @@ function createOverlays(url, timeout, tries, overlays)
                 }
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
-            }
-
-            if(overlays.root)
-            {
-                setTimeout(function()
+                
+                if(overlays.root)
                 {
-                    removeOverlays(overlays.root);
-                }, 4000);
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, remove);
+                    }, 4000);
+                }
             }
 
             resolve(fetch);

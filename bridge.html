@@ -164,7 +164,7 @@
                 connectionError : { value : 'Keine Verbinfung zur Bridge!' }
             };
 
-            var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays);
+            var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false);
 
             if(update != 'Success')
             {
@@ -201,7 +201,7 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        if(await createOverlays('/restart', 10000, 3, overlays) == 'Success')
+        if(await createOverlays('/restart', 10000, 3, overlays, true) == 'Success')
         {
             await newTimeout(3000);
 
