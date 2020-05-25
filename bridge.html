@@ -196,45 +196,23 @@
     
     async function restartBridge(btn)
     {
-        if(document.getElementById('restart-pending') == null && document.getElementById('restart-result') == null)
+        var overlays = {
+            root : btn,
+            id : 'restart',
+            pending : 'Neustarten ..',
+            executeError : 'Neustart Fehlgeschlagen!',
+            connectionError : 'Keine Verbinfung zur Bridge!'
+        };
+
+        if(await createOverlays('/restart', 10000, 3, overlays) == 'Success')
         {
-            var overlays = {
-                root : btn,
-                id : 'restart',
-                pending : 'Neustarten ..',
-                executeError : 'Neustart Fehlgeschlagen!',
-                connectionError : 'Keine Verbinfung zur Bridge!'
-            };
+            await newTimeout(3000);
 
-            if(await createOverlays('/restart', 10000, 3, overlays) == 'Success')
+            if(await checkRestart())
             {
-                await newTimeout(3000);
-
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                    removeOverlaysDelay(btn, 4000, true);
-                }
-            }
-            /*
-            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
-
-            if(await fetchURL('/restart', 10000) == 'Success')
-            {
-                await newTimeout(3000);
-
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                    removeOverlaysDelay(btn, 4000, true);
-                }
-            }
-            else
-            {
-                showOverlay(btn, createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+                showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
                 removeOverlaysDelay(btn, 4000, true);
             }
-            */
         }
     }
 

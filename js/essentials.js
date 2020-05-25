@@ -252,83 +252,86 @@ function createOverlays(url, tries, overlays)
 */
 function createOverlays(url, timeout, tries, overlays)
 {
-    return new Promise(async function(resolve) {
+    if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
+    {
+        return new Promise(async function(resolve) {
 
-        if(overlays.root && overlays.pending)
-        {
-            var color = 'blue', z = 1;
-
-            if(overlays.connectionError.z)
+            if(overlays.root && overlays.pending)
             {
-                z = overlays.connectionError.z;
+                var color = 'blue', z = 1;
+
+                if(overlays.connectionError.z)
+                {
+                    z = overlays.connectionError.z;
+                }
+
+                if(overlays.connectionError.color)
+                {
+                    color = overlays.connectionError.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending, color));
             }
 
-            if(overlays.connectionError.color)
+            do
             {
-                color = overlays.connectionError.color;
+                var fetch = await fetchURL(url, timeout);
+                tries--;
+            }
+            while(fetch == null && tries > 0);
+
+            if(fetch == null && overlays.root && overlays.connectionError)
+            {
+                var color = 'red', z = 2;
+
+                if(overlays.connectionError.z)
+                {
+                    z = overlays.connectionError.z;
+                }
+
+                if(overlays.connectionError.color)
+                {
+                    color = overlays.connectionError.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError, color));
+            }
+            else if(fetch != 'Success' && overlays.root && overlays.executeError)
+            {
+                var color = 'red', z = 2;
+
+                if(overlays.executeError.z)
+                {
+                    z = overlays.executeError.z;
+                }
+
+                if(overlays.executeError.color)
+                {
+                    color = overlays.executeError.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError, color));
+            }
+            else if(overlays.root && overlays.success)
+            {
+                var color = 'green', z = 2;
+
+                if(overlays.success.z)
+                {
+                    z = overlays.success.z;
+                }
+
+                if(overlays.success.color)
+                {
+                    color = overlays.success.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success, color));
             }
 
-            showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending, color));
-        }
-
-        do
-        {
-            var fetch = await fetchURL(url, timeout);
-            tries--;
-        }
-        while(fetch == null && tries > 0);
-
-        if(fetch == null && overlays.root && overlays.connectionError)
-        {
-            var color = 'red', z = 2;
-
-            if(overlays.connectionError.z)
-            {
-                z = overlays.connectionError.z;
-            }
-
-            if(overlays.connectionError.color)
-            {
-                color = overlays.connectionError.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError, color));
-        }
-        else if(fetch != 'Success' && overlays.root && overlays.executeError)
-        {
-            var color = 'red', z = 2;
-
-            if(overlays.executeError.z)
-            {
-                z = overlays.executeError.z;
-            }
-
-            if(overlays.executeError.color)
-            {
-                color = overlays.executeError.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError, color));
-        }
-        else if(overlays.root && overlays.success)
-        {
-            var color = 'green', z = 2;
-
-            if(overlays.success.z)
-            {
-                z = overlays.success.z;
-            }
-
-            if(overlays.success.color)
-            {
-                color = overlays.success.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success, color));
-        }
-
-        resolve(fetch);
-    });
+            resolve(fetch);
+        });
+    }
 }
 /*
 function createOverlays(url, timeout, post, tries, overlays)
