@@ -168,7 +168,7 @@ function newTimeout(ms)
 {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
+/*
 function createOverlays(url, tries, overlays)
 {
     return new Promise(async function(resolve) {
@@ -249,7 +249,7 @@ function createOverlays(url, tries, overlays)
         resolve(fetch);
     });
 }
-
+*/
 function createOverlays(url, timeout, tries, overlays)
 {
     return new Promise(async function(resolve) {
@@ -330,7 +330,7 @@ function createOverlays(url, timeout, tries, overlays)
         resolve(fetch);
     });
 }
-
+/*
 function createOverlays(url, timeout, post, tries, overlays)
 {
     return new Promise(async function(resolve) {
@@ -411,3 +411,4 @@ function createOverlays(url, timeout, post, tries, overlays)
         resolve(fetch);
     });
 }
+*/
