@@ -123,18 +123,14 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        var update = await createOverlays('/update?version=' + newestBVersion, 120000, 3, overlays, false);
-
-        if(update != 'Success')
-        {
-            document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
-        }
-        else if(update == 'Success')
+        if(await createOverlays('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
         {
             await newTimeout(3000);
 
             if(await checkRestart())
             {
+                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
+
                 showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
                 await newTimeout(4000);
@@ -156,18 +152,14 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false);
-
-        if(update != 'Success')
-        {
-            document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
-        }
-        else if(update == 'Success')
+        if(await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false) == 'Success')
         {
             await newTimeout(3000);
 
             if(await checkRestart())
             {
+                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
+
                 showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
                 await newTimeout(4000);

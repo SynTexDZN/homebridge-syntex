@@ -35,19 +35,18 @@
     {
         showOverlay(document.getElementById('create-btn'), createPendingOverlay('creating', 'Erstellen ..'));
 
-        var created = await fetchURL('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000);
+        var overlays = {
+            root : document.getElementById('create-btn'),
+            id : 'create',
+            pending : { value : 'Erstellen ..' },
+            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+        };
+
+        var created = await createOverlays('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
 
         await newTimeout(1000);
 
-        if(created == null)
-        {
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Keine Verbindung zur Bridge!'));
-
-            await newTimeout(4000);
-
-            removeOverlays(document.getElementById('create-btn'), true);
-        }
-        else if(created == 'Success')
+        if(created == 'Success')
         {
             document.getElementById('create').style.display = 'none';
             document.getElementById('success').style.display = '';
