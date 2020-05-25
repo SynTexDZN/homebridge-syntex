@@ -169,7 +169,7 @@ function newTimeout(ms)
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 /*
-function createOverlays(url, tries, overlays)
+function complexFetch(url, tries, overlays)
 {
     return new Promise(async function(resolve) {
 
@@ -250,7 +250,7 @@ function createOverlays(url, tries, overlays)
     });
 }
 */
-function createOverlays(url, timeout, tries, overlays, remove)
+function complexFetch(url, timeout, tries, overlays, remove)
 {
     if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
     {
@@ -358,7 +358,7 @@ function createOverlays(url, timeout, tries, overlays, remove)
     }
 }
 /*
-function createOverlays(url, timeout, post, tries, overlays)
+function complexFetch(url, timeout, post, tries, overlays)
 {
     return new Promise(async function(resolve) {
 

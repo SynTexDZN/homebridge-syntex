@@ -42,7 +42,7 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        var created = await createOverlays('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
+        var created = await complexFetch('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
 
         await newTimeout(1000);
 

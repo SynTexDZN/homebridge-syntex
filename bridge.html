@@ -123,7 +123,7 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        if(await createOverlays('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+        if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
         {
             await newTimeout(3000);
 
@@ -133,11 +133,9 @@
 
                 showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                await newTimeout(4000);
+                removeOverlaysDelay(btn, 4000, false);
 
-                removeOverlays(btn, false);
-
-                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
+                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, null, false);
             }
         }
     }
@@ -152,7 +150,7 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        if(await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+        if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
         {
             await newTimeout(3000);
 
@@ -162,11 +160,9 @@
 
                 showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                await newTimeout(4000);
+                removeOverlaysDelay(btn, 4000, false);
 
-                removeOverlays(btn, false);
-
-                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
+                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, null, false);
             }
         }
     }
@@ -184,7 +180,7 @@
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
-        if(await createOverlays('/restart', 10000, 3, overlays, true) == 'Success')
+        if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
         {
             await newTimeout(3000);
 
