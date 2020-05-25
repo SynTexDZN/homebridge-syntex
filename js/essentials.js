@@ -270,7 +270,7 @@ function createOverlays(url, timeout, tries, overlays)
                     color = overlays.connectionError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending, color));
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending.value, color));
             }
 
             do
@@ -294,7 +294,7 @@ function createOverlays(url, timeout, tries, overlays)
                     color = overlays.connectionError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError, color));
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
             }
             else if(fetch != 'Success' && overlays.root && overlays.executeError)
             {
@@ -310,7 +310,7 @@ function createOverlays(url, timeout, tries, overlays)
                     color = overlays.executeError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError, color));
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
             }
             else if(overlays.root && overlays.success)
             {
@@ -326,7 +326,15 @@ function createOverlays(url, timeout, tries, overlays)
                     color = overlays.success.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success, color));
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
+            }
+
+            if(overlays.root)
+            {
+                setTimeout(function()
+                {
+                    removeOverlays(overlays.root);
+                }, 4000);
             }
 
             resolve(fetch);

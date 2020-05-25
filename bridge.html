@@ -156,22 +156,19 @@
     {
         if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
         {
-            showOverlay(btn, createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple'));
+            var overlays = {
+                root : btn,
+                id : 'restart',
+                pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+            };
 
-            var update = await fetchURL(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000);
+            var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays);
 
-            if(update == null)
+            if(update != 'Success')
             {
-                showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
-                removeOverlaysDelay(btn, 4000, true);
-            }
-            else if(update != 'Success')
-            {
-                showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
-
                 document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
-
-                removeOverlaysDelay(btn, 4000, true);
             }
             else if(update == 'Success')
             {
@@ -199,9 +196,9 @@
         var overlays = {
             root : btn,
             id : 'restart',
-            pending : 'Neustarten ..',
-            executeError : 'Neustart Fehlgeschlagen!',
-            connectionError : 'Keine Verbinfung zur Bridge!'
+            pending : { value : 'Neustarten ..' },
+            executeError : { value : 'Neustart Fehlgeschlagen!' },
+            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
         if(await createOverlays('/restart', 10000, 3, overlays) == 'Success')
@@ -211,7 +208,10 @@
             if(await checkRestart())
             {
                 showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                removeOverlaysDelay(btn, 4000, true);
+
+                await newTimeout(4000);
+
+                removeOverlays(btn, true);
             }
         }
     }
