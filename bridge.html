@@ -115,39 +115,33 @@
 
     async function updateBridge(btn)
     {
-        if(document.getElementById('updating') == null && document.getElementById('update-result') == null)
+        var overlays = {
+            root : btn,
+            id : 'update',
+            pending : { value : 'Update wird Installiert ..', color : 'purple' },
+            executeError : { value : 'Update Fehlgeschlagen!' },
+            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+        };
+
+        var update = await createOverlays('/update?version=' + newestBVersion, 120000, 3, overlays, false);
+
+        if(update != 'Success')
         {
-            showOverlay(btn, createOverlay(1, 'updating', 'Update wird Installiert ..', 'purple'));
+            document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
+        }
+        else if(update == 'Success')
+        {
+            await newTimeout(3000);
 
-            var update = await fetchURL('/update?version=' + newestBVersion, 120000);
+            if(await checkRestart())
+            {
+                showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-            if(update == null)
-            {
-                showOverlay(btn, createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!'));
-                removeOverlaysDelay(btn, 4000, true);
-            }
-            else if(update == 'Error')
-            {
-                showOverlay(btn, createErrorOverlay('update-result', 'Update Fehlgeschlagen!'));
+                await newTimeout(4000);
+
+                removeOverlays(btn, false);
 
                 document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
-
-                removeOverlaysDelay(btn, 4000, true);
-            }
-            else if(update == 'Success')
-            {
-                await newTimeout(3000);
-
-                if(await checkRestart())
-                {
-                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                    await newTimeout(4000);
-
-                    removeOverlays(btn, false);
-
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await fetchURL('/version', 10000);
-                }
             }
         }
     }
@@ -158,17 +152,17 @@
             root : btn,
             id : 'update',
             pending : { value : 'Update wird Installiert ..', color : 'purple' },
-            /*executeError : { value : 'Update Fehlgeschlagen!' },*/
+            executeError : { value : 'Update Fehlgeschlagen!' },
             connectionError : { value : 'Keine Verbinfung zur Bridge!' }
         };
 
         var update = await createOverlays(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 10000, 3, overlays, false);
 
-        if(update == 'Success')
+        if(update != 'Success')
         {
             document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await fetchURL(window.location.origin + ':<%wPort%>/version', 10000);
         }
-        else if(update != 'Success')
+        else if(update == 'Success')
         {
             await newTimeout(3000);
 
