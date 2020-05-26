@@ -358,7 +358,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
     }
 }
 
-function complexFetch(url, timeout, post, tries, overlays, remove)
+function complexFetchPost(url, timeout, post, tries, overlays, remove)
 {
     if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
     {
