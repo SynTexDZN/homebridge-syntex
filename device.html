@@ -573,7 +573,6 @@
                 var overlays = {
                     root : btn,
                     id : 'update-installation',
-                    executeError : { value : 'Update Fehlgeschlagen!' },
                     connectionError : { value : 'Keine Verbindung zum Gerät!' }
                 };
 
@@ -587,12 +586,16 @@
                 {  
                     showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
 
-                    await newTimeout(4000);
-
-                    removeOverlays(btn, false);
-
                     response = true;
                 }
+                else
+                {
+                    showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+                }
+
+                await newTimeout(4000);
+
+                removeOverlays(btn, false);
             }
 
             resolve(response);
