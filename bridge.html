@@ -46,7 +46,7 @@
     {
         return new Promise(async function(resolve) {
 
-            var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000);
+            var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
 
             if(newestVersion != null)
             {
@@ -86,7 +86,7 @@
             }
         });
 
-        fetchURL(window.location.origin + ':<%wPort%>/version', 10000).then(function(version) {
+        complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
 
             if(version != null)
             {

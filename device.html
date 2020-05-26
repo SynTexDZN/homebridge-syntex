@@ -43,6 +43,12 @@
     var device = JSON.parse('<%device%>');
     var settings = [];
 
+    if(device.ip != undefined)
+    {
+        document.getElementById('restart-btn').display = 'none';
+        document.getElementById('reconnect-btn').display = 'none';
+    }
+
     if(device.type != 'relais' && device.type != 'switch' && device.type != 'rgb')
     {
         settings.push({
@@ -81,12 +87,6 @@
     var infos = document.getElementById('infos').getElementsByClassName('main')[0];
 
     infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
-
-    if(device.ip != undefined)
-    {
-        document.getElementById('restart-btn').display = 'none';
-        document.getElementById('reconnect-btn').display = 'none';
-    }
 
     if(device.ip != undefined)
     {
@@ -590,7 +590,7 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000);
+        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000, 3, {}, false);
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementsByClassName('main')[1].getAttribute('version')))
         {

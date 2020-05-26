@@ -163,7 +163,7 @@
         btn.value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
-        var res = await fetchURL('http://192.168.4.1/wifi', 10000);
+        var res = await complexFetch('http://192.168.4.1/wifi', 10000, 3, {}, false);
 
         if(res != null && res != "" && res != "[]")
         {  
@@ -245,7 +245,7 @@
         formData.append('bridge-ip', bridgeIP);
         formData.append('device-name', deviceName);
 
-        var mac = await fetchURL('http://192.168.4.1/settings', 10000, formData);
+        var mac = await complexFetchPost('http://192.168.4.1/settings', 10000, formData, 3, {}, false);
 
         if(mac != null)
         {
@@ -258,7 +258,7 @@
 
             setTimeout(async function()
             {
-                if(await fetchURL('/setup', 10000) != null)
+                if(await fetchURL('/create', 10000) != null)
                 {
                     ping = true;
                 }
