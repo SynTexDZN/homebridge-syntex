@@ -728,7 +728,7 @@
                 connectionError : { value : 'Keine Verbindung zum Gerät!' }
             };
             
-            await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
+            console.log(await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true));
 
             await newTimeout(2000);
                 
