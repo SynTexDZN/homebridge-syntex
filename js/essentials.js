@@ -252,10 +252,10 @@ function complexFetch(url, tries, overlays)
 */
 function complexFetch(url, timeout, tries, overlays, remove)
 {
-    if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
-    {
-        return new Promise(async function(resolve) {
+    return new Promise(async function(resolve) {
 
+        if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
+        {
             if(overlays.root && overlays.pending)
             {
                 var color = 'blue', z = 1;
@@ -354,16 +354,20 @@ function complexFetch(url, timeout, tries, overlays, remove)
             }
 
             resolve(fetch);
-        });
-    }
+        }
+        else
+        {
+            resolve(null);
+        }
+    });
 }
 
 function complexFetchPost(url, timeout, post, tries, overlays, remove)
 {
-    if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
-    {
-        return new Promise(async function(resolve) {
+    return new Promise(async function(resolve) {
 
+        if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
+        {
             if(overlays.root && overlays.pending)
             {
                 var color = 'blue', z = 1;
@@ -462,6 +466,10 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
             }
 
             resolve(fetch);
-        });
-    }
+        }
+        else
+        {
+            resolve(null);
+        }
+    });
 }

@@ -718,8 +718,6 @@
 
         if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
         {
-            console.log('Success');
-
             var overlays = {
                 root : document.getElementById('save-btn'),
                 id : 'refresh',
@@ -728,18 +726,14 @@
                 connectionError : { value : 'Keine Verbindung zum Gerät!' }
             };
 
-            var i = await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
+            await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
             
-            console.log(i);
-
             await newTimeout(2000);
                 
-            //redirect();
+            redirect();
         }
         else
         {
-            console.log('No Success');
-
             saving = false;
 
             await newTimeout(500);

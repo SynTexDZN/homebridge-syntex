@@ -84,19 +84,15 @@
 
     async function setName(form)
     {
-        showOverlay(document.getElementById('create-btn'), createPendingOverlay('name-waiting', 'Bitte Warten ..'));
+        var overlays = {
+            root : document.getElementById('create-btn'),
+            id : 'name',
+            pending : { value : 'Bitte Warten ..' },
+            executeError : { value : 'Name ist bereits Vergeben!' },
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+        };
 
-        var nameAvailable = await fetchURL('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000);
-
-        if(nameAvailable == null)
-        {
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('name-result', 'Keine Verbindung zur Bridge!'));
-
-            await newTimeout(4000);
-
-            removeOverlays(document.getElementById('create-btn'), true);
-        }
-        else if(nameAvailable == 'Success')
+        if(await complexFetch('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true) == 'Success')
         {
             deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
@@ -104,14 +100,6 @@
             document.getElementById('create').style.display = "none";
 
             pingESP();
-        }
-        else
-        {
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('name-result', 'Name ist bereits Vergeben!'));
-
-            await newTimeout(4000);
-
-            removeOverlays(document.getElementById('create-btn'), true);
         }
     }
 
