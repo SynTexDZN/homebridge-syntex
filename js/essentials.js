@@ -357,85 +357,111 @@ function complexFetch(url, timeout, tries, overlays, remove)
         });
     }
 }
-/*
-function complexFetch(url, timeout, post, tries, overlays)
+
+function complexFetch(url, timeout, post, tries, overlays, remove)
 {
-    return new Promise(async function(resolve) {
+    if(document.getElementById(overlays.id + '-pending') == null && document.getElementById(overlays.id + '-result') == null)
+    {
+        return new Promise(async function(resolve) {
 
-        if(overlays.root && overlays.pending)
-        {
-            var color = 'blue', z = 1;
-
-            if(overlays.connectionError.z)
+            if(overlays.root && overlays.pending)
             {
-                z = overlays.connectionError.z;
+                var color = 'blue', z = 1;
+
+                if(overlays.pending.z)
+                {
+                    z = overlays.pending.z;
+                }
+
+                if(overlays.pending.color)
+                {
+                    color = overlays.pending.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending.value, color));
             }
 
-            if(overlays.connectionError.color)
+            do
             {
-                color = overlays.connectionError.color;
+                var fetch = await fetchURL(url, timeout, post);
+                tries--;
+            }
+            while(fetch == null && tries > 0);
+
+            if(fetch == null && overlays.root && overlays.connectionError)
+            {
+                var color = 'red', z = 2;
+
+                if(overlays.connectionError.z)
+                {
+                    z = overlays.connectionError.z;
+                }
+
+                if(overlays.connectionError.color)
+                {
+                    color = overlays.connectionError.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
+
+                if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
+                {
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, true);
+                    }, 4000);
+                }
+            }
+            else if(fetch != 'Success' && overlays.root && overlays.executeError)
+            {
+                var color = 'red', z = 2;
+
+                if(overlays.executeError.z)
+                {
+                    z = overlays.executeError.z;
+                }
+
+                if(overlays.executeError.color)
+                {
+                    color = overlays.executeError.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
+
+                if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
+                {
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, true);
+                    }, 4000);
+                }
+            }
+            else if(overlays.root && overlays.success)
+            {
+                var color = 'green', z = 2;
+
+                if(overlays.success.z)
+                {
+                    z = overlays.success.z;
+                }
+
+                if(overlays.success.color)
+                {
+                    color = overlays.success.color;
+                }
+
+                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
+                
+                if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
+                {
+                    setTimeout(function()
+                    {
+                        removeOverlays(overlays.root, remove);
+                    }, 4000);
+                }
             }
 
-            showOverlay(overlays.root, createOverlay(z, overlays.pending.id, overlays.pending.value, color));
-        }
-
-        do
-        {
-            var fetch = await fetchURL(url, timeout, post);
-            tries--;
-        }
-        while(fetch == null && tries > 0);
-
-        if(fetch == null && overlays.root && overlays.connectionError)
-        {
-            var color = 'red', z = 2;
-
-            if(overlays.connectionError.z)
-            {
-                z = overlays.connectionError.z;
-            }
-
-            if(overlays.connectionError.color)
-            {
-                color = overlays.connectionError.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.connectionError.id, overlays.connectionError.value, color));
-        }
-        else if(fetch != 'Success' && overlays.root && overlays.executeError)
-        {
-            var color = 'red', z = 2;
-
-            if(overlays.executeError.z)
-            {
-                z = overlays.executeError.z;
-            }
-
-            if(overlays.executeError.color)
-            {
-                color = overlays.executeError.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.executeError.id, overlays.executeError.value, color));
-        }
-        else if(overlays.root && overlays.success)
-        {
-            var color = 'green', z = 2;
-
-            if(overlays.success.z)
-            {
-                z = overlays.success.z;
-            }
-
-            if(overlays.success.color)
-            {
-                color = overlays.success.color;
-            }
-
-            showOverlay(overlays.root, createOverlay(z, overlays.success.id, overlays.success.value, color));
-        }
-
-        resolve(fetch);
-    });
+            resolve(fetch);
+        });
+    }
 }
-*/

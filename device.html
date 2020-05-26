@@ -631,7 +631,7 @@
             var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
         }
 
-        if(await complexFetch(url, 10000, 3, overlays, true) == 'Success')
+        if(await complexFetch(url, 10000, 2, overlays, true) == 'Success')
         {
             await newTimeout(3000);
 
@@ -653,8 +653,6 @@
 
     async function saveConfig()
     {
-        showOverlay(document.getElementById('save-btn'), createPendingOverlay('saving', 'Hochladen ..'));
-
         var settings = {
             mac: device.id
         };
@@ -710,16 +708,25 @@
 
         console.log(settings);
 
-        if(await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings)) == 'Success')
+        var overlays = {
+            root : document.getElementById('save-btn'),
+            id : 'saving',
+            pending : { value : 'Hochladen ..', remove : false },
+            executeError : { value : 'Update Fehlgeschlagen!' },
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+        };
+
+        if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
         {
-            if(await fetchURL('http://' + device.ip + '/refresh', 10000) == "Success")
-            {
-                showOverlay(document.getElementById('save-btn'), createSuccessOverlay('save-result', 'Hochgeladen!'));
-            }
-            else
-            {
-                showOverlay(document.getElementById('save-btn'), createOverlay(2, 'save-result', 'Gespeichert!', 'yellow'));
-            }
+            var overlays = {
+                root : document.getElementById('save-btn'),
+                id : 'saving',
+                success : { value : 'Hochgeladen!' },
+                executeError : { value : 'Gespeichert!', color : 'yellow' },
+                connectionError : { value : 'Keine Verbindung zum Gerät!' }
+            };
+            
+            await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
 
             await newTimeout(2000);
                 
@@ -727,11 +734,6 @@
         }
         else
         {
-            showOverlay(document.getElementById('save-btn'), createErrorOverlay('save-result', 'Upload Fehlgeschlagen!'));
-
-            await newTimeout(4000);
-
-            removeOverlays(document.getElementById('save-btn'), true);
             saving = false;
 
             await newTimeout(500);
