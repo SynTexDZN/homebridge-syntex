@@ -573,6 +573,7 @@
                 var overlays = {
                     root : btn,
                     id : 'update-installation',
+                    pending : { value : 'Update wird Installiert ..', color : 'purple' },
                     executeError : { value : 'Update Fehlgeschlagen!' },
                     connectionError : { value : 'Keine Verbindung zum Gerät!' }
                 };
@@ -580,6 +581,8 @@
                 var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
 
                 document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+
+                console.log(update);
 
                 if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
                 {  
