@@ -727,8 +727,10 @@
                 executeError : { value : 'Gespeichert!', color : 'yellow' },
                 connectionError : { value : 'Keine Verbindung zum Gerät!' }
             };
+
+            var i = await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
             
-            console.log(await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true));
+            console.log(i);
 
             await newTimeout(2000);
                 
