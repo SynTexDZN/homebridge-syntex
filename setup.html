@@ -88,18 +88,31 @@
             root : document.getElementById('create-btn'),
             id : 'name',
             pending : { value : 'Bitte Warten ..' },
-            executeError : { value : 'Name ist bereits Vergeben!' },
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        if(await complexFetch('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true) == 'Success')
+        var created = await complexFetch('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
+
+        await newTimeout(1000);
+
+        if(created == 'Success')
         {
             deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
-            document.getElementById('search').style.display = "";
-            document.getElementById('create').style.display = "none";
+            document.getElementById('search').style.display = '';
+            document.getElementById('create').style.display = 'none';
 
             pingESP();
+        }
+        else
+        {
+            form.children[1].getElementsByTagName('input')[0].setAttribute('value', '');
+
+            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
+
+            await newTimeout(4000);
+
+            removeOverlays(document.getElementById('create-btn'), true);
         }
     }
 
