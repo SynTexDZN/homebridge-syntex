@@ -572,7 +572,7 @@
 
                 await newTimeout(4000);
 
-                removeOverlays(btn, false);
+                removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
             }
 
             resolve(response);
@@ -605,9 +605,8 @@
 
     function resetDevice(btn)
     {
-        var overlay = createErrorOverlay('reset-confirm', 'Löschen Bestätigen?');
+        var overlay = createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
 
-        overlay.setAttribute('style', 'z-index: 1');
         overlay.setAttribute('onclick', 'resetConfirm(this)');
 
         showOverlay(btn, overlay);
