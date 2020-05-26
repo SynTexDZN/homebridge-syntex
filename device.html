@@ -718,6 +718,8 @@
 
         if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
         {
+            console.log('Success');
+
             var overlays = {
                 root : document.getElementById('save-btn'),
                 id : 'saving',
@@ -734,6 +736,8 @@
         }
         else
         {
+            console.log('No Success');
+
             saving = false;
 
             await newTimeout(500);
