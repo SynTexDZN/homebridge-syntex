@@ -155,7 +155,7 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                restartCounter[await fetchURL('http://' + devices[i].getAttribute('id') + '/restart', 3000) != null ? 0 : 1]++;
+                restartCounter[await complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 3000, 3, {}, false) != null ? 0 : 1]++;
 
                 if(restartCounter[0] + restartCounter[1] >= devices.length)
                 {
@@ -224,7 +224,7 @@
     
     async function checkUpdates(i, device)
     {
-        var newestVersion = await fetchURL('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000);
+        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(device.getAttribute('version')))
         {  
@@ -337,7 +337,7 @@
 
                 showOverlay(device, pendingOverlay);
 
-                var update = await fetchURL('http://' + btn.getAttribute('ip') + '/update', 10000);
+                var update = await complexFetch('http://' + btn.getAttribute('ip') + '/update', 10000, 3, {}, false);
 
                 if(update != null && update == 'Success')
                 {
@@ -433,11 +433,11 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            var saved = await fetchURL('/serverside/save-config', 10000, JSON.stringify(settings));
+            var saved = await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false);
 
             if(saved != null && saved == 'Success')
             {
-                fetchURL('http://' + devices[i].getAttribute('id') + '/refresh', 10000).then(function (refresh) {
+                complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 3, {}, false).then(function (refresh) {
 
                     switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
 
