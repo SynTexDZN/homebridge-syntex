@@ -84,6 +84,12 @@
 
     if(device.ip != undefined)
     {
+        document.getElementById('restart-btn').display = 'none';
+        document.getElementById('reconnect-btn').display = 'none';
+    }
+
+    if(device.ip != undefined)
+    {
         infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
     }
     
