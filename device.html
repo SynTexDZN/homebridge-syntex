@@ -716,7 +716,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
+        if(await complexFetch('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
         {
             var overlays = {
                 root : document.getElementById('save-btn'),
