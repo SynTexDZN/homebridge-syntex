@@ -296,7 +296,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
 
-                if(overlays.root)
+                if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == false))
                 {
                     setTimeout(function()
                     {
@@ -320,7 +320,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
 
-                if(overlays.root)
+                if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == false))
                 {
                     setTimeout(function()
                     {
@@ -344,7 +344,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
                 
-                if(overlays.root)
+                if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == false))
                 {
                     setTimeout(function()
                     {
