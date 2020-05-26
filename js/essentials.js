@@ -296,11 +296,11 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
 
-                if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == false))
+                if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, true);
+                        removeOverlays(overlays.root, remove);
                     }, 4000);
                 }
             }
@@ -320,11 +320,11 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
 
-                if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == false))
+                if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, true);
+                        removeOverlays(overlays.root, remove);
                     }, 4000);
                 }
             }
@@ -344,7 +344,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
                 
-                if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == false))
+                if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
                 {
                     setTimeout(function()
                     {
