@@ -566,7 +566,7 @@
                 connectionError : { value : 'Keine Verbindung zum Gerät!' }
             };
 
-            if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, false) == 'Success')
+            if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
             {
                 await newTimeout(3000);
 
