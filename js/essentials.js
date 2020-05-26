@@ -300,7 +300,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, remove);
+                        removeOverlays(overlays.root, true);
                     }, 4000);
                 }
             }
@@ -324,7 +324,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, remove);
+                        removeOverlays(overlays.root, true);
                     }, 4000);
                 }
             }
