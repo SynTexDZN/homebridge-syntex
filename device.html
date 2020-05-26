@@ -43,7 +43,7 @@
     var device = JSON.parse('<%device%>');
     var settings = [];
 
-    if(device.ip != undefined)
+    if(device.ip == undefined)
     {
         document.getElementById('restart-btn').style.display = 'none';
         document.getElementById('reconnect-btn').style.display = 'none';
