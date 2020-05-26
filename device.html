@@ -530,27 +530,6 @@
         }
     }    
 
-    function checkUpdate(ip, version)
-    {
-        return new Promise(async function(resolve) {
-
-            var update = await complexFetch('http://' + ip + '/version', 3000, 20, {}, false);
-
-            if(update != null && update == version)
-            {  
-                resolve(true);
-            }
-            else if(update != null)
-            {
-                resolve(false);
-            }
-            else
-            {
-                resolve(null);
-            }
-        });
-    }
-
     function updateDevice(btn)
     {
         return new Promise(async function(resolve) {
@@ -578,10 +557,6 @@
 
                 var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
 
-                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
-
-                console.log(update);
-
                 if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
                 {  
                     showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
@@ -592,6 +567,8 @@
                 {
                     showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                 }
+
+                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
 
                 await newTimeout(4000);
 
@@ -638,30 +615,24 @@
     
     async function resetConfirm(btn)
     {
-        showOverlay(btn, createOverlay(2, 'reset-result', 'Zurücksetzen ..', 'blue'));
+        var overlays = {
+            root : btn,
+            id : 'update',
+            pending : { value : 'Zurücksetzen ..', z : 2 },
+            executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
+            connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+        };
 
         if(device.ip != undefined)
         {
-            var reset = await fetchURL('http://' + device.ip + '/reset', 10000);
+            var url = 'http://' + device.ip + '/reset';
         }
         else
         {
-            var reset = await fetchURL('/remove-device?mac=' + device.id + '&type=' + device.type, 10000);
+            var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
         }
 
-        if(reset == null)
-        {
-            showOverlay(btn, createOverlay(3, 'reset-result', 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), 'red'));
-            removeOverlaysDelay(btn, 4000, true);
-            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
-        }
-        else if(reset != 'Success')
-        {
-            showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Fehlgeschlagen!', 'red'));
-            removeOverlaysDelay(btn, 4000, true);
-            removeOverlaysDelay(document.getElementById('reset-btn'), 4010, true);
-        }
-        else
+        if(await complexFetch(url, 10000, 3, overlays, true) == 'Success')
         {
             await newTimeout(3000);
 
@@ -673,6 +644,11 @@
 
                 window.location.href = '/';
             }
+        }
+        else
+        {
+            await newTimeout(4010);
+            removeOverlays(document.getElementById('reset-btn'), true);
         }
     }
 
