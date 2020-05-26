@@ -431,9 +431,14 @@
         {
             restart = true;
 
-            showOverlay(btn, createPendingOverlay('restarting', 'Neustart ..'));
+            var overlays = {
+                root : btn,
+                id : 'restart',
+                pending : { value : 'Neustart ..' },
+                connectionError : { value : 'Keine Verbindung zum Gerät!' }
+            };
 
-            if(await fetchURL('http://' + device.ip + '/restart', 10000) == null)
+            if(await complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
             {
                 showOverlay(btn, createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
 
@@ -480,12 +485,15 @@
                 if(restart == true)
                 {
                     showOverlay(document.getElementById('restart-btn'), createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                    removeOverlaysDelay(document.getElementById('restart-btn'), 4000, true);
+                    
+                    await newTimeout(4000);
+                    
+                    removeOverlays(document.getElementById('restart-btn'), true);
 
                     setTimeout(function()
                     {
                         restart = false;
-                    }, 4300);
+                    }, 300);
                 }
 
                 for(var i = 0; i <= 4000; i += 1000)
@@ -526,7 +534,7 @@
     {
         return new Promise(async function(resolve) {
 
-            var update = await fetchURL('http://' + ip + '/version', 3000);
+            var update = await complexFetch('http://' + ip + '/version', 3000, 20, {}, false);
 
             if(update != null && update == version)
             {  
@@ -549,64 +557,42 @@
 
             var response = false;
 
-            showOverlay(btn, createPendingOverlay('waiting', 'Bitte Warten ..'));
+            var overlays = {
+                root : btn,
+                id : 'update',
+                pending : { value : 'Bitte Warten ..' },
+                success : { value : 'Update wird Installiert ..', color : 'purple' },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zum Gerät!' }
+            };
 
-            var update = await fetchURL('http://' + device.ip + '/update', 10000);
-
-            if(update != null && update == 'Success')
+            if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, false) == 'Success')
             {
-                showOverlay(btn, createOverlay(2, 'updating', 'Update wird Installiert ..', 'purple'));
-
                 await newTimeout(3000);
 
-                var tries = 20;
+                var overlays = {
+                    root : btn,
+                    id : 'update-installation',
+                    executeError : { value : 'Update Fehlgeschlagen!' },
+                    connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                };
 
-                do
-                {
-                    var update = await checkUpdate(device.ip, btn.getAttribute('value').split('( v')[1].split(' )')[0]);
-                    tries--;
-                }
-                while(update == null && tries > 0);
+                var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
 
-                if(update == null)
-                {
-                    var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
-                }
-                else if(update)
-                {
-                    var responseOverlay = createSuccessOverlay('update-result', 'Update Erfolgreich!');
+                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+
+                if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+                {  
+                    showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, false);
 
                     response = true;
                 }
-                else
-                {
-                    var responseOverlay = createErrorOverlay('update-result', 'Update Fehlgeschlagen!');
-                }
-
-                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await fetchURL('http://' + device.ip + '/version', 3000);
-            }
-            else
-            {
-                var responseOverlay = createErrorOverlay('update-result', 'Keine Verbindung zum Gerät!');
             }
 
-            responseOverlay.setAttribute('style', 'z-index: 3');
-
-            showOverlay(btn, responseOverlay);
-
-            await newTimeout(4000);
-
-            removeOverlays(btn, true);
-                
-            if(response == true)
-            {
-                btn.style.opacity = 0;
-
-                await newTimeout(300);
-
-                btn.parentElement.removeChild(btn);
-            }
-            
             resolve(response);
         });
     }

@@ -120,7 +120,7 @@
             id : 'update',
             pending : { value : 'Update wird Installiert ..', color : 'purple' },
             executeError : { value : 'Update Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
         if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
@@ -147,7 +147,7 @@
             id : 'update',
             pending : { value : 'Update wird Installiert ..', color : 'purple' },
             executeError : { value : 'Update Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
         if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
@@ -177,7 +177,7 @@
             id : 'restart',
             pending : { value : 'Neustarten ..' },
             executeError : { value : 'Neustart Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbinfung zur Bridge!' }
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
         if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
