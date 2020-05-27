@@ -295,10 +295,11 @@
                     await newTimeout(4000);
 
                     removeOverlays(btn, updateCounter[1] == 0 ? false : true);
-
+                    /*
                     updateCount -= updateCounter[0];
                     
                     document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
+                    */
                 }
             });
         }
@@ -369,6 +370,8 @@
                     if(update == btn.getAttribute('value').split('v')[1])
                     {
                         var responseOverlay = createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Erfolgreich!', 'green');
+
+                        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML -= 1;
 
                         response = true;
                     }
