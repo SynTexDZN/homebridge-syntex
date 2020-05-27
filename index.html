@@ -469,7 +469,7 @@
 
             if(saved != null && saved == 'Success')
             {
-                if(devices[i].getAttribute('id') != undefined)
+                if(devices[i].getAttribute('id') != 'undefined')
                 {
                     complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
