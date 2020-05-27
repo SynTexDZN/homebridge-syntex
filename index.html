@@ -237,9 +237,10 @@
             document.getElementById(ip + '-offline').style.opacity = 0;
             device.style.opacity = 1;
 
-            await newTimeout(300);
-
-            device.parentElement.removeChild(document.getElementById(ip + '-offline'));
+            setTimeout(function()
+            {
+                device.parentElement.removeChild(document.getElementById(ip + '-offline'));
+            }, 300);
         }
     }
 
