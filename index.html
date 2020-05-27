@@ -375,7 +375,24 @@
 
                         if(document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML == 0)
                         {
-                            removeOverlays('update-all', false);
+                            document.getElementById('update-all').style.opacity = 0;
+
+                            await newTimeout(300);
+
+                            if(response == true)
+                            {
+                                document.getElementById('update-all').style.setProperty('height', '0', 'important');
+                                document.getElementById('update-all').style.paddingTop = 0;
+                                document.getElementById('update-all').style.paddingBottom = 0;
+                                document.getElementById('update-all').style.marginTop = 0;
+                                document.getElementById('update-all').style.marginBottom = 0;
+                                document.getElementById('update-all').style.borderTopWidth = 0;
+                                document.getElementById('update-all').style.borderBottomWidth = 0;
+
+                                await newTimeout(300);
+
+                                document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
+                            }
                         }
 
                         response = true;
