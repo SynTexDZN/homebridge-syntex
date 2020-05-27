@@ -165,7 +165,7 @@
 
                         restartCounter[result != null ? 0 : 1]++;
 
-                        if(restartCounter[0] + restartCounter[1] >= devices.length - !offline.includes(devices[i].getAttribute('id')))
+                        if(restartCounter[0] + restartCounter[1] >= devices.length - offline.length)
                         {
                             await newTimeout(1000);
 
