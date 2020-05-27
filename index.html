@@ -379,20 +379,17 @@
 
                             await newTimeout(300);
 
-                            if(response == true)
-                            {
-                                document.getElementById('update-all').style.setProperty('height', '0', 'important');
-                                document.getElementById('update-all').style.paddingTop = 0;
-                                document.getElementById('update-all').style.paddingBottom = 0;
-                                document.getElementById('update-all').style.marginTop = 0;
-                                document.getElementById('update-all').style.marginBottom = 0;
-                                document.getElementById('update-all').style.borderTopWidth = 0;
-                                document.getElementById('update-all').style.borderBottomWidth = 0;
+                            document.getElementById('update-all').style.setProperty('height', '0', 'important');
+                            document.getElementById('update-all').style.paddingTop = 0;
+                            document.getElementById('update-all').style.paddingBottom = 0;
+                            document.getElementById('update-all').style.marginTop = 0;
+                            document.getElementById('update-all').style.marginBottom = 0;
+                            document.getElementById('update-all').style.borderTopWidth = 0;
+                            document.getElementById('update-all').style.borderBottomWidth = 0;
 
-                                await newTimeout(300);
+                            await newTimeout(300);
 
-                                document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
-                            }
+                            document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
                         }
 
                         response = true;
