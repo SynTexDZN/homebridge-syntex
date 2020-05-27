@@ -161,7 +161,7 @@
             {
                 if(devices[i].getAttribute('id') != 'undefined' && !offline.includes(devices[i].getAttribute('id')))
                 {
-                    complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false).then(function(result) {
+                    complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false).then(async function(result) {
 
                         restartCounter[result != null ? 0 : 1]++;
 
