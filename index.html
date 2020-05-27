@@ -325,13 +325,17 @@
 
                     if(updateCounter[0] + updateCounter[1] >= updateCount)
                     {
-                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter[0] + ' / ' + updateCount + ' Geräte Aktualisiert!', updateCounter[0] == 0 ? 'red' : 'green'));
+                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter[0] + ' / ' + (updateCount - offline.length) + ' Geräte Aktualisiert!', updateCounter[0] == 0 ? 'red' : 'green'));
 
                         await newTimeout(4000);
 
                         removeOverlays(btn, updateCounter[1] == 0 ? false : true);
                     }
                 });
+            }
+            else
+            {
+                updateCounter[1]++;
             }
         }
     }
@@ -497,13 +501,13 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(devices[i].getAttribute('id') != 'undefined' && !offline.includes(devices[i].getAttribute('id')) && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success')
+            if(devices[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success' && !offline.includes(devices[i].getAttribute('id')))
             {
                 complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                     switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
 
-                    if(switchCounter[0] + switchCounter[1] >= devices.length)
+                    if(switchCounter[0] + switchCounter[1] >= devices.length - offline.length)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
