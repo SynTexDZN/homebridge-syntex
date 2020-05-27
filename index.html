@@ -368,14 +368,18 @@
 
                     if(update == btn.getAttribute('value').split('v')[1])
                     {
-                        showOverlay(device, createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Erfolgreich!', 'green'));
+                        var responseOverlay = createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Erfolgreich!', 'green');
 
                         response = true;
                     }
                     else if(update != null)
                     {
-                        showOverlay(device, createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Fehlgeschlagen!', 'red'));
+                        var responseOverlay = createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Fehlgeschlagen!', 'red');
                     }
+
+                    responseOverlay.setAttribute('style', 'z-index: 4; text-align: left');
+
+                    showOverlay(device, responseOverlay);
 
                     await newTimeout(4000);
 
