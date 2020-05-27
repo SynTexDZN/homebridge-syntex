@@ -370,10 +370,6 @@
 
                         response = true;
                     }
-                    else if(update == null)
-                    {
-                        setOffline(device);
-                    }
                     else
                     {
                         showOverlay(device, createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Fehlgeschlagen!', 'red'));
@@ -382,6 +378,11 @@
                     await newTimeout(4000);
 
                     removeOverlays(device, true);
+
+                    if(update == null)
+                    {
+                        setOffline(device);
+                    }
                 }
 
                 if(response == true)
