@@ -470,11 +470,11 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            this.ip = devices[i].getAttribute('id');
+            var ip = devices[i].getAttribute('id');
 
             complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false).then(async function(result) {
 
-                console.log(this.ip);
+                console.log(ip);
 
                 if(result == 'Success')
                 {
@@ -503,8 +503,8 @@
                 {
                     switchCounter[1]++;
                 }
-                
-            }.bind(this));
+
+            });
         }
     }
 
