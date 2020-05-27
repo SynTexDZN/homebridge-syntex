@@ -167,6 +167,8 @@
 
                         if(restartCounter[0] + restartCounter[1] >= devices.length)
                         {
+                            await newTimeout(1000);
+
                             showOverlay(btn, createSuccessOverlay('restart-result-all', restartCounter[0] + ' / ' + (devices.length - offline.length) + ' Geräte Neugestartet!'));
                             
                             removeOverlaysDelay(btn, 4000, true);
