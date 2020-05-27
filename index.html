@@ -54,6 +54,7 @@
 <script>
 
     var devices = JSON.parse('<%devices%>');
+    var offline = [], restarting = [];
         
     console.log(devices);
 
@@ -158,7 +159,7 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                if(devices[i].getAttribute('id') != 'undefined')
+                if(devices[i].getAttribute('id') != 'undefined' && !offline.includes(devices[i].getAttribute('id')))
                 {
                     complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false).then(function(result) {
 
@@ -183,26 +184,20 @@
 </script>
 <script>
     
-    var updatingDevices = [];
+    var updating = [];
     var updateCounter = [0, 0];
     
     async function pingESP(device)
     {
-        if(!updatingDevices.includes(device.getAttribute('id')) && device.getAttribute('id') != 'undefined')
+        var ip = device.getAttribute('id');
+
+        if(ip != 'undefined' && !updating.includes(ip))
         {
-            if(await fetchURL('http://' + device.getAttribute('id') + '/', 15000) != null)
+            if(await fetchURL('http://' + ip + '/', 20000) != null)
             {  
-                if(document.getElementById(device.getAttribute('id') + '-offline') != null)
-                {
-                    document.getElementById(device.getAttribute('id') + '-offline').style.opacity = 0;
-                    device.style.opacity = 1;
-
-                    await newTimeout(300);
-
-                    device.parentElement.removeChild(document.getElementById(device.getAttribute('id') + '-offline'));
-                }
+                setOnline(device);
             }
-            else if(!updatingDevices.includes(device.getAttribute('id')))
+            else if(!updating.includes(ip))
             {  
                 setOffline(device);
             }
@@ -215,14 +210,36 @@
     
     function setOffline(device)
     {
-        if(document.getElementById(device.getAttribute('id') + '-offline') == null)
+        if(!offline.includes(device.getAttribute('id')))
         {
-            var responseOverlay = createOverlay(1, device.getAttribute('id') + '-offline', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' | OFFLINE', 'red');
+            var responseOverlay = createErrorOverlay(device.getAttribute('id') + '-offline', document.getElementById(device.getAttribute('id')).getAttribute('name') + ' | OFFLINE');
 
             responseOverlay.setAttribute('style', 'z-index: 1; text-align: left');
             responseOverlay.setAttribute('onclick', device.getAttribute('onclick'));
 
-            showOverlay(device, responseOverlay);
+            device.parentElement.insertBefore(responseOverlay, device);
+
+            setTimeout(function()
+            {
+                responseOverlay.style.opacity = 1;
+            }, 10);
+
+            offline.push(device.getAttribute('id'));
+        }
+    }
+
+    function setOnline(device)
+    {
+        if(offline.includes(ip))
+        {
+            offline.splice(offline.indexOf(ip), 1);
+
+            document.getElementById(ip + '-offline').style.opacity = 0;
+            device.style.opacity = 1;
+
+            await newTimeout(300);
+
+            device.parentElement.removeChild(document.getElementById(ip + '-offline'));
         }
     }
 
@@ -231,7 +248,7 @@
         for(var i = 0; i < devices.length; i++)
         {
             pingESP(devices[i]);
-            checkUpdates(i, devices[i]);
+            checkUpdates(devices[i]);
         }
     }, 500);
 
@@ -241,7 +258,7 @@
     var updateCount = 0;
     var checkedCount = 0;
     
-    async function checkUpdates(i, device)
+    async function checkUpdates(device)
     {
         var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
 
@@ -291,26 +308,22 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            updateDevice(devices[i]).then(async function(update) {
+            if(!offline.includes(devices[i].getAttribute('ip')))
+            {
+                updateDevice(devices[i]).then(async function(update) {
 
-                updateCounter[update == true ? 0 : 1]++;
+                    updateCounter[update == true ? 0 : 1]++;
 
-                if(updateCounter[0] + updateCounter[1] >= updateCount)
-                {
-                    if(updateCounter[0] == 0)
+                    if(updateCounter[0] + updateCounter[1] >= updateCount)
                     {
-                        showOverlay(btn, createErrorOverlay('update-result-all', updateCounter[0] + ' / ' + updateCount + ' Geräte Aktualisiert!'));
-                    }
-                    else
-                    {
-                        showOverlay(btn, createSuccessOverlay('update-result-all', updateCounter[0] + ' / ' + updateCount + ' Geräte Aktualisiert!'));
-                    }
+                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter[0] + ' / ' + updateCount + ' Geräte Aktualisiert!', updateCounter[0] == 0 ? 'red' : 'green'));
 
-                    await newTimeout(4000);
+                        await newTimeout(4000);
 
-                    removeOverlays(btn, updateCounter[1] == 0 ? false : true);
-                }
-            });
+                        removeOverlays(btn, updateCounter[1] == 0 ? false : true);
+                    }
+                });
+            }
         }
     }
 
@@ -320,7 +333,7 @@
 
             var update = await fetchURL('http://' + ip + '/version', 3000);
 
-            if(update != null && update == version)
+            if(update == version)
             {  
                 resolve(true);
             }
@@ -341,9 +354,9 @@
 
             var response = false;
 
-            if(!updatingDevices.includes(btn.getAttribute('ip')))
+            if(!updating.includes(btn.getAttribute('ip')))
             {
-                updatingDevices.push(btn.getAttribute('ip'));
+                updating.push(btn.getAttribute('ip'));
 
                 var device = document.getElementById(btn.getAttribute('ip'));
 
@@ -360,12 +373,14 @@
 
                 if(update == null)
                 {
-                    await newTimeout(4900);
+                    await newTimeout(4000);
 
                     setOffline(device);
                 }
                 else if(update == 'Success')
                 {
+                    setOnline(device);
+
                     await newTimeout(3000);
 
                     var overlays = {
@@ -448,7 +463,7 @@
                     }
                 }
 
-                updatingDevices.splice(updatingDevices.indexOf(btn.getAttribute('ip')), 1);
+                updating.splice(updating.indexOf(btn.getAttribute('ip')), 1);
             }
             
             resolve(response);
@@ -473,7 +488,7 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(devices[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success')
+            if(devices[i].getAttribute('id') != 'undefined' && !offline.includes(devices[i].getAttribute('id')) && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success')
             {
                 complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
