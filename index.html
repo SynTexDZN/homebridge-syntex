@@ -470,15 +470,15 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            var saved = await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false);
+            var saved = await ;
 
-            if(saved != null && saved == 'Success')
-            {
-                if(devices[i].getAttribute('id') != 'undefined')
+            complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false).then(async function(saved) {
+
+                if(saved != null && saved == 'Success')
                 {
-                    complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
-
-                        switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
+                    if(devices[i].getAttribute('id') != 'undefined')
+                    {
+                        switchCounter[await complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false) == 'Success' ? 0 : 1]++;
 
                         if(switchCounter[0] + switchCounter[1] >= devices.length)
                         {
@@ -488,17 +488,17 @@
 
                             removeOverlays(btn, true);
                         }
-                    });
+                    }
+                    else
+                    {
+                        switchCounter[0]++;
+                    }
                 }
                 else
                 {
-                    switchCounter[0]++;
+                    switchCounter[1]++;
                 }
-            }
-            else
-            {
-                switchCounter[1]++;
-            }
+            });
         }
     }
 
