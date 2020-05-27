@@ -155,7 +155,7 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                restartCounter[await complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 3000, 3, {}, false) != null ? 0 : 1]++;
+                restartCounter[await complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false) != null ? 0 : 1]++;
 
                 if(restartCounter[0] + restartCounter[1] >= devices.length)
                 {
@@ -296,11 +296,6 @@
                     await newTimeout(4000);
 
                     removeOverlays(btn, updateCounter[1] == 0 ? false : true);
-                    /*
-                    updateCount -= updateCounter[0];
-                    
-                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
-                    */
                 }
             });
         }
