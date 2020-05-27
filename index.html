@@ -470,8 +470,6 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            var saved = await ;
-
             complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false).then(async function(saved) {
 
                 if(saved != null && saved == 'Success')
