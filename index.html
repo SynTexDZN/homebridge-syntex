@@ -155,13 +155,19 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                restartCounter[await complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false) != null ? 0 : 1]++;
-
-                if(restartCounter[0] + restartCounter[1] >= devices.length)
+                if(devices[i].getAttribute('id') != 'undefined')
                 {
-                    showOverlay(btn, createSuccessOverlay('restart-result-all', restartCounter[0] + ' / ' + devices.length + ' Geräte Neugestartet!'));
-                    
-                    removeOverlaysDelay(btn, 4000, true);
+                    complexFetch('http://' + devices[i].getAttribute('id') + '/restart', 20000, 1, {}, false).then(function(result) {
+
+                        restartCounter[result != null ? 0 : 1]++;
+
+                        if(restartCounter[0] + restartCounter[1] >= devices.length)
+                        {
+                            showOverlay(btn, createSuccessOverlay('restart-result-all', restartCounter[0] + ' / ' + devices.length + ' Geräte Neugestartet!'));
+                            
+                            removeOverlaysDelay(btn, 4000, true);
+                        }
+                    });
                 }
             }
         }
