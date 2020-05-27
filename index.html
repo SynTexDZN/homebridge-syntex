@@ -82,12 +82,10 @@
             counter++;
         }
 
-        if(devices[i].ip != undefined)
+        if(devices[i].ip != undefined && devices[i].active != undefined)
         {
             activationCounter[devices[i].active]++;
         }
-
-        console.log(devices[i], activationCounter);
 
         if(temp != devices[i].type)
         {
