@@ -14,15 +14,15 @@
             <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
                 <div class="widget">
                     <button class="widget-left" disabled>Geräte</button>
-                    <button class="widget-right gradient-blue" disabled>-</button>
+                    <button class="widget-right gradient-blue" disabled>0</button>
                 </div>
                 <div class="widget">
                     <button class="widget-left" disabled>Updates</button>
                     <button class="widget-right gradient-purple" disabled>-</button>
                 </div>
                 <div class="widget">
-                    <button class="widget-left" disabled>Fehler</button>
-                    <button class="widget-right gradient-red" disabled>-</button>
+                    <button class="widget-left" disabled>Offline</button>
+                    <button class="widget-right gradient-red" disabled>0</button>
                 </div>
                 <div class="widget">
                     <button class="widget-left" disabled>Online</button>
@@ -59,10 +59,8 @@
     console.log(devices);
 
     var lastRestart = '<%restart%>';
-    var errorCount = '<%errors%>';
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length;
-    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = errorCount;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = lastRestart;
     
     var temp = "";
@@ -227,6 +225,8 @@
             {
                 responseOverlay.style.opacity = 1;
             }, 10);
+
+            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
 
             offline.push(ip);
         }
