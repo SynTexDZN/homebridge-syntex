@@ -265,12 +265,23 @@ function complexFetch(url, timeout, tries, overlays, remove)
                     z = overlays.pending.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.pending.color)
                 {
                     color = overlays.pending.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending.value, color));
+                var overlay = createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
             }
 
             do
@@ -289,12 +300,23 @@ function complexFetch(url, timeout, tries, overlays, remove)
                     z = overlays.connectionError.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.connectionError.color)
                 {
                     color = overlays.connectionError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
                 {
@@ -313,12 +335,23 @@ function complexFetch(url, timeout, tries, overlays, remove)
                     z = overlays.executeError.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.executeError.color)
                 {
                     color = overlays.executeError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
                 {
@@ -337,13 +370,24 @@ function complexFetch(url, timeout, tries, overlays, remove)
                     z = overlays.success.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.success.color)
                 {
                     color = overlays.success.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
-                
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.success.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
+
                 if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
                 {
                     setTimeout(function()
@@ -377,12 +421,23 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
                     z = overlays.pending.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.pending.color)
                 {
                     color = overlays.pending.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-pending', overlays.pending.value, color));
+                var overlay = createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
             }
 
             do
@@ -401,12 +456,23 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
                     z = overlays.connectionError.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.connectionError.color)
                 {
                     color = overlays.connectionError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color));
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
                 {
@@ -425,12 +491,23 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
                     z = overlays.executeError.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.executeError.color)
                 {
                     color = overlays.executeError.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.executeError.value, color));
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
                 {
@@ -449,13 +526,24 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
                     z = overlays.success.z;
                 }
 
+                var style = 'z-index: ' + z;
+
+                if(overlays.pending.style)
+                {
+                    style += '; ' + overlays.pending.style;
+                }
+
                 if(overlays.success.color)
                 {
                     color = overlays.success.color;
                 }
 
-                showOverlay(overlays.root, createOverlay(z, overlays.id + '-result', overlays.success.value, color));
-                
+                var overlay = createOverlay(z, overlays.id + '-result', overlays.success.value, color);
+
+                overlay.setAttribute('style', style);
+
+                showOverlay(overlays.root, overlay);
+
                 if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
                 {
                     setTimeout(function()

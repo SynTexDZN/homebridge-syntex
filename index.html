@@ -340,10 +340,10 @@
                 var overlays = {
                     root : device,
                     id : btn.getAttribute('ip') + '-update',
-                    pending : { value : 'Bitte Warten ..', z : 2 },
-                    success : { value : 'Update wird Installiert ..', color : 'purple', remove : false, z : 3 },
-                    executeError : { value : 'Update Fehlgeschlagen!', z : 3 },
-                    connectionError : { value : 'Keine Verbindung zum Gerät!', z : 3 }
+                    pending : { value : 'Bitte Warten ..', z : 2, style : 'text-align: left' },
+                    success : { value : 'Update wird Installiert ..', color : 'purple', remove : false, z : 3, style : 'text-align: left' },
+                    executeError : { value : 'Update Fehlgeschlagen!', z : 3, style : 'text-align: left' },
+                    connectionError : { value : 'Keine Verbindung zum Gerät!', z : 3, style : 'text-align: left' }
                 };
 
                 var update = await complexFetch('http://' + btn.getAttribute('ip') + '/update', 10000, 3, overlays, false);
@@ -359,7 +359,7 @@
                     var overlays = {
                         root : device,
                         id : btn.getAttribute('ip') + '-update-installation',
-                        connectionError : { value : 'Keine Verbindung zum Gerät!', z : 4 }
+                        connectionError : { value : 'Keine Verbindung zum Gerät!', z : 4, style : 'text-align: left' }
                     };
 
                     var update = await complexFetch('http://' + btn.getAttribute('ip') + '/version', 3000, 20, overlays, false);
