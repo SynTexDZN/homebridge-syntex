@@ -373,6 +373,11 @@
 
                         document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML -= 1;
 
+                        if(document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML == 0)
+                        {
+                            removeOverlays('update-all', false);
+                        }
+
                         response = true;
                     }
                     else if(update != null)
