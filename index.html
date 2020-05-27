@@ -82,7 +82,10 @@
             counter++;
         }
 
-        activationCounter[devices[i].active]++;
+        if(device.ip != undefined)
+        {
+            activationCounter[devices[i].active]++;
+        }
 
         if(temp != devices[i].type)
         {
@@ -470,28 +473,21 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success')
+            if(devices[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success')
             {
-                if(devices[i].getAttribute('id') != 'undefined')
-                {
-                    complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
+                complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
-                        switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
+                    switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
 
-                        if(switchCounter[0] + switchCounter[1] >= devices.length)
-                        {
-                            btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                            btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
-                            btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                    if(switchCounter[0] + switchCounter[1] >= devices.length)
+                    {
+                        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+                        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
+                        btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
 
-                            removeOverlays(btn, true);
-                        }
-                    });
-                }
-                else
-                {
-                    switchCounter[0]++;
-                }
+                        removeOverlays(btn, true);
+                    }
+                });
             }
             else
             {
