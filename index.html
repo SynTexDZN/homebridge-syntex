@@ -350,7 +350,7 @@
 
                 if(update == null)
                 {
-                    await newTimeout(10300);
+                    await newTimeout(4600);
 
                     setOffline(device);
                 }
@@ -379,15 +379,13 @@
 
                     await newTimeout(4000);
 
+                    removeOverlays(device, true);
+
                     if(update == null)
                     {
-                        await newTimeout(3000);
+                        await newTimeout(300);
 
                         setOffline(device);
-                    }
-                    else
-                    {
-                        removeOverlays(device, true);
                     }
                 }
 
