@@ -158,7 +158,7 @@
             for(var i = 0; i < devices.length; i++)
             {
                 console.log(devices[i], devices[i].ip);
-                
+
                 if(devices[i].ip != undefined && !offline.includes(devices[i].ip))
                 {
                     complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
@@ -186,7 +186,7 @@
 </script>
 <script>
 
-    var devices = document.getElementsByClassName('device');
+    var deviceElements = document.getElementsByClassName('device');
     
     async function pingESP(device)
     {
@@ -255,10 +255,10 @@
 
     setTimeout(function()
     {
-        for(var i = 0; i < devices.length; i++)
+        for(var i = 0; i < deviceElements.length; i++)
         {
-            pingESP(devices[i]);
-            checkUpdates(devices[i]);
+            pingESP(deviceElements[i]);
+            checkUpdates(deviceElements[i]);
         }
     }, 500);
 
@@ -291,7 +291,7 @@
                 update.setAttribute('value', 'Updates Installieren');
                 update.setAttribute('onclick', 'installAllUpdates(this)');
 
-                document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('devices'));
+                document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('deviceElements'));
             }
 
             updateCount++;
@@ -299,7 +299,7 @@
 
         checkedUpdates++;
 
-        if(checkedUpdates == devices.length)
+        if(checkedUpdates == deviceElements.length)
         {
             document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
@@ -488,20 +488,20 @@
 
         showOverlay(btn, createPendingOverlay('', 'Hochladen ..'));
 
-        for(var i = 0; i < devices.length; i++)
+        for(var i = 0; i < deviceElements.length; i++)
         {
             var settings = {
-                mac: devices[i].getAttribute('onclick').split('mac=')[1].split("'")[0],
+                mac: deviceElements[i].getAttribute('onclick').split('mac=')[1].split("'")[0],
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(devices[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success' && !offline.includes(devices[i].getAttribute('id')))
+            if(deviceElements[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
             {
-                complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
+                complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                     switchCounter[refresh == 'Success' ? 'success' : 'error']++;
 
-                    if(switchCounter['success'] + switchCounter['error'] >= devices.length)
+                    if(switchCounter['success'] + switchCounter['error'] >= deviceElements.length)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
