@@ -41,6 +41,7 @@
 <script>
 
     var device = JSON.parse('<%device%>');
+    var restarting = false, resetting = false, updating = false, saving = false;
     var settings = [];
 
     if(device.ip == undefined)
@@ -427,22 +428,18 @@
 </script>
 <script>
 
-    var restart = false;
-    var updating = false;
-    var saving = false;
-    
     async function restartDevice(btn)
     {
-        if(!restart && !updating && !saving)
+        if(!restarting && !updating && !saving && !resetting)
         {
-            restart = true;
-
             var overlays = {
                 root : btn,
                 id : 'restart',
                 pending : { value : 'Neustart ..' },
                 connectionError : { value : 'Keine Verbindung zum Gerät!' }
             };
+
+            restarting = true;
 
             if(await complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
             {
@@ -453,8 +450,6 @@
                 removeOverlays(btn, true);
 
                 await newTimeout(300);
-
-                restart = false;
             }
         }
     }
@@ -470,7 +465,7 @@
         {
             while(1 != 0)
             {
-                if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
+                if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
                 {
                     fetchState();
                 }
@@ -488,7 +483,7 @@
             {
                 console.log("ESP Gefunden");
 
-                if(restart == true)
+                if(restarting == true)
                 {
                     showOverlay(document.getElementById('restart-btn'), createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
                     
@@ -498,7 +493,7 @@
 
                     setTimeout(function()
                     {
-                        restart = false;
+                        restarting = false;
                     }, 300);
                 }
 
@@ -506,7 +501,7 @@
                 {
                     setTimeout(function()
                     {
-                        if(document.getElementById('settings').hasAttribute('style'))
+                        if(!updating && !saving && !resetting)
                         {
                             fetchState();
                         }
@@ -542,43 +537,50 @@
 
             var response = false;
 
-            var overlays = {
-                root : btn,
-                id : 'update',
-                pending : { value : 'Bitte Warten ..' },
-                success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
-                executeError : { value : 'Update Fehlgeschlagen!' },
-                connectionError : { value : 'Keine Verbindung zum Gerät!' }
-            };
-
-            if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
+            if(!updating && !restarting && !saving && !resetting)
             {
-                await newTimeout(3000);
-
                 var overlays = {
                     root : btn,
-                    id : 'update-installation',
+                    id : 'update',
+                    pending : { value : 'Bitte Warten ..' },
+                    success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
+                    executeError : { value : 'Update Fehlgeschlagen!' },
                     connectionError : { value : 'Keine Verbindung zum Gerät!' }
                 };
 
-                var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
+                updating = true;
 
-                if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
-                {  
-                    showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
-
-                    response = true;
-                }
-                else
+                if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
                 {
-                    showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+                    await newTimeout(3000);
+
+                    var overlays = {
+                        root : btn,
+                        id : 'update-installation',
+                        connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                    };
+
+                    var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
+
+                    if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+                    {  
+                        showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+
+                        response = true;
+                    }
+                    else
+                    {
+                        showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+                    }
+
+                    document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
                 }
 
-                document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
-
-                await newTimeout(4000);
-
-                removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+                updating = false;
             }
 
             resolve(response);
@@ -620,131 +622,145 @@
     
     async function resetConfirm(btn)
     {
-        var overlays = {
-            root : btn,
-            id : 'update',
-            pending : { value : 'Zurücksetzen ..', z : 2 },
-            executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
-            connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
-        };
-
-        if(device.ip != undefined)
+        if(!resetting && !updating && !restarting && !saving)
         {
-            var url = 'http://' + device.ip + '/reset';
-        }
-        else
-        {
-            var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
-        }
+            var overlays = {
+                root : btn,
+                id : 'update',
+                pending : { value : 'Zurücksetzen ..', z : 2 },
+                executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
+                connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+            };
 
-        if(await complexFetch(url, 10000, 2, overlays, true) == 'Success')
-        {
-            await newTimeout(3000);
-
-            if(await checkRestart('/check-restart'))
+            if(device.ip != undefined)
             {
-                showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+                var url = 'http://' + device.ip + '/reset';
+            }
+            else
+            {
+                var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
+            }
 
+            resetting = true;
+
+            if(await complexFetch(url, 10000, 2, overlays, true) == 'Success')
+            {
                 await newTimeout(3000);
 
-                window.location.href = '/';
+                if(await checkRestart('/check-restart'))
+                {
+                    showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+
+                    await newTimeout(3000);
+
+                    window.location.href = '/';
+                }
             }
-        }
-        else
-        {
-            await newTimeout(4010);
-            removeOverlays(document.getElementById('reset-btn'), true);
+            else
+            {
+                await newTimeout(4010);
+                removeOverlays(document.getElementById('reset-btn'), true);
+            }
+
+            resetting = false;
         }
     }
 
     async function saveConfig()
     {
-        var settings = {
-            mac: device.id
-        };
-
-        var form = document.getElementById('settings-form');
-        
-        for(var i = 0; i < form.childElementCount; i++)
+        if(!saving && !updating && !restarting && !resetting)
         {
-            if(!form.children[i].hasAttribute('type'))
-            {
-                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
-                {
-                    if(device.type == 'temperature')
-                    {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                    }
-                    else if(device.type == 'motion')
-                    {
-                        settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                    }
-                    else if(device.type == 'light')
-                    {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                    }
-                    else
-                    {
-                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-                    }
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
-                {
-                    var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
-
-                    for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
-                    {
-                        concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
-                    }
-
-                    concat += ']';
-
-                    settings['events'] = JSON.parse(concat);
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
-                {
-                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
-                }
-                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
-                {
-                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
-                }
-            }
-        }
-
-        console.log(settings);
-
-        var overlays = {
-            root : document.getElementById('save-btn'),
-            id : 'saving',
-            pending : { value : 'Hochladen ..', remove : false },
-            executeError : { value : 'Update Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-        };
-
-        if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
-        {
-            var overlays = {
-                root : document.getElementById('save-btn'),
-                id : 'refresh',
-                success : { value : 'Hochgeladen!' },
-                executeError : { value : 'Gespeichert!', color : 'yellow' },
-                connectionError : { value : 'Keine Verbindung zum Gerät!' }
+            var settings = {
+                mac: device.id
             };
 
-            await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
-            
-            await newTimeout(2000);
+            var form = document.getElementById('settings-form');
+
+            for(var i = 0; i < form.childElementCount; i++)
+            {
+                if(!form.children[i].hasAttribute('type'))
+                {
+                    if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+                    {
+                        if(device.type == 'temperature')
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else if(device.type == 'motion')
+                        {
+                            settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+                        }
+                        else if(device.type == 'light')
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+                        }
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                    {
+                        var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
+
+                        for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
+                        {
+                            concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
+                        }
+
+                        concat += ']';
+
+                        settings['events'] = JSON.parse(concat);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+                    }
+                }
+            }
+
+            console.log(settings);
+
+            var overlays = {
+                root : document.getElementById('save-btn'),
+                id : 'saving',
+                pending : { value : 'Hochladen ..', remove : false },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zur Bridge!' }
+            };
+
+            saving = true;
+
+            if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
+            {
+                var overlays = {
+                    root : document.getElementById('save-btn'),
+                    id : 'refresh',
+                    success : { value : 'Hochgeladen!' },
+                    executeError : { value : 'Gespeichert!', color : 'yellow' },
+                    connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                };
+
+                await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
                 
-            redirect();
-        }
-        else
-        {
+                await newTimeout(2000);
+                    
+                redirect();
+            }
+            else
+            {
+                saving = false;
+
+                await newTimeout(500);
+
+                pingESP();
+            }
+
             saving = false;
-
-            await newTimeout(500);
-
-            pingESP();
         }
     }
     

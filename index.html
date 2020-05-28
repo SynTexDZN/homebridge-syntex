@@ -334,27 +334,6 @@
         }
     }
 
-    function checkUpdate(ip, version)
-    {
-        return new Promise(async function(resolve) {
-
-            var update = await fetchURL('http://' + ip + '/version', 3000);
-
-            if(update == version)
-            {  
-                resolve(true);
-            }
-            else if(update != null)
-            {
-                resolve(false);
-            }
-            else
-            {
-                resolve(null);
-            }
-        });
-    }
-
     function updateDevice(btn)
     {
         return new Promise(async function(resolve) {
