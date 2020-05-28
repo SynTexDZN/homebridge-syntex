@@ -35,9 +35,8 @@
 
     var bridgeIP = '<%ip%>';
     var bridgeVersion = '<%version%>';
-    var webhooksVersion = '';
-    var newestBVersion = '';
-    var newestWVersion = '';
+    var webhooksVersion = '', newestBVersion = '', newestWVersion = '';
+    var updating = { bridge : false, webhooks: false }, restarting = false;
 
     document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
@@ -115,54 +114,72 @@
 
     async function updateBridge(btn)
     {
-        var overlays = {
-            root : btn,
-            id : 'update',
-            pending : { value : 'Update wird Installiert ..', color : 'purple' },
-            executeError : { value : 'Update Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-        };
-
-        if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+        if(!restarting && !updating['bridge'] && !updating['webhooks'])
         {
-            await newTimeout(3000);
+            var overlays = {
+                root : btn,
+                id : 'update',
+                pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zur Bridge!' }
+            };
 
-            if(await checkRestart('/check-restart'))
+            updating['bridge'] = true;
+
+            if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
             {
-                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
+                await newTimeout(3000);
 
-                showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                if(await checkRestart('/check-restart'))
+                {
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
 
-                removeOverlaysDelay(btn, 4000, false);
+                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, {}, false);
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, false);
+
+                    updating['bridge'] = false;
+                }
             }
         }
     }
 
     async function updateWebhooks(btn)
     {
-        var overlays = {
-            root : btn,
-            id : 'update',
-            pending : { value : 'Update wird Installiert ..', color : 'purple' },
-            executeError : { value : 'Update Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-        };
-
-        if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+        if(!restarting && !updating['webhooks'] && !updating['bridge'])
         {
-            await newTimeout(3000);
+            var overlays = {
+                root : btn,
+                id : 'update',
+                pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zur Bridge!' }
+            };
 
-            if(await checkRestart(window.location.origin + ':<%wPort%>/check-restart'))
+            updating['webhooks'] = true;
+
+            if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
             {
-                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
+                await newTimeout(3000);
 
-                showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                if(await checkRestart(window.location.origin + ':<%wPort%>/check-restart'))
+                {
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
 
-                removeOverlaysDelay(btn, 4000, false);
+                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, {}, false);
+
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, false);
+
+                    updating['webhooks'] = false;
+                }
             }
         }
     }
@@ -172,25 +189,32 @@
     
     async function restartBridge(btn)
     {
-        var overlays = {
-            root : btn,
-            id : 'restart',
-            pending : { value : 'Neustarten ..' },
-            executeError : { value : 'Neustart Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-        };
-
-        if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
+        if(!restarting && !updating['bridge'] && !updating['webhooks'])
         {
-            await newTimeout(3000);
+            var overlays = {
+                root : btn,
+                id : 'restart',
+                pending : { value : 'Neustarten ..' },
+                executeError : { value : 'Neustart Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zur Bridge!' }
+            };
 
-            if(await checkRestart('/check-restart'))
+            restarting = true;
+
+            if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
             {
-                showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                await newTimeout(3000);
 
-                await newTimeout(4000);
+                if(await checkRestart('/check-restart'))
+                {
+                    showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
 
-                removeOverlays(btn, true);
+                    await newTimeout(4000);
+
+                    removeOverlays(btn, true);
+
+                    restarting = false;
+                }
             }
         }
     }
