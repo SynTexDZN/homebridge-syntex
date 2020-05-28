@@ -153,8 +153,12 @@
         
             showOverlay(btn, createPendingOverlay('restarting-all', 'Neustart ..'));
 
+            console.log(devices.length);
+
             for(var i = 0; i < devices.length; i++)
             {
+                console.log(devices[i], devices[i].ip);
+                
                 if(devices[i].ip != undefined && !offline.includes(devices[i].ip))
                 {
                     complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
