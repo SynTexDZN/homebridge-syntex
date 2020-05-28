@@ -1,12 +1,7 @@
-var http = require('http');
-var url = require('url');
-var path = require('path');
+var DeviceManager = require('./core/device-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
+var http = require('http'), url = require('url'), path = require('path');
 var store = require('json-fs-store');
-var DeviceManager = require('./core/device-manager');
-var HTMLQuery = require('./core/html-query');
-var logger = require('./core/logger');
-var conf;
-var restart = true;
+var conf, restart = true;
 
 module.exports = function(homebridge)
 {
@@ -286,12 +281,9 @@ SynTexPlatform.prototype = {
                                     var date = new Date();
                                     var devices = await DeviceManager.getDevices();
                                     var restart = await findRestart(date);
-                                    var bridgeErrors = await findErrors('SynTex', date);
-                                    var webhookErrors = await findErrors('SynTexWebHooks', date);
                                     var obj = {
                                         devices: JSON.stringify(devices),
-                                        restart: 'Keine Daten Vorhanden',
-                                        errors: bridgeErrors + webhookErrors
+                                        restart: 'Keine Daten Vorhanden'
                                     };
 
                                     if(restart != null)
@@ -467,30 +459,6 @@ async function findRestart(d)
                 resolve(findRestart(yesterday));
             }
 
-        }).catch(function(e) {
-
-            logger.err(e);
-        });
-    });
-}
-
-async function findErrors(pluginName, d)
-{
-    return new Promise(resolve => {
-
-        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-        logger.find(pluginName, date, '[ERROR]').then(function(errors) {
-
-            if(errors != null)
-            {
-                resolve(errors.length);
-            }
-            else
-            {
-                resolve(0);
-            }
-            
         }).catch(function(e) {
 
             logger.err(e);
