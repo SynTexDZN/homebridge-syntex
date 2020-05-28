@@ -54,18 +54,20 @@
 <script>
 
     var devices = JSON.parse('<%devices%>');
-    var offline = [], restarting = [];
+    var offline = [], restarting = [], updating = [];
         
     console.log(devices);
 
     var lastRestart = '<%restart%>';
+    var temp = "";
+    var restartCounter;
+    var counter = 0;
+    var updateCount = 0;
+    var checkedUpdates = 0;
+    var activationCounter = { active : 0, disabled : 0 };
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = lastRestart;
-    
-    var temp = "";
-    var counter = 0;
-    var activationCounter = [0, 0];
     
     for(const i in devices)
     {
@@ -83,7 +85,7 @@
 
         if(devices[i].ip != undefined && devices[i].active != undefined)
         {
-            activationCounter[devices[i].active]++;
+            activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
         }
 
         if(temp != devices[i].type)
@@ -123,13 +125,13 @@
         temp = devices[i].type;
     }
 
-    if(activationCounter[0] == 0 && activationCounter[1] >= 0)
+    if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
     {
         document.getElementById('activate-all').setAttribute('switch', 1);
         document.getElementById('activate-all').setAttribute('class', 'gradient-green');
         document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
     }
-    else if(activationCounter[0] >= 0 && activationCounter[1] == 0)
+    else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
     {
         document.getElementById('activate-all').setAttribute('switch', 0);
         document.getElementById('activate-all').setAttribute('class', 'gradient-red');
@@ -145,7 +147,6 @@
 <script>
 
     var devices = document.getElementsByClassName('device');
-    var restartCounter;
 
     async function restartAll(btn)
     {
@@ -183,9 +184,6 @@
 
 </script>
 <script>
-    
-    var updating = [];
-    var updateCounter = [0, 0];
     
     async function pingESP(device)
     {
@@ -264,9 +262,6 @@
 </script>
 <script defer>
     
-    var updateCount = 0;
-    var checkedCount = 0;
-    
     async function checkUpdates(device)
     {
         var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
@@ -299,9 +294,9 @@
             updateCount++;
         }
 
-        checkedCount++;
+        checkedUpdates++;
 
-        if(checkedCount == devices.length)
+        if(checkedUpdates == devices.length)
         {
             document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
@@ -309,33 +304,32 @@
     
     function installAllUpdates(btn)
     {
-        var devices = document.getElementsByClassName('update');
-
-        updateCounter = [0, 0];
+        var updates = document.getElementsByClassName('update');
+        var updateCounter = { success : 0, error : 0 };
 
         showOverlay(btn, createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
 
-        for(var i = 0; i < devices.length; i++)
+        for(var i = 0; i < updates.length; i++)
         {
-            if(!offline.includes(devices[i].getAttribute('ip')))
+            if(!offline.includes(updates[i].getAttribute('ip')))
             {
-                updateDevice(devices[i]).then(async function(update) {
+                updateDevice(updates[i]).then(async function(update) {
 
-                    updateCounter[update == true ? 0 : 1]++;
+                    updateCounter[update == true ? 'success' : 'error']++;
 
-                    if(updateCounter[0] + updateCounter[1] >= updateCount)
+                    if(updateCounter['success'] + updateCounter['error'] >= updateCount)
                     {
-                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter[0] + ' / ' + (updateCount - offline.length) + ' Geräte Aktualisiert!', updateCounter[0] == 0 ? 'red' : 'green'));
+                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + (updateCount - offline.length) + ' Geräte Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
 
                         await newTimeout(4000);
 
-                        removeOverlays(btn, updateCounter[1] == 0 ? false : true);
+                        removeOverlays(btn, updateCounter['error'] == 0 ? false : true);
                     }
                 });
             }
             else
             {
-                updateCounter[1]++;
+                updateCounter['error']++;
             }
         }
     }
@@ -483,14 +477,11 @@
         });
     }
 
-    var switchCounter = [0, 0];
-
     async function switchAll(btn)
     {
-        var devices = document.getElementsByClassName('device');
         var settings = [];
 
-        switchCounter = [0, 0];
+        var switchCounter = { success : 0, error : 0 };
 
         showOverlay(btn, createPendingOverlay('', 'Hochladen ..'));
 
@@ -505,9 +496,9 @@
             {
                 complexFetch('http://' + devices[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
-                    switchCounter[refresh != null && refresh == 'Success' ? 0 : 1]++;
+                    switchCounter[refresh == 'Success' ? 'success' : 'error']++;
 
-                    if(switchCounter[0] + switchCounter[1] >= devices.length)
+                    if(switchCounter['success'] + switchCounter['error'] >= devices.length)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
@@ -519,7 +510,7 @@
             }
             else
             {
-                switchCounter[1]++;
+                switchCounter['error']++;
             }
         }
     }
