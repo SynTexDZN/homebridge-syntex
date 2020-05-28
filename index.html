@@ -317,7 +317,7 @@
 
                     if(updateCounter['success'] + updateCounter['error'] >= updateCount)
                     {
-                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + (updateCount - offline.length) + ' Geräte Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
+                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräte Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
 
                         await newTimeout(4000);
 
@@ -400,7 +400,9 @@
                     {
                         var responseOverlay = createOverlay(4, btn.getAttribute('ip') + '-update-installation-result', 'Update Erfolgreich!', 'green');
 
-                        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML -= 1;
+                        updateCount--;
+
+                        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
 
                         response = true;
                     }
@@ -429,7 +431,7 @@
                 {
                     btn.style.opacity = 0;
 
-                    if(document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML == 0)
+                    if(updateCount == 0)
                     {
                         document.getElementById('update-all').style.opacity = 0;
                     }
@@ -447,7 +449,7 @@
                     btn.style.borderLeftWidth = 0;
                     btn.style.borderRightWidth = 0;
 
-                    if(document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML == 0)
+                    if(updateCount == 0)
                     {
                         document.getElementById('update-all').style.setProperty('height', '0', 'important');
                         document.getElementById('update-all').style.paddingTop = 0;
@@ -462,7 +464,7 @@
 
                     btn.parentElement.removeChild(btn);
 
-                    if(document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML == 0)
+                    if(updateCount == 0)
                     {
                         document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
                     }
