@@ -55,9 +55,10 @@ logger.log = function(level, message)
 
         var d = new Date();
         var time = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
+        var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
-        saveLog(time + ' > [' + level.toUpperCase() + '] ' + message);
+        saveLog(weekDays[d.getDay()] + ' ' + time + ' > [' + level.toUpperCase() + '] ' + message);
     }
 }
 
@@ -134,7 +135,7 @@ logger.load = function(pluginName)
     });
 }
 
-async function getLogPath(pluginName)
+function getLogPath(pluginName)
 {
     return new Promise(resolve => {
         
@@ -224,4 +225,50 @@ function saveLog(log)
             }
         });
     }
+}
+
+function removeExpired()
+{
+    return new Promise(async function(resolve) {
+        
+        var logPath = await getLogPath(pluginName);
+
+        if(logPath != null)
+        {
+            store(logPath).load(prefix, (err, obj) => {    
+
+                if(obj && !err)
+                {    
+                    for(var i = 1; i < obj.logs.length + 1; i++)
+                    {
+                        var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+                        var time = obj.logs[obj.logs.length - i].split(' >')[0];
+                        var lastWeekDay = weekDays.indexOf(new Date().getDay()) - 1;
+
+                        if(lastWeekDay < 0)
+                        {
+                            lastWeekDay = 6;
+                        }
+
+                        if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
+                        {
+                            logs.splice(logs.indexOf(obj.logs[obj.logs.length - i]), 1);
+                        }
+                        else if(time.split(' ')[0] != weekDays[new Date().getDay()])
+                        {
+                            logs.splice(logs.indexOf(obj.logs[obj.logs.length - i]), 1);
+                        }
+                    }
+                }
+                else
+                {
+                    resolve(false);
+                }
+            });
+        }
+        else
+        {
+            resolve(false);
+        }
+    });
 }
