@@ -8,6 +8,7 @@ logger.create = function(pluginName, logDirectory, config)
 {
     prefix = pluginName;
     conf = store(config);
+    logger.log('debug', logDirectory);
     logger.logs = store(logDirectory);
 };
 
