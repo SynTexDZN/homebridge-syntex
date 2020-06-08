@@ -278,20 +278,20 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
-                                    var date = new Date();
+                                    //var date = new Date();
                                     var devices = await DeviceManager.getDevices();
-                                    var restart = await findRestart(date);
+                                    //var restart = await findRestart(date);
                                     var obj = {
                                         devices: JSON.stringify(devices),
                                         restart: 'Keine Daten Vorhanden'
                                     };
-
+                                    /*
                                     if(restart != null)
                                     {
                                         var restartDate = new Date((restart[0].getMonth() + 1) + ' ' + restart[0].getDate() + ' ' + restart[0].getFullYear() + ' ' + restart[1].split(' >')[0]);
                                         obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
                                     }
-
+                                    */
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
                                 }
@@ -353,10 +353,8 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    var d = new Date();
-                                    var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-                                    var bridgeLogs = await logger.load('SynTex', date);
-                                    var webhookLogs = await logger.load('SynTexWebHooks', date);
+                                    var bridgeLogs = await logger.load('SynTex');
+                                    var webhookLogs = await logger.load('SynTexWebHooks');
                                     var obj = {
                                         bLog: '[]',
                                         wLog: '[]'
@@ -444,9 +442,7 @@ async function findRestart(d)
 {
     return new Promise(resolve => {
 
-        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-
-        logger.find('SynTex', date, '[INFO] Data').then(function(restart) {
+        logger.find('SynTex', '[INFO] Data').then(function(restart) {
 
             if(restart != null)
             {
