@@ -117,7 +117,7 @@ logger.load = function(pluginName)
 
         if(logPath != null)
         {
-            store(logPath).load(prefix, (err, obj) => {    
+            store(logPath).load(pluginName, (err, obj) => {    
 
                 if(obj && !err)
                 {    
