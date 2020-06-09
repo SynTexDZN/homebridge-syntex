@@ -646,6 +646,57 @@ async function createEventButton(mac, name, buttons)
     });
 }
 
+function getBridgeStorage()
+{
+    return new Promise(resolve => {
+        
+        storage.load('Bridge', (err, obj) => {  
+
+            if(!obj || err)
+            {
+                resolve(null);
+            }
+            else
+            {
+                resolve(obj.data);
+            }
+        });
+    });
+}
+
+function setBridgeStorage(key, value)
+{
+    return new Promise(resolve => {
+        
+        storage.load('Bridge', (err, obj) => {  
+
+            if(!obj || err)
+            {
+                var entry = {
+                    id : 'Bridge',
+                    data : {
+                        key : value
+                    }
+                };
+            }
+            else
+            {
+                obj.data[key] = value;              
+                
+                storage.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+                    }
+
+                    resolve(err ? false : true);
+                });
+            }
+        });
+    });
+}
+
 function SETUP(configPath, slog, storagePath, wPort)
 {
     config = store(configPath);
@@ -665,5 +716,7 @@ module.exports = {
     initDevice,
     initSwitch,
     checkName,
-    removeDevice
+    removeDevice,
+    getBridgeStorage,
+    setBridgeStorage
 };

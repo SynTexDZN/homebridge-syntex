@@ -30,6 +30,8 @@ function SynTexPlatform(log, config, api)
             }
 
             restart = false;
+
+            DeviceManager.setBridgeStorage('restart', new Date());
             
         }.bind(this)).catch(function(e) {
 
@@ -278,20 +280,19 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
-                                    //var date = new Date();
                                     var devices = await DeviceManager.getDevices();
-                                    //var restart = await findRestart(date);
+                                    var restart = new Date(await DeviceManager.getBridgeStorage().restart);
                                     var obj = {
                                         devices: JSON.stringify(devices),
                                         restart: 'Keine Daten Vorhanden'
                                     };
-                                    /*
+                                    
                                     if(restart != null)
                                     {
-                                        var restartDate = new Date((restart[0].getMonth() + 1) + ' ' + restart[0].getDate() + ' ' + restart[0].getFullYear() + ' ' + restart[1].split(' >')[0]);
+                                        var restartDate = new Date((restart.getMonth() + 1) + ' ' + restart.getDate() + ' ' + restart.getFullYear() + ' ' + restart.getHours() + ' ' + restart.getMinutes() + ' ' + restart.getSeconds());
                                         obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
                                     }
-                                    */
+                                    
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
                                 }
