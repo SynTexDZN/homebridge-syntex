@@ -281,15 +281,16 @@ SynTexPlatform.prototype = {
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
                                     var devices = await DeviceManager.getDevices();
-                                    var restart = new Date(await DeviceManager.getBridgeStorage().restart);
+                                    var bridgeData = await DeviceManager.getBridgeStorage();
                                     var obj = {
                                         devices: JSON.stringify(devices),
                                         restart: 'Keine Daten Vorhanden'
                                     };
                                     
-                                    if(restart != null)
+                                    if(bridgeData != null && bridgeData.restart)
                                     {
-                                        var restartDate = new Date((restart.getMonth() + 1) + ' ' + restart.getDate() + ' ' + restart.getFullYear() + ' ' + restart.getHours() + ' ' + restart.getMinutes() + ' ' + restart.getSeconds());
+                                        var restartDate = new Date(bridgeData.restart);
+                                        //var restartDate = new Date((restart.getMonth() + 1) + ' ' + restart.getDate() + ' ' + restart.getFullYear() + ' ' + restart.getHours() + ' ' + restart.getMinutes() + ' ' + restart.getSeconds());
                                         obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
                                     }
                                     

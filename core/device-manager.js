@@ -678,6 +678,16 @@ function setBridgeStorage(key, value)
                         key : value
                     }
                 };
+
+                storage.add(entry, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+                    }
+
+                    resolve(err ? false : true);
+                });
             }
             else
             {
