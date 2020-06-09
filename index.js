@@ -290,7 +290,7 @@ SynTexPlatform.prototype = {
                                     if(restart != null)
                                     {
                                         var restartDate = new Date((restart.getMonth() + 1) + ' ' + restart.getDate() + ' ' + restart.getFullYear() + ' ' + restart.getHours() + ' ' + restart.getMinutes() + ' ' + restart.getSeconds());
-                                        obj.restart = formatTimestamp(date.getTime() / 1000 - restartDate.getTime() / 1000);
+                                        obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
                                     }
                                     
                                     response.write(HTMLQuery.sendValues(head + data, obj));
