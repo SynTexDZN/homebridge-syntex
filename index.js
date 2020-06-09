@@ -284,13 +284,12 @@ SynTexPlatform.prototype = {
                                     var bridgeData = await DeviceManager.getBridgeStorage();
                                     var obj = {
                                         devices: JSON.stringify(devices),
-                                        restart: 'Keine Daten Vorhanden'
+                                        restart: '-'
                                     };
                                     
                                     if(bridgeData != null && bridgeData.restart)
                                     {
                                         var restartDate = new Date(bridgeData.restart);
-                                        //var restartDate = new Date((restart.getMonth() + 1) + ' ' + restart.getDate() + ' ' + restart.getFullYear() + ' ' + restart.getHours() + ' ' + restart.getMinutes() + ' ' + restart.getSeconds());
                                         obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
                                     }
                                     
@@ -438,30 +437,6 @@ SynTexPlatform.prototype = {
             logger.err(e);
         }
     }
-}
-
-async function findRestart(d)
-{
-    return new Promise(resolve => {
-
-        logger.find('SynTex', '[INFO] Data').then(function(restart) {
-
-            if(restart != null)
-            {
-                resolve([d, restart[0]]);
-            }
-            else
-            {
-                var yesterday = new Date();
-                yesterday.setDate(d.getDate() - 1);
-                resolve(findRestart(yesterday));
-            }
-
-        }).catch(function(e) {
-
-            logger.err(e);
-        });
-    });
 }
 
 async function getPluginConfig(pluginName)
