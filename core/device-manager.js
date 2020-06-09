@@ -675,7 +675,7 @@ function setBridgeStorage(key, value)
                 var entry = {
                     id : 'Bridge',
                     data : {
-                        key : value
+                        [key] : value
                     }
                 };
 
