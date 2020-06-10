@@ -233,15 +233,14 @@ function removeExpired()
 {
     return new Promise(async function(resolve) {
 
-        inWork = true;
-        
         logger.logs.load(prefix, (err, obj) => {    
 
             if(obj && !err)
             {    
+                var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+
                 for(var i = 1; i < obj.logs.length + 1; i++)
                 {
-                    var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
                     var time = obj.logs[obj.logs.length - i].split(' >')[0];
                     var lastWeekDay = weekDays.indexOf(new Date().getDay()) - 1;
 
@@ -252,10 +251,12 @@ function removeExpired()
 
                     if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
                     {
+                        console.log('REMOVE 1');
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                     else if(time.split(' ')[0] != weekDays[new Date().getDay()])
                     {
+                        console.log('REMOVE 2');
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                 }
@@ -265,13 +266,6 @@ function removeExpired()
                     if(err)
                     {
                         logger.log('error', prefix + '.json konnte nicht aktualisiert werden! ' + err);
-                    }
-
-                    inWork = false;
-
-                    if(que.length != 0)
-                    {
-                        saveLog(que[0]);
                     }
 
                     resolve(true);
