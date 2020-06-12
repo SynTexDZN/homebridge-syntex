@@ -741,8 +741,8 @@
                     root : document.getElementById('save-btn'),
                     id : 'refresh',
                     success : { value : 'Hochgeladen!' },
-                    executeError : { value : 'Gespeichert!', color : 'yellow' },
-                    connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                    executeError : { value : 'Fehler beim Upload!' },
+                    connectionError : { value : 'Gespeichert!', color : 'yellow' }
                 };
 
                 await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
