@@ -160,7 +160,7 @@ function getLogPath(pluginName)
 var inWork = false;
 var que = [];
 
-function saveLog(log)
+async function saveLog(log)
 {
     if(inWork)
     {
@@ -173,6 +173,8 @@ function saveLog(log)
     {
         inWork = true;
 
+        await removeExpired();
+
         if(que.includes(log))
         {
             que.shift();
@@ -184,9 +186,7 @@ function saveLog(log)
             {    
                 device.logs[device.logs.length] = log;
 
-                logger.logs.add(device, async function(err) {
-
-                    await removeExpired();
+                logger.logs.add(device, function(err) {
 
                     inWork = false;
 
@@ -242,21 +242,19 @@ function removeExpired()
                 for(var i = 1; i < obj.logs.length + 1; i++)
                 {
                     var time = obj.logs[obj.logs.length - i].split(' >')[0];
-                    var lastWeekDay = weekDays.indexOf(new Date().getDay()) - 1;
+                    var lastWeekDay = weekDays[new Date().getDay() - 1];
 
                     if(lastWeekDay < 0)
                     {
                         lastWeekDay = 6;
                     }
 
-                    if(time.split(' ')[0] == weekDays[lastWeekDay] && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
+                    if(time.split(' ')[0] == lastWeekDay && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
                     {
-                        console.log('REMOVE 1');
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                     else if(time.split(' ')[0] != weekDays[new Date().getDay()])
                     {
-                        console.log('REMOVE 2');
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                 }
