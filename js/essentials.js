@@ -302,7 +302,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
@@ -337,7 +337,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
@@ -372,7 +372,7 @@ function complexFetch(url, timeout, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
@@ -458,7 +458,7 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
@@ -493,7 +493,7 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
@@ -528,7 +528,7 @@ function complexFetchPost(url, timeout, post, tries, overlays, remove)
 
                 var style = 'z-index: ' + z;
 
-                if(overlays.pending.style)
+                if(overlays.pending && overlays.pending.style)
                 {
                     style += '; ' + overlays.pending.style;
                 }
