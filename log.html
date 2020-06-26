@@ -167,11 +167,13 @@
 
             if(displayEntry)
             {
-                filterLog += time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+                var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+
+                filterLog += weekDays[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
                 
                 if(level == 'UPDATE' || level == 'READ')
                 {
-                    filterLog += ' > ' + message.split('$')[0] + '\n' + message.split('$')[1] + ' zu ' + message.split('$')[2];
+                    filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
                 }
                 else
                 {
