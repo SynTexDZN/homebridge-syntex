@@ -137,14 +137,16 @@
         for(var i = log.length - 1; i >= 0; i--)
         {
             var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
-            var level = log[i].split('[')[1].split(']')[0];
+            var level = log[i].l;
+            var time = new Date(log[i].t);
+            var message = log[i].m;
             var displayEntry = false;
 
             if(show != null)
             {
                 if(show[0] != null && show[1] != null)
                 {
-                    if(show[0].toUpperCase() == level && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                    if(show[0].toUpperCase() == level && message.toUpperCase().includes(show[1].toUpperCase()))
                     {
                         displayEntry = true;
                     }
@@ -153,7 +155,7 @@
                 {
                     displayEntry = true;
                 }
-                else if(show[1] != null && log[i].replace(log[i].split(']')[0] + '] ', '').toUpperCase().includes(show[1].toUpperCase()))
+                else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
                 {
                     displayEntry = true;
                 }
@@ -165,15 +167,15 @@
 
             if(displayEntry)
             {
-                filterLog += log[i].split(']')[0] + ']';
+                filterLog += message;
                 
-                if(log[i].includes('(') && log[i].includes(')'))
+                if(level == 'update' || level == 'read')
                 {
-                    filterLog += ' > ' + log[i].split('( ')[1].split(' )')[0] + '\n' + log[i].replace(log[i].split(']')[0] + '] ', '').split(' (')[0];
+                    filterLog += ' > ' + message.split('$')[0] + '\n' + message.split('$')[1] + ' zu ' + message.split('$')[2];
                 }
                 else
                 {
-                    filterLog += '\n' + log[i].replace(log[i].split(']')[0] + '] ', '');
+                    filterLog += '\n' + message;
                 }
                 
                 if(i != 0)

@@ -58,7 +58,23 @@ logger.log = function(level, message)
         var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
-        saveLog(weekDays[d.getDay()] + ' ' + time + ' > [' + level.toUpperCase() + '] ' + message);
+
+        var event = {
+            t : Math.round(d.getTime() / 1000),
+            l : level[0].toUpperCase() + level.substring(1)
+        };
+
+        if(level == 'update' || level == 'read')
+        {
+            event.m = message.split('( ')[1].split(' )')[0] + '$' + message.split("'")[1].split("'")[0] + '$' + message.split("'")[3].split("'")[0];
+        }
+        else
+        {
+            event.m = message;
+        }
+
+        //d.getTime() + '$' + level.toUpperCase() + '$' + message
+        saveLog(event);
     }
 }
 
@@ -241,20 +257,11 @@ function removeExpired()
 
                 for(var i = 1; i < obj.logs.length + 1; i++)
                 {
-                    var time = obj.logs[obj.logs.length - i].split(' >')[0];
-                    var lastWeekDay = weekDays[new Date().getDay() - 1];
+                    var time = obj.logs[obj.logs.length - i].time;
 
-                    if(lastWeekDay < 0)
+                    if(new Date() - new Date(time) > 86400000)
                     {
-                        lastWeekDay = 6;
-                    }
-
-                    if(time.split(' ')[0] == lastWeekDay && new Date() - new Date().setHours(time.split(':')[0], time.split(':')[1], time.split(':')[2]) > 0)
-                    {
-                        obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
-                    }
-                    else if(time.split(' ')[0] != weekDays[new Date().getDay()])
-                    {
+                        console.log('REMOVE 1', obj.logs[obj.logs.length - i].split(' >')[0]);
                         obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
                     }
                 }
