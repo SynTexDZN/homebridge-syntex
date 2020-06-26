@@ -137,7 +137,7 @@
         for(var i = log.length - 1; i >= 0; i--)
         {
             var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
-            var level = log[i].l;
+            var level = log[i].l.toUpperCase();
             var time = new Date(log[i].t);
             var message = log[i].m;
             var displayEntry = false;
