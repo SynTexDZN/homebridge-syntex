@@ -167,9 +167,9 @@
 
             if(displayEntry)
             {
-                filterLog += message;
+                filterLog += time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
                 
-                if(level == 'update' || level == 'read')
+                if(level == 'UPDATE' || level == 'READ')
                 {
                     filterLog += ' > ' + message.split('$')[0] + '\n' + message.split('$')[1] + ' zu ' + message.split('$')[2];
                 }
