@@ -171,13 +171,17 @@
 
                 filterLog += weekDays[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
                 
-                if(level == 'UPDATE' || level == 'READ')
+                if(level == 'UPDATE')
                 {
-                    filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
+                    filterLog += ' > ' + message.split('$')[0] + "\n[UPDATE] '" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
+                }
+                else if(level == 'READ')
+                {
+                    filterLog += ' > ' + message.split('$')[0] + "\n[READ] '" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
                 }
                 else
                 {
-                    filterLog += '\n' + message;
+                    filterLog += '\n[' + level + '] ' + message;
                 }
                 
                 if(i != 0)
