@@ -146,7 +146,7 @@ async function saveLog(level, mac, name, time, message)
 
     if(inWork)
     {
-        if(!que.includes(queOBJ))
+        if(!que.some(element => element.time == time && element.message == message))
         {
             que.push(queOBJ);
         }
@@ -157,7 +157,7 @@ async function saveLog(level, mac, name, time, message)
 
         await removeExpired();
 
-        if(que.includes(queOBJ))
+        if(que.some(element => element.time == time && element.message == message))
         {
             que.shift();
         }
@@ -194,7 +194,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message)
+                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
                     }
                 });
             }

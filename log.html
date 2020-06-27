@@ -170,7 +170,7 @@
                 var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
                 filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2) + ' > [' + level + '] ';
-                
+                /*
                 if(level == 'UPDATE')
                 {
                     filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
@@ -180,7 +180,7 @@
                     filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
                 }
                 else
-                {
+                {*/
                     if(message.includes('(') && message.includes(')'))
                     {
                         filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace('[', "'").replace(']', "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
@@ -189,7 +189,7 @@
                     {
                         filterLog += '\n' + message.replace('[', "'").replace(']', "'");
                     }
-                }
+                //}
                 
                 if(i != log.length - 1)
                 {
