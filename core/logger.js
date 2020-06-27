@@ -198,8 +198,6 @@ async function saveLog(level, mac, name, time, message)
                     device[mac].logs = [];
                 }
 
-                logs : []
-
                 device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
 
                 logger.logs.add(device, function(err) {
