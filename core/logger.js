@@ -183,6 +183,11 @@ async function saveLog(level, mac, name, time, message)
 
             if(device && !err)
             {    
+                if(!device[mac].logs)
+                {
+                    device[mac].logs = [];
+                }
+
                 device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
                 device[mac].name = name;
 
