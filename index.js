@@ -105,19 +105,19 @@ SynTexPlatform.prototype = {
 
                                 if(removed)
                                 {
-                                    logger.log('success', 'Das Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
+                                    logger.log('success', urlParams.mac, '', 'Das Gerät wurde entfernt!');
 
                                     restart = true;
 
                                     const { exec } = require("child_process");
 
-                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                    logger.log('warn', 'bridge', 'Bridge', "Die Homebridge wird neu gestartet ..");
 
                                     exec("sudo systemctl restart homebridge");
                                 }
                                 else
                                 {
-                                    logger.log('error', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+                                    logger.err('Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
                                 }
                                 
                             }).catch(function(e) {
@@ -146,7 +146,7 @@ SynTexPlatform.prototype = {
 
                                     const { exec } = require("child_process");
 
-                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
                                     exec("sudo systemctl restart homebridge");
                                 }
@@ -171,7 +171,7 @@ SynTexPlatform.prototype = {
                         response.write('Success');
                         response.end();
 
-                        logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
                         exec("sudo systemctl restart homebridge");
                     }
@@ -218,15 +218,15 @@ SynTexPlatform.prototype = {
 
                                 if(error || stderr.includes('ERR!'))
                                 {
-                                    logger.log('warn', "Die Homebridge konnte nicht aktualisiert werden! " + (error || stderr));
+                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
                                 }
                                 else
                                 {
-                                    logger.log('success', "Die Homebridge wurde auf die Version [" + version + "] aktualisiert!");
+                                    logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
                                     
                                     restart = true;
 
-                                    logger.log('warn', "Die Homebridge wird neu gestartet ..");
+                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
                                     
                                     exec("sudo systemctl restart homebridge");
                                 }
@@ -396,7 +396,7 @@ SynTexPlatform.prototype = {
                                         
                                         if(await DeviceManager.setValues(json) == false)
                                         {
-                                            logger.log('error', urlParams.mac + ".json konnte nicht aktualisiert werden!");
+                                            logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
                                         }
                                         
                                         response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
@@ -430,7 +430,7 @@ SynTexPlatform.prototype = {
 
             http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
             
-            logger.log('info', "Data Link Server läuft auf Port [" + this.port + "]");
+            logger.log('info', 'bridge', 'Bridge', 'Data Link Server läuft auf Port [' + this.port + ']');
         }
         catch(e)
         {

@@ -22,7 +22,7 @@ async function removeDevice(mac, type)
 
                         if(err)
                         {
-                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
         
                             resolve(false);
                         }
@@ -57,7 +57,7 @@ async function removeDevice(mac, type)
             }
             else
             {
-                logger.log('error', "Config.json konnte nicht geladen werden! " + err);
+                logger.err('Config.json konnte nicht geladen werden! ' + err);
         
                 resolve(false);
             }
@@ -129,7 +129,7 @@ async function removeFromSettingsStorage(mac)
                                 
             if(err)
             {
-                logger.log('error', "Das Gerät konnte nicht aus der Settings Storage entfernt werden! " + err);
+                logger.err('Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
             }
 
             resolve(err ? false : true);
@@ -220,7 +220,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                         if(err)
                         {
-                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
 
                             resolve(['Error', '']);
                         }
@@ -242,13 +242,13 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                                 if(err)
                                 {
-                                    logger.log('error', mac + ".json konnte nicht erstellt werden! " + err);
+                                    logger.err(mac + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', '']);
                                 }
                                 else
                                 {
-                                    logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+                                    logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
 
                                     resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": ' + events + '}']);
                                 }
@@ -258,7 +258,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 }
                 else
                 {
-                    logger.log('error', "Config.json konnte nicht geladen werden! " + err);
+                    logger.err('Config.json konnte nicht geladen werden! ' + err);
 
                     resolve(['Error', '']);
                 }
@@ -295,7 +295,7 @@ async function initSwitch(mac, name)
 
                         if(err)
                         {
-                            logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
 
                             resolve(['Error', 'Fehler beim Erstellen!']);
                         }
@@ -312,13 +312,13 @@ async function initSwitch(mac, name)
 
                                 if(err)
                                 {
-                                    logger.log('error', mac + ".json konnte nicht erstellt werden! " + err);
+                                    logger.err(mac + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', 'Fehler beim Erstellen!']);
                                 }
                                 else
                                 {
-                                    logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+                                    logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
 
                                     resolve(['Success', 'Success']);
                                 }
@@ -328,7 +328,7 @@ async function initSwitch(mac, name)
                 }
                 else
                 {
-                    logger.log('error', "Config.json konnte nicht geladen werden! " + err);
+                    logger.err('Config.json konnte nicht geladen werden! ' + err);
 
                     resolve(['Error', 'Fehler beim Erstellen!']);
                 }
@@ -526,7 +526,7 @@ async function setValue(mac, param, value)
 
                     if(err)
                     {
-                        logger.log('error', mac + ".json konnte nicht aktualisiert werden! " + err);
+                        logger.err(mac + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -560,7 +560,7 @@ async function setValues(values)
 
                     if(err)
                     {
-                        logger.log('error', values.mac + ".json konnte nicht aktualisiert werden! " + err);
+                        logger.err(values.mac + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -578,7 +578,7 @@ async function checkEventButton(mac)
 
             if(!obj || err)
             {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
+                logger.err('Config.json konnte nicht geladen werden!');
 
                 resolve(false);
             }
@@ -614,7 +614,7 @@ async function createEventButton(mac, name, buttons)
 
             if(!obj || err)
             {
-                logger.log('error', "Config.json konnte nicht geladen werden!");
+                logger.err('Config.json konnte nicht geladen werden!');
 
                 resolve(false);
             }
@@ -632,11 +632,11 @@ async function createEventButton(mac, name, buttons)
 
                     if(err)
                     {
-                        logger.log('error', "Config.json konnte nicht aktualisiert werden! " + err);
+                        logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
                     }
                     else
                     {
-                        logger.log('success', "Neues Gerät wurde dem System hinzugefügt ( " + mac + " )");
+                        logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
                     }
 
                     resolve(err ? false : true);
@@ -683,7 +683,7 @@ function setBridgeStorage(key, value)
 
                     if(err)
                     {
-                        logger.log('error', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+                        logger.err('Bridge.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -697,7 +697,7 @@ function setBridgeStorage(key, value)
 
                     if(err)
                     {
-                        logger.log('error', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+                        logger.err('Bridge.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
