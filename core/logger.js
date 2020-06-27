@@ -234,16 +234,16 @@ function removeExpired()
 
             if(obj && !err)
             {    
-                for(var i = 1; i < obj[Object.keys(obj)].length; i++)
+                for(var i = 1; i < Object.keys(obj).length; i++)
                 {
-                    for(var j = 1; j < obj[Object.keys(obj)].logs.length + 1; j++)
+                    for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
                     {
-                        var time = obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i].t;
+                        var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i].t;
 
                         if(new Date() - new Date(time) > 86400000)
                         {
-                            console.log('REMOVE 1', obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i].split(' >')[0]);
-                            obj[Object.keys(obj)].logs.splice(obj.logs.indexOf(obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i]), 1);
+                            console.log('REMOVE 1', obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i].split(' >')[0]);
+                            obj[Object.keys(obj)[i]].logs.splice(obj.logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i]), 1);
                         }
                     }
                 }
