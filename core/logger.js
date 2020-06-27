@@ -231,8 +231,7 @@ function removeExpired()
                         {
                             var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
 
-                            logger.log('debug', 'bridge', 'Bridge', obj);
-                            logger.log('debug', 'bridge', 'Bridge', Object.keys(obj));
+                            logger.log('debug', 'bridge', 'Bridge', Object.keys(obj)[i]);
                             logger.log('debug', 'bridge', 'Bridge', time);
 
                             if(new Date() - new Date(time * 1000) > 86400000)
