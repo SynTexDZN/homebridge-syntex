@@ -65,46 +65,6 @@ logger.err = function(error)
     logger.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + " ( '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + "' bei Zeile '" + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + "' )");
 }
 
-logger.find = function(pluginName, param)
-{
-    return new Promise(async function(resolve) {
-
-        var logPath = await getLogPath(pluginName);
-
-        if(logPath != null)
-        {
-            store(logPath).load(prefix, (err, obj) => {    
-
-                var logs = [];
-
-                if(obj && !err)
-                {    
-                    for(var i = 1; i < obj.logs.length + 1; i++)
-                    {
-                        if(obj.logs[obj.logs.length - i].includes(param))
-                        {
-                            logs[logs.length] = obj.logs[obj.logs.length - i];
-                        }
-                    }
-                }
-
-                if(logs[0] != null)
-                {
-                    resolve(logs);
-                }
-                else
-                {
-                    resolve(null);
-                }
-            });
-        }
-        else
-        {
-            resolve(null);
-        }
-    });
-}
-
 logger.load = function(pluginName)
 {
     return new Promise(async function(resolve) {
@@ -129,6 +89,8 @@ logger.load = function(pluginName)
                             }
                         }
                     }
+
+                    // TODO : Sorting
 
                     resolve(logs);
                 }
@@ -268,6 +230,8 @@ function removeExpired()
                         for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
                         {
                             var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - i].t;
+
+                            logger.log('debug', new Date() - new Date(time * 1000));
 
                             if(new Date() - new Date(time * 1000) > 86400000)
                             {
