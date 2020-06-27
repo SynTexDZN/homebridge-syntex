@@ -189,7 +189,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(err)
                     {
-                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
@@ -210,7 +210,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(err)
                     {
-                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
@@ -252,7 +252,7 @@ function removeExpired()
 
                     if(err)
                     {
-                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.err(prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(true);
