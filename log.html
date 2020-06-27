@@ -183,11 +183,11 @@
                 {*/
                     if(message.includes('(') && message.includes(')'))
                     {
-                        filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace(new RegExp('[', 'g'), "'").replace(new RegExp(']', 'g'), "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
+                        filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace(new RegExp('\[', 'g'), "'").replace(new RegExp('\]', 'g'), "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
                     }
                     else
                     {
-                        filterLog += '\n' + message.replace(new RegExp('[', 'g'), "'").replace(new RegExp(']', 'g'), "'");
+                        filterLog += '\n' + message.replace(new RegExp('\[', 'g'), "'").replace(new RegExp('\]', 'g'), "'");
                     }
                 //}
                 
