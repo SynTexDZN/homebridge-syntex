@@ -181,7 +181,12 @@
                 }
                 else
                 {
-                    filterLog += '\n' + message.replace('[', "'").replace(']', "'");
+                    if(message.includes('(') && message.includes(')'))
+                    {
+                        filterLog += ' > ' + message.split('( ')[1].split(' )')[0];
+                    }
+
+                    filterLog += '\n' + message.replace('[', "'").replace(']', "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
                 }
                 
                 if(i != 0)
