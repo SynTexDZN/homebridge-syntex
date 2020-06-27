@@ -178,7 +178,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
         var eventButton = await checkEventButton(mac);
         var device = await getDevice(mac);
 
-        name = name.replace('%', ' ');
+        name = name.replace(new RegExp('%', 'g'), ' ');
 
         if(device != null)
         {
