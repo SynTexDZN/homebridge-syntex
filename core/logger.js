@@ -94,9 +94,9 @@ logger.load = function(pluginName)
 
                         var keyA = new Date(a.t), keyB = new Date(b.t);
                         
-                        if (keyA < keyB) return -1;
-                        if (keyA > keyB) return 1;
-                        
+                        if (keyA < keyB) return 1;
+                        if (keyA > keyB) return -1;
+
                         return 0;
                     });
 
