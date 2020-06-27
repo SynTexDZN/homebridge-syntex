@@ -123,7 +123,7 @@ logger.load = function(pluginName)
                     {
                         if(obj[Object.keys(obj)[i]].logs)
                         {
-                            for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
+                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
                             {
                                 logs.push(obj[Object.keys(obj)[i]].logs[j]);
                             }
