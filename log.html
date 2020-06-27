@@ -169,19 +169,19 @@
             {
                 var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
-                filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+                filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2) + ' > [' + level + '] ';
                 
                 if(level == 'UPDATE')
                 {
-                    filterLog += ' > ' + message.split('$')[0] + "\n[UPDATE] '" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
+                    filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
                 }
                 else if(level == 'READ')
                 {
-                    filterLog += ' > ' + message.split('$')[0] + "\n[READ] '" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
+                    filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
                 }
                 else
                 {
-                    filterLog += '\n[' + level + '] ' + message;
+                    filterLog += '\n[' + level + '] ' + message.replace('[', "'").replace(']', "'");
                 }
                 
                 if(i != 0)
