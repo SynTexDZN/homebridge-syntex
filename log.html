@@ -169,7 +169,7 @@
             {
                 var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
-                filterLog += weekDays[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+                filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
                 
                 if(level == 'UPDATE')
                 {
