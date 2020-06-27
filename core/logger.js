@@ -11,7 +11,7 @@ logger.create = function(pluginName, logDirectory, config)
     logger.logs = store(logDirectory);
 };
 
-logger.log = function(level, message)
+logger.log = function(level, mac, name, message)
 {
     var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
 
@@ -53,28 +53,9 @@ logger.log = function(level, message)
             color = '\x1b[31m';
         }
 
-        var d = new Date();
-        var time = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
-        var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        var event = {
-            t : Math.round(d.getTime() / 1000),
-            l : level[0].toUpperCase() + level.substring(1)
-        };
-
-        if(level == 'update' || level == 'read')
-        {
-            event.m = message.split('( ')[1].split(' )')[0] + '$' + message.split("'")[1].split("'")[0] + '$' + message.split("'")[3].split("'")[0];
-        }
-        else
-        {
-            event.m = message;
-        }
-
-        //d.getTime() + '$' + level.toUpperCase() + '$' + message
-        saveLog(event);
+        saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
     }
 }
 
@@ -176,13 +157,15 @@ function getLogPath(pluginName)
 var inWork = false;
 var que = [];
 
-async function saveLog(log)
+async function saveLog(level, mac, name, time, message)
 {
+    var queOBJ = { mac : mac, name : name, time : time, level : level, message : message };
+
     if(inWork)
     {
-        if(!que.includes(log))
+        if(!que.includes(queOBJ))
         {
-            que.push(log);
+            que.push(queOBJ);
         }
     }
     else
@@ -191,7 +174,7 @@ async function saveLog(log)
 
         await removeExpired();
 
-        if(que.includes(log))
+        if(que.includes(queOBJ))
         {
             que.shift();
         }
@@ -200,7 +183,8 @@ async function saveLog(log)
 
             if(device && !err)
             {    
-                device.logs[device.logs.length] = log;
+                device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
+                device[mac].name = name;
 
                 logger.logs.add(device, function(err) {
 
@@ -208,23 +192,20 @@ async function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0]);
+                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message)
                     }
                 });
             }
             else
             {
-                var entry = {
-                    id: prefix,
-                    logs: [
-                        log
-                    ]
-                };
+                var entry = { id : prefix };
+
+                entry[mac] = [ { t : time, l : level, m : message } ];
 
                 logger.logs.add(entry, (err) => {
 
@@ -232,12 +213,12 @@ async function saveLog(log)
 
                     if(err)
                     {
-                        logger.log('error', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0]);
+                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
                     }
                 });
             }
@@ -253,16 +234,17 @@ function removeExpired()
 
             if(obj && !err)
             {    
-                var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-
-                for(var i = 1; i < obj.logs.length + 1; i++)
+                for(var i = 1; i < obj[Object.keys(obj)].length; i++)
                 {
-                    var time = obj.logs[obj.logs.length - i].time;
-
-                    if(new Date() - new Date(time) > 86400000)
+                    for(var j = 1; j < obj[Object.keys(obj)].logs.length + 1; j++)
                     {
-                        console.log('REMOVE 1', obj.logs[obj.logs.length - i].split(' >')[0]);
-                        obj.logs.splice(obj.logs.indexOf(obj.logs[obj.logs.length - i]), 1);
+                        var time = obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i].t;
+
+                        if(new Date() - new Date(time) > 86400000)
+                        {
+                            console.log('REMOVE 1', obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i].split(' >')[0]);
+                            obj[Object.keys(obj)].logs.splice(obj.logs.indexOf(obj[Object.keys(obj)].logs[obj[Object.keys(obj)].logs.length - i]), 1);
+                        }
                     }
                 }
 
@@ -270,7 +252,7 @@ function removeExpired()
 
                     if(err)
                     {
-                        logger.log('error', prefix + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(true);
