@@ -363,12 +363,12 @@ SynTexPlatform.prototype = {
 
                                     if(bridgeLogs != null)
                                     {    
-                                        obj.bLog = JSON.stringify(bridgeLogs.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
+                                        obj.bLog = JSON.stringify(bridgeLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
                                     }
 
                                     if(webhookLogs != null)
                                     {    
-                                        obj.wLog = JSON.stringify(webhookLogs.logs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
+                                        obj.wLog = JSON.stringify(webhookLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
                                     }
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));

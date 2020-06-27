@@ -117,7 +117,20 @@ logger.load = function(pluginName)
 
                 if(obj && !err)
                 {    
-                    resolve(obj);
+                    var logs = [];
+
+                    for(var i = 1; i < Object.keys(obj).length; i++)
+                    {
+                        if(obj[Object.keys(obj)[i]].logs)
+                        {
+                            for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
+                            {
+                                logs.push(obj[obj[Object.keys(obj)[i]].logs.length - j]);
+                            }
+                        }
+                    }
+
+                    resolve(logs);
                 }
                 else
                 {
