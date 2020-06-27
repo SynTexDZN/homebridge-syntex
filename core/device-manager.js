@@ -248,7 +248,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                                 }
                                 else
                                 {
-                                    logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
+                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
 
                                     resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": ' + events + '}']);
                                 }
@@ -318,7 +318,7 @@ async function initSwitch(mac, name)
                                 }
                                 else
                                 {
-                                    logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
+                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
 
                                     resolve(['Success', 'Success']);
                                 }
@@ -636,7 +636,7 @@ async function createEventButton(mac, name, buttons)
                     }
                     else
                     {
-                        logger.log('success', mac, '', 'Ein neues Gerät wurde dem System hinzugefügt!');
+                        logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
                     }
 
                     resolve(err ? false : true);

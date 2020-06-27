@@ -70,7 +70,7 @@ SynTexPlatform.prototype = {
                     {
                         if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh && urlParams.buttons)
                         {
-                            logger.log('info', urlParams.mac, urlParams.ip, 'Ein Gerät hat sich mit der Bridge verbunden!');
+                            logger.log('info', urlParams.mac, urlParams.name, '[' + urlParams.name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
 
                             DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons).then(function(res) {
 
@@ -83,7 +83,7 @@ SynTexPlatform.prototype = {
 
                                     const { exec } = require("child_process");
 
-                                    logger.log('warn', 'bridge', 'Bridge', "Die Homebridge wird neu gestartet ..");
+                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
                                     exec("sudo systemctl restart homebridge");
                                 }
@@ -105,13 +105,13 @@ SynTexPlatform.prototype = {
 
                                 if(removed)
                                 {
-                                    logger.log('success', urlParams.mac, '', 'Das Gerät wurde entfernt!');
+                                    logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
 
                                     restart = true;
 
                                     const { exec } = require("child_process");
 
-                                    logger.log('warn', 'bridge', 'Bridge', "Die Homebridge wird neu gestartet ..");
+                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
                                     exec("sudo systemctl restart homebridge");
                                 }
