@@ -90,6 +90,16 @@ logger.load = function(pluginName)
                         }
                     }
 
+                    logs.sort(function(a, b) {
+
+                        var keyA = new Date(a.t), keyB = new Date(b.t);
+                        
+                        if (keyA < keyB) return -1;
+                        if (keyA > keyB) return 1;
+                        
+                        return 0;
+                    });
+
                     // TODO : Sorting
 
                     resolve(logs);
@@ -230,10 +240,6 @@ function removeExpired()
                         for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
                         {
                             var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
-
-                            console.log(Object.keys(obj)[i]);
-                            console.log(time);
-                            console.log(new Date() - new Date(time * 1000));
 
                             if(new Date() - new Date(time * 1000) > 86400000)
                             {
