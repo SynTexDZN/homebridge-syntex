@@ -69,58 +69,61 @@
     
     for(const i in devices)
     {
-        var device = document.createElement('div');
+        if(devices[i].mac != 'bridge')
+        {
+            var device = document.createElement('div');
         
-        if(counter == devices.length - 1)
-        {
-            device.setAttribute('style', 'display: flex');
-        }
-        else
-        {
-            device.setAttribute('style', 'display: flex; margin-bottom: 20px');
-            counter++;
-        }
+            if(counter == devices.length - 1)
+            {
+                device.setAttribute('style', 'display: flex');
+            }
+            else
+            {
+                device.setAttribute('style', 'display: flex; margin-bottom: 20px');
+                counter++;
+            }
 
-        if(devices[i].ip != undefined && devices[i].active != undefined)
-        {
-            activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
-        }
+            if(devices[i].ip != undefined && devices[i].active != undefined)
+            {
+                activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
+            }
 
-        if(temp != devices[i].type)
-        {
-            var title = document.createElement('h2');
+            if(temp != devices[i].type)
+            {
+                var title = document.createElement('h2');
 
-            title.setAttribute('style', 'width: fit-content');
-            title.innerHTML = '• ' + devices[i].type + ' •';
+                title.setAttribute('style', 'width: fit-content');
+                title.innerHTML = '• ' + devices[i].type + ' •';
+                
+                document.getElementById('devices').appendChild(title);
+            }
+
+            var button = document.createElement('input');
+
+            button.setAttribute('type', 'button');
+            button.setAttribute('value', devices[i].name);
+            button.setAttribute('sensortype', devices[i].type);
+            button.setAttribute('version', devices[i].version);
+            button.setAttribute('id', devices[i].ip);
+            button.setAttribute('class', 'device white');
+            button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
             
-            document.getElementById('devices').appendChild(title);
+            var url = '/device?mac=' + devices[i].id;
+
+            button.setAttribute('onclick', "window.location.href='" + url + "'");
+            button.setAttribute('name', devices[i].name);
+
+            var container = document.createElement('div');
+
+            container.setAttribute('style', 'display: block; width: 100%');
+
+            container.appendChild(button);
+            device.appendChild(container);
+
+            document.getElementById('devices').appendChild(device);
+            
+            temp = devices[i].type;
         }
-
-        var button = document.createElement('input');
-
-        button.setAttribute('type', 'button');
-        button.setAttribute('value', devices[i].name);
-        button.setAttribute('sensortype', devices[i].type);
-        button.setAttribute('version', devices[i].version);
-        button.setAttribute('id', devices[i].ip);
-        button.setAttribute('class', 'device white');
-        button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
-        
-        var url = '/device?mac=' + devices[i].id;
-
-        button.setAttribute('onclick', "window.location.href='" + url + "'");
-        button.setAttribute('name', devices[i].name);
-
-        var container = document.createElement('div');
-
-        container.setAttribute('style', 'display: block; width: 100%');
-
-        container.appendChild(button);
-        device.appendChild(container);
-
-        document.getElementById('devices').appendChild(device);
-        
-        temp = devices[i].type;
     }
 
     if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
