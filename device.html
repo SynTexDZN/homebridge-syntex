@@ -151,7 +151,11 @@
                     {
                         if(activity.l = 'Update')
                         {
-                            values.push(activity[i].m.split('zu [')[1].split(']')[0]);
+                            var value = activity[i].m.split('zu [')[1].split(']')[0];
+
+                            value = value == 'true' ? 50 : value == 'false' ? 0 : value;
+
+                            values.push();
                         }
                     }
     
