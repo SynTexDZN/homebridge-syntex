@@ -268,7 +268,7 @@ SynTexPlatform.prototype = {
                                     var obj = {
                                         device: JSON.stringify(device),
                                         wPort: 1710,
-                                        activity : JSON.stringify(await logger.load('SynTexWebHooks'))
+                                        activity : JSON.stringify(await logger.load('SynTexWebHooks', urlParams.mac))
                                     };
 
                                     if(webhookConfig != null)
@@ -355,8 +355,8 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/log'))
                                 {
-                                    var bridgeLogs = await logger.load('SynTex');
-                                    var webhookLogs = await logger.load('SynTexWebHooks');
+                                    var bridgeLogs = await logger.load('SynTex', null);
+                                    var webhookLogs = await logger.load('SynTexWebHooks', null);
                                     var obj = {
                                         bLog: '[]',
                                         wLog: '[]'
