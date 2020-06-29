@@ -159,7 +159,7 @@
 
                     for(const i in values)
                     {
-                        values[i] = (values[i] - min * 0.9) / (max * 1.1 - min) * 100;
+                        values[i] = (values[i] - min) / (max - min) * 100;
 
                         console.log(values[i]);
                     }
@@ -182,7 +182,7 @@
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                     
                     //var multiplicator = 100 / max * height / 100;
-                    var multiplicator = 2.5;
+                    var multiplicator = 1;
                     var unterteilungen = 10;
     
                     canvas.width = width + padding * 2;
