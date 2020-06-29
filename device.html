@@ -7,16 +7,7 @@
             </div>
             <h1 class="loading-loop">Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
-                <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
-                    <canvas class="canvas" style="border-radius: 50px"></canvas>
-                </div>
-                <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
-                    <canvas class="canvas" style="border-radius: 50px"></canvas>
-                </div>
-                <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
-                    <canvas class="canvas" style="border-radius: 50px"></canvas>
-                </div>
+            <div id="events" class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <script defer>
 
                     function drawGraph(canvas, data, clr1, clr2, points)
@@ -188,7 +179,14 @@
 
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
-                        var canvas = document.getElementsByClassName('canvas')[i];
+                        var container = document.createElement('div');
+                        var canvas = document.createElement('canvas');
+
+                        container.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
+
+                        canvas.setAttribute('class', 'canvas');
+                        canvas.setAttribute('style', 'border-radius: 50px');
+
                         var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                         var infoMin = document.createElement('div');
 
@@ -221,6 +219,9 @@
                         window.onload = drawGrid(canvas, values[Object.keys(values)[i]], min, max, 10)
                         window.onload = drawFill(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                         window.onload = drawGraph(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+
+                        container.appendChild(canvas);
+                        document.getElementById('events').appendChild(container);
                     }
 
                 </script>
