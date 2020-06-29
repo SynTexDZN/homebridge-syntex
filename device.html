@@ -163,16 +163,16 @@
 
                             if(!values[type])
                             {
-                                values[type] = [1, 2, 3];
+                                values[type] = [];
                             }
 
-                            //values[type].push(value);
+                            values[type].push(value);
                         }
                     }
 
                     for(const i in values)
                     {
-                        values[i] = (values[i] - min) / (max - min) * 100;
+                        //values[i] = (values[i] - min) / (max - min) * 100;
                     }
 
                     console.log(min, max);
