@@ -67,8 +67,6 @@ logger.err = function(error)
 
 logger.load = function(pluginName, group)
 {
-    console.log('Hallo Welt!');
-
     return new Promise(async function(resolve) {
         
         var logPath = await getLogPath(pluginName);
@@ -81,28 +79,14 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
-                    console.log('Group', group);
-
-                    if(group == null)
+                    for(var i = 1; i < Object.keys(obj).length; i++)
                     {
-                        for(var i = 1; i < Object.keys(obj).length; i++)
+                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
                         {
-                            if(obj[Object.keys(obj)[i]].logs)
+                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
                             {
-                                for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
-                                {
-                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
-                                }
+                                logs.push(obj[Object.keys(obj)[i]].logs[j]);
                             }
-                        }
-                    }
-                    else
-                    {
-                        for(var j = 0; j < obj[group].logs.length; j++)
-                        {
-                            logs.push(obj[group].logs[j]);
-
-                            console.log(JSON.stringify(obj[group].logs[j]));
                         }
                     }
 
