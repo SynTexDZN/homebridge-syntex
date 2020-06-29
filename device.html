@@ -198,7 +198,7 @@
                         var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                         var infoMin = document.createElement('div');
 
-                        infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px');
+                        infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
                         infoMin.innerHTML = 'Min // ' + min;
 
@@ -206,7 +206,7 @@
 
                         var infoMax = document.createElement('div');
 
-                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
+                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
                         infoMax.innerHTML = 'Max \\\\ ' + max;
 
@@ -214,9 +214,9 @@
 
                         var infoType = document.createElement('div');
 
-                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right');
+                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
-                        infoType.innerHTML = Object.keys(values)[i] + ' // Type';
+                        infoType.innerHTML = Object.keys(values)[i];
 
                         canvas.parentElement.appendChild(infoType);
 
