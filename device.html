@@ -91,7 +91,7 @@
                         ctx.fill();
                     }
 
-                    function drawGrid(canvas, data, min, max)
+                    function drawGrid(canvas, data, min, max, unterteilungen)
                     {
                         var text = canvas.getContext('2d');
                         var ctx = canvas.getContext('2d');
@@ -99,20 +99,18 @@
                         ctx.lineCap = 'butt';
                         ctx.lineWidth = 1.5;
 
-                        for(var i = 0; i < 10 + 1; i++) // TODO Auto Adjust
+                        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
                         {
                             ctx.strokeStyle = 'rgb(25, 25, 35)';
 
-                            if(i == data.length || i == 0)
+                            if(i == unterteilungen || i == 0)
                             {
                                 ctx.strokeStyle = 'rgb(50, 50, 60)';
                             }
 
-                            console.log(i, ctx.strokeStyle, (height - padding * 2 / data.length) * i);
-
                             ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / data.length) * i - 2);
-                            ctx.lineTo(width + padding * 2, padding + (height / data.length) * i - 2)
+                            ctx.moveTo(0, padding + (height / unterteilungen) * i - 2);
+                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i - 2)
                             ctx.stroke();
                         }
 
@@ -188,7 +186,7 @@
 
                     infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 30) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
 
-                    infoMax.innerHTML = 'Max \\\ ' + max;
+                    infoMax.innerHTML = 'Max \\\\ ' + max;
 
                     canvas.parentElement.appendChild(infoMax);
 
@@ -196,7 +194,7 @@
                     canvas.height = height + padding * 2;
                     canvas.style.background = 'rgb(20, 20, 30)';
 
-                    window.onload = drawGrid(canvas, values, min, max)
+                    window.onload = drawGrid(canvas, values, min, max, 10)
                     window.onload = drawFill(canvas, values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                     window.onload = drawGraph(canvas, values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
     
