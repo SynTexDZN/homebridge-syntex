@@ -79,6 +79,8 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
+                    console.log('Group', group);
+
                     if(group == null)
                     {
                         for(var i = 1; i < Object.keys(obj).length; i++)
@@ -94,8 +96,6 @@ logger.load = function(pluginName, group)
                     }
                     else
                     {
-                        console.log('Group', group);
-
                         for(var j = 0; j < obj[group].logs.length; j++)
                         {
                             logs.push(obj[group].logs[j]);
