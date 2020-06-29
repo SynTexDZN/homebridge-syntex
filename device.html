@@ -16,7 +16,7 @@
                 {
                     ctx.fillStyle = clr1;
                     ctx.beginPath();
-                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3, 10, 0, 360);
+                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * (height - padding) / 100 - padding - 3, 10, 0, 360);
                     ctx.fill();
                     ctx.closePath();
                     ctx.fillStyle = clr2;
