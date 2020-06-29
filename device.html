@@ -153,11 +153,11 @@
                         {
                             console.log(activity[i]);
 
-                            var value = activity[i].m.split('zu [')[1].split(']')[0];
+                            var value = activity[i].m.split('[')[2].split(']')[0];
 
                             value = value == 'true' ? 50 : value == 'false' ? 0 : value;
 
-                            values.push();
+                            values.push(value);
                         }
                     }
     
