@@ -16,19 +16,19 @@
                 {
                     ctx.fillStyle = clr1;
                     ctx.beginPath();
-                    ctx.arc((i - 1) * width / (data.length - 1) + padding, height - data[i - 1] * height / 100 - padding - 3, 10, 0, 360);
+                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3, 10, 0, 360);
                     ctx.fill();
                     ctx.closePath();
                     ctx.fillStyle = clr2;
                     ctx.beginPath();
-                    ctx.arc((i - 1) * width / (data.length - 1) + padding, height - data[i - 1] * height / 100 - padding - 3, 5, 0, 360);
+                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3, 5, 0, 360);
                     ctx.fill();
                     ctx.closePath();
                 }
 
                 ctx.beginPath();
-                ctx.moveTo((i - 1) * width / (data.length - 1) + padding, height - data[i - 1] * height / 100 - padding - 3);
-                ctx.lineTo(i * width / (data.length - 1) + padding, height - data[i] * height / 100 - padding - 3);
+                ctx.moveTo((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3);
+                ctx.lineTo(i * width / (data.length - 1), height - data[i] * height / 100 - padding - 3);
                 ctx.stroke();
             }
 
@@ -36,12 +36,12 @@
             {
                 ctx.fillStyle = clr1;
                 ctx.beginPath();
-                ctx.arc((i - 1) * width / (data.length - 1) + padding, height - data[data.length - 1] * height / 100 - padding - 3, 10, 0, 360);
+                ctx.arc((i - 1) * width / (data.length - 1), height - data[data.length - 1] * height / 100 - padding - 3, 10, 0, 360);
                 ctx.fill();
                 ctx.closePath();
                 ctx.fillStyle = clr2;
                 ctx.beginPath();
-                ctx.arc((i - 1) * width / (data.length - 1) + padding, height - data[data.length - 1] * height / 100 - padding - 3, 5, 0, 360);
+                ctx.arc((i - 1) * width / (data.length - 1), height - data[data.length - 1] * height / 100 - padding - 3, 5, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
@@ -178,7 +178,7 @@
                     */
 
                     var canvas = document.getElementsByClassName('canvas')[0];
-                    var padding = 0;
+                    var padding = 10;
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                     
                     //var multiplicator = 100 / max * height / 100;
