@@ -139,13 +139,9 @@
                     {
                         if(activity[i].l = 'Update' && !activity[i].m.includes('Rain') && !activity[i].m.includes('Humidity'))
                         {
-                            console.log(activity[i]);
-
                             var value = activity[i].m.split('[')[2].split(']')[0];
 
                             value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-                            console.log(value);
 
                             if(value > max)
                             {
@@ -164,9 +160,11 @@
                     for(const i in values)
                     {
                         values[i] = (values[i] - min * 1.2) / (max - min) * 100;
+
+                        console.log(values[i]);
                     }
 
-                    console.log(max);
+                    console.log(min, max);
 
                     /*
                     var width = canvas.parentElement.offsetWidth, height = canvas.parentElement.offsetHeight;
