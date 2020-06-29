@@ -190,6 +190,11 @@
                         frame.appendChild(canvas);
                         document.getElementById('activity').appendChild(frame);
 
+                        if(i != Object.keys(values).length - 1)
+                        {
+                            frame.style.marginBottom = '20px';
+                        }
+
                         var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                         var infoMin = document.createElement('div');
 
