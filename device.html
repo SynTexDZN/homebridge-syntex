@@ -10,7 +10,11 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
                     <canvas class="canvas" style="border-radius: 50px"></canvas>
+                </div>
+                <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
                     <canvas class="canvas" style="border-radius: 50px"></canvas>
+                </div>
+                <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
                     <canvas class="canvas" style="border-radius: 50px"></canvas>
                 </div>
                 <script defer>
@@ -206,9 +210,9 @@
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
-                        window.onload = drawGrid(canvas, values, min, max, 10)
-                        window.onload = drawFill(canvas, values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                        window.onload = drawGraph(canvas, values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]], min, max, 10)
+                        window.onload = drawFill(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                        window.onload = drawGraph(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
 
                 </script>
