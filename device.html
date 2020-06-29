@@ -95,8 +95,11 @@
                     {
                         var text = canvas.getContext('2d');
 
+                        var font = loadFont("/style/Rubik-Medium.ttf");
+
                         text.fillStyle = 'rgb(100, 100, 110)';
-                        text.font = "16px Rubik";
+                        text.textFont(font);
+                        text.textSize(161);
                         text.fillText(min, 20, 30);
                         text.fillText(max, 20, height + padding * 2 - 20);
 
