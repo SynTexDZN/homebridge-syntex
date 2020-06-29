@@ -114,7 +114,7 @@
                             ctx.stroke();
                         }
 
-                        if(data.length < 100)
+                        if(data.length < 75)
                         {
                             for(var i = 0; i < data.length; i++)
                             {
@@ -128,8 +128,8 @@
                                 */
 
                                 ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding - 2);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding - 2);
                                 ctx.stroke();
                             }
                         }
