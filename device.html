@@ -169,26 +169,26 @@
 
                     console.log(min, max);
 
+                    var padding = 50;
+                    var canvas = document.getElementsByClassName('canvas')[0];
+                    var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
+
                     var infoMin = document.createElement('div');
 
                     infoMin.setAttribute('style', 'position: relative; top: 20px; left: 30px; margin-top: -100%; color: rgb(220, 220, 230)');
 
                     infoMin.innerHTML = min;
 
-                    document.getElementsByClassName('canvas')[0].parentElement.appendChild(infoMin);
+                    canvas.parentElement.appendChild(infoMin);
 
                     var infoMax = document.createElement('div');
 
-                    infoMax.setAttribute('style', 'position: relative; top: ' + height + padding * 2 - 20 + 'px; left: 30px; margin-top: -100%; color: rgb(220, 220, 230)');
+                    infoMax.setAttribute('style', 'position: relative; top: ' + (height + padding * 2 - 20) + 'px; left: 30px; margin-top: -100%; color: rgb(220, 220, 230)');
 
                     infoMax.innerHTML = max;
 
-                    document.getElementsByClassName('canvas')[0].parentElement.appendChild(infoMax);
+                    canvas.parentElement.appendChild(infoMax);
 
-                    var padding = 50;
-                    var canvas = document.getElementsByClassName('canvas')[0];
-                    var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
-    
                     canvas.width = width + padding * 2;
                     canvas.height = height + padding * 2;
                     canvas.style.background = 'rgb(20, 20, 30)';
