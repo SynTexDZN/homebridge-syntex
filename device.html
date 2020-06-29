@@ -16,19 +16,19 @@
                 {
                     ctx.fillStyle = clr1;
                     ctx.beginPath();
-                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * (height - padding) / 100 - padding - 3, 10, 0, 360);
+                    ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 10, 0, 360);
                     ctx.fill();
                     ctx.closePath();
                     ctx.fillStyle = clr2;
                     ctx.beginPath();
-                    ctx.arc((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3, 5, 0, 360);
+                    ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 5, 0, 360);
                     ctx.fill();
                     ctx.closePath();
                 }
 
                 ctx.beginPath();
-                ctx.moveTo((i - 1) * width / (data.length - 1), height - data[i - 1] * height / 100 - padding - 3);
-                ctx.lineTo(i * width / (data.length - 1), height - data[i] * height / 100 - padding - 3);
+                ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
                 ctx.stroke();
             }
 
@@ -36,12 +36,12 @@
             {
                 ctx.fillStyle = clr1;
                 ctx.beginPath();
-                ctx.arc((i - 1) * width / (data.length - 1), height - data[data.length - 1] * height / 100 - padding - 3, 10, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 10, 0, 360);
                 ctx.fill();
                 ctx.closePath();
                 ctx.fillStyle = clr2;
                 ctx.beginPath();
-                ctx.arc((i - 1) * width / (data.length - 1), height - data[data.length - 1] * height / 100 - padding - 3, 5, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 5, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
@@ -58,22 +58,23 @@
             ctx.fillStyle = grd;
 
             ctx.beginPath();
-            ctx.moveTo(padding, height - padding);
-            ctx.lineTo(padding, height - data[0] * multiplicator - padding - 3);
+            ctx.moveTo(0, height + padding * 2);
+            ctx.lineTo(0, height - data[0] * height / 100 - 2 + padding);
 
             for(var i = 1; i < data.length; i++)
             {
                 if(smoothing == 0)
                 {
-                    ctx.lineTo(i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 3);
+                    ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
                 }
                 else
                 {
-                    ctx.bezierCurveTo(i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - 3, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 3);
+                    // TODO
+                    ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - 2, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 2);
                 }
             }
 
-            ctx.lineTo((data.length - 1) * width / (data.length - 1) + padding, height - padding);
+            ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding * 2);
 
             ctx.closePath();
             ctx.fill();
@@ -86,18 +87,20 @@
             ctx.lineCap = 'butt';
             ctx.lineWidth = 1.5;
 
-            for(var i = 0; i < height / 5 + 1; i++)
+            for(var i = 0; i < unterteilungen + 1; i++)
             {
                 ctx.strokeStyle = 'rgb(25, 25, 35)';
 
                 if(i == unterteilungen || i == 0)
                 {
-                    ctx.strokeStyle = outline;
+                    ctx.strokeStyle = 'rgb(50, 50, 60)';
                 }
 
+                console.log(i, ctx.strokeStyle, (height - padding * 2 / unterteilungen) * i);
+
                 ctx.beginPath();
-                ctx.moveTo(padding, height - height / unterteilungen * i - padding);
-                ctx.lineTo((data.length - 1) * width / (data.length - 1) + padding, height - height / unterteilungen * i - padding);
+                ctx.moveTo(0, padding + (height / unterteilungen) * i - 2);
+                ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i - 2)
                 ctx.stroke();
             }
 
@@ -105,14 +108,16 @@
             {
                 ctx.strokeStyle = 'rgb(40, 40, 50)';
 
+                /*
                 if(i == data.length - 1 || i == 0)
                 {
                     ctx.strokeStyle = outline;
                 }
+                */
 
                 ctx.beginPath();
-                ctx.moveTo(i * width / (data.length - 1) + padding, 0 - padding);
-                ctx.lineTo(i * width / (data.length - 1) + padding, height - padding);
+                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), 0);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding * 2);
                 ctx.stroke();
             }
         }
@@ -134,7 +139,7 @@
                     var activity = JSON.parse('<%activity%>');
                     var values = [];
                     var min = 100, max = 0;
-
+                    
                     for(var i = 0; i < activity.length; i++)
                     {
                         if(activity[i].l == 'Update' && !activity[i].m.includes('Rain') && !activity[i].m.includes('Humidity'))
@@ -166,31 +171,16 @@
 
                     console.log(min, max);
 
-                    /*
-                    var width = canvas.parentElement.offsetWidth, height = canvas.parentElement.offsetHeight;
-                    var padding = 0;
-                    var max = <?php echo $max + $max / 2; ?>;
-                    var multiplicator = 100 / max * height / 100;
-                    var unterteilungen = 3;
-
-                    canvas.width = width + padding * 2;
-                    canvas.height = height + padding * 2;
-                    */
-
+                    var padding = 20, unterteilungen = 10;
                     var canvas = document.getElementsByClassName('canvas')[0];
-                    var padding = 10;
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
-                    
-                    //var multiplicator = 100 / max * height / 100;
-                    var multiplicator = 1;
-                    var unterteilungen = 10;
     
                     canvas.width = width + padding * 2;
                     canvas.height = height + padding * 2;
                     canvas.style.background = 'rgb(20, 20, 30)';
     
-                    window.onload = drawGrid(canvas, values, 'hsla(205, 98%, 60%, 0)');
-                    window.onload = drawFill(canvas, values, "hsla(205, 98%, 60%, .3", "hsla(205, 98%, 60%, 0", 0);
+                    window.onload = drawGrid(canvas, values, '');
+                    window.onload = drawFill(canvas, values, 'hsla(205, 98%, 60%, .3', 'hsla(205, 98%, 60%, 0', 0);
                     window.onload = drawGraph(canvas, values, 'hsla(205, 98%, 60%, 0.2)', 'hsla(205, 98%, 60%, 1)', false);
     
                 </script>
