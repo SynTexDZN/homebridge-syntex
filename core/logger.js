@@ -67,6 +67,8 @@ logger.err = function(error)
 
 logger.load = function(pluginName, group)
 {
+    console.log('Hallo Welt!');
+
     return new Promise(async function(resolve) {
         
         var logPath = await getLogPath(pluginName);
