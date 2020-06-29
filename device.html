@@ -131,6 +131,7 @@
                 </div>
                 <script defer>
     
+                    var activity = JSON.parse('<%activity%>');
                     var canvas = document.getElementsByClassName('canvas')[0];
                     var padding = 0;
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = 300;
@@ -144,11 +145,19 @@
     
                     canvas.parentElement.style.height = height + 'px';
     
-                    var test = [4, 10, 5, 15, 20];
+                    var values = [];
+
+                    for(var i = 0; i < activity.length; i++)
+                    {
+                        if(activity.l = 'Update')
+                        {
+                            values.push(activity.m.split('zu [')[1].split(']')[0]);
+                        }
+                    }
     
-                    window.onload = drawGrid(canvas, test, 'hsla(205, 98%, 60%, 0)');
-                    window.onload = drawFill(canvas, test, "hsla(205, 98%, 60%, .3", "hsla(205, 98%, 60%, 0", 0);
-                    window.onload = drawGraph(canvas, test, 'hsla(205, 98%, 60%, 0.2)', 'hsla(205, 98%, 60%, 1)', false);
+                    window.onload = drawGrid(canvas, values, 'hsla(205, 98%, 60%, 0)');
+                    window.onload = drawFill(canvas, values, "hsla(205, 98%, 60%, .3", "hsla(205, 98%, 60%, 0", 0);
+                    window.onload = drawGraph(canvas, values, 'hsla(205, 98%, 60%, 0.2)', 'hsla(205, 98%, 60%, 1)', false);
     
                 </script>
             </div>
