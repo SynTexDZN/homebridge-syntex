@@ -79,14 +79,26 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
-                    for(var i = 1; i < Object.keys(obj).length; i++)
+                    if(group == null)
                     {
-                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
+                        for(var i = 1; i < Object.keys(obj).length; i++)
                         {
-                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
+                            if(obj[Object.keys(obj)[i]].logs)
                             {
-                                logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
+                                {
+                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                }
                             }
+                        }
+                    }
+                    else
+                    {
+                        for(var j = 0; j < obj[group].logs.length; j++)
+                        {
+                            logs.push(obj[group].logs[j]);
+
+                            console.log(JSON.stringify(obj[group].logs[j]));
                         }
                     }
 
