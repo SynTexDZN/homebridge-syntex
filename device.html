@@ -179,16 +179,16 @@
 
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
-                        var container = document.createElement('div');
+                        var frame = document.createElement('div');
                         var canvas = document.createElement('canvas');
 
-                        container.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
+                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
 
-                        container.appendChild(canvas);
-                        document.getElementById('events').appendChild(container);
+                        frame.appendChild(canvas);
+                        document.getElementById('events').appendChild(frame);
 
                         var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
                         var infoMin = document.createElement('div');
