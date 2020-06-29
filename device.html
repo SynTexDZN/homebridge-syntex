@@ -131,6 +131,7 @@
                 </div>
                 <script defer>
     
+                    var activity = JSON.parse('<%activity%>');
                     var values = [];
                     var max = 0;
 
@@ -153,7 +154,6 @@
                         }
                     }
 
-                    var activity = JSON.parse('<%activity%>');
                     var canvas = document.getElementsByClassName('canvas')[0];
                     var padding = 0;
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = 300;
