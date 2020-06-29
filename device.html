@@ -141,7 +141,7 @@
                     
                     for(var i = 0; i < activity.length; i++)
                     {
-                        if(activity[i].l == 'Update' && !activity[i].m.includes('Rain') && !activity[i].m.includes('Humidity'))
+                        if(activity[i].l == 'Update')
                         {
                             var value = activity[i].m.split('[')[2].split(']')[0];
 
@@ -159,8 +159,6 @@
 
                             var type = activity[i].m.split('[')[1].split(']')[0].split(' ')[(activity[i].m.split('[')[1].split(']')[0].match(/\s/g) || []).length];
 
-                            console.log(type);
-
                             if(!values[type])
                             {
                                 values[type] = [];
@@ -175,6 +173,7 @@
                         for(const j in values[i])
                         {
                             values[i][j] = (values[i][j] - min) / (max - min) * 100;
+                            console.log(i, j, values[i][j]);
                         }
                     }
 
