@@ -116,21 +116,24 @@
                             ctx.stroke();
                         }
 
-                        for(var i = 0; i < data.length; i++)
+                        if(data.length < 100)
                         {
-                            ctx.strokeStyle = 'rgb(40, 40, 50)';
-
-                            /*
-                            if(i == data.length - 1 || i == 0)
+                            for(var i = 0; i < data.length; i++)
                             {
-                                ctx.strokeStyle = outline;
-                            }
-                            */
+                                ctx.strokeStyle = 'rgb(40, 40, 50)';
 
-                            ctx.beginPath();
-                            ctx.moveTo(i * (width + padding * 2) / (data.length - 1), 0);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding * 2);
-                            ctx.stroke();
+                                /*
+                                if(i == data.length - 1 || i == 0)
+                                {
+                                    ctx.strokeStyle = outline;
+                                }
+                                */
+
+                                ctx.beginPath();
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), 0);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding * 2);
+                                ctx.stroke();
+                            }
                         }
                     }
     
