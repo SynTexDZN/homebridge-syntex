@@ -10,6 +10,8 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
                     <canvas class="canvas" style="border-radius: 50px"></canvas>
+                    <canvas class="canvas" style="border-radius: 50px"></canvas>
+                    <canvas class="canvas" style="border-radius: 50px"></canvas>
                 </div>
                 <script defer>
 
@@ -170,50 +172,45 @@
 
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
-                        console.log(values[Object.keys(values)[i]]);
-
                         var eMax = Math.max(...values[Object.keys(values)[i]]), eMin = Math.min(...values[Object.keys(values)[i]]);
-
-                        console.log(eMin, eMax);
 
                         for(const j in values[Object.keys(values)[i]])
                         {
                             values[Object.keys(values)[i]][j] = (values[Object.keys(values)[i]][j] - eMin) / (eMax - eMin) * 100;
                         }
                     }
-
-                    console.log(Object.keys(values).length, Object.keys(values));
-
-                    console.log(min, max);
-
+                    
                     var padding = 50;
-                    var canvas = document.getElementsByClassName('canvas')[0];
                     var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
 
-                    var infoMin = document.createElement('div');
+                    for(var i = 0; i < Object.keys(values).length; i++)
+                    {
+                        var canvas = document.getElementsByClassName('canvas')[i];
+                        var infoMin = document.createElement('div');
 
-                    infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px');
+                        infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px');
 
-                    infoMin.innerHTML = 'Min // ' + min;
+                        infoMin.innerHTML = 'Min // ' + min;
 
-                    canvas.parentElement.appendChild(infoMin);
+                        canvas.parentElement.appendChild(infoMin);
 
-                    var infoMax = document.createElement('div');
+                        var infoMax = document.createElement('div');
 
-                    infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
+                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
 
-                    infoMax.innerHTML = 'Max \\\\ ' + max;
+                        infoMax.innerHTML = 'Max \\\\ ' + max;
 
-                    canvas.parentElement.appendChild(infoMax);
+                        canvas.parentElement.appendChild(infoMax);
 
-                    canvas.width = width + padding * 2;
-                    canvas.height = height + padding * 2;
-                    canvas.style.background = 'rgb(20, 20, 30)';
+                        canvas.width = width + padding * 2;
+                        canvas.height = height + padding * 2;
+                        canvas.style.background = 'rgb(20, 20, 30)';
 
-                    window.onload = drawGrid(canvas, values, min, max, 10)
-                    window.onload = drawFill(canvas, values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                    window.onload = drawGraph(canvas, values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
-    
+                        window.onload = drawGrid(canvas, values, min, max, 10)
+                        window.onload = drawFill(canvas, values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                        window.onload = drawGraph(canvas, values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                    }
+
                 </script>
             </div>
             <div class="main">
