@@ -94,6 +94,8 @@ logger.load = function(pluginName, group)
                     }
                     else
                     {
+                        console.log('Group', group);
+
                         for(var j = 0; j < obj[group].logs.length; j++)
                         {
                             logs.push(obj[group].logs[j]);
