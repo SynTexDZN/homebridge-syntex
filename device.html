@@ -1,135 +1,5 @@
 <html>
     <title class="loading-loop">Laden ..</title>
-    <script defer>
-    
-        function drawGraph(canvas, data, clr1, clr2, points)
-        {
-            var ctx = canvas.getContext('2d');
-
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = clr2;
-
-            for(var i = 1; i < data.length; i++)
-            {
-                if(points)
-                {
-                    ctx.fillStyle = clr1;
-                    ctx.beginPath();
-                    ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 10, 0, 360);
-                    ctx.fill();
-                    ctx.closePath();
-                    ctx.fillStyle = clr2;
-                    ctx.beginPath();
-                    ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 5, 0, 360);
-                    ctx.fill();
-                    ctx.closePath();
-                }
-
-                ctx.beginPath();
-                ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding);
-                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
-                ctx.stroke();
-            }
-
-            if(points)
-            {
-                ctx.fillStyle = clr1;
-                ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 10, 0, 360);
-                ctx.fill();
-                ctx.closePath();
-                ctx.fillStyle = clr2;
-                ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 5, 0, 360);
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
-
-        function drawFill(canvas, data, clr1, clr2, smoothing)
-        {
-            var ctx = canvas.getContext('2d');
-
-            var grd = ctx.createLinearGradient(0, 0, 0, height + 100);
-            grd.addColorStop(0, clr1);
-            grd.addColorStop(1, clr2);
-
-            ctx.fillStyle = grd;
-
-            ctx.beginPath();
-            ctx.moveTo(0, height + padding * 2);
-            ctx.lineTo(0, height - data[0] * height / 100 - 2 + padding);
-
-            for(var i = 1; i < data.length; i++)
-            {
-                if(smoothing == 0)
-                {
-                    ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
-                }
-                else
-                {
-                    // TODO
-                    ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - 2, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 2);
-                }
-            }
-
-            ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding * 2);
-
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function drawGrid(canvas, data, min, max)
-        {
-            var text = canvas.getContext('2d');
-
-            text.fillStyle = 'rgb(100, 100, 110)';
-            text.font = "16px Rubik";
-            text.fillText(min, 20, 30);
-            text.fillText(max, 20, height + padding * 2 - 20);
-
-            var ctx = canvas.getContext('2d');
-
-            ctx.lineCap = 'butt';
-            ctx.lineWidth = 1.5;
-
-            for(var i = 0; i < data.length + 1; i++)
-            {
-                ctx.strokeStyle = 'rgb(25, 25, 35)';
-
-                if(i == data.length || i == 0)
-                {
-                    ctx.strokeStyle = 'rgb(50, 50, 60)';
-                }
-
-                console.log(i, ctx.strokeStyle, (height - padding * 2 / data.length) * i);
-
-                ctx.beginPath();
-                ctx.moveTo(0, padding + (height / data.length) * i - 2);
-                ctx.lineTo(width + padding * 2, padding + (height / data.length) * i - 2)
-                ctx.stroke();
-            }
-
-            for(var i = 0; i < data.length; i++)
-            {
-                ctx.strokeStyle = 'rgb(40, 40, 50)';
-
-                /*
-                if(i == data.length - 1 || i == 0)
-                {
-                    ctx.strokeStyle = outline;
-                }
-                */
-
-                ctx.beginPath();
-                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), 0);
-                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding * 2);
-                ctx.stroke();
-            }
-        }
-        
-    </script>
     <body>
         <div id="infos">
             <div class="control-container">
@@ -139,10 +9,137 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
-                    <span style="font-family: 'Rubik';">&nbsp</span>
+                    <span style="font-family: Rubik;">&nbsp</span>
                     <canvas class="canvas" style="border-radius: 50px;"></canvas>
                 </div>
                 <script defer>
+
+                    function drawGraph(canvas, data, clr1, clr2, points)
+                    {
+                        var ctx = canvas.getContext('2d');
+
+                        ctx.lineWidth = 2;
+                        ctx.lineCap = 'round';
+                        ctx.strokeStyle = clr2;
+
+                        for(var i = 1; i < data.length; i++)
+                        {
+                            if(points)
+                            {
+                                ctx.fillStyle = clr1;
+                                ctx.beginPath();
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 10, 0, 360);
+                                ctx.fill();
+                                ctx.closePath();
+                                ctx.fillStyle = clr2;
+                                ctx.beginPath();
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 5, 0, 360);
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+
+                            ctx.beginPath();
+                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
+                            ctx.stroke();
+                        }
+
+                        if(points)
+                        {
+                            ctx.fillStyle = clr1;
+                            ctx.beginPath();
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 10, 0, 360);
+                            ctx.fill();
+                            ctx.closePath();
+                            ctx.fillStyle = clr2;
+                            ctx.beginPath();
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 5, 0, 360);
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+
+                    function drawFill(canvas, data, clr1, clr2, smoothing)
+                    {
+                        var ctx = canvas.getContext('2d');
+
+                        var grd = ctx.createLinearGradient(0, 0, 0, height + 100);
+                        grd.addColorStop(0, clr1);
+                        grd.addColorStop(1, clr2);
+
+                        ctx.fillStyle = grd;
+
+                        ctx.beginPath();
+                        ctx.moveTo(0, height + padding * 2);
+                        ctx.lineTo(0, height - data[0] * height / 100 - 2 + padding);
+
+                        for(var i = 1; i < data.length; i++)
+                        {
+                            if(smoothing == 0)
+                            {
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
+                            }
+                            else
+                            {
+                                // TODO
+                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - 2, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 2);
+                            }
+                        }
+
+                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding * 2);
+
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+
+                    function drawGrid(canvas, data, min, max)
+                    {
+                        var text = canvas.getContext('2d');
+
+                        text.fillStyle = 'rgb(100, 100, 110)';
+                        text.font = "16px Rubik";
+                        text.fillText(min, 20, 30);
+                        text.fillText(max, 20, height + padding * 2 - 20);
+
+                        var ctx = canvas.getContext('2d');
+
+                        ctx.lineCap = 'butt';
+                        ctx.lineWidth = 1.5;
+
+                        for(var i = 0; i < data.length + 1; i++)
+                        {
+                            ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+                            if(i == data.length || i == 0)
+                            {
+                                ctx.strokeStyle = 'rgb(50, 50, 60)';
+                            }
+
+                            console.log(i, ctx.strokeStyle, (height - padding * 2 / data.length) * i);
+
+                            ctx.beginPath();
+                            ctx.moveTo(0, padding + (height / data.length) * i - 2);
+                            ctx.lineTo(width + padding * 2, padding + (height / data.length) * i - 2)
+                            ctx.stroke();
+                        }
+
+                        for(var i = 0; i < data.length; i++)
+                        {
+                            ctx.strokeStyle = 'rgb(40, 40, 50)';
+
+                            /*
+                            if(i == data.length - 1 || i == 0)
+                            {
+                                ctx.strokeStyle = outline;
+                            }
+                            */
+
+                            ctx.beginPath();
+                            ctx.moveTo(i * (width + padding * 2) / (data.length - 1), 0);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding * 2);
+                            ctx.stroke();
+                        }
+                    }
     
                     //var activity = JSON.parse('<%activity%>');
                     var values = [50, 30, 0, 10, 50, 80, 100, 70, 50];
