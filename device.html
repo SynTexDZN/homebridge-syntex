@@ -163,7 +163,12 @@
 
                             console.log(type);
 
-                            //values.push(value);
+                            if(!values[type])
+                            {
+                                values[type] = [];
+                            }
+
+                            values[type].push(value);
                         }
                     }
 
