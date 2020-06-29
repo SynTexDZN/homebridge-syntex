@@ -136,7 +136,7 @@
                     }
     
                     var activity = JSON.parse('<%activity%>');
-                    var values = [];
+                    var values = {};
                     var min = 100, max = 0;
                     
                     for(var i = 0; i < activity.length; i++)
@@ -158,6 +158,10 @@
                             {
                                 min = value;
                             }
+
+                            var type = activity[i].m.split('[')[1].split(']')[0].split(' ')[(activity[i].m.split('[')[1].split(']').match(/\s/g) || []).length];
+
+                            console.log(type);
 
                             values.push(value);
                         }
