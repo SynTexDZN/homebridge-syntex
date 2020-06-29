@@ -214,11 +214,13 @@
 
                         var infoType = document.createElement('div');
 
-                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: ' + (width - 35) + 'px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
+                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px');
 
                         infoType.innerHTML = Object.keys(values)[i] + ' // Type';
 
                         canvas.parentElement.appendChild(infoType);
+
+                        infoType.style.left = width - infoType.offsetWidth - 35;
 
                         canvas.width = width + padding * 2;
                         canvas.height = height + padding * 2;
