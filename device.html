@@ -170,9 +170,12 @@
                         }
                     }
 
-                    for(const i in values)
+                    for(const i in Object.keys(values))
                     {
-                        //values[i] = (values[i] - min) / (max - min) * 100;
+                        for(const j in values[i])
+                        {
+                            values[i][j] = (values[i][j] - min) / (max - min) * 100;
+                        }
                     }
 
                     console.log(min, max);
