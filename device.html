@@ -172,12 +172,12 @@
 
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
-                        console.log(values[i]);
+                        console.log(values[Object.keys(values)[i]]);
 
-                        for(const j in values[i])
+                        for(const j in values[Object.keys(values)[i]])
                         {
-                            values[i][j] = (values[i][j] - min) / (max - min) * 100;
-                            console.log(i, j, values[i][j]);
+                            values[Object.keys(values)[i]][j] = (values[Object.keys(values)[i]][j] - min) / (max - min) * 100;
+                            //console.log(i, j, values[i][j]);
                         }
                     }
 
