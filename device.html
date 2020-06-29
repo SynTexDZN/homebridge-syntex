@@ -9,7 +9,6 @@
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
             <div class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
                 <div style="border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;">
-                    <span style="font-family: Rubik;">&nbsp</span>
                     <canvas class="canvas" style="border-radius: 50px;"></canvas>
                 </div>
                 <script defer>
@@ -186,12 +185,7 @@
                     canvas.style.background = 'rgb(20, 20, 30)';
 
                     document.fonts.load('10pt "Rubik"').then(drawGrid(canvas, values, min, max));
-                    /*
-                    let font = new FontFaceObserver('Rubik');
-                    font.load().then(function () {
-                        drawGrid(canvas, values, min, max);
-                    });
-                    */
+                   
                     window.onload = drawFill(canvas, values, 'hsla(205, 98%, 60%, .3', 'hsla(205, 98%, 60%, 0', 0);
                     window.onload = drawGraph(canvas, values, 'hsla(205, 98%, 60%, 0.2)', 'hsla(205, 98%, 60%, 1)', false);
     
