@@ -215,14 +215,12 @@
                         frame.appendChild(infoType);
                     }
 
-                    var orginal = values;
+                    var orginal = { ...values };
 
-                    calcValues(orginal);
+                    calcValues(values);
 
-                    function calcValues(v)
+                    function calcValues(values)
                     {
-                        /*
-                        var values = v;
                         console.log('CALC GRAPH');
 
                         for(var i = 0; i < counter; i++)
@@ -257,7 +255,6 @@
                             window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                             window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
-                        */
                     }
 
                 </script>
