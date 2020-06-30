@@ -27,6 +27,8 @@ function SynTexPlatform(log, config, api)
             if(config != null)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
+
+                logger.log('debug', config);
             }
 
             restart = false;
