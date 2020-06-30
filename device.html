@@ -19,6 +19,7 @@
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
+                    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4
 
                     function drawGraph(canvas, data, clr1, clr2, points)
                     {
@@ -205,7 +206,7 @@
 
                             console.log(frame.offsetWidth, frame.width, frame.clientWidth);
 
-                            var width = document.getElementById('activity').offsetWidth - padding * 2 - 4, height = frame.offsetHeight - padding * 2 - 4;
+                            var height = frame.offsetHeight - padding * 2 - 4;
 
                             canvas.setAttribute('class', 'canvas');
                             canvas.setAttribute('style', 'border-radius: 50px');
