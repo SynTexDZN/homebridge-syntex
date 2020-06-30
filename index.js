@@ -22,21 +22,11 @@ function SynTexPlatform(log, config, api)
 
         HTMLQuery.SETUP(logger);
 
-        DeviceManager.getPluginConfig('SynTexWebHooks').then(function(config) {
+        DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, conf.port);
 
-            if(config != null)
-            {
-                DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config.port);
-            }
+        restart = false;
 
-            restart = false;
-
-            DeviceManager.setBridgeStorage('restart', new Date());
-            
-        }.bind(this)).catch(function(e) {
-
-            logger.err(e);
-        });
+        DeviceManager.setBridgeStorage('restart', new Date());
     }
     catch(e)
     {
