@@ -232,6 +232,8 @@
 
                     function calcValues(values)
                     {
+                        console.log('CALC GRAPH');
+
                         for(var i = 0; i < counter; i++)
                         {
                             var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
@@ -621,6 +623,15 @@
 
             if(state != null)
             {
+                if(temp != null && state != temp)
+                {
+                    orginal[device.type].values.push(state);
+
+                    calcValues(orginal);
+                }
+
+                temp = state;
+                
                 if(device.type == 'light')
                 {
                     document.getElementById('status').value = Math.round(state) + ' LUX' + ' - ' + document.getElementById('status').value.split(' - ')[1];
