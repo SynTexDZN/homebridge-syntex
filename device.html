@@ -553,11 +553,11 @@
         {
             var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
 
-            if(temp[device.type] && state != temp)
+            if(temp[device.type] && state != temp[device.type])
             {
                 orginal[device.type].values.push(state);
 
-                calcValues(Object.assign({}, orginal));
+                calcValues(orginal);
             }
 
             temp[device.type] = state;
@@ -630,11 +630,11 @@
 
             if(state != null)
             {
-                if(temp[device.type] && state != temp)
+                if(temp[device.type] && state != temp[device.type])
                 {
                     orginal[device.type].values.push(state);
 
-                    calcValues(Object.assign({}, orginal));
+                    calcValues(orginal);
                 }
 
                 temp[device.type] = state;
