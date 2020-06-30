@@ -540,6 +540,35 @@ async function getAccessory(mac)
     });
 }
 
+function getPluginConfig(pluginName)
+{
+    return new Promise(resolve => {
+        
+        conf.load('config', (err, obj) => {    
+
+            try
+            {
+                if(obj && !err)
+                {                            
+                    for(const i in obj.platforms)
+                    {
+                        if(obj.platforms[i].platform === pluginName)
+                        {
+                            resolve(obj.platforms[i]);
+                        }
+                    }
+                }
+
+                resolve(null);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
+        });
+    });
+}
+
 async function setValue(mac, param, value)
 {
     return new Promise(resolve => {
@@ -761,5 +790,6 @@ module.exports = {
     checkName,
     removeDevice,
     getBridgeStorage,
-    setBridgeStorage
+    setBridgeStorage,
+    getPluginConfig
 };

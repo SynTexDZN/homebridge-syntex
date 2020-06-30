@@ -22,7 +22,7 @@ function SynTexPlatform(log, config, api)
 
         HTMLQuery.SETUP(logger);
 
-        getPluginConfig('SynTexWebHooks').then(function(config) {
+        DeviceManager.getPluginConfig('SynTexWebHooks').then(function(config) {
 
             if(config != null)
             {
@@ -264,7 +264,7 @@ SynTexPlatform.prototype = {
                                 if(urlPath == '/device' && urlParams.mac)
                                 {
                                     var device = await DeviceManager.getDevice(urlParams.mac);
-                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                                    var webhookConfig = await DeviceManager.getPluginConfig('SynTexWebHooks');
                                     var obj = {
                                         device: JSON.stringify(device),
                                         accessory: JSON.stringify(DeviceManager.getAccessory(urlParams.mac)),
@@ -339,7 +339,7 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
 
-                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                                    var webhookConfig = await DeviceManager.getPluginConfig('SynTexWebHooks');
                                     var obj = {
                                         ip: address,
                                         version: pjson.version,
@@ -439,35 +439,6 @@ SynTexPlatform.prototype = {
             logger.err(e);
         }
     }
-}
-
-async function getPluginConfig(pluginName)
-{
-    return new Promise(resolve => {
-        
-        conf.load('config', (err, obj) => {    
-
-            try
-            {
-                if(obj && !err)
-                {                            
-                    for(const i in obj.platforms)
-                    {
-                        if(obj.platforms[i].platform === pluginName)
-                        {
-                            resolve(obj.platforms[i]);
-                        }
-                    }
-                }
-
-                resolve(null);
-            }
-            catch(e)
-            {
-                logger.err(e);
-            }
-        });
-    });
 }
 
 function formatTimestamp(timestamp)

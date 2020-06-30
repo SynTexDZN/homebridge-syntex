@@ -93,7 +93,7 @@
                         ctx.fill();
                     }
 
-                    function drawGrid(canvas, data, min, max, unterteilungen)
+                    function drawGrid(canvas, data, unterteilungen)
                     {
                         var text = canvas.getContext('2d');
                         var ctx = canvas.getContext('2d');
@@ -237,7 +237,7 @@
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
-                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]].values, min, max, 10)
+                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]].values, 10)
                         window.onload = drawFill(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                         window.onload = drawGraph(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
