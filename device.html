@@ -171,71 +171,78 @@
                             }
                         }
                     }
-                    
-                    for(var i = 0; i < counter; i++)
+
+                    var orginal = values;
+
+                    calcValues(orginal);
+
+                    function calcValues(values)
                     {
-                        var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
-
-                        for(const j in values[accessory.services[i]].values)
+                        for(var i = 0; i < counter; i++)
                         {
-                            values[accessory.services[i]].values[j] = (values[accessory.services[i]].values[j] - eMin) / (eMax - eMin) * 100;
+                            var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
+
+                            for(const j in values[accessory.services[i]].values)
+                            {
+                                values[accessory.services[i]].values[j] = (values[accessory.services[i]].values[j] - eMin) / (eMax - eMin) * 100;
+                            }
                         }
-                    }
-                    
-                    for(var i = 0; i < counter; i++)
-                    {
-                        var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                        document.getElementById('activity').appendChild(frame);
-
-                        if(i != counter - 1)
+                        
+                        for(var i = 0; i < counter; i++)
                         {
-                            frame.style.marginBottom = '20px';
+                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+                            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+                            document.getElementById('activity').appendChild(frame);
+
+                            if(i != counter - 1)
+                            {
+                                frame.style.marginBottom = '20px';
+                            }
+
+                            console.log(frame.offsetWidth, frame.width, frame.clientWidth);
+
+                            var width = document.getElementById('activity').offsetWidth - padding * 2 - 4, height = frame.offsetHeight - padding * 2 - 4;
+
+                            canvas.setAttribute('class', 'canvas');
+                            canvas.setAttribute('style', 'border-radius: 50px');
+                            frame.appendChild(canvas);
+
+                            var infoMin = document.createElement('div');
+
+                            infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+
+                            infoMin.innerHTML = 'Min // ' + values[accessory.services[i]].min;
+
+                            canvas.parentElement.appendChild(infoMin);
+
+                            var infoMax = document.createElement('div');
+
+                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+
+                            infoMax.innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
+
+                            canvas.parentElement.appendChild(infoMax);
+
+                            var infoType = document.createElement('div');
+
+                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                            var formattedType = counter > 1 ? accessory.services[i] : accessory.services;
+
+                            infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
+
+                            canvas.parentElement.appendChild(infoType);
+
+                            canvas.width = width + padding * 2;
+                            canvas.height = height + padding * 2;
+                            canvas.style.background = 'rgb(20, 20, 30)';
+
+                            window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10)
+                            window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                            window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
-
-                        console.log(frame.offsetWidth, frame.width, frame.clientWidth);
-
-                        var width = document.getElementById('activity').offsetWidth - padding * 2 - 4, height = frame.offsetHeight - padding * 2 - 4;
-
-                        canvas.setAttribute('class', 'canvas');
-                        canvas.setAttribute('style', 'border-radius: 50px');
-                        frame.appendChild(canvas);
-
-                        var infoMin = document.createElement('div');
-
-                        infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-
-                        infoMin.innerHTML = 'Min // ' + values[accessory.services[i]].min;
-
-                        canvas.parentElement.appendChild(infoMin);
-
-                        var infoMax = document.createElement('div');
-
-                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-
-                        infoMax.innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
-
-                        canvas.parentElement.appendChild(infoMax);
-
-                        var infoType = document.createElement('div');
-
-                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                        var formattedType = counter > 1 ? accessory.services[i] : accessory.services;
-
-                        infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
-
-                        canvas.parentElement.appendChild(infoType);
-
-                        canvas.width = width + padding * 2;
-                        canvas.height = height + padding * 2;
-                        canvas.style.background = 'rgb(20, 20, 30)';
-
-                        window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10)
-                        window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                        window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
 
                 </script>
@@ -518,12 +525,21 @@
         document.getElementById('settings').setAttribute('style', 'display: none');
         document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
+
+    var temp = null;
     
     async function fetchState()
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch' || device.type == 'rgb' || device.type == 'rgbw')
         {
             var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
+
+            if(temp != null && state != temp)
+            {
+                orginal[device.type].values.push(state);
+
+                calcValues(orginal);
+            }
 
             if(state != null && state != 'Error')
             {
