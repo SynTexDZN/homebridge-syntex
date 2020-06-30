@@ -194,6 +194,11 @@
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
+                        
+                        canvas.width = width + padding * 2;
+                        canvas.height = height + padding * 2;
+                        canvas.style.background = 'rgb(20, 20, 30)';
+
                         frame.appendChild(canvas);
                     }
 
@@ -240,10 +245,6 @@
                             infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
 
                             canvas.parentElement.appendChild(infoType);
-
-                            canvas.width = width + padding * 2;
-                            canvas.height = height + padding * 2;
-                            canvas.style.background = 'rgb(20, 20, 30)';
 
                             window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10)
                             window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
