@@ -149,36 +149,19 @@
                     {
                         for(var j = activity.length - 1; j >= 0; j--)
                         {
-                            console.log(j);
-
                             if(activity[j].l == 'Update' && activity[j].m.toLowerCase().includes(accessory.services[i]))
                             {
                                 var value = activity[j].m.split('[')[2].split(']')[0];
-
-                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
                                 if(!values[accessory.services[i]])
                                 {
                                     values[accessory.services[i]] = { min : 100000, max : 0, values : [] };
                                 }
 
-                                if(parseInt(value) > parseInt(values[accessory.services[i]].max))
-                                {
-                                    values[accessory.services[i]].max = value;
-                                }
-
-                                if(parseInt(value) < parseInt(values[accessory.services[i]].min))
-                                {
-                                    values[accessory.services[i]].min = value;
-                                }
-
                                 values[accessory.services[i]].values.push(value);
                             }
                         }
-                    }
 
-                    for(var i = 0; i < counter; i++)
-                    {
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                         frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
@@ -242,12 +225,23 @@
 
                             for(const j in values[accessory.services[i]].values)
                             {
-                                values[accessory.services[i]].values[j] = (values[accessory.services[i]].values[j] - eMin) / (eMax - eMin) * 100;
+                                var value = values[accessory.services[i]].values[j];
+
+                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                                if(parseInt(value) > parseInt(values[accessory.services[i]].max))
+                                {
+                                    values[accessory.services[i]].max = value;
+                                }
+
+                                if(parseInt(value) < parseInt(values[accessory.services[i]].min))
+                                {
+                                    values[accessory.services[i]].min = value;
+                                }
+
+                                values[accessory.services[i]].values[j] = (value - eMin) / (eMax - eMin) * 100;
                             }
-                        }
-                        
-                        for(var i = 0; i < counter; i++)
-                        {
+
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             
                             canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + values[accessory.services[i]].min;
