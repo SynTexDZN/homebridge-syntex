@@ -658,6 +658,15 @@
 
                 if(rainState != null)
                 {
+                    if(temp['rain'] && rainState != temp['rain'])
+                    {
+                        orginal['rain'].values.push(rainState);
+
+                        calcValues(orginal);
+                    }
+
+                    temp['rain'] = rainState;
+
                     if(rainState == 'false')
                     {
                         document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - TROCKEN';
@@ -678,6 +687,15 @@
 
                 if(humidityState != null)
                 {
+                    if(temp['humidity'] && humidityState != temp['humidity'])
+                    {
+                        orginal['humidity'].values.push(humidityState);
+
+                        calcValues(orginal);
+                    }
+
+                    temp['humidity'] = humidityState;
+
                     if(humidityState > 40 && humidityState < 70)
                     {
                         document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
