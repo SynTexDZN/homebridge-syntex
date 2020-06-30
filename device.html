@@ -29,19 +29,19 @@
                             {
                                 ctx.fillStyle = clr1;
                                 ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 10, 0, 360);
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 10, 0, 360);
                                 ctx.fill();
                                 ctx.closePath();
                                 ctx.fillStyle = clr2;
                                 ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 5, 0, 360);
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding, 5, 0, 360);
                                 ctx.fill();
                                 ctx.closePath();
                             }
 
                             ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
+                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - 2 + padding);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
                             ctx.stroke();
                         }
 
@@ -49,12 +49,12 @@
                         {
                             ctx.fillStyle = clr1;
                             ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 10, 0, 360);
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 10, 0, 360);
                             ctx.fill();
                             ctx.closePath();
                             ctx.fillStyle = clr2;
                             ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 5, 0, 360);
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - 2 + padding, 5, 0, 360);
                             ctx.fill();
                             ctx.closePath();
                         }
@@ -72,18 +72,18 @@
 
                         ctx.beginPath();
                         ctx.moveTo(0, height + padding * 2);
-                        ctx.lineTo(0, height - data[0] * height / 100 + padding);
+                        ctx.lineTo(0, height - data[0] * height / 100 - 2 + padding);
 
                         for(var i = 1; i < data.length; i++)
                         {
                             if(smoothing == 0)
                             {
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - 2 + padding);
                             }
                             else
                             {
                                 // TODO
-                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding);
+                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - 2, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - 2);
                             }
                         }
 
@@ -111,8 +111,8 @@
                             }
 
                             ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / unterteilungen) * i);
-                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+                            ctx.moveTo(0, padding + (height / unterteilungen) * i - 2);
+                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i - 2)
                             ctx.stroke();
                         }
 
@@ -128,8 +128,8 @@
                                 }
                                 
                                 ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding - 2);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding - 2);
                                 ctx.stroke();
                             }
                         }
