@@ -186,7 +186,7 @@
                     {
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
-                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
+                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
 
                         document.getElementById('activity').appendChild(frame);
 
@@ -197,7 +197,7 @@
 
                         console.log(frame.offsetWidth, frame.width, frame.clientWidth);
 
-                        var width = frame.offsetWidth - padding * 2, height = frame.offsetHeight - padding * 2;
+                        var width = document.getElementById('activity').getElementsByTagName('div')[0].offsetWidth - padding * 2, height = frame.offsetHeight - padding * 2;
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
