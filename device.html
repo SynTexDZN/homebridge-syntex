@@ -162,6 +162,8 @@
                             }
                         }
 
+                        console.log(values);
+
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                         frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
@@ -215,8 +217,9 @@
 
                     calcValues(orginal);
 
-                    function calcValues(values)
+                    function calcValues(v)
                     {
+                        var values = v;
                         console.log('CALC GRAPH');
 
                         for(var i = 0; i < counter; i++)
