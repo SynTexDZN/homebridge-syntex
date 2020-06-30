@@ -183,8 +183,6 @@
                             }
                         }
 
-                        console.log(values);
-
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                         frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
@@ -195,8 +193,6 @@
                         {
                             frame.style.marginBottom = '20px';
                         }
-
-                        console.log(frame.offsetWidth, frame.width, frame.clientWidth);
 
                         var height = frame.offsetHeight - padding * 2 - 4;
 
@@ -242,8 +238,8 @@
                     {
                         for(var i = 0; i < counter; i++)
                         {
-                            var v = [], min = 10000, max = 0;
-                            var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
+                            var v = [];
+                            var max = Math.max(...values[accessory.services[i]].values), min = Math.min(...values[accessory.services[i]].values);
 
                             for(const j in values[accessory.services[i]].values)
                             {
@@ -251,20 +247,10 @@
 
                                 value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
-                                if(parseInt(value) > parseInt(max))
-                                {
-                                    max = value;
-                                }
-
-                                if(parseInt(value) < parseInt(min))
-                                {
-                                    min = value;
-                                }
-
-                                v.push((value - eMin) / (eMax - eMin) * 100);
+                                v.push((value - min) / (max - min) * 100);
                             }
 
-                            console.log(min, max, eMin, eMax);
+                            console.log(v);
 
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             
@@ -558,7 +544,7 @@
         document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
 
-    var temp = null;
+    var temp = {};
     
     async function fetchState()
     {        
@@ -566,14 +552,14 @@
         {
             var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
 
-            if(temp != null && state != temp)
+            if(temp[device.type] && state != temp)
             {
                 orginal[device.type].values.push(state);
 
                 calcValues(Object.assign({}, orginal));
             }
 
-            temp = state;
+            temp[device.type] = state;
 
             if(state != null && state != 'Error')
             {
@@ -643,14 +629,14 @@
 
             if(state != null)
             {
-                if(temp != null && state != temp)
+                if(temp[device.type] && state != temp)
                 {
                     orginal[device.type].values.push(state);
 
                     calcValues(Object.assign({}, orginal));
                 }
 
-                temp = state;
+                temp[device.type] = state;
                 
                 if(device.type == 'light')
                 {
