@@ -513,7 +513,7 @@ async function getAccessory(mac)
     return new Promise(resolve => {
         
         getPluginConfig('SynTexWebHooks').then(function(config) {
-
+/*
             if(config != null)
             {
                 var accessories = config.accessories;
@@ -527,9 +527,9 @@ async function getAccessory(mac)
                 }
             }
             else
-            {
+            {*/
                 resolve(null);
-            }
+            //}
             
         }.bind(this)).catch(function(e) {
 
@@ -540,7 +540,7 @@ async function getAccessory(mac)
     });
 }
 
-function getPluginConfig(pluginName)
+async function getPluginConfig(pluginName)
 {
     return new Promise(resolve => {
         
