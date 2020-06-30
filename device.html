@@ -140,6 +140,7 @@
                     var activity = JSON.parse('<%activity%>');
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+                    var padding = 50;
 
                     for(var i = 0; i < counter; i++)
                     {
@@ -170,52 +171,20 @@
                             }
                         }
                     }
-                    
-                    for(var i = 0; i < activity.length; i++)
-                    {
-                        if(activity[i].l == 'Update')
-                        {
-                            var value = activity[i].m.split('[')[2].split(']')[0];
-
-                            value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-                            var type = activity[i].m.split('[')[1].split(']')[0].split(' ')[(activity[i].m.split('[')[1].split(']')[0].match(/\s/g) || []).length];
-
-                            if(!values[type])
-                            {
-                                values[type] = { min : 100000, max : 0, values : [] };
-                            }
-
-                            if(parseInt(value) > parseInt(values[type].max))
-                            {
-                                values[type].max = value;
-                            }
-
-                            if(parseInt(value) < parseInt(values[type].min))
-                            {
-                                values[type].min = value;
-                            }
-
-                            values[type].values.push(value);
-                        }
-                    }
-
-                    for(var i = 0; i < Object.keys(values).length; i++)
-                    {
-                        var eMax = Math.max(...values[Object.keys(values)[i]].values), eMin = Math.min(...values[Object.keys(values)[i]].values);
-
-                        for(const j in values[Object.keys(values)[i]].values)
-                        {
-                            values[Object.keys(values)[i]].values[j] = (values[Object.keys(values)[i]].values[j] - eMin) / (eMax - eMin) * 100;
-                        }
-                    }
-                    
-                    var padding = 50;
 
                     for(var i = 0; i < counter; i++)
                     {
-                        var frame = document.createElement('div');
-                        var canvas = document.createElement('canvas');
+                        var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
+
+                        for(const j in values[accessory.services[i]].values)
+                        {
+                            values[accessory.services[i]].values[j] = (values[accessory.services[i]].values[j] - eMin) / (eMax - eMin) * 100;
+                        }
+                    }
+                    
+                    for(var i = 0; i < counter; i++)
+                    {
+                        var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                         frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
 
@@ -225,7 +194,7 @@
                         frame.appendChild(canvas);
                         document.getElementById('activity').appendChild(frame);
 
-                        if(i != Object.keys(values).length - 1)
+                        if(i != counter - 1)
                         {
                             frame.style.marginBottom = '20px';
                         }
@@ -235,7 +204,7 @@
 
                         infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
-                        infoMin.innerHTML = 'Min // ' + values[Object.keys(values)[i]].min;
+                        infoMin.innerHTML = 'Min // ' + values[accessory.services[i]].min;
 
                         canvas.parentElement.appendChild(infoMin);
 
@@ -243,7 +212,7 @@
 
                         infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
-                        infoMax.innerHTML = 'Max \\\\ ' + values[Object.keys(values)[i]].max;
+                        infoMax.innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
 
                         canvas.parentElement.appendChild(infoMax);
 
@@ -251,19 +220,17 @@
 
                         infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
-                        infoType.innerHTML = Object.keys(values)[i];
+                        infoType.innerHTML = accessory.services[i];
 
                         canvas.parentElement.appendChild(infoType);
-
-                        //infoType.style.left = width - infoType.offsetWidth - 35;
 
                         canvas.width = width + padding * 2;
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
-                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]].values, 10)
-                        window.onload = drawFill(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                        window.onload = drawGraph(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                        window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10)
+                        window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                        window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
 
                 </script>
