@@ -144,34 +144,34 @@
 
                             value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
-                            if(parseInt(value) > parseInt(max))
-                            {
-                                max = value;
-                            }
-
-                            if(value < min)
-                            {
-                                min = value;
-                            }
-
                             var type = activity[i].m.split('[')[1].split(']')[0].split(' ')[(activity[i].m.split('[')[1].split(']')[0].match(/\s/g) || []).length];
 
                             if(!values[type])
                             {
-                                values[type] = [];
+                                values[type] = { min : 100000, max : 0, values : [] };
                             }
 
-                            values[type].push(value);
+                            if(parseInt(value) > parseInt(max))
+                            {
+                                values[type].max = value;
+                            }
+
+                            if(value < min)
+                            {
+                                values[type].min = value;
+                            }
+
+                            values[type].values.push(value);
                         }
                     }
 
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
-                        var eMax = Math.max(...values[Object.keys(values)[i]]), eMin = Math.min(...values[Object.keys(values)[i]]);
+                        var eMax = Math.max(...values[Object.keys(values)[i]].values), eMin = Math.min(...values[Object.keys(values)[i]].values);
 
-                        for(const j in values[Object.keys(values)[i]])
+                        for(const j in values[Object.keys(values)[i]].values)
                         {
-                            values[Object.keys(values)[i]][j] = (values[Object.keys(values)[i]][j] - eMin) / (eMax - eMin) * 100;
+                            values[Object.keys(values)[i]].values[j] = (values[Object.keys(values)[i]].values[j] - eMin) / (eMax - eMin) * 100;
                         }
                     }
                     
@@ -200,7 +200,7 @@
 
                         infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
-                        infoMin.innerHTML = 'Min // ' + min;
+                        infoMin.innerHTML = 'Min // ' + values[Object.keys(values)[i]].min;
 
                         canvas.parentElement.appendChild(infoMin);
 
@@ -208,7 +208,7 @@
 
                         infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
-                        infoMax.innerHTML = 'Max \\\\ ' + max;
+                        infoMax.innerHTML = 'Max \\\\ ' + values[Object.keys(values)[i]].max;
 
                         canvas.parentElement.appendChild(infoMax);
 
@@ -226,9 +226,9 @@
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
-                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]], min, max, 10)
-                        window.onload = drawFill(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                        window.onload = drawGraph(canvas, values[Object.keys(values)[i]], 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                        window.onload = drawGrid(canvas, values[Object.keys(values)[i]].values, min, max, 10)
+                        window.onload = drawFill(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                        window.onload = drawGraph(canvas, values[Object.keys(values)[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
 
                 </script>
