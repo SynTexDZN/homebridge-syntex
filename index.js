@@ -27,9 +27,9 @@ function SynTexPlatform(log, config, api)
             if(config != null)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
-
-                logger.log('debug', config);
             }
+
+            logger.log('debug', config);
 
             restart = false;
 
@@ -455,6 +455,8 @@ async function getPluginConfig(pluginName)
                 {                            
                     for(const i in obj.platforms)
                     {
+                        logger.log('warn', obj.platforms[i].platform);
+
                         if(obj.platforms[i].platform === pluginName)
                         {
                             resolve(obj.platforms[i]);
