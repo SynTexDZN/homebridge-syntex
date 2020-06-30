@@ -194,7 +194,7 @@
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
-                        
+
                         canvas.width = width + padding * 2;
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
@@ -204,7 +204,7 @@
 
                     var orginal = values;
 
-                    //calcValues(orginal);
+                    calcValues(orginal);
 
                     function calcValues(values)
                     {
@@ -220,6 +220,8 @@
                         
                         for(var i = 0; i < counter; i++)
                         {
+                            var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
+                            /*
                             var infoMin = document.createElement('div');
 
                             infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
@@ -245,8 +247,8 @@
                             infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
 
                             canvas.parentElement.appendChild(infoType);
-
-                            window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10)
+                            */
+                            window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10);
                             window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                             window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
