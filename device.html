@@ -15,6 +15,27 @@
             <div id="activity" class="main" style="display: table; margin-bottom: 132px">
                 <script defer>
 
+                    var test = { a : 10, b : 0 };
+
+                    playground(test);
+
+                    async function playground()
+                    {
+                        console.log(test);
+
+                        var x = {};
+
+                        Object.assign(x, test);
+
+                        test.a = 5;
+
+                        console.log(test, x);
+
+                        x.b = 100;
+
+                        console.log(test, x);
+                    }
+
                     var activity = JSON.parse('<%activity%>');
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
@@ -217,7 +238,7 @@
 
                     var orginal = { ...values };
 
-                    calcValues(Object.assign({}, orginal));
+                    calcValues(values);
 
                     function calcValues(v)
                     {
@@ -225,9 +246,9 @@
 
                         var y = {};
 
-                        var x = Object.assign(y, ...v);
+                        Object.assign(y, v);
 
-                        console.log('NEW', x, y, v, values, orginal);
+                        console.log('NEW', y, v, values, orginal);
 
                         for(var i = 0; i < counter; i++)
                         {
