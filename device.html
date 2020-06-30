@@ -168,18 +168,20 @@
     
                     for(var i = 0; i < counter; i++)
                     {
+                        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
                         for(var j = activity.length - 1; j >= 0; j--)
                         {
-                            if(activity[j].l == 'Update' && activity[j].m.toLowerCase().includes(accessory.services[i]))
+                            if(activity[j].l == 'Update' && activity[j].m.toLowerCase().includes(type))
                             {
                                 var value = activity[j].m.split('[')[2].split(']')[0];
 
-                                if(!values[accessory.services[i]])
+                                if(!values[type])
                                 {
-                                    values[accessory.services[i]] = { min : 100000, max : 0, values : [] };
+                                    values[type] = { min : 100000, max : 0, values : [] };
                                 }
 
-                                values[accessory.services[i]].values.push(value);
+                                values[type].values.push(value);
                             }
                         }
 
@@ -223,9 +225,7 @@
 
                         infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
-                        var formattedType = counter > 1 ? accessory.services[i] : accessory.services;
-
-                        infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
+                        infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
 
                         frame.appendChild(infoType);
                     }
