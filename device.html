@@ -144,7 +144,9 @@
                     {
                         for(var j = 0; j < activity.length; j++)
                         {
-                            if(activity[j].l == 'Update' && activity[j].m.includes(accessory.services[i]))
+                            console.log(activity[j].m, accessory.services[i]);
+
+                            if(activity[j].l == 'Update' && activity[j].m.toLowerCase().includes(accessory.services[i]))
                             {
                                 var value = activity[j].m.split('[')[2].split(']')[0];
 
@@ -179,7 +181,7 @@
                             values[accessory.services[i]].values[j] = (values[accessory.services[i]].values[j] - eMin) / (eMax - eMin) * 100;
                         }
                     }
-                    */
+                    
                     for(var i = 0; i < counter; i++)
                     {
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
@@ -230,6 +232,7 @@
                         window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                         window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                     }
+                    */
 
                 </script>
             </div>
