@@ -151,12 +151,12 @@
                                 values[type] = { min : 100000, max : 0, values : [] };
                             }
 
-                            if(parseInt(value) > parseInt(max))
+                            if(parseInt(value) > parseInt(values[type].max))
                             {
                                 values[type].max = value;
                             }
 
-                            if(value < min)
+                            if(parseInt(value) < parseInt(values[type].min))
                             {
                                 values[type].min = value;
                             }
