@@ -199,6 +199,30 @@
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
+                        var infoMin = document.createElement('div');
+
+                        infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                        infoMin.setAttribute('class', 'min');
+
+                        canvas.parentElement.appendChild(infoMin);
+
+                        var infoMax = document.createElement('div');
+
+                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                        infoMax.setAttribute('class', 'max');
+
+                        canvas.parentElement.appendChild(infoMax);
+
+                        var infoType = document.createElement('div');
+
+                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                        var formattedType = counter > 1 ? accessory.services[i] : accessory.services;
+
+                        infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
+
+                        canvas.parentElement.appendChild(infoType);
+
                         frame.appendChild(canvas);
                     }
 
@@ -221,33 +245,10 @@
                         for(var i = 0; i < counter; i++)
                         {
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
-                            /*
-                            var infoMin = document.createElement('div');
-
-                            infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-
-                            infoMin.innerHTML = 'Min // ' + values[accessory.services[i]].min;
-
-                            canvas.parentElement.appendChild(infoMin);
-
-                            var infoMax = document.createElement('div');
-
-                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-
-                            infoMax.innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
-
-                            canvas.parentElement.appendChild(infoMax);
-
-                            var infoType = document.createElement('div');
-
-                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                            var formattedType = counter > 1 ? accessory.services[i] : accessory.services;
-
-                            infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
-
-                            canvas.parentElement.appendChild(infoType);
-                            */
+                            
+                            canvas.getElementsByClassName('min')[0].innerHTML = 'Min // ' + values[accessory.services[i]].min;
+                            canvas.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
+                            
                             window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10);
                             window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                             window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
