@@ -219,9 +219,13 @@
 
                     calcValues(Object.assign({}, orginal));
 
-                    function calcValues(values)
+                    function calcValues(v)
                     {
                         console.log('CALC GRAPH');
+
+                        var values = Object.assign({}, v);
+
+                        console.log('NEW', values);
 
                         for(var i = 0; i < counter; i++)
                         {
