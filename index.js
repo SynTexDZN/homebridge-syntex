@@ -20,9 +20,6 @@ function SynTexPlatform(log, config, api)
 
         logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
-        logger.debug(api.user.storagePath());
-        logger.debug(JSON.stringify(conf));
-
         HTMLQuery.SETUP(logger);
 
         getPluginConfig('SynTexWebHooks').then(function(config) {
@@ -31,8 +28,6 @@ function SynTexPlatform(log, config, api)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
             }
-
-            logger.debug(config);
 
             restart = false;
 
@@ -456,12 +451,8 @@ async function getPluginConfig(pluginName)
             {
                 if(obj && !err)
                 {       
-                    logger.debug(obj);
-                    
                     for(const i in obj.platforms)
                     {
-                        logger.log('warn', obj.platforms[i].platform);
-
                         if(obj.platforms[i].platform === pluginName)
                         {
                             resolve(obj.platforms[i]);

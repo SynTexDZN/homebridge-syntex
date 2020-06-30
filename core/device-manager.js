@@ -510,9 +510,13 @@ async function getDevices()
 
 async function getAccessory(mac)
 {
+    logger.debug(mac);
+
     return new Promise(resolve => {
         
         var accessories = webhookConfig.accessories;
+
+        logger.debug(accessories);
 
         for(var i = 0; i < accessories.length; i++)
         {
@@ -731,8 +735,6 @@ function SETUP(configPath, slog, storagePath, wConf)
     logger = slog;
     webhookPort = wConf.port;
     webhookConfig = wConf;
-
-    logger.debug(webhookPort);
 };
 
 module.exports = {
