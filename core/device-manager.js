@@ -723,7 +723,7 @@ function setBridgeStorage(key, value)
     });
 }
 
-function SETUP(configPath, slog, storagePath, webhookConfig)
+function SETUP(configPath, slog, storagePath, wConf)
 {
     config = store(configPath);
     storage = store(storagePath);
