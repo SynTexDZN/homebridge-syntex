@@ -20,6 +20,8 @@ function SynTexPlatform(log, config, api)
 
         logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
+        logger.log('debug', JSON.stringify(conf));
+
         HTMLQuery.SETUP(logger);
 
         getPluginConfig('SynTexWebHooks').then(function(config) {
@@ -452,7 +454,9 @@ async function getPluginConfig(pluginName)
             try
             {
                 if(obj && !err)
-                {                            
+                {       
+                    logger.log('debug', obj);
+                    
                     for(const i in obj.platforms)
                     {
                         logger.log('warn', obj.platforms[i].platform);
