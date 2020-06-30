@@ -544,7 +544,7 @@ function getPluginConfig(pluginName)
 {
     return new Promise(resolve => {
         
-        conf.load('config', (err, obj) => {    
+        config.load('config', (err, obj) => {    
 
             try
             {
