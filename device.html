@@ -12,7 +12,7 @@
             </div>
             <h1 class="loading-loop">Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" class="main" style="display: table">
+            <div id="activity" class="main" style="display: table; margin-bottom: 132px">
                 <script defer>
 
                     function drawGraph(canvas, data, clr1, clr2, points)
@@ -139,6 +139,7 @@
     
                     var activity = JSON.parse('<%activity%>');
                     var values = {};
+                    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
 
                     console.log(accessory);
                     
@@ -171,11 +172,6 @@
                         }
                     }
 
-                    if(Object.keys(values).length > 0)
-                    {
-                        document.getElementById('activity').style.marginBottom = '132px';
-                    }
-
                     for(var i = 0; i < Object.keys(values).length; i++)
                     {
                         var eMax = Math.max(...values[Object.keys(values)[i]].values), eMin = Math.min(...values[Object.keys(values)[i]].values);
@@ -188,7 +184,7 @@
                     
                     var padding = 50;
 
-                    for(var i = 0; i < Object.keys(values).length; i++)
+                    for(var i = 0; i < counter; i++)
                     {
                         var frame = document.createElement('div');
                         var canvas = document.createElement('canvas');
