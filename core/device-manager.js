@@ -508,6 +508,38 @@ async function getDevices()
     });
 }
 
+async function getAccessory(mac)
+{
+    return new Promise(resolve => {
+        
+        getPluginConfig('SynTexWebHooks').then(function(config) {
+
+            if(config != null)
+            {
+                var accessories = config.accessories;
+
+                for(var i = 0; i < accessories.length; i++)
+                {
+                    if(accessories[i].mac == mac)
+                    {
+                        resolve(accessories[i]);
+                    }
+                }
+            }
+            else
+            {
+                resolve(null);
+            }
+            
+        }.bind(this)).catch(function(e) {
+
+            logger.err(e);
+
+            resolve(null);
+        });
+    });
+}
+
 async function setValue(mac, param, value)
 {
     return new Promise(resolve => {
@@ -721,6 +753,7 @@ module.exports = {
     getValue,
     getDevice,
     getDevices,
+    getAccessory,
     setValue,
     setValues,
     initDevice,

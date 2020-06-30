@@ -1,5 +1,10 @@
 <html>
     <title class="loading-loop">Laden ..</title>
+    <script>
+
+    var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
+
+    </script>
     <body>
         <div id="infos">
             <div class="control-container">
@@ -7,7 +12,7 @@
             </div>
             <h1 class="loading-loop">Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" class="main" style="margin-top: 100px; margin-bottom: 132px; display: table">
+            <div id="activity" class="main" style="display: table">
                 <script defer>
 
                     function drawGraph(canvas, data, clr1, clr2, points)
@@ -134,7 +139,8 @@
     
                     var activity = JSON.parse('<%activity%>');
                     var values = {};
-                    var min = 100, max = 0;
+
+                    console.log(accessory);
                     
                     for(var i = 0; i < activity.length; i++)
                     {
@@ -163,6 +169,11 @@
 
                             values[type].values.push(value);
                         }
+                    }
+
+                    if(Object.keys(values).length > 0)
+                    {
+                        document.getElementById('activity').style.marginBottom = '132px';
                     }
 
                     for(var i = 0; i < Object.keys(values).length; i++)
@@ -266,7 +277,6 @@
 </html>
 <script>
 
-    var device = JSON.parse('<%device%>');
     var restarting = false, resetting = false, updating = false, saving = false;
     var settings = [];
 
