@@ -217,7 +217,7 @@
 
                     var orginal = { ...values };
 
-                    calcValues(values);
+                    calcValues({ ...orginal });
 
                     function calcValues(values)
                     {
@@ -550,7 +550,7 @@
             {
                 orginal[device.type].values.push(state);
 
-                calcValues(orginal);
+                calcValues({ ...orginal });
             }
 
             temp = state;
@@ -627,7 +627,7 @@
                 {
                     orginal[device.type].values.push(state);
 
-                    calcValues(orginal);
+                    calcValues({ ...orginal });
                 }
 
                 temp = state;
