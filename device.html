@@ -246,8 +246,8 @@
                         {
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             
-                            canvas.getElementsByClassName('min')[0].innerHTML = 'Min // ' + values[accessory.services[i]].min;
-                            canvas.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
+                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + values[accessory.services[i]].min;
+                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
                             
                             window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10);
                             window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
