@@ -19,21 +19,21 @@
 
                     playground(test);
 
-                    async function playground()
+                    async function playground(t)
                     {
-                        console.log(test);
+                        console.log(t);
 
                         var x = {};
 
-                        Object.assign(x, test);
+                        Object.assign(x, t);
 
-                        test.a = 5;
+                        t.a = 5;
 
-                        console.log(test, x);
+                        console.log(t, x);
 
                         x.b = 100;
 
-                        console.log(test, x);
+                        console.log(t, x);
                     }
 
                     var activity = JSON.parse('<%activity%>');
@@ -240,23 +240,11 @@
 
                     calcValues(values);
 
-                    function calcValues(v)
+                    function calcValues(values)
                     {
-                        console.log('CALC GRAPH');
-
-                        var y = {};
-
-                        Object.assign(y, v);
-
-                        y.temperature.max = 100;
-
-                        console.log('Y', y);
-                        console.log('V', v);
-                        console.log('VALUES', values);
-                        console.log('ORGINAL', orginal);
-
                         for(var i = 0; i < counter; i++)
                         {
+                            var v = [], min = 10000, max = 0;
                             var eMax = Math.max(...values[accessory.services[i]].values), eMin = Math.min(...values[accessory.services[i]].values);
 
                             for(const j in values[accessory.services[i]].values)
@@ -265,27 +253,27 @@
 
                                 value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
-                                if(parseInt(value) > parseInt(values[accessory.services[i]].max))
+                                if(parseInt(value) > parseInt(max))
                                 {
-                                    values[accessory.services[i]].max = value;
+                                    max = value;
                                 }
 
-                                if(parseInt(value) < parseInt(values[accessory.services[i]].min))
+                                if(parseInt(value) < parseInt(min))
                                 {
-                                    values[accessory.services[i]].min = value;
+                                    min = value;
                                 }
 
-                                values[accessory.services[i]].values[j] = (value - eMin) / (eMax - eMin) * 100;
+                                v.push((value - eMin) / (eMax - eMin) * 100);
                             }
 
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             
-                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + values[accessory.services[i]].min;
-                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
+                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + min;
+                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + max;
                             
-                            window.onload = drawGrid(canvas, values[accessory.services[i]].values, 10);
-                            window.onload = drawFill(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                            window.onload = drawGraph(canvas, values[accessory.services[i]].values, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                            window.onload = drawGrid(canvas, v, 10);
+                            window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                            window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
                     }
 
