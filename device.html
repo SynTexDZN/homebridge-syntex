@@ -239,7 +239,8 @@
                         for(var i = 0; i < counter; i++)
                         {
                             var v = [];
-                            var max = Math.max(...values[accessory.services[i]].values), min = Math.min(...values[accessory.services[i]].values);
+                            var max = !isNaN(values[accessory.services[i]].values[0]) ? Math.max(...values[accessory.services[i]].values) : 1;
+                            var min = !isNaN(values[accessory.services[i]].values[0]) ? Math.min(...values[accessory.services[i]].values) : 0;
 
                             for(const j in values[accessory.services[i]].values)
                             {
