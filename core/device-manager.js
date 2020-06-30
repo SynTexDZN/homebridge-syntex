@@ -522,6 +522,8 @@ async function getAccessory(mac)
         {
             if(accessories[i].mac == mac)
             {
+                logger.debug(accessories[i]);
+
                 resolve(accessories[i]);
             }
         }
