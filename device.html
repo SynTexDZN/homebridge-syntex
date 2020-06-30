@@ -15,8 +15,6 @@
             <div id="activity" class="main" style="display: table; margin-bottom: 132px">
                 <script defer>
 
-                    var offset = -2;
-
                     function drawGraph(canvas, data, clr1, clr2, points)
                     {
                         var ctx = canvas.getContext('2d');
@@ -31,19 +29,19 @@
                             {
                                 ctx.fillStyle = clr1;
                                 ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - offset + padding, 10, 0, 360);
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
                                 ctx.fill();
                                 ctx.closePath();
                                 ctx.fillStyle = clr2;
                                 ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - offset + padding, 5, 0, 360);
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
                                 ctx.fill();
                                 ctx.closePath();
                             }
 
                             ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 - offset + padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - offset + padding);
+                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
                             ctx.stroke();
                         }
 
@@ -51,12 +49,12 @@
                         {
                             ctx.fillStyle = clr1;
                             ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - offset + padding, 10, 0, 360);
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
                             ctx.fill();
                             ctx.closePath();
                             ctx.fillStyle = clr2;
                             ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 - offset + padding, 5, 0, 360);
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
                             ctx.fill();
                             ctx.closePath();
                         }
@@ -74,18 +72,18 @@
 
                         ctx.beginPath();
                         ctx.moveTo(0, height + padding * 2);
-                        ctx.lineTo(0, height - data[0] * height / 100 - offset + padding);
+                        ctx.lineTo(0, height - data[0] * height / 100  + padding);
 
                         for(var i = 1; i < data.length; i++)
                         {
                             if(smoothing == 0)
                             {
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 - offset + padding);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
                             }
                             else
                             {
                                 // TODO
-                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding - offset, i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding - offset);
+                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
                             }
                         }
 
@@ -113,8 +111,8 @@
                             }
 
                             ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / unterteilungen) * i - offset);
-                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i - offset)
+                            ctx.moveTo(0, padding + (height / unterteilungen) * i );
+                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i )
                             ctx.stroke();
                         }
 
@@ -130,8 +128,8 @@
                                 }
                                 
                                 ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding - offset);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding - offset);
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding );
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding );
                                 ctx.stroke();
                             }
                         }
@@ -207,7 +205,7 @@
 
                         var infoMin = document.createElement('div');
 
-                        infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                        infoMin.setAttribute('style', 'position: relative; bottom: 20px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
                         infoMin.innerHTML = 'Min // ' + values[accessory.services[i]].min;
 
@@ -215,7 +213,7 @@
 
                         var infoMax = document.createElement('div');
 
-                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 33) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
 
                         infoMax.innerHTML = 'Max \\\\ ' + values[accessory.services[i]].max;
 
