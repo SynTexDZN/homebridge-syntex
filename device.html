@@ -15,9 +15,15 @@
             <div id="activity" class="main" style="display: table; margin-bottom: 132px">
                 <script defer>
 
+                    var activity = JSON.parse('<%activity%>');
+                    var values = {};
+                    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+                    var padding = 50;
+
                     function drawGraph(canvas, data, clr1, clr2, points)
                     {
                         var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 4;
 
                         ctx.lineWidth = 2;
                         ctx.lineCap = 'round';
@@ -63,6 +69,7 @@
                     function drawFill(canvas, data, clr1, clr2, smoothing)
                     {
                         var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 4;
 
                         var grd = ctx.createLinearGradient(0, 0, 0, height + 100);
                         grd.addColorStop(0, clr1);
@@ -95,8 +102,8 @@
 
                     function drawGrid(canvas, data, unterteilungen)
                     {
-                        var text = canvas.getContext('2d');
                         var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 4;
 
                         ctx.lineCap = 'butt';
                         ctx.lineWidth = 1.5;
@@ -135,11 +142,6 @@
                         }
                     }
     
-                    var activity = JSON.parse('<%activity%>');
-                    var values = {};
-                    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
-                    var padding = 50;
-
                     for(var i = 0; i < counter; i++)
                     {
                         for(var j = activity.length - 1; j >= 0; j--)
