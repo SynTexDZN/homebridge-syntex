@@ -20,7 +20,7 @@ function SynTexPlatform(log, config, api)
 
         logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
-        logger.log('debug', api.user.storagePath());
+        console.log('debug', api.user.storagePath());
         logger.log('debug', JSON.stringify(conf));
 
         HTMLQuery.SETUP(logger);
