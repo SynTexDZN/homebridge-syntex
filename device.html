@@ -199,19 +199,21 @@
                         canvas.height = height + padding * 2;
                         canvas.style.background = 'rgb(20, 20, 30)';
 
+                        frame.appendChild(canvas);
+
                         var infoMin = document.createElement('div');
 
                         infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
                         infoMin.setAttribute('class', 'min');
 
-                        canvas.parentElement.appendChild(infoMin);
+                        frame.appendChild(infoMin);
 
                         var infoMax = document.createElement('div');
 
                         infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
                         infoMax.setAttribute('class', 'max');
 
-                        canvas.parentElement.appendChild(infoMax);
+                        frame.appendChild(infoMax);
 
                         var infoType = document.createElement('div');
 
@@ -221,9 +223,7 @@
 
                         infoType.innerHTML = formattedType[0].toUpperCase() + formattedType.substring(1);
 
-                        canvas.parentElement.appendChild(infoType);
-
-                        frame.appendChild(canvas);
+                        frame.appendChild(infoType);
                     }
 
                     var orginal = values;
