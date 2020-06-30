@@ -2,7 +2,7 @@
     <title class="loading-loop">Laden ..</title>
     <script>
 
-    var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
+        var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
 
     </script>
     <body>
@@ -121,14 +121,12 @@
                             for(var i = 0; i < data.length; i++)
                             {
                                 ctx.strokeStyle = 'rgb(40, 40, 50)';
-
                                 /*
                                 if(i == data.length - 1 || i == 0)
                                 {
                                     ctx.strokeStyle = outline;
                                 }
                                 */
-
                                 ctx.beginPath();
                                 ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding - 2);
                                 ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding - 2);
@@ -148,7 +146,7 @@
                         {
                             if(activity[j].l == 'Update' && activity[j].m.includes(accessory.services[i]))
                             {
-                                var value = activity[i].m.split('[')[2].split(']')[0];
+                                var value = activity[j].m.split('[')[2].split(']')[0];
 
                                 value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
