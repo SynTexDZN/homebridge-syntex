@@ -188,18 +188,19 @@
 
                         frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: overlay; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30); box-sizing: border-box;');
 
-                        canvas.setAttribute('class', 'canvas');
-                        canvas.setAttribute('style', 'border-radius: 50px');
-
                         document.getElementById('activity').appendChild(frame);
-                        frame.appendChild(canvas);
 
                         if(i != counter - 1)
                         {
                             frame.style.marginBottom = '20px';
                         }
 
-                        var width = canvas.parentElement.offsetWidth - padding * 2, height = canvas.parentElement.offsetHeight - padding * 2;
+                        var width = frame.offsetWidth - padding * 2, height = frame.offsetHeight - padding * 2;
+
+                        canvas.setAttribute('class', 'canvas');
+                        canvas.setAttribute('style', 'border-radius: 50px');
+                        frame.appendChild(canvas);
+
                         var infoMin = document.createElement('div');
 
                         infoMin.setAttribute('style', 'position: relative; bottom: 18px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
