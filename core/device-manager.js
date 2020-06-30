@@ -732,7 +732,7 @@ function SETUP(configPath, slog, storagePath, wConf)
     webhookPort = wConf.port;
     webhookConfig = wConf;
 
-    logger.log('debug', webhookPort);
+    logger.debug(webhookPort);
 };
 
 module.exports = {

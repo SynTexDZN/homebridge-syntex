@@ -20,8 +20,8 @@ function SynTexPlatform(log, config, api)
 
         logger.create("SynTex", this.logDirectory, api.user.storagePath());
 
-        console.log('debug', api.user.storagePath());
-        logger.log('debug', JSON.stringify(conf));
+        logger.debug(api.user.storagePath());
+        logger.debug(JSON.stringify(conf));
 
         HTMLQuery.SETUP(logger);
 
@@ -32,7 +32,7 @@ function SynTexPlatform(log, config, api)
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
             }
 
-            logger.log('debug', config);
+            logger.debug(config);
 
             restart = false;
 
@@ -456,7 +456,7 @@ async function getPluginConfig(pluginName)
             {
                 if(obj && !err)
                 {       
-                    logger.log('debug', obj);
+                    logger.debug(obj);
                     
                     for(const i in obj.platforms)
                     {
