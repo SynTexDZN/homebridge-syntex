@@ -238,13 +238,14 @@
                     {
                         for(var i = 0; i < counter; i++)
                         {
+                            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+                            var min = !isNaN(values[type].values[0]) ? Math.min(...values[type].values) : 0;
+                            var max = !isNaN(values[type].values[0]) ? Math.max(...values[type].values) : 1;
                             var v = [];
-                            var max = !isNaN(values[accessory.services[i]].values[0]) ? Math.max(...values[accessory.services[i]].values) : 1;
-                            var min = !isNaN(values[accessory.services[i]].values[0]) ? Math.min(...values[accessory.services[i]].values) : 0;
 
-                            for(const j in values[accessory.services[i]].values)
+                            for(const j in values[type].values)
                             {
-                                var value = values[accessory.services[i]].values[j];
+                                var value = values[type].values[j];
 
                                 value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
