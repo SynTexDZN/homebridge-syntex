@@ -1,5 +1,5 @@
 var store = require('json-fs-store');
-var config, storage, dataStorage, logger;
+var config, storage, dataStorage, logger, webhookConfig;
     
 async function removeDevice(mac, type)
 {
@@ -512,60 +512,15 @@ async function getAccessory(mac)
 {
     return new Promise(resolve => {
         
-        getPluginConfig('SynTexWebHooks').then(function(config) {
-/*
-            if(config != null)
+        var accessories = webhookConfig.accessories;
+
+        for(var i = 0; i < accessories.length; i++)
+        {
+            if(accessories[i].mac == mac)
             {
-                var accessories = config.accessories;
-
-                for(var i = 0; i < accessories.length; i++)
-                {
-                    if(accessories[i].mac == mac)
-                    {
-                        resolve(accessories[i]);
-                    }
-                }
+                resolve(accessories[i]);
             }
-            else
-            {*/
-                resolve(null);
-            //}
-            
-        }.bind(this)).catch(function(e) {
-
-            logger.err(e);
-
-            resolve(null);
-        });
-    });
-}
-
-async function getPluginConfig(pluginName)
-{
-    return new Promise(resolve => {
-        
-        config.load('config', (err, obj) => {    
-
-            try
-            {
-                if(obj && !err)
-                {                            
-                    for(const i in obj.platforms)
-                    {
-                        if(obj.platforms[i].platform === pluginName)
-                        {
-                            resolve(obj.platforms[i]);
-                        }
-                    }
-                }
-
-                resolve(null);
-            }
-            catch(e)
-            {
-                logger.err(e);
-            }
-        });
+        }
     });
 }
 
@@ -768,13 +723,14 @@ function setBridgeStorage(key, value)
     });
 }
 
-function SETUP(configPath, slog, storagePath, wPort)
+function SETUP(configPath, slog, storagePath, webhookConfig)
 {
     config = store(configPath);
     storage = store(storagePath);
     dataStorage = store(storagePath.replace('/data', '/'));
     logger = slog;
-    webhookPort = wPort;
+    webhookPort = wConf.port;
+    webhookConfig = wConf;
 
     logger.log('debug', webhookPort);
 };
@@ -792,6 +748,5 @@ module.exports = {
     checkName,
     removeDevice,
     getBridgeStorage,
-    setBridgeStorage,
-    getPluginConfig
+    setBridgeStorage
 };

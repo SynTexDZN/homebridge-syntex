@@ -22,11 +22,21 @@ function SynTexPlatform(log, config, api)
 
         HTMLQuery.SETUP(logger);
 
-        DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, conf.port);
+        getPluginConfig('SynTexWebHooks').then(function(config) {
 
-        restart = false;
+            if(config != null)
+            {
+                DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
+            }
 
-        DeviceManager.setBridgeStorage('restart', new Date());
+            restart = false;
+
+            DeviceManager.setBridgeStorage('restart', new Date());
+            
+        }.bind(this)).catch(function(e) {
+
+            logger.err(e);
+        });
     }
     catch(e)
     {
@@ -254,7 +264,7 @@ SynTexPlatform.prototype = {
                                 if(urlPath == '/device' && urlParams.mac)
                                 {
                                     var device = await DeviceManager.getDevice(urlParams.mac);
-                                    var webhookConfig = await DeviceManager.getPluginConfig('SynTexWebHooks');
+                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
                                         device: JSON.stringify(device),
                                         accessory: JSON.stringify(DeviceManager.getAccessory(urlParams.mac)),
@@ -329,7 +339,7 @@ SynTexPlatform.prototype = {
                                         if(iface.length > 0) address = iface[0].address;
                                     }
 
-                                    var webhookConfig = await DeviceManager.getPluginConfig('SynTexWebHooks');
+                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
                                         ip: address,
                                         version: pjson.version,
@@ -429,6 +439,35 @@ SynTexPlatform.prototype = {
             logger.err(e);
         }
     }
+}
+
+async function getPluginConfig(pluginName)
+{
+    return new Promise(resolve => {
+        
+        conf.load('config', (err, obj) => {    
+
+            try
+            {
+                if(obj && !err)
+                {                            
+                    for(const i in obj.platforms)
+                    {
+                        if(obj.platforms[i].platform === pluginName)
+                        {
+                            resolve(obj.platforms[i]);
+                        }
+                    }
+                }
+
+                resolve(null);
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
+        });
+    });
 }
 
 function formatTimestamp(timestamp)
