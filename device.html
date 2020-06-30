@@ -141,7 +141,35 @@
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
 
-                    console.log(accessory);
+                    for(var i = 0; i < counter; i++)
+                    {
+                        for(var j = 0; j < activity.length; j++)
+                        {
+                            if(activity[j].l == 'Update' && activity[j].m.includes(accessory.services[i]))
+                            {
+                                var value = activity[i].m.split('[')[2].split(']')[0];
+
+                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                                if(!values[accessory.services[i]])
+                                {
+                                    values[accessory.services[i]] = { min : 100000, max : 0, values : [] };
+                                }
+
+                                if(parseInt(value) > parseInt(values[accessory.services[i]].max))
+                                {
+                                    values[accessory.services[i]].max = value;
+                                }
+
+                                if(parseInt(value) < parseInt(values[accessory.services[i]].min))
+                                {
+                                    values[accessory.services[i]].min = value;
+                                }
+
+                                values[accessory.services[i]].values.push(value);
+                            }
+                        }
+                    }
                     
                     for(var i = 0; i < activity.length; i++)
                     {
