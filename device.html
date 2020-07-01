@@ -653,18 +653,24 @@
                     }
                     else if(type == 'humidity')
                     {
-                        if(state < 40 || state > 85)
+                        var cRange = [0, 150], vRange = [0, 100];
+
+                        color = (vRange[1] - vRange[0]) / state * (cRange[1] - cRange[0]) + ', 75%, 55%';
+
+                        /*
+                        if(state < 30 || state > 70)
+                        {
+                            
+                        }
+                        else if(state < 40 || state > 60)
                         {
                             color = '40, 75%, 55%';
-                        }
-                        else if(state < 50 || state > 75)
-                        {
-                            color = '350, 75%, 55%';
                         }
                         else
                         {
                             color = '150, 75%, 55%';
                         }
+                        */
                     }
                     else if(type == 'light')
                     {
