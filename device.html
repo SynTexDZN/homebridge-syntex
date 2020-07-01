@@ -588,17 +588,17 @@
             {
                 if(state == 'true')
                 {
-                    document.getElementById('status').value = data[type].active.text;
-                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(' + data[type].active.color + ') 100%)';
+                    document.getElementById('status').value = data[type].active.text.toUpperCase();
+                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
                 }
                 else if(state == 'false')
                 {
-                    document.getElementById('status').value = data[type].inactive.text;
-                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(' + data[type].inactive.color + ') 100%)';
+                    document.getElementById('status').value = data[type].inactive.text.toUpperCase();
+                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
                 }
                 else
                 {
-                    document.getElementById('status').value = state + ' ' + data[type].inactive.text;
+                    document.getElementById('status').value = state + ' ' + data[type].inactive.text.toUpperCase();
                 }
             }
             else if(state == 'Error')
