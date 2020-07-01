@@ -141,7 +141,7 @@ async function removeFromDataStorage(mac, type)
 {
     return new Promise(resolve => {
 
-        if(type == 'temperature')
+        if(type == 'climate')
         {
             dataStorage.remove(mac + '-T', (err) => {
 
@@ -365,9 +365,9 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                     platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
                 }
 
-                if(type == "temperature")
+                if(type == "climate")
                 {
-                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-H", type: "humidity"};
+                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-H", services: ["temperature", "humidity"]};
                 }
 
                 if(type == "light")
@@ -375,7 +375,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                     platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
                 }
 
-                if((type == "light" || type == "temperature" || type == "statelessswitch") && !eventButton)
+                if((type == "light" || type == "climate" || type == "statelessswitch") && !eventButton)
                 {
                     platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons};
                 }
