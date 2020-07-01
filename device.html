@@ -614,14 +614,51 @@
                 else
                 {
                     document.getElementById('status-' + type).value = state + ' ' + data[type].text.toUpperCase();
+               
+                    var color = '240, 11%, 26%';
+
+                    if(type == 'temperature')
+                    {
+                        if(state < 21)
+                        {
+                            color = '205, 75%, 55%';
+                        }
+                        else if(state > 23)
+                        {
+                            color = '350, 75%, 55%';
+                        }
+                        else
+                        {
+                            color = '150, 75%, 55%';
+                        }
+                    }
+                    else if(type == 'humidity')
+                    {
+                        if(state < 50 || state > 75)
+                        {
+                            color = '350, 75%, 55%';
+                        }
+                        else if(state < 40 || state > 85)
+                        {
+                            color = '40, 75%, 55%';
+                        }
+                        else
+                        {
+                            color = '150, 75%, 55%';
+                        }
+                    }
+                    else if(type == 'light')
+                    {
+                        color = '40, 85%, 85%';
+                    }
+
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + color + ') 0%, hsl(' + color + ') 100%)';
                 }
             }
             else if(state == 'Error')
             {
                 document.getElementById('status-' + type).value = 'KEINE DATEN GEFUNDEN!';
             }
-
-            //document.getElementById('status').value = 'OUT OF ORDER! :(';
         }
     }
     
@@ -842,11 +879,7 @@
                 if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
                 {
                     fetchState();
-
-                    console.log('FETCH STATE');
                 }
-
-                console.log('LOOP');
 
                 await newTimeout(1000);
             }
