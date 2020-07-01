@@ -548,6 +548,25 @@
 
     var temp = {};
 
+    var data = {
+        motion: {
+            active : { text : 'Bewegung', color : '280, 75%, 55%' },
+            inactive : { text : 'Bereit', color : '150, 75%, 55%' }
+        },
+        contact: {
+            active : { text : 'Geöffnet', color : '350, 75%, 55%' },
+            inactive : { text : 'Geschlossen', color : '150, 75%, 55%' }
+        },
+        relais: {
+            active : { text : 'An', color : '18, 75%, 55%' },
+            inactive : { text : 'Aus', color : '205, 75%, 55%' }
+        },
+        switch: {
+            active : { text : 'An', color : '18, 75%, 55%' },
+            inactive : { text : 'Aus', color : '205, 75%, 55%' }
+        }
+    };
+
     async function fetchState()
     {
         for(var i = 0; i < counter; i++)
@@ -567,10 +586,27 @@
 
             if(state != null && state != 'Error')
             {
-
+                if(state == 'true')
+                {
+                    document.getElementById('status').value = data[type].active.text;
+                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(' + data[type].active.color + ') 100%)';
+                }
+                else if(state == 'false')
+                {
+                    document.getElementById('status').value = data[type].inactive.text;
+                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(' + data[type].inactive.color + ') 100%)';
+                }
+                else
+                {
+                    document.getElementById('status').value = state + ' ' + data[type].inactive.text;
+                }
+            }
+            else if(state == 'Error')
+            {
+                document.getElementById('status').value = 'KEINE DATEN GEFUNDEN!';
             }
 
-            document.getElementById('status').value = 'OUT OF ORDER! :(';
+            //document.getElementById('status').value = 'OUT OF ORDER! :(';
         }
     }
     
