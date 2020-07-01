@@ -613,8 +613,19 @@
                 }
                 else
                 {
-                    document.getElementById('status-' + type).value = state + ' ' + data[type].text.toUpperCase();
-               
+                    if(device.type == 'light')
+                    {
+                        document.getElementById('status-' + type).value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+                    }
+                    else if(device.type == 'temperature')
+                    {
+                        document.getElementById('status-' + type).value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+                    }
+                    else
+                    {
+                        document.getElementById('status-' + type).value = state + ' ' + data[type].text.toUpperCase();
+                    }
+
                     var color = '240, 11%, 26%';
 
                     if(type == 'temperature')
