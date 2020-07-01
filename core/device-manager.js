@@ -1,5 +1,5 @@
 var store = require('json-fs-store');
-var config, storage, dataStorage, logger, webhookConfig;
+var config, storage, dataStorage, logger, accessories;
     
 async function removeDevice(mac, type)
 {
@@ -512,8 +512,6 @@ async function getAccessory(mac)
 {
     return new Promise(resolve => {
         
-        var accessories = webhookConfig.accessories;
-
         for(var i = 0; i < accessories.length; i++)
         {
             if(accessories[i].mac == mac)
@@ -734,7 +732,7 @@ function SETUP(configPath, slog, storagePath, wConf)
     dataStorage = store(storagePath.replace('/data', '/'));
     logger = slog;
     webhookPort = wConf.port;
-    webhookConfig = wConf;
+    accessories = wConf.accessories;
 };
 
 module.exports = {
