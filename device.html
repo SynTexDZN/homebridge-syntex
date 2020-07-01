@@ -630,6 +630,7 @@
 
                     if(type == 'temperature')
                     {
+                        /*
                         if(state < 19)
                         {
                             color = '205, 75%, 55%';
@@ -650,12 +651,16 @@
                         {
                             color = '150, 75%, 55%';
                         }
+                        */
+                        var cRange = [220, 0], vRange = [18, 26];
+
+                        color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
                     }
                     else if(type == 'humidity')
                     {
                         var cRange = [0, 150], vRange = [0, 100];
 
-                        color = state / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + ', 75%, 55%';
+                        color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
 
                         /*
                         if(state < 30 || state > 70)
