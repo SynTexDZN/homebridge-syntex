@@ -619,13 +619,21 @@
 
                     if(type == 'temperature')
                     {
-                        if(state < 21)
+                        if(state < 19)
                         {
                             color = '205, 75%, 55%';
                         }
-                        else if(state > 23)
+                        else if(state < 21)
+                        {
+                            color = '175, 75%, 55%';
+                        }
+                        else if(state > 25)
                         {
                             color = '350, 75%, 55%';
+                        }
+                        else if(state > 23)
+                        {
+                            color = '18, 75%, 55%';
                         }
                         else
                         {
@@ -634,13 +642,13 @@
                     }
                     else if(type == 'humidity')
                     {
-                        if(state < 50 || state > 75)
-                        {
-                            color = '350, 75%, 55%';
-                        }
-                        else if(state < 40 || state > 85)
+                        if(state < 40 || state > 85)
                         {
                             color = '40, 75%, 55%';
+                        }
+                        else if(state < 50 || state > 75)
+                        {
+                            color = '350, 75%, 55%';
                         }
                         else
                         {
