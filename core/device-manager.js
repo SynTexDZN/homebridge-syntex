@@ -508,7 +508,7 @@ async function getDevices()
     });
 }
 
-async function getAccessory(mac)
+function getAccessory(mac)
 {
     return new Promise(resolve => {
         
@@ -516,13 +516,11 @@ async function getAccessory(mac)
         {
             if(accessories[i].mac == mac)
             {
-                logger.debug(accessories[i]);
-
                 resolve(accessories[i]);
             }
         }
 
-        resolve({});
+        resolve(null);
     });
 }
 

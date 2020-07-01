@@ -184,19 +184,26 @@
 
                         document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-                        for(var j = activity.length - 1; j >= 0; j--)
+                        if(activity != 'null')
                         {
-                            if(activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                            for(var j = activity.length - 1; j >= 0; j--)
                             {
-                                var value = activity[j].m.split('[')[2].split(']')[0];
-
-                                if(!values[type])
+                                if(activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                 {
-                                    values[type] = { min : 100000, max : 0, values : [] };
-                                }
+                                    var value = activity[j].m.split('[')[2].split(']')[0];
 
-                                values[type].values.push(value);
+                                    if(!values[type])
+                                    {
+                                        values[type] = [];
+                                    }
+
+                                    values[type].push(value);
+                                }
                             }
+                        }
+                        else
+                        {
+                            values[type] = [];
                         }
 
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
@@ -253,13 +260,13 @@
                         for(var i = 0; i < counter; i++)
                         {
                             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-                            var min = !isNaN(values[type].values[0]) ? Math.min(...values[type].values) : 0;
-                            var max = !isNaN(values[type].values[0]) ? Math.max(...values[type].values) : 1;
+                            var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
+                            var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
                             var v = [];
 
-                            for(const j in values[type].values)
+                            for(const j in values[type])
                             {
-                                var value = values[type].values[j];
+                                var value = values[type][j];
 
                                 value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
@@ -606,7 +613,7 @@
         
             if(temp[type] && state != temp[type])
             {
-                orginal[type].values.push(state);
+                orginal[type].push(state);
 
                 calcValues(orginal);
             }
