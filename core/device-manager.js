@@ -510,13 +510,9 @@ async function getDevices()
 
 async function getAccessory(mac)
 {
-    logger.debug(mac);
-
     return new Promise(resolve => {
         
         var accessories = webhookConfig.accessories;
-
-        logger.debug(accessories);
 
         for(var i = 0; i < accessories.length; i++)
         {
@@ -527,6 +523,8 @@ async function getAccessory(mac)
                 resolve(accessories[i]);
             }
         }
+
+        resolve({});
     });
 }
 
