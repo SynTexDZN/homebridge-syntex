@@ -555,7 +555,7 @@
         },
         contact: {
             active : { text : 'Geöffnet', color : '350, 75%, 55%' },
-            inactive : { text : 'Geschlossen', color : '150, 75%, 55%' }
+            inactive : { text : 'Zu', color : '150, 75%, 55%' }
         },
         relais: {
             active : { text : 'An', color : '18, 75%, 55%' },
@@ -851,7 +851,11 @@
                 if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
                 {
                     fetchState();
+
+                    console.log('FETCH STATE');
                 }
+
+                console.log('LOOP');
 
                 await newTimeout(1000);
             }
