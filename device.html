@@ -609,12 +609,12 @@
                 if(state == 'true')
                 {
                     document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%) 0%, hsl(' + data[type].active.color + ') 100%)';
                 }
                 else if(state == 'false')
                 {
                     document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%) 0%, hsl(' + data[type].inactive.color + ') 100%)';
                 }
                 else
                 {
@@ -670,8 +670,13 @@
                         }
                     }
 
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + color + ') 0%, hsl(' + color + ') 100%)';
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + color.split(', ')[0] + ', ' + color.split(', ')[1] + ', ' + (color.split(', ')[2].split('%')[0] - 10) + ') 0%, hsl(' + color + ') 100%)';
                 }
+            }
+            else if(type == 'statelessswitch')
+            {
+                document.getElementById('status-' + type).value = 'BEREIT';
+                document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
             }
             else if(state == 'Error')
             {
