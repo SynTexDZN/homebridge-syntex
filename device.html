@@ -7,9 +7,7 @@
     </script>
     <body>
         <div id="infos">
-            <div class="control-container">
-                <input id="status" class="control-panel loading-loop" type="button" value="LADEN ..">
-            </div>
+            <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
             <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
             <div id="activity" class="main" style="display: table; margin-bottom: 132px">
@@ -169,6 +167,15 @@
                     for(var i = 0; i < counter; i++)
                     {
                         var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+                        var statusField = document.createElement('input');
+                        
+                        statusField.setAttribute('id', 'status-' + type);
+                        statusField.setAttribute('class', 'control-panel loading-loop');
+                        statusField.setAttribute('type', 'button');
+                        statusField.setAttribute('value', 'LADEN ..');
+
+                        document.getElementsByClassName('control-container').appendChild(statusField);
 
                         for(var j = activity.length - 1; j >= 0; j--)
                         {
@@ -565,21 +572,12 @@
             active : { text : 'An', color : '18, 75%, 55%' },
             inactive : { text : 'Aus', color : '205, 75%, 55%' }
         },
-        light: {
-            active : { text : 'Lux', color : '18, 75%, 55%' },
-            inactive : { text : 'Lux', color : '205, 75%, 55%' }
-        },
+        temperature: { text : '°C' },
+        humidity: { text : '%' },
+        light: { text : 'Lux' },
         rain: {
-            active : { text : 'Regen', color : '18, 75%, 55%' },
-            inactive : { text : 'Trocken', color : '205, 75%, 55%' }
-        },
-        temperature: {
-            active : { text : '°C', color : '18, 75%, 55%' },
-            inactive : { text : '°C', color : '205, 75%, 55%' }
-        },
-        humidity: {
-            active : { text : '%', color : '18, 75%, 55%' },
-            inactive : { text : '%', color : '205, 75%, 55%' }
+            active : { text : 'Regen', color : '220, 75%, 55%' },
+            inactive : { text : 'Trocken', color : '40, 85%, 85%' }
         },
         rgb: {
             active : { text : '°C', color : '18, 75%, 55%' },
@@ -612,24 +610,24 @@
 
             if(state != null && state != 'Error')
             {
-                if(state == 'true')
+                if(state == 'true' || state == true)
                 {
-                    document.getElementById('status').value = data[type].active.text.toUpperCase();
-                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
+                    document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
                 }
-                else if(state == 'false')
+                else if(state == 'false' || state == false)
                 {
-                    document.getElementById('status').value = data[type].inactive.text.toUpperCase();
-                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
+                    document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
+                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
                 }
                 else
                 {
-                    document.getElementById('status').value = state + ' ' + data[type].inactive.text.toUpperCase();
+                    document.getElementById('status-' + type).value = state + ' ' + data[type].text.toUpperCase();
                 }
             }
             else if(state == 'Error')
             {
-                document.getElementById('status').value = 'KEINE DATEN GEFUNDEN!';
+                document.getElementById('status-' + type).value = 'KEINE DATEN GEFUNDEN!';
             }
 
             //document.getElementById('status').value = 'OUT OF ORDER! :(';
