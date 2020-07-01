@@ -613,11 +613,11 @@
                 }
                 else
                 {
-                    if(device.type == 'light')
+                    if(type == 'light')
                     {
                         document.getElementById('status-' + type).value = Math.round(state) + ' ' + data[type].text.toUpperCase();
                     }
-                    else if(device.type == 'temperature')
+                    else if(type == 'temperature')
                     {
                         document.getElementById('status-' + type).value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
                     }
@@ -659,7 +659,7 @@
                         }
                         else
                         {
-                            var cRange = [15, 85], vRange = [0, 1000];
+                            var cRange = [20, 85], vRange = [0, 1000];
 
                             color = '40, 85%, ' + (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + '%';
                         }
