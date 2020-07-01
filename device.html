@@ -564,6 +564,30 @@
         switch: {
             active : { text : 'An', color : '18, 75%, 55%' },
             inactive : { text : 'Aus', color : '205, 75%, 55%' }
+        },
+        light: {
+            active : { text : 'Lux', color : '18, 75%, 55%' },
+            inactive : { text : 'Lux', color : '205, 75%, 55%' }
+        },
+        rain: {
+            active : { text : 'Regen', color : '18, 75%, 55%' },
+            inactive : { text : 'Trocken', color : '205, 75%, 55%' }
+        },
+        temperature: {
+            active : { text : '°C', color : '18, 75%, 55%' },
+            inactive : { text : '°C', color : '205, 75%, 55%' }
+        },
+        humidity: {
+            active : { text : '%', color : '18, 75%, 55%' },
+            inactive : { text : '%', color : '205, 75%, 55%' }
+        },
+        rgb: {
+            active : { text : '°C', color : '18, 75%, 55%' },
+            inactive : { text : '°C', color : '205, 75%, 55%' }
+        },
+        rgbw: {
+            active : { text : '°C', color : '18, 75%, 55%' },
+            inactive : { text : '°C', color : '205, 75%, 55%' }
         }
     };
 
@@ -589,7 +613,7 @@
                 if(state == 'true')
                 {
                     document.getElementById('status').value = data[type].active.text.toUpperCase();
-                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
+                    document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
                 }
                 else if(state == 'false')
                 {
