@@ -553,35 +553,35 @@
 
     var data = {
         motion: {
-            active : { text : 'Bewegung', color : '280, 75%, 50%' },
-            inactive : { text : 'Bereit', color : '150, 75%, 50%' }
+            active : { text : 'Bewegung', color : '280, 75%, 55%' },
+            inactive : { text : 'Bereit', color : '150, 75%, 55%' }
         },
         contact: {
-            active : { text : 'Geöffnet', color : '350, 75%, 50%' },
-            inactive : { text : 'Zu', color : '150, 75%, 50%' }
+            active : { text : 'Geöffnet', color : '350, 75%, 55%' },
+            inactive : { text : 'Zu', color : '150, 75%, 55%' }
         },
         relais: {
-            active : { text : 'An', color : '18, 75%, 50%' },
-            inactive : { text : 'Aus', color : '205, 75%, 50%' }
+            active : { text : 'An', color : '18, 75%, 55%' },
+            inactive : { text : 'Aus', color : '205, 75%, 55%' }
         },
         switch: {
-            active : { text : 'An', color : '18, 75%, 50%' },
-            inactive : { text : 'Aus', color : '205, 75%, 50%' }
+            active : { text : 'An', color : '18, 75%, 55%' },
+            inactive : { text : 'Aus', color : '205, 75%, 55%' }
         },
         temperature: { text : '°C' },
         humidity: { text : '%' },
         light: { text : 'Lux' },
         rain: {
-            active : { text : 'Regen', color : '220, 75%, 50%' },
-            inactive : { text : 'Trocken', color : '150, 75%, 50%' }
+            active : { text : 'Regen', color : '220, 75%, 55%' },
+            inactive : { text : 'Trocken', color : '150, 75%, 55%' }
         },
         rgb: {
-            active : { text : '°C', color : '18, 75%, 50%' },
-            inactive : { text : '°C', color : '205, 75%, 50%' }
+            active : { text : '°C', color : '18, 75%, 55%' },
+            inactive : { text : '°C', color : '205, 75%, 55%' }
         },
         rgbw: {
-            active : { text : '°C', color : '18, 75%, 50%' },
-            inactive : { text : '°C', color : '205, 75%, 50%' }
+            active : { text : '°C', color : '18, 75%, 55%' },
+            inactive : { text : '°C', color : '205, 75%, 55%' }
         }
     };
 
@@ -637,24 +637,24 @@
                     {
                         if(state < 18)
                         {
-                            color = '220, 75%, 50%';
+                            color = '220, 75%, 55%';
                         }
                         else if(state > 26)
                         {
-                            color = '0, 75%, 50%';
+                            color = '0, 75%, 55%';
                         }
                         else
                         {
                             var cRange = [220, 0], vRange = [18, 26];
 
-                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 50%';
+                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                         }
                     }
                     else if(type == 'humidity')
                     {
                         var cRange = [0, 150], vRange = [0, 100];
 
-                        color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 50%';
+                        color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                     }
                     else if(type == 'light')
                     {
@@ -676,7 +676,7 @@
             else if(type == 'statelessswitch')
             {
                 document.getElementById('status-' + type).value = 'BEREIT';
-                document.getElementById('status-' + type).style.backgroundColor = 'hsl(150, 75%, 50%)';
+                document.getElementById('status-' + type).style.backgroundColor = 'hsl(150, 75%, 55%)';
             }
             else if(state == 'Error')
             {
@@ -855,7 +855,7 @@
         else if(device.type == 'statelessswitch')
         {
             document.getElementById('status').value = 'BEREIT';
-            document.getElementById('status').style.backgroundColor = 'hsl(150, 75%, 50%)';
+            document.getElementById('status').style.backgroundColor = 'hsl(150, 75%, 55%)';
         }
     }
 
@@ -949,7 +949,7 @@
             }
             else
             {
-                document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 50%)';
+                document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
                 document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
 
                 for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
