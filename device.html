@@ -642,14 +642,14 @@
                         {
                             var cRange = [220, 0], vRange = [18, 26];
 
-                            color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
+                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                         }
                     }
                     else if(type == 'humidity')
                     {
                         var cRange = [0, 150], vRange = [0, 100];
 
-                        color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
+                        color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                     }
                     else if(type == 'light')
                     {
@@ -659,7 +659,7 @@
                         }
                         else
                         {
-                            var cRange = [30, 85], vRange = [0, 1000];
+                            var cRange = [20, 85], vRange = [0, 1000];
 
                             color = '40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%';
                         }
