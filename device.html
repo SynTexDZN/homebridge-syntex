@@ -601,12 +601,12 @@
 
             if(state != null && state != 'Error')
             {
-                if(state == 'true' || state == true)
+                if(state == 'true')
                 {
                     document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
                     document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
                 }
-                else if(state == 'false' || state == false)
+                else if(state == 'false')
                 {
                     document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
                     document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
