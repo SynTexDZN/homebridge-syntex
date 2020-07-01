@@ -654,6 +654,11 @@
                     {
                         var cRange = [0, 150], vRange = [0, 100];
 
+                        if(state > 50)
+                        {
+                            cRange = [150, 0];
+                        }
+
                         color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                     }
                     else if(type == 'light')
