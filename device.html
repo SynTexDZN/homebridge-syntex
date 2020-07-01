@@ -13,27 +13,6 @@
             <div id="activity" class="main" style="display: table; margin-bottom: 132px">
                 <script defer>
 
-                    var test = { a : 10, b : 0 };
-
-                    playground(test);
-
-                    async function playground(t)
-                    {
-                        console.log(t);
-
-                        var x = {};
-
-                        Object.assign(x, t);
-
-                        t.a = 5;
-
-                        console.log(t, x);
-
-                        x.b = 100;
-
-                        console.log(t, x);
-                    }
-
                     var activity = JSON.parse('<%activity%>');
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
@@ -177,10 +156,8 @@
 
                         if(counter > 1)
                         {
-                            statusField.height = '100px';
+                            statusField..style.height = '100px';
                         }
-
-                        console.log(type);
 
                         document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
