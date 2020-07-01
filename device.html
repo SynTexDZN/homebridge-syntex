@@ -547,8 +547,34 @@
     }
 
     var temp = {};
-    
+
     async function fetchState()
+    {
+        for(var i = 0; i < counter; i++)
+        {
+            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type, 10000);
+        
+            if(temp[type] && state != temp[type])
+            {
+                orginal[type].values.push(state);
+
+                calcValues(orginal);
+            }
+
+            temp[type] = state;
+
+            if(state != null && state != 'Error')
+            {
+
+            }
+
+            document.getElementById('status').value = 'OUT OF ORDER! :(';
+        }
+    }
+    
+    async function fetchStateOLD()
     {        
         if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch' || device.type == 'rgb' || device.type == 'rgbw')
         {
