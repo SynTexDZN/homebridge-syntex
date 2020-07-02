@@ -237,7 +237,16 @@
 
                         infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
-                        infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                        var obj = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+                        if(obj instanceof Object)
+                        {
+                            infoType.innerHTML = obj.name;
+                        }
+                        else
+                        {
+                            infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                        }
 
                         frame.appendChild(infoType);
                     }
