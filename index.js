@@ -380,7 +380,7 @@ SynTexPlatform.prototype = {
                                             webhookLogs[i].m = webhookLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
 
-                                        obj.wLog = JSON.stringify(webhookLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                        obj.wLog = JSON.stringify(webhookLogs);
                                     }
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
