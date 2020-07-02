@@ -251,6 +251,7 @@
                         for(var i = 0; i < counter; i++)
                         {
                             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+                            var v = [];
 
                             if(type instanceof Object)
                             {
@@ -261,7 +262,6 @@
                             {
                                 var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
                                 var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
-                                var v = [];
 
                                 for(const j in values[type])
                                 {
@@ -278,15 +278,15 @@
                                 
                                 canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + min;
                                 canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + max;
-                                
-                                window.onload = drawGrid(canvas, v, 10);
-                                window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                                window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                             }
                             else
                             {
                                 console.log("Keine Daten Geladen!");
                             }
+
+                            window.onload = drawGrid(canvas, v, 10);
+                            window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                            window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
                     }
 
