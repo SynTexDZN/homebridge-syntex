@@ -275,16 +275,18 @@ h2
 {
     transition: .3s ease-in-out;
     margin-bottom: 20px;
-    /*background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;*/
     background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .05) 100%)!important;
-    /*background-attachment: fixed!important;*/
+    /*
+    background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
+    background-attachment: fixed!important;
+    */
 }
-
+/*
 .control-panel:nth-of-type(2n)
 {
-    /*background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;*/
+    background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
 }
-
+*/
 .status-panel
 {
     margin-top: 20px;
@@ -459,78 +461,44 @@ h2
         background: rgb(220, 220, 230);
     }
 
-    input, textarea, button, .widget
+    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled), .control-panel, .status-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
     {
-        color: rgb(45, 45, 55);
-        border-color: rgb(45, 45, 55);
-        box-shadow: 0 1px 1px -1px rgba(0,0,0,0.2),
-                    0 2px 2px -1px rgba(0,0,0,0.15),
-                    0 4px 4px -2px rgba(0,0,0,0.15),
-                    0 8px 8px -2px rgba(0,0,0,0.1);
+        color: rgb(220, 220, 230);
     }
 
-    input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
+    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled), h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
     {
-        filter: brightness(80%);
+        background: rgb(45, 45, 55);
+    }
+
+    .gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan, input[type='submit'], input[type='button']:disabled, .outline, h2, p, label, input, textarea, button, .widget
+    {
+        color: rgb(45, 45, 55);
+    }
+
+    h2, input[type='button']:disabled, .outline, input, textarea, button, .widget
+    {
+        border-color: rgb(45, 45, 55);
     }
 
     input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
     {
-        background: rgb(45, 45, 55);
-        color: rgb(220, 220, 230);
         border-color: rgba(45, 45, 55, 0);
-    }
-
-    p, label
-    {
-        color: rgb(45, 45, 55);
-    }
-    
-    h2
-    {
-        color: rgb(45, 45, 55);
-        border: 3px solid rgb(45, 45, 55);
-        border-color: rgb(45, 45, 55);
     }
 
     .control-panel, .status-panel
     {
-        color: rgb(220, 220, 230);
         background-image: linear-gradient(to top, rgb(45, 45, 55) 0%, rgb(25, 25, 35) 100%);
-    }
-
-    h1
-    {
-        background: rgb(45, 45, 55);
-        color: rgb(220, 220, 230);
-    }
-
-    input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button
-    { 
-        color: rgb(220, 220, 230);
-        background: rgb(45, 45, 55);
-    }
-    
-    input[type='button']:disabled, .outline
-    {
-        color: rgb(45, 45, 55)!important;
-        border: 3px solid rgb(45, 45, 55)!important;
-    }
-
-    input[type='text']:focus, input[type='password']:focus, textarea:focus
-    {
-        background: rgb(45, 45, 55);
-        color: rgb(220, 220, 230);
-    }
-
-    .gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan, input[type='submit']
-    {
-        color: rgb(20, 20, 30)!important;
     }
 
     .setup-png
     {
         filter: saturate(0%);
+    }
+
+    input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
+    {
+        filter: brightness(80%);
     }
 
     ::-webkit-scrollbar-track, ::-webkit-scrollbar
@@ -546,6 +514,14 @@ h2
     *
     {
         scrollbar-color: rgba(50, 50, 60, 0.2) rgba(245, 245, 255, 0.5);
+    }
+
+    input, textarea, button, .widget
+    {
+        box-shadow: 0 1px 1px -1px rgba(0,0,0,0.2),
+                    0 2px 2px -1px rgba(0,0,0,0.15),
+                    0 4px 4px -2px rgba(0,0,0,0.15),
+                    0 8px 8px -2px rgba(0,0,0,0.1);
     }
 }
 
