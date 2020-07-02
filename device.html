@@ -625,7 +625,7 @@
                         }
                         else
                         {
-                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
+                            color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
                         }
                     }
                     else if(type == 'humidity')
@@ -641,11 +641,11 @@
 
                         if(state < 45 || state > 55)	
                         {	
-                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
+                            color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
                         }	
                         else	
                         {	
-                            color = '140, 75%, 55%';	
+                            color = 'hsl(140, 75%, 55%)';	
                         }
                     }
                     else if(type == 'light')
@@ -676,11 +676,6 @@
                             color = 'hsl(18, 75%, 55%)';
                         }
                     }
-                    else if(type == 'statelessswitch')	
-                    {	
-                        value = 'BEREIT';	
-                        color = 'hsl(150, 75%, 55%)';	
-                    }
                     else
                     {
                         value = state + ' ' + data[type].text.toUpperCase();
@@ -689,6 +684,11 @@
                     document.getElementById('status-' + type).value = value;
                     document.getElementById('status-' + type).style.backgroundColor = color;
                 }
+            }
+            else if(type == 'statelessswitch')	
+            {	
+                document.getElementById('status-' + type).value = 'BEREIT';	
+                document.getElementById('status-' + type).backgroundColor = 'hsl(150, 75%, 55%)';	
             }
             else if(state == 'Error')
             {
