@@ -147,6 +147,11 @@
                     {
                         var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
 
+                        if(type instanceof Object)
+                        {
+                            type = type[type];
+                        }
+
                         var statusField = document.createElement('input');
                         
                         statusField.setAttribute('id', 'status-' + type);
