@@ -175,7 +175,12 @@
 
                         document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-                        if(activity != null)
+                        if(!values[type])
+                        {
+                            values[type] = [];
+                        }
+
+                        if(activity.length > 0)
                         {
                             for(var j = activity.length - 1; j >= 0; j--)
                             {
@@ -183,18 +188,9 @@
                                 {
                                     var value = activity[j].m.split('[')[2].split(']')[0];
 
-                                    if(!values[type])
-                                    {
-                                        values[type] = [];
-                                    }
-
                                     values[type].push(value);
                                 }
                             }
-                        }
-                        else
-                        {
-                            values[type] = [];
                         }
 
                         var frame = document.createElement('div'), canvas = document.createElement('canvas');
@@ -268,7 +264,7 @@
                                 type = type.type;
                             }
 
-                            if(Object.keys(values).length != 0 && values[type].length != null)
+                            if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
                                 var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
                                 var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
