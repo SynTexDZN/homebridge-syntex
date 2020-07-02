@@ -365,7 +365,7 @@ SynTexPlatform.prototype = {
 
                                     if(bridgeLogs != null)
                                     {    
-                                        for(var i = 0; i < bridgeLogs; i++)
+                                        for(var i = 0; i < bridgeLogs.length; i++)
                                         {
                                             bridgeLogs[i].m = bridgeLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
@@ -375,7 +375,7 @@ SynTexPlatform.prototype = {
 
                                     if(webhookLogs != null)
                                     {    
-                                        for(var i = 0; i < webhookLogs; i++)
+                                        for(var i = 0; i < webhookLogs.length; i++)
                                         {
                                             webhookLogs[i].m = webhookLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
