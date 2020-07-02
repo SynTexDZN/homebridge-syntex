@@ -598,6 +598,8 @@
             {
                 var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
+                console.log(typeCounter[type], state, j);
+
                 if(temp[type] && state != temp[type])
                 {
                     orginal[type].push(state);
