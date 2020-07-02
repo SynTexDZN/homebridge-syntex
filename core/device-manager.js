@@ -1,5 +1,5 @@
 var store = require('json-fs-store');
-var config, storage, dataStorage, logger, webhookConfig;
+var config, storage, dataStorage, logger, accessories;
     
 async function removeDevice(mac, type)
 {
@@ -508,25 +508,19 @@ async function getDevices()
     });
 }
 
-async function getAccessory(mac)
+function getAccessory(mac)
 {
-    logger.debug(mac);
-
     return new Promise(resolve => {
         
-        var accessories = webhookConfig.accessories;
-
-        logger.debug(accessories);
-
         for(var i = 0; i < accessories.length; i++)
         {
             if(accessories[i].mac == mac)
             {
-                logger.debug(accessories[i]);
-
                 resolve(accessories[i]);
             }
         }
+
+        resolve(null);
     });
 }
 
@@ -612,9 +606,9 @@ async function checkEventButton(mac)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        for(const j in obj.platforms[i].statelessswitches)
+                        for(const j in obj.platforms[i].accessories)
                         {
-                            if(obj.platforms[i].statelessswitches[j].mac === mac)
+                            if(obj.platforms[i].accessories[j].mac === mac && obj.platforms[i].accessories[j].services.includes('statelessswitch'))
                             {
                                 found = true;
                             }
@@ -646,7 +640,7 @@ async function createEventButton(mac, name, buttons)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        obj.platforms[i].statelessswitches[obj.platforms[i].statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
+                        obj.platforms[i].accessories[obj.platforms[i].accessories.length] = {mac: mac, name: name + ' Events', services : 'statelessswitch', buttons: buttons};
                     }
                 }
 
@@ -736,7 +730,7 @@ function SETUP(configPath, slog, storagePath, wConf)
     dataStorage = store(storagePath.replace('/data', '/'));
     logger = slog;
     webhookPort = wConf.port;
-    webhookConfig = wConf;
+    accessories = wConf.accessories;
 };
 
 module.exports = {
