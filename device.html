@@ -142,23 +142,23 @@
                             }
                         }
                     }
+
+                    var typeCounter = {};
     
                     for(var i = 0; i < counter; i++)
                     {
                         var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                        console.log(type);
 
                         if(type instanceof Object)
                         {
                             type = type.type;
                         }
 
-                        console.log(type);
+                        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
 
                         var statusField = document.createElement('input');
                         
-                        statusField.setAttribute('id', 'status-' + type);
+                        statusField.setAttribute('id', 'status-' + type + '-' + (typeCounter[type] - 1));
                         statusField.setAttribute('class', 'control-panel loading-loop');
                         statusField.setAttribute('type', 'button');
                         statusField.setAttribute('value', 'LADEN ..');
@@ -591,117 +591,121 @@
         for(var i = 0; i < counter; i++)
         {
             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type, 10000);
+
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
-            if(temp[type] && state != temp[type])
-            {
-                orginal[type].push(state);
-
-                calcValues(orginal);
-            }
-
-            temp[type] = state;
-
-            if(state != null && state != 'Error')
-            {
-                if(state == 'true')
+                if(temp[type] && state != temp[type])
                 {
-                    document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundColor = data[type].active.color;
+                    orginal[type].push(state);
+
+                    calcValues(orginal);
                 }
-                else if(state == 'false')
+
+                temp[type] = state;
+
+                if(state != null && state != 'Error')
                 {
-                    document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundColor = data[type].inactive.color;
-                }
-                else
-                {
-                    var color = 'rgb(60, 60, 75)', value = state;
-
-                    if(type == 'temperature')
+                    if(state == 'true')
                     {
-                        var cRange = [220, 0], vRange = [18, 26];
-
-                        value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-
-                        if(state < 18)
-                        {
-                            color = 'hsl(220, 75%, 55%)';
-                        }
-                        else if(state > 26)
-                        {
-                            color = 'hsl(0, 75%, 55%)';
-                        }
-                        else
-                        {
-                            color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-                        }
+                        document.getElementById('status-' + type + '-' + j).value = data[type].active.text.toUpperCase();
+                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].active.color;
                     }
-                    else if(type == 'humidity')
+                    else if(state == 'false')
                     {
-                        var cRange = [0, 280], vRange = [0, 100];
-
-                        value = Math.round(state) + ' ' + data[type].text.toUpperCase();
-
-                        if(state > 50)
-                        {	
-                            cRange = [280, 0];
-                        }	
-
-                        if(state < 45 || state > 55)	
-                        {	
-                            color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-                        }	
-                        else	
-                        {	
-                            color = 'hsl(140, 75%, 55%)';	
-                        }
-                    }
-                    else if(type == 'light')
-                    {
-                        var cRange = [25, 85], vRange = [0, 1000];
-
-                        value = Math.round(state) + ' ' + data[type].text.toUpperCase();
-
-                        if(state > 1000)
-                        {
-                            color = 'hsl(40, 85%, 85%)';
-                        }
-                        else
-                        {
-                            color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-                        }
-                    }
-                    else if(type == 'rgb' || type == 'rgbw')
-                    {
-                        if(state.split(':')[0] == 'true')
-                        {
-                            value = 'AN';
-                            color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
-                        }
-                        else if(state.split(':')[0] == 'false')
-                        {
-                            value = 'AUS';
-                            color = 'hsl(18, 75%, 55%)';
-                        }
+                        document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();
+                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;
                     }
                     else
                     {
-                        value = state + ' ' + data[type].text.toUpperCase();
-                    }
+                        var color = 'rgb(60, 60, 75)', value = state;
 
-                    document.getElementById('status-' + type).value = value;
-                    document.getElementById('status-' + type).style.backgroundColor = color;
+                        if(type == 'temperature')
+                        {
+                            var cRange = [220, 0], vRange = [18, 26];
+
+                            value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+                            if(state < 18)
+                            {
+                                color = 'hsl(220, 75%, 55%)';
+                            }
+                            else if(state > 26)
+                            {
+                                color = 'hsl(0, 75%, 55%)';
+                            }
+                            else
+                            {
+                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                            }
+                        }
+                        else if(type == 'humidity')
+                        {
+                            var cRange = [0, 280], vRange = [0, 100];
+
+                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                            if(state > 50)
+                            {	
+                                cRange = [280, 0];
+                            }	
+
+                            if(state < 45 || state > 55)	
+                            {	
+                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                            }	
+                            else	
+                            {	
+                                color = 'hsl(140, 75%, 55%)';	
+                            }
+                        }
+                        else if(type == 'light')
+                        {
+                            var cRange = [25, 85], vRange = [0, 1000];
+
+                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                            if(state > 1000)
+                            {
+                                color = 'hsl(40, 85%, 85%)';
+                            }
+                            else
+                            {
+                                color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+                            }
+                        }
+                        else if(type == 'rgb' || type == 'rgbw')
+                        {
+                            if(state.split(':')[0] == 'true')
+                            {
+                                value = 'AN';
+                                color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+                            }
+                            else if(state.split(':')[0] == 'false')
+                            {
+                                value = 'AUS';
+                                color = 'hsl(18, 75%, 55%)';
+                            }
+                        }
+                        else
+                        {
+                            value = state + ' ' + data[type].text.toUpperCase();
+                        }
+
+                        document.getElementById('status-' + type + '-' + j).value = value;
+                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+                    }
                 }
-            }
-            else if(type == 'statelessswitch')	
-            {	
-                document.getElementById('status-' + type).value = 'BEREIT';	
-                document.getElementById('status-' + type).style.backgroundColor = 'hsl(150, 75%, 55%)';	
-            }
-            else if(state == 'Error')
-            {
-                document.getElementById('status-' + type).value = 'KEINE DATEN GEFUNDEN!';
+                else if(type == 'statelessswitch')	
+                {	
+                    document.getElementById('status-' + type + '-' + j).value = 'BEREIT';	
+                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = 'hsl(150, 75%, 55%)';	
+                }
+                else if(state == 'Error')
+                {
+                    document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN GEFUNDEN!';
+                }
             }
         }
     }
