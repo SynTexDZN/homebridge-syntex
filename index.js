@@ -310,7 +310,7 @@ SynTexPlatform.prototype = {
                                     var ifaces = require('os').networkInterfaces();
                                     var address;
 
-                                    for (var dev in ifaces)
+                                    for(var dev in ifaces)
                                     {
                                         var iface = ifaces[dev].filter(function(details)
                                         {
@@ -329,7 +329,7 @@ SynTexPlatform.prototype = {
                                     var ifaces = require('os').networkInterfaces();
                                     var address;
 
-                                    for (var dev in ifaces)
+                                    for(var dev in ifaces)
                                     {
                                         var iface = ifaces[dev].filter(function(details)
                                         {
@@ -365,11 +365,21 @@ SynTexPlatform.prototype = {
 
                                     if(bridgeLogs != null)
                                     {    
-                                        obj.bLog = JSON.stringify(bridgeLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                        for(var i = 0; i < bridgeLogs; i++)
+                                        {
+                                            bridgeLogs[i].m = bridgeLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                        }
+
+                                        obj.bLog = JSON.stringify(bridgeLogs);
                                     }
 
                                     if(webhookLogs != null)
                                     {    
+                                        for(var i = 0; i < webhookLogs; i++)
+                                        {
+                                            webhookLogs[i].m = webhookLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                        }
+
                                         obj.wLog = JSON.stringify(webhookLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                     }
 
