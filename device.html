@@ -553,24 +553,24 @@
 
     var data = {
         motion: {
-            active : { text : 'Bewegung', color : '280, 75%, 55%' },
-            inactive : { text : 'Bereit', color : '150, 75%, 55%' }
+            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
         },
         contact: {
-            active : { text : 'Geöffnet', color : '350, 75%, 55%' },
-            inactive : { text : 'Zu', color : '150, 75%, 55%' }
+            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
         },
         relais: {
-            active : { text : 'An', color : '18, 75%, 55%' },
-            inactive : { text : 'Aus', color : '205, 75%, 55%' }
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
         },
         switch: {
-            active : { text : 'An', color : '18, 75%, 55%' },
-            inactive : { text : 'Aus', color : '205, 75%, 55%' }
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
         },
         rain: {
-            active : { text : 'Regen', color : '220, 75%, 55%' },
-            inactive : { text : 'Trocken', color : '40, 85%, 85%' }
+            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+            inactive : { text : 'Trocken', color : 'hsl(40, 85%, 85%)' }
         },
         temperature: { text : '°C' },
         humidity: { text : '%' },
@@ -595,15 +595,15 @@
 
             if(state != null && state != 'Error')
             {
-                if(state == 'true' || state == true)
+                if(state == 'true')
                 {
                     document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
+                    document.getElementById('status-' + type).style.backgroundColor = data[type].active.color;
                 }
-                else if(state == 'false' || state == false)
+                else if(state == 'false')
                 {
                     document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
+                    document.getElementById('status-' + type).style.backgroundColor = data[type].inactive.color;
                 }
                 else
                 {
@@ -625,20 +625,32 @@
                         }
                         else
                         {
-                            color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
+                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
                         }
                     }
                     else if(type == 'humidity')
                     {
-                        var cRange = [0, 150], vRange = [0, 100];
+                        var cRange = [0, 280], vRange = [0, 100];
 
                         value = Math.round(state) + ' ' + data[type].text.toUpperCase();
 
-                        color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
+                        if(state > 50)
+                        {	
+                            cRange = [280, 0];
+                        }	
+
+                        if(state < 45 || state > 55)	
+                        {	
+                            color = ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%';
+                        }	
+                        else	
+                        {	
+                            color = '140, 75%, 55%';	
+                        }
                     }
                     else if(type == 'light')
                     {
-                        var cRange = [20, 85], vRange = [0, 1000];
+                        var cRange = [25, 85], vRange = [0, 1000];
 
                         value = Math.round(state) + ' ' + data[type].text.toUpperCase();
 
@@ -648,7 +660,7 @@
                         }
                         else
                         {
-                            color = 'hsl(40, 85%, ' + (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + '%)';
+                            color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
                         }
                     }
                     else if(type == 'rgb' || type == 'rgbw')
@@ -664,13 +676,18 @@
                             color = 'hsl(18, 75%, 55%)';
                         }
                     }
+                    else if(type == 'statelessswitch')	
+                    {	
+                        value = 'BEREIT';	
+                        color = 'hsl(150, 75%, 55%)';	
+                    }
                     else
                     {
                         value = state + ' ' + data[type].text.toUpperCase();
                     }
 
                     document.getElementById('status-' + type).value = value;
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, ' + color + ' 0%, ' + color + ' 100%)';
+                    document.getElementById('status-' + type).style.backgroundColor = color;
                 }
             }
             else if(state == 'Error')
