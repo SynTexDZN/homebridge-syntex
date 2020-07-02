@@ -248,10 +248,15 @@
 
                     function calcValues(values)
                     {
-                        /*
                         for(var i = 0; i < counter; i++)
                         {
                             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+                            if(type instanceof Object)
+                            {
+                                type = type.type;
+                            }
+
                             var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
                             var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
                             var v = [];
@@ -265,7 +270,7 @@
                                 v.push((value - min) / (max - min) * 100);
                             }
 
-                            console.log(v);
+                            console.log("Calc Graphs", v);
 
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             
@@ -276,7 +281,6 @@
                             window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
                             window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                         }
-                        */
                     }
 
                 </script>
@@ -590,8 +594,6 @@
 
     async function fetchState()
     {
-        console.log("FETCH STATE", counter, typeCounter);
-
         for(var i = 0; i < counter; i++)
         {
             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
@@ -601,14 +603,10 @@
                 type = type.type;
             }
 
-            console.log(typeCounter[type], type);
-
             for(var j = 0; j < typeCounter[type]; j++)
             {
                 var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
-                console.log(state, j);
-
                 if(temp[type] && state != temp[type])
                 {
                     orginal[type].push(state);
