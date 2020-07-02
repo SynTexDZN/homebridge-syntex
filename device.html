@@ -257,29 +257,36 @@
                                 type = type.type;
                             }
 
-                            var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
-                            var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
-                            var v = [];
-
-                            for(const j in values[type])
+                            if(Object.keys(values).length != 0 && values[type].length != null)
                             {
-                                var value = values[type][j];
+                                var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
+                                var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
+                                var v = [];
 
-                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+                                for(const j in values[type])
+                                {
+                                    var value = values[type][j];
 
-                                v.push((value - min) / (max - min) * 100);
+                                    value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                                    v.push((value - min) / (max - min) * 100);
+                                }
+
+                                console.log("Calc Graphs", v);
+
+                                var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
+                                
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + min;
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + max;
+                                
+                                window.onload = drawGrid(canvas, v, 10);
+                                window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
+                                window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
                             }
-
-                            console.log("Calc Graphs", v);
-
-                            var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
-                            
-                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + min;
-                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + max;
-                            
-                            window.onload = drawGrid(canvas, v, 10);
-                            window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                            window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                            else
+                            {
+                                console.log("Keine Daten Geladen!");
+                            }
                         }
                     }
 
