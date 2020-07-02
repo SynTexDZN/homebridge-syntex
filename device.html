@@ -596,11 +596,13 @@
         {
             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
 
+            console.log(typeCounter[type], type);
+
             for(var j = 0; j < typeCounter[type]; j++)
             {
                 var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
-                console.log(typeCounter[type], state, j);
+                console.log(state, j);
 
                 if(temp[type] && state != temp[type])
                 {
