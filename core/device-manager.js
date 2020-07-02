@@ -606,9 +606,9 @@ async function checkEventButton(mac)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        for(const j in obj.platforms[i].statelessswitches)
+                        for(const j in obj.platforms[i].accessories)
                         {
-                            if(obj.platforms[i].statelessswitches[j].mac === mac)
+                            if(obj.platforms[i].accessories[j].mac === mac && obj.platforms[i].accessories[j].services.includes('statelessswitch'))
                             {
                                 found = true;
                             }
@@ -640,7 +640,7 @@ async function createEventButton(mac, name, buttons)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        obj.platforms[i].statelessswitches[obj.platforms[i].statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
+                        obj.platforms[i].accessories[obj.platforms[i].accessories.length] = {mac: mac, name: name + ' Events', services : 'statelessswitch', buttons: buttons};
                     }
                 }
 
