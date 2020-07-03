@@ -31,7 +31,7 @@
             };
 
     </script>
-    <body>
+    <body onresize="calcValues(orginal)">
         <div id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
@@ -242,7 +242,6 @@
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
-                        canvas.setAttribute('onresize', 'console.log("hiii")');
 
                         canvas.width = width + padding * 2;
                         canvas.height = height + padding * 2;
