@@ -362,7 +362,9 @@
                                 var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
                                 var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)'
 
-                                window.onload = drawFill(canvas, v, [, ], 0);
+                                //color = minClr
+
+                                window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
                             }
                             else if(type == 'humidity')
                             {
