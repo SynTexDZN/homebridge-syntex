@@ -25,9 +25,9 @@
                     active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
                     inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
                 },
-                temperature: { text : '°C' },
-                humidity: { text : '%', color : 'hsl(140, 75%, 55%)' },
-                light: { text : 'Lux', color : 'hsl(40, 85%, 85%)' }
+                temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+                humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+                light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
             };
 
     </script>
@@ -301,6 +301,15 @@
                                 color = data[type].color;
                             }
 
+                            if(data[type].colorRange && data[type].valueRange)
+                            {
+                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                                var state = 50;
+
+                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                            }
+
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
                                 var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
@@ -326,7 +335,7 @@
                             }
 
                             window.onload = drawGrid(canvas, v, 10);
-                            window.onload = drawFill(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .3)'), 'hsla(0, 0%, 0%, 0)', 0);
+                            window.onload = drawFill(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)'), 0);
                             window.onload = drawGraph(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .2)'), color, false);
                         }
                     }
@@ -656,7 +665,7 @@
 
                         if(type == 'temperature')
                         {
-                            var cRange = [220, 0], vRange = [18, 26];
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
                             value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
 
@@ -675,7 +684,7 @@
                         }
                         else if(type == 'humidity')
                         {
-                            var cRange = [0, 280], vRange = [0, 100];
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
                             value = Math.round(state) + ' ' + data[type].text.toUpperCase();
 
@@ -695,7 +704,7 @@
                         }
                         else if(type == 'light')
                         {
-                            var cRange = [25, 85], vRange = [0, 1000];
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
                             value = Math.round(state) + ' ' + data[type].text.toUpperCase();
 
