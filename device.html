@@ -354,10 +354,18 @@
                                 {
                                     min = data[type].valueRange[0];
                                 }
+                                else if(min > data[type].valueRange[1])
+                                {
+                                    min = data[type].valueRange[1];
+                                }
 
                                 if(max > data[type].valueRange[1])
                                 {
                                     max = data[type].valueRange[1];
+                                }
+                                else if(max < data[type].valueRange[0])
+                                {
+                                    max = data[type].valueRange[0];
                                 }
 
                                 console.log(min, max);
