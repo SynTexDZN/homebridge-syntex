@@ -26,8 +26,8 @@
                     inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
                 },
                 temperature: { text : '°C' },
-                humidity: { text : '%' },
-                light: { text : 'Lux' }
+                humidity: { text : '%', color : 'hsl(140, 75%, 55%)' },
+                light: { text : 'Lux', color : 'hsl(40, 85%, 85%)' }
             };
 
     </script>
@@ -685,7 +685,7 @@
                             }	
                             else	
                             {	
-                                color = 'hsl(140, 75%, 55%)';	
+                                color = data[type].color;	
                             }
                         }
                         else if(type == 'light')
@@ -696,7 +696,7 @@
 
                             if(state > 1000)
                             {
-                                color = 'hsl(40, 85%, 85%)';
+                                color = data[type].color;
                             }
                             else
                             {
