@@ -51,7 +51,7 @@
                         var height = canvas.offsetHeight - padding * 2 - 4;
 
                         ctx.lineWidth = 2;
-                        ctx.lineCap = 'butt';
+                        ctx.lineCap = 'square';
                         ctx.strokeStyle = clr2;
 
                         ctx.beginPath();
@@ -97,16 +97,11 @@
                     {
                         var ctx = canvas.getContext('2d');
                         var height = canvas.offsetHeight - padding * 2 - 4;
-
-                        console.log(height, (height + padding * 2 + 4));
-
                         var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 4) - padding);
 
                         for(var i = 0; i < gradients.length; i++)
                         {
                             grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-
-                            console.log(i / (gradients.length - 1));
                         }
 
                         ctx.fillStyle = grd;
