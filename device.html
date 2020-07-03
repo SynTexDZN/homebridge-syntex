@@ -43,7 +43,7 @@
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
-                    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4
+                    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
 
                     function drawGraph(canvas, data, gradients, points)
                     {
@@ -306,8 +306,9 @@
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             var v = [];
 
-                            canvas.width = width + padding * 2;
-                            canvas.height = height + padding * 2;
+                            canvas.width = document.getElementById('activity').offsetWidth;
+                            canvas.height = document.getElementById('activity').offsetHeight;
+                            
 
                             if(type instanceof Object)
                             {
