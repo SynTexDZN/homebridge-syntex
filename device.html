@@ -60,9 +60,6 @@
                         ctx.lineCap = 'square';
                         ctx.strokeStyle = grd;
 
-                        ctx.beginPath();
-                        ctx.moveTo(0, height - data[0] * height / 100  + padding);
-
                         for(var i = 1; i < data.length; i++)
                         {
                             if(points)
@@ -79,10 +76,11 @@
                                 ctx.closePath();
                             }
 
+                            ctx.beginPath();
+                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
                             ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+                            ctx.stroke();
                         }
-
-                        ctx.stroke();
 
                         if(points)
                         {
@@ -365,10 +363,8 @@
                                 var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, 0)';
                                 var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
 
-                                color = 'hsl(' + (((max + min) / 2 - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-
                                 window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
-                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', 0)', ')'), minClr.replace('hsla', 'hsl').replace(', .3)', ')')], false);
+                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', 0)', ')')], false);
                             }
                             else if(type == 'humidity')
                             {
