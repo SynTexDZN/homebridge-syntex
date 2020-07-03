@@ -368,8 +368,52 @@
                             }
                             else if(type == 'humidity')
                             {
-                                window.onload = drawFill(canvas, v, ['hsla(150, 65%, 55%, .3)', 'hsla(0, 65%, 55%, .1)'], 0);
-                                window.onload = drawGraph(canvas, v, ['hsl(150, 65%, 55%)', 'hsla(0, 65%, 55%)'], false);
+                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                                if(min < data[type].valueRange[0])
+                                {
+                                    min = data[type].valueRange[0];
+                                }
+
+                                if(max > data[type].valueRange[1])
+                                {
+                                    max = data[type].valueRange[1];
+                                }
+
+                                if(min > 50)
+                                {	
+                                    cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+                                }
+
+                                if(min < 45 || min > 55)	
+                                {	
+                                    var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+                                }
+                                else
+                                {
+                                    var minClr = data[type].color.replace('hsl', 'hsla').replace(')', ', .1)');
+                                }
+
+                                if(max > 50)
+                                {	
+                                    cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+                                }
+                                else
+                                {
+                                    cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+                                }
+
+                                if(max < 45 || max > 55)	
+                                {	
+                                    var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+                                }
+                                else
+                                {
+                                    var maxClr = data[type].color.replace('hsl', 'hsla').replace(')', ', .3)');
+                                }
+
+                                window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
                             }
                             else if(type == 'light')
                             {
