@@ -395,14 +395,7 @@
                                     cRange = [data[type].colorRange[1], data[type].colorRange[0]];
                                 }
 
-                                if(min < 45 || min > 55)	
-                                {	
-                                    var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-                                }
-                                else
-                                {
-                                    var minClr = data[type].color.replace('hsl', 'hsla').replace(')', ', .1)');
-                                }
+                                var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
 
                                 if(max > 50)
                                 {	
@@ -413,14 +406,7 @@
                                     cRange = [data[type].colorRange[0], data[type].colorRange[1]];
                                 }
 
-                                if(max < 45 || max > 55)	
-                                {	
-                                    var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-                                }
-                                else
-                                {
-                                    var maxClr = data[type].color.replace('hsl', 'hsla').replace(')', ', .3)');
-                                }
+                                var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
 
                                 window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
                                 window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
