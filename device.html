@@ -45,14 +45,20 @@
                     var padding = 50;
                     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4
 
-                    function drawGraph(canvas, data, clr1, clr2, points)
+                    function drawGraph(canvas, data, gradients, points)
                     {
                         var ctx = canvas.getContext('2d');
                         var height = canvas.offsetHeight - padding * 2 - 4;
+                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 4) - padding);
+
+                        for(var i = 0; i < gradients.length; i++)
+                        {
+                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+                        }
 
                         ctx.lineWidth = 2;
                         ctx.lineCap = 'square';
-                        ctx.strokeStyle = clr2;
+                        ctx.strokeStyle = grd;
 
                         ctx.beginPath();
                         ctx.moveTo(0, height - data[0] * height / 100  + padding);
@@ -61,12 +67,12 @@
                         {
                             if(points)
                             {
-                                ctx.fillStyle = clr1;
+                                ctx.fillStyle = gradients[0];
                                 ctx.beginPath();
                                 ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
                                 ctx.fill();
                                 ctx.closePath();
-                                ctx.fillStyle = clr2;
+                                ctx.fillStyle = gradients[1];
                                 ctx.beginPath();
                                 ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
                                 ctx.fill();
@@ -80,12 +86,12 @@
 
                         if(points)
                         {
-                            ctx.fillStyle = clr1;
+                            ctx.fillStyle = gradients[0];
                             ctx.beginPath();
                             ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
                             ctx.fill();
                             ctx.closePath();
-                            ctx.fillStyle = clr2;
+                            ctx.fillStyle = gradients[1];
                             ctx.beginPath();
                             ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
                             ctx.fill();
@@ -362,21 +368,23 @@
                                 color = 'hsl(' + (((max + min) / 2 - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
 
                                 window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', 0)', ')'), minClr.replace('hsla', 'hsl').replace(', .3)', ')')], false);
                             }
                             else if(type == 'humidity')
                             {
                                 window.onload = drawFill(canvas, v, ['hsla(150, 65%, 55%, .3)', 'hsla(0, 65%, 55%, .1)'], 0);
+                                window.onload = drawGraph(canvas, v, ['hsl(150, 65%, 55%)', 'hsla(0, 65%, 55%)'], false);
                             }
                             else if(type == 'light')
                             {
                                 window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+                                window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 25%, 25%)'], false);
                             }
                             else
                             {
                                 window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+                                window.onload = drawGraph(canvas, v, [color, color], false);
                             }
-
-                            window.onload = drawGraph(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .2)'), color, false);
                         }
                     }
 
