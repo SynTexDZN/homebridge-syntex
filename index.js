@@ -272,11 +272,11 @@ SynTexPlatform.prototype = {
                                         activity : '[]'
                                     };
 
-                                    var activity = JSON.stringify(await logger.load('SynTexWebHooks', urlParams.mac));
+                                    var activity = await logger.load('SynTexWebHooks', urlParams.mac);
 
                                     if(activity != null)
                                     {
-                                        obj.activity = activity;
+                                        obj.activity = JSON.stringify(activity);
                                     }
 
                                     if(webhookConfig != null)
