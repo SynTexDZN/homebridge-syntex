@@ -54,6 +54,9 @@
                         ctx.lineCap = 'round';
                         ctx.strokeStyle = clr2;
 
+                        ctx.beginPath();
+                        ctx.moveTo(0, height - data[0] * height / 100  + padding);
+
                         for(var i = 1; i < data.length; i++)
                         {
                             if(points)
@@ -70,11 +73,10 @@
                                 ctx.closePath();
                             }
 
-                            ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
                             ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            ctx.stroke();
                         }
+
+                        ctx.stroke();
 
                         if(points)
                         {
