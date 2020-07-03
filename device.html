@@ -32,11 +32,11 @@
 
     </script>
     <body onresize="calcValues(orginal)">
-        <div id="infos">
+        <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
-            <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" class="main" style="display: table; margin-bottom: 100px">
+            <div style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
+            <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
                     var activity = JSON.parse('<%activity%>');
@@ -440,12 +440,10 @@
 
                 </script>
             </div>
-            <div class="main">
-                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-                <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
-                </div>
+            <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
+            <div style="display: flex">
+                <input type="button" value="Zurück" onclick="window.location.href='/'">
+                <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
             </div>
         </div>
         <div id="settings" style="display: none;">
