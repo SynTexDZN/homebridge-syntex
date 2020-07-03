@@ -2,7 +2,34 @@
     <title class="loading-loop">Laden ..</title>
     <script>
 
-        var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
+        var device = JSON.parse('<%device%>'),
+            accessory = JSON.parse('<%accessory%>'),
+        
+        var data = {
+            motion: {
+                active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+                inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+            },
+            contact: {
+                active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+                inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+            },
+            relais: {
+                active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+            },
+            switch: {
+                active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+            },
+            rain: {
+                active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+                inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+            },
+            temperature: { text : '°C' },
+            humidity: { text : '%' },
+            light: { text : 'Lux' }
+        };
 
     </script>
     <body>
@@ -256,12 +283,18 @@
                         for(var i = 0; i < counter; i++)
                         {
                             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+                            var color = 'hsl(200, 98%, 60%)';
                             var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
                             var v = [];
 
                             if(type instanceof Object)
                             {
                                 type = type.type;
+                            }
+
+                            if(data[type].active && data[type].active.color)
+                            {
+                                color = data[type].active.color;
                             }
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
@@ -289,8 +322,8 @@
                             }
 
                             window.onload = drawGrid(canvas, v, 10);
-                            window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                            window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
+                            window.onload = drawFill(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .3)'), 'hsla(0, 0%, 0%, 0)', 0);
+                            window.onload = drawGraph(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .2)'), color, false);
                         }
                     }
 
@@ -576,32 +609,6 @@
     }
 
     var temp = {};
-
-    var data = {
-        motion: {
-            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-        },
-        contact: {
-            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
-        },
-        relais: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        switch: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        rain: {
-            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
-        },
-        temperature: { text : '°C' },
-        humidity: { text : '%' },
-        light: { text : 'Lux' }
-    };
 
     async function fetchState()
     {
