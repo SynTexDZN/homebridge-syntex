@@ -329,7 +329,7 @@
 
                             if(type == 'temperature' || type == 'humidity' || type == 'light')
                             {
-                                window.onload = drawFill(canvas, v, data[type].colorRange[1].replace('hsl', 'hsla').replace(')', ', .3)'), data[type].colorRange[0].replace('hsl', 'hsla').replace(')', ', .1)'), 0);
+                                window.onload = drawFill(canvas, v, 'hsla(' + data[type].colorRange[1] + ', 65%, 55%, .3)', 'hsla(' + data[type].colorRange[0] + ', 65%, 55%, .3)', 0);
                             }
                             else
                             {
