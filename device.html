@@ -91,14 +91,17 @@
                         }
                     }
 
-                    function drawFill(canvas, data, clr1, clr2, smoothing)
+                    function drawFill(canvas, data, gradients, smoothing)
                     {
                         var ctx = canvas.getContext('2d');
                         var height = canvas.offsetHeight - padding * 2 - 4;
 
                         var grd = ctx.createLinearGradient(0, 0, 0, height + 100);
-                        grd.addColorStop(0, clr1);
-                        grd.addColorStop(1, clr2);
+
+                        for(var i = 0; i < gradients.length; i++)
+                        {
+                            grd.addColorStop(i, gradients[i]);
+                        }
 
                         ctx.fillStyle = grd;
 
@@ -119,7 +122,7 @@
                             }
                         }
 
-                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding * 2);
+                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
 
                         ctx.closePath();
                         ctx.fill();
@@ -329,19 +332,19 @@
 
                             if(type == 'temperature')
                             {
-                                window.onload = drawFill(canvas, v, 'hsla(200, 65%, 55%, .3)', 'hsla(0, 65%, 55%, .1)', 0);
+                                window.onload = drawFill(canvas, v, ['hsla(200, 65%, 55%, .3)', 'hsla(100, 65%, 55%, .2)', 'hsla(0, 65%, 55%, .1)'], 0);
                             }
                             else if(type == 'humidity')
                             {
-                                window.onload = drawFill(canvas, v, 'hsla(0, 65%, 55%, .3)', 'hsla(150, 65%, 55%, .1)', 0);
+                                window.onload = drawFill(canvas, v, ['hsla(0, 65%, 55%, .3)', 'hsla(150, 65%, 55%, .1)'], 0);
                             }
                             else if(type == 'light')
                             {
-                                window.onload = drawFill(canvas, v, 'hsla(40, 85%, 75%, .3)', 'hsla(40, 35%, 25%, .1)', 0);
+                                window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 35%, 25%, .1)'], 0);
                             }
                             else
                             {
-                                window.onload = drawFill(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)'), 0);
+                                window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
                             }
 
                             window.onload = drawGraph(canvas, v, color.replace('hsl', 'hsla').replace(')', ', .2)'), color, false);
