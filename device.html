@@ -279,7 +279,7 @@
                         }
 
                         frame.appendChild(infoType);
-
+                        /*
                         if(data[type].text)
                         {
                             var infoUnit = document.createElement('div');
@@ -290,6 +290,7 @@
 
                             frame.appendChild(infoUnit);
                         }
+                        */
                     }
 
                     var orginal = { ...values };
@@ -343,8 +344,8 @@
                                 }
                                 else
                                 {
-                                    canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + min;
-                                    canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + max;
+                                    canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + min + ' ' + data[type].text;
+                                    canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + max + ' ' + data[type].text;
                                 }
                             }
                             else
