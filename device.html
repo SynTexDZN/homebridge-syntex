@@ -296,6 +296,11 @@
                                 color = data[type].active.color;
                             }
 
+                            if(data[type].color)
+                            {
+                                color = data[type].color;
+                            }
+
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
                                 var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
