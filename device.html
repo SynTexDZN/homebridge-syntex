@@ -356,8 +356,14 @@
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
-                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */40;
-                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */60;
+                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */0;
+                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */100000;
+
+                                for(const j in values[type])
+                                {
+                                    min = values[type][j].value < min ? values[type][j].value : min;
+                                    max = values[type][j].value > max ? values[type][j].value : max;
+                                }
                                 
                                 var unterteilungen = 24 * 4,
                                     date = new Date();
