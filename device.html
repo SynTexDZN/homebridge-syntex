@@ -370,7 +370,7 @@
                                     {
                                         if(values[type][j].time < Math.round(date.getTime() / 1000) - 86400 * (k / unterteilungen) && values[type][j].time > Math.round(date.getTime() / 1000) - 86400 * ((k + 1) / unterteilungen))
                                         {
-                                            var value = (values[type][j] - min) / (max - min) * 100;
+                                            var value = (values[type][j].value - min) / (max - min) * 100;
 
                                             sum += parseInt(value);
 
