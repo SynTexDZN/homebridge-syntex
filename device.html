@@ -48,9 +48,9 @@
                     function drawGraph(canvas, data, gradients, points)
                     {
                         var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 1;
+                        var height = canvas.offsetHeight - padding * 2 - 2;
                         var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 1) - padding);
+                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
 
                         for(var i = 0; i < gradients.length; i++)
                         {
@@ -101,9 +101,9 @@
                     function drawFill(canvas, data, gradients, smoothing)
                     {
                         var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 1;
+                        var height = canvas.offsetHeight - padding * 2 - 2;
                         var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 1) - padding);
+                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
 
                         for(var i = 0; i < gradients.length; i++)
                         {
@@ -138,7 +138,7 @@
                     function drawGrid(canvas, data, unterteilungen)
                     {
                         var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 1;
+                        var height = canvas.offsetHeight - padding * 2 - 2;
                         var width = canvas.offsetWidth - padding * 2;
 
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -241,7 +241,7 @@
                             frame.style.marginBottom = '20px';
                         }
 
-                        var height = frame.offsetHeight - padding * 2 - 1;
+                        var height = frame.offsetHeight - padding * 2 - 2;
 
                         canvas.setAttribute('class', 'canvas');
                         canvas.setAttribute('style', 'border-radius: 50px');
