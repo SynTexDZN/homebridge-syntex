@@ -35,7 +35,7 @@
         <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
-            <div style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
+            <div id="info" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
@@ -441,7 +441,7 @@
                 </script>
             </div>
             <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-            <div style="display: flex">
+            <div id="navigation-panel style="display: flex">
                 <input type="button" value="Zurück" onclick="window.location.href='/'">
                 <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
             </div>
@@ -515,7 +515,7 @@
     document.getElementsByTagName('title')[0].innerHTML = device.name;
     document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
-    var infos = document.getElementById('infos').getElementsByClassName('main')[0];
+    var infos = document.getElementById('info');
 
     infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
 
@@ -562,8 +562,8 @@
         }
     }
 
-    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
-    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('version', device.version);
+    document.getElementById('navigation-panel').setAttribute('type', device.type);
+    document.getElementById('navigation-panel').setAttribute('version', device.version);
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
 
@@ -1002,7 +1002,7 @@
                         showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                     }
 
-                    document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+                    document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
 
                     await newTimeout(4000);
 
@@ -1021,9 +1021,9 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000, 3, {}, false);
+        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
 
-        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementsByClassName('main')[1].getAttribute('version')))
+        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementById('navigation-panel').getAttribute('version')))
         {
             var update = document.createElement('input');
 
@@ -1033,7 +1033,7 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('id', 'update-btn');
 
-            document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
+            document.getElementById('navigation-panel').insertBefore(update, document.getElementById('restart-btn'));
         }
     }
     
