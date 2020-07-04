@@ -229,7 +229,7 @@
                                 {
                                     console.log(activity[j].t);
 
-                                    if(activity[j].t > new Date().getTime() - 86400 * (k / unterteilungen) && activity[j].t < new Date().getTime() - 86400 * ((k + 1) / unterteilungen) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                                    if(activity[j].t > Math.round(Date().getTime() / 1000) - 86400 * (k / unterteilungen) && activity[j].t < Math.round(Date().getTime() / 1000) - 86400 * ((k + 1) / unterteilungen) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                     {
                                         var value = activity[j].m.split('[')[2].split(']')[0];
 
