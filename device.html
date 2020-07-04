@@ -225,20 +225,21 @@
                             {
                                 console.log(Math.round(new Date().getTime() / 1000) - 86400 * (k / unterteilungen), Math.round(new Date().getTime() / 1000) - 86400 * ((k + 1) / unterteilungen));
 
+                                var x = [], sum = 0;
+
                                 for(var j = activity.length - 1; j >= 0; j--)
                                 {
                                     if(activity[j].t < Math.round(new Date().getTime() / 1000) - 86400 * (k / unterteilungen) && activity[j].t > Math.round(new Date().getTime() / 1000) - 86400 * ((k + 1) / unterteilungen) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                     {
                                         var value = activity[j].m.split('[')[2].split(']')[0];
 
-                                        values[type][k] = value;
+                                        sum += value;
+
+                                        x.push(value);
                                     }
                                 }
 
-                                if(!values[type][k])
-                                {
-                                    values[type][k] = (values[type][k - 1] || 0);
-                                }
+                                values[type][k] = sum / x.length;
                             }
                         }
 
