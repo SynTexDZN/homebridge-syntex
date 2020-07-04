@@ -388,7 +388,7 @@
                                     unterteilungen = 24 * 100;
                                 }
 
-                                for(var k = 0; k < unterteilungen; k++)
+                                for(var k = unterteilungen; k >= 0; k--)
                                 {
                                     var x = [], sum = 0;
 
@@ -411,6 +411,7 @@
                                         }
                                     }
 
+                                    console.log(v[k], k);
                                     //console.log(sum, x, sum / x.length);
                                     if(!isNaN(values[type][0].value))
                                     {
@@ -420,6 +421,8 @@
                                     {
                                         v[k] = x.includes('true') ? 100 : 0;
                                     }
+
+                                    console.log(v[k], k);
                                 }
                                 /*
                                 for(const j in values[type])
