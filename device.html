@@ -380,8 +380,13 @@
 
                                 console.log('Min', min, 'Max', max);
                                 
-                                var unterteilungen = 24 * 12,
+                                var unterteilungen = 24 * 20,
                                     date = new Date();
+
+                                if(!isNaN(values[type][0].value))
+                                {
+                                    unterteilungen = 24 * 6;
+                                }
 
                                 for(var k = 0; k < unterteilungen; k++)
                                 {
