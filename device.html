@@ -356,8 +356,8 @@
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
-                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */0;
-                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */100;
+                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */40;
+                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */60;
                                 
                                 var unterteilungen = 24 * 4,
                                     date = new Date();
@@ -377,6 +377,8 @@
                                             x.push(value);
                                         }
                                     }
+
+                                    console.log(sum, x, sum / x.length);
 
                                     v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
                                 }
