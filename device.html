@@ -392,8 +392,6 @@
                                 {
                                     var x = [], sum = 0;
 
-                                    console.log(k);
-
                                     for(const j in values[type])
                                     {
                                         if(values[type][j].time < Math.round(date.getTime() / 1000) - 86400 * (k / unterteilungen) && values[type][j].time > Math.round(date.getTime() / 1000) - 86400 * ((k + 1) / unterteilungen))
@@ -411,18 +409,17 @@
                                         }
                                     }
 
-                                    console.log(v[k], k);
                                     //console.log(sum, x, sum / x.length);
                                     if(!isNaN(values[type][0].value))
                                     {
-                                        v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
+                                        v[k] = x.length > 0 ? sum / x.length : 0;
                                     }
                                     else
                                     {
                                         v[k] = x.includes('true') ? 100 : 0;
                                     }
 
-                                    console.log(v[k], k);
+                                    console.log(v[k], k, sum / x.length);
                                 }
                                 /*
                                 for(const j in values[type])
