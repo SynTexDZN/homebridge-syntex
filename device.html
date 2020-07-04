@@ -223,9 +223,11 @@
 
                             for(var k = 0; k < unterteilungen; k++)
                             {
+                                console.log(86400 / (unterteilungen - k), 86400 / (unterteilungen - k + 1));
+
                                 for(var j = activity.length - 1; j >= 0; j--)
                                 {
-                                    console.log(86400 / (unterteilungen - k), 86400 / (unterteilungen - k + 1));
+                                    console.log(activity[j].t);
 
                                     if(activity[j].t > 86400 / (unterteilungen - k) && activity[j].t < 86400 / (unterteilungen - k + 1) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                     {
