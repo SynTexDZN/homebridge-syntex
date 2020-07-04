@@ -412,11 +412,11 @@
                                     //console.log(sum, x, sum / x.length);
                                     if(!isNaN(values[type][0].value))
                                     {
-                                        v[unterteilungen - k] = x.length > 0 ? sum / x.length : !isNaN(x[unterteilungen - k + 1]) ? x[unterteilungen - k + 1] : 0;
+                                        v[unterteilungen - k - 1] = x.length > 0 ? sum / x.length : !isNaN(x[unterteilungen - k + 1]) ? x[unterteilungen - k + 1] : 0;
                                     }
                                     else
                                     {
-                                        v[unterteilungen - k] = x.includes('true') ? 100 : 0;
+                                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
                                     }
 
                                     console.log(v[k], k, sum / x.length);
