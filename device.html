@@ -161,22 +161,19 @@
                             ctx.stroke();
                         }
 
-                        if(data.length < 75)
+                        for(var i = 0; i < 12; i++)
                         {
-                            for(var i = 0; i < data.length; i++)
+                            ctx.strokeStyle = 'rgb(40, 40, 50)';
+                            
+                            if(i == data.length - 1 || i == 0)
                             {
-                                ctx.strokeStyle = 'rgb(40, 40, 50)';
-                                
-                                if(i == data.length - 1 || i == 0)
-                                {
-                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                                }
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
-                                ctx.stroke();
+                                ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
                             }
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                            ctx.stroke();
                         }
                     }
 
