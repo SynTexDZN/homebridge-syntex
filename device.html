@@ -223,13 +223,13 @@
 
                             for(var k = 0; k < unterteilungen; k++)
                             {
-                                console.log(86400 / (unterteilungen - k), 86400 / (unterteilungen - k + 1));
+                                console.log(86400 * (k / unterteilungen), 86400 * ((k + 1) / unterteilungen));
 
                                 for(var j = activity.length - 1; j >= 0; j--)
                                 {
                                     console.log(activity[j].t);
 
-                                    if(activity[j].t > 86400 / (unterteilungen - k) && activity[j].t < 86400 / (unterteilungen - k + 1) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                                    if(activity[j].t > 86400 * (k / unterteilungen) && activity[j].t < 86400 * ((k + 1) / unterteilungen) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                     {
                                         var value = activity[j].m.split('[')[2].split(']')[0];
 
