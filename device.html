@@ -161,19 +161,22 @@
                             ctx.stroke();
                         }
 
-                        for(var i = 0; i < 24; i++)
+                        if(data.length < 75)
                         {
-                            ctx.strokeStyle = 'rgb(40, 40, 50)';
-                            
-                            if(i == data.length - 1 || i == 0)
+                            for(var i = 0; i < data.length; i++)
                             {
-                                ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                                ctx.strokeStyle = 'rgb(40, 40, 50)';
+                                
+                                if(i == data.length - 1 || i == 0)
+                                {
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                                }
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                                ctx.stroke();
                             }
-                            
-                            ctx.beginPath();
-                            ctx.moveTo(i * (width + padding * 2) / 24, padding);
-                            ctx.lineTo(i * (width + padding * 2) / 24, height + padding);
-                            ctx.stroke();
                         }
                     }
 
@@ -216,13 +219,18 @@
 
                         if(activity.length > 0)
                         {
-                            for(var j = activity.length - 1; j >= 0; j--)
-                            {
-                                if(activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
-                                {
-                                    var value = activity[j].m.split('[')[2].split(']')[0];
+                            var unterteilungen = 24;
 
-                                    values[type].push(value);
+                            for(var k = 0; k < unterteilungen; k++)
+                            {
+                                for(var j = activity.length - 1; j >= 0; j--)
+                                {
+                                    if(activity[j].t < 86400 / (unterteilungen - k) && activity[j].t < 86400 / (unterteilungen - k + 1) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                                    {
+                                        var value = activity[j].m.split('[')[2].split(']')[0];
+
+                                        values[type][k] = value;
+                                    }
                                 }
                             }
                         }
