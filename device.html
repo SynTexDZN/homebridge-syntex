@@ -412,14 +412,20 @@
                                     //console.log(sum, x, sum / x.length);
                                     if(!isNaN(values[type][0].value))
                                     {
-                                        v[unterteilungen - k - 1] = x.length > 0 ? sum / x.length : 0;
+                                        if(x.length > 0)
+                                        {
+                                            v[unterteilungen - k - 1] = sum / x.length;
+                                        }
+                                        else
+                                        {
+                                            v[unterteilungen - k - 1] = 0;
+                                            console.log('Keine Daten für Segment', unterteilungen - k - 1);
+                                        }
                                     }
                                     else
                                     {
                                         v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
                                     }
-
-                                    console.log(v[k], k, sum / x.length);
                                 }
                                 /*
                                 for(const j in values[type])
