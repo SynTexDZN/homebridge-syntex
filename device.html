@@ -356,13 +356,19 @@
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
-                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */100000;
-                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */0;
+                                var min = 1;
+                                var max = 0;
 
-                                for(const j in values[type])
+                                if(!isNaN(values[type][0]))
                                 {
-                                    min = parseInt(values[type][j].value) < min ? parseInt(values[type][j].value) : min;
-                                    max = parseInt(values[type][j].value) > max ? parseInt(values[type][j].value) : max;
+                                    min = 100000;
+                                    max = 0;
+
+                                    for(const j in values[type])
+                                    {
+                                        min = parseInt(values[type][j].value) < min ? parseInt(values[type][j].value) : min;
+                                        max = parseInt(values[type][j].value) > max ? parseInt(values[type][j].value) : max;
+                                    }
                                 }
                                 
                                 var unterteilungen = 24 * 4,
@@ -376,17 +382,28 @@
                                     {
                                         if(values[type][j].time < Math.round(date.getTime() / 1000) - 86400 * (k / unterteilungen) && values[type][j].time > Math.round(date.getTime() / 1000) - 86400 * ((k + 1) / unterteilungen))
                                         {
-                                            var value = (values[type][j].value - min) / (max - min) * 100;
+                                            var value = values[type][j].value;
 
-                                            sum += parseInt(value);
+                                            if(!isNaN(values[type][0]))
+                                            {
+                                                value = (values[type][j].value - min) / (max - min) * 100;
+
+                                                sum += parseInt(value);
+                                            }
 
                                             x.push(value);
                                         }
                                     }
 
-                                    console.log(sum, x, sum / x.length);
-
-                                    v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
+                                    //console.log(sum, x, sum / x.length);
+                                    if(!isNaN(values[type][0]))
+                                    {
+                                        v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
+                                    }
+                                    else
+                                    {
+                                        v[k] = x.includes('true') ? 1 : 0;
+                                    }
                                 }
                                 /*
                                 for(const j in values[type])
