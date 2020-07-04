@@ -225,7 +225,7 @@
                                 {
                                     var value = activity[j].m.split('[')[2].split(']')[0];
 
-                                    values[type].push(value);
+                                    values[type].push({ time : activity[j].t, value : value });
                                 }
                             }
                         }
@@ -356,9 +356,29 @@
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
-                                var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
-                                var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
+                                var min = /*!isNaN(values[type][0]) ? Math.min(...values[type]) : */0;
+                                var max = /*!isNaN(values[type][0]) ? Math.max(...values[type]) : */100;
+                                
+                                var unterteilungen = 24 * 4,
+                                    date = new Date();
 
+                                for(var k = 0; k < unterteilungen; k++)
+                                {
+                                    var x = [], sum = 0;
+
+                                    for(const j in values[type])
+                                    {
+                                        if(values[type][j].time < Math.round(date.getTime() / 1000) - 86400 * (k / unterteilungen) && values[type][j].time > Math.round(date.getTime() / 1000) - 86400 * ((k + 1) / unterteilungen))
+                                        {
+                                            sum += parseInt(value);
+
+                                            x.push((values[type][j] - min) / (max - min) * 100);
+                                        }
+                                    }
+
+                                    v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
+                                }
+                                /*
                                 for(const j in values[type])
                                 {
                                     var value = values[type][j];
@@ -367,7 +387,7 @@
 
                                     v.push((value - min) / (max - min) * 100);
                                 }
-
+                                */
                                 console.log('Graph Berechnen ..', v);
                                 
                                 if(values[type][0] == 'true' || values[type][0] == 'false')
@@ -764,7 +784,7 @@
         
                 if(temp[type + j] && state != temp[type + j])
                 {
-                    orginal[type].push(state);
+                    orginal[type].push({ time : new Date().getTime / 1000, value : state });
 
                     calcValues(orginal);
                 }
