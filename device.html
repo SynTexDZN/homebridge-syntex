@@ -359,7 +359,7 @@
                                 var min = 1;
                                 var max = 0;
 
-                                if(!isNaN(values[type][0]))
+                                if(!isNaN(values[type][0].value))
                                 {
                                     min = 100000;
                                     max = 0;
@@ -384,7 +384,7 @@
                                         {
                                             var value = values[type][j].value;
 
-                                            if(!isNaN(values[type][0]))
+                                            if(!isNaN(values[type][0].value))
                                             {
                                                 value = (values[type][j].value - min) / (max - min) * 100;
 
@@ -396,7 +396,7 @@
                                     }
 
                                     //console.log(sum, x, sum / x.length);
-                                    if(!isNaN(values[type][0]))
+                                    if(!isNaN(values[type][0].value))
                                     {
                                         v[k] = x.length > 0 ? sum / x.length : !isNaN(v[k - 1]) ? v[k - 1] : 0;
                                     }
