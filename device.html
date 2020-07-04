@@ -356,8 +356,8 @@
 
                             if(Object.keys(values).length != 0 && values[type].length != 0)
                             {
-                                var min = 1;
-                                var max = 0;
+                                var min = 0;
+                                var max = 1;
 
                                 if(!isNaN(values[type][0].value))
                                 {
@@ -366,8 +366,15 @@
 
                                     for(const j in values[type])
                                     {
-                                        min = parseInt(values[type][j].value) < min ? parseInt(values[type][j].value) : min;
-                                        max = parseInt(values[type][j].value) > max ? parseInt(values[type][j].value) : max;
+                                        if(parseInt(values[type][j].value) < min)
+                                        {
+                                            min = parseInt(values[type][j].value);
+                                        }
+
+                                        if(parseInt(values[type][j].value) > max)
+                                        {
+                                            max = parseInt(values[type][j].value);
+                                        }
                                     }
                                 }
                                 
@@ -812,7 +819,7 @@
         
                 if(temp[type + j] && state != temp[type + j])
                 {
-                    orginal[type].push({ time : new Date().getTime() / 1000, value : state });
+                    orginal[type].push({ time : Math.round(new Date().getTime()) / 1000, value : state });
 
                     calcValues(orginal);
                 }
