@@ -225,7 +225,7 @@
                             {
                                 for(var j = activity.length - 1; j >= 0; j--)
                                 {
-                                    if(activity[j].t < 86400 / (unterteilungen - k) && activity[j].t < 86400 / (unterteilungen - k + 1) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                                    if(activity[j].t > 86400 / (unterteilungen - k) && activity[j].t < 86400 / (unterteilungen - k + 1) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
                                     {
                                         var value = activity[j].m.split('[')[2].split(']')[0];
 
