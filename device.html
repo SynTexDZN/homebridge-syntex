@@ -342,7 +342,7 @@
                             values[type] = [
                                 { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
                                 { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
-                                { value : 0, time : new Date().getTime() / 1000 - 3600 * 2 },
+                                { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 },
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 4 },
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 5 },
@@ -350,7 +350,21 @@
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 7 },
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 8 },
                                 { value : 20, time : new Date().getTime() / 1000 - 3600 * 9 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 }
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 11 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 12 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 13 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 14 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 15 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 16 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 17 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 18 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 19 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 },
+                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 24 }
                             ]
 
                             canvas.width = document.getElementById('infos').offsetWidth - 4;
@@ -435,7 +449,9 @@
                                             console.log('Daten für Segment', unterteilungen - k - 1, sum / x.length);
                                         }
                                         else
-                                        {/*
+                                        {
+                                            console.log('Vorherige Daten für Segment', v[unterteilungen - k + 1], v[unterteilungen - k], v[unterteilungen - k - 1], v[unterteilungen - k - 2]);
+                                            /*
                                             if(!isNaN(v[unterteilungen - k]))
                                             {
                                                 v[unterteilungen - k - 1] = v[unterteilungen - k + 1];
