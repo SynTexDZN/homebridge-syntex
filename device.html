@@ -423,7 +423,7 @@
 
                                     for(const j in values[type])
                                     {
-                                        if(values[type][j].time < Math.round(date.getTime() / 1000) - 86400 * (k / unterteilungen) && values[type][j].time > Math.round(date.getTime() / 1000) - 86400 * ((k + 1) / unterteilungen))
+                                        if(values[type][j].time < Math.round(date.getTime() / 1000 - 86400 * (k / unterteilungen)) && values[type][j].time > Math.round(date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen)))
                                         {
                                             var value = values[type][j].value;
 
