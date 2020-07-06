@@ -200,7 +200,7 @@
                         statusField.setAttribute('type', 'button');
                         statusField.setAttribute('value', 'LADEN ..');
 
-                        if(accessory.services.match(new RegExp(type, 'g') || []).length > 1)
+                        if(JSON.stringify(accessory.services).match(new RegExp(type, 'g') || []).length > 1)
                         {
                             statusField.style.fontSize = '32px';
                         }
