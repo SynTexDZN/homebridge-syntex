@@ -269,14 +269,27 @@ SynTexPlatform.prototype = {
                                         device: JSON.stringify(device),
                                         accessory: JSON.stringify(await DeviceManager.getAccessory(urlParams.mac)),
                                         wPort: 1710,
-                                        activity : '[]'
+                                        activity : '{}'
                                     };
 
                                     var activity = await logger.load('SynTexWebHooks', urlParams.mac);
 
                                     if(activity != null)
                                     {
-                                        obj.activity = JSON.stringify(activity);
+                                        var a = { update : [], success : [] };
+
+                                        for(var i = 0; i < activity.length; i++)
+                                        {
+                                            var value = activity[i].m.split('[')[2].split(']')[0];
+                                            var name = activity[i].m.split('[')[1].split(']')[0];
+
+                                            if(activity[i].l == 'Update' || activity[i].l == 'Success')
+                                            {
+                                                a[activity[i].l].push({ t : activity[i].t, v : value, n : name });
+                                            }
+                                        }
+
+                                        obj.activity = JSON.stringify(a);
                                     }
 
                                     if(webhookConfig != null)
