@@ -100,13 +100,10 @@ textarea
     height: auto;
     max-height: 300px;
     overflow-y: scroll;
-}
-
-textarea
-{
     height: 300px;
     resize: none;
     white-space: pre-line;
+    border-right-width: 0;
 }
 
 input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):not(.control-panel), button:not(:disabled):not(.control-panel)
@@ -372,6 +369,19 @@ h2
     border: 2px solid rgb(245, 245, 255);
     border-radius: 26px!important;
     min-height: 26px;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+textarea::-webkit-scrollbar-thumb
+{
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+textarea
+{
+    border-right-width: 0;
 }
 
 *
