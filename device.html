@@ -456,7 +456,7 @@
                                 {
                                     if(!isNaN(values[type][0].value))
                                     {
-                                        v[unterteilungen - k - 1] = Math.max(...x);
+                                        v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
                                     }
                                     else if(!(x.includes('true') && x.includes('false')))
                                     {
