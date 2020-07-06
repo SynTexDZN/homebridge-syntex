@@ -480,9 +480,13 @@
                                     {
                                         v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
                                     }
-                                    else
+                                    else if(!isNaN(values[type][0].value))
                                     {
                                         v[unterteilungen - k - 1] = (values[type][0].value - min) / (max - min) * 100;
+                                    }
+                                    else
+                                    {
+                                        v[unterteilungen - k - 1] = 0;
                                     }
                                 }
                             }
