@@ -385,14 +385,14 @@
                             type = type.type;
                         }
 
-                        if(data[type + c].active && data[type + c].active.color)
+                        if(data[type].active && data[type].active.color)
                         {
-                            color = data[type + c].active.color;
+                            color = data[type].active.color;
                         }
 
-                        if(data[type + c].color)
+                        if(data[type].color)
                         {
-                            color = data[type + c].color;
+                            color = data[type].color;
                         }
 
                         var min = 0;
@@ -502,13 +502,13 @@
                             
                             if(isNaN(values[type + c][0].value))
                             {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type + c].inactive.text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type + c].active.text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
                             }
                             else
                             {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type + c].text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type + c].text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
                             }
 
                             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
@@ -522,24 +522,24 @@
 
                         if(type == 'temperature')
                         {
-                            var cRange = data[type + c].colorRange, vRange = data[type + c].valueRange;
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
-                            if(min < data[type + c].valueRange[0])
+                            if(min < data[type].valueRange[0])
                             {
-                                min = data[type + c].valueRange[0];
+                                min = data[type].valueRange[0];
                             }
-                            else if(min > data[type + c].valueRange[1])
+                            else if(min > data[type].valueRange[1])
                             {
-                                min = data[type + c].valueRange[1];
+                                min = data[type].valueRange[1];
                             }
 
-                            if(max > data[type + c].valueRange[1])
+                            if(max > data[type].valueRange[1])
                             {
-                                max = data[type + c].valueRange[1];
+                                max = data[type].valueRange[1];
                             }
-                            else if(max < data[type + c].valueRange[0])
+                            else if(max < data[type].valueRange[0])
                             {
-                                max = data[type + c].valueRange[0];
+                                max = data[type].valueRange[0];
                             }
 
                             console.log(min, max);
@@ -552,32 +552,32 @@
                         }
                         else if(type == 'humidity')
                         {
-                            var cRange = data[type + c].colorRange, vRange = data[type + c].valueRange;
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
-                            if(min < data[type + c].valueRange[0])
+                            if(min < data[type].valueRange[0])
                             {
-                                min = data[type + c].valueRange[0];
+                                min = data[type].valueRange[0];
                             }
 
-                            if(max > data[type + c].valueRange[1])
+                            if(max > data[type].valueRange[1])
                             {
-                                max = data[type + c].valueRange[1];
+                                max = data[type].valueRange[1];
                             }
 
                             if(min > 50)
                             {	
-                                cRange = [data[type + c].colorRange[1], data[type + c].colorRange[0]];
+                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
                             }
 
                             var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
 
                             if(max > 50)
                             {	
-                                cRange = [data[type + c].colorRange[1], data[type + c].colorRange[0]];
+                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
                             }
                             else
                             {
-                                cRange = [data[type + c].colorRange[0], data[type + c].colorRange[1]];
+                                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
                             }
 
                             var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
