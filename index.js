@@ -285,7 +285,7 @@ SynTexPlatform.prototype = {
 
                                             if(activity[i].l == 'Update' || activity[i].l == 'Success')
                                             {
-                                                a[activity[i].l].push({ t : activity[i].t, v : value, n : name });
+                                                a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, n : name });
                                             }
                                         }
 
