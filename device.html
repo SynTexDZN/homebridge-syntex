@@ -882,15 +882,10 @@
 
     async function fetchState()
     {
-        for(var i = 0; i < counter; i++)
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
-            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-            if(type instanceof Object)
-            {
-                type = type.type;
-            }
-
+            var type = Object.keys(typeCounter)[i];
+            
             for(var j = 0; j < typeCounter[type]; j++)
             {
                 var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
