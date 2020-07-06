@@ -310,18 +310,13 @@
                         }
 
                         frame.appendChild(infoType);
-                        /*
-                        if(data[type].text)
-                        {
-                            var infoUnit = document.createElement('div');
 
-                            infoUnit.setAttribute('style', 'position: relative; bottom: 15px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                        var infoUpdate = document.createElement('div');
 
-                            infoUnit.innerHTML = 'Einheit • ' + data[type].text.toUpperCase();
+                        infoUpdate.setAttribute('style', 'position: relative; bottom: 15px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                        infoUpdate.setAttribute('class', 'update');
 
-                            frame.appendChild(infoUnit);
-                        }
-                        */
+                        frame.appendChild(infoUpdate);
                     }
 
                     var orginal = { ...values };
@@ -490,6 +485,8 @@
                                     canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
                                     canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
                                 }
+
+                                canvas.parentElement.getElementsByClassName('update')[0].innerHTML = 'Letztes Update • ' + new Date(values[values.length].time * 1000).getHours() + ':' + new Date(values[values.length].time * 1000).getMinutes();
                             }
                             else
                             {
@@ -876,6 +873,8 @@
                 {
                     orginal[type].push({ time : Math.round(new Date().getTime()) / 1000, value : state });
 
+                    console.log(state);
+                    
                     calcValues(orginal);
                 }
 
