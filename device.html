@@ -192,135 +192,130 @@
                         }
 
                         typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+                    }
 
-                        var statusField = document.createElement('input');
-                        
-                        statusField.setAttribute('id', 'status-' + type + '-' + (typeCounter[type] - 1));
-                        statusField.setAttribute('class', 'control-panel loading-loop');
-                        statusField.setAttribute('type', 'button');
-                        statusField.setAttribute('value', 'LADEN ..');
-
-                        if(JSON.stringify(accessory.services).match(new RegExp(type, 'g') || []).length > 1)
+                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
+                    {
+                        for(var j = 0; j < typeCounter[Object.keys(typeCounter)[i]]; i++)
                         {
-                            statusField.style.setProperty('font-size', '30px', 'important');
-                        }
+                            var type = Object.keys(typeCounter)[i];
+                            var name = accessory.name + ' ' + type + ' ' + j;
+                            var n = [];
 
-                        if(counter > 1)
-                        {
-                            statusField.style.height = '100px';
-                        }
-
-                        if(i == counter - 1)
-                        {
-                            statusField.style.setProperty('margin-bottom', '0', 'important');
-                        }
-
-                        document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-                        if(!values[type])
-                        {
-                            values[type] = [];
-                        }
-
-                        if(activity.update.length > 0)
-                        {
-                            for(var j = activity.update.length - 1; j >= 0; j--)
+                            for(var k = 0; k < accessory.services.length; k++)
                             {
-                                if(counter == 1 || activity.update[j].n.toLowerCase().includes(type))
+                                if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
                                 {
-                                    values[type].push({ time : activity.update[j].t, value : activity.update[j].v });
+                                    n.push(accessory.services[k].name);
                                 }
                             }
-                        }
-                        /*
-                        if(activity.length > 0)
-                        {
-                            var unterteilungen = 24 * 4;
 
-                            for(var k = 0; k < unterteilungen; k++)
+                            if(n.length > 0)
                             {
-                                console.log(Math.round(new Date().getTime() / 1000) - 86400 * (k / unterteilungen), Math.round(new Date().getTime() / 1000) - 86400 * ((k + 1) / unterteilungen));
+                                name = n[j];
+                            }
 
-                                var x = [], sum = 0;
+                            var statusField = document.createElement('input');
+                        
+                            statusField.setAttribute('id', 'status-' + type + '-' + j);
+                            statusField.setAttribute('class', 'control-panel loading-loop');
+                            statusField.setAttribute('type', 'button');
+                            statusField.setAttribute('value', 'LADEN ..');
 
-                                for(var j = activity.length - 1; j >= 0; j--)
+                            if(typeCounter[type] > 1)
+                            {
+                                statusField.style.setProperty('font-size', '30px', 'important');
+                            }
+
+                            if(counter > 1)
+                            {
+                                statusField.style.height = '100px';
+                            }
+
+                            if(i == counter - 1) // TODO
+                            {
+                                statusField.style.setProperty('margin-bottom', '0', 'important');
+                            }
+
+                            document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+                            if(!values[type + j])
+                            {
+                                values[type + j] = [];
+                            }
+
+                            if(activity.update.length > 0)
+                            {
+                                for(var k = activity.update.length - 1; k >= 0; k--)
                                 {
-                                    if(activity[j].t < Math.round(new Date().getTime() / 1000) - 86400 * (k / unterteilungen) && activity[j].t > Math.round(new Date().getTime() / 1000) - 86400 * ((k + 1) / unterteilungen) && activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
+                                    if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.toLowerCase().includes(name))
                                     {
-                                        var value = activity[j].m.split('[')[2].split(']')[0];
-
-                                        sum += parseInt(value);
-
-                                        x.push(value);
+                                        values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
                                     }
                                 }
-
-                                console.log(x, sum, values[type][k - 1]);
-
-                                values[type][k] = x.length > 0 ? sum / x.length : !isNaN(values[type][k - 1]) ? values[type][k - 1] : 0;
                             }
+                            
+                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+                            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+                            document.getElementById('activity').appendChild(frame);
+
+                            if(i != counter - 1) // TODO
+                            {
+                                frame.style.marginBottom = '20px';
+                            }
+
+                            var height = frame.offsetHeight - padding * 2 - 2;
+
+                            canvas.setAttribute('class', 'canvas');
+                            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+                            canvas.setAttribute('style', 'border-radius: 50px');
+
+                            canvas.width = width + padding * 2;
+                            canvas.height = height + padding * 2;
+                            canvas.style.background = 'rgb(20, 20, 30)';
+
+                            frame.appendChild(canvas);
+
+                            var infoMin = document.createElement('div');
+
+                            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                            infoMin.setAttribute('class', 'min');
+
+                            frame.appendChild(infoMin);
+
+                            var infoMax = document.createElement('div');
+
+                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                            infoMax.setAttribute('class', 'max');
+
+                            frame.appendChild(infoMax);
+
+                            var infoType = document.createElement('div');
+
+                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                            var obj = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services; // TODO
+
+                            if(obj instanceof Object)
+                            {
+                                infoType.innerHTML = obj.name;
+                            }
+                            else
+                            {
+                                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                            }
+
+                            frame.appendChild(infoType);
+
+                            var infoUpdate = document.createElement('div');
+
+                            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                            infoUpdate.setAttribute('class', 'update');
+
+                            frame.appendChild(infoUpdate);
                         }
-                        */
-                        var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                        document.getElementById('activity').appendChild(frame);
-
-                        if(i != counter - 1)
-                        {
-                            frame.style.marginBottom = '20px';
-                        }
-
-                        var height = frame.offsetHeight - padding * 2 - 2;
-
-                        canvas.setAttribute('class', 'canvas');
-                        canvas.setAttribute('id', 'canvas-' + type + '-' + (typeCounter[type] - 1));
-                        canvas.setAttribute('style', 'border-radius: 50px');
-
-                        canvas.width = width + padding * 2;
-                        canvas.height = height + padding * 2;
-                        canvas.style.background = 'rgb(20, 20, 30)';
-
-                        frame.appendChild(canvas);
-
-                        var infoMin = document.createElement('div');
-
-                        infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                        infoMin.setAttribute('class', 'min');
-
-                        frame.appendChild(infoMin);
-
-                        var infoMax = document.createElement('div');
-
-                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                        infoMax.setAttribute('class', 'max');
-
-                        frame.appendChild(infoMax);
-
-                        var infoType = document.createElement('div');
-
-                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                        var obj = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                        if(obj instanceof Object)
-                        {
-                            infoType.innerHTML = obj.name;
-                        }
-                        else
-                        {
-                            infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
-                        }
-
-                        frame.appendChild(infoType);
-
-                        var infoUpdate = document.createElement('div');
-
-                        infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-                        infoUpdate.setAttribute('class', 'update');
-
-                        frame.appendChild(infoUpdate);
                     }
 
                     var orginal = { ...values };
