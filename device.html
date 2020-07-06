@@ -31,7 +31,7 @@
             };
 
     </script>
-    <body onresize="calcValues(orginal)">
+    <body onresize="repaintGraphs()">
         <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
@@ -272,6 +272,7 @@
                         var height = frame.offsetHeight - padding * 2 - 2;
 
                         canvas.setAttribute('class', 'canvas');
+                        canvas.setAttribute('id', 'canvas-' + type);
                         canvas.setAttribute('style', 'border-radius: 50px');
 
                         canvas.width = width + padding * 2;
@@ -321,255 +322,262 @@
 
                     var orginal = { ...values };
 
-                    calcValues(values);
-
-                    function calcValues(values)
+                    function repaintGraphs()
                     {
                         for(var i = 0; i < counter; i++)
                         {
-                            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-                            var color = 'hsl(200, 98%, 60%)';
-                            var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
-                            var v = [];
-                            /*
-                            values = {};
+                            calcValues(orginal, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services);
+                        }
+                    }
 
-                            values[type] = [
-                                { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
-                                { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
-                                { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 4 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 5 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 6 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 7 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 8 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 9 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 11 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 12 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 13 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 14 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 15 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 16 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 17 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 18 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 19 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
-                                { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 }
-                            ]
-                            */
-                            canvas.width = document.getElementById('infos').offsetWidth - 4;
+                    for(var i = 0; i < counter; i++)
+                    {
+                        calcValues(values, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services);
+                    }
 
-                            if(type instanceof Object)
+                    function calcValues(values, type)
+                    {
+                        var color = 'hsl(200, 98%, 60%)';
+                        var canvas = document.getElementById('canvas-' + type);
+                        var v = [];
+                        /*
+                        values = {};
+
+                        values[type] = [
+                            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
+                            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
+                            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 4 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 5 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 6 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 7 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 8 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 9 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 11 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 12 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 13 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 14 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 15 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 16 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 17 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 18 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 19 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
+                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 }
+                        ]
+                        */
+                        canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+                        if(type instanceof Object)
+                        {
+                            type = type.type;
+                        }
+
+                        if(data[type].active && data[type].active.color)
+                        {
+                            color = data[type].active.color;
+                        }
+
+                        if(data[type].color)
+                        {
+                            color = data[type].color;
+                        }
+
+                        if(Object.keys(values).length != 0 && values[type].length != 0)
+                        {
+                            var min = 0;
+                            var max = 1;
+
+                            if(!isNaN(values[type][0].value))
                             {
-                                type = type.type;
-                            }
+                                min = 100000;
+                                max = 0;
 
-                            if(data[type].active && data[type].active.color)
-                            {
-                                color = data[type].active.color;
-                            }
-
-                            if(data[type].color)
-                            {
-                                color = data[type].color;
-                            }
-
-                            if(Object.keys(values).length != 0 && values[type].length != 0)
-                            {
-                                var min = 0;
-                                var max = 1;
-
-                                if(!isNaN(values[type][0].value))
+                                for(const j in values[type])
                                 {
-                                    min = 100000;
-                                    max = 0;
-
-                                    for(const j in values[type])
+                                    if(parseFloat(values[type][j].value) < min)
                                     {
-                                        if(parseFloat(values[type][j].value) < min)
-                                        {
-                                            min = parseFloat(values[type][j].value);
-                                        }
-
-                                        if(parseFloat(values[type][j].value) > max)
-                                        {
-                                            max = parseFloat(values[type][j].value);
-                                        }
-                                    }
-                                }
-
-                                console.log('Min', min, 'Max', max);
-                                
-                                var unterteilungen = 24 * 15,
-                                    date = new Date();
-
-                                if(!isNaN(values[type][0].value))
-                                {
-                                    unterteilungen = 24 * 6;
-                                }
-
-                                for(var k = unterteilungen; k >= 0; k--)
-                                {
-                                    var x = [], sum = 0;
-
-                                    for(const j in values[type])
-                                    {
-                                        if(values[type][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
-                                        {
-                                            var value = values[type][j].value;
-
-                                            if(!isNaN(values[type][0].value))
-                                            {
-                                                value = (values[type][j].value - min) / (max - min) * 100;
-
-                                                sum += parseInt(value);
-                                            }
-
-                                            x.push(value);
-                                        }
+                                        min = parseFloat(values[type][j].value);
                                     }
 
-                                    if(x.length > 0)
+                                    if(parseFloat(values[type][j].value) > max)
                                     {
+                                        max = parseFloat(values[type][j].value);
+                                    }
+                                }
+                            }
+
+                            console.log('Min', min, 'Max', max);
+                            
+                            var unterteilungen = 24 * 15,
+                                date = new Date();
+
+                            if(!isNaN(values[type][0].value))
+                            {
+                                unterteilungen = 24 * 6;
+                            }
+
+                            for(var k = unterteilungen; k >= 0; k--)
+                            {
+                                var x = [], sum = 0;
+
+                                for(const j in values[type])
+                                {
+                                    if(values[type][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+                                    {
+                                        var value = values[type][j].value;
+
                                         if(!isNaN(values[type][0].value))
                                         {
-                                            v[unterteilungen - k - 1] = Math.max(...x);
-                                        }
-                                        else if(!(x.includes('true') && x.includes('false')))
-                                        {
-                                            v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
-                                        }
-                                        else
-                                        {
-                                            v[unterteilungen - k - 2] = 100;
-                                            v[unterteilungen - k - 1] = 0;
+                                            value = (values[type][j].value - min) / (max - min) * 100;
+
+                                            sum += parseInt(value);
                                         }
 
-                                        //v[unterteilungen - k - 1] = sum / x.length;
+                                        x.push(value);
+                                    }
+                                }
+
+                                if(x.length > 0)
+                                {
+                                    if(!isNaN(values[type][0].value))
+                                    {
+                                        v[unterteilungen - k - 1] = Math.max(...x);
+                                    }
+                                    else if(!(x.includes('true') && x.includes('false')))
+                                    {
+                                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
                                     }
                                     else
                                     {
-                                        if(!isNaN(v[unterteilungen - k - 2]))
-                                        {
-                                            v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
-                                        }
-                                        else
-                                        {
-                                            v[unterteilungen - k - 1] = 0;
-                                        }
+                                        v[unterteilungen - k - 2] = 100;
+                                        v[unterteilungen - k - 1] = 0;
+                                    }
+
+                                    //v[unterteilungen - k - 1] = sum / x.length;
+                                }
+                                else
+                                {
+                                    if(!isNaN(v[unterteilungen - k - 2]))
+                                    {
+                                        v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
+                                    }
+                                    else
+                                    {
+                                        v[unterteilungen - k - 1] = 0;
                                     }
                                 }
-                                /*
-                                for(const j in values[type])
-                                {
-                                    var value = values[type][j];
+                            }
+                            /*
+                            for(const j in values[type])
+                            {
+                                var value = values[type][j];
 
-                                    value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
 
-                                    v.push((value - min) / (max - min) * 100);
-                                }
-                                */
-                                console.log('Graph Berechnen ..', v);
-                                
-                                if(isNaN(values[type][0].value))
-                                {
-                                    canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
-                                    canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
-                                }
-                                else
-                                {
-                                    canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                                    canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                                }
-
-                                canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type][values[type].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type][values[type].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+                                v.push((value - min) / (max - min) * 100);
+                            }
+                            */
+                            console.log('Graph Berechnen ..', v);
+                            
+                            if(isNaN(values[type][0].value))
+                            {
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
                             }
                             else
                             {
-                                console.log('Keine Daten Geladen!');
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
                             }
 
-                            window.onload = drawGrid(canvas, v, 10);
+                            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type][values[type].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type][values[type].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+                        }
+                        else
+                        {
+                            console.log('Keine Daten Geladen!');
+                        }
 
-                            if(type == 'temperature')
+                        window.onload = drawGrid(canvas, v, 10);
+
+                        if(type == 'temperature')
+                        {
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                            if(min < data[type].valueRange[0])
                             {
-                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                                if(min < data[type].valueRange[0])
-                                {
-                                    min = data[type].valueRange[0];
-                                }
-                                else if(min > data[type].valueRange[1])
-                                {
-                                    min = data[type].valueRange[1];
-                                }
-
-                                if(max > data[type].valueRange[1])
-                                {
-                                    max = data[type].valueRange[1];
-                                }
-                                else if(max < data[type].valueRange[0])
-                                {
-                                    max = data[type].valueRange[0];
-                                }
-
-                                console.log(min, max);
-
-                                var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-                                var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                                window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
-                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+                                min = data[type].valueRange[0];
                             }
-                            else if(type == 'humidity')
+                            else if(min > data[type].valueRange[1])
                             {
-                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                                if(min < data[type].valueRange[0])
-                                {
-                                    min = data[type].valueRange[0];
-                                }
-
-                                if(max > data[type].valueRange[1])
-                                {
-                                    max = data[type].valueRange[1];
-                                }
-
-                                if(min > 50)
-                                {	
-                                    cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                                }
-
-                                var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-
-                                if(max > 50)
-                                {	
-                                    cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                                }
-                                else
-                                {
-                                    cRange = [data[type].colorRange[0], data[type].colorRange[1]];
-                                }
-
-                                var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                                window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
-                                window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+                                min = data[type].valueRange[1];
                             }
-                            else if(type == 'light')
+
+                            if(max > data[type].valueRange[1])
                             {
-                                window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
-                                window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+                                max = data[type].valueRange[1];
+                            }
+                            else if(max < data[type].valueRange[0])
+                            {
+                                max = data[type].valueRange[0];
+                            }
+
+                            console.log(min, max);
+
+                            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+                            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+                            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+                            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+                        }
+                        else if(type == 'humidity')
+                        {
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                            if(min < data[type].valueRange[0])
+                            {
+                                min = data[type].valueRange[0];
+                            }
+
+                            if(max > data[type].valueRange[1])
+                            {
+                                max = data[type].valueRange[1];
+                            }
+
+                            if(min > 50)
+                            {	
+                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+                            }
+
+                            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+
+                            if(max > 50)
+                            {	
+                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
                             }
                             else
                             {
-                                window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
-                                window.onload = drawGraph(canvas, v, [color, color], false);
+                                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
                             }
+
+                            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+                            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+                            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+                        }
+                        else if(type == 'light')
+                        {
+                            window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+                            window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+                        }
+                        else
+                        {
+                            window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+                            window.onload = drawGraph(canvas, v, [color, color], false);
                         }
                     }
 
@@ -875,7 +883,7 @@
 
                     console.log(state);
                     
-                    calcValues(orginal);
+                    calcValues(orginal, type);
                 }
 
                 temp[type + j] = state;
