@@ -326,13 +326,27 @@
                     {
                         for(var i = 0; i < counter; i++)
                         {
-                            calcValues(orginal, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services, 0); // TODO : Services mit dem selben Typ
+                            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+                            if(type instanceof Object)
+                            {
+                                type = type.type;
+                            }
+
+                            calcValues(values, type, 0); // TODO : Services mit dem selben Typ
                         }
                     }
 
                     for(var i = 0; i < counter; i++)
                     {
-                        calcValues(values, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services, 0); // TODO : Services mit dem selben Typ
+                        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+                        if(type instanceof Object)
+                        {
+                            type = type.type;
+                        }
+
+                        calcValues(values, type, 0); // TODO : Services mit dem selben Typ
                     }
 
                     function calcValues(values, type, c)
