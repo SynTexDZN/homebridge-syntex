@@ -486,7 +486,7 @@
                                     canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
                                 }
 
-                                canvas.parentElement.getElementsByClassName('update')[0].innerHTML = new Date(values[type][values[type].length - 1].time * 1000).getHours() + ':' + new Date(values[type][values[type].length - 1].time * 1000).getMinutes() + ' • Letzte Aktivität';
+                                canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type][values[type].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type][values[type].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
                             }
                             else
                             {
