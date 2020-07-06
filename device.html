@@ -272,7 +272,7 @@
                         var height = frame.offsetHeight - padding * 2 - 2;
 
                         canvas.setAttribute('class', 'canvas');
-                        canvas.setAttribute('id', 'canvas-' + type);
+                        canvas.setAttribute('id', 'canvas-' + type + '-' + (typeCounter[type] - 1));
                         canvas.setAttribute('style', 'border-radius: 50px');
 
                         canvas.width = width + padding * 2;
@@ -326,19 +326,19 @@
                     {
                         for(var i = 0; i < counter; i++)
                         {
-                            calcValues(orginal, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services);
+                            calcValues(orginal, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services, 0); // TODO : Services mit dem selben Typ
                         }
                     }
 
                     for(var i = 0; i < counter; i++)
                     {
-                        calcValues(values, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services);
+                        calcValues(values, Array.isArray(accessory.services) ? accessory.services[i] : accessory.services, 0); // TODO : Services mit dem selben Typ
                     }
 
-                    function calcValues(values, type)
+                    function calcValues(values, type, c)
                     {
                         var color = 'hsl(200, 98%, 60%)';
-                        var canvas = document.getElementById('canvas-' + type);
+                        var canvas = document.getElementById('canvas-' + type + '-' + c);
                         var v = [];
                         /*
                         values = {};
@@ -883,7 +883,7 @@
 
                     console.log(state);
                     
-                    calcValues(orginal, type);
+                    calcValues(orginal, type, j);
                 }
 
                 temp[type + j] = state;
