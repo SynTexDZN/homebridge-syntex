@@ -444,9 +444,9 @@
                                         {
                                             v[unterteilungen - k - 1] = Math.max(...x);
                                         }
-                                        else
+                                        else if(!(x.includes('true') && x.includes('false')))
                                         {
-                                            v[unterteilungen - k - 1] = x[x.length - 1] == 'true' ? 100 : 0;
+                                            v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
                                         }
 
                                         //v[unterteilungen - k - 1] = sum / x.length;
