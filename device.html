@@ -910,13 +910,13 @@
                 {
                     if(state == 'true')
                     {
-                        document.getElementById('status-' + type + '-' + j).value = data[type].active.text.toUpperCase();
-                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].active.color;
+                        value = data[type].active.text.toUpperCase();
+                        color = data[type].active.color;
                     }
                     else if(state == 'false')
                     {
-                        document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();
-                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;
+                        value = data[type].inactive.text.toUpperCase();
+                        color = data[type].inactive.color;
                     }
                     else
                     {
@@ -993,10 +993,27 @@
                         {
                             value = state + ' ' + data[type].text.toUpperCase();
                         }
-
-                        document.getElementById('status-' + type + '-' + j).value = value;
-                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
                     }
+
+                    if(typeCounter[type] > 1)
+                    {
+                        if(Array.isArray(accessory.services) ? accessory.services[i] : accessory.services instanceof Object)
+                        {
+                            var name = (Array.isArray(accessory.services) ? accessory.services[i] : accessory.services).name;
+                        }
+                        else
+                        {
+                            var name = accessory.name;
+                        }
+
+                        document.getElementById('status-' + type + '-' + j).value = name + ' • ' + value;
+                    }
+                    else
+                    {
+                        document.getElementById('status-' + type + '-' + j).value = value;
+                    }
+
+                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
                 }
                 else if(type == 'statelessswitch')	
                 {	
