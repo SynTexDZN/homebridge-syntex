@@ -360,7 +360,7 @@ h2
 ::-webkit-scrollbar-track, ::-webkit-scrollbar
 {
     background: rgb(245, 245, 255);
-    border-radius: 0 13px 13px 0!important;
+    border-radius: 13px!important;
 }
 
 ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner
@@ -369,14 +369,17 @@ h2
     border: 2px solid rgb(245, 245, 255);
     border-radius: 26px!important;
     min-height: 26px;
-    border-top-width: 0;
-    border-bottom-width: 0;
 }
 
 textarea::-webkit-scrollbar-thumb
 {
-    border-top-width: 0;
+    border-top-width: 1px;
     border-bottom-width: 0;
+}
+
+textarea::-webkit-scrollbar-track
+{
+    border-radius: 0 13px 13px 0!important;
 }
 
 textarea
