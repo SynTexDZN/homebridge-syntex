@@ -385,36 +385,36 @@
                             type = type.type;
                         }
 
-                        if(data[type].active && data[type].active.color)
+                        if(data[type + c].active && data[type + c].active.color)
                         {
-                            color = data[type].active.color;
+                            color = data[type + c].active.color;
                         }
 
-                        if(data[type].color)
+                        if(data[type + c].color)
                         {
-                            color = data[type].color;
+                            color = data[type + c].color;
                         }
 
                         var min = 0;
                         var max = 1;
 
-                        if(Object.keys(values).length != 0 && values[type].length != 0)
+                        if(Object.keys(values).length != 0 && values[type + c].length != 0)
                         {
-                            if(!isNaN(values[type][0].value))
+                            if(!isNaN(values[type + c][0].value))
                             {
                                 min = 100000;
                                 max = 0;
 
-                                for(const j in values[type])
+                                for(const j in values[type + c])
                                 {
-                                    if(parseFloat(values[type][j].value) < min)
+                                    if(parseFloat(values[type + c][j].value) < min)
                                     {
-                                        min = parseFloat(values[type][j].value);
+                                        min = parseFloat(values[type + c][j].value);
                                     }
 
-                                    if(parseFloat(values[type][j].value) > max)
+                                    if(parseFloat(values[type + c][j].value) > max)
                                     {
-                                        max = parseFloat(values[type][j].value);
+                                        max = parseFloat(values[type + c][j].value);
                                     }
                                 }
                             }
@@ -424,7 +424,7 @@
                             var unterteilungen = 24 * 15,
                                 date = new Date();
 
-                            if(!isNaN(values[type][0].value))
+                            if(!isNaN(values[type + c][0].value))
                             {
                                 unterteilungen = 24 * 6;
                             }
@@ -433,15 +433,15 @@
                             {
                                 var x = [], sum = 0;
 
-                                for(const j in values[type])
+                                for(const j in values[type + c])
                                 {
-                                    if(values[type][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+                                    if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
                                     {
-                                        var value = values[type][j].value;
+                                        var value = values[type + c][j].value;
 
-                                        if(!isNaN(values[type][0].value))
+                                        if(!isNaN(values[type + c][0].value))
                                         {
-                                            value = (values[type][j].value - min) / (max - min) * 100;
+                                            value = (values[type + c][j].value - min) / (max - min) * 100;
 
                                             sum += parseFloat(value);
                                         }
@@ -452,7 +452,7 @@
 
                                 if(x.length > 0)
                                 {
-                                    if(!isNaN(values[type][0].value))
+                                    if(!isNaN(values[type + c][0].value))
                                     {
                                         v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
 
@@ -480,7 +480,7 @@
                                     }
                                     else if(!isNaN(values[type][0].value))
                                     {
-                                        v[unterteilungen - k - 1] = (values[type][0].value - min) / (max - min) * 100;
+                                        v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
                                     }
                                     else
                                     {
@@ -500,18 +500,18 @@
                             */
                             console.log('Graph Berechnen ..', v);
                             
-                            if(isNaN(values[type][0].value))
+                            if(isNaN(values[type + c][0].value))
                             {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type + c].inactive.text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type + c].active.text.toUpperCase();
                             }
                             else
                             {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type + c].text.toUpperCase();
+                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type + c].text.toUpperCase();
                             }
 
-                            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type][values[type].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type][values[type].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+                            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
                         }
                         else
                         {
@@ -522,24 +522,24 @@
 
                         if(type == 'temperature')
                         {
-                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+                            var cRange = data[type + c].colorRange, vRange = data[type + c].valueRange;
 
-                            if(min < data[type].valueRange[0])
+                            if(min < data[type + c].valueRange[0])
                             {
-                                min = data[type].valueRange[0];
+                                min = data[type + c].valueRange[0];
                             }
-                            else if(min > data[type].valueRange[1])
+                            else if(min > data[type + c].valueRange[1])
                             {
-                                min = data[type].valueRange[1];
+                                min = data[type + c].valueRange[1];
                             }
 
-                            if(max > data[type].valueRange[1])
+                            if(max > data[type + c].valueRange[1])
                             {
-                                max = data[type].valueRange[1];
+                                max = data[type + c].valueRange[1];
                             }
-                            else if(max < data[type].valueRange[0])
+                            else if(max < data[type + c].valueRange[0])
                             {
-                                max = data[type].valueRange[0];
+                                max = data[type + c].valueRange[0];
                             }
 
                             console.log(min, max);
@@ -552,32 +552,32 @@
                         }
                         else if(type == 'humidity')
                         {
-                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+                            var cRange = data[type + c].colorRange, vRange = data[type + c].valueRange;
 
-                            if(min < data[type].valueRange[0])
+                            if(min < data[type + c].valueRange[0])
                             {
-                                min = data[type].valueRange[0];
+                                min = data[type + c].valueRange[0];
                             }
 
-                            if(max > data[type].valueRange[1])
+                            if(max > data[type + c].valueRange[1])
                             {
-                                max = data[type].valueRange[1];
+                                max = data[type + c].valueRange[1];
                             }
 
                             if(min > 50)
                             {	
-                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+                                cRange = [data[type + c].colorRange[1], data[type + c].colorRange[0]];
                             }
 
                             var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
 
                             if(max > 50)
                             {	
-                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+                                cRange = [data[type + c].colorRange[1], data[type + c].colorRange[0]];
                             }
                             else
                             {
-                                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+                                cRange = [data[type + c].colorRange[0], data[type + c].colorRange[1]];
                             }
 
                             var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
