@@ -200,6 +200,11 @@
                         statusField.setAttribute('type', 'button');
                         statusField.setAttribute('value', 'LADEN ..');
 
+                        if(accessory.services.match(new RegExp(type, 'g') || []).length > 1)
+                        {
+                            statusField.style.fontSize = '32px';
+                        }
+
                         if(counter > 1)
                         {
                             statusField.style.height = '100px';
@@ -1008,8 +1013,7 @@
                             name = n[j];
                         }
 
-                        document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' • ' + value;
-                        document.getElementById('status-' + type + '-' + j).style.fontSize = '32px';
+                        document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + '&#10;' + value;
                     }
                     else
                     {
