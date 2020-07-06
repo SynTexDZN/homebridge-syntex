@@ -333,21 +333,14 @@
                                 type = type.type;
                             }
 
-                            calcValues(values, type, 0); // TODO : Services mit dem selben Typ
+                            for(var j = 0; j < typeCounter[type]; j++)
+                            {
+                                calcValues(values, type, j);
+                            }
                         }
                     }
 
-                    for(var i = 0; i < counter; i++)
-                    {
-                        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                        if(type instanceof Object)
-                        {
-                            type = type.type;
-                        }
-
-                        calcValues(values, type, 0); // TODO : Services mit dem selben Typ
-                    }
+                    repaintGraphs();
 
                     function calcValues(values, type, c)
                     {
