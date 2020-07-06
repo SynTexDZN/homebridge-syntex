@@ -397,11 +397,11 @@
                             color = data[type].color;
                         }
 
+                        var min = 0;
+                        var max = 1;
+
                         if(Object.keys(values).length != 0 && values[type].length != 0)
                         {
-                            var min = 0;
-                            var max = 1;
-
                             if(!isNaN(values[type][0].value))
                             {
                                 min = 100000;
@@ -478,7 +478,7 @@
                                     }
                                     else
                                     {
-                                        v[unterteilungen - k - 1] = 0;
+                                        v[unterteilungen - k - 1] = min;
                                     }
                                 }
                             }
