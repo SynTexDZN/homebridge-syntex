@@ -121,9 +121,10 @@
                                 values[type + j] = [];
                             }
 
-                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(activity) {
+                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
 
-                                console.log('Aktivität', activity, '/activity?mac=' + accessory.mac);
+                                var activity = JSON.parse(a);
+                                console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
 
                                 if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                                 {
