@@ -43,7 +43,7 @@
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
-                    var values = {};
+                    var values = {}, orginal = {};;
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
                     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
@@ -112,9 +112,9 @@
                             canvas.height = height + padding * 2;
                             canvas.style.background = 'rgb(20, 20, 30)';
 
-                            drawGrid(canvas, [], 10);
-
                             frame.appendChild(canvas);
+
+                            drawGrid(canvas, [], 10);
 
                             var infoMin = document.createElement('div');
 
@@ -250,7 +250,7 @@
                             }
                         }
 
-                        var orginal = { ...values };
+                        orginal = { ...values };
 
                         repaintGraphs();
                     }
