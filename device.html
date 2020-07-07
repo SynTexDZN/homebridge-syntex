@@ -249,7 +249,7 @@
                             {
                                 for(var k = activity.update.length - 1; k >= 0; k--)
                                 {
-                                    if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.toLowerCase().includes(name))
+                                    if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
                                     {
                                         values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
                                     }
@@ -297,11 +297,9 @@
 
                             infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
-                            var obj = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services; // TODO
-
-                            if(obj instanceof Object)
+                            if(typeCounter[type] > 1)
                             {
-                                infoType.innerHTML = obj.name;
+                                infoType.innerHTML = name;
                             }
                             else
                             {
