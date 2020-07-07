@@ -445,7 +445,7 @@
                             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
                         }
 
-                        window.onload = drawGrid(canvas, v, 10);
+                        window.onload = drawGrid(canvas, [], 10);
 
                         if(type == 'temperature')
                         {
