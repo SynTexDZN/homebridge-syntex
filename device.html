@@ -192,7 +192,7 @@
                                     {
                                         for(var k = activity.success.length - 1; k >= 0; k--)
                                         {
-                                            if(activity.success[k].n.includes(name))
+                                            if(activity.success[k].n.includes(this.name))
                                             {
                                                 values[this.service].push({ time : activity.success[k].t, value : 'true' });
                                                 values[this.service].push({ time : activity.success[k].t, value : 'false' });
@@ -203,7 +203,7 @@
                                     {
                                         for(var k = activity.update.length - 1; k >= 0; k--)
                                         {
-                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(this.name))
+                                            if(activity.update[k].n.toLowerCase().includes(this.type) || activity.update[k].n.includes(this.name))
                                             {
                                                 values[this.service].push({ time : activity.update[k].t, value : activity.update[k].v });
                                             }
@@ -219,7 +219,7 @@
 
                                 repaintGraphs();
 
-                            }.bind({ service : type + j, name : name }));
+                            }.bind({ service : type + j, name : name, type : type }));
                         }
                     }
 
