@@ -26,7 +26,8 @@
                     inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
                 },
                 statelessswitch: {
-                    active : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+                    inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
                 },
                 temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
                 humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
@@ -1031,8 +1032,8 @@
                 }
                 else if(type == 'statelessswitch')	
                 {	
-                    document.getElementById('status-' + type + '-' + j).value = data[type].active.text.toUpperCase();	
-                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].active.color;	
+                    document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
+                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
                 }
                 else if(state == 'Error')
                 {
