@@ -43,7 +43,7 @@
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
-                    var values = {}, orginal = {};
+                    var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
                     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
@@ -61,130 +61,69 @@
                         typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
                     }
 
-                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                    {
-                        var type = Object.keys(typeCounter)[i];
+                    fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
 
-                        for(var j = 0; j < typeCounter[type]; j++)
-                        {
-                            var name = accessory.name;
-                            var n = [];
-
-                            if(typeCounter[type] > 1)
-                            {
-                                name = accessory.name + ' ' + type + ' ' + j;
-                            }
-                            else if(counter > 1)
-                            {
-                                name = accessory.name + ' ' + type;
-                            }
-
-                            for(var k = 0; k < accessory.services.length; k++)
-                            {
-                                if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
-                                {
-                                    n.push(accessory.services[k].name);
-                                }
-                            }
-
-                            if(n.length > 0)
-                            {
-                                name = n[j];
-                            }
-
-                            var statusField = document.createElement('input');
+                        var activity = JSON.parse(a);
                         
-                            statusField.setAttribute('id', 'status-' + type + '-' + j);
-                            statusField.setAttribute('class', 'control-panel loading-loop');
-                            statusField.setAttribute('type', 'button');
-                            statusField.setAttribute('value', 'LADEN ..');
+                        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+                        {
+                            var type = Object.keys(typeCounter)[i];
 
-                            if(typeCounter[type] > 1)
+                            for(var j = 0; j < typeCounter[type]; j++)
                             {
-                                statusField.style.setProperty('font-size', '30px', 'important');
-                            }
+                                var name = accessory.name;
+                                var n = [];
 
-                            if(counter > 1)
-                            {
-                                statusField.style.height = '100px';
-                            }
-
-                            if(i == counter - 1) // TODO
-                            {
-                                statusField.style.setProperty('margin-bottom', '0', 'important');
-                            }
-
-                            document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                            document.getElementById('activity').appendChild(frame);
-
-                            if(i != counter - 1) // TODO
-                            {
-                                frame.style.marginBottom = '20px';
-                            }
-
-                            var height = frame.offsetHeight - padding * 2 - 2;
-
-                            canvas.setAttribute('class', 'canvas');
-                            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-                            canvas.setAttribute('style', 'border-radius: 50px');
-
-                            canvas.width = width + padding * 2;
-                            canvas.height = height + padding * 2;
-                            canvas.style.background = 'rgb(20, 20, 30)';
-
-                            frame.appendChild(canvas);
-
-                            var infoMin = document.createElement('div');
-
-                            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                            infoMin.setAttribute('class', 'min');
-
-                            frame.appendChild(infoMin);
-
-                            var infoMax = document.createElement('div');
-
-                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                            infoMax.setAttribute('class', 'max');
-
-                            frame.appendChild(infoMax);
-
-                            var infoType = document.createElement('div');
-
-                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                            if(typeCounter[type] > 1)
-                            {
-                                infoType.innerHTML = name;
-                            }
-                            else
-                            {
-                                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
-                            }
-
-                            frame.appendChild(infoType);
-
-                            var infoUpdate = document.createElement('div');
-
-                            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-                            infoUpdate.setAttribute('class', 'update');
-
-                            frame.appendChild(infoUpdate);
-
-                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
-
-                                var activity = JSON.parse(a);
-
-                                if(!values[this.service])
+                                if(typeCounter[type] > 1)
                                 {
-                                    values[this.service] = [];
+                                    name = accessory.name + ' ' + type + ' ' + j;
                                 }
-                                
-                                console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
+                                else if(counter > 1)
+                                {
+                                    name = accessory.name + ' ' + type;
+                                }
+
+                                for(var k = 0; k < accessory.services.length; k++)
+                                {
+                                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                                    {
+                                        n.push(accessory.services[k].name);
+                                    }
+                                }
+
+                                if(n.length > 0)
+                                {
+                                    name = n[j];
+                                }
+
+                                var statusField = document.createElement('input');
+                            
+                                statusField.setAttribute('id', 'status-' + type + '-' + j);
+                                statusField.setAttribute('class', 'control-panel loading-loop');
+                                statusField.setAttribute('type', 'button');
+                                statusField.setAttribute('value', 'LADEN ..');
+
+                                if(typeCounter[type] > 1)
+                                {
+                                    statusField.style.setProperty('font-size', '30px', 'important');
+                                }
+
+                                if(counter > 1)
+                                {
+                                    statusField.style.height = '100px';
+                                }
+
+                                if(i == counter - 1) // TODO
+                                {
+                                    statusField.style.setProperty('margin-bottom', '0', 'important');
+                                }
+
+                                document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+                                if(!values[type + j])
+                                {
+                                    values[type + j] = [];
+                                }
 
                                 if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                                 {
@@ -192,10 +131,10 @@
                                     {
                                         for(var k = activity.success.length - 1; k >= 0; k--)
                                         {
-                                            if(activity.success[k].n.includes(this.name))
+                                            if(activity.success[k].n.includes(name))
                                             {
-                                                values[this.service].push({ time : activity.success[k].t, value : 'true' });
-                                                values[this.service].push({ time : activity.success[k].t, value : 'false' });
+                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
                                             }
                                         }
                                     }
@@ -203,9 +142,9 @@
                                     {
                                         for(var k = activity.update.length - 1; k >= 0; k--)
                                         {
-                                            if(activity.update[k].n.toLowerCase().includes(this.type) || activity.update[k].n.includes(this.name))
+                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
                                             {
-                                                values[this.service].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
                                             }
                                         }
                                     }
@@ -215,13 +154,71 @@
                                     console.log('Keine Daten');
                                 }
 
-                                orginal = { ...values };
+                                var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
-                                repaintGraphs();
+                                frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
 
-                            }.bind({ service : type + j, name : name, type : type }));
+                                document.getElementById('activity').appendChild(frame);
+
+                                if(i != counter - 1) // TODO
+                                {
+                                    frame.style.marginBottom = '20px';
+                                }
+
+                                var height = frame.offsetHeight - padding * 2 - 2;
+
+                                canvas.setAttribute('class', 'canvas');
+                                canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+                                canvas.setAttribute('style', 'border-radius: 50px');
+
+                                canvas.width = width + padding * 2;
+                                canvas.height = height + padding * 2;
+                                canvas.style.background = 'rgb(20, 20, 30)';
+
+                                frame.appendChild(canvas);
+
+                                var infoMin = document.createElement('div');
+
+                                infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                                infoMin.setAttribute('class', 'min');
+
+                                frame.appendChild(infoMin);
+
+                                var infoMax = document.createElement('div');
+
+                                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                                infoMax.setAttribute('class', 'max');
+
+                                frame.appendChild(infoMax);
+
+                                var infoType = document.createElement('div');
+
+                                infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                                if(typeCounter[type] > 1)
+                                {
+                                    infoType.innerHTML = name;
+                                }
+                                else
+                                {
+                                    infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                                }
+
+                                frame.appendChild(infoType);
+
+                                var infoUpdate = document.createElement('div');
+
+                                infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                                infoUpdate.setAttribute('class', 'update');
+
+                                frame.appendChild(infoUpdate);
+                            }
                         }
-                    }
+
+                        var orginal = { ...values };
+
+                        repaintGraphs();
+                    });
 
                     function repaintGraphs()
                     {
@@ -236,7 +233,7 @@
 
                             for(var j = 0; j < typeCounter[type]; j++)
                             {
-                                calcValues(orginal, type, j);
+                                calcValues(values, type, j);
                             }
                         }
                     }
