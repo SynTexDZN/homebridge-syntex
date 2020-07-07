@@ -43,147 +43,10 @@
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
-                    var activity = await fetchURL('/activity?mac=' + accessory.mac, 10000);
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
                     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-
-                    function drawGraph(canvas, data, gradients, points)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                        for(var i = 0; i < gradients.length; i++)
-                        {
-                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                        }
-
-                        ctx.lineWidth = 2;
-                        ctx.lineCap = 'round';
-                        ctx.strokeStyle = grd;
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(points)
-                            {
-                                ctx.fillStyle = gradients[0];
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                                ctx.fillStyle = gradients[1];
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            ctx.stroke();
-                        }
-
-                        if(points)
-                        {
-                            ctx.fillStyle = gradients[0];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                            ctx.fillStyle = gradients[1];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                        }
-                    }
-
-                    function drawFill(canvas, data, gradients, smoothing)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                        for(var i = 0; i < gradients.length; i++)
-                        {
-                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                        }
-
-                        ctx.fillStyle = grd;
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, height + padding);
-                        ctx.lineTo(0, height - data[0] * height / 100  + padding);
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(smoothing == 0)
-                            {
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            }
-                            else
-                            {
-                                // TODO
-                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
-                            }
-                        }
-
-                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
-
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-
-                    function drawGrid(canvas, data, unterteilungen)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        ctx.lineCap = 'butt';
-                        ctx.lineWidth = 1.5;
-
-                        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
-                        {
-                            ctx.strokeStyle = 'rgb(25, 25, 35)';
-
-                            if(i == unterteilungen || i == 0)
-                            {
-                                ctx.strokeStyle = 'rgb(50, 50, 60)';
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / unterteilungen) * i);
-                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
-                            ctx.stroke();
-                        }
-
-                        if(data.length < 75)
-                        {
-                            for(var i = 0; i < data.length; i++)
-                            {
-                                ctx.strokeStyle = 'rgb(40, 40, 50)';
-                                
-                                if(i == data.length - 1 || i == 0)
-                                {
-                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                                }
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-
                     var typeCounter = {};
     
                     for(var i = 0; i < counter; i++)
@@ -258,34 +121,37 @@
                                 values[type + j] = [];
                             }
 
-                            if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
-                            {
-                                if(type == 'statelessswitch')
+                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(activity) {
+
+                                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                                 {
-                                    for(var k = activity.success.length - 1; k >= 0; k--)
+                                    if(type == 'statelessswitch')
                                     {
-                                        if(activity.success[k].n.includes(name))
+                                        for(var k = activity.success.length - 1; k >= 0; k--)
                                         {
-                                            values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                            values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                            if(activity.success[k].n.includes(name))
+                                            {
+                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for(var k = activity.update.length - 1; k >= 0; k--)
+                                        {
+                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                                            {
+                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                            }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    for(var k = activity.update.length - 1; k >= 0; k--)
-                                    {
-                                        if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
-                                        {
-                                            values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
-                                        }
-                                    }
+                                    console.log('Keine Daten');
                                 }
-                            }
-                            else
-                            {
-                                console.log('Keine Daten');
-                            }
+                            });
 
                             var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
@@ -350,6 +216,8 @@
 
                     var orginal = { ...values };
 
+                    repaintGraphs();
+
                     function repaintGraphs()
                     {
                         for(var i = 0; i < Object.keys(typeCounter).length; i++)
@@ -367,8 +235,6 @@
                             }
                         }
                     }
-
-                    repaintGraphs();
 
                     function calcValues(values, type, c)
                     {
@@ -620,6 +486,141 @@
                         {
                             window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
                             window.onload = drawGraph(canvas, v, [color, color], false);
+                        }
+                    }
+
+                    function drawGraph(canvas, data, gradients, points)
+                    {
+                        var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 2;
+                        var width = canvas.offsetWidth - padding * 2;
+                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+                        for(var i = 0; i < gradients.length; i++)
+                        {
+                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+                        }
+
+                        ctx.lineWidth = 2;
+                        ctx.lineCap = 'round';
+                        ctx.strokeStyle = grd;
+
+                        for(var i = 1; i < data.length; i++)
+                        {
+                            if(points)
+                            {
+                                ctx.fillStyle = gradients[0];
+                                ctx.beginPath();
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
+                                ctx.fill();
+                                ctx.closePath();
+                                ctx.fillStyle = gradients[1];
+                                ctx.beginPath();
+                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+
+                            ctx.beginPath();
+                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+                            ctx.stroke();
+                        }
+
+                        if(points)
+                        {
+                            ctx.fillStyle = gradients[0];
+                            ctx.beginPath();
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
+                            ctx.fill();
+                            ctx.closePath();
+                            ctx.fillStyle = gradients[1];
+                            ctx.beginPath();
+                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+
+                    function drawFill(canvas, data, gradients, smoothing)
+                    {
+                        var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 2;
+                        var width = canvas.offsetWidth - padding * 2;
+                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+                        for(var i = 0; i < gradients.length; i++)
+                        {
+                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+                        }
+
+                        ctx.fillStyle = grd;
+
+                        ctx.beginPath();
+                        ctx.moveTo(0, height + padding);
+                        ctx.lineTo(0, height - data[0] * height / 100  + padding);
+
+                        for(var i = 1; i < data.length; i++)
+                        {
+                            if(smoothing == 0)
+                            {
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+                            }
+                            else
+                            {
+                                // TODO
+                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
+                            }
+                        }
+
+                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
+
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+
+                    function drawGrid(canvas, data, unterteilungen)
+                    {
+                        var ctx = canvas.getContext('2d');
+                        var height = canvas.offsetHeight - padding * 2 - 2;
+                        var width = canvas.offsetWidth - padding * 2;
+
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        ctx.lineCap = 'butt';
+                        ctx.lineWidth = 1.5;
+
+                        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
+                        {
+                            ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+                            if(i == unterteilungen || i == 0)
+                            {
+                                ctx.strokeStyle = 'rgb(50, 50, 60)';
+                            }
+
+                            ctx.beginPath();
+                            ctx.moveTo(0, padding + (height / unterteilungen) * i);
+                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+                            ctx.stroke();
+                        }
+
+                        if(data.length < 75)
+                        {
+                            for(var i = 0; i < data.length; i++)
+                            {
+                                ctx.strokeStyle = 'rgb(40, 40, 50)';
+                                
+                                if(i == data.length - 1 || i == 0)
+                                {
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                                }
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                                ctx.stroke();
+                            }
                         }
                     }
 
