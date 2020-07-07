@@ -43,7 +43,7 @@
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
-                    var activity = JSON.parse('<%activity%>');
+                    var activity = await fetchURL('/activity?mac=' + accessory.mac, 10000);
                     var values = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
