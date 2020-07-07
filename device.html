@@ -40,629 +40,7 @@
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
             <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" style="display: table; margin-bottom: 100px">
-                <script defer>
-
-                    var values = {}, orginal = {};;
-                    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
-                    var padding = 50;
-                    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-                    var typeCounter = {};
-    
-                    for(var i = 0; i < counter; i++)
-                    {
-                        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                        if(type instanceof Object)
-                        {
-                            type = type.type;
-                        }
-
-                        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
-                    }
-
-                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                    {
-                        var type = Object.keys(typeCounter)[i];
-
-                        for(var j = 0; j < typeCounter[type]; j++)
-                        {
-                            var statusField = document.createElement('input');
-                        
-                            statusField.setAttribute('id', 'status-' + type + '-' + j);
-                            statusField.setAttribute('class', 'control-panel loading-loop');
-                            statusField.setAttribute('type', 'button');
-                            statusField.setAttribute('value', 'LADEN ..');
-
-                            if(typeCounter[type] > 1)
-                            {
-                                statusField.style.setProperty('font-size', '30px', 'important');
-                            }
-
-                            if(counter > 1)
-                            {
-                                statusField.style.height = '100px';
-                            }
-
-                            if(i == counter - 1) // TODO
-                            {
-                                statusField.style.setProperty('margin-bottom', '0', 'important');
-                            }
-
-                            document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                            document.getElementById('activity').appendChild(frame);
-
-                            if(i != counter - 1) // TODO
-                            {
-                                frame.style.marginBottom = '20px';
-                            }
-
-                            var height = frame.offsetHeight - padding * 2 - 2;
-
-                            canvas.setAttribute('class', 'canvas');
-                            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-                            canvas.setAttribute('style', 'border-radius: 50px');
-
-                            canvas.width = document.getElementById('infos').offsetWidth - 4;
-                            canvas.height = height + padding * 2;
-                            canvas.style.background = 'rgb(20, 20, 30)';
-
-                            frame.appendChild(canvas);
-
-                            drawGrid(canvas, [], 10);
-
-                            var infoMin = document.createElement('div');
-
-                            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                            infoMin.setAttribute('class', 'min');
-
-                            frame.appendChild(infoMin);
-
-                            var infoMax = document.createElement('div');
-
-                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                            infoMax.setAttribute('class', 'max');
-
-                            frame.appendChild(infoMax);
-
-                            var infoType = document.createElement('div');
-
-                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                            if(typeCounter[type] > 1)
-                            {
-                                var name = accessory.name, n = [];
-
-                                if(typeCounter[type] > 1)
-                                {
-                                    name = accessory.name + ' ' + type + ' ' + j;
-                                }
-                                else if(counter > 1)
-                                {
-                                    name = accessory.name + ' ' + type;
-                                }
-
-                                for(var k = 0; k < accessory.services.length; k++)
-                                {
-                                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
-                                    {
-                                        n.push(accessory.services[k].name);
-                                    }
-                                }
-
-                                if(n.length > 0)
-                                {
-                                    name = n[j];
-                                }
-
-                                infoType.innerHTML = name;
-                            }
-                            else
-                            {
-                                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
-                            }
-
-                            frame.appendChild(infoType);
-
-                            var infoUpdate = document.createElement('div');
-
-                            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-                            infoUpdate.setAttribute('class', 'update');
-
-                            frame.appendChild(infoUpdate);
-                        }
-                    }
-
-                    loadActivity();
-
-                    async function loadActivity()
-                    {
-                        var activity = JSON.parse(await fetchURL('/activity?mac=' + accessory.mac, 10000));
-
-                        for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                        {
-                            var type = Object.keys(typeCounter)[i];
-
-                            for(var j = 0; j < typeCounter[type]; j++)
-                            {
-                                var name = accessory.name, n = [];
-
-                                if(typeCounter[type] > 1)
-                                {
-                                    name = accessory.name + ' ' + type + ' ' + j;
-                                }
-                                else if(counter > 1)
-                                {
-                                    name = accessory.name + ' ' + type;
-                                }
-
-                                for(var k = 0; k < accessory.services.length; k++)
-                                {
-                                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
-                                    {
-                                        n.push(accessory.services[k].name);
-                                    }
-                                }
-
-                                if(n.length > 0)
-                                {
-                                    name = n[j];
-                                }
-
-                                if(!values[type + j])
-                                {
-                                    values[type + j] = [];
-                                }
-
-                                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
-                                {
-                                    if(type == 'statelessswitch')
-                                    {
-                                        for(var k = activity.success.length - 1; k >= 0; k--)
-                                        {
-                                            if(activity.success[k].n.includes(name))
-                                            {
-                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        for(var k = activity.update.length - 1; k >= 0; k--)
-                                        {
-                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
-                                            {
-                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    console.log('Keine Daten');
-                                }
-                            }
-                        }
-
-                        orginal = { ...values };
-
-                        repaintGraphs();
-                    }
-
-                    function repaintGraphs()
-                    {
-                        for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                        {
-                            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                            if(type instanceof Object)
-                            {
-                                type = type.type;
-                            }
-
-                            for(var j = 0; j < typeCounter[type]; j++)
-                            {
-                                calcValues(values, type, j);
-                            }
-                        }
-                    }
-
-                    function calcValues(values, type, c)
-                    {
-                        var color = 'hsl(200, 98%, 60%)';
-                        var canvas = document.getElementById('canvas-' + type + '-' + c);
-
-                        console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
-
-                        var v = [];
-                        /*
-                        values = {};
-
-                        values[type] = [
-                            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
-                            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
-                            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 4 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 5 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 6 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 7 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 8 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 9 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 11 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 12 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 13 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 14 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 15 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 16 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 17 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 18 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 19 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
-                            { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 }
-                        ]
-                        */
-                        canvas.width = document.getElementById('infos').offsetWidth - 4;
-
-                        if(type instanceof Object)
-                        {
-                            type = type.type;
-                        }
-
-                        if(data[type].active && data[type].active.color)
-                        {
-                            color = data[type].active.color;
-                        }
-
-                        if(data[type].color)
-                        {
-                            color = data[type].color;
-                        }
-
-                        var min = 0;
-                        var max = 1;
-
-                        if(Object.keys(values).length != 0 && values[type + c].length != 0)
-                        {
-                            if(!isNaN(values[type + c][0].value))
-                            {
-                                min = 100000;
-                                max = 0;
-
-                                for(const j in values[type + c])
-                                {
-                                    if(parseFloat(values[type + c][j].value) < min)
-                                    {
-                                        min = parseFloat(values[type + c][j].value);
-                                    }
-
-                                    if(parseFloat(values[type + c][j].value) > max)
-                                    {
-                                        max = parseFloat(values[type + c][j].value);
-                                    }
-                                }
-                            }
-
-                            console.log('Min', min, 'Max', max);
-                            
-                            var unterteilungen = 24 * 15,
-                                date = new Date();
-
-                            if(!isNaN(values[type + c][0].value))
-                            {
-                                unterteilungen = 24 * 6;
-                            }
-
-                            for(var k = unterteilungen; k >= 0; k--)
-                            {
-                                var x = [], sum = 0;
-
-                                for(const j in values[type + c])
-                                {
-                                    if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
-                                    {
-                                        var value = values[type + c][j].value;
-
-                                        if(!isNaN(values[type + c][0].value))
-                                        {
-                                            value = (values[type + c][j].value - min) / (max - min) * 100;
-
-                                            sum += parseFloat(value);
-                                        }
-
-                                        x.push(value);
-                                    }
-                                }
-
-                                if(x.length > 0)
-                                {
-                                    if(!isNaN(values[type + c][0].value))
-                                    {
-                                        v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
-
-                                        //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
-
-                                        //console.log('MAX', 100 - Math.max(...x), 'MIN', Math.min(...x), 'Entscheidung', (100 - Math.max(...x)) < Math.min(...x) ? 'MAX' : 'MIN');
-                                    }
-                                    else if(!(x.includes('true') && x.includes('false')))
-                                    {
-                                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
-                                    }
-                                    else
-                                    {
-                                        v[unterteilungen - k - 2] = 100;
-                                        v[unterteilungen - k - 1] = 0;
-                                    }
-
-                                    //v[unterteilungen - k - 1] = sum / x.length;
-                                }
-                                else
-                                {
-                                    if(!isNaN(v[unterteilungen - k - 2]))
-                                    {
-                                        v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
-                                    }
-                                    else if(!isNaN(values[type + c][0].value))
-                                    {
-                                        v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
-                                    }
-                                    else
-                                    {
-                                        v[unterteilungen - k - 1] = 0;
-                                    }
-                                }
-                            }
-                            /*
-                            for(const j in values[type])
-                            {
-                                var value = values[type][j];
-
-                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-                                v.push((value - min) / (max - min) * 100);
-                            }
-                            */
-                            console.log('Graph Berechnen ..', v);
-                            
-                            if(isNaN(values[type + c][0].value))
-                            {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
-                            }
-                            else
-                            {
-                                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                            }
-
-                            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
-                        }
-
-                        window.onload = drawGrid(canvas, [], 10);
-
-                        if(type == 'temperature')
-                        {
-                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                            if(min < data[type].valueRange[0])
-                            {
-                                min = data[type].valueRange[0];
-                            }
-                            else if(min > data[type].valueRange[1])
-                            {
-                                min = data[type].valueRange[1];
-                            }
-
-                            if(max > data[type].valueRange[1])
-                            {
-                                max = data[type].valueRange[1];
-                            }
-                            else if(max < data[type].valueRange[0])
-                            {
-                                max = data[type].valueRange[0];
-                            }
-
-                            console.log(min, max);
-
-                            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-                            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
-                            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-                        }
-                        else if(type == 'humidity')
-                        {
-                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                            if(min < data[type].valueRange[0])
-                            {
-                                min = data[type].valueRange[0];
-                            }
-
-                            if(max > data[type].valueRange[1])
-                            {
-                                max = data[type].valueRange[1];
-                            }
-
-                            if(min > 50)
-                            {	
-                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                            }
-
-                            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-
-                            if(max > 50)
-                            {	
-                                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                            }
-                            else
-                            {
-                                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
-                            }
-
-                            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
-                            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-                        }
-                        else if(type == 'light')
-                        {
-                            window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
-                            window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
-                        }
-                        else
-                        {
-                            window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
-                            window.onload = drawGraph(canvas, v, [color, color], false);
-                        }
-                    }
-
-                    function drawGraph(canvas, data, gradients, points)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                        for(var i = 0; i < gradients.length; i++)
-                        {
-                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                        }
-
-                        ctx.lineWidth = 2;
-                        ctx.lineCap = 'round';
-                        ctx.strokeStyle = grd;
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(points)
-                            {
-                                ctx.fillStyle = gradients[0];
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                                ctx.fillStyle = gradients[1];
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            ctx.stroke();
-                        }
-
-                        if(points)
-                        {
-                            ctx.fillStyle = gradients[0];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                            ctx.fillStyle = gradients[1];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                        }
-                    }
-
-                    function drawFill(canvas, data, gradients, smoothing)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-                        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                        for(var i = 0; i < gradients.length; i++)
-                        {
-                            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                        }
-
-                        ctx.fillStyle = grd;
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, height + padding);
-                        ctx.lineTo(0, height - data[0] * height / 100  + padding);
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(smoothing == 0)
-                            {
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            }
-                            else
-                            {
-                                // TODO
-                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
-                            }
-                        }
-
-                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
-
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-
-                    function drawGrid(canvas, data, unterteilungen)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 2;
-                        var width = canvas.offsetWidth - padding * 2;
-
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        ctx.lineCap = 'butt';
-                        ctx.lineWidth = 1.5;
-
-                        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
-                        {
-                            ctx.strokeStyle = 'rgb(25, 25, 35)';
-
-                            if(i == unterteilungen || i == 0)
-                            {
-                                ctx.strokeStyle = 'rgb(50, 50, 60)';
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / unterteilungen) * i);
-                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
-                            ctx.stroke();
-                        }
-
-                        if(data.length < 75)
-                        {
-                            for(var i = 0; i < data.length; i++)
-                            {
-                                ctx.strokeStyle = 'rgb(40, 40, 50)';
-                                
-                                if(i == data.length - 1 || i == 0)
-                                {
-                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                                }
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-
-                </script>
-            </div>
+            <div id="activity" style="display: table; margin-bottom: 100px"></div>
             <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
             <div id="navigation-panel" style="display: flex">
                 <input type="button" value="Zurück" onclick="window.location.href='/'">
@@ -692,6 +70,627 @@
         </div>
     </body>
 </html>
+<script>
+
+    var values = {}, orginal = {};;
+    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+    var padding = 50;
+    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+    var typeCounter = {};
+
+    for(var i = 0; i < counter; i++)
+    {
+        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+        if(type instanceof Object)
+        {
+            type = type.type;
+        }
+
+        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+    }
+
+    for(var i = 0; i < Object.keys(typeCounter).length; i++)
+    {
+        var type = Object.keys(typeCounter)[i];
+
+        for(var j = 0; j < typeCounter[type]; j++)
+        {
+            var statusField = document.createElement('input');
+        
+            statusField.setAttribute('id', 'status-' + type + '-' + j);
+            statusField.setAttribute('class', 'control-panel loading-loop');
+            statusField.setAttribute('type', 'button');
+            statusField.setAttribute('value', 'LADEN ..');
+
+            if(typeCounter[type] > 1)
+            {
+                statusField.style.setProperty('font-size', '30px', 'important');
+            }
+
+            if(counter > 1)
+            {
+                statusField.style.height = '100px';
+            }
+
+            if(i == counter - 1) // TODO
+            {
+                statusField.style.setProperty('margin-bottom', '0', 'important');
+            }
+
+            document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+            var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+            document.getElementById('activity').appendChild(frame);
+
+            if(i != counter - 1) // TODO
+            {
+                frame.style.marginBottom = '20px';
+            }
+
+            var height = frame.offsetHeight - padding * 2 - 2;
+
+            canvas.setAttribute('class', 'canvas');
+            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+            canvas.setAttribute('style', 'border-radius: 50px');
+
+            canvas.width = document.getElementById('infos').offsetWidth - 4;
+            canvas.height = height + padding * 2;
+            canvas.style.background = 'rgb(20, 20, 30)';
+
+            frame.appendChild(canvas);
+
+            drawGrid(canvas, [], 10);
+
+            var infoMin = document.createElement('div');
+
+            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+            infoMin.setAttribute('class', 'min');
+
+            frame.appendChild(infoMin);
+
+            var infoMax = document.createElement('div');
+
+            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+            infoMax.setAttribute('class', 'max');
+
+            frame.appendChild(infoMax);
+
+            var infoType = document.createElement('div');
+
+            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+            if(typeCounter[type] > 1)
+            {
+                var name = accessory.name, n = [];
+
+                if(typeCounter[type] > 1)
+                {
+                    name = accessory.name + ' ' + type + ' ' + j;
+                }
+                else if(counter > 1)
+                {
+                    name = accessory.name + ' ' + type;
+                }
+
+                for(var k = 0; k < accessory.services.length; k++)
+                {
+                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    {
+                        n.push(accessory.services[k].name);
+                    }
+                }
+
+                if(n.length > 0)
+                {
+                    name = n[j];
+                }
+
+                infoType.innerHTML = name;
+            }
+            else
+            {
+                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+            }
+
+            frame.appendChild(infoType);
+
+            var infoUpdate = document.createElement('div');
+
+            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+            infoUpdate.setAttribute('class', 'update');
+
+            frame.appendChild(infoUpdate);
+        }
+    }
+
+    loadActivity();
+
+    async function loadActivity()
+    {
+        var activity = JSON.parse(await complexFetch('/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Object.keys(typeCounter)[i];
+
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                var name = accessory.name, n = [];
+
+                if(typeCounter[type] > 1)
+                {
+                    name = accessory.name + ' ' + type + ' ' + j;
+                }
+                else if(counter > 1)
+                {
+                    name = accessory.name + ' ' + type;
+                }
+
+                for(var k = 0; k < accessory.services.length; k++)
+                {
+                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    {
+                        n.push(accessory.services[k].name);
+                    }
+                }
+
+                if(n.length > 0)
+                {
+                    name = n[j];
+                }
+
+                if(!values[type + j])
+                {
+                    values[type + j] = [];
+                }
+
+                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
+                {
+                    if(type == 'statelessswitch')
+                    {
+                        for(var k = activity.success.length - 1; k >= 0; k--)
+                        {
+                            if(activity.success[k].n.includes(name))
+                            {
+                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for(var k = activity.update.length - 1; k >= 0; k--)
+                        {
+                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                            {
+                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    console.log('Keine Daten');
+                }
+            }
+        }
+
+        orginal = { ...values };
+
+        repaintGraphs();
+    }
+
+    function repaintGraphs()
+    {
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+            if(type instanceof Object)
+            {
+                type = type.type;
+            }
+
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                calcValues(values, type, j);
+            }
+        }
+    }
+
+    function calcValues(values, type, c)
+    {
+        var color = 'hsl(200, 98%, 60%)';
+        var canvas = document.getElementById('canvas-' + type + '-' + c);
+
+        console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
+
+        var v = [];
+        /*
+        values = {};
+
+        values[type] = [
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
+            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 4 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 5 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 6 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 7 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 8 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 9 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 10 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 11 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 12 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 13 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 14 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 15 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 16 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 17 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 18 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 19 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 }
+        ]
+        */
+        canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+        if(type instanceof Object)
+        {
+            type = type.type;
+        }
+
+        if(data[type].active && data[type].active.color)
+        {
+            color = data[type].active.color;
+        }
+
+        if(data[type].color)
+        {
+            color = data[type].color;
+        }
+
+        var min = 0;
+        var max = 1;
+
+        if(Object.keys(values).length != 0 && values[type + c].length != 0)
+        {
+            if(!isNaN(values[type + c][0].value))
+            {
+                min = 100000;
+                max = 0;
+
+                for(const j in values[type + c])
+                {
+                    if(parseFloat(values[type + c][j].value) < min)
+                    {
+                        min = parseFloat(values[type + c][j].value);
+                    }
+
+                    if(parseFloat(values[type + c][j].value) > max)
+                    {
+                        max = parseFloat(values[type + c][j].value);
+                    }
+                }
+            }
+
+            console.log('Min', min, 'Max', max);
+            
+            var unterteilungen = 24 * 15,
+                date = new Date();
+
+            if(!isNaN(values[type + c][0].value))
+            {
+                unterteilungen = 24 * 6;
+            }
+
+            for(var k = unterteilungen; k >= 0; k--)
+            {
+                var x = [], sum = 0;
+
+                for(const j in values[type + c])
+                {
+                    if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+                    {
+                        var value = values[type + c][j].value;
+
+                        if(!isNaN(values[type + c][0].value))
+                        {
+                            value = (values[type + c][j].value - min) / (max - min) * 100;
+
+                            sum += parseFloat(value);
+                        }
+
+                        x.push(value);
+                    }
+                }
+
+                if(x.length > 0)
+                {
+                    if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
+
+                        //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
+
+                        //console.log('MAX', 100 - Math.max(...x), 'MIN', Math.min(...x), 'Entscheidung', (100 - Math.max(...x)) < Math.min(...x) ? 'MAX' : 'MIN');
+                    }
+                    else if(!(x.includes('true') && x.includes('false')))
+                    {
+                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 2] = 100;
+                        v[unterteilungen - k - 1] = 0;
+                    }
+
+                    //v[unterteilungen - k - 1] = sum / x.length;
+                }
+                else
+                {
+                    if(!isNaN(v[unterteilungen - k - 2]))
+                    {
+                        v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
+                    }
+                    else if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 1] = 0;
+                    }
+                }
+            }
+            /*
+            for(const j in values[type])
+            {
+                var value = values[type][j];
+
+                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                v.push((value - min) / (max - min) * 100);
+            }
+            */
+            console.log('Graph Berechnen ..', v);
+            
+            if(isNaN(values[type + c][0].value))
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+            }
+            else
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+            }
+
+            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+        }
+
+        window.onload = drawGrid(canvas, [], 10);
+
+        if(type == 'temperature')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+            else if(min > data[type].valueRange[1])
+            {
+                min = data[type].valueRange[1];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+            else if(max < data[type].valueRange[0])
+            {
+                max = data[type].valueRange[0];
+            }
+
+            console.log(min, max);
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+        }
+        else if(type == 'humidity')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+
+            if(min > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+
+            if(max > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+            else
+            {
+                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+            }
+
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+            window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+        }
+        else if(type == 'light')
+        {
+            window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+            window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+        }
+        else
+        {
+            window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+            window.onload = drawGraph(canvas, v, [color, color], false);
+        }
+    }
+
+    function drawGraph(canvas, data, gradients, points)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = grd;
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(points)
+            {
+                ctx.fillStyle = gradients[0];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+                ctx.fillStyle = gradients[1];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            ctx.beginPath();
+            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            ctx.stroke();
+        }
+
+        if(points)
+        {
+            ctx.fillStyle = gradients[0];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+            ctx.fillStyle = gradients[1];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    function drawFill(canvas, data, gradients, smoothing)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.fillStyle = grd;
+
+        ctx.beginPath();
+        ctx.moveTo(0, height + padding);
+        ctx.lineTo(0, height - data[0] * height / 100  + padding);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(smoothing == 0)
+            {
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            }
+            else
+            {
+                // TODO
+                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
+            }
+        }
+
+        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
+
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawGrid(canvas, data, unterteilungen)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+
+        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
+        {
+            ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+            if(i == unterteilungen || i == 0)
+            {
+                ctx.strokeStyle = 'rgb(50, 50, 60)';
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, padding + (height / unterteilungen) * i);
+            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+            ctx.stroke();
+        }
+
+        if(data.length < 75)
+        {
+            for(var i = 0; i < data.length; i++)
+            {
+                ctx.strokeStyle = 'rgb(40, 40, 50)';
+                
+                if(i == data.length - 1 || i == 0)
+                {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                ctx.stroke();
+            }
+        }
+    }
+
+</script>
 <script>
 
     var restarting = false, resetting = false, updating = false, saving = false;
