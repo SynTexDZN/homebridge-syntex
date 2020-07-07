@@ -256,19 +256,25 @@
 
                             if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                             {
-                                if(type == 'statelessswitch' && (counter == 1 || activity.success[k].n.includes(name)))
+                                if(type == 'statelessswitch')
                                 {
                                     for(var k = activity.success.length - 1; k >= 0; k--)
                                     {
-                                        values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                        values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                        if(activity.success[k].n.includes(name))
+                                        {
+                                            values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                            values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                        }
                                     }
                                 }
-                                else if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                                else
                                 {
                                     for(var k = activity.update.length - 1; k >= 0; k--)
                                     {
-                                        values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                        if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                                        {
+                                            values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                        }
                                     }
                                 }
                             }
