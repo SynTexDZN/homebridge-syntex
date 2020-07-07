@@ -112,6 +112,8 @@
                             canvas.height = height + padding * 2;
                             canvas.style.background = 'rgb(20, 20, 30)';
 
+                            drawGrid(canvas, [], 10);
+
                             frame.appendChild(canvas);
 
                             var infoMin = document.createElement('div');
@@ -444,8 +446,6 @@
 
                             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
                         }
-
-                        window.onload = drawGrid(canvas, [], 10);
 
                         if(type == 'temperature')
                         {
