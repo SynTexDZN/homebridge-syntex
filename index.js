@@ -1,6 +1,7 @@
 var DeviceManager = require('./core/device-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
 var http = require('http'), url = require('url'), path = require('path');
 var store = require('json-fs-store');
+const { isRegExp } = require('util');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -236,6 +237,34 @@ SynTexPlatform.prototype = {
                                 logger.err(e);
                             }
                         });
+                    }
+                    else if(urlPath == '/activity')
+                    {
+                        if(urlParams.mac)
+                        {
+                            var activity = await logger.load('SynTexWebHooks', urlParams.mac);
+
+                            if(activity != null)
+                            {
+                                /*
+                                var a = { update : [], success : [] };
+
+                                for(var i = 0; i < activity.length; i++)
+                                {
+                                    if(activity[i].l == 'Update' || activity[i].l == 'Success')
+                                    {
+                                        var value = activity[i].m.split('[')[2].split(']')[0];
+                                        var name = activity[i].m.split('[')[1].split(']')[0];
+
+                                        a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, n : name });
+                                    }
+                                }
+                                */
+                            }
+                        }
+
+                        response.write(JSON.stringify(a) || 'Error');
+                        response.end();
                     }
                     else
                     {
