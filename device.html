@@ -254,7 +254,7 @@
                                 values[type + j] = [];
                             }
 
-                            if(activity.update.length > 0 || activity.success.length > 0)
+                            if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                             {
                                 if(type == 'statelessswitch' && (counter == 1 || activity.success[k].n.includes(name)))
                                 {
@@ -272,7 +272,11 @@
                                     }
                                 }
                             }
-                            
+                            else
+                            {
+                                console.log('Keine Daten');
+                            }
+
                             var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                             frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
@@ -528,10 +532,6 @@
                             }
 
                             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
-                        }
-                        else
-                        {
-                            console.log('Keine Daten Geladen!');
                         }
 
                         window.onload = drawGrid(canvas, v, 10);
