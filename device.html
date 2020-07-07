@@ -61,20 +61,80 @@
                         typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
                     }
 
-                    loadActivity();
-
-                    async function loadActivity()
+                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
                     {
-                        var activity = JSON.parse(await fetchURL('/activity?mac=' + accessory.mac, 10000));
+                        var type = Object.keys(typeCounter)[i];
 
-                        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+                        for(var j = 0; j < typeCounter[type]; j++)
                         {
-                            var type = Object.keys(typeCounter)[i];
+                            var statusField = document.createElement('input');
+                        
+                            statusField.setAttribute('id', 'status-' + type + '-' + j);
+                            statusField.setAttribute('class', 'control-panel loading-loop');
+                            statusField.setAttribute('type', 'button');
+                            statusField.setAttribute('value', 'LADEN ..');
 
-                            for(var j = 0; j < typeCounter[type]; j++)
+                            if(typeCounter[type] > 1)
                             {
-                                var name = accessory.name;
-                                var n = [];
+                                statusField.style.setProperty('font-size', '30px', 'important');
+                            }
+
+                            if(counter > 1)
+                            {
+                                statusField.style.height = '100px';
+                            }
+
+                            if(i == counter - 1) // TODO
+                            {
+                                statusField.style.setProperty('margin-bottom', '0', 'important');
+                            }
+
+                            document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+                            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+                            document.getElementById('activity').appendChild(frame);
+
+                            if(i != counter - 1) // TODO
+                            {
+                                frame.style.marginBottom = '20px';
+                            }
+
+                            var height = frame.offsetHeight - padding * 2 - 2;
+
+                            canvas.setAttribute('class', 'canvas');
+                            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+                            canvas.setAttribute('style', 'border-radius: 50px');
+
+                            canvas.width = width + padding * 2;
+                            canvas.height = height + padding * 2;
+                            canvas.style.background = 'rgb(20, 20, 30)';
+
+                            frame.appendChild(canvas);
+
+                            var infoMin = document.createElement('div');
+
+                            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                            infoMin.setAttribute('class', 'min');
+
+                            frame.appendChild(infoMin);
+
+                            var infoMax = document.createElement('div');
+
+                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                            infoMax.setAttribute('class', 'max');
+
+                            frame.appendChild(infoMax);
+
+                            var infoType = document.createElement('div');
+
+                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                            if(typeCounter[type] > 1)
+                            {
+                                var name = accessory.name, n = [];
 
                                 if(typeCounter[type] > 1)
                                 {
@@ -97,30 +157,60 @@
                                 {
                                     name = n[j];
                                 }
+                                
+                                infoType.innerHTML = name;
+                            }
+                            else
+                            {
+                                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                            }
 
-                                var statusField = document.createElement('input');
-                            
-                                statusField.setAttribute('id', 'status-' + type + '-' + j);
-                                statusField.setAttribute('class', 'control-panel loading-loop');
-                                statusField.setAttribute('type', 'button');
-                                statusField.setAttribute('value', 'LADEN ..');
+                            frame.appendChild(infoType);
+
+                            var infoUpdate = document.createElement('div');
+
+                            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                            infoUpdate.setAttribute('class', 'update');
+
+                            frame.appendChild(infoUpdate);
+                        }
+                    }
+
+                    loadActivity();
+
+                    async function loadActivity()
+                    {
+                        var activity = JSON.parse(await fetchURL('/activity?mac=' + accessory.mac, 10000));
+
+                        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+                        {
+                            var type = Object.keys(typeCounter)[i];
+
+                            for(var j = 0; j < typeCounter[type]; j++)
+                            {
+                                var name = accessory.name, n = [];
 
                                 if(typeCounter[type] > 1)
                                 {
-                                    statusField.style.setProperty('font-size', '30px', 'important');
+                                    name = accessory.name + ' ' + type + ' ' + j;
                                 }
-
-                                if(counter > 1)
+                                else if(counter > 1)
                                 {
-                                    statusField.style.height = '100px';
+                                    name = accessory.name + ' ' + type;
                                 }
 
-                                if(i == counter - 1) // TODO
+                                for(var k = 0; k < accessory.services.length; k++)
                                 {
-                                    statusField.style.setProperty('margin-bottom', '0', 'important');
+                                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                                    {
+                                        n.push(accessory.services[k].name);
+                                    }
                                 }
 
-                                document.getElementsByClassName('control-container')[0].appendChild(statusField);
+                                if(n.length > 0)
+                                {
+                                    name = n[j];
+                                }
 
                                 if(!values[type + j])
                                 {
@@ -155,65 +245,6 @@
                                 {
                                     console.log('Keine Daten');
                                 }
-
-                                var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                                frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                                document.getElementById('activity').appendChild(frame);
-
-                                if(i != counter - 1) // TODO
-                                {
-                                    frame.style.marginBottom = '20px';
-                                }
-
-                                var height = frame.offsetHeight - padding * 2 - 2;
-
-                                canvas.setAttribute('class', 'canvas');
-                                canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-                                canvas.setAttribute('style', 'border-radius: 50px');
-
-                                canvas.width = width + padding * 2;
-                                canvas.height = height + padding * 2;
-                                canvas.style.background = 'rgb(20, 20, 30)';
-
-                                frame.appendChild(canvas);
-
-                                var infoMin = document.createElement('div');
-
-                                infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                                infoMin.setAttribute('class', 'min');
-
-                                frame.appendChild(infoMin);
-
-                                var infoMax = document.createElement('div');
-
-                                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                                infoMax.setAttribute('class', 'max');
-
-                                frame.appendChild(infoMax);
-
-                                var infoType = document.createElement('div');
-
-                                infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                                if(typeCounter[type] > 1)
-                                {
-                                    infoType.innerHTML = name;
-                                }
-                                else
-                                {
-                                    infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
-                                }
-
-                                frame.appendChild(infoType);
-
-                                var infoUpdate = document.createElement('div');
-
-                                infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-                                infoUpdate.setAttribute('class', 'update');
-
-                                frame.appendChild(infoUpdate);
                             }
                         }
 
