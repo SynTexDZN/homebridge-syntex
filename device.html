@@ -261,6 +261,7 @@
                                     for(var k = activity.success.length - 1; k >= 0; k--)
                                     {
                                         values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                        values[type + j].push({ time : activity.success[k].t, value : 'false' });
                                     }
                                 }
                                 else if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
