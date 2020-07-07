@@ -116,47 +116,6 @@
 
                             document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
-
-                                var activity = JSON.parse(a);
-
-                                if(!values[type + j])
-                                {
-                                    values[type + j] = [];
-                                }
-                                
-                                console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
-
-                                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
-                                {
-                                    if(type == 'statelessswitch')
-                                    {
-                                        for(var k = activity.success.length - 1; k >= 0; k--)
-                                        {
-                                            if(activity.success[k].n.includes(name))
-                                            {
-                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        for(var k = activity.update.length - 1; k >= 0; k--)
-                                        {
-                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
-                                            {
-                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    console.log('Keine Daten');
-                                }
-                            });
-
                             var frame = document.createElement('div'), canvas = document.createElement('canvas');
 
                             frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
@@ -215,12 +174,53 @@
                             infoUpdate.setAttribute('class', 'update');
 
                             frame.appendChild(infoUpdate);
+
+                            fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
+
+                                var activity = JSON.parse(a);
+
+                                if(!values[type + j])
+                                {
+                                    values[type + j] = [];
+                                }
+                                
+                                console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
+
+                                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
+                                {
+                                    if(type == 'statelessswitch')
+                                    {
+                                        for(var k = activity.success.length - 1; k >= 0; k--)
+                                        {
+                                            if(activity.success[k].n.includes(name))
+                                            {
+                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for(var k = activity.update.length - 1; k >= 0; k--)
+                                        {
+                                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                                            {
+                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    console.log('Keine Daten');
+                                }
+
+                                repaintGraphs();
+                            });
                         }
                     }
 
                     var orginal = { ...values };
-
-                    repaintGraphs();
 
                     function repaintGraphs()
                     {
