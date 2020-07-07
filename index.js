@@ -55,7 +55,7 @@ SynTexPlatform.prototype = {
 
             callback(accessories);
             
-            var createServerCallback = (function(request, response)
+            var createServerCallback = (async function(request, response)
             {
                 try
                 {
