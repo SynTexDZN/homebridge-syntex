@@ -179,9 +179,9 @@
 
                                 var activity = JSON.parse(a);
 
-                                if(!values[type + j])
+                                if(!values[this.service])
                                 {
-                                    values[type + j] = [];
+                                    values[this.service] = [];
                                 }
                                 
                                 console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
@@ -194,8 +194,8 @@
                                         {
                                             if(activity.success[k].n.includes(name))
                                             {
-                                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                                values[this.service].push({ time : activity.success[k].t, value : 'true' });
+                                                values[this.service].push({ time : activity.success[k].t, value : 'false' });
                                             }
                                         }
                                     }
@@ -205,7 +205,7 @@
                                         {
                                             if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
                                             {
-                                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                                values[this.service].push({ time : activity.update[k].t, value : activity.update[k].v });
                                             }
                                         }
                                     }
@@ -218,7 +218,8 @@
                                 orginal = { ...values };
 
                                 repaintGraphs();
-                            });
+
+                            }.bind({ service : type + j }));
                         }
                     }
 
