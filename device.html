@@ -196,9 +196,10 @@
 
                     for(var i = 0; i < Object.keys(typeCounter).length; i++)
                     {
-                        for(var j = 0; j < typeCounter[Object.keys(typeCounter)[i]]; i++)
+                        var type = Object.keys(typeCounter)[i];
+
+                        for(var j = 0; j < typeCounter[type]; j++)
                         {
-                            var type = Object.keys(typeCounter)[i];
                             var name = accessory.name + ' ' + type + ' ' + j;
                             var n = [];
 
