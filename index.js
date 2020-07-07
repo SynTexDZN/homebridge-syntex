@@ -240,13 +240,14 @@ SynTexPlatform.prototype = {
                     }
                     else if(urlPath == '/activity')
                     {
+                        var result = {};
+
                         if(urlParams.mac)
                         {
                             var activity = await logger.load('SynTexWebHooks', urlParams.mac);
 
                             if(activity != null)
                             {
-                                /*
                                 var a = { update : [], success : [] };
 
                                 for(var i = 0; i < activity.length; i++)
@@ -259,11 +260,12 @@ SynTexPlatform.prototype = {
                                         a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, n : name });
                                     }
                                 }
-                                */
+
+                                result = a;
                             }
                         }
 
-                        response.write(JSON.stringify(a) || 'Error');
+                        response.write(JSON.stringify(result));
                         response.end();
                     }
                     else
