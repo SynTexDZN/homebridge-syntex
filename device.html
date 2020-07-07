@@ -116,14 +116,15 @@
 
                             document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-                            if(!values[type + j])
-                            {
-                                values[type + j] = [];
-                            }
-
                             fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
 
                                 var activity = JSON.parse(a);
+
+                                if(!values[type + j])
+                                {
+                                    values[type + j] = [];
+                                }
+                                
                                 console.log('Aktivität', '/activity?mac=' + accessory.mac, activity);
 
                                 if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
