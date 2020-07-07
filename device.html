@@ -108,7 +108,7 @@
                             canvas.setAttribute('id', 'canvas-' + type + '-' + j);
                             canvas.setAttribute('style', 'border-radius: 50px');
 
-                            canvas.width = width + padding * 2;
+                            canvas.width = document.getElementById('infos').offsetWidth - 4;
                             canvas.height = height + padding * 2;
                             canvas.style.background = 'rgb(20, 20, 30)';
 
@@ -157,7 +157,7 @@
                                 {
                                     name = n[j];
                                 }
-                                
+
                                 infoType.innerHTML = name;
                             }
                             else
