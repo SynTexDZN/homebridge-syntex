@@ -252,7 +252,11 @@
                             {
                                 for(var k = activity.update.length - 1; k >= 0; k--)
                                 {
-                                    if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                                    if(type == 'statelessswitch' && (counter == 1 || activity.success[k].n.toLowerCase().includes(type) || activity.success[k].n.includes(name)))
+                                    {
+                                        values[type + j].push({ time : activity.success[k].t, value : activity.success[k].v });
+                                    }
+                                    else if(counter == 1 || activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
                                     {
                                         values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
                                     }
@@ -1019,7 +1023,7 @@
                 }
                 else if(type == 'statelessswitch')	
                 {	
-                    document.getElementById('status-' + type + '-' + j).value = data[type].active.text;	
+                    document.getElementById('status-' + type + '-' + j).value = data[type].active.text.toUpperCase();	
                     document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].active.color;	
                 }
                 else if(state == 'Error')
