@@ -61,10 +61,12 @@
                         typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
                     }
 
-                    fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(a) {
+                    loadActivity();
 
-                        var activity = JSON.parse(a);
-                        
+                    async function loadActivity()
+                    {
+                        var activity = JSON.parse(await fetchURL('/activity?mac=' + accessory.mac, 10000));
+
                         for(var i = 0; i < Object.keys(typeCounter).length; i++)
                         {
                             var type = Object.keys(typeCounter)[i];
@@ -218,7 +220,7 @@
                         var orginal = { ...values };
 
                         repaintGraphs();
-                    });
+                    }
 
                     function repaintGraphs()
                     {
