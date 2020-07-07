@@ -123,6 +123,8 @@
 
                             fetchURL('/activity?mac=' + accessory.mac, 10000).then(function(activity) {
 
+                                console.log('Aktivität', activity, '/activity?mac=' + accessory.mac);
+
                                 if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
                                 {
                                     if(type == 'statelessswitch')
