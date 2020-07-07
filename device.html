@@ -203,8 +203,13 @@
 
                         for(var j = 0; j < typeCounter[type]; j++)
                         {
-                            var name = accessory.name + ' ' + type + ' ' + j;
+                            var name = accessory.name;
                             var n = [];
+
+                            if(typeCounter[type] > 1)
+                            {
+                                name = accessory.name + ' ' + type + ' ' + j;
+                            }
 
                             for(var k = 0; k < accessory.services.length; k++)
                             {
