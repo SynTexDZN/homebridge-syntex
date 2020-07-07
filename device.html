@@ -43,7 +43,7 @@
             <div id="activity" style="display: table; margin-bottom: 100px">
                 <script defer>
 
-                    var values = {};
+                    var values = {}, orginal = {};
                     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
                     var padding = 50;
                     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
@@ -215,12 +215,12 @@
                                     console.log('Keine Daten');
                                 }
 
+                                orginal = { ...values };
+
                                 repaintGraphs();
                             });
                         }
                     }
-
-                    var orginal = { ...values };
 
                     function repaintGraphs()
                     {
@@ -235,7 +235,7 @@
 
                             for(var j = 0; j < typeCounter[type]; j++)
                             {
-                                calcValues(values, type, j);
+                                calcValues(orginal, type, j);
                             }
                         }
                     }
