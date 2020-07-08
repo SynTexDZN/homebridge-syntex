@@ -194,7 +194,7 @@
             {
                 var element = document.createElement('script');
     
-                element.onerror = test;
+                element.onerror = console.error('Das Script konnte nicht geladen werden', link);
                 element.onload = callback;
     
                 document.head.appendChild(element);
