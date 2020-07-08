@@ -70,7 +70,7 @@
         </div>
     </body>
 </html>
-<script>
+<script defer>
 
     var values = {}, orginal = {};;
     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
@@ -336,7 +336,8 @@
             { value : 20, time : new Date().getTime() / 1000 - 3600 * 20 },
             { value : 20, time : new Date().getTime() / 1000 - 3600 * 21 },
             { value : 20, time : new Date().getTime() / 1000 - 3600 * 22 },
-            { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 }
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 23 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 24 }
         ]
         
         canvas.width = document.getElementById('infos').offsetWidth - 4;
@@ -956,7 +957,7 @@
 
                     console.log(state);
                     
-                    calcValues(orginal, type, j);
+                    //calcValues(orginal, type, j);
                 }
 
                 temp[type + j] = state;
