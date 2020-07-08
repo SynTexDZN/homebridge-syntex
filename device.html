@@ -207,10 +207,11 @@
         }
     }
 
-    setTimeout(async function()
+    head.ready('/js/query.js', function()
     {
+        alert('QUERY READY');
         loadActivity();
-    }, 500);
+    });
 
     async function loadActivity()
     {
