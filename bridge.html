@@ -75,7 +75,7 @@
         });
     }
 
-    setTimeout(function()
+    head.load('/js/query.js', function()
     {
         fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
 
@@ -107,7 +107,7 @@
                 document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
-    }, 500);
+    });
 
 </script>
 <script>

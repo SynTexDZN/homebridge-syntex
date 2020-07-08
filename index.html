@@ -251,14 +251,14 @@
         }
     }
 
-    setTimeout(function()
+    head.load('/js/query.js', function()
     {
         for(var i = 0; i < deviceElements.length; i++)
         {
             pingESP(deviceElements[i]);
             checkUpdates(deviceElements[i]);
         }
-    }, 500);
+    });
 
 </script>
 <script defer>

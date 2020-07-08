@@ -85,10 +85,10 @@
     var ip = 'http://192.168.4.1/';
     var ipp = (new URL(window.location.href)).searchParams.get("ip");
     
-    setTimeout(function()
+    head.load('/js/query.js', function()
     {
         pingESP();
-    }, 500);
+    });
     
     async function pingESP()
     {
