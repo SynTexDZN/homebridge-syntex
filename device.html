@@ -286,6 +286,8 @@
 
     function repaintGraphs()
     {
+        alert(JSON.stringify(typeCounter));
+
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
             var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
@@ -309,7 +311,7 @@
 
         console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
 
-        alert('CALC', type, c);
+        alert('CALC' + ' - ' + type + ' - ' + c);
 
         if(type instanceof Object)
         {
