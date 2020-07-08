@@ -207,10 +207,27 @@
         }
     }
 
-    head.ready('/js/query.js', function()
+    head.load('/js/query.js', function()
     {
-        alert('QUERY READY');
         loadActivity();
+
+        if(device.ip != undefined)
+        {
+            pingESP();
+            checkUpdates();
+        }
+        else
+        {
+            while(1 != 0)
+            {
+                if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+                {
+                    fetchState();
+                }
+
+                await newTimeout(1000);
+            }
+        }
     });
 
     async function loadActivity()
@@ -1109,27 +1126,6 @@
             }
         }
     }
-
-    setTimeout(async function()
-    {
-        if(device.ip != undefined)
-        {
-            pingESP();
-            checkUpdates();
-        }
-        else
-        {
-            while(1 != 0)
-            {
-                if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
-                {
-                    fetchState();
-                }
-
-                await newTimeout(1000);
-            }
-        }
-    }, 500);
 
     async function pingESP()
     {

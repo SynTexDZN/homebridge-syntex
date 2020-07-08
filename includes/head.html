@@ -186,6 +186,26 @@
     <script async src="/js/loading.js"></script>
     <script src="/js/essentials.js"></script>
     <script src="/js/loading-loop.js"></script>
+    <script>
+
+        function HeadLoader()
+        {
+            this.ready = function(link, callback)
+            {
+                var element = document.createElement('script');
+    
+                element.onerror = test;
+                element.onload = callback;
+    
+                document.head.appendChild(element);
+    
+                element.src = link;
+            }
+        }
+    
+        var head = new HeadLoader();
+    
+    </script>
 </head>
 <div id="preloader">
     <div class="loader-4"><span></span></div>
