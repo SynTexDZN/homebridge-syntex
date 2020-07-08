@@ -476,7 +476,7 @@
             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
         }
 
-        window.onload = drawGrid(canvas, [], 10);
+        //window.onload = drawGrid(canvas, [], 10);
 
         if(type == 'temperature')
         {
@@ -505,7 +505,7 @@
             var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
             var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
 
-            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+            //window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
             window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
         }
         else if(type == 'humidity')
@@ -540,17 +540,17 @@
 
             var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
 
-            window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
+            //window.onload = drawFill(canvas, v, [maxClr, minClr], 0);
             window.onload = drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
         }
         else if(type == 'light')
         {
-            window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+            //window.onload = drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
             window.onload = drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
         }
         else
         {
-            window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+            //window.onload = drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
             window.onload = drawGraph(canvas, v, [color, color], false);
         }
     }
