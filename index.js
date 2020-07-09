@@ -69,7 +69,7 @@ SynTexPlatform.prototype = {
 
                     if(urlPath.startsWith('/serverside'))
                     {
-                        urlParams = urlParams.split('/serverside')[1];
+                        urlPath = urlPath.split('/serverside')[1];
 
                         if(urlPath == '/init')
                         {
