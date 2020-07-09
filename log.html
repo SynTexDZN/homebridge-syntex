@@ -75,8 +75,8 @@
     head.load('/js/query.js', async function()
     {
         var logs = JSON.parse(await complexFetch('/serverside/log', 10000, 3, {}, false));
-        bLogJSON = logs.bLog;
-        wLogJSON = logs.wLog;
+        bLogJSON = JSON.parse(logs.bLog);
+        wLogJSON = JSON.parse(logs.wLog);
 
         createLog(document.getElementById('bLog'), bLogJSON, null);
         createLog(document.getElementById('wLog'), wLogJSON, null);
