@@ -66,15 +66,17 @@
 </html>
 <script>
 
+    var bLogJSON = [];
+    var wLogJSON = [];
+    var counter = 0;
+    var levelCounter = [0, 0, 0, 0, 0, 0, 0];
+    var countLogs = true;
+
     head.load('/js/query.js', async function()
     {
         var logs = JSON.parse(await complexFetch('/serverside/log', 10000, 3, {}, false));
-        var bLogJSON = logs.bLog;
-        var wLogJSON = logs.wLog;
-        var counter = 0;
-        var levelCounter = [0, 0, 0, 0, 0, 0, 0];
-        var countLogs = true;
-
+        bLogJSON = logs.bLog;
+        wLogJSON = logs.wLog;
 
         createLog(document.getElementById('bLog'), bLogJSON, null);
         createLog(document.getElementById('wLog'), wLogJSON, null);
