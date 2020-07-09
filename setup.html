@@ -93,7 +93,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetch('/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
+        var created = await complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
 
         await newTimeout(1000);
 
@@ -120,7 +120,7 @@
     {
         setTimeout(async function()
         {
-            if(await checkRestart('/check-restart'))
+            if(await checkRestart('/serverside/check-restart'))
             {
                 window.location.href = url;
             }

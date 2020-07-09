@@ -126,17 +126,17 @@
 
             updating['bridge'] = true;
 
-            if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+            if(await complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/serverside/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
@@ -201,11 +201,11 @@
 
             restarting = true;
 
-            if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
+            if(await complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
 

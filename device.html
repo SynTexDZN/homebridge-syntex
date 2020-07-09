@@ -228,7 +228,7 @@
 
     async function loadActivity()
     {
-        var activity = JSON.parse(await complexFetch('/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+        var activity = JSON.parse(await complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
 
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
@@ -1288,7 +1288,7 @@
             }
             else
             {
-                var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
+                var url = '/serverside/remove-device?mac=' + device.id + '&type=' + device.type;
             }
 
             resetting = true;
@@ -1297,7 +1297,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
 
