@@ -717,7 +717,7 @@
         });
     }
 
-    if(device.type == 'motion' || device.type == 'light' || device.type == 'climate')
+    if(device.type == 'motion' || device.type == 'weather' || device.type == 'climate')
     {
         settings.push({
             index: 'interval',
@@ -725,7 +725,7 @@
         });
     }
 
-    if(device.type == 'light' || device.type == 'climate' || device.type == 'statelessswitch')
+    if(device.type == 'weather' || device.type == 'climate' || device.type == 'statelessswitch')
     {
         settings.push({
             index: 'events',
@@ -754,7 +754,7 @@
 
     for(const i in settings)
     {
-        if(settings[i].index == 'interval' && (device.type == 'light' || device.type == 'climate'))
+        if(settings[i].index == 'interval' && (device.type == 'weather' || device.type == 'climate'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
@@ -796,7 +796,7 @@
 
     for(const i in settings)
     {
-        if((device.type == 'light' || device.type == 'climate') && settings[i].index == 'interval')
+        if((device.type == 'weather' || device.type == 'climate') && settings[i].index == 'interval')
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
@@ -854,12 +854,12 @@
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', device.type);
 
-    if(device.type == 'climate' || device.type == 'light' || device.type == 'statelessswitch')
+    if(device.type == 'climate' || device.type == 'weather' || device.type == 'statelessswitch')
     {
         document.getElementById('infobox').style.display = '';
     }
 
-    if(device.type == 'climate' || device.type == 'light')
+    if(device.type == 'climate' || device.type == 'weather')
     {
         document.getElementById('infobox').children[1].innerHTML = 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet<br>Negative wenn er unterschritten wird';
     }
@@ -1340,7 +1340,7 @@
                         {
                             settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
                         }
-                        else if(device.type == 'light')
+                        else if(device.type == 'weather')
                         {
                             settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
