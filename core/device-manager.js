@@ -187,7 +187,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 status = 'Init';
             }
 
-            resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + (device['active'] || 1) + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + (device['led'] || 1) + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
+            resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
         }
         else if(await checkName(name))
         {
