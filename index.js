@@ -304,6 +304,11 @@ SynTexPlatform.prototype = {
                             response.write(JSON.stringify(obj));
                             response.end();
                         }
+                        else if(urlPath == '/time')
+                        {
+                            response.write(new Date().getTime());
+                            response.end();
+                        }
                     }
                     else
                     {
