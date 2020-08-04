@@ -99,7 +99,7 @@ async function removeFromConfig(obj, mac)
                 {
                     if(obj.platforms[i].accessories[j].mac === mac)
                     {
-                        obj.platforms[i].accessories[j].splice(j, 1);
+                        obj.platforms[i].splice(j, 1);
                     }
                 }
             }
