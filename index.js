@@ -306,7 +306,7 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/time')
                         {
-                            response.write('' + (new Date().getTime() / 1000 + 7202));
+                            response.write('' + (new Date().getTime() / 1000 + 7201));
                             response.end();
                         }
                     }

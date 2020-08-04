@@ -85,7 +85,7 @@
             }
         });
 
-        complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
+        complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
 
             if(version != null)
             {
@@ -162,17 +162,17 @@
 
             updating['webhooks'] = true;
 
-            if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+            if(await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart(window.location.origin + ':<%wPort%>/check-restart'))
+                if(await checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
                 {
                     document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
