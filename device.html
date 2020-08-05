@@ -239,7 +239,7 @@
         if(!busy.includes(button.getAttribute('id')))
         {
             busy.push(button.getAttribute('id'));
-            
+
             var counter = button.getAttribute('id').split('-')[2];
             var type = button.getAttribute('id').split('-')[1];
             var value = button.value.toUpperCase() == 'AN' ? 'false' : 'true';
@@ -255,9 +255,9 @@
 
             const index = busy.indexOf(button.getAttribute('id'));
 
-            if (index > -1)
+            if(index > -1)
             {
-                array.splice(index, 1);
+                busy.splice(index, 1);
             }
         }
     }
