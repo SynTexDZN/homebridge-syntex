@@ -309,6 +309,35 @@ SynTexPlatform.prototype = {
                             response.write('' + (new Date().getTime() / 1000 + 7201));
                             response.end();
                         }
+                        else if(urlPath == '/check-device' && urlParams.mac)
+                        {
+                            var device = await DeviceManager.getDevice(urlParams.mac);
+
+                            response.write(HTMLQuery.sendValue(data, 'found', device ? device.type : 'Error'));
+                            response.end();
+                        }
+                        else if(urlPath == '/save-config' && request.method == 'POST')
+                        {
+                            var post = '';
+
+                            request.on('data', function(data)
+                            {
+                                post += data;
+                            });
+
+                            request.on('end', async function()
+                            {
+                                var json = JSON.parse(post);
+                                
+                                if(await DeviceManager.setValues(json) == false)
+                                {
+                                    logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
+                                }
+                                
+                                response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
+                                response.end();
+                            });
+                        }
                     }
                     else
                     {
@@ -430,35 +459,6 @@ SynTexPlatform.prototype = {
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
-                                }
-                                else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
-                                {
-                                    var device = await DeviceManager.getDevice(urlParams.mac);
-
-                                    response.write(HTMLQuery.sendValue(data, 'found', device ? device.type : 'Error'));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
-                                {
-                                    var post = '';
-
-                                    request.on('data', function(data)
-                                    {
-                                        post += data;
-                                    });
-
-                                    request.on('end', async function()
-                                    {
-                                        var json = JSON.parse(post);
-                                        
-                                        if(await DeviceManager.setValues(json) == false)
-                                        {
-                                            logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
-                                        }
-                                        
-                                        response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
-                                        response.end();
-                                    });
                                 }
                                 else if(path.parse(relPath).ext == '.html')
                                 {
