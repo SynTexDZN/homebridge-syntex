@@ -506,11 +506,11 @@
 
             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
         }
-        else
+        else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
         {
             var label = document.createElement('h2');
 
-            label.innerHTML = '↺ | Keine Daten';
+            label.innerHTML = '↻ Neu Laden';
             label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
             label.setAttribute('onclick', 'loadActivity()');
 
