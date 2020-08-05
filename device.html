@@ -231,11 +231,11 @@
         }
     });
 
-    function controlSwitch(button)
+    async function controlSwitch(button)
     {
         var counter = button.getAttribute('id').split('-')[2];
 
-        var state = JSON.parse(await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false));
+        var state = await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
 
         if(state != null)
         {
