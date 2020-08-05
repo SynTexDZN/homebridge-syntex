@@ -101,6 +101,11 @@
             statusField.setAttribute('type', 'button');
             statusField.setAttribute('value', 'LADEN ..');
 
+            if(type == 'switch')
+            {
+                statusField.setAttribute('onclick', 'controlSwitch(this)');
+            }
+
             if(typeCounter[type] > 1)
             {
                 statusField.style.setProperty('font-size', '30px', 'important');
@@ -225,6 +230,18 @@
             }, 300);
         }
     });
+
+    function controlSwitch(button)
+    {
+        var counter = button.getAttribute('id').split('-')[2];
+
+        var state = JSON.parse(await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false));
+
+        if(state != null)
+        {
+
+        }
+    }
 
     async function loadActivity()
     {
@@ -1084,7 +1101,7 @@
                 }
                 else if(state == 'Error')
                 {
-                    document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN GEFUNDEN!';
+                    document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
                 }
             }
         }
