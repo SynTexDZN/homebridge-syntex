@@ -1,6 +1,7 @@
 var DeviceManager = require('./core/device-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
 var http = require('http'), url = require('url'), path = require('path');
 var store = require('json-fs-store');
+const { isRegExp } = require('util');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -54,7 +55,7 @@ SynTexPlatform.prototype = {
 
             callback(accessories);
             
-            var createServerCallback = (function(request, response)
+            var createServerCallback = (async function(request, response)
             {
                 try
                 {
@@ -66,176 +67,277 @@ SynTexPlatform.prototype = {
                     response.setHeader('Content-Type', 'text/plain');
                     response.setHeader('Access-Control-Allow-Origin', '*');
 
-                    if(urlPath == '/init')
+                    if(urlPath.startsWith('/serverside'))
                     {
-                        if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh && urlParams.buttons)
+                        urlPath = urlPath.split('/serverside')[1];
+
+                        if(urlPath == '/init')
                         {
-                            DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons).then(function(res) {
+                            if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh && urlParams.buttons)
+                            {
+                                DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons).then(function(res) {
 
-                                logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
+                                    logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
 
-                                response.write(res[1]);
-                                response.end();
+                                    response.write(res[1]);
+                                    response.end();
 
-                                if(res[0] == "Init")
-                                {
-                                    restart = true;
+                                    if(res[0] == "Init")
+                                    {
+                                        restart = true;
 
-                                    const { exec } = require("child_process");
+                                        const { exec } = require("child_process");
 
-                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                                    exec("sudo systemctl restart homebridge");
-                                }
-                                
-                            }).catch(function(e) {
+                                        exec("sudo systemctl restart homebridge");
+                                    }
+                                    
+                                }).catch(function(e) {
 
-                                logger.err(e);
-                            });
+                                    logger.err(e);
+                                });
+                            }
                         }
-                    }
-                    else if(urlPath == '/remove-device')
-                    {
-                        if(urlParams.mac && urlParams.type)
+                        else if(urlPath == '/remove-device')
                         {
-                            DeviceManager.removeDevice(urlParams.mac, urlParams.type).then(function(removed) {
+                            if(urlParams.mac && urlParams.type)
+                            {
+                                DeviceManager.removeDevice(urlParams.mac, urlParams.type).then(function(removed) {
 
-                                response.write(removed ? 'Success' : 'Error');
+                                    response.write(removed ? 'Success' : 'Error');
+                                    response.end();
+
+                                    if(removed)
+                                    {
+                                        logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
+
+                                        restart = true;
+
+                                        const { exec } = require("child_process");
+
+                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                                        exec("sudo systemctl restart homebridge");
+                                    }
+                                    else
+                                    {
+                                        logger.err('Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+                                    }
+                                    
+                                }).catch(function(e) {
+
+                                    logger.err(e);
+                                });
+                            }
+                            else
+                            {
+                                response.write("Error");
                                 response.end();
-
-                                if(removed)
-                                {
-                                    logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
-
-                                    restart = true;
-
-                                    const { exec } = require("child_process");
-
-                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                    exec("sudo systemctl restart homebridge");
-                                }
-                                else
-                                {
-                                    logger.err('Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
-                                }
-                                
-                            }).catch(function(e) {
-
-                                logger.err(e);
-                            });
+                            }
                         }
-                        else
+                        else if(urlPath == '/init-switch')
                         {
-                            response.write("Error");
+                            if(urlParams.mac && urlParams.name)
+                            {
+                                DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
+
+                                    response.write(res[1]);
+                                    response.end();
+
+                                    if(res[0] == "Success")
+                                    {
+                                        restart = true;
+
+                                        const { exec } = require("child_process");
+
+                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                                        exec("sudo systemctl restart homebridge");
+                                    }
+                                    
+                                }).catch(function(e) {
+
+                                    logger.err(e);
+                                });
+                            }
+                            else
+                            {
+                                response.write("Error");
+                                response.end();
+                            }
+                        }
+                        else if(urlPath == '/restart')
+                        {
+                            restart = true;
+
+                            const { exec } = require("child_process");
+                            
+                            response.write('Success');
+                            response.end();
+
+                            logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                            exec("sudo systemctl restart homebridge");
+                        }
+                        else if(urlPath == '/check-restart')
+                        {
+                            response.write(restart.toString());
                             response.end();
                         }
-                    }
-                    else if(urlPath == '/init-switch')
-                    {
-                        if(urlParams.mac && urlParams.name)
+                        else if(urlPath == '/check-name')
                         {
-                            DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
+                            if(urlParams.name)
+                            {
+                                DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
 
-                                response.write(res[1]);
-                                response.end();
-
-                                if(res[0] == "Success")
-                                {
-                                    restart = true;
-
-                                    const { exec } = require("child_process");
-
-                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                    exec("sudo systemctl restart homebridge");
-                                }
-                                
-                            }).catch(function(e) {
-
-                                logger.err(e);
-                            });
+                                    response.write(nameAvailable ? 'Success' : 'Error');
+                                    response.end();
+                                });
+                            }
                         }
-                        else
+                        else if(urlPath == '/version')
                         {
-                            response.write("Error");
+                            var pjson = require('./package.json');
+
+                            response.write(pjson.version);
                             response.end();
                         }
-                    }
-                    else if(urlPath == '/restart')
-                    {
-                        restart = true;
-
-                        const { exec } = require("child_process");
-                        
-                        response.write('Success');
-                        response.end();
-
-                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                        exec("sudo systemctl restart homebridge");
-                    }
-                    else if(urlPath == '/check-restart')
-                    {
-                        response.write(restart.toString());
-                        response.end();
-                    }
-                    else if(urlPath == '/check-name')
-                    {
-                        if(urlParams.name)
+                        else if(urlPath == '/update')
                         {
-                            DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
+                            var version = 'latest';
 
-                                response.write(nameAvailable ? 'Success' : 'Error');
+                            if(urlParams.version)
+                            {
+                                version = urlParams.version;
+                            }
+
+                            const { exec } = require("child_process");
+                            
+                            exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
+
+                                try
+                                {
+                                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                                    response.end();
+
+                                    if(error || stderr.includes('ERR!'))
+                                    {
+                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                                    }
+                                    else
+                                    {
+                                        logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+                                        
+                                        restart = true;
+
+                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+                                        
+                                        exec("sudo systemctl restart homebridge");
+                                    }
+                                }
+                                catch(e)
+                                {
+                                    logger.err(e);
+                                }
+                            });
+                        }
+                        else if(urlPath == '/activity')
+                        {
+                            var result = {};
+
+                            if(urlParams.mac)
+                            {
+                                var activity = await logger.load('SynTexWebHooks', urlParams.mac);
+
+                                if(activity != null)
+                                {
+                                    var a = { update : [], success : [] };
+
+                                    for(var i = 0; i < activity.length; i++)
+                                    {
+                                        if(activity[i].l == 'Update' || activity[i].l == 'Success')
+                                        {
+                                            var value = activity[i].m.split('[')[2].split(']')[0];
+                                            var name = activity[i].m.split('[')[1].split(']')[0];
+
+                                            a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, n : name });
+                                        }
+                                    }
+
+                                    result = a;
+                                }
+                            }
+
+                            response.write(JSON.stringify(result));
+                            response.end();
+                        }
+                        else if(urlPath == '/log')
+                        {
+                            var bridgeLogs = await logger.load('SynTex', null);
+                            var webhookLogs = await logger.load('SynTexWebHooks', null);
+                            var obj = {
+                                bLog: '[]',
+                                wLog: '[]'
+                            };
+
+                            if(bridgeLogs != null)
+                            {    
+                                for(var i = 0; i < bridgeLogs.length; i++)
+                                {
+                                    bridgeLogs[i].m = bridgeLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                }
+
+                                obj.bLog = JSON.stringify(bridgeLogs);
+                            }
+
+                            if(webhookLogs != null)
+                            {    
+                                for(var i = 0; i < webhookLogs.length; i++)
+                                {
+                                    webhookLogs[i].m = webhookLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                }
+
+                                obj.wLog = JSON.stringify(webhookLogs);
+                            }
+
+                            response.write(JSON.stringify(obj));
+                            response.end();
+                        }
+                        else if(urlPath == '/time')
+                        {
+                            response.write('' + (new Date().getTime() / 1000 + 7201));
+                            response.end();
+                        }
+                        else if(urlPath == '/check-device' && urlParams.mac)
+                        {
+                            var device = await DeviceManager.getDevice(urlParams.mac);
+
+                            response.write(device ? device.type : 'Error');
+                            response.end();
+                        }
+                        else if(urlPath == '/save-config' && request.method == 'POST')
+                        {
+                            var post = '';
+
+                            request.on('data', function(data)
+                            {
+                                post += data;
+                            });
+
+                            request.on('end', async function()
+                            {
+                                var json = JSON.parse(post);
+                                
+                                if(await DeviceManager.setValues(json) == false)
+                                {
+                                    logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
+                                }
+                                
+                                response.write('Success'); 
                                 response.end();
                             });
                         }
-                    }
-                    else if(urlPath == '/version')
-                    {
-                        var pjson = require('./package.json');
-
-                        response.write(pjson.version);
-                        response.end();
-                    }
-                    else if(urlPath == '/update')
-                    {
-                        var version = 'latest';
-
-                        if(urlParams.version)
-                        {
-                            version = urlParams.version;
-                        }
-
-                        const { exec } = require("child_process");
-                        
-                        exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
-
-                            try
-                            {
-                                response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                                response.end();
-
-                                if(error || stderr.includes('ERR!'))
-                                {
-                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
-                                }
-                                else
-                                {
-                                    logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
-                                    
-                                    restart = true;
-
-                                    logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-                                    
-                                    exec("sudo systemctl restart homebridge");
-                                }
-                            }
-                            catch(e)
-                            {
-                                logger.err(e);
-                            }
-                        });
                     }
                     else
                     {
@@ -243,7 +345,12 @@ SynTexPlatform.prototype = {
                         {            
                             if(!relPath)
                             {
-                                
+                                var data = await HTMLQuery.read(path.join(__dirname, '/notfound.html'));
+                                var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+
+                                response.setHeader('Content-Type', 'text/html; charset=utf-8');
+                                response.write(HTMLQuery.sendValues(head + data, obj));
+                                response.end();
                             }
                             else
                             {
@@ -268,8 +375,7 @@ SynTexPlatform.prototype = {
                                     var obj = {
                                         device: JSON.stringify(device),
                                         accessory: JSON.stringify(await DeviceManager.getAccessory(urlParams.mac)),
-                                        wPort: 1710,
-                                        activity : JSON.stringify(await logger.load('SynTexWebHooks', urlParams.mac))
+                                        wPort: 1710
                                     };
 
                                     if(webhookConfig != null)
@@ -310,7 +416,7 @@ SynTexPlatform.prototype = {
                                     var ifaces = require('os').networkInterfaces();
                                     var address;
 
-                                    for (var dev in ifaces)
+                                    for(var dev in ifaces)
                                     {
                                         var iface = ifaces[dev].filter(function(details)
                                         {
@@ -329,7 +435,7 @@ SynTexPlatform.prototype = {
                                     var ifaces = require('os').networkInterfaces();
                                     var address;
 
-                                    for (var dev in ifaces)
+                                    for(var dev in ifaces)
                                     {
                                         var iface = ifaces[dev].filter(function(details)
                                         {
@@ -353,57 +459,6 @@ SynTexPlatform.prototype = {
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
-                                }
-                                else if(urlPath.startsWith('/log'))
-                                {
-                                    var bridgeLogs = await logger.load('SynTex', null);
-                                    var webhookLogs = await logger.load('SynTexWebHooks', null);
-                                    var obj = {
-                                        bLog: '[]',
-                                        wLog: '[]'
-                                    };
-
-                                    if(bridgeLogs != null)
-                                    {    
-                                        obj.bLog = JSON.stringify(bridgeLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
-                                    }
-
-                                    if(webhookLogs != null)
-                                    {    
-                                        obj.wLog = JSON.stringify(webhookLogs).replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'\"/g, ']"').replace(/\'\:/g, ']:');
-                                    }
-
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/serverside/check-device') && urlParams.mac)
-                                {
-                                    var device = await DeviceManager.getDevice(urlParams.mac);
-
-                                    response.write(HTMLQuery.sendValue(data, 'found', device ? device.type : 'Error'));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/serverside/save-config') && request.method == 'POST')
-                                {
-                                    var post = '';
-
-                                    request.on('data', function(data)
-                                    {
-                                        post += data;
-                                    });
-
-                                    request.on('end', async function()
-                                    {
-                                        var json = JSON.parse(post);
-                                        
-                                        if(await DeviceManager.setValues(json) == false)
-                                        {
-                                            logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
-                                        }
-                                        
-                                        response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
-                                        response.end();
-                                    });
                                 }
                                 else if(path.parse(relPath).ext == '.html')
                                 {

@@ -66,11 +66,36 @@
 </html>
 <script>
 
-    var bLogJSON = JSON.parse('<%bLog%>');
-    var wLogJSON = JSON.parse('<%wLog%>');
+    var bLogJSON = [];
+    var wLogJSON = [];
     var counter = 0;
     var levelCounter = [0, 0, 0, 0, 0, 0, 0];
     var countLogs = true;
+
+    head.load('/js/query.js', async function()
+    {
+        var logs = JSON.parse(await complexFetch('/serverside/log', 10000, 3, {}, false));
+        bLogJSON = JSON.parse(logs.bLog);
+        wLogJSON = JSON.parse(logs.wLog);
+
+        createLog(document.getElementById('bLog'), bLogJSON, null);
+        createLog(document.getElementById('wLog'), wLogJSON, null);
+
+        countLogs = false;
+
+        document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
+        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
+        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
+        document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
+        document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
+        document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
+
+        if(levelCounter[6] > 0)
+        {
+            document.getElementById('debug-widget').style.display = '';
+            document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
+        }
+    });
 
     async function clearSearch()
     {
@@ -209,22 +234,4 @@
         document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
     }
 
-    createLog(document.getElementById('bLog'), bLogJSON, null);
-    createLog(document.getElementById('wLog'), wLogJSON, null);
-
-    countLogs = false;
-
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
-    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
-    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
-    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
-    document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
-    document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
-
-    if(levelCounter[6] > 0)
-    {
-        document.getElementById('debug-widget').style.display = '';
-        document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
-    }
-    
 </script>

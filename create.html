@@ -31,6 +31,8 @@
 </html>
 <script>
 
+    head.load('/js/query.js');
+
     async function createSwitch(form)
     {
         var overlays = {
@@ -40,7 +42,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetch('/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
+        var created = await complexFetch('serverside/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
 
         await newTimeout(1000);
 
@@ -65,7 +67,7 @@
     {
         setTimeout(async function()
         {
-            if(await checkRestart('/check-restart'))
+            if(await checkRestart('/serverside/check-restart'))
             {
                 window.location.href = url;
             }

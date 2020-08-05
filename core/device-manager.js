@@ -73,17 +73,11 @@ async function existsInConfig(obj, mac)
         {
             if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
-                var platform = obj.platforms[i];
-                var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
-
-                for(const i in configContainer)
+                for(const j in obj.platforms[i].accessories)
                 {
-                    for(const j in configContainer[i])
+                    if(obj.platforms[i].accessories[j].mac === mac)
                     {
-                        if(configContainer[i][j].mac === mac)
-                        {
-                            resolve(true);
-                        }
+                        resolve(true);
                     }
                 }
             }
@@ -101,17 +95,11 @@ async function removeFromConfig(obj, mac)
         {
             if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
-                var platform = obj.platforms[i];
-                var configContainer = [platform.sensors, platform.switches, platform.lights, platform.statelessswitches];
-
-                for(const i in configContainer)
+                for(const j in obj.platforms[i].accessories)
                 {
-                    for(const j in configContainer[i])
+                    if(obj.platforms[i].accessories[j].mac === mac)
                     {
-                        if(configContainer[i][j].mac === mac)
-                        {
-                            configContainer[i].splice(j, 1);
-                        }
+                        obj.platforms[i].accessories.splice(j, 1);
                     }
                 }
             }
@@ -151,7 +139,7 @@ async function removeFromDataStorage(mac, type)
                 });
             });
         }
-        else if(type == 'light')
+        else if(type == 'weather')
         {
             dataStorage.remove(mac + '-L', (err) => {
 
@@ -199,7 +187,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 status = 'Init';
             }
 
-            resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + (device['active'] || 1) + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + (device['led'] || 1) + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
+            resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
         }
         else if(await checkName(name))
         {
@@ -301,12 +289,7 @@ async function initSwitch(mac, name)
                         }
                         else
                         {
-                            var device = {
-                                id: mac,
-                                name: name,
-                                type: 'switch',
-                                active: 1
-                            };
+                            var device = { id: mac, name: name, type: 'switch', active: 1 };
 
                             storage.add(device, (err) => {
 
@@ -348,36 +331,30 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                 var platform = obj.platforms[i];
                 var eventButton = await checkEventButton(mac);
 
-                if(type == "relais")
-                {
-                    platform.switches[platform.switches.length] = {mac: mac, name: name, type: type, on_url: "http://" + ip + "/switch?state=true", on_method: "GET", off_url: "http://" + ip + "/switch?state=false", off_method: "GET"};
-                }
-                else if(type == "switch")
-                {
-                    platform.switches[platform.switches.length] = {mac: mac, name: name, type: type};
-                }
-                else if(type == "rgb" || type == "rgbw")
-                {
-                    platform.lights[platform.lights.length] = {mac: mac, name: name, type: type, url: "http://" + ip + "/color"};
-                }
-                else if(type != "statelessswitch")
-                {
-                    platform.sensors[platform.sensors.length] = {mac: mac, name: name, type: type};
-                }
+                platform.accessories[platform.accessories.length] = { mac : mac, name : name, services : type };
 
-                if(type == "climate")
+                if(type == 'relais')
                 {
-                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-H", services: ["temperature", "humidity"]};
+                    platform.accessories[platform.accessories.length]['on_url'] = 'http://' + ip + '/switch?state=true';
+                    platform.accessories[platform.accessories.length]['on_method'] = 'GET';
+                    platform.accessories[platform.accessories.length]['off_url'] = 'http://' + ip + '/switch?state=false';
+                    platform.accessories[platform.accessories.length]['off_method'] = 'GET';
                 }
-
-                if(type == "light")
+                else if(type == 'rgb' || type == 'rgbw')
                 {
-                    platform.sensors[platform.sensors.length] = {mac: mac, name: name + "-R", type: "rain"};
+                    platform.accessories[platform.accessories.length]['url'] = 'http://' + ip + '/color';
                 }
-
-                if((type == "light" || type == "climate" || type == "statelessswitch") && !eventButton)
+                else if(type == 'climate')
                 {
-                    platform.statelessswitches[platform.statelessswitches.length] = {mac: mac, name: name, buttons: buttons};
+                    platform.accessories[platform.accessories.length]['services'] = ['temperature', 'humidity'];
+                }
+                else if(type == 'weather')
+                {
+                    platform.accessories[platform.accessories.length]['services'] = ['rain', 'light'];
+                }
+                if((type == 'weather' || type == 'climate' || type == 'statelessswitch') && !eventButton)
+                {
+                    platform.accessories[platform.accessories.length]['buttons'] = buttons;
                 }
             }
         }
@@ -398,16 +375,11 @@ async function checkName(name)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
-
-                        for(const i in configContainer)
+                        for(const j in obj.platforms[i].accessories)
                         {
-                            for(const j in configContainer[i])
+                            if(obj.platforms[i].accessories[j].name === name)
                             {
-                                if(configContainer[i][j].name === name)
-                                {
-                                    resolve(false);
-                                }
+                                resolve(false);
                             }
                         }
                     }
@@ -431,16 +403,11 @@ async function checkMac(mac)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        var configContainer = [obj.platforms[i].sensors, obj.platforms[i].switches, obj.platforms[i].lights, obj.platforms[i].statelessswitches];
-
-                        for(const i in configContainer)
+                        for(const j in obj.platforms[i].accessories)
                         {
-                            for(const j in configContainer[i])
+                            if(obj.platforms[i].accessories[j].mac === mac)
                             {
-                                if(configContainer[i][j].mac === mac)
-                                {
-                                    resolve(false);
-                                }
+                                resolve(false);
                             }
                         }
                     }
@@ -606,9 +573,9 @@ async function checkEventButton(mac)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        for(const j in obj.platforms[i].statelessswitches)
+                        for(const j in obj.platforms[i].accessories)
                         {
-                            if(obj.platforms[i].statelessswitches[j].mac === mac)
+                            if(obj.platforms[i].accessories[j].mac === mac && obj.platforms[i].accessories[j].services.includes('statelessswitch'))
                             {
                                 found = true;
                             }
@@ -640,7 +607,7 @@ async function createEventButton(mac, name, buttons)
                 {
                     if(obj.platforms[i].platform === 'SynTexWebHooks')
                     {
-                        obj.platforms[i].statelessswitches[obj.platforms[i].statelessswitches.length] = {mac: mac, name: name + ' Events', buttons: buttons};
+                        obj.platforms[i].accessories[obj.platforms[i].accessories.length] = { mac : mac, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
                     }
                 }
 
@@ -688,12 +655,7 @@ function setBridgeStorage(key, value)
 
             if(!obj || err)
             {
-                var entry = {
-                    id : 'Bridge',
-                    data : {
-                        [key] : value
-                    }
-                };
+                var entry = { id : 'Bridge', data : { [key] : value } };
 
                 storage.add(entry, (err) => {
 

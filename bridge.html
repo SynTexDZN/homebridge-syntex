@@ -75,7 +75,7 @@
         });
     }
 
-    setTimeout(function()
+    head.load('/js/query.js', function()
     {
         fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
 
@@ -85,7 +85,7 @@
             }
         });
 
-        complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
+        complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
 
             if(version != null)
             {
@@ -107,7 +107,7 @@
                 document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
             }
         });
-    }, 500);
+    });
 
 </script>
 <script>
@@ -126,17 +126,17 @@
 
             updating['bridge'] = true;
 
-            if(await complexFetch('/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+            if(await complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/serverside/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
@@ -162,17 +162,17 @@
 
             updating['webhooks'] = true;
 
-            if(await complexFetch(window.location.origin + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+            if(await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart(window.location.origin + ':<%wPort%>/check-restart'))
+                if(await checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
                 {
                     document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.origin + ':<%wPort%>/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
@@ -201,11 +201,11 @@
 
             restarting = true;
 
-            if(await complexFetch('/restart', 10000, 3, overlays, true) == 'Success')
+            if(await complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
 

@@ -1,276 +1,15 @@
 <html>
     <title class="loading-loop">Laden ..</title>
-    <script>
-
-        var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
-
-    </script>
-    <body>
-        <div id="infos">
+    <body onresize="repaintGraphs()">
+        <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
-            <div class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" class="main" style="display: table; margin-bottom: 132px">
-                <script defer>
-
-                    var activity = JSON.parse('<%activity%>');
-                    var values = {};
-                    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
-                    var padding = 50;
-                    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4
-
-                    function drawGraph(canvas, data, clr1, clr2, points)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 4;
-
-                        ctx.lineWidth = 2;
-                        ctx.lineCap = 'round';
-                        ctx.strokeStyle = clr2;
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(points)
-                            {
-                                ctx.fillStyle = clr1;
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                                ctx.fillStyle = clr2;
-                                ctx.beginPath();
-                                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
-                                ctx.fill();
-                                ctx.closePath();
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            ctx.stroke();
-                        }
-
-                        if(points)
-                        {
-                            ctx.fillStyle = clr1;
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                            ctx.fillStyle = clr2;
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                        }
-                    }
-
-                    function drawFill(canvas, data, clr1, clr2, smoothing)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 4;
-
-                        var grd = ctx.createLinearGradient(0, 0, 0, height + 100);
-                        grd.addColorStop(0, clr1);
-                        grd.addColorStop(1, clr2);
-
-                        ctx.fillStyle = grd;
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, height + padding * 2);
-                        ctx.lineTo(0, height - data[0] * height / 100  + padding);
-
-                        for(var i = 1; i < data.length; i++)
-                        {
-                            if(smoothing == 0)
-                            {
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
-                            }
-                            else
-                            {
-                                // TODO
-                                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
-                            }
-                        }
-
-                        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding * 2);
-
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-
-                    function drawGrid(canvas, data, unterteilungen)
-                    {
-                        var ctx = canvas.getContext('2d');
-                        var height = canvas.offsetHeight - padding * 2 - 4;
-
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        ctx.lineCap = 'butt';
-                        ctx.lineWidth = 1.5;
-
-                        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
-                        {
-                            ctx.strokeStyle = 'rgb(25, 25, 35)';
-
-                            if(i == unterteilungen || i == 0)
-                            {
-                                ctx.strokeStyle = 'rgb(50, 50, 60)';
-                            }
-
-                            ctx.beginPath();
-                            ctx.moveTo(0, padding + (height / unterteilungen) * i );
-                            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i )
-                            ctx.stroke();
-                        }
-
-                        if(data.length < 75)
-                        {
-                            for(var i = 0; i < data.length; i++)
-                            {
-                                ctx.strokeStyle = 'rgb(40, 40, 50)';
-                                
-                                if(i == data.length - 1 || i == 0)
-                                {
-                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                                }
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding );
-                                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding );
-                                ctx.stroke();
-                            }
-                        }
-                    }
-    
-                    for(var i = 0; i < counter; i++)
-                    {
-                        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-
-                        var statusField = document.createElement('input');
-                        
-                        statusField.setAttribute('id', 'status-' + type);
-                        statusField.setAttribute('class', 'control-panel loading-loop');
-                        statusField.setAttribute('type', 'button');
-                        statusField.setAttribute('value', 'LADEN ..');
-
-                        if(counter > 1)
-                        {
-                            statusField.style.height = '100px';
-                        }
-
-                        document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-                        if(activity != null)
-                        {
-                            for(var j = activity.length - 1; j >= 0; j--)
-                            {
-                                if(activity[j].l == 'Update' && (counter == 1 || activity[j].m.toLowerCase().includes(type)))
-                                {
-                                    var value = activity[j].m.split('[')[2].split(']')[0];
-
-                                    if(!values[type])
-                                    {
-                                        values[type] = [];
-                                    }
-
-                                    values[type].push(value);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            values[type] = [];
-                        }
-
-                        var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                        frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
-
-                        document.getElementById('activity').appendChild(frame);
-
-                        if(i != counter - 1)
-                        {
-                            frame.style.marginBottom = '20px';
-                        }
-
-                        var height = frame.offsetHeight - padding * 2 - 4;
-
-                        canvas.setAttribute('class', 'canvas');
-                        canvas.setAttribute('style', 'border-radius: 50px');
-
-                        canvas.width = width + padding * 2;
-                        canvas.height = height + padding * 2;
-                        canvas.style.background = 'rgb(20, 20, 30)';
-
-                        frame.appendChild(canvas);
-
-                        var infoMin = document.createElement('div');
-
-                        infoMin.setAttribute('style', 'position: relative; bottom: 15px; left: 35px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                        infoMin.setAttribute('class', 'min');
-
-                        frame.appendChild(infoMin);
-
-                        var infoMax = document.createElement('div');
-
-                        infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: 35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
-                        infoMax.setAttribute('class', 'max');
-
-                        frame.appendChild(infoMax);
-
-                        var infoType = document.createElement('div');
-
-                        infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 35) + 'px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                        infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
-
-                        frame.appendChild(infoType);
-                    }
-
-                    var orginal = { ...values };
-
-                    calcValues(values);
-
-                    function calcValues(values)
-                    {
-                        for(var i = 0; i < counter; i++)
-                        {
-                            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
-                            var min = !isNaN(values[type][0]) ? Math.min(...values[type]) : 0;
-                            var max = !isNaN(values[type][0]) ? Math.max(...values[type]) : 1;
-                            var v = [];
-
-                            for(const j in values[type])
-                            {
-                                var value = values[type][j];
-
-                                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-                                v.push((value - min) / (max - min) * 100);
-                            }
-
-                            console.log(v);
-
-                            var canvas = document.getElementById('activity').getElementsByTagName('canvas')[i];
-                            
-                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min // ' + min;
-                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max \\\\ ' + max;
-                            
-                            window.onload = drawGrid(canvas, v, 10);
-                            window.onload = drawFill(canvas, v, 'hsla(200, 98%, 60%, .3', 'hsla(200, 98%, 60%, 0', 0);
-                            window.onload = drawGraph(canvas, v, 'hsla(200, 98%, 60%, 0.2)', 'hsla(200, 98%, 60%, 1)', false);
-                        }
-                    }
-
-                </script>
-            </div>
-            <div class="main">
-                <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-                <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="window.location.href='/'">
-                    <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
-                </div>
+            <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
+            <div id="activity" style="display: table; margin-bottom: 100px"></div>
+            <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
+            <div id="navigation-panel" style="display: flex">
+                <input type="button" value="Zurück" onclick="window.location.href='/'">
+                <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
             </div>
         </div>
         <div id="settings" style="display: none;">
@@ -296,6 +35,703 @@
         </div>
     </body>
 </html>
+<script defer>
+
+    var device = JSON.parse('<%device%>'),
+        accessory = JSON.parse('<%accessory%>');
+        
+    var data = {
+        motion: {
+            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        contact: {
+            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+        },
+        relais: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        switch: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        rain: {
+            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+        },
+        statelessswitch: {
+            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+    };
+
+    var values = {}, orginal = {};;
+    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+    var padding = 50;
+    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+    var typeCounter = {};
+
+    for(var i = 0; i < counter; i++)
+    {
+        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+        if(type instanceof Object)
+        {
+            type = type.type;
+        }
+
+        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+    }
+
+    for(var i = 0; i < Object.keys(typeCounter).length; i++)
+    {
+        var type = Object.keys(typeCounter)[i];
+
+        for(var j = 0; j < typeCounter[type]; j++)
+        {
+            var statusField = document.createElement('input');
+        
+            statusField.setAttribute('id', 'status-' + type + '-' + j);
+            statusField.setAttribute('class', 'control-panel loading-loop');
+            statusField.setAttribute('type', 'button');
+            statusField.setAttribute('value', 'LADEN ..');
+
+            if(type == 'relais' || type == 'switch')
+            {
+                statusField.setAttribute('onclick', 'controlSwitch(this)');
+                statusField.style.cursor = 'pointer';
+            }
+
+            if(typeCounter[type] > 1)
+            {
+                statusField.style.setProperty('font-size', '30px', 'important');
+            }
+
+            if(counter > 1)
+            {
+                statusField.style.height = '100px';
+            }
+
+            if(i == counter - 1) // TODO
+            {
+                statusField.style.setProperty('margin-bottom', '0', 'important');
+            }
+
+            document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+            var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+            frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+            document.getElementById('activity').appendChild(frame);
+
+            if(i != counter - 1) // TODO
+            {
+                frame.style.marginBottom = '20px';
+            }
+
+            var height = frame.offsetHeight - padding * 2 - 2;
+
+            canvas.setAttribute('class', 'canvas');
+            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+            canvas.setAttribute('style', 'border-radius: 50px');
+
+            canvas.width = document.getElementById('infos').offsetWidth - 4;
+            canvas.height = height + padding * 2;
+            canvas.style.background = 'rgb(20, 20, 30)';
+
+            frame.appendChild(canvas);
+
+            drawGrid(canvas, [], 10);
+
+            var infoMin = document.createElement('div');
+
+            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+            infoMin.setAttribute('class', 'min');
+
+            frame.appendChild(infoMin);
+
+            var infoMax = document.createElement('div');
+
+            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+            infoMax.setAttribute('class', 'max');
+
+            frame.appendChild(infoMax);
+
+            var infoType = document.createElement('div');
+
+            infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+            if(typeCounter[type] > 1)
+            {
+                var name = accessory.name, n = [];
+
+                if(typeCounter[type] > 1)
+                {
+                    name = accessory.name + ' ' + type + ' ' + j;
+                }
+                else if(counter > 1)
+                {
+                    name = accessory.name + ' ' + type;
+                }
+
+                for(var k = 0; k < accessory.services.length; k++)
+                {
+                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    {
+                        n.push(accessory.services[k].name);
+                    }
+                }
+
+                if(n.length > 0)
+                {
+                    name = n[j];
+                }
+
+                infoType.innerHTML = name;
+            }
+            else
+            {
+                infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+            }
+
+            frame.appendChild(infoType);
+
+            var infoUpdate = document.createElement('div');
+
+            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+            infoUpdate.setAttribute('class', 'update');
+
+            frame.appendChild(infoUpdate);
+        }
+    }
+
+    head.load('/js/query.js', function()
+    {
+        loadActivity();
+
+        if(device.ip != undefined)
+        {
+            pingESP();
+            checkUpdates();
+        }
+        else
+        {
+            setInterval(function()
+            {
+                if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+                {
+                    fetchState();
+                }
+            }, 300);
+        }
+    });
+
+    var busy = [];
+
+    async function controlSwitch(button)
+    {
+        if(!busy.includes(button.getAttribute('id')))
+        {
+            busy.push(button.getAttribute('id'));
+
+            var counter = button.getAttribute('id').split('-')[2];
+            var type = button.getAttribute('id').split('-')[1];
+            var value = button.value.toUpperCase() == 'AN' ? 'false' : 'true';
+
+            if(device.ip != undefined)
+            {
+                var state = await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
+            }
+            else
+            {
+                var state = await complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+            }
+
+            const index = busy.indexOf(button.getAttribute('id'));
+
+            if(index > -1)
+            {
+                busy.splice(index, 1);
+            }
+        }
+    }
+
+    async function loadActivity()
+    {
+        var activity = JSON.parse(await complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Object.keys(typeCounter)[i];
+
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                var name = accessory.name, n = [];
+
+                if(typeCounter[type] > 1)
+                {
+                    name = accessory.name + ' ' + type + ' ' + j;
+                }
+                else if(counter > 1)
+                {
+                    name = accessory.name + ' ' + type;
+                }
+
+                for(var k = 0; k < accessory.services.length; k++)
+                {
+                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    {
+                        n.push(accessory.services[k].name);
+                    }
+                }
+
+                if(n.length > 0)
+                {
+                    name = n[j];
+                }
+
+                if(!values[type + j])
+                {
+                    values[type + j] = [];
+                }
+
+                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
+                {
+                    if(type == 'statelessswitch')
+                    {
+                        for(var k = activity.success.length - 1; k >= 0; k--)
+                        {
+                            if(activity.success[k].n.includes(name))
+                            {
+                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
+                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for(var k = activity.update.length - 1; k >= 0; k--)
+                        {
+                            if(activity.update[k].n.toLowerCase().includes(type) || activity.update[k].n.includes(name))
+                            {
+                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        orginal = { ...values };
+
+        console.log('Aktivität wurde geladen!');
+
+        repaintGraphs();
+    }
+
+    function repaintGraphs()
+    {
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+
+            if(type instanceof Object)
+            {
+                type = type.type;
+            }
+
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                calcValues(values, type, j);
+            }
+        }
+    }
+
+    function calcValues(values, type, c)
+    {
+        var color = 'hsl(200, 98%, 60%)';
+        var canvas = document.getElementById('canvas-' + type + '-' + c);
+
+        console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
+
+        if(type instanceof Object)
+        {
+            type = type.type;
+        }
+
+        var v = [];
+        /*
+        values = {};
+
+        values[type + c] = [
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
+            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 }
+        ]
+        */
+        canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+        if(data[type].active && data[type].active.color)
+        {
+            color = data[type].active.color;
+        }
+
+        if(data[type].color)
+        {
+            color = data[type].color;
+        }
+
+        var min = 0;
+        var max = 1;
+
+        if(Object.keys(values).length != 0 && values[type + c].length != 0)
+        {
+            if(!isNaN(values[type + c][0].value))
+            {
+                min = 100000;
+                max = 0;
+
+                for(const j in values[type + c])
+                {
+                    if(parseFloat(values[type + c][j].value) < min)
+                    {
+                        min = parseFloat(values[type + c][j].value);
+                    }
+
+                    if(parseFloat(values[type + c][j].value) > max)
+                    {
+                        max = parseFloat(values[type + c][j].value);
+                    }
+                }
+            }
+
+            console.log('Min', min, 'Max', max);
+            
+            var unterteilungen = 24 * 15,
+                date = new Date();
+
+            if(!isNaN(values[type + c][0].value))
+            {
+                unterteilungen = 24 * 6;
+            }
+
+            for(var k = unterteilungen; k >= 0; k--)
+            {
+                var x = [], sum = 0;
+
+                for(const j in values[type + c])
+                {
+                    if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+                    {
+                        var value = values[type + c][j].value;
+
+                        if(!isNaN(values[type + c][0].value))
+                        {
+                            value = (values[type + c][j].value - min) / (max - min) * 100;
+
+                            sum += parseFloat(value);
+                        }
+
+                        x.push(value);
+                    }
+                }
+
+                if(x.length > 0)
+                {
+                    if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
+
+                        //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
+
+                        //console.log('MAX', 100 - Math.max(...x), 'MIN', Math.min(...x), 'Entscheidung', (100 - Math.max(...x)) < Math.min(...x) ? 'MAX' : 'MIN');
+                    }
+                    else if(!(x.includes('true') && x.includes('false')))
+                    {
+                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 2] = 100;
+                        v[unterteilungen - k - 1] = 0;
+                    }
+
+                    //v[unterteilungen - k - 1] = sum / x.length;
+                }
+                else
+                {
+                    if(!isNaN(v[unterteilungen - k - 2]))
+                    {
+                        v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
+                    }
+                    else if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 1] = 0;
+                    }
+                }
+            }
+            /*
+            for(const j in values[type])
+            {
+                var value = values[type][j];
+
+                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                v.push((value - min) / (max - min) * 100);
+            }
+            */
+            console.log('Graph Berechnen ..', v);
+            
+            if(isNaN(values[type + c][0].value))
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+            }
+            else
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+            }
+
+            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+        }
+        else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
+        {
+            var label = document.createElement('h2');
+
+            label.innerHTML = '↻ Neu Laden';
+            label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+            label.setAttribute('onclick', 'loadActivity()');
+
+            canvas.parentElement.appendChild(label);
+        }
+
+        drawGrid(canvas, [], 10);
+
+        if(type == 'temperature')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+            else if(min > data[type].valueRange[1])
+            {
+                min = data[type].valueRange[1];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+            else if(max < data[type].valueRange[0])
+            {
+                max = data[type].valueRange[0];
+            }
+
+            console.log(min, max);
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            drawFill(canvas, v, [maxClr, minClr], 0);
+            drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+        }
+        else if(type == 'humidity')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+
+            if(min > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+
+            if(max > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+            else
+            {
+                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+            }
+
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            drawFill(canvas, v, [maxClr, minClr], 0);
+            drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+        }
+        else if(type == 'light')
+        {
+            drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+            drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+        }
+        else
+        {
+            drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+            drawGraph(canvas, v, [color, color], false);
+        }
+    }
+
+    function drawGraph(canvas, data, gradients, points)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = grd;
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(points)
+            {
+                ctx.fillStyle = gradients[0];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+                ctx.fillStyle = gradients[1];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            ctx.beginPath();
+            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            ctx.stroke();
+        }
+
+        if(points)
+        {
+            ctx.fillStyle = gradients[0];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+            ctx.fillStyle = gradients[1];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    function drawFill(canvas, data, gradients, smoothing)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.fillStyle = grd;
+
+        ctx.beginPath();
+        ctx.moveTo(0, height + padding);
+        ctx.lineTo(0, height - data[0] * height / 100  + padding);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(smoothing == 0)
+            {
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            }
+            else
+            {
+                // TODO
+                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
+            }
+        }
+
+        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
+
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawGrid(canvas, data, unterteilungen)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+
+        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
+        {
+            ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+            if(i == unterteilungen || i == 0)
+            {
+                ctx.strokeStyle = 'rgb(50, 50, 60)';
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, padding + (height / unterteilungen) * i);
+            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+            ctx.stroke();
+        }
+
+        if(data.length < 75)
+        {
+            for(var i = 0; i < data.length; i++)
+            {
+                ctx.strokeStyle = 'rgb(40, 40, 50)';
+                
+                if(i == data.length - 1 || i == 0)
+                {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                ctx.stroke();
+            }
+        }
+    }
+
+</script>
 <script>
 
     var restarting = false, resetting = false, updating = false, saving = false;
@@ -315,7 +751,7 @@
         });
     }
 
-    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'statelessswitch')
+    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'statelessswitch' || device.type == 'special')
     {
         settings.push({
             index: 'led',
@@ -323,7 +759,7 @@
         });
     }
 
-    if(device.type == 'motion' || device.type == 'light' || device.type == 'climate')
+    if(device.type == 'motion' || device.type == 'weather' || device.type == 'climate')
     {
         settings.push({
             index: 'interval',
@@ -331,7 +767,7 @@
         });
     }
 
-    if(device.type == 'light' || device.type == 'climate' || device.type == 'statelessswitch')
+    if(device.type == 'weather' || device.type == 'climate' || device.type == 'statelessswitch')
     {
         settings.push({
             index: 'events',
@@ -342,7 +778,7 @@
     document.getElementsByTagName('title')[0].innerHTML = device.name;
     document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
-    var infos = document.getElementById('infos').getElementsByClassName('main')[0];
+    var infos = document.getElementById('info');
 
     infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
 
@@ -360,7 +796,7 @@
 
     for(const i in settings)
     {
-        if(settings[i].index == 'interval' && (device.type == 'light' || device.type == 'climate'))
+        if(settings[i].index == 'interval' && (device.type == 'weather' || device.type == 'climate'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
@@ -389,8 +825,8 @@
         }
     }
 
-    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('type', device.type);
-    document.getElementById('infos').getElementsByClassName('main')[1].setAttribute('version', device.version);
+    document.getElementById('navigation-panel').setAttribute('type', device.type);
+    document.getElementById('navigation-panel').setAttribute('version', device.version);
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
 
@@ -402,7 +838,7 @@
 
     for(const i in settings)
     {
-        if((device.type == 'light' || device.type == 'climate') && settings[i].index == 'interval')
+        if((device.type == 'weather' || device.type == 'climate') && settings[i].index == 'interval')
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
@@ -460,12 +896,12 @@
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', device.type);
 
-    if(device.type == 'climate' || device.type == 'light' || device.type == 'statelessswitch')
+    if(device.type == 'climate' || device.type == 'weather' || device.type == 'statelessswitch')
     {
         document.getElementById('infobox').style.display = '';
     }
 
-    if(device.type == 'climate' || device.type == 'light')
+    if(device.type == 'climate' || device.type == 'weather')
     {
         document.getElementById('infobox').children[1].innerHTML = 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet<br>Negative wenn er unterschritten wird';
     }
@@ -546,306 +982,153 @@
 
     var temp = {};
 
-    var data = {
-        motion: {
-            active : { text : 'Bewegung', color : '280, 75%, 55%' },
-            inactive : { text : 'Bereit', color : '150, 75%, 55%' }
-        },
-        contact: {
-            active : { text : 'Geöffnet', color : '350, 75%, 55%' },
-            inactive : { text : 'Zu', color : '150, 75%, 55%' }
-        },
-        relais: {
-            active : { text : 'An', color : '18, 75%, 55%' },
-            inactive : { text : 'Aus', color : '205, 75%, 55%' }
-        },
-        switch: {
-            active : { text : 'An', color : '18, 75%, 55%' },
-            inactive : { text : 'Aus', color : '205, 75%, 55%' }
-        },
-        temperature: { text : '°C' },
-        humidity: { text : '%' },
-        light: { text : 'Lux' },
-        rain: {
-            active : { text : 'Regen', color : '220, 75%, 55%' },
-            inactive : { text : 'Trocken', color : '40, 85%, 85%' }
-        },
-        rgb: {
-            active : { text : '°C', color : '18, 75%, 55%' },
-            inactive : { text : '°C', color : '205, 75%, 55%' }
-        },
-        rgbw: {
-            active : { text : '°C', color : '18, 75%, 55%' },
-            inactive : { text : '°C', color : '205, 75%, 55%' }
-        }
-    };
-
     async function fetchState()
     {
-        for(var i = 0; i < counter; i++)
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
-            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+            var type = Object.keys(typeCounter)[i];
 
-            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type, 10000);
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
-            if(temp[type] && state != temp[type])
-            {
-                orginal[type].push(state);
-
-                calcValues(orginal);
-            }
-
-            temp[type] = state;
-
-            console.log(state);
-
-            if(state != null && state != 'Error')
-            {
-                if(state == 'true' || state == true)
+                if(temp[type + j] && state != temp[type + j])
                 {
-                    document.getElementById('status-' + type).value = data[type].active.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].active.color.split(', ')[0] + ', ' + data[type].active.color.split(', ')[1] + ', ' + (data[type].active.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].active.color + ') 100%)';
+                    orginal[type + j].push({ time : Math.round(new Date().getTime()) / 1000, value : state });
+
+                    console.log(state);
+                    
+                    calcValues(orginal, type, j);
                 }
-                else if(state == 'false' || state == false)
-                {
-                    document.getElementById('status-' + type).value = data[type].inactive.text.toUpperCase();
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + data[type].inactive.color.split(', ')[0] + ', ' + data[type].inactive.color.split(', ')[1] + ', ' + (data[type].inactive.color.split(', ')[2].split('%')[0] - 10) + '%' + ') 0%, hsl(' + data[type].inactive.color + ') 100%)';
-                }
-                else
-                {
-                    if(type == 'light')
-                    {
-                        document.getElementById('status-' + type).value = Math.round(state) + ' ' + data[type].text.toUpperCase();
-                    }
-                    else if(type == 'temperature')
-                    {
-                        document.getElementById('status-' + type).value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-                    }
-                    else
-                    {
-                        document.getElementById('status-' + type).value = state + ' ' + data[type].text.toUpperCase();
-                    }
 
-                    var color = '240, 11%, 26%';
+                temp[type + j] = state;
 
-                    if(type == 'temperature')
-                    {
-                        if(state < 18)
-                        {
-                            color = '220, 75%, 55%';
-                        }
-                        else if(state > 26)
-                        {
-                            color = '0, 75%, 55%';
-                        }
-                        else
-                        {
-                            var cRange = [220, 0], vRange = [18, 26];
-
-                            color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
-                        }
-                    }
-                    else if(type == 'humidity')
-                    {
-                        var cRange = [0, 150], vRange = [0, 100];
-
-                        color = (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + ', 65%, 55%';
-                    }
-                    else if(type == 'light')
-                    {
-                        if(state > 1000)
-                        {
-                            color = '40, 85%, 85%';
-                        }
-                        else
-                        {
-                            var cRange = [20, 85], vRange = [0, 1000];
-
-                            color = '40, 85%, ' + (state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] + '%';
-                        }
-                    }
-
-                    document.getElementById('status-' + type).style.backgroundImage = 'linear-gradient(to top, hsl(' + color + ') 0%, hsl(' + color + ') 100%)';
-                }
-            }
-            else if(state == 'Error')
-            {
-                document.getElementById('status-' + type).value = 'KEINE DATEN GEFUNDEN!';
-            }
-        }
-    }
-    
-    async function fetchStateOLD()
-    {        
-        if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'switch' || device.type == 'rgb' || device.type == 'rgbw')
-        {
-            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
-
-            if(temp[device.type] && state != temp[device.type])
-            {
-                orginal[device.type].values.push(state);
-
-                calcValues(orginal);
-            }
-
-            temp[device.type] = state;
-
-            if(state != null && state != 'Error')
-            {
-                if(device.type == 'contact')
-                {
-                    if(state == 'false') 
-                    {
-                        document.getElementById('status').value = 'ZU';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                    }
-                    else if(state == 'true')
-                    {
-                        document.getElementById('status').value = 'GEÖFFNET';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
-                    }
-                }
-                else if(device.type == 'motion')
-                {
-                    if(state == 'true') 
-                    {
-                        document.getElementById('status').value = 'BEWEGUNG';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(280, 75%, 45%) 0%, hsl(280, 75%, 55%) 100%)';
-                    }
-                    else if(state == 'false')
-                    {
-                        document.getElementById('status').value = 'BEREIT';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                    }
-                }
-                else if(device.type == 'relais' || device.type == 'switch')
+                if(state != null && state != 'Error')
                 {
                     if(state == 'true')
                     {
-                        document.getElementById('status').value = 'AN';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(205, 75%, 45%) 0%, hsl(205, 75%, 55%) 100%)';
+                        value = data[type].active.text.toUpperCase();
+                        color = data[type].active.color;
                     }
                     else if(state == 'false')
                     {
-                        document.getElementById('status').value = 'AUS';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                    }
-                }
-                else if(device.type == 'rgb' || device.type == 'rgbw')
-                {
-                    if(state.split(':')[0] == 'true')
-                    {
-                        document.getElementById('status').value = 'AN';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, rgb(' + state.split(':')[1] + ', ' + state.split(':')[2] + ', ' + state.split(':')[3] + ') 0%, rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ') 100%)';
-                    }
-                    else if(state.split(':')[0] == 'false')
-                    {
-                        document.getElementById('status').value = 'AUS';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
-                    }
-                }
-                
-                console.log(state);
-            }
-            else if(state == 'Error')
-            {
-                document.getElementById('status').value = 'KEINE DATEN GEFUNDEN!';
-            }
-        }
-        else if(device.type == 'light' || device.type == 'temperature')
-        {
-            var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + device.type, 10000);
-
-            if(state != null)
-            {
-                if(temp[device.type] && state != temp[device.type])
-                {
-                    orginal[device.type].values.push(state);
-
-                    calcValues(orginal);
-                }
-
-                temp[device.type] = state;
-                
-                if(device.type == 'light')
-                {
-                    document.getElementById('status').value = Math.round(state) + ' LUX' + ' - ' + document.getElementById('status').value.split(' - ')[1];
-                }
-                else if(device.type == 'temperature')
-                {
-                    document.getElementById('status').value = ((Math.round(state * 10.0)) / 10.0) + ' °C' + ' - ' + document.getElementById('status').value.split(' - ')[1];
-                }
-
-                console.log(state);
-            }
-            
-            if(device.type == 'light')
-            {
-                var rainState = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=rain', 10000);
-
-                if(rainState != null)
-                {
-                    if(temp['rain'] && rainState != temp['rain'])
-                    {
-                        orginal['rain'].values.push(rainState);
-
-                        calcValues(orginal);
-                    }
-
-                    temp['rain'] = rainState;
-
-                    if(rainState == 'false')
-                    {
-                        document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - TROCKEN';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(40, 85%, 75%) 0%, hsl(40, 85%, 85%) 100%)';
-                    }
-                    else if(rainState == 'true')
-                    {
-                        document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - REGEN';
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(220, 75%, 45%) 0%, hsl(220, 75%, 55%) 100%)';
-                    }
-
-                    console.log(rainState);
-                }
-            }
-            else if(device.type == 'temperature')
-            {
-                var humidityState = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=humidity', 10000);
-
-                if(humidityState != null)
-                {
-                    if(temp['humidity'] && humidityState != temp['humidity'])
-                    {
-                        orginal['humidity'].values.push(humidityState);
-
-                        calcValues(orginal);
-                    }
-
-                    temp['humidity'] = humidityState;
-
-                    if(humidityState > 40 && humidityState < 70)
-                    {
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
-                    }
-                    else if(humidityState < 20 || humidityState > 85)
-                    {
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(0, 75%, 45%) 0%, hsl(0, 75%, 55%) 100%)';
+                        value = data[type].inactive.text.toUpperCase();
+                        color = data[type].inactive.color;
                     }
                     else
                     {
-                        document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(18, 75%, 45%) 0%, hsl(18, 75%, 55%) 100%)';
+                        var color = 'rgb(60, 60, 75)', value = state;
+
+                        if(type == 'temperature')
+                        {
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                            value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+                            if(state < 18)
+                            {
+                                color = 'hsl(220, 75%, 55%)';
+                            }
+                            else if(state > 26)
+                            {
+                                color = 'hsl(0, 75%, 55%)';
+                            }
+                            else
+                            {
+                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                            }
+                        }
+                        else if(type == 'humidity')
+                        {
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                            if(state > 50)
+                            {	
+                                cRange = [280, 0];
+                            }	
+
+                            if(state < 45 || state > 55)	
+                            {	
+                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                            }	
+                            else	
+                            {	
+                                color = data[type].color;	
+                            }
+                        }
+                        else if(type == 'light')
+                        {
+                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                            if(state > 1000)
+                            {
+                                color = data[type].color;
+                            }
+                            else
+                            {
+                                color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+                            }
+                        }
+                        else if(type == 'rgb' || type == 'rgbw')
+                        {
+                            if(state.split(':')[0] == 'true')
+                            {
+                                value = 'AN';
+                                color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+                            }
+                            else if(state.split(':')[0] == 'false')
+                            {
+                                value = 'AUS';
+                                color = 'hsl(18, 75%, 55%)';
+                            }
+                        }
+                        else
+                        {
+                            value = state + ' ' + data[type].text.toUpperCase();
+                        }
                     }
 
-                    document.getElementById('status').value = document.getElementById('status').value.split(' - ')[0] + ' - ' + Math.round(humidityState) + ' %';
+                    if(typeCounter[type] > 1)
+                    {
+                        var name = accessory.name + ' ' + type + ' ' + j;
+                        var n = [];
 
-                    console.log(humidityState);
+                        for(var k = 0; k < accessory.services.length; k++)
+                        {
+                            if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                            {
+                                n.push(accessory.services[k].name);
+                            }
+                        }
+
+                        if(n.length > 0)
+                        {
+                            name = n[j];
+                        }
+
+                        document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+                    }
+                    else
+                    {
+                        document.getElementById('status-' + type + '-' + j).value = value;
+                    }
+
+                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+                }
+                else if(type == 'statelessswitch')	
+                {	
+                    document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
+                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
+                }
+                else if(state == 'Error')
+                {
+                    document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
                 }
             }
-        }
-        else if(device.type == 'statelessswitch')
-        {
-            document.getElementById('status').value = 'BEREIT';
-            document.getElementById('status').style.backgroundImage = 'linear-gradient(to top, hsl(150, 75%, 45%) 0%, hsl(150, 75%, 55%) 100%)';
         }
     }
 
@@ -877,27 +1160,6 @@
             }
         }
     }
-
-    setTimeout(async function()
-    {
-        if(device.ip != undefined)
-        {
-            pingESP();
-            checkUpdates();
-        }
-        else
-        {
-            while(1 != 0)
-            {
-                if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
-                {
-                    fetchState();
-                }
-
-                await newTimeout(1000);
-            }
-        }
-    }, 500);
 
     async function pingESP()
     {
@@ -939,8 +1201,14 @@
             }
             else
             {
-                document.getElementsByClassName('control-panel')[0].style.backgroundImage = 'linear-gradient(to top, hsl(350, 75%, 45%) 0%, hsl(350, 75%, 55%) 100%)';
+                document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
                 document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+
+                for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
+                {
+                    document.getElementsByClassName('control-panel')[i].style.backgroundColor = 'rgb(60, 60, 75)';
+                    document.getElementsByClassName('control-panel')[i].value = '-';
+                }
 
                 await newTimeout(500);
                 
@@ -997,7 +1265,7 @@
                         showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                     }
 
-                    document.getElementById('infos').getElementsByClassName('main')[0].children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+                    document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
 
                     await newTimeout(4000);
 
@@ -1016,9 +1284,9 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('main')[1].getAttribute('type'), 10000, 3, {}, false);
+        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
 
-        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementsByClassName('main')[1].getAttribute('version')))
+        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementById('navigation-panel').getAttribute('version')))
         {
             var update = document.createElement('input');
 
@@ -1028,7 +1296,7 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('id', 'update-btn');
 
-            document.getElementsByClassName('main')[1].insertBefore(update, document.getElementById('restart-btn'));
+            document.getElementById('infos').insertBefore(update, document.getElementById('restart-btn'));
         }
     }
     
@@ -1062,7 +1330,7 @@
             }
             else
             {
-                var url = '/remove-device?mac=' + device.id + '&type=' + device.type;
+                var url = '/serverside/remove-device?mac=' + device.id + '&type=' + device.type;
             }
 
             resetting = true;
@@ -1071,7 +1339,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/check-restart'))
+                if(await checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
 
@@ -1114,7 +1382,7 @@
                         {
                             settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
                         }
-                        else if(device.type == 'light')
+                        else if(device.type == 'weather')
                         {
                             settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
@@ -1169,7 +1437,7 @@
                     connectionError : { value : 'Gespeichert!', color : 'yellow' }
                 };
 
-                await complexFetch('http://' + device.ip + '/refresh', 10000, 3, overlays, true);
+                await complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
                 
                 await newTimeout(2000);
                     
