@@ -313,7 +313,7 @@ SynTexPlatform.prototype = {
                         {
                             var device = await DeviceManager.getDevice(urlParams.mac);
 
-                            response.write('found', device ? device.type : 'Error');
+                            response.write(device ? device.type : 'Error');
                             response.end();
                         }
                         else if(urlPath == '/save-config' && request.method == 'POST')
@@ -334,7 +334,7 @@ SynTexPlatform.prototype = {
                                     logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
                                 }
                                 
-                                response.write(HTMLQuery.sendValue(data, 'result', 'Success')); 
+                                response.write('Success'); 
                                 response.end();
                             });
                         }
