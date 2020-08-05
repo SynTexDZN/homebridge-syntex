@@ -24,12 +24,10 @@ A plugin to control SynTex accessory.
     },
     {
         "platform": "SynTexWebHooks",
-        "port": 1710,
         "cache_directory": "./SynTex/devices",
         "log_directory": "./SynTex/log",
-        "sensors": [],
-        "switches": [],
-        "lights": []
+        "port": 1710,
+        "accessories": []
     }
 ]
 ```

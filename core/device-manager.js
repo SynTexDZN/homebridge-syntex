@@ -353,7 +353,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                     platform.accessories[platform.accessories.length]['services'] = ['rain', 'light'];
                 }
                 
-                if((type == 'light' || type == 'temperature' || type == 'statelessswitch') && !eventButton)
+                if((type == 'weather' || type == 'climate' || type == 'statelessswitch') && !eventButton)
                 {
                     platform.accessories[platform.accessories.length]['buttons'] = buttons;
                 }
