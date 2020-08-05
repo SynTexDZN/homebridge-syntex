@@ -325,10 +325,6 @@
                         }
                     }
                 }
-                else
-                {
-                    console.log('Keine Daten');
-                }
             }
         }
 
@@ -512,7 +508,11 @@
         }
         else
         {
-            console.log('CREATE LABEL');
+            var label = document.createElement('h2');
+
+            label.innerHTML = 'Keine Daten';
+
+            canvas.parentElement.appendChild(label);
         }
 
         drawGrid(canvas, [], 10);
