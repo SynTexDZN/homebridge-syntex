@@ -232,24 +232,33 @@
         }
     });
 
+    var busy = [];
+
     async function controlSwitch(button)
     {
-        var counter = button.getAttribute('id').split('-')[2];
-        var type = button.getAttribute('id').split('-')[1];
-        var value = button.value.toUpperCase() == 'AN' ? 'false' : 'true';
-
-        if(device.ip != undefined)
+        if(!busy.includes(button.getAttribute('id')))
         {
-            var state = await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
-        }
-        else
-        {
-            var state = await complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
-        }
+            busy.push(button.getAttribute('id'));
+            
+            var counter = button.getAttribute('id').split('-')[2];
+            var type = button.getAttribute('id').split('-')[1];
+            var value = button.value.toUpperCase() == 'AN' ? 'false' : 'true';
 
-        if(state != null)
-        {
+            if(device.ip != undefined)
+            {
+                var state = await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
+            }
+            else
+            {
+                var state = await complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+            }
 
+            const index = busy.indexOf(button.getAttribute('id'));
+
+            if (index > -1)
+            {
+                array.splice(index, 1);
+            }
         }
     }
 
