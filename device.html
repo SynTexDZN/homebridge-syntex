@@ -510,6 +510,10 @@
 
             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
         }
+        else
+        {
+            console.log('CREATE LABEL');
+        }
 
         drawGrid(canvas, [], 10);
 
