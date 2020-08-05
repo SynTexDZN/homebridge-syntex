@@ -313,7 +313,7 @@ SynTexPlatform.prototype = {
                         {
                             var device = await DeviceManager.getDevice(urlParams.mac);
 
-                            response.write(HTMLQuery.sendValue(data, 'found', device ? device.type : 'Error'));
+                            response.write('found', device ? device.type : 'Error');
                             response.end();
                         }
                         else if(urlPath == '/save-config' && request.method == 'POST')
