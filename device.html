@@ -510,8 +510,9 @@
         {
             var label = document.createElement('h2');
 
-            label.innerHTML = 'Keine Daten';
-            label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255)');
+            label.innerHTML = '↺ | Keine Daten';
+            label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+            label.setAttribute('onclick', 'loadActivity()');
 
             canvas.parentElement.appendChild(label);
         }
