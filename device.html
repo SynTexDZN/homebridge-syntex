@@ -505,6 +505,11 @@
             }
 
             canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+        
+            if(canvas.parentElement.getElementsByTagName('h2').length > 0)
+            {
+                canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
+            }
         }
         else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
         {
