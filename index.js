@@ -122,7 +122,7 @@ SynTexPlatform.prototype = {
                                     }
                                     else
                                     {
-                                        logger.err('Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+                                        logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
                                     }
                                     
                                 }).catch(function(e) {
@@ -331,7 +331,7 @@ SynTexPlatform.prototype = {
                                 
                                 if(await DeviceManager.setValues(json) == false)
                                 {
-                                    logger.err(urlParams.mac + ".json konnte nicht aktualisiert werden!");
+                                    logger.log('error', 'bridge', 'Bridge', urlParams.mac + ".json konnte nicht aktualisiert werden!");
                                 }
                                 
                                 response.write('Success'); 

@@ -22,7 +22,7 @@ async function removeDevice(mac, type)
 
                         if(err)
                         {
-                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
+                            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
         
                             resolve(false);
                         }
@@ -57,7 +57,7 @@ async function removeDevice(mac, type)
             }
             else
             {
-                logger.err('Config.json konnte nicht geladen werden! ' + err);
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
         
                 resolve(false);
             }
@@ -117,7 +117,7 @@ async function removeFromSettingsStorage(mac)
                                 
             if(err)
             {
-                logger.err('Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
+                logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
             }
 
             resolve(err ? false : true);
@@ -208,7 +208,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                         if(err)
                         {
-                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
+                            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
 
                             resolve(['Error', '']);
                         }
@@ -230,7 +230,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
 
                                 if(err)
                                 {
-                                    logger.err(mac + '.json konnte nicht erstellt werden! ' + err);
+                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', '']);
                                 }
@@ -246,7 +246,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                 }
                 else
                 {
-                    logger.err('Config.json konnte nicht geladen werden! ' + err);
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
 
                     resolve(['Error', '']);
                 }
@@ -283,7 +283,7 @@ async function initSwitch(mac, name)
 
                         if(err)
                         {
-                            logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
+                            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
 
                             resolve(['Error', 'Fehler beim Erstellen!']);
                         }
@@ -295,7 +295,7 @@ async function initSwitch(mac, name)
 
                                 if(err)
                                 {
-                                    logger.err(mac + '.json konnte nicht erstellt werden! ' + err);
+                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', 'Fehler beim Erstellen!']);
                                 }
@@ -311,7 +311,7 @@ async function initSwitch(mac, name)
                 }
                 else
                 {
-                    logger.err('Config.json konnte nicht geladen werden! ' + err);
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
 
                     resolve(['Error', 'Fehler beim Erstellen!']);
                 }
@@ -510,7 +510,7 @@ async function setValue(mac, param, value)
 
                     if(err)
                     {
-                        logger.err(mac + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -544,7 +544,7 @@ async function setValues(values)
 
                     if(err)
                     {
-                        logger.err(values.mac + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -562,7 +562,7 @@ async function checkEventButton(mac)
 
             if(!obj || err)
             {
-                logger.err('Config.json konnte nicht geladen werden!');
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
 
                 resolve(false);
             }
@@ -598,7 +598,7 @@ async function createEventButton(mac, name, buttons)
 
             if(!obj || err)
             {
-                logger.err('Config.json konnte nicht geladen werden!');
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
 
                 resolve(false);
             }
@@ -616,7 +616,7 @@ async function createEventButton(mac, name, buttons)
 
                     if(err)
                     {
-                        logger.err('Config.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
                     }
                     else
                     {
@@ -662,7 +662,7 @@ function setBridgeStorage(key, value)
 
                     if(err)
                     {
-                        logger.err('Bridge.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
@@ -676,7 +676,7 @@ function setBridgeStorage(key, value)
 
                     if(err)
                     {
-                        logger.err('Bridge.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
                     }
 
                     resolve(err ? false : true);
