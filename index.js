@@ -281,15 +281,17 @@ SynTexPlatform.prototype = {
                             {
                                 var obj = {};
 
-                                logger.debug(files);
+                                console.log(files);
 
                                 for(var i = 0; i < files.length; i++)
                                 {
-                                    logger.debug(files[i]);
-                                    
-                                    obj[files[i].split('.')[0]] = '[]';
+                                    console.log(files[i]);
 
-                                    var logs = await logger.load(files[i].split('.')[0], null);
+                                    var file = files[i].split('.')[0];
+                                    
+                                    obj[file] = '[]';
+
+                                    var logs = await logger.load(file, null);
 
                                     if(logs != null)
                                     {    
@@ -298,7 +300,7 @@ SynTexPlatform.prototype = {
                                             logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
 
-                                        obj[files[i].split('.')[0]] = JSON.stringify(logs);
+                                        obj[file] = JSON.stringify(logs);
                                     }
                                 }
 
