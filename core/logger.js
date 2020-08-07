@@ -76,6 +76,8 @@ logger.list = function()
 
         var logPath = await getLogPath(prefix);
 
+        logger.debug(logPath);
+
         store(logPath).list(function(err, objects)
         {
             if(!objects || err)

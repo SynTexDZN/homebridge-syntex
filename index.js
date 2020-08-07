@@ -277,7 +277,7 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/log')
                         {
-                            var logs = logger.list();
+                            var logs = await logger.list();
 
                             for(var i = 0; i < logs.length; i++)
                             {
