@@ -1,5 +1,5 @@
 var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
-var http = require('http'), url = require('url'), path = require('path');
+var http = require('http'), url = require('url'), path = require('path'), fs = require('fs');
 var store = require('json-fs-store');
 const { isRegExp } = require('util');
 const automations = require('./core/automations');
@@ -277,12 +277,11 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/log')
                         {
-                            var logs = await logger.list();
-
-                            for(var i = 0; i < logs.length; i++)
-                            {
-                                logger.debug(logs[i]);
-                            }
+                            fs.readdir(this.cacheDirectory, (err, files) => {
+                                files.forEach(file => {
+                                    console.log(file);
+                                });
+                            });
 
                             var bridgeLogs = await logger.load('SynTex', null);
                             var webhookLogs = await logger.load('SynTexWebHooks', null);
