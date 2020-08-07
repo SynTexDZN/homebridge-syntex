@@ -5,7 +5,7 @@ async function loadAutomations()
 {
     return new Promise(resolve => {
 
-        storage.load(mac, (err, obj) => {  
+        storage.load('automations', (err, obj) => {  
 
             if(!obj || err)
             {
