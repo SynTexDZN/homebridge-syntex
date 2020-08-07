@@ -296,7 +296,7 @@ SynTexPlatform.prototype = {
                                     var file = files[i].split('.')[0];
                                     
                                     obj[file] = '[]';
-
+                                    /*
                                     var logs = []; //await logger.load(file, null)
 
                                     if(logs != null)
@@ -308,6 +308,7 @@ SynTexPlatform.prototype = {
 
                                         obj[file] = JSON.stringify(logs);
                                     }
+                                    */
                                 }
 
                                 response.write(JSON.stringify(obj));
