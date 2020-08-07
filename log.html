@@ -79,7 +79,7 @@
 
         for(var i = 0; i < Object.keys(logJSON).length; i++)
         {
-            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], null);
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
         
         /*
@@ -117,7 +117,7 @@
 
         for(var i = 0; i < Object.keys(logJSON).length; i++)
         {
-            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], null);
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
 
         /*
@@ -154,7 +154,7 @@
 
         for(var i = 0; i < Object.keys(logJSON).length; i++)
         {
-            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], search);
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], search);
 
             var lastChars = (document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length;
 
