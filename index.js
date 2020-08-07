@@ -277,9 +277,11 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/log')
                         {
-                            fs.readdir(this.cacheDirectory, (err, files) => {
+                            fs.readdir(this.logDirectory, (err, files) => {
+
                                 files.forEach(file => {
-                                    console.log(file);
+
+                                    console.log(file.split('.')[0]);
                                 });
                             });
 
