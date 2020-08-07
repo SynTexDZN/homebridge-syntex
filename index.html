@@ -167,7 +167,7 @@
                         {
                             await newTimeout(1000);
 
-                            showOverlay(btn, createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (devices.length - offline.length) + ' Geräte Neugestartet!'));
+                            showOverlay(btn, createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (devices.length - offline.length) + ' Geräten Neugestartet!'));
                             
                             removeOverlaysDelay(btn, 4000, true);
                         }
@@ -320,7 +320,7 @@
 
                     if(updateCounter['success'] + updateCounter['error'] >= updateCount)
                     {
-                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräte Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
+                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
 
                         await newTimeout(4000);
 

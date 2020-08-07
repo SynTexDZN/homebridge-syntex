@@ -242,7 +242,7 @@
 
             var counter = button.getAttribute('id').split('-')[2];
             var type = button.getAttribute('id').split('-')[1];
-            var value = button.value.toUpperCase() == 'AN' ? 'false' : 'true';
+            var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
 
             if(device.ip != undefined)
             {
