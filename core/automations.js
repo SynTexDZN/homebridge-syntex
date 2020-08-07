@@ -1,7 +1,7 @@
 var store = require('json-fs-store');
 var logger, storage;
 
-async function loadAutomations()
+function loadAutomations()
 {
     return new Promise(resolve => {
 
@@ -19,7 +19,7 @@ async function loadAutomations()
     });
 }
 
-async function SETUP(log, storagePath)
+function SETUP(log, storagePath)
 {
     logger = log;
     storage = store(storagePath);
