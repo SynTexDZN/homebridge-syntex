@@ -277,8 +277,8 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/log')
                         {
-                            fs.readdir(this.logDirectory, (err, files) => {
-
+                            fs.readdir(this.logDirectory, async function(err, files)
+                            {
                                 var obj = {};
 
                                 for(var i = 0; i < files.length; i++)
