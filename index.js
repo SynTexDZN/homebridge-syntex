@@ -297,7 +297,7 @@ SynTexPlatform.prototype = {
                                     
                                     obj[file] = '[]';
                                     
-                                    var logs = []; //await logger.load(file, null)
+                                    var logs = await logger.load(file, null)
 
                                     if(logs != null)
                                     {    
