@@ -70,6 +70,24 @@ logger.debug = function(message)
     logger.log('debug', 'bridge', 'Bridge', message);
 }
 
+logger.list = function()
+{
+    return new Promise(async function(resolve) {
+
+        store(logPath).list(function(err, objects)
+        {
+            if(!obj || err)
+            {
+                resolve([]);
+            }
+            else
+            {
+                resolve(objects);
+            }
+        });
+    });
+}
+
 logger.load = function(pluginName, group)
 {
     return new Promise(async function(resolve) {

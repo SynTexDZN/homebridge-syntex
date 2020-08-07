@@ -277,6 +277,13 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/log')
                         {
+                            var logs = logger.list();
+
+                            for(var i = 0; i < logs.length; i++)
+                            {
+                                logger.debug(logs[i]);
+                            }
+
                             var bridgeLogs = await logger.load('SynTex', null);
                             var webhookLogs = await logger.load('SynTexWebHooks', null);
                             var obj = {
