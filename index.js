@@ -1,7 +1,8 @@
-var DeviceManager = require('./core/device-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
+var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
 var http = require('http'), url = require('url'), path = require('path');
 var store = require('json-fs-store');
 const { isRegExp } = require('util');
+const automations = require('./core/automations');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -29,6 +30,8 @@ function SynTexPlatform(log, config, api)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
             }
+
+            Automations.SETUP(logger, this.cacheDirectory);
 
             restart = false;
 
@@ -337,6 +340,11 @@ SynTexPlatform.prototype = {
                                 response.write('Success'); 
                                 response.end();
                             });
+                        }
+                        else if(urlPath == '/automations')
+                        {
+                            response.write(JSON.stringify(await Automations.loadAutomations())); 
+                            response.end();
                         }
                     }
                     else
