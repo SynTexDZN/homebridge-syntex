@@ -281,8 +281,12 @@ SynTexPlatform.prototype = {
                             {
                                 var obj = {};
 
+                                logger.debug(files);
+
                                 for(var i = 0; i < files.length; i++)
                                 {
+                                    logger.debug(files[i]);
+                                    /*
                                     obj[files[i].split('.')[0]] = '[]';
 
                                     var logs = await logger.load(files[i].split('.')[0], null);
@@ -296,6 +300,7 @@ SynTexPlatform.prototype = {
 
                                         obj[files[i].split('.')[0]] = JSON.stringify(logs);
                                     }
+                                    */
                                 }
 
                                 files.forEach(async function(file)
