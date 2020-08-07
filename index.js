@@ -298,14 +298,9 @@ SynTexPlatform.prototype = {
                                             logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
 
-                                        //obj[files[i].split('.')[0]] = JSON.stringify(logs);
+                                        obj[files[i].split('.')[0]] = JSON.stringify(logs);
                                     }
                                 }
-
-                                files.forEach(async function(file)
-                                {
-                                    
-                                });
 
                                 response.write(JSON.stringify(obj));
                                 response.end();
