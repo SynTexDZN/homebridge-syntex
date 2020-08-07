@@ -56,7 +56,7 @@
             </div>
         </form>
         <p id="log-counter" class="loading-loop" style="margin-bottom: 32px"><b>Gefundene Elemente: </b>Laden ..</p>
-        <div class="main" style="display: table"></div>
+        <div id="log-container" class="main" style="display: table"></div>
     </body>
 </html>
 <script>
@@ -88,8 +88,8 @@
                 logWindow.style.marginBottom = '100px';    
             }
 
-            document.getElementsByClassName('main')[0].appendChild(logTitle);
-            document.getElementsByClassName('main')[0].appendChild(logWindow);
+            document.getElementById('log-container').appendChild(logTitle);
+            document.getElementById('log-container').appendChild(logWindow);
 
             createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
