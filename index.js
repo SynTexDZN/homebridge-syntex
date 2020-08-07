@@ -279,12 +279,30 @@ SynTexPlatform.prototype = {
                         {
                             fs.readdir(this.logDirectory, (err, files) => {
 
+                                var obj = {};
+
                                 files.forEach(file => {
 
-                                    console.log(file.split('.')[0]);
+                                    obj[file.split('.')[0]] = '[]';
+
+                                    var logs = await logger.load(file.split('.')[0], null);
+
+                                    if(logs != null)
+                                    {    
+                                        for(var i = 0; i < logs.length; i++)
+                                        {
+                                            logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                        }
+
+                                        obj[file.split('.')[0]] = JSON.stringify(logs);
+                                    }
                                 });
+
+                                response.write(JSON.stringify(obj));
+                                response.end();
                             });
 
+                            /*
                             var bridgeLogs = await logger.load('SynTex', null);
                             var webhookLogs = await logger.load('SynTexWebHooks', null);
                             var obj = {
@@ -311,9 +329,10 @@ SynTexPlatform.prototype = {
 
                                 obj.wLog = JSON.stringify(webhookLogs);
                             }
-
+                            
                             response.write(JSON.stringify(obj));
                             response.end();
+                            */
                         }
                         else if(urlPath == '/time')
                         {
