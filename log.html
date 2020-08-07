@@ -188,8 +188,12 @@
     {
         var filterLog = '';
 
+        console.log(log);
+
         for(var i = 0; i < log.length; i++)
         {
+            console.log(log[i]);
+
             var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
             var level = log[i].l.toUpperCase();
             var time = new Date(log[i].t * 1000);
