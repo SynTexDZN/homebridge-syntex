@@ -283,9 +283,9 @@ SynTexPlatform.prototype = {
 
                                 for(var i = 0; i < files.length; i++)
                                 {
-                                    obj[file.split('.')[0]] = '[]';
+                                    obj[files[i].split('.')[0]] = '[]';
 
-                                    var logs = await logger.load(file.split('.')[0], null);
+                                    var logs = await logger.load(files[i].split('.')[0], null);
 
                                     if(logs != null)
                                     {    
@@ -294,7 +294,7 @@ SynTexPlatform.prototype = {
                                             logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
 
-                                        obj[file.split('.')[0]] = JSON.stringify(logs);
+                                        obj[files[i].split('.')[0]] = JSON.stringify(logs);
                                     }
                                 }
 
