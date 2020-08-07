@@ -74,6 +74,8 @@ logger.list = function()
 {
     return new Promise(async function(resolve) {
 
+        var logPath = await getLogPath(prefix);
+
         store(logPath).list(function(err, objects)
         {
             if(!obj || err)
