@@ -37,7 +37,29 @@
             var panel = document.createElement('button');
 
             panel.innerHTML = automations[i].id + ' • ' + automations[i].name + '<br>';
-            panel.innerHTML += (automations[i].active ? 'Aktiv' : 'Deaktiviert');
+            panel.innerHTML += (automations[i].active ? 'Aktiv' : 'Deaktiviert') + '<br>';
+            panel.innerHTML += 'Auslöser';
+
+            for(var j = 0; j < automations[i].trigger.length; j++)
+            {
+                panel.innerHTML += ' • ' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+            }
+
+            panel.innerHTML += '<br>Ausführen';
+
+            for(var j = 0; j < automations[i].result.length; j++)
+            {
+                if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
+                {
+                    panel.innerHTML += ' • ' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + automations[i].result[j].value;
+                }
+                else if(automations[i].result[j].url)
+                {
+                    panel.innerHTML += " • '" + automations[i].result[j].url + "'";
+                }
+            }
+
+            panel.setAttribute('style', 'min-height: 100px; text-align: left; height: auto; line-height: 25px; padding: 20px');
 
             if(i < automations.length - 1)
             {
