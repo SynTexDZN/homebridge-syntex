@@ -31,7 +31,7 @@ function SynTexPlatform(log, config, api)
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
             }
 
-            Automations.SETUP(logger, this.cacheDirectory);
+            Automations.SETUP(logger, config.cacheDirectory);
 
             restart = false;
 
