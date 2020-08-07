@@ -56,12 +56,7 @@
             </div>
         </form>
         <p id="log-counter" class="loading-loop" style="margin-bottom: 32px"><b>Gefundene Elemente: </b>Laden ..</p>
-        <div class="main" style="display: table">
-            <h2 style="width: fit-content">• Bridge Log •</h2>
-            <textarea id="bLog" style="margin-bottom: 100px" readonly></textarea>
-            <h2 style="width: fit-content">• WebHook Log •</h2>
-            <textarea id="wLog" readonly></textarea>
-        </div>
+        <div class="main" style="display: table"></div>
     </body>
 </html>
 <script>
@@ -79,11 +74,6 @@
 
         for(var i = 0; i < Object.keys(logJSON).length; i++)
         {
-            <h2 style="width: fit-content">• Bridge Log •</h2>
-            <textarea id="bLog" style="margin-bottom: 100px" readonly></textarea>
-            <h2 style="width: fit-content">• WebHook Log •</h2>
-            <textarea id="wLog" readonly></textarea>
-
             var logTitle = document.createElement('h2');
             var logWindow = document.createElement('textarea');
 
@@ -97,6 +87,9 @@
             {
                 logWindow.style.marginBottom = '100px';    
             }
+
+            document.getElementsByClassName('main')[0].appendChild(logTitle);
+            document.getElementsByClassName('main')[0].appendChild(logWindow);
 
             createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
