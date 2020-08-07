@@ -9,9 +9,32 @@
                 <input class="white" type="button" value="Bridge" onclick="window.location.href='/bridge'">
             </div>
             <div class="main" style="margin-top: 10px; display: flex">
-                <input class="white" type="button" value="Log" onclick="window.location.href='/log'" disabled>
+                <input class="white" type="button" value="Automations" onclick="window.location.href='/automations'" style="margin-right: 20px" disabled>
+                <input class="white" type="button" value="Log" onclick="window.location.href='/log'">
             </div>
         </div>
         <div class="main"></div>
     </body>
 </html>
+<script>
+
+    var automations = [];
+
+    head.load('/js/query.js', async function()
+    {
+        automations = JSON.parse(await complexFetch('/serverside/automations', 10000, 3, {}, false));
+
+        createAutomationPanels();
+    });
+
+    function createAutomationPanels()
+    {
+        for(var i = 0; i < automations.length; i++)
+        {
+            var panel = document.createElement('button');
+
+            panel.innerHTML = automations[i].id + ' • ' + automations[i].name;
+        }
+    }
+
+</script>
