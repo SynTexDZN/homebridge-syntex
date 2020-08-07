@@ -287,6 +287,8 @@ SynTexPlatform.prototype = {
                                 console.log(files[1]);
                                 console.log(files[2]);
 
+                                console.log(files.length);
+
                                 for(var i = 0; i < files.length; i++)
                                 {
                                     console.log(files[i], i);
