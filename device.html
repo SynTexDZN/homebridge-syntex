@@ -748,7 +748,7 @@
         document.getElementById('reconnect-btn').style.display = 'none';
     }
 
-    if(device.type != 'relais' && device.type != 'switch' && device.type != 'rgb')
+    if(device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' || device.type == 'special')
     {
         settings.push({
             index: 'active',
@@ -772,7 +772,7 @@
         });
     }
 
-    if(device.type == 'weather' || device.type == 'climate' || device.type == 'statelessswitch')
+    if(device.type == 'statelessswitch')
     {
         settings.push({
             index: 'events',
