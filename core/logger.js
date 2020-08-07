@@ -78,7 +78,7 @@ logger.list = function()
 
         store(logPath).list(function(err, objects)
         {
-            if(!obj || err)
+            if(!objects || err)
             {
                 resolve([]);
             }
