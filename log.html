@@ -68,19 +68,27 @@
 
     var bLogJSON = [];
     var wLogJSON = [];
+    var logJSON = {};
     var counter = 0;
     var levelCounter = [0, 0, 0, 0, 0, 0, 0];
     var countLogs = true;
 
     head.load('/js/query.js', async function()
     {
-        var logs = JSON.parse(await complexFetch('/serverside/log', 10000, 3, {}, false));
+        logJSON = JSON.parse(await complexFetch('/serverside/log', 10000, 3, {}, false));
+
+        for(var i = 0; i < Object.keys(logJSON).length; i++)
+        {
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], null);
+        }
+        
+        /*
         bLogJSON = JSON.parse(logs.bLog);
         wLogJSON = JSON.parse(logs.wLog);
 
         createLog(document.getElementById('bLog'), bLogJSON, null);
         createLog(document.getElementById('wLog'), wLogJSON, null);
-
+        */
         countLogs = false;
 
         document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
@@ -105,8 +113,17 @@
 
         await newTimeout(500);
 
+        var logs = JSON.parse();
+
+        for(var i = 0; i < Object.keys(logJSON).length; i++)
+        {
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], null);
+        }
+
+        /*
         createLog(document.getElementById('bLog'), bLogJSON, null);
         createLog(document.getElementById('wLog'), wLogJSON, null);
+        */
 
         document.getElementById('search-btn').value = 'Suchen';
     }
@@ -135,9 +152,21 @@
             search = [level, null];
         }
 
+        for(var i = 0; i < Object.keys(logJSON).length; i++)
+        {
+            createLog(document.getElementById(Object.keys(logJSON)[i]), logs[Object.keys(logJSON)[i]], search);
+
+            var lastChars = (document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length;
+
+            if(lastChars > 0)
+            {
+                document.getElementById(Object.keys(logJSON)[i]).innerHTML = document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(0, -(document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length);
+            }
+        }
+        /*
         createLog(document.getElementById('bLog'), bLogJSON, search);
         createLog(document.getElementById('wLog'), wLogJSON, search);
-
+        
         var lastCharsB = (document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length;
         var lastCharsW = (document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length;
 
@@ -150,7 +179,7 @@
         {
             document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
         }
-
+        */
         document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
         document.getElementById('search-btn').value = 'Suchen';
     }
