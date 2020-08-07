@@ -36,8 +36,7 @@
         {
             var panel = document.createElement('button');
 
-            panel.innerHTML = automations[i].id + ' • ' + automations[i].name + '<br>';
-            panel.innerHTML += (automations[i].active ? 'Aktiv' : 'Deaktiviert') + '<br>';
+            panel.innerHTML = automations[i].id + ' • ' + automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert') + '<br>';
             panel.innerHTML += 'Auslöser';
 
             for(var j = 0; j < automations[i].trigger.length; j++)
