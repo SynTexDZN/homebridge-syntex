@@ -296,19 +296,20 @@ SynTexPlatform.prototype = {
                                     var file = files[i].split('.')[0];
                                     
                                     obj[file] = '[]';
-                                    /*
+                                    
                                     var logs = []; //await logger.load(file, null)
 
                                     if(logs != null)
                                     {    
+                                        /*
                                         for(var i = 0; i < logs.length; i++)
                                         {
                                             logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
 
                                         obj[file] = JSON.stringify(logs);
+                                        */
                                     }
-                                    */
                                 }
 
                                 response.write(JSON.stringify(obj));
