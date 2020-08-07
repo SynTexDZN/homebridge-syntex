@@ -297,7 +297,7 @@ SynTexPlatform.prototype = {
                                     
                                     obj[file] = '[]';
                                     
-                                    var logs = await logger.load(file, null)
+                                    var logs = await logger.load(file, null);
 
                                     if(logs != null)
                                     {    
@@ -306,9 +306,8 @@ SynTexPlatform.prototype = {
                                         {
                                             logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
-
+*/
                                         obj[file] = JSON.stringify(logs);
-                                        */
                                     }
                                 }
 
