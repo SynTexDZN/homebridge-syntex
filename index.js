@@ -281,8 +281,8 @@ SynTexPlatform.prototype = {
 
                                 var obj = {};
 
-                                files.forEach(file => {
-
+                                files.forEach(async function(file)
+                                {
                                     obj[file.split('.')[0]] = '[]';
 
                                     var logs = await logger.load(file.split('.')[0], null);
