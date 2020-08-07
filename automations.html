@@ -36,7 +36,8 @@
         {
             var panel = document.createElement('button');
 
-            panel.innerHTML = automations[i].id + ' • ' + automations[i].name;
+            panel.innerHTML = automations[i].id + ' • ' + automations[i].name + '<br>';
+            panel.innerHTML += (automations[i].active ? 'Aktiv' : 'Deaktiviert');
 
             if(i < automations.length - 1)
             {
