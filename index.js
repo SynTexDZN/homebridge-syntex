@@ -301,12 +301,11 @@ SynTexPlatform.prototype = {
 
                                     if(logs != null)
                                     {    
-                                        /*
-                                        for(var i = 0; i < logs.length; i++)
+                                        for(var j = 0; j < logs.length; j++)
                                         {
-                                            logs[i].m = logs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
+                                            logs[j].m = logs[j].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
-*/
+
                                         obj[file] = JSON.stringify(logs);
                                     }
                                 }
