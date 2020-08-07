@@ -80,6 +80,19 @@
             logTitle.setAttribute('style', 'width: fit-content');
             logTitle.innerHTML = '• ' + Object.keys(logJSON)[i] + ' Log •';
 
+            if(Object.keys(logJSON)[i] == 'SynTex')
+            {
+                logTitle.innerHTML = '• Bridge Log •';
+            }
+            else if(Object.keys(logJSON)[i] == 'SynTexWebHooks')
+            {
+                logTitle.innerHTML = '• WebHooks Log •';
+            }
+            else if(Object.keys(logJSON)[i] == 'SynTexTuya')
+            {
+                logTitle.innerHTML = '• Tuya Log •';
+            }
+
             logWindow.setAttribute('readonly', '');
             logWindow.setAttribute('id', Object.keys(logJSON)[i]);
 
