@@ -90,10 +90,11 @@
 
                 container.setAttribute('id', devices[i].type);
                 container.setAttribute('style', 'display: grid; grid-gap: 20px');
+                container.setAttribute('class', 'container');
 
                 if(gridView)
                 {
-                    container.style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+                    container.className += ' grid-view';
                 }
                 
                 document.getElementById('devices').appendChild(container);
@@ -111,7 +112,7 @@
 
             if(gridView)
             {
-                button.style.height = '100px';
+                button.className += ' grid-view';
             }
             
             var url = '/device?mac=' + devices[i].id;
