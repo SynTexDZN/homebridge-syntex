@@ -80,7 +80,7 @@
             }
             else
             {
-                device.setAttribute('style', 'display: flex; margin-bottom: 20px');
+                device.setAttribute('style', 'display: flex');
                 counter++;
             }
 
@@ -101,6 +101,7 @@
                 var container = document.createElement('div');
 
                 container.setAttribute('id', devices[i].type);
+                container.setAttribute('style', 'display: grid; grid-gap: 20px');
                 
                 document.getElementById('devices').appendChild(container);
             }
