@@ -55,12 +55,11 @@
     console.log(devices);
 
     var temp = "";
-    var counter = 0;
     var updateCount = 0;
     var checkedUpdates = 0;
     var activationCounter = { active : 0, disabled : 0 };
     
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length;
+    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
     
     for(const i in devices)
@@ -68,16 +67,8 @@
         if(devices[i].id != 'Bridge')
         {
             var device = document.createElement('div');
-        
-            if(counter == devices.length - 1)
-            {
-                device.setAttribute('style', 'display: flex');
-            }
-            else
-            {
-                device.setAttribute('style', 'display: flex');
-                counter++;
-            }
+
+            device.setAttribute('style', 'display: flex');
 
             if(devices[i].ip != undefined && devices[i].active != undefined)
             {
