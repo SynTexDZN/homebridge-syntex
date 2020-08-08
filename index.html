@@ -97,10 +97,6 @@
                 container.setAttribute('style', 'display: grid; grid-gap: 20px');
                 container.setAttribute('class', 'container');
 
-                var numOfType = devices.reduce(function (n, device)
-                {
-                    return n + (device.type == devices[i].type);
-                }, 0);
                 /*
                 if(numOfType == 1)
                 {
@@ -119,6 +115,11 @@
             button.setAttribute('id', devices[i].ip);
             button.setAttribute('class', 'device white');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+            var numOfType = devices.reduce(function (n, device)
+            {
+                return n + (device.type == devices[i].type);
+            }, 0);
 
             if(numOfType % 3 == 1)
             {
