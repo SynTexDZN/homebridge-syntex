@@ -97,6 +97,16 @@
                 container.setAttribute('style', 'display: grid; grid-gap: 20px');
                 container.setAttribute('class', 'container');
 
+                var numOfType = devices.reduce(function (n, device)
+                {
+                    return n + (device.type == devices[i].type);
+                }, 0);
+
+                if(numOfType == 1)
+                {
+                    container.style.gridTemplateColumns = '100%';
+                }
+
                 document.getElementById('devices').appendChild(container);
             }
 
