@@ -97,6 +97,12 @@
                 title.innerHTML = '• ' + devices[i].type + ' •';
                 
                 document.getElementById('devices').appendChild(title);
+
+                var container = document.createElement('div');
+
+                title.setAttribute('id', devices[i].type);
+                
+                document.getElementById('devices').appendChild(container);
             }
 
             var button = document.createElement('input');
@@ -121,11 +127,13 @@
             container.appendChild(button);
             device.appendChild(container);
 
-            document.getElementById('devices').appendChild(device);
+            container.appendChild(device);
             
             temp = devices[i].type;
         }
     }
+
+    document.getElementById('devices').appendChild(container);
 
     if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
     {
