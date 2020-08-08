@@ -106,15 +106,15 @@
                 document.getElementById('devices').appendChild(typeContainer);
             }
 
-            var button = document.createElement('input');
+            var button = document.createElement('button');
 
-            button.setAttribute('type', 'button');
-            button.setAttribute('value', devices[i].name);
             button.setAttribute('sensortype', devices[i].type);
             button.setAttribute('version', devices[i].version);
             button.setAttribute('id', devices[i].ip);
             button.setAttribute('class', 'device white');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+            button.innerHTML = devices[i].name;
 
             var url = '/device?mac=' + devices[i].id;
 
