@@ -63,6 +63,11 @@
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
+
+    if(gridView)
+    {
+        document.getElementById('devices').className = 'grid-view';
+    }
     
     for(const i in devices)
     {
@@ -92,11 +97,6 @@
                 container.setAttribute('style', 'display: grid; grid-gap: 20px');
                 container.setAttribute('class', 'container');
 
-                if(gridView)
-                {
-                    container.className += ' grid-view';
-                }
-                
                 document.getElementById('devices').appendChild(container);
             }
 
@@ -110,11 +110,6 @@
             button.setAttribute('class', 'device white');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
-            if(gridView)
-            {
-                button.className += ' grid-view';
-            }
-            
             var url = '/device?mac=' + devices[i].id;
 
             button.setAttribute('onclick', "window.location.href='" + url + "'");
