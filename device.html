@@ -4,8 +4,8 @@
         <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
-            <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px; display: table"></div>
-            <div id="activity" style="display: table; margin-bottom: 100px"></div>
+            <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
+            <div id="activity" style="margin-bottom: 100px"></div>
             <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
             <div id="navigation-panel" style="display: flex">
                 <input type="button" value="Zurück" onclick="window.location.href='/'">
@@ -15,7 +15,7 @@
         <div id="settings" style="display: none;">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
-            <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px; display: table;">
+            <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
                 <div id="settings-form" style="margin-bottom: 100px">
                     <p><b>Name: <input pattern="[a-zA-Z0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                 </div>
