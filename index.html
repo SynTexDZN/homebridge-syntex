@@ -9,6 +9,7 @@
                 <input class="white" type="button" value="Bridge" onclick="window.location.href='/bridge'">
             </div>
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
+                <input class="white" type="button" value="Automation" onclick="window.location.href='/automations'" style="margin-right: 20px">
                 <input class="white" type="button" value="Log" onclick="window.location.href='/log'">
             </div>
             <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
@@ -47,6 +48,8 @@
     </body>
 </html>
 <script>
+
+    var gridView = false;
 
     var devices = JSON.parse('<%devices%>');
     var offline = [], restarting = [], updating = [];
@@ -87,6 +90,11 @@
 
                 container.setAttribute('id', devices[i].type);
                 container.setAttribute('style', 'display: grid; grid-gap: 20px');
+
+                if(gridView)
+                {
+                    container.style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+                }
                 
                 document.getElementById('devices').appendChild(container);
             }
@@ -100,6 +108,11 @@
             button.setAttribute('id', devices[i].ip);
             button.setAttribute('class', 'device white');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+            if(gridView)
+            {
+                button.style.height = '100px';
+            }
             
             var url = '/device?mac=' + devices[i].id;
 
