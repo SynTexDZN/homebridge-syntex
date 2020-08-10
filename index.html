@@ -115,7 +115,16 @@
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + devices[i].type + '.png">';
-            button.innerHTML += '<div class="connection">AKTIV</div>';
+
+            if(devices[i].active == 1)
+            {
+                button.innerHTML += '<div class="connection">AKTIV</div>';
+            }
+            else
+            {
+                button.innerHTML += '<div class="connection" style="color: rgb(20, 20, 30)">INAKTIV</div>';
+            }
+
             button.innerHTML += '<div style="position: absolute; bottom: 14px; width: calc(100% - 36px)">' + devices[i].name + '</div>';
 
             var url = '/device?mac=' + devices[i].id;
