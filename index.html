@@ -227,6 +227,7 @@
 
         if(!offline.includes(ip))
         {
+            /*
             var responseOverlay = createErrorOverlay(ip + '-offline', document.getElementById(ip).getAttribute('name') + ' | OFFLINE');
 
             responseOverlay.setAttribute('style', 'z-index: 1; text-align: left');
@@ -238,6 +239,10 @@
             {
                 responseOverlay.style.opacity = 1;
             }, 10);
+            */
+
+            device.children[1].innerHTML = 'OFFLINE';
+            device.children[1].style.color = 'hsl(350, 95%, 60%)';
 
             document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
 
