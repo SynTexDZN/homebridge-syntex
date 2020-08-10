@@ -114,15 +114,8 @@
             button.setAttribute('class', 'device white');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
-            var typeImg = '';
-
-            if(devices[i].type == 'climate')
-            {
-                typeImg = 'Climate';
-            }
-
-            button.innerHTML = '<img src="/img/accessory/' + typeImg + '.png" style="position: absolute; bottom: 15px; width: calc(100% - 36px);">' + devices[i].name + '</div>';
-            button.innerHTML += '<div style="position: absolute; bottom: 15px; width: calc(100% - 36px);">' + devices[i].name + '</div>';
+            button.innerHTML = '<img src="/img/accessory/' + devices[i].type + '.png" style="position: absolute; top: 15px; width: 30%">';
+            button.innerHTML += '<div style="position: absolute; bottom: 15px; width: calc(100% - 36px)">' + devices[i].name + '</div>';
 
             var url = '/device?mac=' + devices[i].id;
 
