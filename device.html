@@ -253,6 +253,11 @@
                 var state = await complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
             }
 
+            if(state != null)
+            {
+                button.style.color = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'hsl(205, 75%, 55%)' : 'hsl(18, 75%, 55%)';
+            }
+
             const index = busy.indexOf(button.getAttribute('id'));
 
             if(index > -1)
