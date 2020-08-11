@@ -256,6 +256,15 @@
             if(state != null)
             {
                 button.style.backgroundColor = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'hsl(205, 75%, 55%)' : 'hsl(18, 75%, 55%)';
+            
+                if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
+                {
+                    button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
+                }
+                else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+                {
+                    button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
+                }
             }
 
             const index = busy.indexOf(button.getAttribute('id'));
