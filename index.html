@@ -508,6 +508,20 @@
 
                     switchCounter[refresh == 'Success' ? 'success' : 'error']++;
 
+                    if(refresh == 'Success')
+                    {
+                        if(this.active == 1)
+                        {
+                            this.device.getElementsByClassName('connection')[0].removeAttribute('style');
+                            this.device.innerHTML = 'AKTIV';
+                        }
+                        else
+                        {
+                            this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                            this.device.innerHTML = 'INAKTIV';
+                        }
+                    }
+
                     if(switchCounter['success'] + switchCounter['error'] >= deviceElements.length)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
@@ -516,7 +530,7 @@
 
                         removeOverlays(btn, true);
                     }
-                });
+                }.bind({ avtive : settings.active, device : deviceElements[i] }));
             }
             else
             {
