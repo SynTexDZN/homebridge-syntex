@@ -512,7 +512,7 @@
                     {
                         if(this.active == 1)
                         {
-                            this.device.getElementsByClassName('connection')[0].removeAttribute('style');
+                            this.device.getElementsByClassName('connection')[0].style.color = '';
                             this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
                         }
                         else
@@ -530,7 +530,7 @@
 
                         removeOverlays(btn, true);
                     }
-                }.bind({ avtive : settings.active, device : deviceElements[i] }));
+                }.bind({ active : settings.active, device : deviceElements[i] }));
             }
             else
             {
