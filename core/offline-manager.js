@@ -21,7 +21,7 @@ function checkConnection(url, mac)
             {
                 temp.push(mac);
 
-                logger.debug("PUSH TEMP");
+                logger.debug("PUSH TEMP" + JSON.stringify(temp));
             }
             else if(!offline.includes(mac))
             {
@@ -32,11 +32,11 @@ function checkConnection(url, mac)
         }
         else
         {
-            if(!temp.includes(mac))
+            if(temp.includes(mac))
             {
                 temp.splice(temp.indexOf(mac), 1);
 
-                logger.debug("REMOVE TEMP");
+                logger.debug("REMOVE TEMP" + JSON.stringify(temp));
             }
             
             if(offline.includes(mac))
