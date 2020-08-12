@@ -15,6 +15,11 @@ function checkConnection(url, mac)
 
         logger.debug(statusCode);
 
+        if(err)
+        {
+            logger.debug(err);
+        }
+
         if(err || statusCode != 200)
         {
             if(!offline.includes(mac))
