@@ -15,20 +15,19 @@ function checkConnection(url, mac)
 
         logger.debug(statusCode);
 
-        if(err)
-        {
-            logger.debug(err);
-        }
-
         if(err || statusCode != 200)
         {
             if(!temp.includes(mac))
             {
                 temp.push(mac);
+
+                logger.debug("PUSH TEMP");
             }
             else if(!offline.includes(mac))
             {
                 offline.push(mac);
+
+                logger.debug("PUSH OFFLINE");
             }
         }
         else
@@ -36,11 +35,15 @@ function checkConnection(url, mac)
             if(!temp.includes(mac))
             {
                 temp.splice(temp.indexOf(mac), 1);
+
+                logger.debug("REMOVE TEMP");
             }
             
             if(offline.includes(mac))
             {
                 offline.splice(offline.indexOf(mac), 1);
+
+                logger.debug("REMOVE OFFLINE");
             }
         }
     }));
