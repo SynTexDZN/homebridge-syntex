@@ -1,5 +1,5 @@
 var request = require('request');
-var logger, offline;
+var logger, offline = [];
 
 function checkConnection(url, mac)
 {
