@@ -1,11 +1,11 @@
 var request = require('request');
 var logger, temp = [], offline = [];
 
-function checkConnection(url, mac)
+function checkConnection(ip)
 {
     var theRequest = {
         method : 'GET',
-        url : url,
+        url : 'http://' + ip + '/',
         timeout : 30000
     };
 
@@ -17,33 +17,25 @@ function checkConnection(url, mac)
 
         if(err || statusCode != 200)
         {
-            if(!temp.includes(mac))
+            if(!temp.includes(ip))
             {
-                temp.push(mac);
-
-                logger.debug("PUSH TEMP" + JSON.stringify(temp));
+                temp.push(ip);
             }
-            else if(!offline.includes(mac))
+            else if(!offline.includes(ip))
             {
-                offline.push(mac);
-
-                logger.debug("PUSH OFFLINE");
+                offline.push(ip);
             }
         }
         else
         {
-            if(temp.includes(mac))
+            if(temp.includes(ip))
             {
-                temp.splice(temp.indexOf(mac), 1);
-
-                logger.debug("REMOVE TEMP" + JSON.stringify(temp));
+                temp.splice(temp.indexOf(ip), 1);
             }
             
-            if(offline.includes(mac))
+            if(offline.includes(ip))
             {
-                offline.splice(offline.indexOf(mac), 1);
-
-                logger.debug("REMOVE OFFLINE");
+                offline.splice(offline.indexOf(ip), 1);
             }
         }
     }));
@@ -55,7 +47,7 @@ function pingDevices(devices)
     {
         if(devices[i].ip != undefined)
         {
-            checkConnection('http://' + devices[i].ip + '/', devices[i].id);
+            checkConnection(devices[i].ip);
         }
     }
 

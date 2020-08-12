@@ -208,6 +208,29 @@
 <script>
 
     var deviceElements = document.getElementsByClassName('device');
+
+    async function checkConnection()
+    {
+        var offline = JSON.stringify(await fetchURL('/serverside/offline-devices', 10000));
+
+        for(var i = 0; i < deviceElements.length; i++)
+        {
+            if(offline.includes(deviceElements[i].id))
+            {
+                setOffline(deviceElements[i]);
+            }
+            else
+            {
+                setOnline(deviceElements[i]);
+            }
+        }
+
+        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offline.length;
+
+        await newTimeout(20000);
+            
+        checkConnection();
+    }
     
     async function pingESP(device)
     {
@@ -253,7 +276,7 @@
             device.children[1].innerHTML = 'OFFLINE';
             device.children[1].style.color = 'hsl(350, 95%, 60%)';
 
-            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
+            //document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
 
             offline.push(ip);
         }
@@ -266,7 +289,7 @@
         if(offline.includes(ip))
         {
             offline.splice(offline.indexOf(ip), 1);
-
+            /*
             document.getElementById(ip + '-offline').style.opacity = 0;
             device.style.opacity = 1;
 
@@ -276,6 +299,7 @@
             }, 300);
 
             document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML--;
+            */
         }
     }
 
@@ -283,7 +307,7 @@
     {
         for(var i = 0; i < deviceElements.length; i++)
         {
-            pingESP(deviceElements[i]);
+            //pingESP(deviceElements[i]);
             checkUpdates(deviceElements[i]);
         }
     });
