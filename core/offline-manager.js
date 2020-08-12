@@ -13,6 +13,8 @@ function checkConnection(url, mac)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
 
+        logger.debug(statusCode);
+
         if(err || statusCode != 200)
         {
             if(!offline.includes(mac))
@@ -24,7 +26,6 @@ function checkConnection(url, mac)
         {
             offline.splice(offline.indexOf(mac), 1);
         }
-        
     }));
 }
 
