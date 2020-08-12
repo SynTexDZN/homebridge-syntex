@@ -96,7 +96,6 @@
                 typeContainer.setAttribute('id', devices[i].type);
                 typeContainer.setAttribute('style', 'display: grid; grid-gap: 20px');
                 typeContainer.setAttribute('class', 'container');
-
                 /*
                 if(numOfType == 1)
                 {
@@ -230,49 +229,12 @@
         checkConnection();
     }
     
-    async function pingESP(device)
-    {
-        var ip = device.getAttribute('id');
-
-        if(ip != 'undefined' && !updating.includes(ip))
-        {
-            if(await fetchURL('http://' + ip + '/', 20000) != null)
-            {  
-                setOnline(device);
-            }
-            else if(!updating.includes(ip))
-            {  
-                setOffline(device);
-            }
-
-            await newTimeout(10000);
-            
-            pingESP(device);
-        }
-    }
-    
     function setOffline(device)
     {
         var ip = device.getAttribute('id');
 
         if(!offline.includes(ip))
         {
-            /*
-            var responseOverlay = createErrorOverlay(ip + '-offline', document.getElementById(ip).getAttribute('name') + ' | OFFLINE');
-
-            responseOverlay.setAttribute('style', 'z-index: 1; text-align: left');
-            responseOverlay.setAttribute('onclick', device.getAttribute('onclick'));
-
-            device.parentElement.insertBefore(responseOverlay, device);
-
-            setTimeout(function()
-            {
-                responseOverlay.style.opacity = 1;
-            }, 10);
-            */
-
-            //document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
-
             device.children[1].innerHTML = 'OFFLINE';
             device.children[1].style.color = 'hsl(350, 95%, 60%)';
 
@@ -298,20 +260,6 @@
                 device.children[1].innerHTML = 'INAKTIV';
                 device.children[1].style.color = 'rgb(130, 130, 150)';
             }
-
-            // TODO : Check Activation
-
-            /*
-            document.getElementById(ip + '-offline').style.opacity = 0;
-            device.style.opacity = 1;
-
-            setTimeout(function()
-            {
-                device.parentElement.removeChild(document.getElementById(ip + '-offline'));
-            }, 300);
-
-            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML--;
-            */
         }
     }
 
@@ -321,7 +269,6 @@
 
         for(var i = 0; i < deviceElements.length; i++)
         {
-            //pingESP(deviceElements[i]);
             checkUpdates(deviceElements[i]);
         }
     });
