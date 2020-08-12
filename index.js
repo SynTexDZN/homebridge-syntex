@@ -1,8 +1,7 @@
-var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
+var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
 var http = require('http'), url = require('url'), path = require('path'), fs = require('fs');
 var store = require('json-fs-store');
 const { isRegExp } = require('util');
-const automations = require('./core/automations');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -24,14 +23,17 @@ function SynTexPlatform(log, config, api)
 
         HTMLQuery.SETUP(logger);
 
-        getPluginConfig('SynTexWebHooks').then(function(config) {
+        getPluginConfig('SynTexWebHooks').then(async function(config) {
 
             if(config != null)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
             }
 
+            var devices = await DeviceManager.getDevices();
+
             Automations.SETUP(logger, config.cache_directory);
+            OfflineManager.SETUP(logger, devices);
 
             restart = false;
 
@@ -364,6 +366,11 @@ SynTexPlatform.prototype = {
                         else if(urlPath == '/time')
                         {
                             response.write('' + (new Date().getTime() / 1000 + 7201));
+                            response.end();
+                        }
+                        else if(urlPath == '/offline-devices')
+                        {
+                            response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
                             response.end();
                         }
                         else if(urlPath == '/check-device' && urlParams.mac)
