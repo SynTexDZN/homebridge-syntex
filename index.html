@@ -269,10 +269,10 @@
             }, 10);
             */
 
+            //document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
+
             device.children[1].innerHTML = 'OFFLINE';
             device.children[1].style.color = 'hsl(350, 95%, 60%)';
-
-            //document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML++;
 
             offline.push(ip);
         }
@@ -285,6 +285,12 @@
         if(offline.includes(ip))
         {
             offline.splice(offline.indexOf(ip), 1);
+
+            device.children[1].innerHTML = 'AKTIV';
+            device.children[1].style.color = 'hsl(170, 90%, 50%)';
+
+            // TODO : Check Activation
+
             /*
             document.getElementById(ip + '-offline').style.opacity = 0;
             device.style.opacity = 1;
