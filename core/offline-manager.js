@@ -1,12 +1,12 @@
 var request = require('request');
-var logger, offline = [];
+var logger, temp = [], offline = [];
 
 function checkConnection(url, mac)
 {
     var theRequest = {
         method : 'GET',
         url : url,
-        timeout : 60000
+        timeout : 30000
     };
 
     request(theRequest, (function(err, response, body)
@@ -22,14 +22,26 @@ function checkConnection(url, mac)
 
         if(err || statusCode != 200)
         {
-            if(!offline.includes(mac))
+            if(!temp.includes(mac))
+            {
+                temp.push(mac);
+            }
+            else if(!offline.includes(mac))
             {
                 offline.push(mac);
             }
         }
-        else if(offline.includes(mac))
+        else
         {
-            offline.splice(offline.indexOf(mac), 1);
+            if(!temp.includes(mac))
+            {
+                temp.splice(temp.indexOf(mac), 1);
+            }
+            
+            if(offline.includes(mac))
+            {
+                offline.splice(offline.indexOf(mac), 1);
+            }
         }
     }));
 }
@@ -47,7 +59,7 @@ function pingDevices(devices)
     setTimeout(function()
     {
         pingDevices(devices);
-    }, 60000);
+    }, 30000);
 }
 
 function getOfflineDevices()
