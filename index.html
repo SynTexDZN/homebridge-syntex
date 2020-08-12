@@ -136,12 +136,8 @@
 
             container.setAttribute('style', 'display: block; width: 100%');
 
-            console.log(device, container, button);
-
             container.appendChild(button);
             device.appendChild(container);
-
-            console.log(devices[i].type, device);
 
             document.getElementById(devices[i].type).appendChild(device);
             
@@ -211,7 +207,7 @@
 
     async function checkConnection()
     {
-        var offline = JSON.stringify(await fetchURL('/serverside/offline-devices', 10000));
+        var offline = JSON.parse(await fetchURL('/serverside/offline-devices', 10000));
 
         for(var i = 0; i < deviceElements.length; i++)
         {
@@ -306,7 +302,7 @@
     head.load('/js/query.js', function()
     {
         checkConnection();
-        
+
         for(var i = 0; i < deviceElements.length; i++)
         {
             //pingESP(deviceElements[i]);
