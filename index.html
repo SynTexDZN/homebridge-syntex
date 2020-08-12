@@ -116,6 +116,8 @@
 
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + devices[i].type + '.png">';
 
+            button.setAttribute('active', devices[i].active == 1 ? 'true' : 'false');
+
             if(devices[i].active == 1)
             {
                 button.innerHTML += '<div class="connection">AKTIV</div>';
@@ -286,8 +288,16 @@
         {
             offline.splice(offline.indexOf(ip), 1);
 
-            device.children[1].innerHTML = 'AKTIV';
-            device.children[1].style.color = 'hsl(170, 90%, 50%)';
+            if(device.getAttribute('active') == 'true')
+            {
+                device.children[1].innerHTML = 'AKTIV';
+                device.children[1].style.color = 'hsl(170, 90%, 50%)';
+            }
+            else
+            {
+                device.children[1].innerHTML = 'INAKTIV';
+                device.children[1].style.color = 'rgb(130, 130, 150)';
+            }
 
             // TODO : Check Activation
 
@@ -538,6 +548,8 @@
 
                     if(refresh == 'Success')
                     {
+                        button.setAttribute('active', this.active == 1 ? 'true' : 'false');
+
                         if(this.active == 1)
                         {
                             this.device.getElementsByClassName('connection')[0].style.color = '';
