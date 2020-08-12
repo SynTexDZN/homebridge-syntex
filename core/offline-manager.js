@@ -15,7 +15,10 @@ function checkConnection(url, mac)
 
         if(!err && statusCode == 200)
         {
-            offline.push(mac);
+            if(!offline.includes(mac))
+            {
+                offline.push(mac);
+            }
         }
         else if(offline.includes(mac))
         {
