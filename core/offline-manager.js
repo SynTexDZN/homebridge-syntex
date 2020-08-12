@@ -13,8 +13,6 @@ function checkConnection(ip)
     {
         var statusCode = response && response.statusCode ? response.statusCode : -1;
 
-        logger.debug(statusCode);
-
         if(err || statusCode != 200)
         {
             if(!temp.includes(ip))
