@@ -14,19 +14,19 @@
             </div>
             <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
                 <div class="widget">
-                    <button class="widget-left" disabled>Geräte</button>
+                    <button class="widget-left" disabled>GERÄTE</button>
                     <button class="widget-right gradient-blue" disabled>0</button>
                 </div>
                 <div class="widget">
-                    <button class="widget-left" disabled>Updates</button>
+                    <button class="widget-left" disabled>UPDATES</button>
                     <button class="widget-right gradient-purple" disabled>-</button>
                 </div>
                 <div class="widget">
-                    <button class="widget-left" disabled>Offline</button>
+                    <button class="widget-left" disabled>OFFLINE</button>
                     <button class="widget-right gradient-red" disabled>0</button>
                 </div>
                 <div class="widget">
-                    <button class="widget-left" disabled>Online</button>
+                    <button class="widget-left" disabled>ONLINE</button>
                     <button class="widget-right gradient-green" disabled>-</button>
                 </div>
             </div>
@@ -161,7 +161,7 @@
     else
     {
         document.getElementById('activate-all').setAttribute('switch', 0);
-        document.getElementById('activate-all').innerHTML = 'Aktiv: Unterschiedlich';
+        document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
     }
 
 </script>
@@ -284,21 +284,11 @@
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(device.getAttribute('version')))
         {  
-            var update = document.createElement('input');
-
-            update.setAttribute('type', 'button');
-            update.setAttribute('value', 'v' + newestVersion);
-            update.setAttribute('style', 'max-width: 175px; margin: 0; margin-left: 20px;');
-            update.setAttribute('ip', device.getAttribute('id'));
-            update.setAttribute('onclick', 'updateDevice(this)');
-            update.setAttribute('class', 'update');
-
             device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
             device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+
             device.setAttribute('class', 'device update');
             device.setAttribute('newest-version', newestVersion);
-
-            //device.parentElement.parentElement.appendChild(update);
 
             if(document.getElementById('update-all') == null)
             {
