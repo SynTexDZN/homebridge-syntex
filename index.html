@@ -376,12 +376,15 @@
                 */
 
                 device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
-                device.getElementsByClassName('connection')[0].innerHTML = 'VORBEREITEN';
+                device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
 
                 var update = await complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
 
                 if(update == null)
                 {
+                    device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                    device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+
                     await newTimeout(4000);
 
                     setOffline(device);
@@ -391,17 +394,17 @@
                     setOnline(device);
 
                     device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
-                    device.getElementsByClassName('connection')[0].innerHTML = 'INSTALLIEREN';
+                    device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
 
                     await newTimeout(3000);
-
+                    /*
                     var overlays = {
                         root : device,
                         id : device.getAttribute('id') + '-update-installation',
                         connectionError : { value : 'Keine Verbindung zum Gerät!', z : 4, style : 'text-align: left' }
                     };
-
-                    var update = await complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, overlays, false);
+                    */
+                    var update = await complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
 
                     if(update == device.getElementsByClassName('connection')[0].innerHTML.split('V')[1])
                     {
