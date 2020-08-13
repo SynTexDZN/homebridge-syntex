@@ -55,6 +55,16 @@
 
     var gridView = true;
 
+    if(localStorage.getItem('view') == 'list-view')
+    {
+        btn.value = 'List';
+    }
+    else if(localStorage.getItem('view') == 'grid-view')
+    {
+        btn.value = 'Grid';
+        document.getElementById('devices').className = 'grid-view';
+    }
+
     function switchView(btn)
     {
         if(btn.value == 'Grid')
@@ -63,6 +73,8 @@
             //btn.className = 'outline';
 
             document.getElementById('devices').className = '';
+
+            localStorage.setItem('view', 'list-view');
         }
         else if(btn.value == 'List')
         {
@@ -70,6 +82,8 @@
             //btn.className = 'white';
 
             document.getElementById('devices').className = 'grid-view';
+
+            localStorage.setItem('view', 'grid-view');
         }
     }
 
