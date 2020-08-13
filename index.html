@@ -291,6 +291,9 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('class', 'update');
 
+            device.getElementsByClassName('connection')[0].innerHTML = 'Update?';
+            device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+
             device.parentElement.parentElement.appendChild(update);
 
             if(document.getElementById('update-all') == null)
