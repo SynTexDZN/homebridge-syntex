@@ -245,12 +245,8 @@
 
     function setOnline(device)
     {
-        var ip = device.getAttribute('id');
-
-        if(offline.includes(ip))
+        if(!device.className.includes('update'))
         {
-            offline.splice(offline.indexOf(ip), 1);
-
             if(device.getAttribute('active') == 'true')
             {
                 device.children[1].innerHTML = 'AKTIV';
@@ -261,6 +257,11 @@
                 device.children[1].innerHTML = 'INAKTIV';
                 device.children[1].style.color = 'rgb(130, 130, 150)';
             }
+        }
+
+        if(offline.includes(device.getAttribute('id')))
+        {
+            offline.splice(offline.indexOf(device.getAttribute('id')), 1);
         }
     }
 
@@ -365,17 +366,6 @@
             if(!updating.includes(device.getAttribute('id')))
             {
                 updating.push(device.getAttribute('id'));
-
-                /*
-                var overlays = {
-                    root : device,
-                    id : btn.getAttribute('ip') + '-update',
-                    pending : { value : 'Bitte Warten ..', z : 2, style : 'text-align: left' },
-                    success : { value : 'Update wird Installiert ..', color : 'purple', remove : false, z : 3, style : 'text-align: left' },
-                    executeError : { value : 'Update Fehlgeschlagen!', z : 3, style : 'text-align: left' },
-                    connectionError : { value : 'Keine Verbindung zum Gerät!', z : 3, style : 'text-align: left' }
-                };
-                */
 
                 device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
                 device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
