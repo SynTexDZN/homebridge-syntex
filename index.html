@@ -38,7 +38,7 @@
                     <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
                 </div>
             </div>
-            <div class="main" style="display: fle; margin-top: 100px">
+            <div id="toolbar" class="main" style="display: fle; margin-top: 100px">
                 <input type="button" style="border-width: 3px" onclick="switchView(this)" value="Grid" class="white">
             </div>  
             <div id="devices" style=""></div>
@@ -320,7 +320,7 @@
                 update.setAttribute('value', 'Updates Installieren');
                 update.setAttribute('onclick', 'installAllUpdates(this)');
 
-                document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('devices'));
+                document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('toolbar'));
             }
 
             updateCount++;
