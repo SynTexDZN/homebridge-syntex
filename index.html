@@ -403,7 +403,7 @@
 
                     var update = await complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, overlays, false);
 
-                    if(update == device.getElementsByClassName('connection')[0].getAttribute('value').split('V')[1])
+                    if(update == device.getElementsByClassName('connection')[0].innerHTML.split('V')[1])
                     {
                         var responseOverlay = createOverlay(4, device.getAttribute('id') + '-update-installation-result', 'Update Erfolgreich!', 'green');
 
