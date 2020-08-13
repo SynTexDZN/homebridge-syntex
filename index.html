@@ -504,15 +504,18 @@
                     {
                         this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
 
-                        if(this.active == 1)
+                        if(!this.device.className.includes('update'))
                         {
-                            this.device.getElementsByClassName('connection')[0].style.color = '';
-                            this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
-                        }
-                        else
-                        {
-                            this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                            this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                            if(this.active == 1)
+                            {
+                                this.device.getElementsByClassName('connection')[0].style.color = '';
+                                this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                            }
+                            else
+                            {
+                                this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                            }
                         }
                     }
 
