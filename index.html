@@ -231,13 +231,11 @@
     
     function setOffline(device)
     {
-        var ip = device.getAttribute('id');
+        device.children[1].innerHTML = 'OFFLINE';
+        device.children[1].style.color = 'hsl(350, 95%, 60%)';
 
         if(!offline.includes(ip))
         {
-            device.children[1].innerHTML = 'OFFLINE';
-            device.children[1].style.color = 'hsl(350, 95%, 60%)';
-
             offline.push(ip);
         }
     }
@@ -408,7 +406,8 @@
 
                     if(update == device.getElementsByClassName('connection')[0].innerHTML.split('V')[1])
                     {
-                        var responseOverlay = createOverlay(4, device.getAttribute('id') + '-update-installation-result', 'Update Erfolgreich!', 'green');
+                        device.getElementsByClassName('connection')[0].style.color = '';
+                        device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
 
                         document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
 
@@ -416,20 +415,21 @@
                     }
                     else if(update != null)
                     {
-                        var responseOverlay = createOverlay(4, device.getAttribute('id') + '-update-installation-result', 'Update Fehlgeschlagen!', 'red');
+                        device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                        device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
                     }
-
+                    /*
                     responseOverlay.setAttribute('style', 'z-index: 4; text-align: left');
 
                     showOverlay(device, responseOverlay);
-
+                    */
                     await newTimeout(4000);
 
-                    removeOverlays(device, true);
+                    //removeOverlays(device, true);
 
                     if(update == null)
                     {
-                        await newTimeout(300);
+                        //await newTimeout(300);
 
                         setOffline(device);
                     }
