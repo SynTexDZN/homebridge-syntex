@@ -384,13 +384,12 @@
                 if(update == null)
                 {
                     device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-                    device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+                    device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
 
                     await newTimeout(4000);
 
-                    updating.splice(updating.indexOf(device.getAttribute('id')), 1);
-
-                    setOffline(device);
+                    device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
+                    device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                 }
                 else if(update == 'Success')
                 {
@@ -425,6 +424,11 @@
                         device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
                         device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
                     }
+                    else
+                    {
+                        device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                        device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+                    }
                     /*
                     responseOverlay.setAttribute('style', 'z-index: 4; text-align: left');
 
@@ -434,13 +438,12 @@
 
                     //removeOverlays(device, true);
 
-                    updating.splice(updating.indexOf(device.getAttribute('id')), 1);
-
-                    if(update == null)
+                    if(device.className.includes('update'))
                     {
                         //await newTimeout(300);
 
-                        setOffline(device);
+                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
+                        device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                     }
                 }
 
@@ -487,6 +490,8 @@
                         document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
                     }
                 }
+
+                updating.splice(updating.indexOf(device.getAttribute('id')), 1);
             }
             
             resolve(response);
