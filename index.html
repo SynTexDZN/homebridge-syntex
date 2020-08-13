@@ -231,7 +231,7 @@
     
     function setOffline(device)
     {
-        if(!updating.includes(device.getAttribute('id')))
+        if(!device.className.includes('update'))
         {
             device.children[1].innerHTML = 'OFFLINE';
             device.children[1].style.color = 'hsl(350, 95%, 60%)';
@@ -413,6 +413,8 @@
                     {
                         device.getElementsByClassName('connection')[0].style.color = '';
                         device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
+
+                        device.className = 'device';
 
                         document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
 
