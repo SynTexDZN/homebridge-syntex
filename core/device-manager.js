@@ -330,32 +330,33 @@ function addToConfig(obj, mac, ip, name, type, buttons)
             {
                 var platform = obj.platforms[i];
                 var eventButton = await checkEventButton(mac);
+                var index = platform.accessories.length;
 
-                platform.accessories[platform.accessories.length] = { mac : mac, name : name, services : type };
+                platform.accessories[index] = { mac : mac, name : name, services : type };
 
                 if(type == 'relais')
                 {
-                    platform.accessories[platform.accessories.length]['on_url'] = 'http://' + ip + '/switch?state=true';
-                    platform.accessories[platform.accessories.length]['on_method'] = 'GET';
-                    platform.accessories[platform.accessories.length]['off_url'] = 'http://' + ip + '/switch?state=false';
-                    platform.accessories[platform.accessories.length]['off_method'] = 'GET';
+                    platform.accessories[index]['on_url'] = 'http://' + ip + '/switch?state=true';
+                    platform.accessories[index]['on_method'] = 'GET';
+                    platform.accessories[index]['off_url'] = 'http://' + ip + '/switch?state=false';
+                    platform.accessories[index]['off_method'] = 'GET';
                 }
                 else if(type == 'rgb' || type == 'rgbw')
                 {
-                    platform.accessories[platform.accessories.length]['url'] = 'http://' + ip + '/color';
+                    platform.accessories[index]['url'] = 'http://' + ip + '/color';
                 }
                 else if(type == 'climate')
                 {
-                    platform.accessories[platform.accessories.length]['services'] = ['temperature', 'humidity'];
+                    platform.accessories[index]['services'] = ['temperature', 'humidity'];
                 }
                 else if(type == 'weather')
                 {
-                    platform.accessories[platform.accessories.length]['services'] = ['rain', 'light'];
+                    platform.accessories[index]['services'] = ['rain', 'light'];
                 }
                 
                 if((type == 'weather' || type == 'climate' || type == 'statelessswitch') && !eventButton)
                 {
-                    platform.accessories[platform.accessories.length]['buttons'] = buttons;
+                    platform.accessories[index]['buttons'] = buttons;
                 }
             }
         }
