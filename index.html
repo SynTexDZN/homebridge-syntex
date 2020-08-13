@@ -291,7 +291,7 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('class', 'update');
 
-            device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE v' + newestVersion;
+            device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
             device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
 
             //device.parentElement.parentElement.appendChild(update);
@@ -364,7 +364,7 @@
                 updating.push(btn.getAttribute('ip'));
 
                 var device = document.getElementById(btn.getAttribute('ip'));
-
+                /*
                 var overlays = {
                     root : device,
                     id : btn.getAttribute('ip') + '-update',
@@ -373,8 +373,12 @@
                     executeError : { value : 'Update Fehlgeschlagen!', z : 3, style : 'text-align: left' },
                     connectionError : { value : 'Keine Verbindung zum Gerät!', z : 3, style : 'text-align: left' }
                 };
+                */
 
-                var update = await complexFetch('http://' + btn.getAttribute('ip') + '/update', 10000, 3, overlays, false);
+                device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
+                device.getElementsByClassName('connection')[0].innerHTML = 'VORBEREITEN';
+
+                var update = await complexFetch('http://' + btn.getAttribute('ip') + '/update', 10000, 3, {}, false);
 
                 if(update == null)
                 {
@@ -385,6 +389,9 @@
                 else if(update == 'Success')
                 {
                     setOnline(device);
+
+                    device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
+                    device.getElementsByClassName('connection')[0].innerHTML = 'INSTALLIEREN';
 
                     await newTimeout(3000);
 
