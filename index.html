@@ -234,9 +234,9 @@
         device.children[1].innerHTML = 'OFFLINE';
         device.children[1].style.color = 'hsl(350, 95%, 60%)';
 
-        if(!offline.includes(ip))
+        if(!offline.includes(device.getAttribute('id')))
         {
-            offline.push(ip);
+            offline.push(device.getAttribute('id'));
         }
     }
 
