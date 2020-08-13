@@ -400,16 +400,10 @@
                     device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
 
                     await newTimeout(3000);
-                    /*
-                    var overlays = {
-                        root : device,
-                        id : device.getAttribute('id') + '-update-installation',
-                        connectionError : { value : 'Keine Verbindung zum Gerät!', z : 4, style : 'text-align: left' }
-                    };
-                    */
+                    
                     var update = await complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
 
-                    if(update == device.getElementsByClassName('connection')[0].innerHTML.split('V')[1])
+                    if(update == device.getAttribute('newest-version'))
                     {
                         device.getElementsByClassName('connection')[0].style.color = '';
                         device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
@@ -430,47 +424,35 @@
                         device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
                         device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
                     }
-                    /*
-                    responseOverlay.setAttribute('style', 'z-index: 4; text-align: left');
 
-                    showOverlay(device, responseOverlay);
-                    */
                     await newTimeout(4000);
-
-                    //removeOverlays(device, true);
 
                     if(device.className.includes('update'))
                     {
-                        //await newTimeout(300);
-
                         device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
                         device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                     }
+                    else if(device.getAttribute('active') == 'true')
+                    {
+                        this.device.getElementsByClassName('connection')[0].style.color = '';
+                        this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                    }
+                    else if(device.getAttribute('active') == 'false')
+                    {
+                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                        this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                    }
                 }
 
-                if(response == true)
+                if(response == true && updateCount == 0)
                 {
-                    //btn.style.opacity = 0;
-
-                    if(updateCount == 0)
-                    {
-                        document.getElementById('update-all').style.opacity = 0;
-                    }
+                    document.getElementById('update-all').style.opacity = 0;
                 }
 
                 await newTimeout(300);
 
                 if(response == true)
                 {
-                    /*
-                    btn.style.setProperty('width', '0', 'important');
-                    btn.style.paddingLeft = 0;
-                    btn.style.paddingRight = 0;
-                    btn.style.marginLeft = 0;
-                    btn.style.marginRight = 0;
-                    btn.style.borderLeftWidth = 0;
-                    btn.style.borderRightWidth = 0;
-                    */
                     if(updateCount == 0)
                     {
                         document.getElementById('update-all').style.setProperty('height', '0', 'important');
@@ -483,8 +465,6 @@
                     }
 
                     await newTimeout(300);
-
-                    //btn.parentElement.removeChild(btn);
 
                     if(updateCount == 0)
                     {
