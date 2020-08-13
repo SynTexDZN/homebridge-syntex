@@ -295,6 +295,7 @@
             device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
             device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
             device.setAttribute('class', 'device update');
+            device.setAttribute('newest-version', newestVersion);
 
             //device.parentElement.parentElement.appendChild(update);
 
@@ -388,7 +389,7 @@
 
                     await newTimeout(4000);
 
-                    device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
+                    device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
                     device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                 }
                 else if(update == 'Success')
@@ -442,7 +443,7 @@
                     {
                         //await newTimeout(300);
 
-                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
+                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
                         device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                     }
                 }
