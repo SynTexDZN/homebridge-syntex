@@ -38,7 +38,11 @@
                     <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
                 </div>
             </div>
-            <div id="devices" style="margin-top: 100px"></div>
+            <div id="devices" style="margin-top: 100px">
+                <div style="display: flex">
+                    <input type="button" style="border-width: 3px" onclick="switchView(this)" value="Grid" class="white">
+                </div>    
+            </div>
         </div>
         <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
             <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href=window.location.protocol +  '//' + window.location.hostname+':8000/settings.php'">
@@ -50,6 +54,24 @@
 <script>
 
     var gridView = true;
+
+    function switchView(btn)
+    {
+        if(btn.value == 'Grid')
+        {
+            btn.value = 'List';
+            btn.className = 'outline';
+
+            document.getElementById('devices').className = '';
+        }
+        else if(btn.value == 'List')
+        {
+            btn.value = 'Grid';
+            btn.className = 'white';
+
+            document.getElementById('devices').className = 'grid-view';
+        }
+    }
 
     var devices = JSON.parse('<%devices%>');
     var offline = [], restarting = [], updating = [];
