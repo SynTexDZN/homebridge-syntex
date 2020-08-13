@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
-                <button onclick="switchView(this)" class="gradient-blue-purple" style="width: 300px!important"><img src="/img/list.png"></button>
+                <button onclick="switchView(this)" class="gradient-blue-purple" style="width: 50px!important; padding: 10px" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"></button>
                 <input type="button" onclick="" value="Alle Typen" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices"></div>
@@ -56,6 +56,7 @@
     if(localStorage.getItem('view') == 'grid-view')
     {
         document.getElementById('toolbar').children[0].children[0].src = '/img/grid.png';
+        document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
         document.getElementById('devices').className = 'grid-view';
     }
 
