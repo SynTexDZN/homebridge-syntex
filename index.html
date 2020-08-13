@@ -38,9 +38,9 @@
                     <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
                 </div>
             </div>
-            <div id="toolbar" class="main" style="display: fle; margin-top: 100px">
-                <input type="button" style="border-width: 3px" onclick="switchView(this)" value="Grid" class="gradient-blue-green">
-                <input type="button" onclick="" value="Alle Typen" class="white">
+            <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
+                <input type="button" onclick="switchView(this)" value="Grid" class="gradient-blue-green">
+                <input type="button" onclick="" value="Alle Typen" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices"></div>
         </div>
@@ -60,14 +60,14 @@
         if(btn.value == 'Grid')
         {
             btn.value = 'List';
-            btn.className = 'outline';
+            //btn.className = 'outline';
 
             document.getElementById('devices').className = '';
         }
         else if(btn.value == 'List')
         {
             btn.value = 'Grid';
-            btn.className = 'white';
+            //btn.className = 'white';
 
             document.getElementById('devices').className = 'grid-view';
         }
