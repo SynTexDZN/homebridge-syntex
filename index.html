@@ -231,8 +231,11 @@
     
     function setOffline(device)
     {
-        device.children[1].innerHTML = 'OFFLINE';
-        device.children[1].style.color = 'hsl(350, 95%, 60%)';
+        if(!updating.includes(device.getAttribute('id')))
+        {
+            device.children[1].innerHTML = 'OFFLINE';
+            device.children[1].style.color = 'hsl(350, 95%, 60%)';
+        }
 
         if(!offline.includes(device.getAttribute('id')))
         {
@@ -385,6 +388,8 @@
 
                     await newTimeout(4000);
 
+                    updating.splice(updating.indexOf(device.getAttribute('id')), 1);
+
                     setOffline(device);
                 }
                 else if(update == 'Success')
@@ -426,6 +431,8 @@
                     await newTimeout(4000);
 
                     //removeOverlays(device, true);
+
+                    updating.splice(updating.indexOf(device.getAttribute('id')), 1);
 
                     if(update == null)
                     {
@@ -478,8 +485,6 @@
                         document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
                     }
                 }
-
-                updating.splice(updating.indexOf(device.getAttribute('id')), 1);
             }
             
             resolve(response);
