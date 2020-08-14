@@ -278,9 +278,11 @@
         }
     }
 
+    var activity = [];
+
     async function loadActivity()
     {
-        var activity = JSON.parse(await complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+        activity = JSON.parse(await complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
 
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
