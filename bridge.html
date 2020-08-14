@@ -34,16 +34,6 @@
 </html>
 <script>
 
-    complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-        if(automations != null && automations.length > 0)
-        {
-            document.getElementById("a").style.display = "";
-        }
-    });
-
-    //test
-
     var bridgeIP = '<%ip%>';
     var bridgeVersion = '<%version%>';
     var webhooksVersion = '', newestBVersion = '', newestWVersion = '';
@@ -116,6 +106,14 @@
             {
                 document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
                 document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+            }
+        });
+
+        complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+            if(automations != null && automations.length > 0)
+            {
+                document.getElementById("a").style.display = "";
             }
         });
     });

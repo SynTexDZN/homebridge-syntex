@@ -62,16 +62,6 @@
 </html>
 <script>
 
-    complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-        if(automations != null && automations.length > 0)
-        {
-            document.getElementById("a").style.display = "";
-        }
-    });
-
-    //test
-
     var bLogJSON = [];
     var wLogJSON = [];
     var logJSON = {};
@@ -139,6 +129,14 @@
             document.getElementById('debug-widget').style.display = '';
             document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
         }
+
+        complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+            if(automations != null && automations.length > 0)
+            {
+                document.getElementById("a").style.display = "";
+            }
+        });
     });
 
     async function clearSearch()
