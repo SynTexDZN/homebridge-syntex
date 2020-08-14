@@ -62,14 +62,13 @@
 </html>
 <script>
 
-    var a = [];
+    complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
 
-    a = JSON.parse(await complexFetch('/serverside/automations', 10000, 3, {}, false));
-
-    if(a.length != 0)
-    {
-        document.getElementById("a").style.display = "";
-    }
+        if(automations != null && automations.length > 0)
+        {
+            document.getElementById("a").style.display = "";
+        }
+    });
 
     var bLogJSON = [];
     var wLogJSON = [];
