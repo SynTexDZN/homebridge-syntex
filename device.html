@@ -773,14 +773,15 @@
         var height = canvas.offsetHeight - padding * 2 - 2;
         var width = canvas.offsetWidth - padding * 2;
 
-        ctx.lineCap = 'butt';
+        ctx.lineCap = 'round';
         ctx.lineWidth = 1.5;
+        ctx.setLineDash([20, 10]);
 
         console.log(data);
 
         for(var i = 0; i < data.length; i++)
         {
-            ctx.strokeStyle = 'red';
+            ctx.strokeStyle = 'rgb(80, 80, 90)';
 
             ctx.beginPath();
             ctx.moveTo(0, height - data[i] * height / 100  + padding);
