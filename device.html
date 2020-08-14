@@ -70,11 +70,11 @@
         light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
     };
 
-    var values = {}, orginal = {};;
+    var values = {}, orginal = {}, typeCounter = {};
     var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
     var padding = 50;
     var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-    var typeCounter = {};
+    var automations = [];
 
     for(var i = 0; i < counter; i++)
     {
@@ -211,8 +211,10 @@
         }
     }
 
-    head.load('/js/query.js', function()
+    head.load('/js/query.js', async function()
     {
+        automations = await complexFetch('/serverside/automations', 10000, 3, {}, false);
+
         loadActivity();
 
         if(device.ip != undefined)
@@ -613,6 +615,21 @@
             drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
             drawGraph(canvas, v, [color, color], false);
         }
+
+        var w = [];
+
+        for(var i = 0; i < automations.length; i++)
+        {
+            for(var j = 0; j < automations.trigger.length; j++)
+            {
+                if(automations[i].trigger[j].type == type)
+                {
+                    w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
+                }
+            }
+        }
+
+        drawEvents(canvas, w);
     }
 
     function drawGraph(canvas, data, gradients, points)
@@ -747,6 +764,30 @@
                 ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
                 ctx.stroke();
             }
+        }
+    }
+
+    function drawEvents(canvas, data)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+
+        console.log(data);
+
+        for(var i = 0; i < data.length; i++)
+        {
+            ctx.strokeStyle = 'red';
+
+            ctx.beginPath();
+            //ctx.moveTo(0, padding + (height / unterteilungen) * i);
+            //ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+            ctx.stroke();
+
+            //ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
         }
     }
 
