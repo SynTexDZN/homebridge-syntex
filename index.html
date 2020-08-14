@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
-                <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"></button>
+                <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/grid.png"></button>
                 <input type="button" onclick="" value="Alle Geräte" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices"></div>
@@ -55,7 +55,8 @@
 
     if(localStorage.getItem('view') == 'grid-view')
     {
-        document.getElementById('toolbar').children[0].children[0].src = '/img/grid.png';
+        document.getElementById('toolbar').children[0].children[0].style.display = 'none';
+        document.getElementById('toolbar').children[0].children[1].style.display = '';
         document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
         document.getElementById('devices').className = 'grid-view';
     }
@@ -64,7 +65,8 @@
     {
         if(btn.getAttribute('view') == 'grid')
         {
-            btn.children[0].src = '/img/list.png';
+            btn.children[0].style.display = '';
+            btn.children[1].style.display = 'none';
 
             document.getElementById('devices').className = '';
 
@@ -73,7 +75,8 @@
         }
         else if(btn.getAttribute('view') == 'list')
         {
-            btn.children[0].src = '/img/grid.png';
+            btn.children[0].style.display = 'none';
+            btn.children[1].style.display = '';
 
             document.getElementById('devices').className = 'grid-view';
 
