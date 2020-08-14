@@ -622,7 +622,7 @@
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].type == type)
+                if(automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
                 {
                     w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
                 }
@@ -783,8 +783,8 @@
             ctx.strokeStyle = 'red';
 
             ctx.beginPath();
-            //ctx.moveTo(0, padding + (height / unterteilungen) * i);
-            //ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+            ctx.moveTo(0, height - data[i] * height / 100  + padding);
+            ctx.lineTo(width + padding * 2, height - data[i] * height / 100  + padding)
             ctx.stroke();
 
             //ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
