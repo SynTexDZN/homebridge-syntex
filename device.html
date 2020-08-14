@@ -775,13 +775,13 @@
 
         ctx.lineCap = 'round';
         ctx.lineWidth = 1.5;
-        ctx.setLineDash([20, 10]);
+        ctx.setLineDash([10, 10]);
 
         console.log(data);
 
         for(var i = 0; i < data.length; i++)
         {
-            ctx.strokeStyle = 'rgb(80, 80, 90)';
+            ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
 
             ctx.beginPath();
             ctx.moveTo(0, height - data[i] * height / 100  + padding);
