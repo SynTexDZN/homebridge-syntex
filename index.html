@@ -114,19 +114,29 @@
                 title.setAttribute('style', 'width: fit-content');
                 title.innerHTML = '• ' + devices[i].type + ' •';
                 
-                document.getElementById('devices').appendChild(title);
+                var typeDevices = document.createElement('div');
 
-                var typeContainer = document.createElement('div');
-
-                typeContainer.setAttribute('id', devices[i].type);
-                typeContainer.setAttribute('style', 'display: grid; grid-gap: 20px');
-                typeContainer.setAttribute('class', 'container');
+                typeDevices.setAttribute('id', devices[i].type);
+                typeDevices.setAttribute('style', 'display: grid; grid-gap: 20px');
+                typeDevices.setAttribute('class', 'container');
                 /*
                 if(numOfType == 1)
                 {
-                    typeContainer.style.gridTemplateColumns = '100%';
+                    typeDevices.style.gridTemplateColumns = '100%';
                 }
                 */
+                var typeContainer = document.createElement('div');
+
+                typeDevices.setAttribute('style', '');
+                typeDevices.setAttribute('class', 'type-container');
+                /*
+                if(numOfType == 1)
+                {
+                    typeDevices.style.gridTemplateColumns = '100%';
+                }
+                */
+                typeContainer.appendChild(title);
+                typeContainer.appendChild(typeDevices);
                 document.getElementById('devices').appendChild(typeContainer);
             }
 
