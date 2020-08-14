@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
-                <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/grid.png"></button>
+                <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
                 <input type="button" onclick="" value="Alle Geräte" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices"></div>
@@ -102,10 +102,6 @@
     {
         if(devices[i].id != 'Bridge')
         {
-            var device = document.createElement('div');
-
-            device.setAttribute('style', 'display: flex');
-
             if(devices[i].ip != undefined && devices[i].active != undefined)
             {
                 activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
@@ -162,14 +158,7 @@
             button.setAttribute('onclick', "window.location.href='" + url + "'");
             button.setAttribute('name', devices[i].name);
 
-            var container = document.createElement('div');
-
-            container.setAttribute('style', 'display: block; width: 100%');
-
-            container.appendChild(button);
-            device.appendChild(container);
-
-            document.getElementById(devices[i].type).appendChild(device);
+            document.getElementById(devices[i].type).appendChild(button);
             
             temp = devices[i].type;
         }
