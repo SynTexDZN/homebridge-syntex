@@ -329,19 +329,18 @@ function addToConfig(obj, mac, ip, name, type, buttons)
             if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
                 var platform = obj.platforms[i];
-                var eventButton = await checkEventButton(mac);
                 var index = platform.accessories.length;
 
                 platform.accessories[index] = { mac : mac, name : name, services : type };
 
-                if(type == 'relais')
+                if(type.includes('relais'))
                 {
                     platform.accessories[index]['on_url'] = 'http://' + ip + '/switch?state=true';
                     platform.accessories[index]['on_method'] = 'GET';
                     platform.accessories[index]['off_url'] = 'http://' + ip + '/switch?state=false';
                     platform.accessories[index]['off_method'] = 'GET';
                 }
-                else if(type == 'rgb' || type == 'rgbw')
+                else if(type.includes('rgb') || type.includes('rgbw'))
                 {
                     platform.accessories[index]['url'] = 'http://' + ip + '/color';
                 }
@@ -354,7 +353,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                     platform.accessories[index]['services'] = ['rain', 'light'];
                 }
                 
-                if((type == 'weather' || type == 'climate' || type == 'statelessswitch') && !eventButton)
+                if(type == 'statelessswitch')
                 {
                     platform.accessories[index]['buttons'] = buttons;
                 }
