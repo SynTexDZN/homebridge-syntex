@@ -213,7 +213,7 @@
 
     head.load('/js/query.js', async function()
     {
-        automations = await complexFetch('/serverside/automations', 10000, 3, {}, false);
+        automations = JSON.parse(await complexFetch('/serverside/automations', 10000, 3, {}, false));
 
         loadActivity();
 
