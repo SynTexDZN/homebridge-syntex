@@ -21,6 +21,36 @@
 </html>
 <script>
 
+    var data = {
+        motion: {
+            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        contact: {
+            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+        },
+        relais: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        switch: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        rain: {
+            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+        },
+        statelessswitch: {
+            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+    };
+
     var automations = [];
 
     head.load('/js/query.js', async function()
@@ -41,7 +71,7 @@
 
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                panel.innerHTML += ' • ' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+                panel.innerHTML += ' • <img src="/img/accessory/' + automations[i].trigger[j].type + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
             }
 
             panel.innerHTML += '<br>Ausführen';
