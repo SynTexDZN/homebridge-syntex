@@ -87,11 +87,17 @@
             }
 
             var panel = document.createElement('button');
+            var column = document.createElement('div');
+            var category = document.createElement('div');
 
-            panel.innerHTML = '<div>Auslöser';
+            category.innerHTML = 'Auslöser';
+            category.style.width = '300px';
+
+            column.appendChild(category);
 
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
+                var row = document.createElement('div');
                 var src = automations[i].trigger[j].type;
 
                 if(automations[i].trigger[j].type == 'temperature')
@@ -99,8 +105,12 @@
                     src = 'climate';
                 }
 
-                panel.innerHTML += ' • <img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+            
+                column.appendChild(row);
             }
+
+            panel.appendChild(column);
 
             panel.innerHTML += '</div><div>Ausführen';
 
