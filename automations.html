@@ -73,11 +73,7 @@
             {
                 var src = automations[i].trigger[j].type;
 
-                if(automations[i].trigger[j].type == 'light' || automations[i].trigger[j].type == 'rain')
-                {
-                    src = 'weather';
-                }
-                else if(automations[i].trigger[j].type == 'temperature' || automations[i].trigger[j].type == 'humidity')
+                if(automations[i].trigger[j].type == 'temperature')
                 {
                     src = 'climate';
                 }
