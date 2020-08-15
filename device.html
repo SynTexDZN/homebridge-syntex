@@ -383,7 +383,7 @@
             type = type.type;
         }
 
-        var v = [];
+        var v = [], a = [];
         /*
         values = {};
 
@@ -442,7 +442,7 @@
 
             for(var k = unterteilungen; k >= 0; k--)
             {
-                var x = [], sum = 0;
+                var x = [], sum = 0, triggered = false;
 
                 for(const j in values[type + c])
                 {
@@ -455,6 +455,11 @@
                             value = (values[type + c][j].value - min) / (max - min) * 100;
 
                             sum += parseFloat(value);
+                        }
+
+                        if(JSON.stringify(activity.success).includes(values[type + c][j].time))
+                        {
+                            triggered = true;
                         }
 
                         x.push(value);
@@ -497,6 +502,11 @@
                     {
                         v[unterteilungen - k - 1] = 0;
                     }
+                }
+
+                if(triggered)
+                {
+                    x[unterteilungen - k - 1] = v[unterteilungen - k - 1];
                 }
             }
             /*
@@ -631,7 +641,8 @@
             }
         }
 
-        drawEvents(canvas, w);
+        drawEvents(canvas, w, v, a);
+        drawGraph(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
     }
 
     function drawGraph(canvas, data, gradients, points)
@@ -769,7 +780,7 @@
         }
     }
 
-    function drawEvents(canvas, data)
+    function drawEvents(canvas, data, v, a)
     {
         var ctx = canvas.getContext('2d');
         var height = canvas.offsetHeight - padding * 2 - 2;
@@ -779,7 +790,7 @@
         ctx.lineWidth = 1.5;
         ctx.setLineDash([10, 15]);
 
-        console.log(data);
+        console.log(data, v, a);
 
         for(var i = 0; i < data.length; i++)
         {
