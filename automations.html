@@ -110,7 +110,10 @@
                     src = 'climate';
                 }
 
-                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: -16px; margin-bottom: -20px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+                if(automations[i].trigger[j].name && automations[i].trigger[j].operation && automations[i].trigger[j].value)
+                {
+                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: -16px; margin-bottom: -20px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+                }
             
                 row.style.padding = '15px 18px 3px 18px';
                 row.style.wordBreak = 'break-all';
@@ -138,16 +141,16 @@
                 for(var j = 0; j < automations[i].condition.length; j++)
                 {
                     var row = document.createElement('div');
-                    var src = automations[i].trigger[j].type;
+                    var src = automations[i].condition[j].type;
 
-                    if(automations[i].trigger[j].type == 'temperature')
+                    if(automations[i].condition[j].type == 'temperature')
                     {
                         src = 'climate';
                     }
 
                     if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
                     {
-                        row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + automations[i].condition[j].value;
+                        row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: -16px; margin-bottom: -20px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + automations[i].condition[j].value;
                     }
 
                     row.style.padding = '5px 18px 13px 18px';
@@ -180,9 +183,9 @@
             for(var j = 0; j < automations[i].result.length; j++)
             {
                 var row = document.createElement('div');
-                var src = automations[i].trigger[j].type;
+                var src = automations[i].result[j].type;
 
-                if(automations[i].trigger[j].type == 'temperature')
+                if(automations[i].result[j].type == 'temperature')
                 {
                     src = 'climate';
                 }
