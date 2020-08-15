@@ -539,6 +539,13 @@ SynTexPlatform.prototype = {
                                         obj.push({ name : 'SynTex Tuya' });
                                     }
 
+                                    var t = getPluginConfig('MagicHome-Platform');
+
+                                    if(t != null)
+                                    {
+                                        obj.push({ name : 'MagicHome Platform' });
+                                    }
+
                                     response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));
                                     response.end();
                                 }

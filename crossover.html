@@ -34,4 +34,14 @@
 
     var crossoverPlugins = JSON.parse('<%crossoverPlugins%>');
 
+    if(crossoverPlugins.length > 0)
+    {
+        document.getElementById('crossover-plugins').innerHTML = '';
+
+        for(const i in crossoverPlugins)
+        {
+            document.getElementById('crossover-plugins').innerHTML += '<p>' + crossoverPlugins[i].name + '</p>';
+        }
+    }
+
 </script>
