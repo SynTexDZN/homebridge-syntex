@@ -64,10 +64,26 @@
     {
         for(var i = 0; i < automations.length; i++)
         {
-            var panel = document.createElement('button');
+            var title = document.createElement('h2');
 
-            panel.innerHTML = automations[i].id + ' • ' + automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert') + '<br>';
-            panel.innerHTML += 'Auslöser';
+            title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
+            title.innerHTML = automations[i].id + ' • ' + automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert');
+
+            var titleContainer = document.createElement('div');
+
+            titleContainer.setAttribute('class', 'title-container');
+
+            titleContainer.appendChild(title);
+
+            var typeContainer = document.createElement('button');
+
+            typeContainer.setAttribute('style', '');
+            typeContainer.setAttribute('class', 'type-container');
+            typeContainer.appendChild(titleContainer);
+
+            var panel = document.createElement('div');
+
+            panel.innerHTML = 'Auslöser';
 
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
@@ -103,7 +119,8 @@
                 panel.style.marginBottom = '20px';
             }
 
-            document.getElementById('automations').appendChild(panel);
+            typeContainer.appendChild(panel);
+            document.getElementById('automations').appendChild(typeContainer);
         }
     }
 
