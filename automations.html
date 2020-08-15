@@ -95,6 +95,7 @@
             category.innerHTML = 'Auslöser';
             category.style.width = '150px';
             category.style.background = 'rgb(80, 80, 90)';
+            category.style.padding = '10px 15px';
 
             column.appendChild(category);
 
@@ -125,6 +126,7 @@
             category.innerHTML = 'Ausführen';
             category.style.width = '150px';
             category.style.background = 'rgb(80, 80, 90)';
+            category.style.padding = '10px 15px';
 
             column.appendChild(category);
 
@@ -134,11 +136,11 @@
 
                 if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
                 {
-                    row.innerHTML = ' • ' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + automations[i].result[j].value;
+                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + automations[i].result[j].value;
                 }
                 else if(automations[i].result[j].url)
                 {
-                    row.innerHTML = " • '" + automations[i].result[j].url + "'";
+                    row.innerHTML = "URL: '" + automations[i].result[j].url + "'";
                 }
 
                 row.style.padding = '10px 15px';
