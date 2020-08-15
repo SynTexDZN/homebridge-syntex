@@ -94,7 +94,7 @@
 
             category.innerHTML = 'Auslöser';
             category.style.width = '150px';
-            category.style.background = '150px';
+            category.style.background = 'rgb(80, 80, 90)';
 
             column.appendChild(category);
 
@@ -110,28 +110,45 @@
 
                 row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
             
+                row.style.padding = '10px 15px';
+
                 column.appendChild(row);
             }
 
             panel.appendChild(column);
 
-            panel.innerHTML += '</div><div>Ausführen';
+            var column = document.createElement('div');
+            var category = document.createElement('div');
+
+            column.style.display = 'flex';
+
+            category.innerHTML = 'Ausführen';
+            category.style.width = '150px';
+            category.style.background = 'rgb(80, 80, 90)';
+
+            column.appendChild(category);
 
             for(var j = 0; j < automations[i].result.length; j++)
             {
+                var row = document.createElement('div');
+
                 if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
                 {
-                    panel.innerHTML += ' • ' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + automations[i].result[j].value;
+                    row.innerHTML = ' • ' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + automations[i].result[j].value;
                 }
                 else if(automations[i].result[j].url)
                 {
-                    panel.innerHTML += " • '" + automations[i].result[j].url + "'";
+                    row.innerHTML = " • '" + automations[i].result[j].url + "'";
                 }
+
+                row.style.padding = '10px 15px';
+
+                column.appendChild(row);
             }
 
-            panel.innerHTML += '</div>';
+            panel.appendChild(column);
 
-            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230)');
+            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden');
             
             typeContainer.appendChild(panel);
             document.getElementById('automations').appendChild(typeContainer);
