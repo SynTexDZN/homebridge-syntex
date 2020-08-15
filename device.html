@@ -645,7 +645,6 @@
             }
         }
 
-        drawGraph(canvas, a, ['red', 'red'], true);
         drawEvents(canvas, w, v, a);
     }
 
@@ -790,11 +789,24 @@
         var height = canvas.offsetHeight - padding * 2 - 2;
         var width = canvas.offsetWidth - padding * 2;
 
+        console.log(data, v, a);
+
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
-        ctx.setLineDash([10, 15]);
 
-        console.log(data, v, a);
+        for(var i = 1; i < a.length; i++)
+        {
+            if(points && a[i] != 0)
+            {
+                ctx.fillStyle = 'rgba(80, 80, 90, 0.5)';
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        ctx.setLineDash([10, 15]);
 
         for(var i = 0; i < data.length; i++)
         {
