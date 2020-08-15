@@ -143,7 +143,7 @@
                 {
                     var row = document.createElement('div');
                     var src = automations[i].condition[j].type;
-                    var val = automations[i].condition[j].value == 'true' ? data[automations[i].trigger[j].type].active.text : automations[i].condition[j].value == 'false' ? data[automations[i].trigger[j].type].inactive.text : automations[i].condition[j].value;
+                    var val = automations[i].condition[j].value == 'true' ? data[automations[i].condition[j].type].active.text : automations[i].condition[j].value == 'false' ? data[automations[i].condition[j].type].inactive.text : automations[i].condition[j].value;
 
                     if(automations[i].condition[j].type == 'temperature')
                     {
@@ -186,7 +186,7 @@
             {
                 var row = document.createElement('div');
                 var src = automations[i].result[j].type;
-                var val = automations[i].result[j].value == 'true' ? data[automations[i].trigger[j].type].active.text : automations[i].result[j].value == 'false' ? data[automations[i].trigger[j].type].inactive.text : automations[i].result[j].value;
+                var val = automations[i].result[j].value == 'true' ? data[automations[i].result[j].type].active.text : automations[i].result[j].value == 'false' ? data[automations[i].result[j].type].inactive.text : automations[i].result[j].value;
 
                 if(automations[i].result[j].type == 'temperature')
                 {
