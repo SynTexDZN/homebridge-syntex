@@ -529,6 +529,19 @@ SynTexPlatform.prototype = {
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();
                                 }
+                                else if(urlPath.startsWith('/crossover'))
+                                {
+                                    var obj = [];
+                                    var t = getPluginConfig('SynTexTuya');
+
+                                    if(t != null)
+                                    {
+                                        obj.push({ name : 'SynTex Tuya' });
+                                    }
+
+                                    response.write(HTMLQuery.sendValue(head + data, { 'crossover-plugins' : obj }));
+                                    response.end();
+                                }
                                 else if(path.parse(relPath).ext == '.html')
                                 {
                                     response.write(head + data);
