@@ -561,7 +561,7 @@
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
+                if(automations[i].trigger[j].mac == device.id && automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
                 {
                     w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
                 }
