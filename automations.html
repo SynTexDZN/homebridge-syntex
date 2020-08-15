@@ -88,7 +88,7 @@
 
             var panel = document.createElement('button');
 
-            panel.innerHTML = 'Auslöser';
+            panel.innerHTML = '<div>Auslöser';
 
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
@@ -102,7 +102,7 @@
                 panel.innerHTML += ' • <img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
             }
 
-            panel.innerHTML += '<br>Ausführen';
+            panel.innerHTML += '</div><div>Ausführen';
 
             for(var j = 0; j < automations[i].result.length; j++)
             {
@@ -115,6 +115,8 @@
                     panel.innerHTML += " • '" + automations[i].result[j].url + "'";
                 }
             }
+
+            panel.innerHTML += '</div>';
 
             panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 15px 20px; pointer-events: none; height: auto; color: rgb(220, 220, 230)');
             
