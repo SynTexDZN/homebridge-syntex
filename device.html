@@ -554,7 +554,21 @@
             canvas.parentElement.appendChild(label);
         }
 
+        var w = [];
+
+        for(var i = 0; i < automations.length; i++)
+        {
+            for(var j = 0; j < automations[i].trigger.length; j++)
+            {
+                if(automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
+                {
+                    w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
+                }
+            }
+        }
+
         drawGrid(canvas, [], 10);
+        drawAutomations(canvas, w);
 
         if(type == 'temperature')
         {
@@ -585,6 +599,7 @@
 
             drawFill(canvas, v, [maxClr, minClr], 0);
             drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+            drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
         }
         else if(type == 'humidity')
         {
@@ -620,32 +635,20 @@
 
             drawFill(canvas, v, [maxClr, minClr], 0);
             drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+            drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
         }
         else if(type == 'light')
         {
             drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
             drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+            drawEvents(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
         }
         else
         {
             drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
             drawGraph(canvas, v, [color, color], false);
+            drawEvents(canvas, a, [color, color]);
         }
-
-        var w = [];
-
-        for(var i = 0; i < automations.length; i++)
-        {
-            for(var j = 0; j < automations[i].trigger.length; j++)
-            {
-                if(automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
-                {
-                    w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
-                }
-            }
-        }
-
-        drawEvents(canvas, w, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
     }
 
     function drawGraph(canvas, data, gradients, points)
@@ -783,29 +786,16 @@
         }
     }
 
-    function drawEvents(canvas, data, a, gradients)
+    function drawAutomations(canvas, data)
     {
         var ctx = canvas.getContext('2d');
         var height = canvas.offsetHeight - padding * 2 - 2;
         var width = canvas.offsetWidth - padding * 2;
 
-        console.log(data, a);
+        console.log(data);
 
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
-
-        for(var i = 1; i < a.length; i++)
-        {
-            if(a[i - 1] != 0)
-            {
-                ctx.fillStyle = 'rgba(80, 80, 90, 0.5)';
-                ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (a.length - 1), height - a[i - 1] * height / 100  + padding, 5, 0, 360);
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
-
         ctx.setLineDash([10, 15]);
 
         for(var i = 0; i < data.length; i++)
@@ -816,8 +806,36 @@
             ctx.moveTo(0, height - data[i] * height / 100  + padding);
             ctx.lineTo(width + padding * 2, height - data[i] * height / 100  + padding)
             ctx.stroke();
+        }
+    }
 
-            //ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+    function drawEvents(canvas, data, gradients)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.fillStyle = grd;
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+
+        console.log(data);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(data[i - 1] != 0)
+            {
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
         }
     }
 
