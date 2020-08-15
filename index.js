@@ -539,7 +539,7 @@ SynTexPlatform.prototype = {
                                         obj.push({ name : 'SynTex Tuya' });
                                     }
 
-                                    response.write(HTMLQuery.sendValues(head + data, { 'crossover-plugins' : obj }));
+                                    response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));
                                     response.end();
                                 }
                                 else if(path.parse(relPath).ext == '.html')
