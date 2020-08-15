@@ -506,7 +506,7 @@
 
                 if(triggered)
                 {
-                    a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
+                    a[unterteilungen - k - 1] = v[unterteilungen - k];
                 }
                 else
                 {
@@ -645,8 +645,8 @@
             }
         }
 
-        drawEvents(canvas, w, v, a);
         drawGraph(canvas, a, ['red', 'red'], false);
+        drawEvents(canvas, w, v, a);
     }
 
     function drawGraph(canvas, data, gradients, points)
