@@ -666,6 +666,7 @@
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.strokeStyle = grd;
+        ctx.setLineDash([]);
 
         for(var i = 1; i < data.length; i++)
         {
@@ -717,6 +718,7 @@
         }
 
         ctx.fillStyle = grd;
+        ctx.setLineDash([]);
 
         ctx.beginPath();
         ctx.moveTo(0, height + padding);
@@ -751,6 +753,7 @@
 
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
 
         for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
         {
@@ -824,6 +827,7 @@
         ctx.fillStyle = grd;
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
 
         console.log(data);
 
