@@ -645,7 +645,8 @@
             }
         }
 
-        drawEvents(canvas, w, v, a);
+        drawEvents(canvas, w, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
+        drawEvents(canvas, data, a, gradients)
     }
 
     function drawGraph(canvas, data, gradients, points)
@@ -783,7 +784,7 @@
         }
     }
 
-    function drawEvents(canvas, data, a)
+    function drawEvents(canvas, data, a, gradients)
     {
         var ctx = canvas.getContext('2d');
         var height = canvas.offsetHeight - padding * 2 - 2;
