@@ -71,7 +71,18 @@
 
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                panel.innerHTML += ' • <img src="/img/accessory/' + automations[i].trigger[j].type + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
+                var src = automations[i].trigger[j].type;
+
+                if(automations[i].trigger[j].type == 'light' || automations[i].trigger[j].type == 'rain')
+                {
+                    src = 'weather';
+                }
+                else if(automations[i].trigger[j].type == 'temperature' || automations[i].trigger[j].type == 'humidity')
+                {
+                    src = 'cliamte';
+                }
+
+                panel.innerHTML += ' • <img src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + automations[i].trigger[j].value;
             }
 
             panel.innerHTML += '<br>Ausführen';
