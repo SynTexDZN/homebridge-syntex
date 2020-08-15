@@ -120,6 +120,50 @@
 
             panel.appendChild(column);
 
+            if(automations[i].condition && automations[i].condition.length > 0)
+            {
+                var column = document.createElement('div');
+                var category = document.createElement('div');
+
+                column.style.display = 'flex';
+
+                category.innerHTML = 'Bedingung';
+                category.style.minWidth = '120px';
+                category.style.maxWidth = '120px';
+                category.style.background = 'rgb(80, 80, 90)';
+                category.style.padding = '12px 18px 9px 18px';
+
+                column.appendChild(category);
+
+                for(var j = 0; j < automations[i].condition.length; j++)
+                {
+                    var row = document.createElement('div');
+                    var src = automations[i].trigger[j].type;
+
+                    if(automations[i].trigger[j].type == 'temperature')
+                    {
+                        src = 'climate';
+                    }
+
+                    if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
+                    {
+                        row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 20px; margin-right: 10px; position: relative; top: 4px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + automations[i].condition[j].value;
+                    }
+
+                    row.style.padding = '5px 18px 13px 18px';
+                    row.style.wordBreak = 'break-all';
+
+                    column.appendChild(row);
+                }
+
+                panel.appendChild(column);
+
+                panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden');
+                
+                typeContainer.appendChild(panel);
+                document.getElementById('automations').appendChild(typeContainer);
+            }
+
             var column = document.createElement('div');
             var category = document.createElement('div');
 
@@ -136,6 +180,12 @@
             for(var j = 0; j < automations[i].result.length; j++)
             {
                 var row = document.createElement('div');
+                var src = automations[i].trigger[j].type;
+
+                if(automations[i].trigger[j].type == 'temperature')
+                {
+                    src = 'climate';
+                }
 
                 if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
                 {
