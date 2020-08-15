@@ -508,6 +508,10 @@
                 {
                     a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
                 }
+                else
+                {
+                    a[unterteilungen - k - 1] = 0;
+                }
             }
             /*
             for(const j in values[type])
@@ -642,7 +646,7 @@
         }
 
         drawEvents(canvas, w, v, a);
-        drawGraph(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+        drawGraph(canvas, a, ['red', 'red'], false);
     }
 
     function drawGraph(canvas, data, gradients, points)
