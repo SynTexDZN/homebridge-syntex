@@ -81,6 +81,11 @@
             typeContainer.setAttribute('class', 'type-container');
             typeContainer.appendChild(titleContainer);
 
+            if(i == 0)
+            {
+                typeContainer.style.marginTop = '0';
+            }
+
             var panel = document.createElement('button');
 
             panel.innerHTML = 'Auslöser';
@@ -112,12 +117,7 @@
             }
 
             panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 15px 20px; pointer-events: none; height: auto');
-            /*
-            if(i < automations.length - 1)
-            {
-                panel.style.marginBottom = '20px';
-            }
-            */
+            
             typeContainer.appendChild(panel);
             document.getElementById('automations').appendChild(typeContainer);
         }
