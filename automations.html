@@ -90,8 +90,11 @@
             var column = document.createElement('div');
             var category = document.createElement('div');
 
+            column.style.display = 'flex';
+
             category.innerHTML = 'Auslöser';
-            category.style.width = '300px';
+            category.style.width = '150px';
+            category.style.background = '150px';
 
             column.appendChild(category);
 
@@ -128,7 +131,7 @@
 
             panel.innerHTML += '</div>';
 
-            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 15px 20px; pointer-events: none; height: auto; color: rgb(220, 220, 230)');
+            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230)');
             
             typeContainer.appendChild(panel);
             document.getElementById('automations').appendChild(typeContainer);
