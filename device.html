@@ -783,7 +783,7 @@
         }
     }
 
-    function drawEvents(canvas, data, v, a)
+    function drawEvents(canvas, data, a)
     {
         var ctx = canvas.getContext('2d');
         var height = canvas.offsetHeight - padding * 2 - 2;
@@ -796,11 +796,11 @@
 
         for(var i = 1; i < a.length; i++)
         {
-            if(a[i] != 0)
+            if(a[i - 1] != 0)
             {
                 ctx.fillStyle = 'rgba(80, 80, 90, 0.5)';
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (a.length - 1), height - a[i - 1] * height / 100  + padding, 5, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
