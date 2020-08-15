@@ -1,0 +1,30 @@
+<html>
+    <title>Crossover Geräte</title>
+    <body>
+        <div id="create">
+            <h1>Crossover Geräte</h1>
+            <p>Von Drittanbietern</p>
+            <div class="type-container">
+                <div class="title-container">
+                    <h2 style="width: fit-content; margin-top: 0; border: none">Crossover Plugins</h2>
+                </div>
+                <div id="crossover-plugins"></div>
+            </div>
+            <h2>Crossover Gerät Verbinden</h2>
+            <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+                <p><b>IP: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>
+                <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
+                    <button class="widget-left gradient-red" disabled>Wichtig</button>
+                    <button class="widget-right" disabled>Mac Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>
+                </div>
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="window.location.href='/'">
+                    <div style="display: block; width: 100%; margin-left: 20px">
+                        <input id="create-btn" type="submit" value="Erstellen">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
