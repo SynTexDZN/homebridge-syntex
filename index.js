@@ -468,7 +468,8 @@ SynTexPlatform.prototype = {
                                         {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
                                             {
-                                                devices.push({ id : "-", ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, type : magicHome.lights[i].setup.toLowerCase(), version : '1.0.0', active : 1 });
+                                                var type = magicHome.lights[i].setup == 'RGBW' ? 'rgb' : magicHome.lights[i].setup == 'RGBWW' ? 'rgbw' :  magicHome.lights[i].setup.toLowerCase();
+                                                devices.push({ id : "-", ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, type : type, version : '1.0.0', active : 1 });
                                             }
                                         }
                                     }
