@@ -98,6 +98,8 @@
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
+
+    devices.sort((a, b) => (a.type > b.type) ? 1 : ((b.type > a.type) ? -1 : 0));
     
     for(const i in devices)
     {
