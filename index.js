@@ -459,6 +459,17 @@ SynTexPlatform.prototype = {
                                 {
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
+
+                                    var magicHome = await getPluginConfig('MagicHome-Platform');
+
+                                    if(magicHome != null)
+                                    {
+                                        for(var i = 0; i < magicHome.lights.length; i++)
+                                        {
+                                            devices.push({ id : "-", ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, type : magicHome.lights[i].type.toLowerCase(), version : '1.0.0' });
+                                        }
+                                    }
+                                    
                                     var obj = {
                                         devices: JSON.stringify(devices),
                                         restart: '-'
