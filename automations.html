@@ -3,7 +3,7 @@
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
         <div class="main" style="margin-top: 10px; margin-bottom: 100px">
-            <p style="margin-bottom: 100px; margin-top: 20px">Automation</p>
+            <p style="margin-bottom: 100px; margin-top: 20px">Automation Erstellen</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
                 <input class="white" type="button" value="GERÄTE" onclick="window.location.href='/'" style="margin-right: 20px">
                 <input class="white" type="button" value="BRIDGE" onclick="window.location.href='/bridge'">
@@ -13,9 +13,24 @@
                 <input class="white" type="button" value="LOG" onclick="window.location.href='/log'">
             </div>
         </div>
-        <div class="main" id="automations" style="margin-bottom: 100px"></div>
-        <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-            <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="window.location.href='/automations?new'">
+        <div id="view">
+            <div class="main" id="automations" style="margin-bottom: 100px"></div>
+            <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
+                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="
+                    document.getElementById('view').style.display = 'none';
+                    document.getElementById('add').style.display = '';">
+            </div>
+        </div>
+        <div id="edit" style="display: none"></div>
+        <div id="add" style="display: none">
+            <div style="display: flex">
+                <input type="button" value="Zurück" onclick="
+                    document.getElementById('view').style.display = '';
+                    document.getElementById('add').style.display = 'none';">
+                <div style="display: block; width: 100%; margin-left: 20px">
+                    <input id="save-btn" type="submit" value="Erstellen">
+                </div>
+            </div>
         </div>
     </body>
 </html>
