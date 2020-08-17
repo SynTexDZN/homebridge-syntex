@@ -340,7 +340,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                     platform.accessories[index]['off_url'] = 'http://' + ip + '/switch?state=false';
                     platform.accessories[index]['off_method'] = 'GET';
                 }
-                else if(type.includes('rgb') || type.includes('rgbw'))
+                else if(type.includes('rgb') || type.includes('rgbw') || type.includes('rgbww') || type.includes('rgbcw'))
                 {
                     platform.accessories[index]['url'] = 'http://' + ip + '/color';
                 }

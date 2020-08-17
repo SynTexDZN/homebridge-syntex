@@ -856,7 +856,7 @@
         document.getElementById('reconnect-btn').style.display = 'none';
     }
 
-    if(device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' || device.type == 'special')
+    if((device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' && device.type != 'rgbw' && device.type != 'rgbww' && device.type != 'rgbcw') || device.type == 'special')
     {
         settings.push({
             index: 'active',
@@ -1186,7 +1186,7 @@
                                 color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
                             }
                         }
-                        else if(type == 'rgb' || type == 'rgbw')
+                        else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
                         {
                             if(state.split(':')[0] == 'true')
                             {
