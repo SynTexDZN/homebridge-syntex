@@ -340,7 +340,7 @@
                 console.log(t.children[j]);
                 console.log(t.children[j].getElementsByTagName('input'));
 
-                trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].value;
+                trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].getElementsByTagName('input')[0].value;
             }
 
             automation.trigger.push(trigger);
@@ -356,7 +356,7 @@
 
                 for(var j = 0; j < c.children.length - 1; j++)
                 {
-                    condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].value;
+                    condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].getElementsByTagName('input')[0].value;
                 }
 
                 automation.condition.push(condition);
@@ -371,7 +371,7 @@
 
             for(var j = 0; j < r.children.length - 1; j++)
             {
-                result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].value;
+                result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].getElementsByTagName('input')[0].value;
             }
 
             automation.result.push(result);
