@@ -13,7 +13,7 @@ function loadAutomations()
             }
             else
             {
-                resolve(obj);
+                resolve(obj.automations);
             }
         });
     });
@@ -27,14 +27,13 @@ function createAutomation(automation)
 
             if(!obj || err)
             {
-                obj = [automation];
+                obj = { id : 'automations', automations : [ automation ] };
             }
             else
             {
-                obj[obj.length] = JSON.parse(automation);
+                obj.automations[obj.automations.length] = JSON.parse(automation);
             }
 
-            logger.debug(automation);
             logger.debug(obj);
 
             storage.add(obj, (err) => {
