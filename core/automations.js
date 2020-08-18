@@ -31,11 +31,11 @@ function createAutomation(automation)
             }
             else
             {
-                obj[obj.length] = automation;
+                obj[obj.length] = JSON.parse(automation);
             }
 
             logger.debug(automation);
-            logger.debug(obj[obj.length]);
+            logger.debug(obj[obj.length - 1]);
 
             storage.add(obj, (err) => {
 
