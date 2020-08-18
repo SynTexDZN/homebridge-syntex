@@ -407,6 +407,21 @@ SynTexPlatform.prototype = {
                             response.write(JSON.stringify(await Automations.loadAutomations())); 
                             response.end();
                         }
+                        else if(urlPath == '/create-automations' && request.method == 'POST')
+                        {
+                            var post = '';
+
+                            request.on('data', function(data)
+                            {
+                                post += data;
+                            });
+
+                            request.on('end', async function()
+                            {                                
+                                response.write(await Automations.createAutomation(post) ? 'Success' : 'Error'); 
+                                response.end();
+                            });
+                        }
                     }
                     else
                     {

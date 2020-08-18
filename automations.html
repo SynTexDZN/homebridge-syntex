@@ -324,7 +324,7 @@
     {
         var automation = {};
 
-        automation.id = document.getElementById('add').getElementsByTagName('input')[0].value;
+        automation.id = parseInt(document.getElementById('add').getElementsByTagName('input')[0].value);
         automation.name = document.getElementById('add').getElementsByTagName('input')[1].value;
         automation.active = true;
         automation.trigger = [];
@@ -334,7 +334,7 @@
         {
             var t = document.getElementById('trigger').children[i], trigger = {};
 
-            for(var j = 0; j < t.children.length - 1; j++)
+            for(var j = 0; j < t.children.length; j++)
             {
                 console.log(t, j);
                 console.log(t.children[j]);
@@ -354,7 +354,7 @@
             {
                 var c = document.getElementById('condition').children[i], condition = {};
 
-                for(var j = 0; j < c.children.length - 1; j++)
+                for(var j = 0; j < c.children.length; j++)
                 {
                     condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].getElementsByTagName('input')[0].value;
                 }
@@ -369,7 +369,7 @@
         {
             var r = document.getElementById('result').children[i], result = {};
 
-            for(var j = 0; j < r.children.length - 1; j++)
+            for(var j = 0; j < r.children.length; j++)
             {
                 result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].getElementsByTagName('input')[0].value;
             }
@@ -378,7 +378,8 @@
         }
 
         console.log(automation);
-        console.log(JSON.stringify(automation));
+
+        complexFetchPost('/serverside/create-automations', 10000, JSON.stringify(automation), 3, {}, false);
     }
 
 </script>
