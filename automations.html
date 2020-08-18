@@ -322,7 +322,58 @@
 
     function createAutomation()
     {
+        var automation = {};
+
+        automation.id = document.getElementById('add').getElementsByClassName('input')[0].value;
+        automation.name = document.getElementById('add').getElementsByClassName('input')[0].value;
+        automation.active = true;
+        automation.trigger = [];
         
+
+        for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
+        {
+            var t = document.getElementById('trigger').children[i], trigger = {};
+
+            for(const j in t.children)
+            {
+                trigger[t.children[j].getAttribute('name')] = t.children[j].value;
+            }
+
+            automation.trigger.push(trigger);
+        }
+
+        if(document.getElementById('trigger').childElementCount > 1)
+        {
+            automation.condition = [];
+
+            for(var i = 0; i < document.getElementById('condition').children.length - 1; i++)
+            {
+                var c = document.getElementById('condition').children[i], condition = {};
+
+                for(const j in c.children)
+                {
+                    condition[c.children[j].getAttribute('name')] = c.children[j].value;
+                }
+
+                automation.condition.push(condition);
+            }
+        }
+
+        automation.result = [];
+
+        for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
+        {
+            var r = document.getElementById('trigger').children[i], result = {};
+
+            for(const j in r.children)
+            {
+                result[r.children[j].getAttribute('name')] = r.children[j].value;
+            }
+
+            automation.result.push(result);
+        }
+
+        console.log(automation);
     }
 
 </script>
