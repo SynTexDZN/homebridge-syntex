@@ -346,7 +346,7 @@
             automation.trigger.push(trigger);
         }
 
-        if(document.getElementById('trigger').childElementCount > 1)
+        if(document.getElementById('condition').childElementCount > 1)
         {
             automation.condition = [];
 
@@ -367,7 +367,7 @@
 
         for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
         {
-            var r = document.getElementById('trigger').children[i], result = {};
+            var r = document.getElementById('result').children[i], result = {};
 
             for(var j = 0; j < r.children.length - 1; j++)
             {
@@ -378,6 +378,7 @@
         }
 
         console.log(automation);
+        console.log(JSON.stringify(automation));
     }
 
 </script>
