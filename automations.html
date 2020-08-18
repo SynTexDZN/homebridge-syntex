@@ -320,7 +320,7 @@
         document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
     }    
 
-    function createAutomation()
+    async function createAutomation()
     {
         var automation = {};
 
@@ -379,7 +379,23 @@
 
         console.log(automation);
 
-        complexFetchPost('/serverside/create-automations', 10000, JSON.stringify(automation), 3, {}, false);
+        var overlays = {
+            root : document.getElementById('save-btn'),
+            id : 'save',
+            pending : { value : 'Erstellen ..' },
+            success : { value : 'Automation Erstellt!', remove : false },
+            executeError : { value : 'Erstellung Fehlgeschlagen!' },
+            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+        };
+
+        var created = await complexFetchPost('/serverside/create-automations', 10000, JSON.stringify(automation), 3, overlays, false);
+
+        if(created)
+        {
+            await newTimeout(4000);
+
+            window.location.reload();
+        }
     }
 
 </script>
