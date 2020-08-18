@@ -268,10 +268,10 @@
         var trigger = document.createElement('div');
 
         trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="mac" type="text" style="max-width: 325px"></b></p>';
         trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Letters: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Operation: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        trigger.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="mac" type="text" style="max-width: 325px"></b></p>';
         trigger.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';        
     
         document.getElementById('trigger').appendChild(trigger);
@@ -279,12 +279,30 @@
 
     function addCondition()
     {
+        var condition = document.createElement('div');
 
+        condition.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        condition.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        condition.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        condition.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        condition.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        condition.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';        
+    
+        document.getElementById('condition').appendChild(condition);
     }
 
     function addResult()
     {
-        
+        var result = document.createElement('div');
+
+        result.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        result.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        result.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        result.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        result.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="mac" type="text" style="max-width: 325px"></b></p>';
+        result.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';        
+    
+        document.getElementById('result').appendChild(result);
     }    
 
     function createAutomation()
