@@ -260,6 +260,21 @@
         }
     }
 
+    var a = ['trigger', 'condition', 'result'];
+
+    for(var i = 0; i < a.length; i++)
+    {
+        var addBtn = document.createElement('input');
+        
+        addBtn.setAttribute('value', '+');
+        addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+        addBtn.setAttribute('type', 'button');
+        addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+        addBtn.setAttribute('style', '');
+
+        document.getElementById(a[i]).appendChild(addBtn);
+    }
+
     addTrigger();
     addResult();
 
@@ -274,7 +289,7 @@
         trigger.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
         trigger.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
     
-        document.getElementById('trigger').appendChild(trigger);
+        document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button'));
     }
 
     function addCondition()
@@ -288,7 +303,7 @@
         condition.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
         condition.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
     
-        document.getElementById('condition').appendChild(condition);
+        document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button'));
     }
 
     function addResult()
@@ -302,12 +317,12 @@
         result.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
         result.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
     
-        document.getElementById('result').appendChild(result);
+        document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button'));
     }    
 
     function createAutomation()
     {
-
+        
     }
 
 </script>
