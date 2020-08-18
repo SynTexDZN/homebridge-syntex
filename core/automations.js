@@ -44,7 +44,7 @@ function createAutomation(automation)
                 }
                 else
                 {
-                    logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert! ( ' + mac + ' )');
+                    logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert');
 
                     resolve(true);
                 }
