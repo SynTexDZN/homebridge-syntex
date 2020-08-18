@@ -28,13 +28,18 @@
         <div id="edit" style="display: none"></div>
         <div id="add" style="display: none">
             <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
-                <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                <h2>Auslöser</h2>
-                <div id="trigger"></div>
-                <h2>Bedingung</h2>
-                <div id="condition"></div>
-                <h2>Ausführen</h2>
-                <div id="result"></div>
+                <div class="type-container">
+                    <div class="title-container">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Neue Automation</h2>
+                    </div>
+                    <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                    <h2>Auslöser</h2>
+                    <div id="trigger"></div>
+                    <h2>Bedingung</h2>
+                    <div id="condition"></div>
+                    <h2>Ausführen</h2>
+                    <div id="result"></div>
+                </div>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px; display: none">
                     <button class="widget-left gradient-red" disabled>Wichtig</button>
                     <button class="widget-right" disabled>Mac Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>
