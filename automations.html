@@ -336,6 +336,10 @@
 
             for(const j in t.children)
             {
+                console.log(t);
+                console.log(t.children[j]);
+                console.log(t.children[j].getElementsByTagName('input'));
+
                 trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].value;
             }
 
