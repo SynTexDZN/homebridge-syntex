@@ -35,11 +35,11 @@
                     <p><b>ID: <input type="button" style="max-width: 150px" disabled>
                     <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                     <h2>Auslöser</h2>
-                    <div id="trigger"></div>
+                    <div id="trigger" style="text-align: center"></div>
                     <h2>Bedingung</h2>
-                    <div id="condition"></div>
+                    <div id="condition" style="text-align: center"></div>
                     <h2>Ausführen</h2>
-                    <div id="result"></div>
+                    <div id="result" style="text-align: center"></div>
                 </div>
                 <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
                     <button class="widget-left gradient-red" disabled>Wichtig</button>
@@ -270,7 +270,7 @@
         addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
         addBtn.setAttribute('type', 'button');
         addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-        addBtn.setAttribute('style', '');
+        addBtn.setAttribute('style', 'max-width: 150px');
 
         document.getElementById(a[i]).appendChild(addBtn);
     }
