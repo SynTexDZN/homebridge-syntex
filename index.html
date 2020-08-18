@@ -172,9 +172,11 @@
 
             button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
 
-            var url = '/device?mac=' + devices[i].id;
-
-            button.setAttribute('onclick', "window.location.href='" + url + "'");
+            if(devices[i].id != '')
+            {
+                button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].id + "'");
+            }
+            
             button.setAttribute('name', devices[i].name);
 
             document.getElementById(devices[i].type).appendChild(button);
