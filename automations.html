@@ -334,9 +334,9 @@
         {
             var t = document.getElementById('trigger').children[i], trigger = {};
 
-            for(const j in t.children)
+            for(var j = 0; j < t.children.length - 1; j++)
             {
-                console.log(t);
+                console.log(t, j);
                 console.log(t.children[j]);
                 console.log(t.children[j].getElementsByTagName('input'));
 
@@ -354,7 +354,7 @@
             {
                 var c = document.getElementById('condition').children[i], condition = {};
 
-                for(const j in c.children)
+                for(var j = 0; j < c.children.length - 1; j++)
                 {
                     condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].value;
                 }
@@ -369,7 +369,7 @@
         {
             var r = document.getElementById('trigger').children[i], result = {};
 
-            for(const j in r.children)
+            for(var j = 0; j < r.children.length - 1; j++)
             {
                 result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].value;
             }
