@@ -34,6 +34,9 @@ function createAutomation(automation)
                 obj[obj.length] = automation;
             }
 
+            logger.debug(automation);
+            logger.debug(obj[obj.length]);
+
             storage.add(obj, (err) => {
 
                 if(err)
