@@ -28,7 +28,7 @@
                 <button class="widget-left gradient-red" disabled>Wichtig</button>
                 <button class="widget-right" disabled>Bitte schließe während eines Updates oder Neustarts nicht diese Seite</button>
             </div>
-            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)">
+            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="margin-bottom: 20px">
         </div>
     </body>
 </html>
@@ -61,8 +61,12 @@
                     updateButton.setAttribute('type', 'button');
                     updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
                     updateButton.setAttribute('onclick', 'update' + name + '(this)');
-                    updateButton.setAttribute('style', 'margin-top: 20px');
                     updateButton.setAttribute('id', 'update-btn-' + name.toLowerCase());
+
+                    if(index != 'syntex-webhooks')
+                    {
+                        updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+                    }
 
                     document.getElementsByClassName('main')[0].appendChild(updateButton);
                 }
