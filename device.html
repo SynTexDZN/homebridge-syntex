@@ -951,11 +951,11 @@
 
     for(const i in settings)
     {
-        if((device.type == 'weather' || device.type == 'climate') && settings[i].index == 'interval')
+        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
-        else if((device.type == 'motion') && settings[i].index == 'interval')
+        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
@@ -1009,18 +1009,9 @@
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', device.type);
 
-    if(device.type == 'climate' || device.type == 'weather' || device.type == 'statelessswitch')
-    {
-        document.getElementById('infobox').style.display = '';
-    }
-
-    if(device.type == 'climate' || device.type == 'weather')
-    {
-        document.getElementById('infobox').children[1].innerHTML = 'Positive Event Einstellungen werden aktiviert wenn der Wert diese überschreitet<br>Negative wenn er unterschritten wird';
-    }
-
     if(device.type == 'statelessswitch')
     {
+        document.getElementById('infobox').style.display = '';
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
     }
 
@@ -1487,17 +1478,13 @@
                 {
                     if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                     {
-                        if(device.type == 'climate')
+                        if(!accessory.services.includes('motion'))
                         {
                             settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
-                        else if(device.type == 'motion')
+                        else if(accessory.services.includes('motion'))
                         {
                             settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                        }
-                        else if(device.type == 'weather')
-                        {
-                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
                         else
                         {
