@@ -62,8 +62,6 @@
 </html>
 <script>
 
-    var bLogJSON = [];
-    var wLogJSON = [];
     var logJSON = {};
     var counter = 0;
     var levelCounter = [0, 0, 0, 0, 0, 0, 0];
@@ -110,13 +108,6 @@
             createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
         
-        /*
-        bLogJSON = JSON.parse(logs.bLog);
-        wLogJSON = JSON.parse(logs.wLog);
-
-        createLog(document.getElementById('bLog'), bLogJSON, null);
-        createLog(document.getElementById('wLog'), wLogJSON, null);
-        */
         countLogs = false;
 
         document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
@@ -153,11 +144,6 @@
         {
             createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
         }
-
-        /*
-        createLog(document.getElementById('bLog'), bLogJSON, null);
-        createLog(document.getElementById('wLog'), wLogJSON, null);
-        */
 
         document.getElementById('search-btn').value = 'Suchen';
     }
@@ -197,23 +183,7 @@
                 document.getElementById(Object.keys(logJSON)[i]).innerHTML = document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(0, -(document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length);
             }
         }
-        /*
-        createLog(document.getElementById('bLog'), bLogJSON, search);
-        createLog(document.getElementById('wLog'), wLogJSON, search);
-        
-        var lastCharsB = (document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length;
-        var lastCharsW = (document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length;
 
-        if(lastCharsB > 0)
-        {
-            document.getElementById('bLog').innerHTML = document.getElementById('bLog').innerHTML.slice(0, -(document.getElementById('bLog').innerHTML.slice(-2).match(/\n/g) || []).length);
-        }
-
-        if(lastCharsW > 0)
-        {
-            document.getElementById('wLog').innerHTML = document.getElementById('wLog').innerHTML.slice(0, -(document.getElementById('wLog').innerHTML.slice(-2).match(/\n/g) || []).length);
-        }
-        */
         document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
         document.getElementById('search-btn').value = 'Suchen';
     }
