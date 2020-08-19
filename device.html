@@ -864,7 +864,7 @@
         });
     }
 
-    if(device.type == 'contact' || device.type == 'motion' || device.type == 'relais' || device.type == 'statelessswitch' || device.type == 'special')
+    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || device.type == 'special')
     {
         settings.push({
             index: 'led',
@@ -872,7 +872,7 @@
         });
     }
 
-    if(device.type == 'motion' || device.type == 'weather' || device.type == 'climate')
+    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity'))
     {
         settings.push({
             index: 'interval',
@@ -909,11 +909,11 @@
 
     for(const i in settings)
     {
-        if(settings[i].index == 'interval' && (device.type == 'weather' || device.type == 'climate'))
+        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
-        else if(settings[i].index == 'interval' && (device.type == 'motion'))
+        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
         }
