@@ -308,8 +308,6 @@ SynTexPlatform.prototype = {
 
                                 for(var i = 0; i < files.length; i++)
                                 {
-                                    console.log(files[i], i);
-
                                     var file = files[i].split('.')[0];
                                     
                                     obj[file] = '[]';
