@@ -331,7 +331,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                 var platform = obj.platforms[i];
                 var index = platform.accessories.length;
 
-                platform.accessories[index] = { mac : mac, name : name, services : type };
+                platform.accessories[index] = { mac : mac, name : name, services : JSON.parse(type) };
 
                 if(type.includes('relais'))
                 {
