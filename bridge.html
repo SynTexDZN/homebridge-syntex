@@ -51,21 +51,16 @@
 
     window.Query = Query;
 
-    var bridgeIP = '<%ip%>';
-    var bridgeVersion = '<%version%>';
-    var webhooksVersion = '', newestBVersion = '', newestWVersion = '';
-    var updating = { bridge : false, webhooks: false }, restarting = false;
+    window.bridgeIP = '<%ip%>';
+    window.bridgeVersion = '<%version%>';
+    window.webhooksVersion = ''
+    window.newestBVersion = ''
+    window.newestWVersion = '';
+    window.updating = { bridge : false, webhooks: false }
+    window.restarting = false;
 
     document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
     document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
-
-    fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
-
-        if(version != null)
-        {
-            newestBVersion = version;
-        }
-    });
 
     Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
 
@@ -95,6 +90,14 @@
         if(automations != null && automations.length > 0)
         {
             document.getElementById("a").style.display = "";
+        }
+    });
+
+    fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
+
+        if(version != null)
+        {
+            newestBVersion = version;
         }
     });
 
