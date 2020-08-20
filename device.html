@@ -41,16 +41,53 @@
 
     window.Query = Query;
 
-    var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
-    var values = {}, orginal = {}, typeCounter = {};
-    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
-    var padding = 50;
-    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-    var automations = [], busy = [];
-    var restarting = false, resetting = false, updating = false, saving = false;
-    var settings = [];
-    var activity = [];
-    var temp = {};
+    window.device = JSON.parse('<%device%>')
+    window.accessory = JSON.parse('<%accessory%>');
+    window.values = {}
+    window.orginal = {}
+    window.typeCounter = {};
+    window.counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+    window.padding = 50;
+    window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+    window.automations = []
+    window.busy = [];
+    window.restarting = false
+    window.resetting = false
+    window.updating = false
+    window.saving = false;
+    window.settings = [];
+    window.activity = [];
+    window.temp = {};
+
+    window.data = {
+        motion: {
+            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        contact: {
+            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+        },
+        relais: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        switch: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        rain: {
+            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+        },
+        statelessswitch: {
+            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+    };
 
     if(device.ip == undefined)
     {
@@ -217,36 +254,6 @@
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
     }
 
-    var data = {
-        motion: {
-            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-        },
-        contact: {
-            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
-        },
-        relais: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        switch: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        rain: {
-            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
-        },
-        statelessswitch: {
-            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-        },
-        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-    };
-
     for(var i = 0; i < counter; i++)
     {
         var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
@@ -404,8 +411,6 @@
             }
         }, 300);
     }
-
-
 
 </script>
 <script>
