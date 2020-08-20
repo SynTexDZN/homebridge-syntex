@@ -52,49 +52,23 @@
         </div>
     </body>
 </html>
-<script>
+<script type="module" defer>
 
-    if(localStorage.getItem('view') == 'grid-view')
-    {
-        document.getElementById('toolbar').children[0].children[0].style.display = 'none';
-        document.getElementById('toolbar').children[0].children[1].style.display = '';
-        document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
-        document.getElementById('devices').className = 'grid-view';
-    }
+    import { Query } from '/js/query.js';
 
-    function switchView(btn)
-    {
-        if(btn.getAttribute('view') == 'grid')
-        {
-            btn.children[0].style.display = '';
-            btn.children[1].style.display = 'none';
+    window.Query = Query;
 
-            document.getElementById('devices').className = '';
+    window.devices = JSON.parse('<%devices%>');
+    window.offline = []
+    window.restarting = []
+    window.updating = [];
+    window.temp = "";
+    window.updateCount = 0;
+    window.checkedUpdates = 0;
+    window.activationCounter = { active : 0, disabled : 0 };
+    window.deviceElements = document.getElementsByClassName('device');
 
-            localStorage.setItem('view', 'list-view');
-            btn.setAttribute('view', 'list');
-        }
-        else if(btn.getAttribute('view') == 'list')
-        {
-            btn.children[0].style.display = 'none';
-            btn.children[1].style.display = '';
-
-            document.getElementById('devices').className = 'grid-view';
-
-            localStorage.setItem('view', 'grid-view');
-            btn.setAttribute('view', 'grid');
-        }
-    }
-
-    var devices = JSON.parse('<%devices%>');
-    var offline = [], restarting = [], updating = [];
-        
     console.log(devices);
-
-    var temp = "";
-    var updateCount = 0;
-    var checkedUpdates = 0;
-    var activationCounter = { active : 0, disabled : 0 };
     
     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
@@ -207,6 +181,56 @@
         document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
     }
 
+    checkConnection();
+
+    for(var i = 0; i < deviceElements.length; i++)
+    {
+        checkUpdates(deviceElements[i]);
+    }
+
+    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+        if(automations != null && automations.length > 0)
+        {
+            document.getElementById("a").style.display = "";
+        }
+    });
+
+    if(localStorage.getItem('view') == 'grid-view')
+    {
+        document.getElementById('toolbar').children[0].children[0].style.display = 'none';
+        document.getElementById('toolbar').children[0].children[1].style.display = '';
+        document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
+        document.getElementById('devices').className = 'grid-view';
+    }
+
+</script>
+<script>
+
+    function switchView(btn)
+    {
+        if(btn.getAttribute('view') == 'grid')
+        {
+            btn.children[0].style.display = '';
+            btn.children[1].style.display = 'none';
+
+            document.getElementById('devices').className = '';
+
+            localStorage.setItem('view', 'list-view');
+            btn.setAttribute('view', 'list');
+        }
+        else if(btn.getAttribute('view') == 'list')
+        {
+            btn.children[0].style.display = 'none';
+            btn.children[1].style.display = '';
+
+            document.getElementById('devices').className = 'grid-view';
+
+            localStorage.setItem('view', 'grid-view');
+            btn.setAttribute('view', 'grid');
+        }
+    }
+
 </script>
 <script>
 
@@ -222,7 +246,7 @@
             {
                 if(devices[i].ip != undefined && !offline.includes(devices[i].ip))
                 {
-                    complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
+                    Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
                         restartCounter[result != null ? 'success' : 'error']++;
 
@@ -247,11 +271,9 @@
 </script>
 <script>
 
-    var deviceElements = document.getElementsByClassName('device');
-
     async function checkConnection()
     {
-        var offline = JSON.parse(await fetchURL('/serverside/offline-devices', 10000));
+        var offline = JSON.parse(await Query.fetchURL('/serverside/offline-devices', 10000));
 
         for(var i = 0; i < deviceElements.length; i++)
         {
@@ -308,30 +330,12 @@
         }
     }
 
-    head.load('/js/query.js', function()
-    {
-        checkConnection();
-
-        for(var i = 0; i < deviceElements.length; i++)
-        {
-            checkUpdates(deviceElements[i]);
-        }
-
-        complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-            if(automations != null && automations.length > 0)
-            {
-                document.getElementById("a").style.display = "";
-            }
-        });
-    });
-
 </script>
 <script defer>
     
     async function checkUpdates(device)
     {
-        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
+        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(device.getAttribute('version')))
         {  
@@ -411,7 +415,7 @@
                 device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
                 device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
 
-                var update = await complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
+                var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
 
                 if(update == null)
                 {
@@ -432,7 +436,7 @@
 
                     await newTimeout(3000);
                     
-                    var update = await complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
+                    var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
 
                     if(update == device.getAttribute('newest-version'))
                     {
@@ -525,9 +529,9 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(deviceElements[i].getAttribute('id') != 'undefined' && await complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
+            if(deviceElements[i].getAttribute('id') != 'undefined' && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
             {
-                complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
+                Query.complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                     switchCounter[refresh == 'Success' ? 'success' : 'error']++;
 

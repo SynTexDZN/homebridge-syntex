@@ -56,16 +56,30 @@
         </div>
     </body>
 </html>
-<script defer>
+<script type="module" defer>
 
-    var urlMac = (new URL(window.location.href)).searchParams.get("mac");
+    import { Query } from '/js/query.js';
+
+    window.Query = Query;
+
+    window.urlMac = (new URL(window.location.href)).searchParams.get("mac");
+    window.ping = false;
+    window.ip = 'http://192.168.4.1/';
+    window.ipp = (new URL(window.location.href)).searchParams.get("ip");
+    window.bridgeIP = 'http://<%bridge-ip%>';
+    window.timeRemaining = 0;
 
     if(urlMac)
     {
         document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
         document.getElementById('back-btn-wifi').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "'");
         document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
-    }
+    }    
+    
+    pingESP();
+
+</script>
+<script defer>
 
     function redirectCountdown(url)
     {
@@ -77,18 +91,6 @@
             }
         }, 3000);
     }
-
-</script>
-<script defer>
-    
-    var ping = false;
-    var ip = 'http://192.168.4.1/';
-    var ipp = (new URL(window.location.href)).searchParams.get("ip");
-    
-    head.load('/js/query.js', function()
-    {
-        pingESP();
-    });
     
     async function pingESP()
     {
@@ -178,8 +180,6 @@
 
         btn.value = 'Suchen';
     }
-
-    var timeRemaining = 0;
     
     function setTimer(time)
     {
@@ -191,8 +191,6 @@
             setTimer(timeRemaining);
         }, 100);
     }
-
-    var bridgeIP = 'http://<%bridge-ip%>';
     
     async function sendWifiSettings(form)
     {

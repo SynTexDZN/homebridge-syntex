@@ -78,11 +78,20 @@
         </div>
     </body>
 </html>
+<script type="module" defer>
+
+    import { Query } from '/js/query.js';
+
+    window.Query = Query;
+
+    window.deviceName;
+    window.bridgeIP = 'http://<%bridge-ip%>';
+    window.timeRemaining = 0;
+    window.success = false;
+    window.ping = false;
+
+</script>
 <script defer>
-
-    var deviceName;
-
-    head.load('/js/query.js');
 
     async function setName(form)
     {
@@ -129,8 +138,6 @@
 
 </script>
 <script defer>
-    
-    var ping = false;
     
     async function pingESP()
     {
@@ -199,8 +206,6 @@
         btn.value = 'Suchen';
     }
     
-    var success = false;
-    
     async function checkDB(mac)
     {
         var exists = await fetchURL('/serverside/check-device?mac=' + mac, 10000);
@@ -225,8 +230,6 @@
         }
     }
     
-    var timeRemaining = 0;
-    
     function setTimer(time)
     {
         timeRemaining = time - 100;
@@ -237,8 +240,6 @@
             setTimer(timeRemaining);
         }, 100);
     }
-
-    var bridgeIP = 'http://<%bridge-ip%>';
     
     async function sendWifiSettings(form)
     {
