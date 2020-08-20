@@ -159,7 +159,7 @@ async function removeFromDataStorage(mac, type)
     });
 }
 
-async function initDevice(mac, ip, name, type, version, interval, events)
+function initDevice(mac, ip, name, type, version, interval, events, services)
 {
     return new Promise(async function(resolve) {
         
@@ -202,7 +202,7 @@ async function initDevice(mac, ip, name, type, version, interval, events)
                         configObj = await removeFromConfig(obj, mac);
                     }
 
-                    configObj = await addToConfig(configObj || obj, mac, ip, name, type, JSON.parse(events).length);
+                    configObj = await addToConfig(configObj || obj, mac, ip, name, type, services, JSON.parse(events).length);
 
                     config.add(configObj, async function(err) {
 
@@ -277,7 +277,7 @@ async function initSwitch(mac, name)
 
                 if(obj && !err)
                 {
-                    var configObj = await addToConfig(obj, mac, null, name, 'switch', 0);
+                    var configObj = await addToConfig(obj, mac, null, name, 'switch', 'switch', 0);
 
                     config.add(configObj, async function(err) {
 
@@ -320,7 +320,7 @@ async function initSwitch(mac, name)
     });
 }
 
-function addToConfig(obj, mac, ip, name, type, buttons)
+function addToConfig(obj, mac, ip, name, type, services, buttons)
 {
     return new Promise(async function(resolve) {
 
@@ -331,7 +331,7 @@ function addToConfig(obj, mac, ip, name, type, buttons)
                 var platform = obj.platforms[i];
                 var index = platform.accessories.length;
 
-                platform.accessories[index] = { mac : mac, name : name, services : JSON.parse(type) };
+                platform.accessories[index] = { mac : mac, name : name, services : JSON.parse(services) };
 
                 if(type.includes('relais'))
                 {
