@@ -39,9 +39,184 @@
 
     import { Query } from '/js/query.js';
 
-    var device = JSON.parse('<%device%>'),
-        accessory = JSON.parse('<%accessory%>');
-        
+    window.Query = Query;
+
+    var device = JSON.parse('<%device%>'), accessory = JSON.parse('<%accessory%>');
+    var values = {}, orginal = {}, typeCounter = {};
+    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+    var padding = 50;
+    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+    var automations = [], busy = [];
+    var restarting = false, resetting = false, updating = false, saving = false;
+    var settings = [];
+    var activity = [];
+    var temp = {};
+
+    if(device.ip == undefined)
+    {
+        document.getElementById('restart-btn').style.display = 'none';
+        document.getElementById('reconnect-btn').style.display = 'none';
+    }
+
+    if((device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' && device.type != 'rgbw' && device.type != 'rgbww' && device.type != 'rgbcw') || device.type == 'special')
+    {
+        settings.push({
+            index: 'active',
+            name: 'Aktiviert'
+        });
+    }
+
+    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || device.type == 'special')
+    {
+        settings.push({
+            index: 'led',
+            name: 'LED'
+        });
+    }
+
+    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity'))
+    {
+        settings.push({
+            index: 'interval',
+            name: device.type == 'motion' ? 'Delay' : 'Interval'
+        });
+    }
+
+    if(device.type == 'statelessswitch')
+    {
+        settings.push({
+            index: 'events',
+            name: 'Events'
+        });
+    }
+
+    document.getElementsByTagName('title')[0].innerHTML = device.name;
+    document.getElementsByTagName('h1')[0].innerHTML = device.name;
+
+    var infos = document.getElementById('info');
+
+    infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
+
+    if(device.ip != undefined)
+    {
+        infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+    }
+    
+    infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
+
+    if(device.version != undefined)
+    {
+        infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+    }
+
+    for(const i in settings)
+    {
+        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+        }
+        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+        }
+        else if(settings[i].index == 'led' || settings[i].index == 'active')
+        {
+            if(device[settings[i].index] == 1)
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
+            }
+            else
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
+            }
+        }
+        else if(settings[i].index == 'events' && device[settings[i].index] == '')
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Keine</p>';
+        }
+        else
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+        }
+    }
+
+    document.getElementById('navigation-panel').setAttribute('type', device.type);
+    document.getElementById('navigation-panel').setAttribute('version', device.version);
+
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
+
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+
+    var settingsForm = document.getElementById('settings-form');
+
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+
+    for(const i in settings)
+    {
+        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+        }
+        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+        }
+        else if(settings[i].index == 'events')
+        {
+            var events = JSON.parse('[' + device[settings[i].index] + ']');
+            var main = document.createElement('div');
+            var container = document.createElement('div');
+            var controls = document.createElement('div');
+            var addBtn = document.createElement('input');
+
+            main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
+            main.setAttribute('style', 'display: flex');
+
+            container.setAttribute('id', 'events');
+            container.setAttribute('style', 'max-width: 150px; margin-right: 16px');
+
+            controls.setAttribute('id', 'controls');
+            controls.setAttribute('style', 'width: 100px; margin-right: auto');
+
+            addBtn.setAttribute('value', '+');
+            addBtn.setAttribute('onclick', 'addEventInput("0")');
+            addBtn.setAttribute('type', 'button');
+            addBtn.setAttribute('class', 'gradient-blue-green');
+            addBtn.setAttribute('id', 'add-event-btn');
+            addBtn.setAttribute('style', '');
+
+            main.appendChild(container);
+            main.appendChild(controls);
+            
+            settingsForm.appendChild(main);
+
+            for(const j in events)
+            {
+                addEventInput(events[j]);
+            }
+
+            controls.appendChild(addBtn);
+        }
+        else if(settings[i].index == 'led' || settings[i].index == 'active')
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+        }
+        else
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+        }
+    }
+
+    settingsForm.setAttribute('mac', device.id);
+    settingsForm.setAttribute('ip', device.ip);
+    settingsForm.setAttribute('type', device.type);
+
+    if(device.type == 'statelessswitch')
+    {
+        document.getElementById('infobox').style.display = '';
+        document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
+    }
+
     var data = {
         motion: {
             active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
@@ -71,12 +246,6 @@
         humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
         light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
     };
-
-    var values = {}, orginal = {}, typeCounter = {};
-    var counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
-    var padding = 50;
-    var width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-    var automations = [];
 
     for(var i = 0; i < counter; i++)
     {
@@ -236,7 +405,10 @@
         }, 300);
     }
 
-    var busy = [];
+
+
+</script>
+<script>
 
     async function controlSwitch(button)
     {
@@ -279,8 +451,6 @@
             }
         }
     }
-
-    var activity = [];
 
     async function loadActivity()
     {
@@ -846,174 +1016,6 @@
         }
     }
 
-    var restarting = false, resetting = false, updating = false, saving = false;
-    var settings = [];
-
-    if(device.ip == undefined)
-    {
-        document.getElementById('restart-btn').style.display = 'none';
-        document.getElementById('reconnect-btn').style.display = 'none';
-    }
-
-    if((device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' && device.type != 'rgbw' && device.type != 'rgbww' && device.type != 'rgbcw') || device.type == 'special')
-    {
-        settings.push({
-            index: 'active',
-            name: 'Aktiviert'
-        });
-    }
-
-    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || device.type == 'special')
-    {
-        settings.push({
-            index: 'led',
-            name: 'LED'
-        });
-    }
-
-    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity'))
-    {
-        settings.push({
-            index: 'interval',
-            name: device.type == 'motion' ? 'Delay' : 'Interval'
-        });
-    }
-
-    if(device.type == 'statelessswitch')
-    {
-        settings.push({
-            index: 'events',
-            name: 'Events'
-        });
-    }
-
-    document.getElementsByTagName('title')[0].innerHTML = device.name;
-    document.getElementsByTagName('h1')[0].innerHTML = device.name;
-
-    var infos = document.getElementById('info');
-
-    infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
-
-    if(device.ip != undefined)
-    {
-        infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
-    }
-    
-    infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
-
-    if(device.version != undefined)
-    {
-        infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
-    }
-
-    for(const i in settings)
-    {
-        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
-        {
-            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
-        }
-        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
-        {
-            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
-        }
-        else if(settings[i].index == 'led' || settings[i].index == 'active')
-        {
-            if(device[settings[i].index] == 1)
-            {
-                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
-            }
-            else
-            {
-                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
-            }
-        }
-        else if(settings[i].index == 'events' && device[settings[i].index] == '')
-        {
-            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Keine</p>';
-        }
-        else
-        {
-            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
-        }
-    }
-
-    document.getElementById('navigation-panel').setAttribute('type', device.type);
-    document.getElementById('navigation-panel').setAttribute('version', device.version);
-
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
-
-    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
-
-    var settingsForm = document.getElementById('settings-form');
-
-    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
-
-    for(const i in settings)
-    {
-        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
-        {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
-        }
-        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
-        {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
-        }
-        else if(settings[i].index == 'events')
-        {
-            var events = JSON.parse('[' + device[settings[i].index] + ']');
-            var main = document.createElement('div');
-            var container = document.createElement('div');
-            var controls = document.createElement('div');
-            var addBtn = document.createElement('input');
-
-            main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
-            main.setAttribute('style', 'display: flex');
-
-            container.setAttribute('id', 'events');
-            container.setAttribute('style', 'max-width: 150px; margin-right: 16px');
-
-            controls.setAttribute('id', 'controls');
-            controls.setAttribute('style', 'width: 100px; margin-right: auto');
-
-            addBtn.setAttribute('value', '+');
-            addBtn.setAttribute('onclick', 'addEventInput("0")');
-            addBtn.setAttribute('type', 'button');
-            addBtn.setAttribute('class', 'gradient-blue-green');
-            addBtn.setAttribute('id', 'add-event-btn');
-            addBtn.setAttribute('style', '');
-
-            main.appendChild(container);
-            main.appendChild(controls);
-            
-            settingsForm.appendChild(main);
-
-            for(const j in events)
-            {
-                addEventInput(events[j]);
-            }
-
-            controls.appendChild(addBtn);
-        }
-        else if(settings[i].index == 'led' || settings[i].index == 'active')
-        {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
-        }
-        else
-        {
-            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
-        }
-    }
-
-    settingsForm.setAttribute('mac', device.id);
-    settingsForm.setAttribute('ip', device.ip);
-    settingsForm.setAttribute('type', device.type);
-
-    if(device.type == 'statelessswitch')
-    {
-        document.getElementById('infobox').style.display = '';
-        document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
-    }
-
     function addEventInput(value)
     {
         var input = document.createElement('input');
@@ -1079,8 +1081,6 @@
         document.getElementById('settings').setAttribute('style', 'display: none');
         document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
-
-    var temp = {};
 
     async function fetchState()
     {
