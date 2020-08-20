@@ -35,7 +35,9 @@
         </div>
     </body>
 </html>
-<script defer>
+<script type="module" defer>
+
+    import { Query } from '/js/query.js';
 
     var device = JSON.parse('<%device%>'),
         accessory = JSON.parse('<%accessory%>');
@@ -213,7 +215,7 @@
 
     head.load('/js/query.js', async function()
     {
-        automations = JSON.parse(await complexFetch('/serverside/automations', 10000, 3, {}, false));
+        automations = JSON.parse(await Query.complexFetch('/serverside/automations', 10000, 3, {}, false));
 
         loadActivity();
 
@@ -248,11 +250,11 @@
 
             if(device.ip != undefined)
             {
-                var state = await complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
+                var state = await Query.complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
             }
             else
             {
-                var state = await complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
             }
 
             if(state != null)
@@ -282,7 +284,7 @@
 
     async function loadActivity()
     {
-        activity = JSON.parse(await complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+        activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
 
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
@@ -1094,7 +1096,7 @@
 
             for(var j = 0; j < typeCounter[type]; j++)
             {
-                var state = await fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
+                var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
         
                 if(temp[type + j] && state != temp[type + j])
                 {
@@ -1252,7 +1254,7 @@
 
             restarting = true;
 
-            if(await complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
+            if(await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
             {
                 showOverlay(btn, createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
 
@@ -1269,7 +1271,7 @@
     {
         if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
         {
-            if(await fetchURL('http://' + device.ip + '/', 10000) != null)
+            if(await Query.fetchURL('http://' + device.ip + '/', 10000) != null)
             {
                 console.log("ESP Gefunden");
 
@@ -1346,7 +1348,7 @@
 
                 updating = true;
 
-                if(await complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
+                if(await Query.complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
                 {
                     await newTimeout(3000);
 
@@ -1356,7 +1358,7 @@
                         connectionError : { value : 'Keine Verbindung zum Gerät!' }
                     };
 
-                    var update = await complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
+                    var update = await Query.complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
 
                     if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
                     {  
@@ -1369,7 +1371,7 @@
                         showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                     }
 
-                    document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+                    document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
 
                     await newTimeout(4000);
 
@@ -1388,7 +1390,7 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
+        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
 
         if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementById('navigation-panel').getAttribute('version')))
         {
@@ -1439,7 +1441,7 @@
 
             resetting = true;
 
-            if(await complexFetch(url, 10000, 2, overlays, true) == 'Success')
+            if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
             {
                 await newTimeout(3000);
 
@@ -1527,7 +1529,7 @@
 
             saving = true;
 
-            if(await complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
+            if(await Query.complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
             {
                 var overlays = {
                     root : document.getElementById('save-btn'),
@@ -1537,7 +1539,7 @@
                     connectionError : { value : 'Gespeichert!', color : 'yellow' }
                 };
 
-                await complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
+                await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
                 
                 await newTimeout(2000);
                     

@@ -57,7 +57,9 @@
         </div>
     </body>
 </html>
-<script>
+<script type="module">
+
+    import { Query } from '/js/query.js';   
 
     var data = {
         motion: {
@@ -91,14 +93,11 @@
 
     var automations = [];
 
-    head.load('/js/query.js', async function()
-    {
-        automations = JSON.parse(await complexFetch('/serverside/automations', 10000, 3, {}, false));
+    automations = JSON.parse(await Query.complexFetch('/serverside/automations', 10000, 3, {}, false));
 
-        createAutomationPanels();
+    createAutomationPanels();
 
-        document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
-    });
+    document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
 
     function createAutomationPanels()
     {
@@ -388,7 +387,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
+        var created = await Query.complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
 
         if(created)
         {

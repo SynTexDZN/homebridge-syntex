@@ -29,9 +29,9 @@
         </div>
     </body>
 </html>
-<script>
+<script type="module">
 
-    head.load('/js/query.js');
+    import { Query } from '/js/query.js';
 
     async function createSwitch(form)
     {
@@ -42,7 +42,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetch('serverside/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
+        var created = await Query.complexFetch('serverside/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
 
         await newTimeout(1000);
 
