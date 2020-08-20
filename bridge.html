@@ -1,4 +1,17 @@
 <html>
+    <script type="module">
+    
+        //var head = require('/core/head.js');
+
+        import { Head } from '/core/head.js';
+
+        console.log(Head);
+
+        Head.Hi('Hi');
+
+        Head.Test();
+
+    </script>
     <title>Dashboard: Bridge</title>
     <body>
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
@@ -32,7 +45,9 @@
         </div>
     </body>
 </html>
-<script>
+<script type="module">
+
+    import { Query } from '/js/query.js';
 
     var bridgeIP = '<%ip%>';
     var bridgeVersion = '<%version%>';
@@ -46,12 +61,12 @@
     {
         return new Promise(async function(resolve) {
 
-            var newestVersion = await complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
+            var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
 
             if(newestVersion != null)
             {
                 label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
-
+                /*
                 var installedVersion = versionCount(version);
 
                 if(versionCount(newestVersion) > installedVersion)
@@ -70,6 +85,7 @@
 
                     document.getElementsByClassName('main')[0].appendChild(updateButton);
                 }
+                */
             }
             else
             {
@@ -79,51 +95,45 @@
             resolve(newestVersion);
         });
     }
+    
+    fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
 
-    head.load('/js/query.js', function()
-    {
-        fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
-
-            if(version != null)
-            {
-                newestBVersion = version;
-            }
-        });
-
-        complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
-
-            if(version != null)
-            {
-                webhooksVersion = version;
-
-                document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
-
-                fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
-
-                    if(version != null)
-                    {
-                        newestWVersion = version;
-                    }
-                });
-            }
-            else
-            {
-                document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
-                document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
-            }
-        });
-
-        complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-            if(automations != null && automations.length > 0)
-            {
-                document.getElementById("a").style.display = "";
-            }
-        });
+        if(version != null)
+        {
+            newestBVersion = version;
+        }
     });
 
-</script>
-<script>
+    Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
+
+        if(version != null)
+        {
+            webhooksVersion = version;
+
+            document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
+
+            fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
+
+                if(version != null)
+                {
+                    newestWVersion = version;
+                }
+            });
+        }
+        else
+        {
+            document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
+            document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+        }
+    });
+
+    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+        if(automations != null && automations.length > 0)
+        {
+            document.getElementById("a").style.display = "";
+        }
+    });
 
     async function updateBridge(btn)
     {
@@ -139,7 +149,7 @@
 
             updating['bridge'] = true;
 
-            if(await complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+            if(await Query.complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
@@ -149,7 +159,7 @@
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await complexFetch('/serverside/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
@@ -175,7 +185,7 @@
 
             updating['webhooks'] = true;
 
-            if(await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+            if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
             {
                 await newTimeout(3000);
 
@@ -185,7 +195,7 @@
 
                     showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
 
                     await newTimeout(4000);
 
@@ -196,9 +206,6 @@
             }
         }
     }
-
-</script>
-<script>
     
     async function restartBridge(btn)
     {
@@ -214,7 +221,7 @@
 
             restarting = true;
 
-            if(await complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
+            if(await Query.complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
             {
                 await newTimeout(3000);
 

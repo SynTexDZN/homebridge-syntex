@@ -1527,7 +1527,7 @@
 
             saving = true;
 
-            if(await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, overlays, true) == 'Success')
+            if(await complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
             {
                 var overlays = {
                     root : document.getElementById('save-btn'),

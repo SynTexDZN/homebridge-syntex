@@ -247,7 +247,7 @@
         formData.append('bridge-ip', bridgeIP);
         formData.append('device-name', deviceName);
 
-        var mac = await complexFetchPost('http://192.168.4.1/settings', 10000, formData, 3, {}, false);
+        var mac = await complexFetch('http://192.168.4.1/settings', 10000, 3, {}, false, formData);
 
         if(mac != null)
         {

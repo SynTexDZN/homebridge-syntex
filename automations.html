@@ -388,7 +388,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetchPost('/serverside/create-automations', 10000, JSON.stringify(automation), 3, overlays, false);
+        var created = await complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
 
         if(created)
         {

@@ -525,7 +525,7 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(deviceElements[i].getAttribute('id') != 'undefined' && await complexFetchPost('/serverside/save-config', 10000, JSON.stringify(settings), 3, {}, false) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
+            if(deviceElements[i].getAttribute('id') != 'undefined' && await complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
             {
                 complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
