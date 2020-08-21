@@ -81,8 +81,10 @@
 <script type="module" defer>
 
     import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
 
     window.Query = Query;
+    window.Essentials = Essentials;
 
     window.deviceName;
     window.bridgeIP = 'http://<%bridge-ip%>';
@@ -129,7 +131,7 @@
     {
         setTimeout(async function()
         {
-            if(await checkRestart('/serverside/check-restart'))
+            if(await Essentials.checkRestart('/serverside/check-restart'))
             {
                 window.location.href = url;
             }

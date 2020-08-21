@@ -1,3 +1,5 @@
+import { Query } from '/js/query.js';
+
 function versionCount(version)
 {
     if(version.includes('-'))
@@ -28,7 +30,7 @@ function checkRestart(url)
 {
     return new Promise(async function(resolve) {
 
-        var restart = await fetchURL(url, 3000);
+        var restart = await Query.fetchURL(url, 3000); //TODO: Auf Modul Umstellen
 
         console.log(restart);
 
@@ -168,3 +170,5 @@ function newTimeout(ms)
 {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export let Essentials = { newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };

@@ -38,8 +38,10 @@
 <script type="module" defer>
 
     import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
 
     window.Query = Query;
+    window.Essentials = Essentials;
 
     window.device = JSON.parse('<%device%>')
     window.accessory = JSON.parse('<%accessory%>');
@@ -1435,7 +1437,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/serverside/check-restart'))
+                if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
 

@@ -48,8 +48,10 @@
 <script type="module">
 
     import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
 
     window.Query = Query;
+    window.Essentials = Essentials;
 
     window.bridgeIP = '<%ip%>';
     window.bridgeVersion = '<%version%>';
@@ -161,7 +163,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/serverside/check-restart'))
+                if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
                     document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
 
@@ -197,7 +199,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
+                if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
                 {
                     document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
 
@@ -233,7 +235,7 @@
             {
                 await newTimeout(3000);
 
-                if(await checkRestart('/serverside/check-restart'))
+                if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
                     showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
 
