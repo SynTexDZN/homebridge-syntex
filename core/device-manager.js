@@ -490,6 +490,14 @@ function getAccessory(mac)
     });
 }
 
+function getAccessories()
+{
+    return new Promise(resolve => {
+        
+        resolve(accessories);
+    });
+}
+
 async function setValue(mac, param, value)
 {
     return new Promise(resolve => {
@@ -700,6 +708,7 @@ module.exports = {
     getDevice,
     getDevices,
     getAccessory,
+    getAccessories,
     setValue,
     setValues,
     initDevice,

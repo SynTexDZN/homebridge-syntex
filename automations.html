@@ -69,6 +69,7 @@
     window.Essentials = Essentials;
 
     window.automations = [];
+    window.accessories = JSON.parse('<%accessories%>');
 
     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 

@@ -577,6 +577,15 @@ SynTexPlatform.prototype = {
                                     response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));
                                     response.end();
                                 }
+                                else if(urlPath.startsWith('/automations'))
+                                {
+                                    var obj = {
+                                        accessories: JSON.stringify(await DeviceManager.getAccessories())
+                                    };
+
+                                    response.write(HTMLQuery.sendValues(head + data, obj));
+                                    response.end();
+                                }
                                 else if(path.parse(relPath).ext == '.html')
                                 {
                                     response.write(head + data);
