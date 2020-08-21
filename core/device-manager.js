@@ -1,7 +1,7 @@
 var store = require('json-fs-store');
 var config, storage, dataStorage, logger, accessories;
     
-async function removeDevice(mac, type)
+function removeDevice(mac)
 {
     return new Promise(resolve => {
 
@@ -30,7 +30,7 @@ async function removeDevice(mac, type)
                         {
                             if(await removeFromSettingsStorage(mac))
                             {
-                                await removeFromDataStorage(mac, type);
+                                await removeFromDataStorage(mac);
 
                                 resolve(true);
                             }
@@ -45,7 +45,7 @@ async function removeDevice(mac, type)
                 {
                     if(await removeFromSettingsStorage(mac))
                     {
-                        await removeFromDataStorage(mac, type);
+                        await removeFromDataStorage(mac);
 
                         resolve(true);
                     }
@@ -65,7 +65,7 @@ async function removeDevice(mac, type)
     });
 }
 
-async function existsInConfig(obj, mac)
+function existsInConfig(obj, mac)
 {
     return new Promise(resolve => {
 
@@ -87,7 +87,7 @@ async function existsInConfig(obj, mac)
     });
 }
 
-async function removeFromConfig(obj, mac)
+function removeFromConfig(obj, mac)
 {
     return new Promise(resolve => {
 
@@ -109,7 +109,7 @@ async function removeFromConfig(obj, mac)
     });
 }
 
-async function removeFromSettingsStorage(mac)
+function removeFromSettingsStorage(mac)
 {
     return new Promise(resolve => {
 
@@ -125,37 +125,25 @@ async function removeFromSettingsStorage(mac)
     });
 }
 
-async function removeFromDataStorage(mac, type)
+function removeFromDataStorage(mac)
 {
-    return new Promise(resolve => {
+    return new Promise(async function(resolve) {
 
-        if(type == 'climate')
-        {
-            dataStorage.remove(mac + '-T', (err) => {
+        dataStorage.list((err, objs) => {  
 
-                dataStorage.remove(mac + '-H', (err) => {
+            if(objs && !err)
+            {
+                for(var i = 0; i < objs.length; i++)
+                {
+                    if(objs[i].id.startsWith(mac))
+                    {
+                        dataStorage.remove(objs[i], (err) => {});
+                    }
+                }
+            }
 
-                    resolve();
-                });
-            });
-        }
-        else if(type == 'weather')
-        {
-            dataStorage.remove(mac + '-L', (err) => {
-
-                dataStorage.remove(mac + '-R', (err) => {
-
-                    resolve();
-                });
-            });
-        }
-        else
-        {
-            dataStorage.remove(mac, (err) => {
-
-                resolve();
-            });
-        }
+            resolve();
+        });
     });
 }
 
@@ -202,7 +190,7 @@ function initDevice(mac, ip, name, type, version, interval, events, services)
                         configObj = await removeFromConfig(obj, mac);
                     }
 
-                    configObj = await addToConfig(configObj || obj, mac, ip, name, type, services, JSON.parse(events).length);
+                    configObj = await addToConfig(configObj || obj, mac, ip, name, services, JSON.parse(events).length);
 
                     config.add(configObj, async function(err) {
 
@@ -259,7 +247,7 @@ function initDevice(mac, ip, name, type, version, interval, events, services)
     });
 }
 
-async function initSwitch(mac, name)
+function initSwitch(mac, name)
 {
     return new Promise(async function(resolve) {
         
@@ -277,7 +265,7 @@ async function initSwitch(mac, name)
 
                 if(obj && !err)
                 {
-                    var configObj = await addToConfig(obj, mac, null, name, 'switch', 'switch', 0);
+                    var configObj = await addToConfig(obj, mac, null, name, 'switch', 0);
 
                     config.add(configObj, async function(err) {
 
@@ -320,7 +308,7 @@ async function initSwitch(mac, name)
     });
 }
 
-function addToConfig(obj, mac, ip, name, type, services, buttons)
+function addToConfig(obj, mac, ip, name, services, buttons)
 {
     return new Promise(async function(resolve) {
 
@@ -328,34 +316,25 @@ function addToConfig(obj, mac, ip, name, type, services, buttons)
         {
             if(obj.platforms[i].platform === 'SynTexWebHooks')
             {
-                var platform = obj.platforms[i];
-                var index = platform.accessories.length;
+                var accessories = obj.platforms[i].accessories;
+                var index = accessories.length;
 
-                platform.accessories[index] = { mac : mac, name : name, services : JSON.parse(services) };
+                accessories[index] = { mac : mac, name : name, services : JSON.parse(services) };
 
-                if(type.includes('relais'))
+                if(services.includes('relais'))
                 {
-                    platform.accessories[index]['on_url'] = 'http://' + ip + '/switch?state=true';
-                    platform.accessories[index]['on_method'] = 'GET';
-                    platform.accessories[index]['off_url'] = 'http://' + ip + '/switch?state=false';
-                    platform.accessories[index]['off_method'] = 'GET';
+                    accessories[index]['on_url'] = 'http://' + ip + '/relais?value=true';
+                    accessories[index]['on_method'] = 'GET';
+                    accessories[index]['off_url'] = 'http://' + ip + '/relais?value=false';
+                    accessories[index]['off_method'] = 'GET';
                 }
-                else if(type.includes('rgb') || type.includes('rgbw') || type.includes('rgbww') || type.includes('rgbcw'))
+                else if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
                 {
-                    platform.accessories[index]['url'] = 'http://' + ip + '/color';
+                    accessories[index]['url'] = 'http://' + ip + '/color';
                 }
-                else if(type == 'climate')
+                else if(services.includes('statelessswitch'))
                 {
-                    platform.accessories[index]['services'] = ['temperature', 'humidity'];
-                }
-                else if(type == 'weather')
-                {
-                    platform.accessories[index]['services'] = ['rain', 'light'];
-                }
-                
-                if(type == 'statelessswitch')
-                {
-                    platform.accessories[index]['buttons'] = buttons;
+                    accessories[index]['buttons'] = buttons;
                 }
             }
         }
@@ -364,7 +343,7 @@ function addToConfig(obj, mac, ip, name, type, services, buttons)
     });
 }
 
-async function checkName(name)
+function checkName(name)
 {
     return new Promise(resolve => {
         
@@ -392,7 +371,7 @@ async function checkName(name)
     });
 }
 
-async function checkMac(mac)
+function checkMac(mac)
 {
     return new Promise(resolve => {
         
@@ -420,7 +399,7 @@ async function checkMac(mac)
     });
 }
 
-async function getValue(mac, param)
+function getValue(mac, param)
 {
     return new Promise(resolve => {
         
@@ -438,7 +417,7 @@ async function getValue(mac, param)
     });
 }
 
-async function getDevice(mac)
+function getDevice(mac)
 {
     return new Promise(resolve => {
         
@@ -456,7 +435,7 @@ async function getDevice(mac)
     });
 }
 
-async function getDevices()
+function getDevices()
 {
     return new Promise(resolve => {
         
@@ -498,7 +477,7 @@ function getAccessories()
     });
 }
 
-async function setValue(mac, param, value)
+function setValue(mac, param, value)
 {
     return new Promise(resolve => {
         
@@ -526,7 +505,7 @@ async function setValue(mac, param, value)
     });
 }
 
-async function setValues(values)
+function setValues(values)
 {
     return new Promise(resolve => {
         
@@ -560,7 +539,7 @@ async function setValues(values)
     });
 }
 
-async function checkEventButton(mac)
+function checkEventButton(mac)
 {
     return new Promise(resolve => {
 
@@ -596,7 +575,7 @@ async function checkEventButton(mac)
     });
 }
 
-async function createEventButton(mac, name, buttons)
+function createEventButton(mac, name, buttons)
 {
     return new Promise(resolve => {
 

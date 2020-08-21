@@ -158,6 +158,30 @@ function removeOverlays(btn, show)
     }, 600);
 }
 
+function getType(services)
+{
+    if(!Array.isArray(services))
+    {
+        return services;
+    }
+    else if(services.length == 1)
+    {
+        return services[0];
+    }
+    else if(services.length == 2 && services.includes('temperature') && services.includes('humidity'))
+    {
+        return 'climate';
+    }
+    else if(services.length == 2 && services.includes('light') && services.includes('rain'))
+    {
+        return 'weather';
+    }
+    else
+    {
+        return 'special';
+    }
+}
+
 function removeOverlaysDelay(btn, delay, show)
 {
     setTimeout(function()
@@ -176,4 +200,4 @@ function SETUP(Q)
     Query = Q;
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType };
