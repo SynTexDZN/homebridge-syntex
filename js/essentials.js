@@ -1,4 +1,4 @@
-import { Query } from '/js/query.js';
+var Query;
 
 function versionCount(version)
 {
@@ -171,4 +171,9 @@ function newTimeout(ms)
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export let Essentials = { newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };
+function setupQuery(Q)
+{
+    Query = Q;
+}
+
+export let Essentials = { setupQuery, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };
