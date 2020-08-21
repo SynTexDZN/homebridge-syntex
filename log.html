@@ -137,7 +137,7 @@
                     label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
                     label.setAttribute('onclick', 'fetchLogs()');
 
-                    canvas.parentElement.appendChild(label);
+                    document.getElementById(Object.keys(logJSON)[i]).parentElement.appendChild(label);
                 }
 
                 createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
