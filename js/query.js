@@ -205,9 +205,9 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
     });
 }
 
-function setupEssentials(E)
+function SETUP(E)
 {
     Essentials = E;
 }
 
-export let Query = { setupEssentials, fetchURL, complexFetch };
+export let Query = { SETUP, fetchURL, complexFetch };

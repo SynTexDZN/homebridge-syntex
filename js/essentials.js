@@ -171,9 +171,9 @@ function newTimeout(ms)
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function setupQuery(Q)
+function SETUP(Q)
 {
     Query = Q;
 }
 
-export let Essentials = { setupQuery, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay };
