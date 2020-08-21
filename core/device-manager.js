@@ -41,18 +41,17 @@ function removeDevice(mac)
                         }
                     });
                 }
+                else if(await removeFromSettingsStorage(mac))
+                {
+                    await removeFromDataStorage(mac);
+
+                    resolve(true);
+                }
                 else
                 {
-                    if(await removeFromSettingsStorage(mac))
-                    {
-                        await removeFromDataStorage(mac);
+                    await removeFromDataStorage(mac);
 
-                        resolve(true);
-                    }
-                    else
-                    {
-                        resolve(false);
-                    }
+                    resolve(true);
                 }
             }
             else
