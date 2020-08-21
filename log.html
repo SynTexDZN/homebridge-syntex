@@ -129,8 +129,9 @@
                 document.getElementById('log-container').appendChild(logTitle);
                 document.getElementById('log-container').appendChild(logWindow);
 
-                if(logJSON[Object.keys(logJSON)[i]].length > 0)
+                if(logJSON[Object.keys(logJSON)[i]].length == 0)
                 {
+                    /*
                     var label = document.createElement('h2');
 
                     label.innerHTML = '↻ Neu Laden';
@@ -138,6 +139,7 @@
                     label.setAttribute('onclick', 'fetchLogs()');
 
                     document.getElementById(Object.keys(logJSON)[i]).appendChild(label);
+                    */
                 }
                 else
                 {
