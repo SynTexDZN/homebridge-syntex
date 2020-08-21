@@ -55,8 +55,13 @@
 <script type="module" defer>
 
     import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
+
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
 
     window.Query = Query;
+    window.Essentials = Essentials;
 
     window.devices = JSON.parse('<%devices%>');
     window.offline = []
@@ -240,7 +245,7 @@
         {
             var restartCounter = { success : 0, error : 0 };
         
-            showOverlay(btn, createPendingOverlay('restart-all-pending', 'Neustart ..'));
+            Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
 
             for(var i = 0; i < devices.length; i++)
             {
@@ -252,11 +257,11 @@
 
                         if(restartCounter['success'] + restartCounter['error'] >= devices.length - offline.length)
                         {
-                            await newTimeout(1000);
+                            await Essentials.newTimeout(1000);
 
-                            showOverlay(btn, createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (devices.length - offline.length) + ' Geräten Neugestartet!'));
+                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (devices.length - offline.length) + ' Geräten Neugestartet!'));
                             
-                            removeOverlaysDelay(btn, 4000, true);
+                            Essentials.removeOverlaysDelay(btn, 4000, true);
                         }
                     });
                 }
@@ -289,7 +294,7 @@
 
         document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offline.length;
 
-        await newTimeout(10000);
+        await Essentials.newTimeout(10000);
             
         checkConnection();
     }
@@ -337,7 +342,7 @@
     {
         var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
 
-        if(newestVersion != null && versionCount(newestVersion) > versionCount(device.getAttribute('version')))
+        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
         {  
             device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
             device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
@@ -373,7 +378,7 @@
         var updates = document.getElementsByClassName('update');
         var updateCounter = { success : 0, error : 0 };
 
-        showOverlay(btn, createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
+        Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
 
         for(var i = 0; i < updates.length; i++)
         {
@@ -385,11 +390,11 @@
 
                     if(updateCounter['success'] + updateCounter['error'] >= updateCount)
                     {
-                        showOverlay(btn, createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
+                        Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
 
-                        await newTimeout(4000);
+                        await Essentials.newTimeout(4000);
 
-                        removeOverlays(btn, updateCounter['error'] == 0 ? false : true);
+                        Essentials.removeOverlays(btn, updateCounter['error'] == 0 ? false : true);
 
                         updateCount -= updateCounter['success'];
                     }
@@ -422,7 +427,7 @@
                     device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
                     device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
                     device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
                     device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
@@ -434,7 +439,7 @@
                     device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
                     device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
 
-                    await newTimeout(3000);
+                    await Essentials.newTimeout(3000);
                     
                     var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
 
@@ -460,7 +465,7 @@
                         device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
                     }
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
                     if(device.className.includes('update'))
                     {
@@ -484,7 +489,7 @@
                     document.getElementById('update-all').style.opacity = 0;
                 }
 
-                await newTimeout(300);
+                await Essentials.newTimeout(300);
 
                 if(response == true)
                 {
@@ -499,7 +504,7 @@
                         document.getElementById('update-all').style.borderBottomWidth = 0;
                     }
 
-                    await newTimeout(300);
+                    await Essentials.newTimeout(300);
 
                     if(updateCount == 0)
                     {
@@ -520,7 +525,7 @@
 
         var switchCounter = { success : 0, error : 0 };
 
-        showOverlay(btn, createPendingOverlay('', 'Hochladen ..'));
+        Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
 
         for(var i = 0; i < deviceElements.length; i++)
         {
@@ -560,7 +565,7 @@
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
                         btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
 
-                        removeOverlays(btn, true);
+                        Essentials.removeOverlays(btn, true);
                     }
                 }.bind({ active : settings.active, device : deviceElements[i] }));
             }

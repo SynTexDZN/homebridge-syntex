@@ -34,6 +34,9 @@
     import { Query } from '/js/query.js';
     import { Essentials } from '/js/essentials.js';
 
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
+
     window.Query = Query;
     window.Essentials = Essentials;
 
@@ -51,7 +54,7 @@
 
         var created = await Query.complexFetch('serverside/init-switch?mac=' + form.children[0].getElementsByTagName('input')[0].value + '&name=' + form.children[1].getElementsByTagName('input')[0].value, 10000, 3, overlays, false);
 
-        await newTimeout(1000);
+        await Essentials.newTimeout(1000);
 
         if(created == 'Success')
         {
@@ -62,11 +65,11 @@
         }
         else
         {
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', created));
+            Essentials.showOverlay(document.getElementById('create-btn'), Essentials.createErrorOverlay('create-result', created));
 
-            await newTimeout(4000);
+            await Essentials.newTimeout(4000);
 
-            removeOverlays(document.getElementById('create-btn'), true);
+            Essentials.removeOverlays(document.getElementById('create-btn'), true);
         }
     }
 

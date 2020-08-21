@@ -63,8 +63,13 @@
 <script type="module" defer>
 
     import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
+
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
 
     window.Query = Query;
+    window.Essentials = Essentials;
 
     window.logJSON = {};
     window.counter = 0;
@@ -145,7 +150,7 @@
         document.getElementById('search-params').value = '';
         document.getElementById('search-level').value = '';
 
-        await newTimeout(500);
+        await Essentials.newTimeout(500);
 
         for(var i = 0; i < Object.keys(logJSON).length; i++)
         {
@@ -160,7 +165,7 @@
         counter = 0;
         document.getElementById('search-btn').value = 'Suchen ..';
 
-        await newTimeout(500);
+        await Essentials.newTimeout(500);
 
         var params = document.getElementById('search-params').value;
         var level = document.getElementById('search-level').value;

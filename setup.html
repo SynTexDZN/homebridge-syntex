@@ -83,6 +83,9 @@
     import { Query } from '/js/query.js';
     import { Essentials } from '/js/essentials.js';
 
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
+
     window.Query = Query;
     window.Essentials = Essentials;
 
@@ -106,7 +109,7 @@
 
         var created = await complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
 
-        await newTimeout(1000);
+        await Essentials.newTimeout(1000);
 
         if(created == 'Success')
         {
@@ -119,11 +122,11 @@
         }
         else
         {
-            showOverlay(document.getElementById('create-btn'), createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
+            Essentials.showOverlay(document.getElementById('create-btn'), Essentials.createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
 
-            await newTimeout(4000);
+            await Essentials.newTimeout(4000);
 
-            removeOverlays(document.getElementById('create-btn'), true);
+            Essentials.removeOverlays(document.getElementById('create-btn'), true);
         }
     }
 

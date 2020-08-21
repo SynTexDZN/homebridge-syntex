@@ -40,6 +40,9 @@
     import { Query } from '/js/query.js';
     import { Essentials } from '/js/essentials.js';
 
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
+
     window.Query = Query;
     window.Essentials = Essentials;
 
@@ -1254,13 +1257,13 @@
 
             if(await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
             {
-                showOverlay(btn, createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
+                Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
 
-                await newTimeout(4000);
+                await Essentials.newTimeout(4000);
 
-                removeOverlays(btn, true);
+                Essentials.removeOverlays(btn, true);
 
-                await newTimeout(300);
+                await Essentials.newTimeout(300);
             }
         }
     }
@@ -1275,11 +1278,11 @@
 
                 if(restarting == true)
                 {
-                    showOverlay(document.getElementById('restart-btn'), createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                    Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
                     
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
                     
-                    removeOverlays(document.getElementById('restart-btn'), true);
+                    Essentials.removeOverlays(document.getElementById('restart-btn'), true);
 
                     setTimeout(function()
                     {
@@ -1314,14 +1317,14 @@
                     document.getElementsByClassName('control-panel')[i].value = '-';
                 }
 
-                await newTimeout(500);
+                await Essentials.newTimeout(500);
                 
                 pingESP();
             }
         }
         else
         {
-            await newTimeout(500);
+            await Essentials.newTimeout(500);
                 
             pingESP();
         }
@@ -1348,7 +1351,7 @@
 
                 if(await Query.complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
                 {
-                    await newTimeout(3000);
+                    await Essentials.newTimeout(3000);
 
                     var overlays = {
                         root : btn,
@@ -1360,20 +1363,20 @@
 
                     if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
                     {  
-                        showOverlay(btn, createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+                        Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
 
                         response = true;
                     }
                     else
                     {
-                        showOverlay(btn, createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+                        Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                     }
 
                     document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
-                    removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+                    Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
                 }
 
                 updating = false;
@@ -1387,7 +1390,7 @@
     {
         var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
 
-        if(newestVersion != null && versionCount(newestVersion) > versionCount(document.getElementById('navigation-panel').getAttribute('version')))
+        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('navigation-panel').getAttribute('version')))
         {
             var update = document.createElement('input');
 
@@ -1403,11 +1406,11 @@
 
     function resetDevice(btn)
     {
-        var overlay = createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+        var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
 
         overlay.setAttribute('onclick', 'resetConfirm(this)');
 
-        showOverlay(btn, overlay);
+        Essentials.showOverlay(btn, overlay);
     }
     
     async function resetConfirm(btn)
@@ -1435,21 +1438,21 @@
 
             if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
             {
-                await newTimeout(3000);
+                await Essentials.newTimeout(3000);
 
                 if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
-                    showOverlay(btn, createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+                    Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
 
-                    await newTimeout(3000);
+                    await Essentials.newTimeout(3000);
 
                     window.location.href = '/';
                 }
             }
             else
             {
-                await newTimeout(4010);
-                removeOverlays(document.getElementById('reset-btn'), true);
+                await Essentials.newTimeout(4010);
+                Essentials.removeOverlays(document.getElementById('reset-btn'), true);
             }
 
             resetting = false;
@@ -1533,7 +1536,7 @@
 
                 await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
                 
-                await newTimeout(2000);
+                await Essentials.newTimeout(2000);
                     
                 redirect();
             }
@@ -1541,7 +1544,7 @@
             {
                 saving = false;
 
-                await newTimeout(500);
+                await Essentials.newTimeout(500);
 
                 pingESP();
             }
