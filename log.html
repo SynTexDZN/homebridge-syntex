@@ -139,8 +139,10 @@
 
                     document.getElementById(Object.keys(logJSON)[i]).appendChild(label);
                 }
-
-                createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
+                else
+                {
+                    createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
+                }
             }
 
             countLogs = false;
