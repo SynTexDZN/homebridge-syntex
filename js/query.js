@@ -1,3 +1,5 @@
+var Essentials;
+
 function fetchURL(url, timeout, post)
 {
     return new Promise(resolve => {
@@ -66,11 +68,11 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
                     color = overlays.pending.color;
                 }
 
-                var overlay = createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
+                var overlay = Essentials.createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
 
                 overlay.setAttribute('style', style);
 
-                showOverlay(overlays.root, overlay);
+                Essentials.showOverlay(overlays.root, overlay);
             }
 
             do
@@ -109,17 +111,17 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
                     color = overlays.connectionError.color;
                 }
 
-                var overlay = createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
+                var overlay = Essentials.createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
 
                 overlay.setAttribute('style', style);
 
-                showOverlay(overlays.root, overlay);
+                Essentials.showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, true);
+                        Essentials.removeOverlays(overlays.root, true);
                     }, 4000);
                 }
             }
@@ -144,17 +146,17 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
                     color = overlays.executeError.color;
                 }
 
-                var overlay = createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
+                var overlay = Essentials.createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
 
                 overlay.setAttribute('style', style);
 
-                showOverlay(overlays.root, overlay);
+                Essentials.showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, true);
+                        Essentials.removeOverlays(overlays.root, true);
                     }, 4000);
                 }
             }
@@ -179,17 +181,17 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
                     color = overlays.success.color;
                 }
 
-                var overlay = createOverlay(z, overlays.id + '-result', overlays.success.value, color);
+                var overlay = Essentials.createOverlay(z, overlays.id + '-result', overlays.success.value, color);
 
                 overlay.setAttribute('style', style);
 
-                showOverlay(overlays.root, overlay);
+                Essentials.showOverlay(overlays.root, overlay);
 
                 if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
                 {
                     setTimeout(function()
                     {
-                        removeOverlays(overlays.root, remove);
+                        Essentials.removeOverlays(overlays.root, remove);
                     }, 4000);
                 }
             }
@@ -203,4 +205,9 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
     });
 }
 
-export let Query = { fetchURL, complexFetch };
+function setupEssentials(E)
+{
+    Essentials = E;
+}
+
+export let Query = { setupEssentials, fetchURL, complexFetch };

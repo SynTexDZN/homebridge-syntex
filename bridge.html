@@ -163,19 +163,19 @@
 
             if(await Query.complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
             {
-                await newTimeout(3000);
+                await Essentials.newTimeout(3000);
 
                 if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
                     document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
 
-                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
                     document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
-                    removeOverlays(btn, false);
+                    Essentials.removeOverlays(btn, false);
 
                     updating['bridge'] = false;
                 }
@@ -199,19 +199,19 @@
 
             if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
             {
-                await newTimeout(3000);
+                await Essentials.newTimeout(3000);
 
                 if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
                 {
                     document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
 
-                    showOverlay(btn, createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
                     document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
-                    removeOverlays(btn, false);
+                    Essentials.removeOverlays(btn, false);
 
                     updating['webhooks'] = false;
                 }
@@ -235,15 +235,15 @@
 
             if(await Query.complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
             {
-                await newTimeout(3000);
+                await Essentials.newTimeout(3000);
 
                 if(await Essentials.checkRestart('/serverside/check-restart'))
                 {
-                    showOverlay(btn, createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
 
-                    await newTimeout(4000);
+                    await Essentials.newTimeout(4000);
 
-                    removeOverlays(btn, true);
+                    Essentials.removeOverlays(btn, true);
 
                     restarting = false;
                 }
