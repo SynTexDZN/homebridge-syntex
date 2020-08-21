@@ -76,62 +76,7 @@
     window.levelCounter = [0, 0, 0, 0, 0, 0, 0];
     window.countLogs = true;
 
-    Query.complexFetch('/serverside/log', 10000, 3, {}, false).then(function(l) {
-
-        logJSON = JSON.parse(l);
-
-        for(var i = 0; i < Object.keys(logJSON).length; i++)
-        {
-            var logTitle = document.createElement('h2');
-            var logWindow = document.createElement('textarea');
-
-            logTitle.setAttribute('style', 'width: fit-content');
-            logTitle.innerHTML = '• ' + Object.keys(logJSON)[i] + ' Log •';
-
-            if(Object.keys(logJSON)[i] == 'SynTex')
-            {
-                logTitle.innerHTML = '• Bridge Log •';
-            }
-            else if(Object.keys(logJSON)[i] == 'SynTexWebHooks')
-            {
-                logTitle.innerHTML = '• WebHooks Log •';
-            }
-            else if(Object.keys(logJSON)[i] == 'SynTexTuya')
-            {
-                logTitle.innerHTML = '• Tuya Log •';
-            }
-
-            logWindow.setAttribute('readonly', '');
-            logWindow.setAttribute('id', Object.keys(logJSON)[i]);
-            logWindow.style.height = '800px'; 
-            logWindow.style.maxHeight = '800px'; 
-
-            if(i < Object.keys(logJSON).length - 1)
-            {
-                logWindow.style.marginBottom = '40px';    
-            }
-
-            document.getElementById('log-container').appendChild(logTitle);
-            document.getElementById('log-container').appendChild(logWindow);
-
-            createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
-        }
-        
-        countLogs = false;
-
-        document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
-        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
-        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
-        document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
-        document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
-        document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
-
-        if(levelCounter[6] > 0)
-        {
-            document.getElementById('debug-widget').style.display = '';
-            document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
-        }
-    });
+    fetchLogs();
 
     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
 
@@ -142,7 +87,78 @@
     });
 
 </script>
-<script>    
+<script>
+
+    function fetchLogs()
+    {
+        Query.complexFetch('/serverside/log', 10000, 3, {}, false).then(function(l) {
+
+            logJSON = JSON.parse(l);
+
+            for(var i = 0; i < Object.keys(logJSON).length; i++)
+            {
+                var logTitle = document.createElement('h2');
+                var logWindow = document.createElement('textarea');
+
+                logTitle.setAttribute('style', 'width: fit-content');
+                logTitle.innerHTML = '• ' + Object.keys(logJSON)[i] + ' Log •';
+
+                if(Object.keys(logJSON)[i] == 'SynTex')
+                {
+                    logTitle.innerHTML = '• Bridge Log •';
+                }
+                else if(Object.keys(logJSON)[i] == 'SynTexWebHooks')
+                {
+                    logTitle.innerHTML = '• WebHooks Log •';
+                }
+                else if(Object.keys(logJSON)[i] == 'SynTexTuya')
+                {
+                    logTitle.innerHTML = '• Tuya Log •';
+                }
+
+                logWindow.setAttribute('readonly', '');
+                logWindow.setAttribute('id', Object.keys(logJSON)[i]);
+                logWindow.style.height = '800px'; 
+                logWindow.style.maxHeight = '800px'; 
+
+                if(i < Object.keys(logJSON).length - 1)
+                {
+                    logWindow.style.marginBottom = '40px';    
+                }
+
+                document.getElementById('log-container').appendChild(logTitle);
+                document.getElementById('log-container').appendChild(logWindow);
+
+                if(logJSON[Object.keys(logJSON)[i]].length > 0)
+                {
+                    var label = document.createElement('h2');
+
+                    label.innerHTML = '↻ Neu Laden';
+                    label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+                    label.setAttribute('onclick', 'fetchLogs()');
+
+                    canvas.parentElement.appendChild(label);
+                }
+
+                createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
+            }
+
+            countLogs = false;
+
+            document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
+            document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
+            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
+            document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
+            document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
+            document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
+
+            if(levelCounter[6] > 0)
+            {
+                document.getElementById('debug-widget').style.display = '';
+                document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
+            }
+        });
+    }
 
     async function clearSearch()
     {
