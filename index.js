@@ -458,7 +458,7 @@ SynTexPlatform.prototype = {
 
                                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
-                                        device: all,
+                                        device: JSON.stringify(all),
                                         wPort: 1710
                                     };
 
