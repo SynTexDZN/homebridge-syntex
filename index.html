@@ -140,7 +140,7 @@
 
             button.setAttribute('active', devices[i].active == 1 ? 'true' : 'false');
 
-            if(devices[i].active == 1)
+            if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
             {
                 button.innerHTML += '<div class="connection">AKTIV</div>';
             }
