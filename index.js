@@ -121,9 +121,9 @@ SynTexPlatform.prototype = {
                         }
                         else if(urlPath == '/remove-device')
                         {
-                            if(urlParams.mac && urlParams.type)
+                            if(urlParams.mac)
                             {
-                                DeviceManager.removeDevice(urlParams.mac, urlParams.type).then(function(removed) {
+                                DeviceManager.removeDevice(urlParams.mac).then(function(removed) {
 
                                     response.write(removed ? 'Success' : 'Error');
                                     response.end();
@@ -375,7 +375,7 @@ SynTexPlatform.prototype = {
                         {
                             var device = await DeviceManager.getDevice(urlParams.mac);
 
-                            response.write(device ? device.type : 'Error');
+                            response.write(device ? 'Success' : 'Error');
                             response.end();
                         }
                         else if(urlPath == '/save-config' && request.method == 'POST')
@@ -477,14 +477,10 @@ SynTexPlatform.prototype = {
 
                                     all.push.apply(all, accessories);
 
-                                    console.log(all);
-                                    
                                     var magicHome = await getPluginConfig('MagicHome-Platform');
 
                                     if(magicHome != null)
                                     {
-                                        console.log(magicHome);
-
                                         for(var i = 0; i < magicHome.lights.length; i++)
                                         {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')

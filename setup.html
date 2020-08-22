@@ -213,9 +213,7 @@
     
     async function checkDB(mac)
     {
-        var exists = await fetchURL('/serverside/check-device?mac=' + mac, 10000);
-
-        if(exists != null && exists != 'Error')
+        if(await fetchURL('/serverside/check-device?mac=' + mac, 10000) == 'Success')
         {  
             console.log(exists);
         
