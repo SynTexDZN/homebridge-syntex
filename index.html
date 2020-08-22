@@ -138,7 +138,7 @@
 
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
 
-            button.setAttribute('active', devices[i].active == 1 ? 'true' : 'false');
+            button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false');
 
             if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
             {
