@@ -447,11 +447,18 @@ SynTexPlatform.prototype = {
 
                                 if(urlPath == '/device' && urlParams.mac)
                                 {
+                                    var accessory = await DeviceManager.getAccessory(urlParams.mac);
+                                    var all = { ...accessory };
                                     var device = await DeviceManager.getDevice(urlParams.mac);
+
+                                    for(var k = 0; k < Object.keys(device).length; k++)
+                                    {
+                                        all[Object.keys(device)[k]] = device[Object.keys(device)[k]];
+                                    }
+
                                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
-                                        device: device != null ? JSON.stringify(device) : '{}',
-                                        accessory: JSON.stringify(await DeviceManager.getAccessory(urlParams.mac)),
+                                        device: all,
                                         wPort: 1710
                                     };
 

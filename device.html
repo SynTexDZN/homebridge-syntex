@@ -47,11 +47,10 @@
     window.Essentials = Essentials;
 
     window.device = JSON.parse('<%device%>')
-    window.accessory = JSON.parse('<%accessory%>');
     window.values = {}
     window.orginal = {}
     window.typeCounter = {};
-    window.counter = Array.isArray(accessory.services) ? accessory.services.length : 1;
+    window.counter = Array.isArray(device.services) ? device.services.length : 1;
     window.padding = 50;
     window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
     window.automations = []
@@ -108,7 +107,7 @@
         document.getElementById('reconnect-btn').style.display = 'none';
     }
 
-    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('statelessswitch') || accessory.services.includes('temperature') || accessory.services.includes('humidity') || accessory.services.includes('light') || accessory.services.includes('rain'))
+    if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('statelessswitch') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('light') || device.services.includes('rain'))
     {
         settings.push({
             index: 'active',
@@ -116,7 +115,7 @@
         });
     }
 
-    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || accessory.services.includes('lcd'))
+    if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('relais') || device.services.includes('statelessswitch') || device.services.includes('lcd'))
     {
         settings.push({
             index: 'led',
@@ -124,15 +123,15 @@
         });
     }
 
-    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity') || accessory.services.includes('lcd'))
+    if(device.services.includes('motion') || device.services.includes('light') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('lcd'))
     {
         settings.push({
             index: 'interval',
-            name: accessory.services.includes('motion') ? 'Delay' : 'Interval'
+            name: device.services.includes('motion') ? 'Delay' : 'Interval'
         });
     }
 
-    if(accessory.services.includes('statelessswitch'))
+    if(device.services.includes('statelessswitch'))
     {
         settings.push({
             index: 'events',
@@ -140,19 +139,19 @@
         });
     }
 
-    document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name);
-    document.getElementsByTagName('h1')[0].innerHTML = (device.name || accessory.name);
+    document.getElementsByTagName('title')[0].innerHTML = device.name;
+    document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
     var infos = document.getElementById('info');
 
-    infos.innerHTML += '<p><b>Mac: </b>' + accessory.mac + '</p>';
+    infos.innerHTML += '<p><b>Mac: </b>' + device.mac + '</p>';
 
     if(device.ip != undefined)
     {
         infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
     }
     
-    infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(accessory.services) + '</p>';
+    infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(device.services) + '</p>';
 
     if(device.version != undefined)
     {
@@ -161,11 +160,11 @@
 
     for(const i in settings)
     {
-        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
+        if(settings[i].index == 'interval' && !device.services.includes('motion'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
         }
-        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
+        else if(settings[i].index == 'interval' && device.services.includes('motion'))
         {
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
         }
@@ -190,24 +189,24 @@
         }
     }
 
-    document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(accessory.services));
+    document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(device.services));
     document.getElementById('navigation-panel').setAttribute('version', device.version);
 
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + accessory.mac + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.mac + "'");
 
-    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + (device.name || accessory.name) + ' )';
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
     var settingsForm = document.getElementById('settings-form');
 
-    settingsForm.getElementsByTagName('input')[0].setAttribute('value', (device.name || accessory.name));
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 
     for(const i in settings)
     {
-        if(settings[i].index == 'interval' && !accessory.services.includes('motion'))
+        if(settings[i].index == 'interval' && !device.services.includes('motion'))
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
-        else if(settings[i].index == 'interval' && accessory.services.includes('motion'))
+        else if(settings[i].index == 'interval' && device.services.includes('motion'))
         {
             settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
         }
@@ -257,11 +256,11 @@
         }
     }
 
-    settingsForm.setAttribute('mac', accessory.mac);
+    settingsForm.setAttribute('mac', device.mac);
     settingsForm.setAttribute('ip', device.ip);
-    settingsForm.setAttribute('type', Essentials.getType(accessory.services));
+    settingsForm.setAttribute('type', Essentials.getType(device.services));
 
-    if(accessory.services.includes('statelessswitch'))
+    if(device.services.includes('statelessswitch'))
     {
         document.getElementById('infobox').style.display = '';
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
@@ -269,7 +268,7 @@
 
     for(var i = 0; i < counter; i++)
     {
-        var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+        var type = Array.isArray(device.services) ? device.services[i] : device.services;
 
         if(type instanceof Object)
         {
@@ -360,22 +359,22 @@
 
             if(typeCounter[type] > 1)
             {
-                var name = (device.name || accessory.name), n = [];
+                var name = device.name, n = [];
 
                 if(typeCounter[type] > 1)
                 {
-                    name = (device.name || accessory.name) + ' ' + type + ' ' + j;
+                    name = device.name + ' ' + type + ' ' + j;
                 }
                 else if(counter > 1)
                 {
-                    name = (device.name || accessory.name) + ' ' + type;
+                    name = device.name + ' ' + type;
                 }
 
-                for(var k = 0; k < accessory.services.length; k++)
+                for(var k = 0; k < device.services.length; k++)
                 {
-                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    if(device.services[k] instanceof Object && device.services[k].type == type)
                     {
-                        n.push(accessory.services[k].name);
+                        n.push(device.services[k].name);
                     }
                 }
 
@@ -444,7 +443,7 @@
             }
             else
             {
-                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + accessory.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
             }
 
             if(state != null)
@@ -472,7 +471,7 @@
 
     async function loadActivity()
     {
-        activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + accessory.mac, 10000, 3, {}, false));
+        activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + device.mac, 10000, 3, {}, false));
 
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
@@ -480,22 +479,22 @@
 
             for(var j = 0; j < typeCounter[type]; j++)
             {
-                var name = (device.name || accessory.name), n = [];
+                var name = device.name, n = [];
 
                 if(typeCounter[type] > 1)
                 {
-                    name = (device.name || accessory.name) + ' ' + type + ' ' + j;
+                    name = device.name + ' ' + type + ' ' + j;
                 }
                 else if(counter > 1)
                 {
-                    name = (device.name || accessory.name) + ' ' + type;
+                    name = device.name + ' ' + type;
                 }
 
-                for(var k = 0; k < accessory.services.length; k++)
+                for(var k = 0; k < device.services.length; k++)
                 {
-                    if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                    if(device.services[k] instanceof Object && device.services[k].type == type)
                     {
-                        n.push(accessory.services[k].name);
+                        n.push(device.services[k].name);
                     }
                 }
 
@@ -547,7 +546,7 @@
     {
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
-            var type = Array.isArray(accessory.services) ? accessory.services[i] : accessory.services;
+            var type = Array.isArray(device.services) ? device.services[i] : device.services;
 
             if(type instanceof Object)
             {
@@ -751,7 +750,7 @@
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].mac == accessory.mac && automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
+                if(automations[i].trigger[j].mac == device.mac && automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
                 {
                     w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
                 }
@@ -1090,14 +1089,14 @@
     {
         document.getElementById('infos').setAttribute('style', 'display: none');
         document.getElementById('settings').removeAttribute('style');
-        document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name) + ' (Einstellungen)';
+        document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
     }
     
     function closeSettings()
     {
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
-        document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name);
+        document.getElementsByTagName('title')[0].innerHTML = device.name;
     }
 
     async function fetchState()
@@ -1108,7 +1107,7 @@
 
             for(var j = 0; j < typeCounter[type]; j++)
             {
-                var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + accessory.mac + '&type=' + type + '&counter=' + j, 10000);
+                var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000);
         
                 if(temp[type + j] && state != temp[type + j])
                 {
@@ -1197,9 +1196,9 @@
                             {
                                 value = 'AN';
 
-                                console.log(accessory.spectrum, accessory.spectrum == 'HSL');
+                                console.log(device.spectrum, device.spectrum == 'HSL');
 
-                                if(accessory.spectrum == 'HSL')
+                                if(device.spectrum == 'HSL')
                                 {
                                     color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
                                     console.log(color);
@@ -1223,14 +1222,14 @@
 
                     if(typeCounter[type] > 1)
                     {
-                        var name = (device.name || accessory.name) + ' ' + type + ' ' + j;
+                        var name = device.name + ' ' + type + ' ' + j;
                         var n = [];
 
-                        for(var k = 0; k < accessory.services.length; k++)
+                        for(var k = 0; k < device.services.length; k++)
                         {
-                            if(accessory.services[k] instanceof Object && accessory.services[k].type == type)
+                            if(device.services[k] instanceof Object && device.services[k].type == type)
                             {
-                                n.push(accessory.services[k].name);
+                                n.push(device.services[k].name);
                             }
                         }
 
@@ -1450,7 +1449,7 @@
             }
             else
             {
-                var url = '/serverside/remove-device?mac=' + accessory.mac;
+                var url = '/serverside/remove-device?mac=' + device.mac;
             }
 
             resetting = true;
@@ -1483,7 +1482,7 @@
         if(!saving && !updating && !restarting && !resetting)
         {
             var settings = {
-                mac: accessory.mac
+                mac: device.mac
             };
 
             var form = document.getElementById('settings-form');
@@ -1494,11 +1493,11 @@
                 {
                     if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                     {
-                        if(!accessory.services.includes('motion'))
+                        if(!device.services.includes('motion'))
                         {
                             settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                         }
-                        else if(accessory.services.includes('motion'))
+                        else if(device.services.includes('motion'))
                         {
                             settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
                         }
