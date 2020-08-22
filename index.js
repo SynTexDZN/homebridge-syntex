@@ -470,9 +470,10 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
+                                    var accessories = JSON.stringify(await DeviceManager.getAccessories());
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
-
+                                    /*
                                     var magicHome = await getPluginConfig('MagicHome-Platform');
 
                                     if(magicHome != null)
@@ -486,9 +487,23 @@ SynTexPlatform.prototype = {
                                             }
                                         }
                                     }
+                                    */
+                                    for(var i = 0; i < accessories.length; i++)
+                                    {
+                                        for(var j = 0; j < devices.length; j++)
+                                        {
+                                            if(accessories.mac == devices.id)
+                                            {
+                                                for(var k = 0; k < Object.keys(devices[j]).length; k++)
+                                                {
+                                                    accessories[i][Object.keys(devices[j])[k]] = devices[j][k];
+                                                }
+                                            }
+                                        }
+                                    }
                                     
                                     var obj = {
-                                        devices: JSON.stringify(devices),
+                                        devices: JSON.stringify(accessories),
                                         restart: '-'
                                     };
                                     
