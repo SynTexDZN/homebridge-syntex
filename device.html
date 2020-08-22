@@ -144,7 +144,7 @@
         infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
     }
     
-    infos.innerHTML += '<p><b>Typ: </b>' + device.type + '</p>';
+    infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(accessory.services) + '</p>';
 
     if(device.version != undefined)
     {
@@ -182,7 +182,7 @@
         }
     }
 
-    document.getElementById('navigation-panel').setAttribute('type', device.type);
+    document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(accessory.services));
     document.getElementById('navigation-panel').setAttribute('version', device.version);
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
@@ -251,7 +251,7 @@
 
     settingsForm.setAttribute('mac', device.id);
     settingsForm.setAttribute('ip', device.ip);
-    settingsForm.setAttribute('type', device.type);
+    settingsForm.setAttribute('type', Essentials.getType(accessory.services));
 
     if(device.type == 'statelessswitch')
     {
@@ -1431,7 +1431,7 @@
             }
             else
             {
-                var url = '/serverside/remove-device?mac=' + device.id + '&type=' + device.type;
+                var url = '/serverside/remove-device?mac=' + device.id + '&type=' + device.type; // TODO: Remove Device Param
             }
 
             resetting = true;
