@@ -176,6 +176,10 @@ function getType(services)
     {
         return 'weather';
     }
+    else if(services.includes('rgb'))
+    {
+        return 'rgb';
+    }
     else
     {
         return 'special';
