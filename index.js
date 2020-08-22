@@ -500,8 +500,8 @@ SynTexPlatform.prototype = {
 
                                                 for(var k = 0; k < Object.keys(devices[j]).length; k++)
                                                 {
-                                                    console.log(devices[j][k] + ' - ' + Object.keys(devices[j])[k]);
-                                                    accessories[i][Object.keys(devices[j])[k]] = devices[j][k];
+                                                    console.log(devices[j][Object.keys(devices[j])[k]] + ' - ' + Object.keys(devices[j])[k]);
+                                                    accessories[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
                                                 }
                                             }
                                         }
