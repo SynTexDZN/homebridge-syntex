@@ -35,9 +35,14 @@ A plugin to control SynTex accessory.
 
 # Currently Supported
 - Climate Sensor
+- Temperature Sensor
+- Humidity Sensor
 - Weather Sensor
+- Light Sensor
+- Rain Sensor
 - Motion Sensor
 - Contact Sensor
 - Relais
 - Switch
 - LED Controller
+- Special Devices
