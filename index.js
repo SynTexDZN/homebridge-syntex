@@ -473,7 +473,7 @@ SynTexPlatform.prototype = {
                                     var accessories = await DeviceManager.getAccessories();
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
-                                    /*
+                                    
                                     var magicHome = await getPluginConfig('MagicHome-Platform');
 
                                     if(magicHome != null)
@@ -483,11 +483,11 @@ SynTexPlatform.prototype = {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
                                             {
                                                 var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                                                devices.push({ id : '', ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, type : type, version : '99.99.99', active : 1 });
+                                                accessories.push({ ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, type : type, version : '99.99.99' });
                                             }
                                         }
                                     }
-                                    */
+
                                     for(var i = 0; i < accessories.length; i++)
                                     {
                                         for(var j = 0; j < devices.length; j++)
