@@ -475,11 +475,15 @@ SynTexPlatform.prototype = {
                                     var bridgeData = await DeviceManager.getBridgeStorage();
 
                                     all = await DeviceManager.getAccessories();
+
+                                    console.log(all);
                                     
                                     var magicHome = await getPluginConfig('MagicHome-Platform');
 
                                     if(magicHome != null)
                                     {
+                                        console.log(magicHome);
+
                                         for(var i = 0; i < magicHome.lights.length; i++)
                                         {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
