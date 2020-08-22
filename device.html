@@ -132,8 +132,8 @@
         });
     }
 
-    document.getElementsByTagName('title')[0].innerHTML = device.name;
-    document.getElementsByTagName('h1')[0].innerHTML = device.name;
+    document.getElementsByTagName('title')[0].innerHTML = accessory.name;
+    document.getElementsByTagName('h1')[0].innerHTML = accessory.name;
 
     var infos = document.getElementById('info');
 
@@ -187,11 +187,11 @@
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + accessory.mac + "'");
 
-    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + accessory.name + ' )';
 
     var settingsForm = document.getElementById('settings-form');
 
-    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', accessory.name);
 
     for(const i in settings)
     {
@@ -1082,14 +1082,14 @@
     {
         document.getElementById('infos').setAttribute('style', 'display: none');
         document.getElementById('settings').removeAttribute('style');
-        document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+        document.getElementsByTagName('title')[0].innerHTML = accessory.name + ' (Einstellungen)';
     }
     
     function closeSettings()
     {
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
-        document.getElementsByTagName('title')[0].innerHTML = device.name;
+        document.getElementsByTagName('title')[0].innerHTML = accessory.name;
     }
 
     async function fetchState()
