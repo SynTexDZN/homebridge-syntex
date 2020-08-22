@@ -278,24 +278,29 @@
 
     async function checkConnection()
     {
-        var offline = JSON.parse(await Query.fetchURL('/serverside/offline-devices', 10000));
+        var offline = await Query.fetchURL('/serverside/offline-devices', 10000);
 
-        for(var i = 0; i < deviceElements.length; i++)
+        if(offline != null)
         {
-            if(offline.includes(deviceElements[i].id))
+            offline = JSON.parse(offline);
+
+            for(var i = 0; i < deviceElements.length; i++)
             {
-                setOffline(deviceElements[i]);
+                if(offline.includes(deviceElements[i].id))
+                {
+                    setOffline(deviceElements[i]);
+                }
+                else
+                {
+                    setOnline(deviceElements[i]);
+                }
             }
-            else
-            {
-                setOnline(deviceElements[i]);
-            }
+
+            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offline.length;
+
+            await Essentials.newTimeout(10000);
         }
 
-        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offline.length;
-
-        await Essentials.newTimeout(10000);
-            
         checkConnection();
     }
     
