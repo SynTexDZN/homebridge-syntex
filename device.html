@@ -1197,9 +1197,12 @@
                             {
                                 value = 'AN';
 
+                                console.log(accessory.spectrum, accessory.spectrum == 'HSL');
+
                                 if(accessory.spectrum == 'HSL')
                                 {
                                     color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (parseInt(state.split(':')[3]) + 60) + '%)';
+                                    console.log(color);
                                 }
                                 else
                                 {
