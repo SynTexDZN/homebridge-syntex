@@ -471,10 +471,11 @@ SynTexPlatform.prototype = {
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
                                     var all = [];
+                                    var accessories = await DeviceManager.getAccessories();
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
 
-                                    all = await DeviceManager.getAccessories();
+                                    all.push.apply(all, accessories);
 
                                     console.log(all);
                                     
