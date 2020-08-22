@@ -137,7 +137,7 @@
 
     var infos = document.getElementById('info');
 
-    infos.innerHTML += '<p><b>Mac: </b>' + device.id + '</p>';
+    infos.innerHTML += '<p><b>Mac: </b>' + accessory.mac + '</p>';
 
     if(device.ip != undefined)
     {
@@ -185,7 +185,7 @@
     document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(accessory.services));
     document.getElementById('navigation-panel').setAttribute('version', device.version);
 
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.id + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + accessory.mac + "'");
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
@@ -249,7 +249,7 @@
         }
     }
 
-    settingsForm.setAttribute('mac', device.id);
+    settingsForm.setAttribute('mac', accessory.mac);
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', Essentials.getType(accessory.services));
 
@@ -410,7 +410,7 @@
     {
         setInterval(function()
         {
-            if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style') && device.mac != undefined)
+            if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
             {
                 fetchState();
             }
@@ -436,7 +436,7 @@
             }
             else
             {
-                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + accessory.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
             }
 
             if(state != null)
@@ -743,7 +743,7 @@
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].mac == device.id && automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
+                if(automations[i].trigger[j].mac == accessory.mac && automations[i].trigger[j].type == type && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
                 {
                     w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
                 }
@@ -1100,7 +1100,7 @@
 
             for(var j = 0; j < typeCounter[type]; j++)
             {
-                var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.id + '&type=' + type + '&counter=' + j, 10000);
+                var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + accessory.mac + '&type=' + type + '&counter=' + j, 10000);
         
                 if(temp[type + j] && state != temp[type + j])
                 {
@@ -1431,7 +1431,7 @@
             }
             else
             {
-                var url = '/serverside/remove-device?mac=' + device.id;
+                var url = '/serverside/remove-device?mac=' + accessory.mac;
             }
 
             resetting = true;
@@ -1464,7 +1464,7 @@
         if(!saving && !updating && !restarting && !resetting)
         {
             var settings = {
-                mac: device.id
+                mac: accessory.mac
             };
 
             var form = document.getElementById('settings-form');
