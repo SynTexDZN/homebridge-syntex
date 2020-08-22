@@ -160,29 +160,42 @@ function removeOverlays(btn, show)
 
 function getType(services)
 {
-    if(!Array.isArray(services))
+    var s = services;
+
+    if(Array.isArray(s))
     {
-        return services;
-    }
-    else if(services.length == 1)
-    {
-        return services[0];
-    }
-    else if(services.length == 2 && services.includes('temperature') && services.includes('humidity'))
-    {
-        return 'climate';
-    }
-    else if(services.length == 2 && services.includes('light') && services.includes('rain'))
-    {
-        return 'weather';
-    }
-    else if(services.includes('rgb'))
-    {
-        return 'rgb';
+        for(var i = 0; i < s.length; i++)
+        {
+            if(s[i] instanceof Object)
+            {
+                s[i] = s[i].type;
+            }
+        }
+
+        if(s.length == 1)
+        {
+            return s[0];
+        }
+        else if(s.length == 2 && s.includes('temperature') && s.includes('humidity'))
+        {
+            return 'climate';
+        }
+        else if(s.length == 2 && s.includes('light') && s.includes('rain'))
+        {
+            return 'weather';
+        }
+        else if(s.includes('rgb'))
+        {
+            return 'rgb';
+        }
+        else
+        {
+            return 'special';
+        }
     }
     else
     {
-        return 'special';
+        return s;
     }
 }
 
