@@ -100,7 +100,7 @@
         document.getElementById('reconnect-btn').style.display = 'none';
     }
 
-    if((device.type != 'relais' && device.type != 'switch' && device.type != 'rgb' && device.type != 'rgbw' && device.type != 'rgbww' && device.type != 'rgbcw') || device.type == 'special')
+    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('statelessswitch') || accessory.services.includes('temperature') || accessory.services.includes('humidity') || accessory.services.includes('light') || accessory.services.includes('rain'))
     {
         settings.push({
             index: 'active',
@@ -108,7 +108,7 @@
         });
     }
 
-    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || device.type == 'special')
+    if(accessory.services.includes('contact') || accessory.services.includes('motion') || accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || accessory.services.includes('lcd'))
     {
         settings.push({
             index: 'led',
@@ -116,15 +116,15 @@
         });
     }
 
-    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity'))
+    if(accessory.services.includes('motion') || accessory.services.includes('light') || accessory.services.includes('temperature') || accessory.services.includes('humidity') || accessory.services.includes('lcd'))
     {
         settings.push({
             index: 'interval',
-            name: device.type == 'motion' ? 'Delay' : 'Interval'
+            name: accessory.services.includes('motion') ? 'Delay' : 'Interval'
         });
     }
 
-    if(device.type == 'statelessswitch')
+    if(accessory.services.includes('statelessswitch'))
     {
         settings.push({
             index: 'events',
@@ -253,7 +253,7 @@
     settingsForm.setAttribute('ip', device.ip);
     settingsForm.setAttribute('type', Essentials.getType(accessory.services));
 
-    if(device.type == 'statelessswitch')
+    if(accessory.services.includes('statelessswitch'))
     {
         document.getElementById('infobox').style.display = '';
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
@@ -1431,7 +1431,7 @@
             }
             else
             {
-                var url = '/serverside/remove-device?mac=' + device.id + '&type=' + device.type; // TODO: Remove Device Param
+                var url = '/serverside/remove-device?mac=' + device.id;
             }
 
             resetting = true;
