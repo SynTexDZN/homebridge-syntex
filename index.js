@@ -492,7 +492,7 @@ SynTexPlatform.prototype = {
                                     {
                                         for(var j = 0; j < devices.length; j++)
                                         {
-                                            if(accessories.mac == devices.id)
+                                            if(accessories[i].mac == devices[j].id)
                                             {
                                                 for(var k = 0; k < Object.keys(devices[j]).length; k++)
                                                 {
