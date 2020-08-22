@@ -391,12 +391,7 @@ SynTexPlatform.prototype = {
                             {
                                 var json = JSON.parse(post);
                                 
-                                if(await DeviceManager.setValues(json) == false)
-                                {
-                                    logger.log('error', 'bridge', 'Bridge', urlParams.mac + ".json konnte nicht aktualisiert werden!");
-                                }
-                                
-                                response.write('Success'); 
+                                response.write(await DeviceManager.setValues(json) ? 'Success' : 'Error'); 
                                 response.end();
                             });
                         }

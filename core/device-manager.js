@@ -512,7 +512,27 @@ function setValues(values)
 
             if(!obj || err)
             {
-                resolve(false);
+                var obj = {
+                    id: values.mac
+                };
+                
+                for(const i in values)
+                {
+                    if(i != 'mac')
+                    {
+                        obj[i] = values[i];
+                    }
+                }
+
+                storage.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
+                    }
+
+                    resolve(err ? false : true);
+                });
             }
             else
             {
