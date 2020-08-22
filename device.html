@@ -410,7 +410,7 @@
     {
         setInterval(function()
         {
-            if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+            if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style') && device.mac != undefined)
             {
                 fetchState();
             }
