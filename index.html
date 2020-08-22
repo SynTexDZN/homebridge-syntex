@@ -82,7 +82,7 @@
     
     for(const i in devices)
     {
-        if(devices[i].id != 'Bridge')
+        if(devices[i].mac != 'Bridge')
         {
             if(devices[i].ip != undefined && devices[i].active != undefined)
             {
@@ -151,9 +151,9 @@
 
             button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
 
-            if(devices[i].id != '')
+            if(devices[i].mac != '')
             {
-                button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].id + "'");
+                button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].mac + "'");
             }
             else
             {
