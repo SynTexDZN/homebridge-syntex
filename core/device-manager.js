@@ -162,11 +162,43 @@ function initDevice(mac, ip, name, type, version, interval, events, services)
                 setValue(mac, 'ip', ip);
             }
 
+            config.load('config', (err, obj) => {    
+
+                if(!obj || err)
+                {
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
+                }
+                else
+                {                            
+                    for(const i in obj.platforms)
+                    {
+                        if(obj.platforms[i].platform === 'SynTexWebHooks')
+                        {
+                            for(var j = 0; j < obj.platforms[i].accessories.length; j++)
+                            {
+                                if(obj.platforms[i].accessories[j].mac == mac && version != obj.platforms[i].accessories[j].version)
+                                {
+                                    obj.platforms[i].accessories[j].version = version;
+
+                                    config.add(obj, (err) => {
+
+                                        if(err)
+                                        {
+                                            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
+                                        }
+                                    }); 
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            /*
             if(version != device['version'])
             {
                 setValue(mac, 'version', version);
             }
-
+            */
             var status = 'Success';
 
             if(!eventButton && device['events'] && (device['events'] || []).length != 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
