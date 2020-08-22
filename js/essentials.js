@@ -188,6 +188,10 @@ function getType(services)
         {
             return 'rgb';
         }
+        else if(s.includes('switch'))
+        {
+            return 'switch';
+        }
         else
         {
             return 'special';
