@@ -470,7 +470,7 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
-                                    var accessories = await DeviceManager.getAccessories();
+                                    var all = await DeviceManager.getAccessories();
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
                                     
@@ -483,27 +483,27 @@ SynTexPlatform.prototype = {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
                                             {
                                                 var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                                                accessories.push({ ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' });
+                                                all.push({ ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' });
                                             }
                                         }
                                     }
 
-                                    for(var i = 0; i < accessories.length; i++)
+                                    for(var i = 0; i < all.length; i++)
                                     {
                                         for(var j = 0; j < devices.length; j++)
                                         {
-                                            if(accessories[i].mac == devices[j].id)
+                                            if(all[i].mac == devices[j].id)
                                             {
                                                 for(var k = 0; k < Object.keys(devices[j]).length; k++)
                                                 {
-                                                    accessories[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
+                                                    all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
                                                 }
                                             }
                                         }
                                     }
                                     
                                     var obj = {
-                                        devices: JSON.stringify(accessories),
+                                        devices: JSON.stringify(all),
                                         restart: '-'
                                     };
                                     
