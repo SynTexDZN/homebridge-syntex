@@ -492,12 +492,15 @@ SynTexPlatform.prototype = {
                                     {
                                         for(var j = 0; j < devices.length; j++)
                                         {
-                                            console.log(accessories[i].mac + ' - ' +  devices[j].id);
+                                            //console.log(accessories[i].mac + ' - ' +  devices[j].id);
 
                                             if(accessories[i].mac == devices[j].id)
                                             {
+                                                console.log(devices[j]);
+
                                                 for(var k = 0; k < Object.keys(devices[j]).length; k++)
                                                 {
+                                                    console.log(devices[j][k] + ' - ' + Object.keys(devices[j])[k]);
                                                     accessories[i][Object.keys(devices[j])[k]] = devices[j][k];
                                                 }
                                             }
