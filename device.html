@@ -1196,7 +1196,15 @@
                             if(state.split(':')[0] == 'true')
                             {
                                 value = 'AN';
-                                color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+
+                                if(accessory.spectrum == 'HSL')
+                                {
+                                    color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (parseInt(state.split(':')[3]) + 60) + '%)';
+                                }
+                                else
+                                {
+                                    color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+                                }
                             }
                             else if(state.split(':')[0] == 'false')
                             {
