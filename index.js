@@ -470,7 +470,7 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
-                                    var accessories = JSON.stringify(await DeviceManager.getAccessories());
+                                    var accessories = await DeviceManager.getAccessories();
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
                                     /*
