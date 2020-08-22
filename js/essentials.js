@@ -184,6 +184,10 @@ function getType(services)
         {
             return 'weather';
         }
+        else if(s.length == 2 && s.includes('rgb') && s.includes('switch'))
+        {
+            return 'rgbw';
+        }
         else if(s.includes('rgb'))
         {
             return 'rgb';
