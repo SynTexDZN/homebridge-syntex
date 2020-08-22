@@ -140,8 +140,8 @@
         });
     }
 
-    document.getElementsByTagName('title')[0].innerHTML = accessory.name;
-    document.getElementsByTagName('h1')[0].innerHTML = accessory.name;
+    document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name);
+    document.getElementsByTagName('h1')[0].innerHTML = (device.name || accessory.name);
 
     var infos = document.getElementById('info');
 
@@ -195,11 +195,11 @@
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + accessory.mac + "'");
 
-    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + accessory.name + ' )';
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + (device.name || accessory.name) + ' )';
 
     var settingsForm = document.getElementById('settings-form');
 
-    settingsForm.getElementsByTagName('input')[0].setAttribute('value', accessory.name);
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', (device.name || accessory.name));
 
     for(const i in settings)
     {
@@ -360,15 +360,15 @@
 
             if(typeCounter[type] > 1)
             {
-                var name = accessory.name, n = [];
+                var name = (device.name || accessory.name), n = [];
 
                 if(typeCounter[type] > 1)
                 {
-                    name = accessory.name + ' ' + type + ' ' + j;
+                    name = (device.name || accessory.name) + ' ' + type + ' ' + j;
                 }
                 else if(counter > 1)
                 {
-                    name = accessory.name + ' ' + type;
+                    name = (device.name || accessory.name) + ' ' + type;
                 }
 
                 for(var k = 0; k < accessory.services.length; k++)
@@ -480,15 +480,15 @@
 
             for(var j = 0; j < typeCounter[type]; j++)
             {
-                var name = accessory.name, n = [];
+                var name = (device.name || accessory.name), n = [];
 
                 if(typeCounter[type] > 1)
                 {
-                    name = accessory.name + ' ' + type + ' ' + j;
+                    name = (device.name || accessory.name) + ' ' + type + ' ' + j;
                 }
                 else if(counter > 1)
                 {
-                    name = accessory.name + ' ' + type;
+                    name = (device.name || accessory.name) + ' ' + type;
                 }
 
                 for(var k = 0; k < accessory.services.length; k++)
@@ -1090,14 +1090,14 @@
     {
         document.getElementById('infos').setAttribute('style', 'display: none');
         document.getElementById('settings').removeAttribute('style');
-        document.getElementsByTagName('title')[0].innerHTML = accessory.name + ' (Einstellungen)';
+        document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name) + ' (Einstellungen)';
     }
     
     function closeSettings()
     {
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
-        document.getElementsByTagName('title')[0].innerHTML = accessory.name;
+        document.getElementsByTagName('title')[0].innerHTML = (device.name || accessory.name);
     }
 
     async function fetchState()
@@ -1223,7 +1223,7 @@
 
                     if(typeCounter[type] > 1)
                     {
-                        var name = accessory.name + ' ' + type + ' ' + j;
+                        var name = (device.name || accessory.name) + ' ' + type + ' ' + j;
                         var n = [];
 
                         for(var k = 0; k < accessory.services.length; k++)
