@@ -470,9 +470,11 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath == '/' || urlPath.startsWith('/index'))
                                 {
-                                    var all = await DeviceManager.getAccessories();
+                                    var all = [];
                                     var devices = await DeviceManager.getDevices();
                                     var bridgeData = await DeviceManager.getBridgeStorage();
+
+                                    all = await DeviceManager.getAccessories();
                                     
                                     var magicHome = await getPluginConfig('MagicHome-Platform');
 
