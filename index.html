@@ -151,7 +151,15 @@
 
             button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
 
-            button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].mac + "'");
+            if(devices[i].mac != undefined)
+            {
+                button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].mac + "'");
+            }
+            else
+            {
+                button.setAttribute('disabled', '');
+            }
+            
             button.setAttribute('name', devices[i].name);
 
             document.getElementById(Essentials.getType(devices[i].services)).appendChild(button);
