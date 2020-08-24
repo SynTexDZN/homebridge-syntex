@@ -207,6 +207,19 @@ function getType(services)
     }
 }
 
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter)];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type)];
+}
+
 function removeOverlaysDelay(btn, delay, show)
 {
     setTimeout(function()
@@ -225,4 +238,4 @@ function SETUP(Q)
     Query = Q;
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter };

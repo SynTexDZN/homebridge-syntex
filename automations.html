@@ -176,10 +176,10 @@
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
                 var row = document.createElement('div');
-                var src = automations[i].trigger[j].type;
-                var val = automations[i].trigger[j].value == 'true' ? data[automations[i].trigger[j].type].active.text : automations[i].trigger[j].value == 'false' ? data[automations[i].trigger[j].type].inactive.text : automations[i].trigger[j].value;
+                var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
+                var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
 
-                if(automations[i].trigger[j].type == 'temperature')
+                if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
                 {
                     src = 'climate';
                 }
@@ -218,10 +218,10 @@
                 for(var j = 0; j < automations[i].condition.length; j++)
                 {
                     var row = document.createElement('div');
-                    var src = automations[i].condition[j].type;
-                    var val = automations[i].condition[j].value == 'true' ? data[automations[i].condition[j].type].active.text : automations[i].condition[j].value == 'false' ? data[automations[i].condition[j].type].inactive.text : automations[i].condition[j].value;
+                    var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
+                    var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
 
-                    if(automations[i].condition[j].type == 'temperature')
+                    if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
                     {
                         src = 'climate';
                     }
@@ -259,10 +259,10 @@
             for(var j = 0; j < automations[i].result.length; j++)
             {
                 var row = document.createElement('div');
-                var src = automations[i].result[j].type;
-                var val = automations[i].result[j].value == 'true' ? data[automations[i].result[j].type].active.text : automations[i].result[j].value == 'false' ? data[automations[i].result[j].type].inactive.text : automations[i].result[j].value;
+                var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+                var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
 
-                if(automations[i].result[j].type == 'temperature')
+                if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
                 {
                     src = 'climate';
                 }
