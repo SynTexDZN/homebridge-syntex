@@ -212,12 +212,12 @@ var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
 
 function letterToType(letter)
 {
-    return types[letters.indexOf(letter)];
+    return types[letters.indexOf(letter.toUpperCase())];
 }
 
 function typeToLetter(type)
 {
-    return letters[types.indexOf(type)];
+    return letters[types.indexOf(type.toLowerCase())];
 }
 
 function removeOverlaysDelay(btn, delay, show)
