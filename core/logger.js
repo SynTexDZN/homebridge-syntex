@@ -110,8 +110,6 @@ logger.load = function(pluginName, group)
                     {
                         for(const k in obj[Object.keys(obj)[i]])
                         {
-                            var logs = obj[Object.keys(obj)[i]][k];
-
                             if(group == null || group == Object.keys(obj)[i])
                             {
                                 for(var j = 0; j < obj[Object.keys(obj)[i]][k].length; j++)
