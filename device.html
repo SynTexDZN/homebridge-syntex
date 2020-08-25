@@ -523,11 +523,17 @@
                     }
                     else
                     {
-                        for(var k = activity.update.length - 1; k >= 0; k--)
+                        for(const l in activity)
                         {
-                            if(activity.update[k].s == Essentials.typeToLetter(type) + j)
+                            if(l == Essentials.typeToLetter(type))
                             {
-                                values[type + j].push({ time : activity.update[k].t, value : activity.update[k].v });
+                                for(var k = activity[l].update.length - 1; k >= 0; k--)
+                                {
+                                    if(activity[l].update[k].s == Essentials.typeToLetter(type) + j)
+                                    {
+                                        values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
+                                    }
+                                }
                             }
                         }
                     }
