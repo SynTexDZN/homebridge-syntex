@@ -111,33 +111,8 @@ logger.load = function(pluginName, group)
                         if(i != 'id' && (group == null || group == i))
                         {
                             logs.push(obj[i]);
-                            /*
-                            for(const k in obj[i])
-                            {
-                                logs[k] = [];
-
-                                for(const j in obj[i][k])
-                                {
-                                    if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
-                                    {
-                                        var l = obj[i][k][j];
-                                        logs.push({ t : l.t, l : l.l, m : l.m, s : k });
-                                    }
-                                }
-                            }
-                            */
                         }
                     }
-
-                    logs.sort(function(a, b) {
-
-                        var keyA = new Date(a.t), keyB = new Date(b.t);
-                        
-                        if (keyA < keyB) return 1;
-                        if (keyA > keyB) return -1;
-                        
-                        return 0;
-                    });
 
                     resolve(logs);
                 }

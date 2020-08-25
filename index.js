@@ -321,7 +321,15 @@ SynTexPlatform.prototype = {
                                             }
                                         }
 
-                                        console.log(logList.length);
+                                        logList.sort(function(a, b) {
+
+                                            var keyA = new Date(a.t), keyB = new Date(b.t);
+                                            
+                                            if (keyA < keyB) return 1;
+                                            if (keyA > keyB) return -1;
+                                            
+                                            return 0;
+                                        });
 
                                         /*
                                         for(var j = 0; j < logs.length; j++)
