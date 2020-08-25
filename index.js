@@ -298,14 +298,6 @@ SynTexPlatform.prototype = {
                             {
                                 var obj = {};
 
-                                console.log(files);
-
-                                console.log(files[0]);
-                                console.log(files[1]);
-                                console.log(files[2]);
-
-                                console.log(files.length);
-
                                 for(var i = 0; i < files.length; i++)
                                 {
                                     var file = files[i].split('.')[0];
@@ -328,38 +320,6 @@ SynTexPlatform.prototype = {
                                 response.write(JSON.stringify(obj));
                                 response.end();
                             });
-
-                            /*
-                            var bridgeLogs = await logger.load('SynTex', null);
-                            var webhookLogs = await logger.load('SynTexWebHooks', null);
-                            var obj = {
-                                bLog: '[]',
-                                wLog: '[]'
-                            };
-
-                            if(bridgeLogs != null)
-                            {    
-                                for(var i = 0; i < bridgeLogs.length; i++)
-                                {
-                                    bridgeLogs[i].m = bridgeLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
-                                }
-
-                                obj.bLog = JSON.stringify(bridgeLogs);
-                            }
-
-                            if(webhookLogs != null)
-                            {    
-                                for(var i = 0; i < webhookLogs.length; i++)
-                                {
-                                    webhookLogs[i].m = webhookLogs[i].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
-                                }
-
-                                obj.wLog = JSON.stringify(webhookLogs);
-                            }
-                            
-                            response.write(JSON.stringify(obj));
-                            response.end();
-                            */
                         }
                         else if(urlPath == '/time')
                         {
