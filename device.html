@@ -508,24 +508,24 @@
                     values[type + j] = [];
                 }
 
-                if(Object.keys(activity).length > 0 && (activity.update.length > 0 || activity.success.length > 0))
+                for(const l in activity)
                 {
-                    if(type == 'statelessswitch')
+                    if(l == Essentials.typeToLetter(type))
                     {
-                        for(var k = activity.success.length - 1; k >= 0; k--)
+                        if(activity[l].update.length > 0 || activity[l].success.length > 0)
                         {
-                            if(activity.success[k].s == Essentials.typeToLetter(type) + j)
+                            if(type == 'statelessswitch')
                             {
-                                values[type + j].push({ time : activity.success[k].t, value : 'true' });
-                                values[type + j].push({ time : activity.success[k].t, value : 'false' });
+                                for(var k = activity[l].success.length - 1; k >= 0; k--)
+                                {
+                                    if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
+                                    {
+                                        values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
+                                        values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
+                                    }
+                                }
                             }
-                        }
-                    }
-                    else
-                    {
-                        for(const l in activity)
-                        {
-                            if(l == Essentials.typeToLetter(type))
+                            else
                             {
                                 for(var k = activity[l].update.length - 1; k >= 0; k--)
                                 {
