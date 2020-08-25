@@ -303,8 +303,12 @@ SynTexPlatform.prototype = {
                                     var file = files[i].split('.')[0];
                                     
                                     obj[file] = '[]';
+
+                                    console.log(file);
                                     
                                     var logs = await logger.load(file, null);
+
+                                    console.log(logs);
 
                                     if(logs != null)
                                     {    
