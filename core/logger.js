@@ -98,6 +98,8 @@ logger.load = function(pluginName, group)
         
         var logPath = await getLogPath(pluginName);
 
+        console.log(logPath);
+
         if(logPath != null)
         {
             store(logPath).load(pluginName, (err, obj) => {    
