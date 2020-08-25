@@ -138,12 +138,16 @@ logger.load = function(pluginName, group)
                 }
                 else
                 {
+                    logger.debug('No Content');
+
                     resolve(null);
                 }
             });
         }
         else
         {
+            logger.debug('Wrong Path');
+
             resolve(null);
         }
     });
