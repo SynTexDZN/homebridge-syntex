@@ -510,16 +510,10 @@
 
                 for(const l in activity)
                 {
-                    console.log(l[0] == Essentials.typeToLetter(type), l[0], Essentials.typeToLetter(type));
-
                     if(l[0] == Essentials.typeToLetter(type))
                     {
-                        console.log(activity[l].update.length, activity[l].success.length);
-
                         if(activity[l].update.length > 0 || activity[l].success.length > 0)
                         {
-                            console.log(type);
-
                             if(type == 'statelessswitch')
                             {
                                 for(var k = activity[l].success.length - 1; k >= 0; k--)
@@ -533,10 +527,8 @@
                             }
                             else
                             {
-                                console.log(type+j);
                                 for(var k = activity[l].update.length - 1; k >= 0; k--)
                                 {
-                                    console.log(activity[l].update[k], activity[l], Essentials.typeToLetter(type) + j);
                                     values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
                                 }
                             }
@@ -657,6 +649,8 @@
 
                             sum += parseFloat(value);
                         }
+
+                        console.log(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success), values[type + c][j].time, JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time));
                         
                         if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
                         {
@@ -1207,12 +1201,9 @@
                             {
                                 value = 'AN';
 
-                                console.log(device.spectrum, device.spectrum == 'HSL');
-
                                 if(device.spectrum == 'HSL')
                                 {
                                     color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
-                                    console.log(color);
                                 }
                                 else
                                 {
