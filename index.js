@@ -329,7 +329,7 @@ SynTexPlatform.prototype = {
                                             logs[j].m = logs[j].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
                                         */
-                                        obj[file] = logList;
+                                        obj[file] = JSON.stringify(logList);
                                     }
                                 }
 
