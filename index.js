@@ -308,7 +308,7 @@ SynTexPlatform.prototype = {
 
                                     if(logs != null)
                                     {
-                                        var l = [];
+                                        var logList = [];
 
                                         for(const j in logs)
                                         {
@@ -316,21 +316,24 @@ SynTexPlatform.prototype = {
                                             {
                                                 for(const l in logs[j][k])
                                                 {
-                                                    l[l.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
+                                                    logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
                                                 }
                                             }
                                         }
+
+                                        console.log(logList.length);
+
                                         /*
                                         for(var j = 0; j < logs.length; j++)
                                         {
                                             logs[j].m = logs[j].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
                                         */
-                                        obj[file] = JSON.stringify(l);
+                                        obj[file] = JSON.stringify(logList);
                                     }
                                 }
 
-                                response.write(JSON.stringify(obj));
+                                response.write(obj);
                                 response.end();
                             });
                         }
