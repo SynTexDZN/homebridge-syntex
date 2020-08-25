@@ -108,13 +108,18 @@ logger.load = function(pluginName, group)
 
                     for(var i = 1; i < Object.keys(obj).length; i++)
                     {
-                        if(obj[Object.keys(obj)[i]].logs && (group == null || group == Object.keys(obj)[i]))
+                        for(const k in obj[Object.keys(obj)[i]])
                         {
-                            for(var j = 0; j < obj[Object.keys(obj)[i]].logs.length; j++)
+                            var logs = obj[Object.keys(obj)[i]][k];
+
+                            if(group == null || group == Object.keys(obj)[i])
                             {
-                                if(group == null || obj[Object.keys(obj)[i]].logs[j].l == 'Update' || obj[Object.keys(obj)[i]].logs[j].l == 'Success')
+                                for(var j = 0; j < obj[Object.keys(obj)[i]][k].length; j++)
                                 {
-                                    logs.push(obj[Object.keys(obj)[i]].logs[j]);
+                                    if(group == null || obj[Object.keys(obj)[i]][k][j].l == 'Update' || obj[Object.keys(obj)[i]][k][j].l == 'Success')
+                                    {
+                                        logs.push(obj[Object.keys(obj)[i]][k][j]);
+                                    }
                                 }
                             }
                         }
