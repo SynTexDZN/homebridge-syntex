@@ -116,7 +116,7 @@ logger.load = function(pluginName, group)
                             {
                                 for(const j in obj[i][k])
                                 {
-                                    if(obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
+                                    if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
                                     {
                                         var l = obj[i][k][j];
                                         logs.push({ t : l.t, l : l.l, m : l.m, s : k });
