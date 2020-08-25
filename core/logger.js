@@ -11,7 +11,7 @@ logger.create = function(pluginName, logDirectory, config)
     logger.logs = store(logDirectory);
 };
 
-logger.log = function(level, mac, name, message)
+logger.log = function(level, mac, letters, message)
 {
     var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
 
@@ -55,7 +55,7 @@ logger.log = function(level, mac, name, message)
 
         console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-        saveLog(level[0].toUpperCase() + level.substring(1), mac, name, Math.round(new Date().getTime() / 1000), message);
+        saveLog(level[0].toUpperCase() + level.substring(1), mac, letters, Math.round(new Date().getTime() / 1000), message);
     }
 }
 
@@ -174,9 +174,9 @@ function getLogPath(pluginName)
 var inWork = false;
 var que = [];
 
-async function saveLog(level, mac, name, time, message)
+async function saveLog(level, mac, letters, time, message)
 {
-    var queOBJ = { mac : mac, name : name, time : time, level : level, message : message };
+    var queOBJ = { mac : mac, letters : letters, time : time, level : level, message : message };
 
     if(inWork)
     {
@@ -205,17 +205,12 @@ async function saveLog(level, mac, name, time, message)
                     device[mac] = {};
                 }
 
-                if(!device[mac].name || device[mac].name == '')
+                if(!device[mac][letters])
                 {
-                    device[mac].name = name;
+                    device[mac][letters] = [];
                 }
 
-                if(!device[mac].logs)
-                {
-                    device[mac].logs = [];
-                }
-
-                device[mac].logs[device[mac].logs.length] = { t : time, l : level, m : message };
+                device[mac][letters][device[mac][letters].length] = { t : time, l : level, m : message };
 
                 logger.logs.add(device, function(err) {
 
@@ -228,7 +223,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
+                        saveLog(que[0].level, que[0].mac, que[0].letters, que[0].time, que[0].message);
                     }
                 });
             }
@@ -236,7 +231,9 @@ async function saveLog(level, mac, name, time, message)
             {
                 var entry = { id : prefix };
 
-                entry[mac] = { name : name, logs : [ { t : time, l : level, m : message } ] };
+                entry[mac] = {};
+
+                entry[mac][letters] = [ { t : time, l : level, m : message } ];
 
                 logger.logs.add(entry, (err) => {
 
@@ -249,7 +246,7 @@ async function saveLog(level, mac, name, time, message)
 
                     if(que.length != 0)
                     {
-                        saveLog(que[0].level, que[0].mac, que[0].name, que[0].time, que[0].message);
+                        saveLog(que[0].level, que[0].mac, que[0].letters, que[0].time, que[0].message);
                     }
                 });
             }
