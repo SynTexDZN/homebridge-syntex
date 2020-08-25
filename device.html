@@ -650,9 +650,6 @@
                             sum += parseFloat(value);
                         }
 
-                        console.log(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success), values[type + c][j].time, JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time));
-                        console.log(Essentials.typeToLetter(type) + c, activity[Essentials.typeToLetter(type) + c]);
-
                         if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
                         {
                             triggered = true;
@@ -756,7 +753,7 @@
         {
             for(var j = 0; j < automations[i].trigger.length; j++)
             {
-                if(automations[i].trigger[j].mac == device.mac && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100)
+                if(automations[i].trigger[j].mac == device.mac && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automations[i].trigger[j].value - min) / (max - min) * 100 > 0)
                 {
                     w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
                 }
