@@ -110,7 +110,7 @@ logger.load = function(pluginName, group)
                     {
                         console.log('I: ' + i);
 
-                        if(group == null || group == i)
+                        if(i != 'id' && (group == null || group == i))
                         {
                             for(const k in obj[i])
                             {
@@ -119,7 +119,7 @@ logger.load = function(pluginName, group)
                                 for(const j in obj[i][k])
                                 {
                                     console.log('J: ' + j);
-                                    
+
                                     if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
                                     {
                                         var l = obj[i][k][j];
