@@ -116,7 +116,8 @@ logger.load = function(pluginName, group)
                                 {
                                     if(obj[Object.keys(obj)[i]][k][j].l == 'Update' || obj[Object.keys(obj)[i]][k][j].l == 'Success')
                                     {
-                                        logs.push(obj[Object.keys(obj)[i]][k][j]);
+                                        var l = obj[Object.keys(obj)[i]][k][j];
+                                        logs.push({ t : l.t, l : l.l, m : l.m, s : k });
                                     }
                                 }
                             }

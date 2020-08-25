@@ -281,7 +281,7 @@ SynTexPlatform.prototype = {
                                             var value = activity[i].m.split('[')[2].split(']')[0];
                                             var name = activity[i].m.split('[')[1].split(']')[0];
 
-                                            a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, n : name });
+                                            a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, s : activity[i].s });
                                         }
                                     }
 
