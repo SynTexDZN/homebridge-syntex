@@ -110,8 +110,12 @@ logger.load = function(pluginName, group)
                     {
                         if(i != 'id' && (group == null || group == i))
                         {
+                            logs.push(obj[i]);
+                            /*
                             for(const k in obj[i])
                             {
+                                logs[k] = [];
+
                                 for(const j in obj[i][k])
                                 {
                                     if(group == null || obj[i][k][j].l == 'Update' || obj[i][k][j].l == 'Success')
@@ -121,6 +125,7 @@ logger.load = function(pluginName, group)
                                     }
                                 }
                             }
+                            */
                         }
                     }
 

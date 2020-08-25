@@ -307,13 +307,26 @@ SynTexPlatform.prototype = {
                                     var logs = await logger.load(file, null);
 
                                     if(logs != null)
-                                    {    
+                                    {
+                                        var l = [];
+
+                                        for(const j in logs)
+                                        {
+                                            for(const k in logs[j])
+                                            {
+                                                for(const l in logs[j][k])
+                                                {
+                                                    l[l.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
+                                                }
+                                            }
+                                        }
+                                        /*
                                         for(var j = 0; j < logs.length; j++)
                                         {
                                             logs[j].m = logs[j].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
                                         }
-
-                                        obj[file] = JSON.stringify(logs);
+                                        */
+                                        obj[file] = JSON.stringify(l);
                                     }
                                 }
 
