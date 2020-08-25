@@ -140,7 +140,7 @@ logger.load = function(pluginName, group)
                 }
                 else
                 {
-                    logger.debug('No Content');
+                    logger.debug('No Content', err);
 
                     resolve(null);
                 }
