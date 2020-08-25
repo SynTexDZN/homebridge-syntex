@@ -272,16 +272,20 @@ SynTexPlatform.prototype = {
 
                                 if(activity != null)
                                 {
-                                    var a = { update : [], success : [] };
+                                    var a = {};
 
-                                    for(var i = 0; i < activity.length; i++)
+                                    for(const i in activity)
                                     {
-                                        if(activity[i].l == 'Update' || activity[i].l == 'Success')
-                                        {
-                                            var value = activity[i].m.split('[')[2].split(']')[0];
-                                            var name = activity[i].m.split('[')[1].split(']')[0];
+                                        a[i] = { update : [], success : [] };
 
-                                            a[activity[i].l.toLowerCase()].push({ t : activity[i].t, v : value, s : activity[i].s });
+                                        for(const j in activity[i])
+                                        {
+                                            if(activity[i][j].l == 'Update' || activity[i][j].l == 'Success')
+                                            {
+                                                var value = activity[i][j].m.split('[')[2].split(']')[0];
+
+                                                a[i][activity[i][j].l.toLowerCase()].push({ t : activity[i][j].t, v : value, s : activity[i][j].s });
+                                            }
                                         }
                                     }
 
@@ -331,12 +335,6 @@ SynTexPlatform.prototype = {
                                             return 0;
                                         });
 
-                                        /*
-                                        for(var j = 0; j < logs.length; j++)
-                                        {
-                                            logs[j].m = logs[j].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '');
-                                        }
-                                        */
                                         obj[file] = JSON.stringify(logList);
                                     }
                                 }
