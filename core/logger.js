@@ -106,7 +106,7 @@ logger.load = function(pluginName, group)
                 {    
                     var logs = [];
 
-                    for(var i = 1; i < Object.keys(obj).length; i++)
+                    for(var i = 0; i < Object.keys(obj).length; i++)
                     {
                         if(group == null || group == Object.keys(obj)[i])
                         {
