@@ -514,8 +514,12 @@
 
                     if(l[0] == Essentials.typeToLetter(type))
                     {
+                        console.log(activity[l].update.length, activity[l].success.length);
+
                         if(activity[l].update.length > 0 || activity[l].success.length > 0)
                         {
+                            console.log(type);
+
                             if(type == 'statelessswitch')
                             {
                                 for(var k = activity[l].success.length - 1; k >= 0; k--)
@@ -529,6 +533,7 @@
                             }
                             else
                             {
+                                console.log(type+j);
                                 for(var k = activity[l].update.length - 1; k >= 0; k--)
                                 {
                                     if(activity[l].update[k].s == Essentials.typeToLetter(type) + j)
