@@ -270,6 +270,8 @@ SynTexPlatform.prototype = {
                             {
                                 var activity = await logger.load('SynTexWebHooks', urlParams.mac);
 
+                                console.log(activity);
+
                                 if(activity != null)
                                 {
                                     var a = {};
