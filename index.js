@@ -445,7 +445,7 @@ SynTexPlatform.prototype = {
                                         {
                                             console.log(k);
 
-                                            if(k != 'services')
+                                            if(k != 'id' && k != 'type')
                                             {
                                                 all[k] = device[k];
                                             }
