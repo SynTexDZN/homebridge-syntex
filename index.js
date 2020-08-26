@@ -268,7 +268,7 @@ SynTexPlatform.prototype = {
 
                             if(urlParams.mac)
                             {
-                                var activity = (await logger.load('SynTexWebHooks', urlParams.mac))[0];
+                                var activity = await logger.load('SynTexWebHooks', urlParams.mac);
 
                                 console.log(activity);
 
@@ -276,17 +276,17 @@ SynTexPlatform.prototype = {
                                 {
                                     var a = {};
 
-                                    for(const i in activity)
+                                    for(const i in activity[0])
                                     {
                                         a[i] = { update : [], success : [] };
 
-                                        for(const j in activity[i])
+                                        for(const j in activity[0][i])
                                         {
-                                            if(activity[i][j].l == 'Update' || activity[i][j].l == 'Success')
+                                            if(activity[0][i][j].l == 'Update' || activity[0][i][j].l == 'Success')
                                             {
-                                                var value = activity[i][j].m.split('[')[2].split(']')[0];
+                                                var value = activity[0][i][j].m.split('[')[2].split(']')[0];
 
-                                                a[i][activity[i][j].l.toLowerCase()].push({ t : activity[i][j].t, v : value, s : activity[i][j].s });
+                                                a[i][activity[0][i][j].l.toLowerCase()].push({ t : activity[0][i][j].t, v : value, s : activity[0][i][j].s });
                                             }
                                         }
                                     }
@@ -434,6 +434,8 @@ SynTexPlatform.prototype = {
                                     var accessory = await DeviceManager.getAccessory(urlParams.mac);
                                     var all = { ...accessory };
                                     var device = await DeviceManager.getDevice(urlParams.mac);
+
+                                    console.log(accessory);
 
                                     if(device != null)
                                     {
