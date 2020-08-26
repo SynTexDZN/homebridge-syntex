@@ -440,7 +440,18 @@
             var type = button.getAttribute('id').split('-')[1];
             var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
 
-            if(device.ip != undefined)
+            if(device.on_url != undefined && device.off_url != undefined)
+            {
+                if(value == 'true')
+                {
+                    var state = await Query.complexFetch(device.on_url, 10000, 3, {}, false);
+                }
+                else if(value == 'false')
+                {
+                    var state = await Query.complexFetch(device.off_url, 10000, 3, {}, false);
+                }
+            }
+            else if(device.ip != undefined)
             {
                 var state = await Query.complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
             }
