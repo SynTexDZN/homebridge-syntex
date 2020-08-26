@@ -190,7 +190,7 @@
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
         }
     }
-/*
+
     document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(device.services));
     document.getElementById('navigation-panel').setAttribute('version', device.version);
 
@@ -343,7 +343,7 @@
 
                 frame.appendChild(canvas);
 
-                //drawGrid(canvas, [], 10);
+                drawGrid(canvas, [], 10);
 
                 var infoMin = document.createElement('div');
 
@@ -407,18 +407,18 @@
             }
         }
     }
-*/
+
     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
         automations = JSON.parse(a);
 
-        //loadActivity();
+        loadActivity();
     });
 
     if(device.ip != undefined)
     {
-        //pingESP();
-        //checkUpdates();
+        pingESP();
+        checkUpdates();
     }
     else
     {
@@ -426,7 +426,7 @@
         {
             if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
             {
-                //fetchState();
+                fetchState();
             }
         }, 300);
     }
