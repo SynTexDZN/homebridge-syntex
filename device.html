@@ -450,6 +450,8 @@
                 {
                     var state = await Query.complexFetch(device.off_url, 10000, 3, {}, false);
                 }
+
+                await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
             }
             else if(device.ip != undefined)
             {
