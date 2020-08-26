@@ -274,10 +274,12 @@
 
         if(type instanceof Object)
         {
-            type = type.type;
+            typeCounter[type.type] = typeCounter[type.type] ? typeCounter[type.type] + 1 : 1;
         }
-
-        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+        else
+        {
+            typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+        }
     }
 
     for(var i = 0; i < Object.keys(typeCounter).length; i++)
@@ -574,14 +576,16 @@
 
             if(type != 'lcd')
             {
-                if(type instanceof Object)
-                {
-                    type = type.type;
-                }
-
                 for(var j = 0; j < typeCounter[type]; j++)
                 {
-                    calcValues(values, type, j);
+                    if(type instanceof Object)
+                    {
+                        calcValues(values, type.type, j);
+                    }
+                    else
+                    {
+                        calcValues(values, type, j);
+                    }
                 }
             }
         }
