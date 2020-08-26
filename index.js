@@ -437,9 +437,12 @@ SynTexPlatform.prototype = {
 
                                     if(device != null)
                                     {
-                                        for(var k = 0; k < Object.keys(device).length; k++)
+                                        for(const k in device)
                                         {
-                                            all[Object.keys(device)[k]] = device[Object.keys(device)[k]];
+                                            if(k != 'services')
+                                            {
+                                                all[k] = device[k];
+                                            }
                                         }
                                     }
 
