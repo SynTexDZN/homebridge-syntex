@@ -1,0 +1,1611 @@
+<html>
+    <title class="loading-loop">Laden ..</title>
+    <body onresize="repaintGraphs()">
+        <div class="main" id="infos">
+            <div class="control-container"></div>
+            <h1 class="loading-loop">Laden ..</h1>
+            <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
+            <div id="activity" style="margin-bottom: 100px"></div>
+            <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
+            <div id="navigation-panel" style="display: flex">
+                <input type="button" value="Zurück" onclick="window.location.href='/'">
+                <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
+            </div>
+        </div>
+        <div id="settings" style="display: none;">
+            <h1>Einstellungen</h1>
+            <p class="loading-loop">( Laden .. )</p>
+            <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
+                <div id="settings-form" style="margin-bottom: 100px">
+                    <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                </div>
+                <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
+                    <button class="widget-left gradient-yellow" disabled>Infobox</button>
+                    <button class="widget-right" disabled></button>
+                </div>
+                <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
+                <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
+                <div style="display: flex">
+                    <input type="button" value="Zurück" onclick="closeSettings()">
+                    <div style="display: block; width: 100%; margin-left: 20px">
+                        <input id="save-btn" type="submit" value="Speichern">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
+<script type="module" defer>
+
+    import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
+
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
+
+    window.Query = Query;
+    window.Essentials = Essentials;
+
+    window.device = JSON.parse('<%device%>')
+    window.values = {}
+    window.orginal = {}
+    window.typeCounter = {};
+    window.counter = Array.isArray(device.services) ? device.services.length : 1;
+    window.padding = 50;
+    window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+    window.automations = []
+    window.busy = [];
+    window.restarting = false
+    window.resetting = false
+    window.updating = false
+    window.saving = false;
+    window.settings = [];
+    window.activity = [];
+    window.temp = {};
+
+    console.log(JSON.stringify(device));
+
+    window.data = {
+        motion: {
+            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        contact: {
+            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+        },
+        relais: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        switch: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        rain: {
+            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+        },
+        statelessswitch: {
+            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+        },
+        rgb: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        rgbw: {
+            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+        },
+        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+    };
+
+    if(device.ip == undefined)
+    {
+        document.getElementById('restart-btn').style.display = 'none';
+        document.getElementById('reconnect-btn').style.display = 'none';
+    }
+
+    if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('statelessswitch') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('light') || device.services.includes('rain'))
+    {
+        settings.push({
+            index: 'active',
+            name: 'Aktiviert'
+        });
+    }
+
+    if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('relais') || device.services.includes('statelessswitch') || device.services.includes('lcd'))
+    {
+        settings.push({
+            index: 'led',
+            name: 'LED'
+        });
+    }
+
+    if(device.services.includes('motion') || device.services.includes('light') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('lcd'))
+    {
+        settings.push({
+            index: 'interval',
+            name: device.services.includes('motion') ? 'Delay' : 'Interval'
+        });
+    }
+
+    if(device.services.includes('statelessswitch'))
+    {
+        settings.push({
+            index: 'events',
+            name: 'Events'
+        });
+    }
+
+    document.getElementsByTagName('title')[0].innerHTML = device.name;
+    document.getElementsByTagName('h1')[0].innerHTML = device.name;
+
+    var infos = document.getElementById('info');
+
+    infos.innerHTML += '<p><b>Mac: </b>' + device.mac + '</p>';
+
+    if(device.ip != undefined)
+    {
+        infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+    }
+    
+    infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(device.services) + '</p>';
+
+    if(device.version != undefined)
+    {
+        infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+    }
+
+    for(const i in settings)
+    {
+        if(settings[i].index == 'interval' && !device.services.includes('motion'))
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+        }
+        else if(settings[i].index == 'interval' && device.services.includes('motion'))
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+        }
+        else if(settings[i].index == 'led' || settings[i].index == 'active')
+        {
+            if(device[settings[i].index] == 1)
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
+            }
+            else
+            {
+                infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
+            }
+        }
+        else if(settings[i].index == 'events' && device[settings[i].index] == '')
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Keine</p>';
+        }
+        else
+        {
+            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+        }
+    }
+
+    document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(device.services));
+    document.getElementById('navigation-panel').setAttribute('version', device.version);
+
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.mac + "'");
+
+    document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+
+    var settingsForm = document.getElementById('settings-form');
+
+    settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+
+    for(const i in settings)
+    {
+        if(settings[i].index == 'interval' && !device.services.includes('motion'))
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+        }
+        else if(settings[i].index == 'interval' && device.services.includes('motion'))
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+        }
+        else if(settings[i].index == 'events')
+        {
+            var events = JSON.parse('[' + device[settings[i].index] + ']');
+            var main = document.createElement('div');
+            var container = document.createElement('div');
+            var controls = document.createElement('div');
+            var addBtn = document.createElement('input');
+
+            main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
+            main.setAttribute('style', 'display: flex');
+
+            container.setAttribute('id', 'events');
+            container.setAttribute('style', 'max-width: 150px; margin-right: 16px');
+
+            controls.setAttribute('id', 'controls');
+            controls.setAttribute('style', 'width: 100px; margin-right: auto');
+
+            addBtn.setAttribute('value', '+');
+            addBtn.setAttribute('onclick', 'addEventInput("0")');
+            addBtn.setAttribute('type', 'button');
+            addBtn.setAttribute('class', 'gradient-blue-green');
+            addBtn.setAttribute('id', 'add-event-btn');
+            addBtn.setAttribute('style', '');
+
+            main.appendChild(container);
+            main.appendChild(controls);
+            
+            settingsForm.appendChild(main);
+
+            for(const j in events)
+            {
+                addEventInput(events[j]);
+            }
+
+            controls.appendChild(addBtn);
+        }
+        else if(settings[i].index == 'led' || settings[i].index == 'active')
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+        }
+        else
+        {
+            settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+        }
+    }
+
+    settingsForm.setAttribute('mac', device.mac);
+    settingsForm.setAttribute('ip', device.ip);
+    settingsForm.setAttribute('type', Essentials.getType(device.services));
+
+    if(device.services.includes('statelessswitch'))
+    {
+        document.getElementById('infobox').style.display = '';
+        document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
+    }
+
+    for(var i = 0; i < counter; i++)
+    {
+        var type = Array.isArray(device.services) ? device.services[i] : device.services;
+
+        if(type instanceof Object)
+        {
+            typeCounter[type.type] = typeCounter[type.type] ? typeCounter[type.type] + 1 : 1;
+        }
+        else
+        {
+            typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+        }
+    }
+
+    for(var i = 0; i < Object.keys(typeCounter).length; i++)
+    {
+        var type = Object.keys(typeCounter)[i];
+
+        if(type != 'lcd')
+        {
+            for(var j = 0; j < typeCounter[type]; j++)
+            {
+                var statusField = document.createElement('input');
+            
+                statusField.setAttribute('id', 'status-' + type + '-' + j);
+                statusField.setAttribute('class', 'control-panel loading-loop');
+                statusField.setAttribute('type', 'button');
+                statusField.setAttribute('value', 'LADEN ..');
+
+                if(type == 'relais' || type == 'switch')
+                {
+                    statusField.setAttribute('onclick', 'controlSwitch(this)');
+                    statusField.style.cursor = 'pointer';
+                }
+
+                if(typeCounter[type] > 1)
+                {
+                    statusField.style.setProperty('font-size', '30px', 'important');
+                }
+
+                if(counter > 1)
+                {
+                    statusField.style.height = '100px';
+                }
+
+                if(i == counter - 1) // TODO
+                {
+                    statusField.style.setProperty('margin-bottom', '0', 'important');
+                }
+
+                document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+                var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+                frame.setAttribute('style', 'border-radius: 50px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 50); background: rgb(20, 20, 30)');
+
+                document.getElementById('activity').appendChild(frame);
+
+                if(i != counter - 1) // TODO
+                {
+                    frame.style.marginBottom = '20px';
+                }
+
+                var height = frame.offsetHeight - padding * 2 - 2;
+
+                canvas.setAttribute('class', 'canvas');
+                canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+                canvas.setAttribute('style', 'border-radius: 50px');
+
+                canvas.width = document.getElementById('infos').offsetWidth - 4;
+                canvas.height = height + padding * 2;
+                canvas.style.background = 'rgb(20, 20, 30)';
+
+                frame.appendChild(canvas);
+
+                drawGrid(canvas, [], 10);
+
+                var infoMin = document.createElement('div');
+
+                infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                infoMin.setAttribute('class', 'min');
+
+                frame.appendChild(infoMin);
+
+                var infoMax = document.createElement('div');
+
+                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                infoMax.setAttribute('class', 'max');
+
+                frame.appendChild(infoMax);
+
+                var infoType = document.createElement('div');
+
+                infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+                if(typeCounter[type] > 1)
+                {
+                    var name = device.name, n = [];
+
+                    if(typeCounter[type] > 1)
+                    {
+                        name = device.name + ' ' + type + ' ' + j;
+                    }
+                    else if(counter > 1)
+                    {
+                        name = device.name + ' ' + type;
+                    }
+
+                    for(var k = 0; k < device.services.length; k++)
+                    {
+                        if(device.services[k] instanceof Object && device.services[k].type == type)
+                        {
+                            n.push(device.services[k].name);
+                        }
+                    }
+
+                    if(n.length > 0)
+                    {
+                        name = n[j];
+                    }
+
+                    infoType.innerHTML = name;
+                }
+                else
+                {
+                    infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                }
+
+                frame.appendChild(infoType);
+
+                var infoUpdate = document.createElement('div');
+
+                infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                infoUpdate.setAttribute('class', 'update');
+
+                frame.appendChild(infoUpdate);
+            }
+        }
+    }
+
+    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+
+        automations = JSON.parse(a);
+
+        //loadActivity();
+    });
+
+    if(device.ip != undefined)
+    {
+        //pingESP();
+        //checkUpdates();
+    }
+    else
+    {
+        setInterval(function()
+        {
+            if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+            {
+                //fetchState();
+            }
+        }, 300);
+    }
+
+</script>
+<script>
+
+    async function controlSwitch(button)
+    {
+        if(!busy.includes(button.getAttribute('id')))
+        {
+            busy.push(button.getAttribute('id'));
+
+            var counter = button.getAttribute('id').split('-')[2];
+            var type = button.getAttribute('id').split('-')[1];
+            var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
+
+            if(device.on_url != undefined && device.off_url != undefined)
+            {
+                if(value == 'true')
+                {
+                    var state = await Query.complexFetch(device.on_url, 10000, 3, {}, false);
+                }
+                else if(value == 'false')
+                {
+                    var state = await Query.complexFetch(device.off_url, 10000, 3, {}, false);
+                }
+
+                await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+            }
+            else if(device.ip != undefined)
+            {
+                var state = await Query.complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
+            }
+            else
+            {
+                var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+            }
+
+            if(state != null)
+            {
+                button.style.backgroundColor = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'hsl(205, 75%, 55%)' : 'hsl(18, 75%, 55%)';
+            
+                if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
+                {
+                    button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
+                }
+                else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+                {
+                    button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
+                }
+            }
+
+            const index = busy.indexOf(button.getAttribute('id'));
+
+            if(index > -1)
+            {
+                busy.splice(index, 1);
+            }
+        }
+    }
+
+    async function loadActivity()
+    {
+        activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + device.mac, 10000, 3, {}, false));
+
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Object.keys(typeCounter)[i];
+
+            if(type != 'lcd')
+            {
+                for(var j = 0; j < typeCounter[type]; j++)
+                {
+                    var name = device.name, n = [];
+
+                    if(typeCounter[type] > 1)
+                    {
+                        name = device.name + ' ' + type + ' ' + j;
+                    }
+                    else if(counter > 1)
+                    {
+                        name = device.name + ' ' + type;
+                    }
+
+                    for(var k = 0; k < device.services.length; k++)
+                    {
+                        if(device.services[k] instanceof Object && device.services[k].type == type)
+                        {
+                            n.push(device.services[k].name);
+                        }
+                    }
+
+                    if(n.length > 0)
+                    {
+                        name = n[j];
+                    }
+
+                    if(!values[type + j])
+                    {
+                        values[type + j] = [];
+                    }
+
+                    for(const l in activity)
+                    {
+                        if(l[0] == Essentials.typeToLetter(type))
+                        {
+                            if(activity[l].update.length > 0 || activity[l].success.length > 0)
+                            {
+                                if(type == 'statelessswitch')
+                                {
+                                    for(var k = activity[l].success.length - 1; k >= 0; k--)
+                                    {
+                                        if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
+                                        {
+                                            values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
+                                            values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for(var k = activity[l].update.length - 1; k >= 0; k--)
+                                    {
+                                        values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        orginal = { ...values };
+
+        console.log('Aktivität wurde geladen!');
+
+        repaintGraphs();
+    }
+
+    function repaintGraphs()
+    {
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Array.isArray(device.services) ? device.services[i] : device.services;
+
+            if(type != 'lcd')
+            {
+                for(var j = 0; j < typeCounter[type]; j++)
+                {
+                    if(type instanceof Object)
+                    {
+                        calcValues(values, type.type, j);
+                    }
+                    else
+                    {
+                        calcValues(values, type, j);
+                    }
+                }
+            }
+        }
+    }
+
+    function calcValues(values, type, c)
+    {
+        var color = 'hsl(200, 98%, 60%)';
+        var canvas = document.getElementById('canvas-' + type + '-' + c);
+
+        console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
+/*
+        if(type instanceof Object)
+        {
+            type = type.type;
+        }
+*/
+        var v = [], a = [];
+        /*
+        values = {};
+
+        values[type + c] = [
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
+            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
+            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
+            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 }
+        ]
+        */
+        canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+        if(data[type].active && data[type].active.color)
+        {
+            color = data[type].active.color;
+        }
+
+        if(data[type].color)
+        {
+            color = data[type].color;
+        }
+
+        var min = 0;
+        var max = 1;
+
+        if(Object.keys(values).length != 0 && values[type + c].length != 0)
+        {
+            if(!isNaN(values[type + c][0].value))
+            {
+                min = 100000;
+                max = 0;
+
+                for(const j in values[type + c])
+                {
+                    if(parseFloat(values[type + c][j].value) < min)
+                    {
+                        min = parseFloat(values[type + c][j].value);
+                    }
+
+                    if(parseFloat(values[type + c][j].value) > max)
+                    {
+                        max = parseFloat(values[type + c][j].value);
+                    }
+                }
+            }
+
+            console.log('Min', min, 'Max', max);
+            
+            var unterteilungen = 24 * 15,
+                date = new Date();
+
+            if(!isNaN(values[type + c][0].value))
+            {
+                unterteilungen = 24 * 6;
+                //unterteilungen = 24 * 60;
+            }
+
+            for(var k = unterteilungen; k >= 0; k--)
+            {
+                var x = [], sum = 0, triggered = false;
+
+                for(const j in values[type + c])
+                {
+                    if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+                    {
+                        var value = values[type + c][j].value;
+
+                        if(!isNaN(values[type + c][0].value))
+                        {
+                            value = (values[type + c][j].value - min) / (max - min) * 100;
+
+                            sum += parseFloat(value);
+                        }
+
+                        if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
+                        {
+                            triggered = true;
+                            console.log('triggered!!!');
+                        }
+                        
+                        x.push(value);
+                    }
+                }
+
+                if(x.length > 0)
+                {
+                    if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
+
+                        //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
+
+                        //console.log('MAX', 100 - Math.max(...x), 'MIN', Math.min(...x), 'Entscheidung', (100 - Math.max(...x)) < Math.min(...x) ? 'MAX' : 'MIN');
+                    }
+                    else if(!(x.includes('true') && x.includes('false')))
+                    {
+                        v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 2] = 100;
+                        v[unterteilungen - k - 1] = 0;
+                    }
+
+                    //v[unterteilungen - k - 1] = sum / x.length;
+                }
+                else
+                {
+                    if(!isNaN(v[unterteilungen - k - 2]))
+                    {
+                        v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
+                    }
+                    else if(!isNaN(values[type + c][0].value))
+                    {
+                        v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
+                    }
+                    else
+                    {
+                        v[unterteilungen - k - 1] = 0;
+                    }
+                }
+
+                if(triggered)
+                {
+                    a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
+                }
+                else
+                {
+                    a[unterteilungen - k - 1] = -1;
+                }
+            }
+            /*
+            for(const j in values[type])
+            {
+                var value = values[type][j];
+
+                value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+                v.push((value - min) / (max - min) * 100);
+            }
+            */
+            console.log('Graph Berechnen ..', v);
+            
+            if(isNaN(values[type + c][0].value))
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+            }
+            else
+            {
+                canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+                canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+            }
+
+            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+        
+            if(canvas.parentElement.getElementsByTagName('h2').length > 0)
+            {
+                canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
+            }
+        }
+        else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
+        {
+            var label = document.createElement('h2');
+
+            label.innerHTML = '↻ Neu Laden';
+            label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+            label.setAttribute('onclick', 'loadActivity()');
+
+            canvas.parentElement.appendChild(label);
+        }
+
+        var w = [];
+
+        for(var i = 0; i < automations.length; i++)
+        {
+            for(var j = 0; j < automations[i].trigger.length; j++)
+            {
+                if(automations[i].trigger[j].mac == device.mac && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automations[i].trigger[j].value - min) / (max - min) * 100 > 0)
+                {
+                    w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
+                }
+            }
+        }
+
+        drawGrid(canvas, [], 10);
+        drawAutomations(canvas, w);
+
+        if(type == 'temperature')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+            else if(min > data[type].valueRange[1])
+            {
+                min = data[type].valueRange[1];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+            else if(max < data[type].valueRange[0])
+            {
+                max = data[type].valueRange[0];
+            }
+
+            console.log(min, max);
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            drawFill(canvas, v, [maxClr, minClr], 0);
+            drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+            drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+        }
+        else if(type == 'humidity')
+        {
+            var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+            if(min < data[type].valueRange[0])
+            {
+                min = data[type].valueRange[0];
+            }
+
+            if(max > data[type].valueRange[1])
+            {
+                max = data[type].valueRange[1];
+            }
+
+            if(min > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+
+            var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+
+            if(max > 50)
+            {	
+                cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+            }
+            else
+            {
+                cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+            }
+
+            var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+            drawFill(canvas, v, [maxClr, minClr], 0);
+            drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+            drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+        }
+        else if(type == 'light')
+        {
+            drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+            drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+            drawEvents(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
+        }
+        else
+        {
+            drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+            drawGraph(canvas, v, [color, color], false);
+            drawEvents(canvas, a, [color, color]);
+        }
+    }
+
+    function drawGraph(canvas, data, gradients, points)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = grd;
+        ctx.setLineDash([]);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(points)
+            {
+                ctx.fillStyle = gradients[0];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+                ctx.fillStyle = gradients[1];
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            ctx.beginPath();
+            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
+            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            ctx.stroke();
+        }
+
+        if(points)
+        {
+            ctx.fillStyle = gradients[0];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+            ctx.fillStyle = gradients[1];
+            ctx.beginPath();
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    function drawFill(canvas, data, gradients, smoothing)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.fillStyle = grd;
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.moveTo(0, height + padding);
+        ctx.lineTo(0, height - data[0] * height / 100  + padding);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(smoothing == 0)
+            {
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            }
+            else
+            {
+                // TODO
+                ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
+            }
+        }
+
+        ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
+
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawGrid(canvas, data, unterteilungen)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
+
+        for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
+        {
+            ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+            if(i == unterteilungen || i == 0)
+            {
+                ctx.strokeStyle = 'rgb(50, 50, 60)';
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, padding + (height / unterteilungen) * i);
+            ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+            ctx.stroke();
+        }
+
+        if(data.length < 75)
+        {
+            for(var i = 0; i < data.length; i++)
+            {
+                ctx.strokeStyle = 'rgb(40, 40, 50)';
+                
+                if(i == data.length - 1 || i == 0)
+                {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+                ctx.stroke();
+            }
+        }
+    }
+
+    function drawAutomations(canvas, data)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+
+        console.log(data);
+
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([10, 15]);
+
+        for(var i = 0; i < data.length; i++)
+        {
+            ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
+
+            ctx.beginPath();
+            ctx.moveTo(0, height - data[i] * height / 100  + padding);
+            ctx.lineTo(width + padding * 2, height - data[i] * height / 100  + padding)
+            ctx.stroke();
+        }
+    }
+
+    function drawEvents(canvas, data, gradients)
+    {
+        var ctx = canvas.getContext('2d');
+        var height = canvas.offsetHeight - padding * 2 - 2;
+        var width = canvas.offsetWidth - padding * 2;
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+        for(var i = 0; i < gradients.length; i++)
+        {
+            grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+        }
+
+        ctx.fillStyle = grd;
+        ctx.lineCap = 'butt';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
+
+        console.log(data);
+
+        for(var i = 1; i < data.length; i++)
+        {
+            if(data[i - 1] != -1)
+            {
+                ctx.beginPath();
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 4, 0, 360);
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+
+    function addEventInput(value)
+    {
+        var input = document.createElement('input');
+        var control = document.createElement('input');
+
+        input.setAttribute('value', value);
+        input.setAttribute('name', 'events');
+        input.setAttribute('type', 'text');
+        input.setAttribute('pattern', '-?[0-9]+');
+        input.setAttribute('title', 'Bitte benutze nur Zahlen');
+        input.setAttribute('required', '');
+        input.setAttribute('style', 'margin-bottom: 16px');
+
+        control.setAttribute('value', '-');
+        control.setAttribute('type', 'button');
+        control.setAttribute('onclick', 'removeEventInput(this)');
+        control.setAttribute('style', 'margin-bottom: 16px');
+
+        document.getElementById('events').appendChild(input);
+
+        if(document.getElementById('add-event-btn') == null)
+        {
+            document.getElementById('controls').appendChild(control);
+        }
+        else
+        {
+            document.getElementById('controls').insertBefore(control, document.getElementById('add-event-btn'));
+        }
+    }
+
+    function removeEventInput(button)
+    {
+        var i = Array.prototype.indexOf.call(button.parentElement.children, button);
+
+        document.getElementById('events').removeChild(document.getElementById('events').children[i]);
+        document.getElementById('controls').removeChild(button);
+    }
+
+    function switchFormButton(btn)
+    {
+        if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+        {
+            btn.setAttribute('class', 'outline');
+            btn.setAttribute('value', 'Aus');
+        }
+        else
+        {
+            btn.setAttribute('class', 'white');
+            btn.setAttribute('value', 'An');
+        }
+    }
+
+    function openSettings()
+    {
+        document.getElementById('infos').setAttribute('style', 'display: none');
+        document.getElementById('settings').removeAttribute('style');
+        document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+    }
+    
+    function closeSettings()
+    {
+        document.getElementById('infos').removeAttribute('style');
+        document.getElementById('settings').setAttribute('style', 'display: none');
+        document.getElementsByTagName('title')[0].innerHTML = device.name;
+    }
+
+    async function fetchState()
+    {
+        for(var i = 0; i < Object.keys(typeCounter).length; i++)
+        {
+            var type = Object.keys(typeCounter)[i];
+
+            if(type != 'lcd')
+            {
+                for(var j = 0; j < typeCounter[type]; j++)
+                {
+                    var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000);
+            
+                    if(temp[type + j] && state != temp[type + j])
+                    {
+                        orginal[type + j].push({ time : Math.round(new Date().getTime()) / 1000, value : state });
+
+                        console.log(state);
+                        
+                        calcValues(orginal, type, j);
+                    }
+
+                    temp[type + j] = state;
+
+                    if(state != null && state != 'Error')
+                    {
+                        if(state == 'true')
+                        {
+                            value = data[type].active.text.toUpperCase();
+                            color = data[type].active.color;
+                        }
+                        else if(state == 'false')
+                        {
+                            value = data[type].inactive.text.toUpperCase();
+                            color = data[type].inactive.color;
+                        }
+                        else
+                        {
+                            var color = 'rgb(60, 60, 75)', value = state;
+
+                            if(type == 'temperature')
+                            {
+                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                                value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+                                if(state < 18)
+                                {
+                                    color = 'hsl(220, 75%, 55%)';
+                                }
+                                else if(state > 26)
+                                {
+                                    color = 'hsl(0, 75%, 55%)';
+                                }
+                                else
+                                {
+                                    color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                                }
+                            }
+                            else if(type == 'humidity')
+                            {
+                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                                value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                                if(state > 50)
+                                {	
+                                    cRange = [280, 0];
+                                }	
+
+                                if(state < 45 || state > 55)	
+                                {	
+                                    color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                                }	
+                                else	
+                                {	
+                                    color = data[type].color;	
+                                }
+                            }
+                            else if(type == 'light')
+                            {
+                                var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+                                value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+
+                                if(state > 1000)
+                                {
+                                    color = data[type].color;
+                                }
+                                else
+                                {
+                                    color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+                                }
+                            }
+                            else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                            {
+                                if(state.split(':')[0] == 'true')
+                                {
+                                    value = 'AN';
+
+                                    if(device.spectrum == 'HSL')
+                                    {
+                                        color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
+                                    }
+                                    else
+                                    {
+                                        color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+                                    }
+                                }
+                                else if(state.split(':')[0] == 'false')
+                                {
+                                    value = 'AUS';
+                                    color = 'rgb(60, 60, 75)';
+                                }
+                            }
+                            else
+                            {
+                                value = state + ' ' + data[type].text.toUpperCase();
+                            }
+                        }
+
+                        if(typeCounter[type] > 1)
+                        {
+                            var name = device.name + ' ' + type + ' ' + j;
+                            var n = [];
+
+                            for(var k = 0; k < device.services.length; k++)
+                            {
+                                if(device.services[k] instanceof Object && device.services[k].type == type)
+                                {
+                                    n.push(device.services[k].name);
+                                }
+                            }
+
+                            if(n.length > 0)
+                            {
+                                name = n[j];
+                            }
+
+                            document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+                        }
+                        else
+                        {
+                            document.getElementById('status-' + type + '-' + j).value = value;
+                        }
+
+                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+                    }
+                    else if(type == 'statelessswitch')	
+                    {	
+                        document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
+                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
+                    }
+                    else if(state == 'Error')
+                    {
+                        document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
+                    }
+                }
+            }
+        }
+    }
+
+    async function restartDevice(btn)
+    {
+        if(!restarting && !updating && !saving && !resetting)
+        {
+            var overlays = {
+                root : btn,
+                id : 'restart',
+                pending : { value : 'Neustart ..' },
+                connectionError : { value : 'Keine Verbindung zum Gerät!' }
+            };
+
+            restarting = true;
+
+            if(await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, false) == null)
+            {
+                Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
+
+                await Essentials.newTimeout(4000);
+
+                Essentials.removeOverlays(btn, true);
+
+                await Essentials.newTimeout(300);
+            }
+        }
+    }
+
+    async function pingESP()
+    {
+        if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
+        {
+            if(await Query.fetchURL('http://' + device.ip + '/', 10000) != null)
+            {
+                console.log("ESP Gefunden");
+
+                if(restarting == true)
+                {
+                    Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+                    
+                    await Essentials.newTimeout(4000);
+                    
+                    Essentials.removeOverlays(document.getElementById('restart-btn'), true);
+
+                    setTimeout(function()
+                    {
+                        restarting = false;
+                    }, 300);
+                }
+
+                for(var i = 0; i <= 4000; i += 1000)
+                {
+                    setTimeout(function()
+                    {
+                        if(!updating && !saving && !resetting)
+                        {
+                            fetchState();
+                        }
+                    }, i);
+                }
+
+                setTimeout(function()
+                {
+                    pingESP();
+                }, 5000);
+            }
+            else
+            {
+                document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
+                document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+
+                for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
+                {
+                    document.getElementsByClassName('control-panel')[i].style.backgroundColor = 'rgb(60, 60, 75)';
+                    document.getElementsByClassName('control-panel')[i].value = '-';
+                }
+
+                await Essentials.newTimeout(1000);
+                
+                pingESP();
+            }
+        }
+        else
+        {
+            await Essentials.newTimeout(1000);
+                
+            pingESP();
+        }
+    }    
+
+    function updateDevice(btn)
+    {
+        return new Promise(async function(resolve) {
+
+            var response = false;
+
+            if(!updating && !restarting && !saving && !resetting)
+            {
+                var overlays = {
+                    root : btn,
+                    id : 'update',
+                    pending : { value : 'Bitte Warten ..' },
+                    success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
+                    executeError : { value : 'Update Fehlgeschlagen!' },
+                    connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                };
+
+                updating = true;
+
+                if(await Query.complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
+                {
+                    await Essentials.newTimeout(3000);
+
+                    var overlays = {
+                        root : btn,
+                        id : 'update-installation',
+                        connectionError : { value : 'Keine Verbindung zum Gerät!' }
+                    };
+
+                    var update = await Query.complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
+
+                    if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+                    {  
+                        Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+
+                        response = true;
+                    }
+                    else
+                    {
+                        Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+                    }
+
+                    document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+
+                    await Essentials.newTimeout(4000);
+
+                    Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+                }
+
+                updating = false;
+            }
+
+            resolve(response);
+        });
+    }
+
+    async function checkUpdates()
+    {
+        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
+
+        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('navigation-panel').getAttribute('version')))
+        {
+            var update = document.createElement('input');
+
+            update.setAttribute('type', 'button');
+            update.setAttribute('value', 'Update Installieren ( v' + newestVersion + ' )');
+            update.setAttribute('style', 'margin-bottom: 20px;');
+            update.setAttribute('onclick', 'updateDevice(this)');
+            update.setAttribute('id', 'update-btn');
+
+            document.getElementById('infos').insertBefore(update, document.getElementById('restart-btn'));
+        }
+    }
+
+    function resetDevice(btn)
+    {
+        var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+
+        overlay.setAttribute('onclick', 'resetConfirm(this)');
+
+        Essentials.showOverlay(btn, overlay);
+    }
+    
+    async function resetConfirm(btn)
+    {
+        if(!resetting && !updating && !restarting && !saving)
+        {
+            var overlays = {
+                root : btn,
+                id : 'update',
+                pending : { value : 'Zurücksetzen ..', z : 2 },
+                executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
+                connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+            };
+
+            if(device.ip != undefined)
+            {
+                var url = 'http://' + device.ip + '/reset';
+            }
+            else
+            {
+                var url = '/serverside/remove-device?mac=' + device.mac;
+            }
+
+            resetting = true;
+
+            if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
+            {
+                await Essentials.newTimeout(3000);
+
+                if(await Essentials.checkRestart('/serverside/check-restart'))
+                {
+                    Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+
+                    await Essentials.newTimeout(3000);
+
+                    window.location.href = '/';
+                }
+            }
+            else
+            {
+                await Essentials.newTimeout(4010);
+                Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+            }
+
+            resetting = false;
+        }
+    }
+
+    async function saveConfig()
+    {
+        if(!saving && !updating && !restarting && !resetting)
+        {
+            var settings = {
+                mac: device.mac
+            };
+
+            var form = document.getElementById('settings-form');
+
+            for(var i = 0; i < form.childElementCount; i++)
+            {
+                if(!form.children[i].hasAttribute('type'))
+                {
+                    if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+                    {
+                        if(!device.services.includes('motion'))
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+                        }
+                        else if(device.services.includes('motion'))
+                        {
+                            settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+                        }
+                        else
+                        {
+                            settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+                        }
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
+                    {
+                        var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
+
+                        for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
+                        {
+                            concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
+                        }
+
+                        concat += ']';
+
+                        settings['events'] = JSON.parse(concat);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+                    }
+                    else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+                    {
+                        settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+                    }
+                }
+            }
+
+            console.log(settings);
+
+            var overlays = {
+                root : document.getElementById('save-btn'),
+                id : 'saving',
+                pending : { value : 'Hochladen ..', remove : false },
+                executeError : { value : 'Update Fehlgeschlagen!' },
+                connectionError : { value : 'Keine Verbindung zur Bridge!' }
+            };
+
+            saving = true;
+
+            if(await Query.complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
+            {
+                var overlays = {
+                    root : document.getElementById('save-btn'),
+                    id : 'refresh',
+                    success : { value : 'Hochgeladen!' },
+                    executeError : { value : 'Fehler beim Upload!' },
+                    connectionError : { value : 'Gespeichert!', color : 'yellow' }
+                };
+
+                await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
+                
+                await Essentials.newTimeout(2000);
+                    
+                redirect();
+            }
+            else
+            {
+                saving = false;
+
+                await Essentials.newTimeout(500);
+
+                pingESP();
+            }
+
+            saving = false;
+        }
+    }
+    
+    function redirect()
+    {
+        location.reload();
+    }
+
+</script>
