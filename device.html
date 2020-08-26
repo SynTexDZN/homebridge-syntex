@@ -480,59 +480,62 @@
         {
             var type = Object.keys(typeCounter)[i];
 
-            for(var j = 0; j < typeCounter[type]; j++)
+            if(type != 'lcd')
             {
-                var name = device.name, n = [];
+                for(var j = 0; j < typeCounter[type]; j++)
+                {
+                    var name = device.name, n = [];
 
-                if(typeCounter[type] > 1)
-                {
-                    name = device.name + ' ' + type + ' ' + j;
-                }
-                else if(counter > 1)
-                {
-                    name = device.name + ' ' + type;
-                }
-
-                for(var k = 0; k < device.services.length; k++)
-                {
-                    if(device.services[k] instanceof Object && device.services[k].type == type)
+                    if(typeCounter[type] > 1)
                     {
-                        n.push(device.services[k].name);
+                        name = device.name + ' ' + type + ' ' + j;
                     }
-                }
-
-                if(n.length > 0)
-                {
-                    name = n[j];
-                }
-
-                if(!values[type + j])
-                {
-                    values[type + j] = [];
-                }
-
-                for(const l in activity)
-                {
-                    if(l[0] == Essentials.typeToLetter(type))
+                    else if(counter > 1)
                     {
-                        if(activity[l].update.length > 0 || activity[l].success.length > 0)
+                        name = device.name + ' ' + type;
+                    }
+
+                    for(var k = 0; k < device.services.length; k++)
+                    {
+                        if(device.services[k] instanceof Object && device.services[k].type == type)
                         {
-                            if(type == 'statelessswitch')
+                            n.push(device.services[k].name);
+                        }
+                    }
+
+                    if(n.length > 0)
+                    {
+                        name = n[j];
+                    }
+
+                    if(!values[type + j])
+                    {
+                        values[type + j] = [];
+                    }
+
+                    for(const l in activity)
+                    {
+                        if(l[0] == Essentials.typeToLetter(type))
+                        {
+                            if(activity[l].update.length > 0 || activity[l].success.length > 0)
                             {
-                                for(var k = activity[l].success.length - 1; k >= 0; k--)
+                                if(type == 'statelessswitch')
                                 {
-                                    if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
+                                    for(var k = activity[l].success.length - 1; k >= 0; k--)
                                     {
-                                        values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
-                                        values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
+                                        if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
+                                        {
+                                            values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
+                                            values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                for(var k = activity[l].update.length - 1; k >= 0; k--)
+                                else
                                 {
-                                    values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
+                                    for(var k = activity[l].update.length - 1; k >= 0; k--)
+                                    {
+                                        values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
+                                    }
                                 }
                             }
                         }
