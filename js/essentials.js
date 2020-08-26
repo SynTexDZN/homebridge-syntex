@@ -160,7 +160,7 @@ function removeOverlays(btn, show)
 
 function getType(services)
 {
-    var s = { ...services };
+    var s = [ ...services ];
 
     if(Array.isArray(s))
     {
