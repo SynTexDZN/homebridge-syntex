@@ -437,8 +437,12 @@ SynTexPlatform.prototype = {
 
                                     if(device != null)
                                     {
+                                        console.log(device);
+
                                         for(const k in device)
                                         {
+                                            console.log(k);
+
                                             if(k != 'services')
                                             {
                                                 all[k] = device[k];
