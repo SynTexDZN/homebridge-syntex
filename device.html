@@ -102,7 +102,7 @@
         humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
         light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
     };
-/*
+
     if(device.ip == undefined)
     {
         document.getElementById('restart-btn').style.display = 'none';
@@ -190,7 +190,7 @@
             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
         }
     }
-
+/*
     document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(device.services));
     document.getElementById('navigation-panel').setAttribute('version', device.version);
 
@@ -407,7 +407,7 @@
             }
         }
     }
-
+*/
     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
         automations = JSON.parse(a);
@@ -430,7 +430,7 @@
             }
         }, 300);
     }
-*/
+
 </script>
 <script>
 
