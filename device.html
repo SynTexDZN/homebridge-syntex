@@ -557,14 +557,17 @@
         {
             var type = Array.isArray(device.services) ? device.services[i] : device.services;
 
-            if(type instanceof Object)
+            if(type != 'lcd')
             {
-                type = type.type;
-            }
+                if(type instanceof Object)
+                {
+                    type = type.type;
+                }
 
-            for(var j = 0; j < typeCounter[type]; j++)
-            {
-                calcValues(values, type, j);
+                for(var j = 0; j < typeCounter[type]; j++)
+                {
+                    calcValues(values, type, j);
+                }
             }
         }
     }
