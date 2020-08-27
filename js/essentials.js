@@ -198,6 +198,8 @@ function getType(services)
 
             for(const i in s)
             {
+                console.log(lastType, i, lastType != i);
+
                 if(lastType != i)
                 {
                     return 'special';
