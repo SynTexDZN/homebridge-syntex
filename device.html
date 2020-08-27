@@ -568,9 +568,13 @@
 
     function repaintGraphs()
     {
+        console.log(typeCounter);
+
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
             var type = Array.isArray(device.services) ? device.services[i] : device.services;
+
+            console.log("TYP: " + type);
 
             if(type != 'lcd')
             {
