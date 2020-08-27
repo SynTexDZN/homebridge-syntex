@@ -198,7 +198,17 @@ function getType(services)
         }
         else
         {
-            return 'special';
+            var lastType = s[0];
+
+            for(const i in s)
+            {
+                if(lastType != i)
+                {
+                    return 'special';
+                }
+            }
+
+            return lastType;
         }
     }
     else
