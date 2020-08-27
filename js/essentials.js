@@ -198,9 +198,9 @@ function getType(services)
 
             for(const i in s)
             {
-                console.log(lastType, i, lastType != i);
+                console.log(lastType, s[i], lastType != s[i]);
 
-                if(lastType != i)
+                if(lastType != s[i])
                 {
                     return 'special';
                 }
