@@ -192,10 +192,6 @@ function getType(services)
         {
             return 'rgb';
         }
-        else if(s.includes('switch'))
-        {
-            return 'switch';
-        }
         else
         {
             var lastType = s[0];
