@@ -255,7 +255,7 @@ function removeExpired(obj)
                     if(new Date() - new Date(time * 1000) > 86400000)
                     {
                         console.log('REMOVE', JSON.stringify(obj[i][j].length - k));
-                        obj[i][j].splice(obj[i][j].indexOf(obj[i][j][obj[i][j].length - k]), 1);
+                        obj[i][j].splice(obj[i][j].length - k, 1);
                     }
                 }
             }
