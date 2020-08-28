@@ -6,7 +6,7 @@
             <h1 class="loading-loop">Laden ..</h1>
             <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
             <div id="activity" style="margin-bottom: 100px"></div>
-            <div id="navigation-panel">
+            <div class="navigation-panel">
                 <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
                 <div style="display: flex">
                     <input type="button" value="Zurück" onclick="window.location.href='/'">
@@ -191,8 +191,8 @@
         }
     }
 
-    document.getElementById('navigation-panel').setAttribute('type', Essentials.getType(device.services));
-    document.getElementById('navigation-panel').setAttribute('version', device.version);
+    document.getElementsByClassName('navigation-panel')[0].setAttribute('type', Essentials.getType(device.services));
+    document.getElementsByClassName('navigation-panel')[0].setAttribute('version', device.version);
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.mac + "'");
 
@@ -1485,9 +1485,9 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('navigation-panel').getAttribute('type'), 10000, 3, {}, false);
+        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].getAttribute('type'), 10000, 3, {}, false);
 
-        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('navigation-panel').getAttribute('version')))
+        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].getAttribute('version')))
         {
             var update = document.createElement('input');
 
@@ -1497,7 +1497,7 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('id', 'update-btn');
 
-            document.getElementById('nagivation-panel').insertBefore(update, document.getElementById('restart-btn'));
+            document.getElementsByClassName('navigation-panel')[0].insertBefore(update, document.getElementById('restart-btn'));
         }
     }
 
