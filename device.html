@@ -345,14 +345,14 @@
 
                 var infoMin = document.createElement('div');
 
-                infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 40px; margin-top: -19.2px; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300; opacity: 0');
                 infoMin.setAttribute('class', 'min');
 
                 frame.appendChild(infoMin);
 
                 var infoMax = document.createElement('div');
 
-                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300');
+                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300; opacity: 0');
                 infoMax.setAttribute('class', 'max');
 
                 frame.appendChild(infoMax);
@@ -398,7 +398,7 @@
 
                 var infoUpdate = document.createElement('div');
 
-                infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -35px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0');
                 infoUpdate.setAttribute('class', 'update');
 
                 frame.appendChild(infoUpdate);
@@ -787,6 +787,10 @@
             {
                 canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
             }
+
+            canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
+            canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
+            canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
         }
         else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
         {
