@@ -236,22 +236,39 @@ async function saveLog(level, mac, letters, time, message)
 
 function removeExpired(obj)
 {
-    for(var i = 1; i < Object.keys(obj).length; i++)
+    for(const i in obj)
     {
-        if(obj[Object.keys(obj)[i]].logs)
+        if(i != 'id')
         {
-            for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
+            for(const j in obj[i])
             {
-                var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
-
-                if(new Date() - new Date(time * 1000) > 86400000)
+                for(var k = 1; j < obj[i][j].length + 1; k++)
                 {
-                    console.log('REMOVE', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
-                    obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
+                    var time = obj[i][j][obj[i][j].length - k].t;
+
+                    if(new Date() - new Date(time * 1000) > 86400000)
+                    {
+                        console.log('REMOVE', JSON.stringify(obj[i][j].length - k));
+                        obj[i][j].splice(obj[i][j].indexOf(obj[i][j][obj[i][j].length - k]), 1);
+                    }
                 }
             }
         }
     }
+    /*
+    for(var i = 1; i < Object.keys(obj).length; i++)
+    {
+        for(var j = 1; j < obj[Object.keys(obj)[i]].logs.length + 1; j++)
+        {
+            var time = obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j].t;
 
+            if(new Date() - new Date(time * 1000) > 86400000)
+            {
+                console.log('REMOVE', JSON.stringify(obj[Object.keys(obj)[i]].logs.length - j));
+                obj[Object.keys(obj)[i]].logs.splice(obj[Object.keys(obj)[i]].logs.indexOf(obj[Object.keys(obj)[i]].logs[obj[Object.keys(obj)[i]].logs.length - j]), 1);
+            }
+        }
+    }
+    */
     return obj;
 }
