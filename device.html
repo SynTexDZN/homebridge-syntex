@@ -578,7 +578,9 @@
             {
                 for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
                 {
-                    console.log(i instanceof Object ? i.type : i, j);
+                    console.log(Essentials.typeToLetter(i instanceof Object ? i.type : i) + j);
+
+                    calcValues(values, i instanceof Object ? i.type : i, j);
                 }
             }
         }
