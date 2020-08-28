@@ -341,7 +341,7 @@
 
                 frame.appendChild(canvas);
 
-                drawGrid(canvas, [], 10);
+                //drawGrid(canvas, [], 10);
 
                 var infoMin = document.createElement('div');
 
@@ -530,8 +530,6 @@
 
                     for(const l in activity)
                     {
-                        console.error(type, l, Essentials.typeToLetter(type));
-
                         if(l == Essentials.typeToLetter(type) + j)
                         {
                             if(activity[l].update.length > 0 || activity[l].success.length > 0)
@@ -640,6 +638,8 @@
         ]
         */
         canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+        drawGrid(canvas, [], 10);
 
         if(data[type].active && data[type].active.color)
         {
