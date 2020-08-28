@@ -712,7 +712,7 @@ canvas
     body
     {
         min-height: calc(100% - 100px);
-        padding-bottom: 85px;
+        padding-bottom: calc(85px + env(safe-area-inset-bottom) * 0.5);
     }
 
     .main
@@ -890,7 +890,7 @@ canvas
     #navigation-panel
     {
         position: fixed;
-        bottom: 25px;
+        bottom: calc(25px + env(safe-area-inset-bottom) * 0.5);
         border-radius: 50px;
         width: calc(100% - 50px);
         padding: 0;
