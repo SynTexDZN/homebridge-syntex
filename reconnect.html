@@ -105,7 +105,7 @@
     {
         if(ping == false)
         {
-            if(await Essentials.fetchURL('http://192.168.4.1/', 2000) != null)
+            if(await Query.fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
                 document.getElementById('wifi').style.display = "";
@@ -124,7 +124,7 @@
                 }, 2000);
             } 
 
-            if(await Essentials.fetchURL('http://' + ipp + '/', 2000) != null)
+            if(await Query.fetchURL('http://' + ipp + '/', 2000) != null)
             {  
                 ping = true;
                 ip = 'http://' + ipp + '/';
@@ -156,7 +156,7 @@
         btn.value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
-        var res = await Essentials.complexFetch(ip + 'wifi', 10000, 3, {}, false);
+        var res = await Query.complexFetch(ip + 'wifi', 10000, 3, {}, false);
 
         if(res != null && res != "" && res != "[]")
         {  
@@ -207,7 +207,7 @@
 
         formData.append('bridge-ip', bridgeIP);
 
-        var mac = await Essentials.complexFetch(ip + 'settings', 10000, 3, {}, false, formData);
+        var mac = await Query.complexFetch(ip + 'settings', 10000, 3, {}, false, formData);
 
         if(mac != null)
         {
@@ -220,7 +220,7 @@
 
             setTimeout(async function()
             {
-                if(await Essentials.fetchURL('/create', 10000) != null)
+                if(await Query.fetchURL('/create', 10000) != null)
                 {
                     ping = true;
                 }
