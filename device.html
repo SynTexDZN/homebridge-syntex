@@ -781,7 +781,7 @@
                 canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
             }
 
-            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][values[type + c].length - 1].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+            canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
         
             if(canvas.parentElement.getElementsByTagName('h2').length > 0)
             {
