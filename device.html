@@ -444,6 +444,11 @@
         }, 300);
     }
 
+    if((new URL(window.location.href)).searchParams.get('search'))
+    {
+        openSettings();
+    }
+
 </script>
 <script>
 
@@ -1184,6 +1189,7 @@
         document.getElementById('infos').setAttribute('style', 'display: none');
         document.getElementById('settings').removeAttribute('style');
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+        window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
     }
     
     function closeSettings()
@@ -1191,6 +1197,7 @@
         document.getElementById('infos').removeAttribute('style');
         document.getElementById('settings').setAttribute('style', 'display: none');
         document.getElementsByTagName('title')[0].innerHTML = device.name;
+        window.history.replaceState(null, null, "?mac=" + device.mac);
     }
 
     async function fetchState()
