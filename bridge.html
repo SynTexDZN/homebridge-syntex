@@ -43,10 +43,9 @@
             </div>
             <div class="navigation-panel">
                 <div class="sticky-inset">
-                    <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="margin-bottom: 20px">
+                    <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)">
                 </div>
             </div>
-            
         </div>
     </body>
 </html>
@@ -137,10 +136,10 @@
 
                     if(index != 'syntex-webhooks')
                     {
-                        updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+                        updateButton.setAttribute('style', 'margin-top: 20px'); 
                     }
 
-                    document.getElementsByClassName('main')[0].appendChild(updateButton);
+                    document.getElementsByClassName('navigation-panel')[0].children[0].appendChild(updateButton);
                 }
             }
             else
