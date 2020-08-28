@@ -894,7 +894,7 @@ canvas
 
     .navigation-panel
     {
-        position: fixed;
+        position: sticky;
         /*
         border-radius: 50px;
         bottom: calc(25px + env(safe-area-inset-bottom) * 0.5);
@@ -902,11 +902,18 @@ canvas
         padding: 0;
         */
         border-radius: 50px 50px 0 0;
-        bottom: -76px;
-        left: 0;
+        
         width: 100%;
         padding: 25px;
         padding-bottom: 100px;
         /*padding-bottom: 50px;*/
+    }
+
+    .navigation-panel .sticky-inset
+    {
+        position: relative;
+
+        bottom: -76px;
+        left: 0;
     }
 }
