@@ -183,6 +183,11 @@
 
                     Essentials.removeOverlays(btn, false);
 
+                    if(document.getElementsByClassName('navigation-panel')[0].children[0].childElementCount == 1)
+                    {
+                        document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
+                    }
+
                     updating['bridge'] = false;
                 }
             }
@@ -218,6 +223,13 @@
                     await Essentials.newTimeout(4000);
 
                     Essentials.removeOverlays(btn, false);
+
+                    await Essentials.newTimeout(300);
+
+                    if(document.getElementsByClassName('navigation-panel')[0].children[0].childElementCount == 1)
+                    {
+                        document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
+                    }
 
                     updating['webhooks'] = false;
                 }
