@@ -361,40 +361,33 @@
 
                 infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
+                var name = type[0].toUpperCase() + type.substring(1), n = [];
+
                 if(typeCounter[type] > 1)
                 {
-                    var name = device.name, n = [];
-
-                    if(typeCounter[type] > 1)
-                    {
-                        name = device.name + ' ' + type + ' ' + j;
-                    }
-                    else if(counter > 1)
-                    {
-                        name = device.name + ' ' + type;
-                    }
-
-                    for(var k = 0; k < device.services.length; k++)
-                    {
-                        console.log(device.services[k], device.services[k].type, type);
-
-                        if(device.services[k] instanceof Object && device.services[k].type == type)
-                        {
-                            n.push(device.services[k].name);
-                        }
-                    }
-
-                    if(n.length > 0)
-                    {
-                        name = n[j];
-                    }
-
-                    infoType.innerHTML = name;
+                    name = device.name + ' ' + type + ' ' + j;
                 }
-                else
+                else if(counter > 1)
                 {
-                    infoType.innerHTML = type[0].toUpperCase() + type.substring(1);
+                    name = device.name + ' ' + type;
                 }
+
+                for(var k = 0; k < device.services.length; k++)
+                {
+                    console.log(device.services[k], device.services[k].type, type);
+
+                    if(device.services[k] instanceof Object && device.services[k].type == type)
+                    {
+                        n.push(device.services[k].name);
+                    }
+                }
+
+                if(n.length > 0)
+                {
+                    name = n[j];
+                }
+
+                infoType.innerHTML = name;
 
                 frame.appendChild(infoType);
 
