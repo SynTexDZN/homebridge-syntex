@@ -107,7 +107,7 @@
             connectionError : { value : 'Keine Verbindung zur Bridge!' }
         };
 
-        var created = await complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
+        var created = await Essentials.complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
 
         await Essentials.newTimeout(1000);
 
@@ -148,7 +148,7 @@
     {
         if(ping == false)
         {
-            if(await fetchURL('http://192.168.4.1/', 2000) != null)
+            if(await Essentials.fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
                 document.getElementById('wifi').style.display = "";
@@ -177,7 +177,7 @@
         btn.value = 'Bitte Warten ..'; 
         document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
-        var res = await complexFetch('http://192.168.4.1/wifi', 10000, 3, {}, false);
+        var res = await Essentials.complexFetch('http://192.168.4.1/wifi', 10000, 3, {}, false);
 
         if(res != null && res != "" && res != "[]")
         {  
@@ -213,7 +213,7 @@
     
     async function checkDB(mac)
     {
-        if(await fetchURL('/serverside/check-device?mac=' + mac, 10000) == 'Success')
+        if(await Essentials.fetchURL('/serverside/check-device?mac=' + mac, 10000) == 'Success')
         {  
             console.log(exists);
         
@@ -251,7 +251,7 @@
         formData.append('bridge-ip', bridgeIP);
         formData.append('device-name', deviceName);
 
-        var mac = await complexFetch('http://192.168.4.1/settings', 10000, 3, {}, false, formData);
+        var mac = await Essentials.complexFetch('http://192.168.4.1/settings', 10000, 3, {}, false, formData);
 
         if(mac != null)
         {
@@ -264,7 +264,7 @@
 
             setTimeout(async function()
             {
-                if(await fetchURL('/create', 10000) != null)
+                if(await Essentials.fetchURL('/create', 10000) != null)
                 {
                     ping = true;
                 }
