@@ -274,6 +274,11 @@
         document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
     }
 
+    if(counter > 3)
+    {
+        document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+    }
+
     for(var i = 0; i < counter; i++)
     {
         var type = Array.isArray(device.services) ? device.services[i] : device.services;
