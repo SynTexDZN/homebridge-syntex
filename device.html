@@ -365,11 +365,11 @@
 
                 if(typeCounter[type] > 1)
                 {
-                    name = device.name + ' ' + type + ' ' + j;
+                    name = device.name + ' ' + type[0].toUpperCase() + type.substring(1) + ' ' + j;
                 }
                 else if(counter > 1)
                 {
-                    name = device.name + ' ' + type;
+                    //name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
                 }
 
                 for(var k = 0; k < device.services.length; k++)
