@@ -376,6 +376,8 @@
 
                     for(var k = 0; k < device.services.length; k++)
                     {
+                        console.log(device.services[k], device.services[k].type, type);
+
                         if(device.services[k] instanceof Object && device.services[k].type == type)
                         {
                             n.push(device.services[k].name);
