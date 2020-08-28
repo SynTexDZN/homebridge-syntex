@@ -29,10 +29,14 @@
                 </div>
                 <input id="reset-btn" style="margin-bottom: 20px" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
                 <input id="reconnect-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neu Verbinden">
-                <div style="display: flex">
-                    <input type="button" value="Zurück" onclick="closeSettings()">
-                    <div style="display: block; width: 100%; margin-left: 20px">
-                        <input id="save-btn" type="submit" value="Speichern">
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <div style="display: flex">
+                            <input type="button" value="Zurück" onclick="closeSettings()">
+                            <div style="display: block; width: 100%; margin-left: 20px">
+                                <input id="save-btn" type="submit" value="Speichern">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -193,8 +197,8 @@
         }
     }
 
-    document.getElementsByClassName('navigation-panel')[0].setAttribute('type', Essentials.getType(device.services));
-    document.getElementsByClassName('navigation-panel')[0].setAttribute('version', device.version);
+    document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(device.services));
+    document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
     document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.mac + "'");
 
@@ -1487,9 +1491,9 @@
 
     async function checkUpdates()
     {
-        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].getAttribute('type'), 10000, 3, {}, false);
+        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 3, {}, false);
 
-        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].getAttribute('version')))
+        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
         {
             var update = document.createElement('input');
 
@@ -1499,7 +1503,7 @@
             update.setAttribute('onclick', 'updateDevice(this)');
             update.setAttribute('id', 'update-btn');
 
-            document.getElementsByClassName('navigation-panel')[0].insertBefore(update, document.getElementById('restart-btn'));
+            document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(update, document.getElementById('restart-btn'));
         }
     }
 
