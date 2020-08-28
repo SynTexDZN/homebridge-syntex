@@ -570,11 +570,24 @@
     {
         console.log(typeCounter);
 
+        for(const i in typeCounter)
+        {
+            console.log(i);
+
+            if(i != 'lcd')
+            {
+                for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
+                {
+                    console.log(i instanceof Object ? i.type : i, j);
+                }
+            }
+        }
+        /*
         for(var i = 0; i < Object.keys(typeCounter).length; i++)
         {
             var type = Array.isArray(device.services) ? device.services[i] : device.services;
 
-            console.log("TYP: " + type, type != 'lcd');
+            console.log("TYP: ", type, type != 'lcd');
 
             if(type != 'lcd')
             {
@@ -593,6 +606,7 @@
                 }
             }
         }
+        */
     }
 
     function calcValues(values, type, c)
