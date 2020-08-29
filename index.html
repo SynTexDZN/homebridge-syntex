@@ -40,7 +40,7 @@
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <input type="button" onclick="" value="Alle Geräte" class="white" style="margin-left: 20px">
+                <input type="button" onclick="switchRoom(this)" room="all" value="Alle Geräte" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices" style="margin-top: 100px"></div>
         </div>
@@ -207,6 +207,27 @@
         document.getElementById('toolbar').children[0].children[1].style.display = '';
         document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
         document.getElementById('devices').className = 'grid-view';
+    }
+
+    var tmpRoom;
+
+    for(const i in devices)
+    {
+        if(devices[i].room && tmpRoom != devices[i].room)
+        {
+            var room = document.createElement('input');
+
+            room.setAttribute('type', 'button');
+            room.setAttribute('onclick', 'switchRoom(this)');
+            room.setAttribute('room', devices[i].room.toLowerCase());
+            room.setAttribute('value', devices[i].room);
+            room.setAttribute('class', 'white');
+            room.setAttribute('style', 'margin-left: 20px');
+
+            document.getElementById('toolbar').appendChild(room);
+
+            tmpRoom = devices[i].room.toLowerCase();
+        }
     }
 
 </script>
