@@ -4,7 +4,6 @@
         <div class="main" id="infos">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
-            <p class="loading-loop">Laden ..</p>
             <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
             <div id="activity" style="margin-bottom: 30px"></div>
             <div class="navigation-panel">
@@ -151,7 +150,6 @@
 
     document.getElementsByTagName('title')[0].innerHTML = device.name;
     document.getElementsByTagName('h1')[0].innerHTML = device.name;
-    document.getElementsByTagName('p')[0].innerHTML = '( ' + device.room + ' )';
 
     var infos = document.getElementById('info');
 
@@ -167,6 +165,11 @@
     if(device.version != undefined)
     {
         infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+    }
+
+    if(device.room != undefined)
+    {
+        infos.innerHTML += '<p><b>Raum: </b>' + device.room + '</p>';
     }
 
     for(const i in settings)
