@@ -157,21 +157,21 @@
     {
         await switchPage(previous, 'add', false);
 
-        window.history.replaceState(null, null, '?add');
+        window.history.replaceState(null, null, '/automations?add');
     }
 
     async function openEditPage(previous)
     {
         await switchPage(previous, 'edit', false);
 
-        window.history.replaceState(null, null, '?edit');
+        window.history.replaceState(null, null, '/automations?edit');
     }
 
     async function openViewPage(previous)
     {
         await switchPage(previous, 'view', false);
 
-        window.history.replaceState(null, null, '/');
+        window.history.replaceState(null, null, '/automations');
     }
 
     async function switchPage(previous, next, init)
