@@ -248,11 +248,11 @@
 
         await Essentials.newTimeout(1000);
 
-        for(const i in document.getElementById('devices').children)
+        for(var i = 0; i < document.getElementById('devices').children.length; i++)
         {
             console.log(document.getElementById('devices').children[i]);
 
-            for(const j in document.getElementById('devices').children[i].children[1].children)
+            for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
             {
                 console.log(document.getElementById('devices').children[i].children[1].children[j]);
             }
