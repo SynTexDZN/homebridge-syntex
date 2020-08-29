@@ -220,7 +220,7 @@
     {
         if(devices[i].room && !tmpRoom.includes(devices[i].room.toLowerCase()))
         {
-            rooms.push(devices[i].room.toLowerCase());
+            rooms.push(devices[i].room);
             tmpRoom.push(devices[i].room.toLowerCase());
         }
     }
@@ -232,9 +232,9 @@
         var room = document.createElement('input');
 
         room.setAttribute('type', 'button');
-        room.setAttribute('onclick', 'switchRoom("' + devices[i].room.toLowerCase() + '", false)');
-        room.setAttribute('room', devices[i].room.toLowerCase());
-        room.setAttribute('value', devices[i].room);
+        room.setAttribute('onclick', 'switchRoom("' + rooms[i].toLowerCase() + '", false)');
+        room.setAttribute('room', rooms[i].toLowerCase());
+        room.setAttribute('value', rooms[i]);
         room.setAttribute('class', 'white');
         room.setAttribute('style', 'margin-left: 20px');
         
