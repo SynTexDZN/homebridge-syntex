@@ -209,11 +209,11 @@
         document.getElementById('devices').className = 'grid-view';
     }
 
-    var tmpRoom;
+    var tmpRoom = [];
 
     for(const i in devices)
     {
-        if(devices[i].room && tmpRoom != devices[i].room.toLowerCase())
+        if(devices[i].room && tmpRoom.includes(devices[i].room.toLowerCase()))
         {
             var room = document.createElement('input');
 
@@ -226,7 +226,7 @@
 
             document.getElementById('toolbar').appendChild(room);
 
-            tmpRoom = devices[i].room.toLowerCase();
+            tmpRoom.push(devices[i].room.toLowerCase());
         }
     }
 
