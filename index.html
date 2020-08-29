@@ -136,6 +136,11 @@
             button.setAttribute('class', 'device');
             button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
+            if(devices[i].room)
+            {
+                button.setAttribute('room', devices[i].room);
+            }
+
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
 
             button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false');
@@ -241,11 +246,14 @@
 
         document.getElementById('devices').style.opacity = 0;
 
-        await Essentials.newTimeout(300);
+        await Essentials.newTimeout(1000);
 
         for(const i in document.getElementById('devices').children)
         {
-            //document.getElementById('devices').children[i]
+            for(const j in document.getElementById('devices').children[i].children[1].children)
+            {
+                console.log(document.getElementById('devices').children[i].children[1].children[j].getAttribute('room'));
+            }
         }
 
         document.getElementById('devices').style.opacity = 1;
