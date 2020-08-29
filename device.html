@@ -1687,6 +1687,7 @@
     
     function redirect()
     {
+        window.history.replaceState(null, null, "?mac=" + device.mac);
         location.reload();
     }
 
