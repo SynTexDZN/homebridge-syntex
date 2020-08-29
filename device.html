@@ -1196,18 +1196,23 @@
         }
     }
 
-    async function openSettings()
+    async function switchPage(previous, next)
     {
-        document.getElementById('infos').style.opacity = 0;
+        document.getElementById(previous).style.opacity = 0;
 
         await Essentials.newTimeout(300);
 
-        document.getElementById('infos').style.display = 'none';
-        document.getElementById('settings').style.display = '';
+        document.getElementById(previous).style.display = 'none';
+        document.getElementById(next).style.display = '';
+        
+        await Essentials.newTimeout(1);
 
-        await Essentials.newTimeout(10);
+        document.getElementById(next).style.opacity = 1;
+    }
 
-        document.getElementById('settings').style.opacity = 1;
+    async function openSettings()
+    {
+        await switchPage('infos', 'settings');
 
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
         window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
@@ -1215,16 +1220,7 @@
     
     async function closeSettings()
     {
-        document.getElementById('settings').style.opacity = 0;
-
-        await Essentials.newTimeout(300);
-
-        document.getElementById('settings').style.display = 'none';
-        document.getElementById('infos').style.display = '';
-
-        await Essentials.newTimeout(10);
-
-        document.getElementById('infos').style.opacity = 1;
+        await switchPage('settings', 'infos');
 
         document.getElementsByTagName('title')[0].innerHTML = device.name;
         window.history.replaceState(null, null, "?mac=" + device.mac);

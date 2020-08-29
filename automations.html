@@ -13,21 +13,19 @@
                 <input class="white" type="button" value="LOG" onclick="window.location.href='/log'">
             </div>
         </div>
-        <div id="view">
+        <div id="view" style="transition: .3s ease-in-out">
             <div class="main" id="automations" style="margin-bottom: 100px">
                 <div id="toolbar" class="main" style="display: flex; margin: 100px auto">
-                    <button id="view-button" onclick="document.getElementById('view').style.display = 'none'; document.getElementById('add').style.display = ''" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+                    <button id="view-button" onclick="switchPage('view', 'add')" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
                     <input type="button" onclick="" value="Alle Automationen" class="white" style="margin-left: 20px">
                 </div>
             </div>
             <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="
-                    document.getElementById('view').style.display = 'none';
-                    document.getElementById('add').style.display = '';">
+                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="switchPage('view', 'add')">
             </div>
         </div>
-        <div id="edit" style="display: none"></div>
-        <div id="add" style="display: none">
+        <div id="edit" style="display: none; opacity: 0; transition: .3s ease-in-out"></div>
+        <div id="add" style="display: none; opacity: 0; transition: .3s ease-in-out">
             <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
                 <div class="type-container">
                     <div class="title-container" style="margin-bottom: 60px">
@@ -61,9 +59,7 @@
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="
-                                document.getElementById('view').style.display = '';
-                                document.getElementById('add').style.display = 'none';">
+                            <input type="button" value="Zurück" onclick="switchPage('add', 'view')">
                             <div style="display: block; width: 100%; margin-left: 20px">
                                 <input id="save-btn" type="submit" value="Erstellen">
                             </div>
@@ -147,6 +143,20 @@
 
 </script>
 <script>
+
+    async function switchPage(previous, next)
+    {
+        document.getElementById(previous).style.opacity = 0;
+
+        await Essentials.newTimeout(300);
+
+        document.getElementById(previous).style.display = 'none';
+        document.getElementById(next).style.display = '';
+        
+        await Essentials.newTimeout(1);
+
+        document.getElementById(next).style.opacity = 1;
+    }
 
     function createAutomationPanels()
     {
@@ -364,7 +374,6 @@
         automation.name = document.getElementById('add').getElementsByTagName('input')[1].value;
         automation.active = true;
         automation.trigger = [];
-        
 
         for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
         {
