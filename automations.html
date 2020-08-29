@@ -16,12 +16,12 @@
         <div id="view" style="transition: .3s ease-in-out">
             <div class="main" id="automations" style="margin-bottom: 100px">
                 <div id="toolbar" class="main" style="display: flex; margin: 100px auto">
-                    <button id="view-button" onclick="openAddPage('view', false)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+                    <button id="view-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
                     <input type="button" onclick="" value="Alle Automationen" class="white" style="margin-left: 20px">
                 </div>
             </div>
             <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view', false)">
+                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
             </div>
         </div>
         <div id="edit" style="display: none; opacity: 0; transition: .3s ease-in-out"></div>
@@ -59,7 +59,7 @@
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="openViewPage('add', false)">
+                            <input type="button" value="Zurück" onclick="openViewPage('add')">
                             <div style="display: block; width: 100%; margin-left: 20px">
                                 <input id="save-btn" type="submit" value="Erstellen">
                             </div>
@@ -143,33 +143,33 @@
 
     if((new URL(window.location.href)).searchParams.get('add') == '')
     {
-        openAddPage('view', true);
+        switchPage('view', 'add', true);
     }
     else if((new URL(window.location.href)).searchParams.get('edit') == '')
     {
-        openEditPage('view', true);
+        switchPage('view', 'edit', true);
     }
 
 </script>
 <script>
 
-    async function openAddPage(previous, init)
+    async function openAddPage(previous)
     {
-        await switchPage(previous, 'add', init);
+        await switchPage(previous, 'add', false);
 
         window.history.replaceState(null, null, '?add');
     }
 
-    async function openEditPage(previous, init)
+    async function openEditPage(previous)
     {
-        await switchPage(previous, 'edit', init);
+        await switchPage(previous, 'edit', false);
 
         window.history.replaceState(null, null, '?edit');
     }
 
-    async function openViewPage(previous, init)
+    async function openViewPage(previous)
     {
-        await switchPage(previous, 'view', init);
+        await switchPage(previous, 'view', false);
 
         window.history.replaceState(null, null, '/');
     }
@@ -185,8 +185,11 @@
 
         document.getElementById(previous).style.display = 'none';
         document.getElementById(next).style.display = '';
-        
-        await Essentials.newTimeout(10);
+
+        if(!init)
+        {
+            await Essentials.newTimeout(10);
+        }
 
         document.getElementById(next).style.opacity = 1;
     }

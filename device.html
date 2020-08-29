@@ -11,7 +11,7 @@
                     <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
                     <div style="display: flex">
                         <input type="button" value="Zurück" onclick="window.location.href='/'">
-                        <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings()">
+                        <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="closeSettings()">
+                            <input type="button" value="Zurück" onclick="closeSettings('settings')">
                             <div style="display: block; width: 100%; margin-left: 20px">
                                 <input id="save-btn" type="submit" value="Speichern">
                             </div>
@@ -458,7 +458,7 @@
 
     if((new URL(window.location.href)).searchParams.get('settings') == '')
     {
-        openSettings();
+        switchPage('infos', 'settings', true);
     }
 
 </script>
@@ -1196,31 +1196,37 @@
         }
     }
 
-    async function switchPage(previous, next)
+    async function switchPage(previous, next, init)
     {
-        document.getElementById(previous).style.opacity = 0;
+        if(!init)
+        {
+            document.getElementById(previous).style.opacity = 0;
 
-        await Essentials.newTimeout(300);
+            await Essentials.newTimeout(300);
+        }
 
         document.getElementById(previous).style.display = 'none';
         document.getElementById(next).style.display = '';
-        
-        await Essentials.newTimeout(10);
+
+        if(!init)
+        {
+            await Essentials.newTimeout(10);
+        }
 
         document.getElementById(next).style.opacity = 1;
     }
 
-    async function openSettings()
+    async function openSettings(previous)
     {
-        await switchPage('infos', 'settings');
+        await switchPage(previous, 'settings', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
         window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
     }
     
-    async function closeSettings()
+    async function closeSettings(previous)
     {
-        await switchPage('settings', 'infos');
+        await switchPage(previous, 'infos', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name;
         window.history.replaceState(null, null, "?mac=" + device.mac);
