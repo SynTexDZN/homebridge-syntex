@@ -250,11 +250,20 @@
 
         for(var i = 0; i < document.getElementById('devices').children.length; i++)
         {
-            console.log(document.getElementById('devices').children[i]);
-
             for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
             {
-                console.log(document.getElementById('devices').children[i].children[1].children[j]);
+                var r = document.getElementById('devices').children[i].children[1].children[j];
+
+                console.log(r.getAttribute('room'));
+
+                if(r.getAttribute('room') != room)
+                {
+                    r.style.display = 'none';
+                }
+                else
+                {
+                    r.style.display = '';
+                }
             }
         }
 
