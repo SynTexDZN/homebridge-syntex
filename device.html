@@ -1,7 +1,7 @@
 <html>
     <title class="loading-loop">Laden ..</title>
     <body onresize="repaintGraphs()">
-        <div class="main" id="infos">
+        <div class="main" id="infos" style="transition: .3s ease-in-out">
             <div class="control-container"></div>
             <h1 class="loading-loop">Laden ..</h1>
             <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div id="settings" style="display: none;">
+        <div id="settings" style="display: none; opacity: 0; transition: .3s ease-in-out">
             <h1>Einstellungen</h1>
             <p class="loading-loop">( Laden .. )</p>
             <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
@@ -1196,18 +1196,30 @@
         }
     }
 
-    function openSettings()
+    async function openSettings()
     {
-        document.getElementById('infos').setAttribute('style', 'display: none');
-        document.getElementById('settings').removeAttribute('style');
+        document.getElementById('infos').style.opacity = 0;
+
+        await newTimeout(300);
+
+        document.getElementById('infos').style.display = 'none';
+        document.getElementById('settings').style.display = '';
+        document.getElementById('settings').style.opacity = 1;
+
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
         window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
     }
     
-    function closeSettings()
+    async function closeSettings()
     {
-        document.getElementById('infos').removeAttribute('style');
-        document.getElementById('settings').setAttribute('style', 'display: none');
+        document.getElementById('settings').style.opacity = 0;
+
+        await newTimeout(300);
+
+        document.getElementById('settings').style.display = 'none';
+        document.getElementById('infos').style.display = '';
+        document.getElementById('infos').style.opacity = 1;
+
         document.getElementsByTagName('title')[0].innerHTML = device.name;
         window.history.replaceState(null, null, "?mac=" + device.mac);
         repaintGraphs();
