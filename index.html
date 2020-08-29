@@ -42,7 +42,7 @@
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
                 <input type="button" onclick="switchRoom(this)" room="all" value="Alle Geräte" class="white" style="margin-left: 20px">
             </div>  
-            <div id="devices" style="margin-top: 100px"></div>
+            <div id="devices" style="margin-top: 100px; transition: 1s ease"></div>
         </div>
         <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
             <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href=window.location.protocol +  '//' + window.location.hostname+':8000/settings.php'">
@@ -232,6 +232,24 @@
 
 </script>
 <script>
+
+    function switchRoom(btn)
+    {
+        var room = btn.setAttribute('room');
+
+        window.history.replaceState(null, null, "?room=" + room);
+
+        document.getElementById('devices').style.opacity = 0;
+
+        await newTimeout(300);
+
+        for(const i in document.getElementById('devices').children)
+        {
+            //document.getElementById('devices').children[i]
+        }
+
+        document.getElementById('devices').style.opacity = 1;
+    }
 
     function switchView(btn)
     {
