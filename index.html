@@ -40,7 +40,7 @@
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <input type="button" onclick="switchRoom('all')" room="all" value="Alle Geräte" class="white" style="margin-left: 20px">
+                <input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="margin-left: 20px">
             </div>  
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
@@ -223,7 +223,7 @@
             var room = document.createElement('input');
 
             room.setAttribute('type', 'button');
-            room.setAttribute('onclick', 'switchRoom("' + devices[i].room.toLowerCase() + '")');
+            room.setAttribute('onclick', 'switchRoom("' + devices[i].room.toLowerCase() + '", false)');
             room.setAttribute('room', devices[i].room.toLowerCase());
             room.setAttribute('value', devices[i].room);
             room.setAttribute('class', 'white');
@@ -237,26 +237,29 @@
 
     if((new URL(window.location.href)).searchParams.get('room'))
     {
-        switchRoom((new URL(window.location.href)).searchParams.get('room'));
+        switchRoom((new URL(window.location.href)).searchParams.get('room'), true);
     }
 
 </script>
 <script>
 
-    async function switchRoom(room)
+    async function switchRoom(room, init)
     {
-        if(room == 'all')
+        if(init)
         {
-            window.history.replaceState(null, null, '');
-        }
-        else
-        {
-            window.history.replaceState(null, null, '?room=' + room);
-        }
+            if(room == 'all')
+            {
+                window.history.replaceState(null, null, '#');
+            }
+            else
+            {
+                window.history.replaceState(null, null, '?room=' + room);
+            }
 
-        document.getElementById('devices').style.opacity = 0;
+            document.getElementById('devices').style.opacity = 0;
 
-        await Essentials.newTimeout(300);
+            await Essentials.newTimeout(300);
+        }
 
         for(var i = 0; i < document.getElementById('devices').children.length; i++)
         {
@@ -265,8 +268,6 @@
             for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
             {
                 var r = document.getElementById('devices').children[i].children[1].children[j];
-
-                console.log(r.getAttribute('room'));
 
                 if(r.getAttribute('room') != room && room != 'all')
                 {
