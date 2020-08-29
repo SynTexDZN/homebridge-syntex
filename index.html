@@ -138,7 +138,7 @@
 
             if(devices[i].room)
             {
-                button.setAttribute('room', devices[i].room);
+                button.setAttribute('room', devices[i].room.toLowerCase());
             }
 
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
@@ -252,7 +252,7 @@
         {
             for(const j in document.getElementById('devices').children[i].children[1].children)
             {
-                console.log(document.getElementById('devices').children[i].children[1].children[j].getAttribute('room'));
+                console.log(document.getElementById('devices').children[i].children[1], document.getElementById('devices').children[i].children[1].children[j]);
             }
         }
 
