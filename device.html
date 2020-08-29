@@ -1204,6 +1204,9 @@
 
         document.getElementById('infos').style.display = 'none';
         document.getElementById('settings').style.display = '';
+
+        await Essentials.newTimeout(300);
+
         document.getElementById('settings').style.opacity = 1;
 
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
@@ -1218,6 +1221,9 @@
 
         document.getElementById('settings').style.display = 'none';
         document.getElementById('infos').style.display = '';
+
+        await Essentials.newTimeout(300);
+
         document.getElementById('infos').style.opacity = 1;
 
         document.getElementsByTagName('title')[0].innerHTML = device.name;
