@@ -250,6 +250,11 @@
         ele.style.cursor = 'grabbing';
         ele.style.userSelect = 'none';
 
+        for(var i = 0; i < ele.children.length; i++)
+        {
+            ele.children[i].style.cursor = 'grabbing';
+        }
+
         pos = {
             left: ele.scrollLeft,
             top: ele.scrollTop,
@@ -276,6 +281,11 @@
     const mouseUpHandler = function() {
         ele.style.cursor = 'grab';
         ele.style.removeProperty('user-select');
+
+        for(var i = 0; i < ele.children.length; i++)
+        {
+            ele.children[i].style.cursor = 'grab';
+        }
 
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
