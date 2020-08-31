@@ -378,7 +378,7 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || !devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                 {
                     Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
