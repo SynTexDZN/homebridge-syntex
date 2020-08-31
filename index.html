@@ -40,17 +40,7 @@
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <div>
-                    <div style="width: 100%;
-                    overflow-x: auto;
-                    padding-bottom: 10px;
-                    margin-left: 20px;
-                    border-radius: 50px;">
-                        <div id="rooms" style="display: flex; width: 100%; /*margin-left: 20px*/">
-                            <input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none">
-                        </div>
-                    </div>
-                </div>
+                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none"></div>
             </div>  
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
@@ -250,6 +240,35 @@
         
         document.getElementById('rooms').appendChild(room);
     }
+
+    var ele = document.getElementById('rooms');
+
+    let pos = { top: 0, left: 0, x: 0, y: 0 };
+
+    const mouseDownHandler = function(e)
+    {
+        pos = {
+            // The current scroll 
+            left: ele.scrollLeft,
+            top: ele.scrollTop,
+            // Get the current mouse position
+            x: e.clientX,
+            y: e.clientY,
+        };
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    };
+
+    const mouseMoveHandler = function(e) {
+        // How far the mouse has been moved
+        const dx = e.clientX - pos.x;
+        const dy = e.clientY - pos.y;
+
+        // Scroll the element
+        ele.scrollTop = pos.top - dy;
+        ele.scrollLeft = pos.left - dx;
+    };
 
     if((new URL(window.location.href)).searchParams.get('room'))
     {
