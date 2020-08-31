@@ -668,7 +668,7 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(deviceElements[i].getAttribute('id') != 'undefined' && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
+            if(deviceElements[i].getAttribute('id') != 'undefined' && (!(new URL(window.location.href)).searchParams.get('room') || deviceElements[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == deviceElements[i].getAttribute('room')) && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !offline.includes(deviceElements[i].getAttribute('id')))
             {
                 Query.complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
