@@ -664,7 +664,7 @@
         for(var i = 0; i < deviceElements.length; i++)
         {
             var settings = {
-                mac: deviceElements[i].getAttribute('onclick').split('mac=')[1].split("'")[0],
+                mac: deviceElements[i].getAttribute('onclick') != 'undefined' ? deviceElements[i].getAttribute('onclick').split('mac=')[1].split("'")[0] : '',
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
