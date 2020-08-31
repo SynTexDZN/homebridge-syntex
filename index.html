@@ -270,6 +270,7 @@
         // Scroll the element
         ele.scrollTop = pos.top - dy;
         ele.scrollLeft = pos.left - dx;
+        ele.style.pointerEvents = 'none';
     };
 
     const mouseUpHandler = function() {
@@ -278,6 +279,8 @@
 
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
+
+        ele.style.pointerEvents = 'all';
     };
 
     // Attach the handler
