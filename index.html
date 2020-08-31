@@ -241,14 +241,16 @@
         document.getElementById('rooms').appendChild(room);
     }
 
-    var ele = document.getElementById('rooms');
+    const ele = document.getElementById('rooms');
+    ele.style.cursor = 'grab';
 
     let pos = { top: 0, left: 0, x: 0, y: 0 };
 
-    const mouseDownHandler = function(e)
-    {
+    const mouseDownHandler = function(e) {
+        ele.style.cursor = 'grabbing';
+        ele.style.userSelect = 'none';
+
         pos = {
-            // The current scroll 
             left: ele.scrollLeft,
             top: ele.scrollTop,
             // Get the current mouse position
@@ -269,6 +271,17 @@
         ele.scrollTop = pos.top - dy;
         ele.scrollLeft = pos.left - dx;
     };
+
+    const mouseUpHandler = function() {
+        ele.style.cursor = 'grab';
+        ele.style.removeProperty('user-select');
+
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    };
+
+    // Attach the handler
+    ele.addEventListener('mousedown', mouseDownHandler);
 
     if((new URL(window.location.href)).searchParams.get('room'))
     {
