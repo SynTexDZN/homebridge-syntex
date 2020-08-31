@@ -250,11 +250,6 @@
         ele.style.cursor = 'grabbing';
         ele.style.userSelect = 'none';
 
-        for(var i = 0; i < ele.children.length; i++)
-        {
-            ele.children[i].style.cursor = 'grabbing';
-        }
-
         pos = {
             left: ele.scrollLeft,
             top: ele.scrollTop,
@@ -275,7 +270,11 @@
         // Scroll the element
         ele.scrollTop = pos.top - dy;
         ele.scrollLeft = pos.left - dx;
-        ele.style.pointerEvents = 'none';
+        
+        for(var i = 0; i < ele.children.length; i++)
+        {
+            ele.children[i].style.pointerEvents = 'none';
+        }
     };
 
     const mouseUpHandler = function() {
@@ -284,13 +283,11 @@
 
         for(var i = 0; i < ele.children.length; i++)
         {
-            ele.children[i].style.cursor = 'grab';
+            ele.children[i].style.pointerEvents = 'all';
         }
 
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
-
-        ele.style.pointerEvents = 'all';
     };
 
     // Attach the handler
