@@ -40,7 +40,7 @@
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; pointer: grab"></div>
+                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
             </div>  
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
@@ -355,7 +355,7 @@
         else
         {
             document.getElementById('activate-all').setAttribute('switch', 0);
-            document.getElementById('activate-all').removeAttribute('class');
+            document.getElementById('activate-all').setAttribute('class', '');
             document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
         }
     }
