@@ -451,7 +451,21 @@
                 }
             }
 
-            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offline.length;
+            var room = (new URL(window.location.href)).searchParams.get('room');
+            var offlineCounter = 0;
+
+            for(var i = 0; i < devices.length; i++)
+            {
+                if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+                {
+                    if(offline.includes(devices[i].ip))
+                    {
+                        offlineCounter++;
+                    }
+                }
+            }
+
+            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
 
             await Essentials.newTimeout(10000);
         }
