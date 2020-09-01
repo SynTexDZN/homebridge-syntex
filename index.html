@@ -463,7 +463,7 @@
                             {
                                 await Essentials.newTimeout(1000);
 
-                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount) + ' Geräten Neugestartet!'));
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount - restartCounter['idle']) + ' Geräten Neugestartet!'));
                                 
                                 Essentials.removeOverlaysDelay(btn, 4000, true);
                             }
