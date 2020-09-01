@@ -760,10 +760,16 @@
                     active: devices[i].active == 1 ? 0 : 1
                 };
 
+                console.log(devices[i]);
+
                 if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
                 {
+                    console.log('Config Saved');
+
                     if(!offline.includes(devices[i].ip))
                     {
+                        console.log('Not Offline');
+
                         Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                             switchCounter[refresh == 'Success' ? 'success' : 'error']++;
