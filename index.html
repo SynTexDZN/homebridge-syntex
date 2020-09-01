@@ -64,8 +64,9 @@
     window.Essentials = Essentials;
 
     window.devices = JSON.parse('<%devices%>');
-    window.offline = []
-    window.restarting = []
+    window.offline = [];
+    window.update = [];
+    window.restarting = [];
     window.updating = [];
     window.temp = "";
     window.updateCount = 0;
@@ -300,6 +301,29 @@
 </script>
 <script>
 
+    function setupToolbar()
+    {
+        var room = (new URL(window.location.href)).searchParams.get('room');
+        var deviceCounter = 0, offlineCounter = 0;
+
+        for(var i = 0; i < devices.length; i++)
+        {
+            if(room == null || devices[i].room != undefined && room == devices[i].room)
+            {
+                deviceCounter++;
+
+                if(offline.includes(devices[i].ip))
+                {
+                    offlineCounter++;
+                }
+            }
+        }
+
+        document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCounter;
+        //document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
+        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
+    }
+
     async function switchRoom(room, init)
     {
         if(!init)
@@ -509,16 +533,16 @@
     
     function installAllUpdates(btn)
     {
-        var updates = document.getElementsByClassName('update');
+        var updateDevice = document.getElementsByClassName('update');
         var updateCounter = { success : 0, error : 0 };
 
         Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
 
-        for(var i = 0; i < updates.length; i++)
+        for(var i = 0; i < updateDevice.length; i++)
         {
-            if(!offline.includes(updates[i].getAttribute('ip')))
+            if(!offline.includes(updateDevice[i].getAttribute('ip')))
             {
-                updateDevice(updates[i]).then(async function(update) {
+                updateDevice(updateDevice[i]).then(async function(update) {
 
                     updateCounter[update == true ? 'success' : 'error']++;
 
