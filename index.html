@@ -451,13 +451,9 @@
             {
                 if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                 {
-                    console.log(devices[i]);
-
                     Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
                         restartCounter[result != null ? 'success' : 'error']++;
-
-                        console.log(JSON.stringify(restartCounter), restartCounter['success'] + restartCounter['error'], realDeviceCount - offlineCount);
 
                         if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount - offlineCount)
                         {
@@ -767,6 +763,8 @@
                 Query.complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                     switchCounter[refresh == 'Success' ? 'success' : 'error']++;
+
+                    console.log(JSON.stringify(switchCounter), switchCounter['success'] + switchCounter['error'], realDeviceCount - offlineCount);
 
                     if(refresh == 'Success')
                     {
