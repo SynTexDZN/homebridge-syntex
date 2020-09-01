@@ -76,7 +76,7 @@
 
     console.log(devices);
     
-    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
+    //document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
 
     devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
@@ -340,6 +340,8 @@
             document.getElementById('devices').style.opacity = 0;
 
             await Essentials.newTimeout(300);
+
+            setupToolbar();
         }
 
         for(var i = 0; i < document.getElementById('devices').children.length; i++)
