@@ -192,7 +192,7 @@
         document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
     }
 
-    setupToolbar();
+    //setupToolbar();
     checkConnection();
 
     for(var i = 0; i < deviceElements.length; i++)
@@ -305,7 +305,7 @@
     function setupToolbar()
     {
         var room = (new URL(window.location.href)).searchParams.get('room');
-        var deviceCounter = 0, offlineCounter = 0;
+        var deviceCounter = 0, offlineCounter = 0, updateCounter = 0;
 
         for(var i = 0; i < devices.length; i++)
         {
@@ -317,11 +317,16 @@
                 {
                     offlineCounter++;
                 }
+
+                if(update.includes(devices[i].ip))
+                {
+                    updateCounter++;
+                }
             }
         }
 
         document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCounter;
-        //document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
+        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCounter;
         document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
     }
 
@@ -537,6 +542,8 @@
                 document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('toolbar'));
             }
 
+            update.push(device.getAttribute('id'));
+
             updateCount++;
         }
 
@@ -544,7 +551,8 @@
 
         if(checkedUpdates == deviceElements.length)
         {
-            document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
+            setupToolbar();
+            //document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
     }
     
@@ -557,7 +565,7 @@
 
         for(var i = 0; i < updateDevice.length; i++)
         {
-            if(!offline.includes(updateDevice[i].getAttribute('ip')))
+            if(!offline.includes(updateDevice[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevice[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevice[i].getAttribute('room')))
             {
                 updateDevice(updateDevice[i]).then(async function(update) {
 
