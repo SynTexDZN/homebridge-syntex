@@ -558,16 +558,16 @@
     
     function installAllUpdates(btn)
     {
-        var updateDevice = document.getElementsByClassName('update');
+        var updateDevices = document.getElementsByClassName('update');
         var updateCounter = { success : 0, error : 0 };
 
         Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
 
-        for(var i = 0; i < updateDevice.length; i++)
+        for(var i = 0; i < updateDevices.length; i++)
         {
-            if(!offline.includes(updateDevice[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevice[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevice[i].getAttribute('room')))
+            if(!offline.includes(updateDevices[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevices[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevices[i].getAttribute('room')))
             {
-                updateDevice(updateDevice[i]).then(async function(update) {
+                updateDevice(updateDevices[i]).then(async function(update) {
 
                     updateCounter[update == true ? 'success' : 'error']++;
 
