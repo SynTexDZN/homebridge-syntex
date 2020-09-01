@@ -443,29 +443,36 @@
     {
         if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
         {
-            var restartCounter = { success : 0, error : 0 };
+            var restartCounter = { success : 0, error : 0, idle : 0 };
         
             Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
 
             for(var i = 0; i < devices.length; i++)
             {
-                if(devices[i].ip != undefined && !restarting.includes(devices[i].ip) && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                 {
-                    restarting.push(devices[i].ip);
+                    if(!restarting.includes(devices[i].ip))
+                    {
+                        restarting.push(devices[i].ip);
 
-                    Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
+                        Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
-                        restartCounter[result != null ? 'success' : 'error']++;
+                            restartCounter[result != null ? 'success' : 'error']++;
 
-                        if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount - offlineCount)
-                        {
-                            await Essentials.newTimeout(1000);
+                            if(restartCounter['success'] + restartCounter['error'] + restartCounter['idle'] >= realDeviceCount - offlineCount)
+                            {
+                                await Essentials.newTimeout(1000);
 
-                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount) + ' Geräten Neugestartet!'));
-                            
-                            Essentials.removeOverlaysDelay(btn, 4000, true);
-                        }
-                    });
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount) + ' Geräten Neugestartet!'));
+                                
+                                Essentials.removeOverlaysDelay(btn, 4000, true);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        restartCounter['idle']++;
+                    }
                 }
             }
         }
