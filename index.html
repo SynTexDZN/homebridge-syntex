@@ -75,6 +75,7 @@
     window.updateCount = 0;
     window.offlineCount = 0;
     window.deviceCount = 0;
+    window.realDeviceCount = 0;
 
     console.log(devices);
     
@@ -331,6 +332,7 @@
 
                 if(devices[i].ip != undefined && devices[i].active != undefined)
                 {
+                    realDeviceCount++;
                     activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
                 }
             }
@@ -434,7 +436,7 @@
     {
         if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
         {
-            var restartCounter = { success : 0, error : 0, idle : 0 };
+            var restartCounter = { success : 0, error : 0 };
         
             Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
 
@@ -446,19 +448,15 @@
 
                         restartCounter[result != null ? 'success' : 'error']++;
 
-                        if(restartCounter['success'] + restartCounter['error'] + restartCounter['idle'] >= devices.length - offline.length)
+                        if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount)
                         {
                             await Essentials.newTimeout(1000);
 
-                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (deviceCount - offlineCount) + ' Geräten Neugestartet!'));
+                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount) + ' Geräten Neugestartet!'));
                             
                             Essentials.removeOverlaysDelay(btn, 4000, true);
                         }
                     });
-                }
-                else if(!offline.includes(devices[i].ip))
-                {
-                    restartCounter['idle']++;
                 }
             }
         }
@@ -778,7 +776,7 @@
                         }
                     }
 
-                    if(switchCounter['success'] + switchCounter['error'] >= deviceElements.length)
+                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
@@ -786,6 +784,7 @@
 
                         Essentials.removeOverlays(btn, true);
                     }
+                    
                 }.bind({ active : settings.active, device : deviceElements[i] }));
             }
             else
