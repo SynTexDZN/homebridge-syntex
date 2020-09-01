@@ -532,14 +532,14 @@
 
             if(document.getElementById('update-all') == null)
             {
-                var update = document.createElement('input');
+                var updateButton = document.createElement('input');
 
-                update.setAttribute('type', 'button');
-                update.setAttribute('id', 'update-all');
-                update.setAttribute('value', 'Updates Installieren');
-                update.setAttribute('onclick', 'installAllUpdates(this)');
+                updateButton.setAttribute('type', 'button');
+                updateButton.setAttribute('id', 'update-all');
+                updateButton.setAttribute('value', 'Updates Installieren');
+                updateButton.setAttribute('onclick', 'installAllUpdates(this)');
 
-                document.getElementsByClassName('main')[0].insertBefore(update, document.getElementById('toolbar'));
+                document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
             }
 
             update.push(device.getAttribute('id'));
