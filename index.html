@@ -444,6 +444,8 @@
         if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
         {
             var restartCounter = { success : 0, error : 0, idle : 0 };
+
+            restarting = [];
         
             Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
 
