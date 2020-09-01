@@ -434,7 +434,7 @@
     {
         if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
         {
-            var restartCounter = { success : 0, error : 0 };
+            var restartCounter = { success : 0, error : 0, idle : 0 };
         
             Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
 
@@ -446,7 +446,7 @@
 
                         restartCounter[result != null ? 'success' : 'error']++;
 
-                        if(restartCounter['success'] + restartCounter['error'] >= devices.length - offline.length)
+                        if(restartCounter['success'] + restartCounter['error'] + restartCounter['idle'] >= devices.length - offline.length)
                         {
                             await Essentials.newTimeout(1000);
 
@@ -458,7 +458,7 @@
                 }
                 else if(!offline.includes(devices[i].ip))
                 {
-                    restartCounter['success']++;
+                    restartCounter['idle']++;
                 }
             }
         }
