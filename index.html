@@ -334,12 +334,11 @@
 
                 if(devices[i].ip != undefined)
                 {
-                    realDeviceCount++;
-
                     if(devices[i].active != undefined)
                     {
+                        realDeviceCount++;
                         real.push(devices[i].ip);
-                        
+
                         activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
                     }
                 }
