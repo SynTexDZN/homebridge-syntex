@@ -453,7 +453,7 @@
 
                         restartCounter[result != null ? 'success' : 'error']++;
 
-                        console.log(JSON.stringify(restartCounter), realDeviceCount);
+                        console.log(JSON.stringify(restartCounter), realDeviceCount - offlineCount, devices[i]);
 
                         if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount - offlineCount)
                         {
