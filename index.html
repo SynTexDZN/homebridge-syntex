@@ -311,6 +311,7 @@
 
         activationCounter = { active : 0, disabled : 0 };
         deviceCount = 0;
+        realDeviceCount = 0;
         offlineCount = 0;
         updateCount = 0;
 
@@ -784,7 +785,7 @@
 
                         Essentials.removeOverlays(btn, true);
                     }
-                    
+
                 }.bind({ active : settings.active, device : deviceElements[i] }));
             }
             else
