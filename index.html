@@ -331,10 +331,14 @@
                     updateCount++;
                 }
 
-                if(devices[i].ip != undefined && devices[i].active != undefined)
+                if(devices[i].ip != undefined)
                 {
                     realDeviceCount++;
-                    activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
+
+                    if(devices[i].active != undefined)
+                    {
+                        activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
+                    }
                 }
             }
         }
