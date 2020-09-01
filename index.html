@@ -449,6 +449,8 @@
 
                         restartCounter[result != null ? 'success' : 'error']++;
 
+                        console.log(JSON.stringify(restartCounter), realDeviceCount);
+
                         if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount)
                         {
                             await Essentials.newTimeout(1000);
