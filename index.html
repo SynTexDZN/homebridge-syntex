@@ -40,7 +40,7 @@
             </div>
             <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
                 <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none"></div>
+                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; pointer: grab"></div>
             </div>  
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
@@ -308,6 +308,7 @@
     {
         var room = (new URL(window.location.href)).searchParams.get('room');
 
+        activationCounter = { active : 0, disabled : 0 };
         deviceCount = 0;
         offlineCount = 0;
         updateCount = 0;
@@ -327,12 +328,35 @@
                 {
                     updateCount++;
                 }
+
+                if(devices[i].ip != undefined && devices[i].active != undefined)
+                {
+                    activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
+                }
             }
         }
 
         document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCount;
         document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCount;
+
+        if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
+        {
+            document.getElementById('activate-all').setAttribute('switch', 1);
+            document.getElementById('activate-all').setAttribute('class', 'gradient-green');
+            document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
+        }
+        else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
+        {
+            document.getElementById('activate-all').setAttribute('switch', 0);
+            document.getElementById('activate-all').setAttribute('class', 'gradient-red');
+            document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
+        }
+        else
+        {
+            document.getElementById('activate-all').setAttribute('switch', 0);
+            document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
+        }
     }
 
     async function switchRoom(room, init)
@@ -425,7 +449,7 @@
                         {
                             await Essentials.newTimeout(1000);
 
-                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (devices.length - offline.length) + ' Geräten Neugestartet!'));
+                            Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (deviceCount - offlineCount) + ' Geräten Neugestartet!'));
                             
                             Essentials.removeOverlaysDelay(btn, 4000, true);
                         }
