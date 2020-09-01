@@ -175,7 +175,7 @@
             temp = Essentials.getType(devices[i].services);
         }
     }
-
+/*
     if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
     {
         document.getElementById('activate-all').setAttribute('switch', 1);
@@ -193,7 +193,7 @@
         document.getElementById('activate-all').setAttribute('switch', 0);
         document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
     }
-
+*/
     //setupToolbar();
     checkConnection();
 
@@ -355,6 +355,7 @@
         else
         {
             document.getElementById('activate-all').setAttribute('switch', 0);
+            document.getElementById('activate-all').removeAttribute('class');
             document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
         }
     }
