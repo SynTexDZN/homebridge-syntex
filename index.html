@@ -455,7 +455,7 @@
 
                         console.log(JSON.stringify(restartCounter), realDeviceCount);
 
-                        if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount)
+                        if(restartCounter['success'] + restartCounter['error'] >= realDeviceCount - offlineCount)
                         {
                             await Essentials.newTimeout(1000);
 
@@ -783,7 +783,7 @@
                         }
                     }
 
-                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount)
+                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
                     {
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                         btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
