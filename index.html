@@ -450,7 +450,7 @@
 
             for(var i = 0; i < devices.length; i++)
             {
-                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && !real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                 {
                     console.log(devices[i]);
 
@@ -763,7 +763,7 @@
                 active: btn.getAttribute('switch') == 1 ? 0 : 1
             };
 
-            if(deviceElements[i].getAttribute('id') != 'undefined' && (!(new URL(window.location.href)).searchParams.get('room') || deviceElements[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == deviceElements[i].getAttribute('room')) && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && !real.includes(devices[i].ip) && !offline.includes(deviceElements[i].getAttribute('id')))
+            if(deviceElements[i].getAttribute('id') != 'undefined' && (!(new URL(window.location.href)).searchParams.get('room') || deviceElements[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == deviceElements[i].getAttribute('room')) && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && real.includes(devices[i].ip) && !offline.includes(deviceElements[i].getAttribute('id')))
             {
                 Query.complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
