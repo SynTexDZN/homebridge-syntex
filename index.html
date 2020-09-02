@@ -457,6 +457,8 @@
                     {
                         restarting.push(devices[i].ip);
 
+                        console.log('RESTART', devices[i]);
+
                         Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
                             restartCounter[result != null ? 'success' : 'error']++;
