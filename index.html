@@ -465,7 +465,21 @@
                             {
                                 await Essentials.newTimeout(1000);
 
-                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-all-result', restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount - restartCounter['idle']) + ' Geräten Neugestartet!'));
+                                var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount - restartCounter['idle']) + ' Geräten Neugestartet!';
+                                var color = 'yellow';
+
+                                if(restartCounter['success'] >= (realDeviceCount - offlineCount - restartCounter['idle']))
+                                {
+                                    responseText = 'Alle Geräte Neugestartet!';
+                                    color = 'green';
+                                }
+                                else if(restartCounter['success'] == 0)
+                                {
+                                    responseText = 'Keine Geräte Neugestartet!';
+                                    color = 'red';
+                                }
+
+                                Essentials.showOverlay(btn, Essentials.createOverlay(2, 'restart-all-result', responseText, color));
                                 
                                 Essentials.removeOverlaysDelay(btn, 4000, true);
                             }
@@ -768,19 +782,15 @@
             {
                 var settings = {
                     mac: devices[i].mac,
-                    active: devices[i].active == 1 ? 0 : 1
+                    active: btn.getAttribute('switch') == 1 ? 0 : 1
                 };
 
                 console.log(devices[i]);
 
                 if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
                 {
-                    console.log('Config Saved');
-
                     if(!offline.includes(devices[i].ip))
                     {
-                        console.log('Not Offline');
-
                         Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
                             switchCounter[refresh == 'Success' ? 'success' : 'error']++;
@@ -789,23 +799,25 @@
 
                             if(refresh == 'Success')
                             {
-                                /*
-                                this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
+                                //this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
+                                
+                                var d = document.getElementById(this.device.ip);
 
-                                if(!this.device.className.includes('update'))
+                                this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
+
+                                if(!d.includes('update'))
                                 {
-                                    if(this.active == 1)
+                                    if(btn.getAttribute('switch') == 1)
                                     {
-                                        this.device.getElementsByClassName('connection')[0].style.color = '';
-                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                                        d.getElementsByClassName('connection')[0].style.color = '';
+                                        d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
                                     }
                                     else
                                     {
-                                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                                        d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                        d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
                                     }
                                 }
-                                */
                             }
 
                             if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
@@ -817,7 +829,20 @@
                                 Essentials.removeOverlays(btn, true);
                             }
 
-                            }.bind({ active : settings.active, device : devices[i] }));
+                        }.bind({ active : settings.active, device : devices[i] }));
+                    }
+                }
+                else
+                {
+                    switchCounter['error']++;
+
+                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
+                    {
+                        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+                        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
+                        btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+
+                        Essentials.removeOverlays(btn, true);
                     }
                 }
             }
