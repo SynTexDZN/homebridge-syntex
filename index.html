@@ -703,10 +703,12 @@
                     device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
                     device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
 
-                    await Essentials.newTimeout(4000);
+                    setTimeout(function() {
 
-                    device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
-                    device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.newestVersion;
+                        device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+
+                    }.bind({ newVersion : device.getAttribute('newest-version') }), 4000);
                 }
                 else if(update == 'Success')
                 {
@@ -743,23 +745,25 @@
                         device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
                     }
 
-                    await Essentials.newTimeout(4000);
+                    setTimeout(function() {
+                        
+                        if(this.d.className.includes('update'))
+                        {
+                            this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
+                            this.d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                        }
+                        else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
+                        {
+                            this.device.getElementsByClassName('connection')[0].style.color = '';
+                            this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                        }
+                        else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
+                        {
+                            this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                            this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                        }
 
-                    if(device.className.includes('update'))
-                    {
-                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
-                        device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                    }
-                    else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
-                    {
-                        this.device.getElementsByClassName('connection')[0].style.color = '';
-                        this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
-                    }
-                    else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
-                    {
-                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                        this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
-                    }
+                    }.bind({ device : this.device, d : device }), 4000);
                 }
 
                 if(response == true && updateCount == 0)
