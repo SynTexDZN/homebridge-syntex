@@ -371,7 +371,7 @@
 
     async function switchRoom(room, init)
     {
-        if(init || !(new URL(window.location.href)).searchParams.get('room') || (new URL(window.location.href)).searchParams.get('room') != room)
+        if(init || ((!(new URL(window.location.href)).searchParams.get('room') || room != 'all') && (new URL(window.location.href)).searchParams.get('room') != room))
         {
             if(!init)
             {
@@ -746,7 +746,7 @@
                     }
 
                     setTimeout(function() {
-                        
+
                         if(this.d.className.includes('update'))
                         {
                             this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
