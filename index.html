@@ -371,45 +371,48 @@
 
     async function switchRoom(room, init)
     {
-        if(!init)
+        if(!(new URL(window.location.href)).searchParams.get('room') || (new URL(window.location.href)).searchParams.get('room') != room)
         {
-            if(room == 'all')
+            if(!init)
             {
-                window.history.replaceState(null, null, '/');
-            }
-            else
-            {
-                window.history.replaceState(null, null, '?room=' + room);
-            }
-
-            document.getElementById('devices').style.opacity = 0;
-
-            await Essentials.newTimeout(300);
-
-            setupToolbar();
-        }
-
-        for(var i = 0; i < document.getElementById('devices').children.length; i++)
-        {
-            document.getElementById('devices').children[i].style.display = 'none';
-
-            for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
-            {
-                var r = document.getElementById('devices').children[i].children[1].children[j];
-
-                if(r.getAttribute('room') != room && room != 'all')
+                if(room == 'all')
                 {
-                    r.style.display = 'none';
+                    window.history.replaceState(null, null, '/');
                 }
                 else
                 {
-                    r.style.display = '';
-                    document.getElementById('devices').children[i].style.display = '';
+                    window.history.replaceState(null, null, '?room=' + room);
+                }
+
+                document.getElementById('devices').style.opacity = 0;
+
+                await Essentials.newTimeout(300);
+
+                setupToolbar();
+            }
+
+            for(var i = 0; i < document.getElementById('devices').children.length; i++)
+            {
+                document.getElementById('devices').children[i].style.display = 'none';
+
+                for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
+                {
+                    var r = document.getElementById('devices').children[i].children[1].children[j];
+
+                    if(r.getAttribute('room') != room && room != 'all')
+                    {
+                        r.style.display = 'none';
+                    }
+                    else
+                    {
+                        r.style.display = '';
+                        document.getElementById('devices').children[i].style.display = '';
+                    }
                 }
             }
-        }
 
-        document.getElementById('devices').style.opacity = 1;
+            document.getElementById('devices').style.opacity = 1;
+        }
     }
 
     function switchView(btn)
