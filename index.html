@@ -371,7 +371,7 @@
 
     async function switchRoom(room, init)
     {
-        if(!(new URL(window.location.href)).searchParams.get('room') || (new URL(window.location.href)).searchParams.get('room') != room)
+        if(init || !(new URL(window.location.href)).searchParams.get('room') || (new URL(window.location.href)).searchParams.get('room') != room)
         {
             if(!init)
             {
