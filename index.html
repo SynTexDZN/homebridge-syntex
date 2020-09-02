@@ -148,7 +148,7 @@
 
             button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
 
-            button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false');
+            button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
 
             if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
             {
@@ -568,7 +568,17 @@
     {
         if(!device.className.includes('update'))
         {
-            if(device.getAttribute('active') == 'true')
+            for(var i = 0; i < devices.length; i++)
+            {
+                /*
+                if()
+                {
+
+                }
+                */
+            }
+
+            if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
             {
                 device.children[1].innerHTML = 'AKTIV';
                 device.children[1].style.color = 'hsl(170, 90%, 50%)';
@@ -660,6 +670,15 @@
             {
                 updateCounter['error']++;
             }
+
+            if(updating.length == 0)
+            {
+                Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
+
+                await Essentials.newTimeout(4000);
+
+                Essentials.removeOverlays(btn, true);
+            }
         }
     }
 
@@ -730,12 +749,12 @@
                         device.getElementsByClassName('connection')[0].innerHTML = 'V' + device.getAttribute('newest-version');
                         device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                     }
-                    else if(device.getAttribute('active') == 'true')
+                    else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
                     {
                         this.device.getElementsByClassName('connection')[0].style.color = '';
                         this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
                     }
-                    else if(device.getAttribute('active') == 'false')
+                    else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
                     {
                         this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                         this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
