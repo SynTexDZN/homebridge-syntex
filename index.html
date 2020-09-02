@@ -493,6 +493,13 @@
                     }
                 }
             }
+
+            if(restarting.length == 0)
+            {
+                Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', 'Keine Geräte Neugestartet!'));
+                                
+                Essentials.removeOverlaysDelay(btn, 4000, true);
+            }
         }
     }
 
