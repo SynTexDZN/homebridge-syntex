@@ -675,9 +675,7 @@
             {
                 Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
 
-                await Essentials.newTimeout(4000);
-
-                Essentials.removeOverlays(btn, true);
+                Essentials.removeOverlaysDelay(btn, 4000, true);
             }
         }
     }
