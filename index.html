@@ -787,7 +787,7 @@
 
         for(var i = 0; i < devices.length; i++)
         {
-            if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room) && real.includes(devices[i].ip))
+            if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()) && real.includes(devices[i].ip))
             {
                 var settings = {
                     mac: devices[i].mac,
