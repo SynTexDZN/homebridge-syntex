@@ -941,9 +941,9 @@
     function drawGraph(canvas, data, gradients, points)
     {
         var ctx = canvas.getContext('2d');
-        var height = canvas.offsetHeight - padding * 2 - 2;
+        var height = canvas.offsetHeight - padding - 2;
         var width = canvas.offsetWidth - padding * 2;
-        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+        var grd = ctx.createLinearGradient(0, padding, 0, height + 2);
 
         for(var i = 0; i < gradients.length; i++)
         {
@@ -961,19 +961,19 @@
             {
                 ctx.fillStyle = gradients[0];
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 10, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100, 10, 0, 360);
                 ctx.fill();
                 ctx.closePath();
                 ctx.fillStyle = gradients[1];
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 5, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100, 5, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
 
             ctx.beginPath();
-            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding);
-            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100);
+            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100);
             ctx.stroke();
         }
 
@@ -981,12 +981,12 @@
         {
             ctx.fillStyle = gradients[0];
             ctx.beginPath();
-            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 10, 0, 360);
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100, 10, 0, 360);
             ctx.fill();
             ctx.closePath();
             ctx.fillStyle = gradients[1];
             ctx.beginPath();
-            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100  + padding, 5, 0, 360);
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100, 5, 0, 360);
             ctx.fill();
             ctx.closePath();
         }
