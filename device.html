@@ -206,7 +206,7 @@
     document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(device.services));
     document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + "&mac=" + device.mac + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + '&mac=' + device.mac + "'");
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
@@ -1203,7 +1203,7 @@
         await Essentials.switchPage(previous, 'settings', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
-        window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
+        window.history.replaceState(null, null, '?mac=' + device.mac + '&settings');
     }
     
     async function closeSettings(previous)
@@ -1211,7 +1211,7 @@
         await Essentials.switchPage(previous, 'infos', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name;
-        window.history.replaceState(null, null, "?mac=" + device.mac);
+        window.history.replaceState(null, null, '?mac=' + device.mac);
         repaintGraphs();
     }
 
@@ -1408,7 +1408,7 @@
         {
             if(await Query.fetchURL('http://' + device.ip + '/', 10000) != null)
             {
-                console.log("ESP Gefunden");
+                console.log('ESP Gefunden');
 
                 if(restarting == true)
                 {
@@ -1689,7 +1689,7 @@
     
     function redirect()
     {
-        window.history.replaceState(null, null, "?mac=" + device.mac);
+        window.history.replaceState(null, null, '?mac=' + device.mac);
         location.reload();
     }
 
