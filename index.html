@@ -410,7 +410,7 @@
                 }
             }
 
-            for(var i = 0; i < document.getElementById('rooms').children.length; i++) // TODO: Raumwechsel austesten ob der Hightlight funtkionwir
+            for(var i = 0; i < document.getElementById('rooms').children.length; i++)
             {
                 var r = document.getElementById('rooms').children[i];
 
@@ -878,8 +878,8 @@
 
                             if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
                             {
-                                var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
-                                var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
+                                var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+                                var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
 
                                 if(switchCounter['error'] > 0)
                                 {
