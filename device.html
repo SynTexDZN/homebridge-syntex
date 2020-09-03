@@ -941,9 +941,9 @@
     function drawGraph(canvas, data, gradients, points)
     {
         var ctx = canvas.getContext('2d');
-        var height = canvas.offsetHeight - padding - 2;
+        var height = canvas.offsetHeight - padding * 2 - 2;
         var width = canvas.offsetWidth - padding * 2;
-        var grd = ctx.createLinearGradient(0, padding, 0, height + 2);
+        var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
 
         for(var i = 0; i < gradients.length; i++)
         {
@@ -961,19 +961,19 @@
             {
                 ctx.fillStyle = gradients[0];
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100, 10, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 10, 0, 360);
                 ctx.fill();
                 ctx.closePath();
                 ctx.fillStyle = gradients[1];
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100, 5, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 5, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
 
             ctx.beginPath();
-            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100);
-            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100);
+            ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding);
+            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
             ctx.stroke();
         }
 
@@ -981,12 +981,12 @@
         {
             ctx.fillStyle = gradients[0];
             ctx.beginPath();
-            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100, 10, 0, 360);
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 10, 0, 360);
             ctx.fill();
             ctx.closePath();
             ctx.fillStyle = gradients[1];
             ctx.beginPath();
-            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100, 5, 0, 360);
+            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 5, 0, 360);
             ctx.fill();
             ctx.closePath();
         }
@@ -1009,13 +1009,13 @@
 
         ctx.beginPath();
         ctx.moveTo(0, height + padding);
-        ctx.lineTo(0, height - data[0] * height / 100  + padding);
+        ctx.lineTo(0, height - data[0] * height / 100 + padding);
 
         for(var i = 1; i < data.length; i++)
         {
             if(smoothing == 0)
             {
-                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100  + padding);
+                ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
             }
             else
             {
@@ -1109,8 +1109,8 @@
             ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
 
             ctx.beginPath();
-            ctx.moveTo(0, height - data[i] * height / 100  + padding);
-            ctx.lineTo(width + padding * 2, height - data[i] * height / 100  + padding)
+            ctx.moveTo(0, height - data[i] * height / 100 + padding);
+            ctx.lineTo(width + padding * 2, height - data[i] * height / 100 + padding)
             ctx.stroke();
         }
     }
@@ -1139,7 +1139,7 @@
             if(data[i - 1] != -1)
             {
                 ctx.beginPath();
-                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100  + padding, 4, 0, 360);
+                ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 4, 0, 360);
                 ctx.fill();
                 ctx.closePath();
             }
