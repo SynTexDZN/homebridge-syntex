@@ -686,7 +686,7 @@
         var min = 0;
         var max = 1;
 
-        values[type + c].sort((a, b) => (a.time > b.time ? 1 : b.time > a.time ? -1 : 0));
+        values[type + c].sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
 
         if(Object.keys(values).length != 0 && values[type + c].length != 0)
         {
