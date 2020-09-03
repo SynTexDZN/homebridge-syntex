@@ -830,8 +830,6 @@
 
     async function switchAll(btn)
     {
-        var noSwitchableDevices = true;
-
         var switchCounter = { success : 0, error : 0, idle : 0 };
 
         Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
@@ -844,8 +842,6 @@
                     mac: devices[i].mac,
                     active: btn.getAttribute('switch') == 1 ? 0 : 1
                 };
-
-                noSwitchableDevices = false;
 
                 if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
                 {
@@ -924,7 +920,7 @@
             }
         }
 
-        if(noSwitchableDevices)
+        if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] == 0)
         {
             Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
 
