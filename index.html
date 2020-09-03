@@ -856,9 +856,9 @@
                             var d = document.getElementById(this.device.ip);
 
                             switchCounter['success']++;
-
-                            this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
+                            
                             this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
+                            d.setAttribute('active', this.active == 1 ? 'true' : 'false');
 
                             if(!d.className.includes('update'))
                             {
