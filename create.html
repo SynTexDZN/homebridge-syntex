@@ -62,8 +62,7 @@
 
         if(created == 'Success')
         {
-            document.getElementById('create').style.display = 'none';
-            document.getElementById('success').style.display = '';
+            Essentials.switchPage('create', 'success', false);
 
             redirectCountdown('/device?mac=' + document.getElementById('form-mac').value);
         }

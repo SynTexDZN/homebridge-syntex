@@ -71,10 +71,10 @@
     window.Query = Query;
     window.Essentials = Essentials;
 
-    window.urlMac = (new URL(window.location.href)).searchParams.get("mac");
+    window.urlMac = (new URL(window.location.href)).searchParams.get('mac');
     window.ping = false;
     window.ip = 'http://192.168.4.1/';
-    window.ipp = (new URL(window.location.href)).searchParams.get("ip");
+    window.ipp = (new URL(window.location.href)).searchParams.get('ip');
     window.bridgeIP = 'http://<%bridge-ip%>';
     window.timeRemaining = 0;
 
@@ -108,8 +108,8 @@
             if(await Query.fetchURL('http://192.168.4.1/', 2000) != null)
             {  
                 ping = true;
-                document.getElementById('wifi').style.display = "";
-                document.getElementById('welcome').style.display = "none";
+
+                Essentials.switchPage('welcome', 'wifi', false);
 
                 setTimeout(function()
                 {
@@ -128,8 +128,8 @@
             {  
                 ping = true;
                 ip = 'http://' + ipp + '/';
-                document.getElementById('wifi').style.display = "";
-                document.getElementById('welcome').style.display = "none";
+
+                Essentials.switchPage('welcome', 'wifi', false);
 
                 setTimeout(function()
                 {
@@ -158,7 +158,7 @@
 
         var res = await Query.complexFetch(ip + 'wifi', 10000, 3, {}, false);
 
-        if(res != null && res != "" && res != "[]")
+        if(res != null && res != '' && res != '[]')
         {  
             document.getElementById('networks').innerHTML = '';
         
@@ -196,7 +196,7 @@
         
         setTimeout(function()
         {
-            document.getElementById('connecting').getElementsByClassName('progress')[0].style.width = (time / 600) + "%";
+            document.getElementById('connecting').getElementsByClassName('progress')[0].style.width = (time / 600) + '%';
             setTimer(timeRemaining);
         }, 100);
     }
@@ -211,8 +211,7 @@
 
         if(mac != null)
         {
-            document.getElementById('wifi').style.display = "none";
-            document.getElementById('connecting').style.display = "";
+            Essentials.switchPage('wifi', 'connecting', false);
 
             setTimer(60000);
 
@@ -238,8 +237,7 @@
             {
                 if(success == false)
                 {
-                    document.getElementById('error').style.display = "";
-                    document.getElementById('connecting').style.display = "none";
+                    Essentials.switchPage('connecting', 'error', false);
 
                     setTimeout(async function()
                     {
@@ -253,8 +251,7 @@
 
             console.log(mac);
 
-            document.getElementById('success').style.display = "";
-            document.getElementById('connecting').style.display = "none";
+            Essentials.switchPage('connecting', 'success', false);
 
             redirectCountdown('/device?mac=' + mac);     
         }
