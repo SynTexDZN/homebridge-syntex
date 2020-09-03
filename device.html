@@ -349,14 +349,14 @@
                     frame.style.marginBottom = '20px';
                 }
 
-                var height = frame.offsetHeight - padding * 2 - 2;
+                var height = frame.offsetHeight - 4;
 
                 canvas.setAttribute('class', 'canvas');
                 canvas.setAttribute('id', 'canvas-' + type + '-' + j);
                 canvas.setAttribute('style', 'border-radius: 50px');
 
                 canvas.width = document.getElementById('infos').offsetWidth - 4;
-                canvas.height = height + padding * 2;
+                canvas.height = height;
                 canvas.style.background = 'rgb(20, 20, 30)';
 
                 frame.appendChild(canvas);
@@ -372,14 +372,14 @@
 
                 var infoMax = document.createElement('div');
 
-                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+                infoMax.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: 40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
                 infoMax.setAttribute('class', 'max');
 
                 frame.appendChild(infoMax);
 
                 var infoType = document.createElement('div');
 
-                infoType.setAttribute('style', 'position: relative; bottom: ' + (height + padding * 2 - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
+                infoType.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: -40px; margin-top: -19.2; color: rgb(150, 150, 160); letter-spacing: 3px; text-align: right; font-weight: 300');
 
                 if(type == 'rgb' || type == 'rgbw')
                 {
