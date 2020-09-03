@@ -411,6 +411,20 @@
                 }
             }
 
+            for(var i = 0; i < document.getElementById('rooms').children.length; i++) // TODO: Raumwechsel austesten ob der Hightlight funtkionwir
+            {
+                var r = document.getElementById('rooms').children[i];
+
+                if(r.getAttribute('room') == room)
+                {
+                    r.className = '';
+                }
+                else
+                {
+                    r.className = 'white';
+                }
+            }
+
             document.getElementById('devices').style.opacity = 1;
         }
     }
@@ -470,10 +484,10 @@
                             {
                                 await Essentials.newTimeout(1000);
 
-                                var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - offlineCount - restartCounter['idle']) + ' Geräten Neugestartet!';
+                                var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' Geräten Neugestartet!';
                                 var color = 'yellow';
 
-                                if(restartCounter['success'] >= (realDeviceCount - offlineCount - restartCounter['idle']))
+                                if(restartCounter['success'] >= (realDeviceCount - restartCounter['idle']))
                                 {
                                     responseText = 'Alle Geräte Neugestartet!';
                                     color = 'green';
@@ -659,7 +673,21 @@
 
                     if(updateCounter['success'] + updateCounter['error'] >= updateCount)
                     {
-                        Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!', updateCounter['success'] == 0 ? 'red' : 'green'));
+                        var responseText = updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!';
+                        var color = 'yellow';
+
+                        if(updateCounter['success'] >= updateCount)
+                        {
+                            responseText = 'Alle Geräte Aktualisiert!';
+                            color = 'green';
+                        }
+                        else if(updateCounter['success'] == 0)
+                        {
+                            responseText = 'Keine Geräte Aktualisiert!';
+                            color = 'red';
+                        }
+                        
+                        Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', responseText, color));
 
                         await Essentials.newTimeout(4000);
 
@@ -855,6 +883,13 @@
 
                             if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
                             {
+                                var mixed = false;
+
+                                for(var j = 0; j < devices.length; j++)
+                                {
+                                    // TODO: Check ob die Geräte eine gemischte Aktivierung haben
+                                }
+
                                 btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
                                 btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
                                 btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
