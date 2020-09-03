@@ -593,82 +593,31 @@
 
         orginal = { ...values };
 
-        console.log('Aktivität wurde geladen!');
-
         repaintGraphs();
     }
 
     function repaintGraphs()
     {
-        console.log(typeCounter);
-
         for(const i in typeCounter)
         {
-            console.log(i);
-
             if(i != 'lcd')
             {
                 for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
                 {
-                    console.log(Essentials.typeToLetter(i instanceof Object ? i.type : i) + j);
-                    console.log(values, i instanceof Object ? i.type : i, j);
-
                     calcValues(values, i instanceof Object ? i.type : i, j);
                 }
             }
         }
-        /*
-        for(var i = 0; i < Object.keys(typeCounter).length; i++)
-        {
-            var type = Array.isArray(device.services) ? device.services[i] : device.services;
-
-            console.log("TYP: ", type, type != 'lcd');
-
-            if(type != 'lcd')
-            {
-                for(var j = 0; j < typeCounter[type instanceof Object ? type.type : type]; j++)
-                {
-                    console.log(type, type instanceof Object);
-
-                    if(type instanceof Object)
-                    {
-                        calcValues(values, type.type, j);
-                    }
-                    else
-                    {
-                        calcValues(values, type, j);
-                    }
-                }
-            }
-        }
-        */
     }
 
     function calcValues(values, type, c)
     {
         var color = 'hsl(200, 98%, 60%)';
         var canvas = document.getElementById('canvas-' + type + '-' + c);
+        var v = [], a = [];
 
         //drawGrid(canvas, [], 10);
 
-        console.log(document.getElementById('canvas-' + type + '-' + c), 'canvas-' + type + '-' + c, type);
-/*
-        if(type instanceof Object)
-        {
-            type = type.type;
-        }
-*/
-        var v = [], a = [];
-        /*
-        values = {};
-
-        values[type + c] = [
-            { value : 10, time : new Date().getTime() / 1000 - 3600 * 0 },
-            { value : 5, time : new Date().getTime() / 1000 - 3600 * 1 },
-            { value : 10, time : new Date().getTime() / 1000 - 3600 * 2 },
-            { value : 20, time : new Date().getTime() / 1000 - 3600 * 3 }
-        ]
-        */
         canvas.width = document.getElementById('infos').offsetWidth - 4;
 
         drawGrid(canvas, [], 10);
@@ -740,7 +689,6 @@
                         if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
                         {
                             triggered = true;
-                            console.log('triggered!!!');
                         }
                         
                         x.push(value);
@@ -754,8 +702,6 @@
                         v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
 
                         //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
-
-                        //console.log('MAX', 100 - Math.max(...x), 'MIN', Math.min(...x), 'Entscheidung', (100 - Math.max(...x)) < Math.min(...x) ? 'MAX' : 'MIN');
                     }
                     else if(!(x.includes('true') && x.includes('false')))
                     {
@@ -804,8 +750,6 @@
                 v.push((value - min) / (max - min) * 100);
             }
             */
-            console.log('Graph Berechnen ..', v);
-            
             if(isNaN(values[type + c][0].value))
             {
                 canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
@@ -1098,8 +1042,6 @@
         var height = canvas.offsetHeight - padding * 2 - 2;
         var width = canvas.offsetWidth - padding * 2;
 
-        console.log(data);
-
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([10, 15]);
@@ -1131,8 +1073,6 @@
         ctx.lineCap = 'butt';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([]);
-
-        console.log(data);
 
         for(var i = 1; i < data.length; i++)
         {

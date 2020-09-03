@@ -45,7 +45,7 @@
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
         <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href=window.location.protocol +  '//' + window.location.hostname+':8000/settings.php'">
+            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href=window.location.protocol + '//' + window.location.hostname+':8000/settings.php'">
             <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="window.location.href='/create'">
             <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="window.location.href='/crossover'">
             <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='/setup'">
@@ -80,7 +80,6 @@
 
     console.log(devices);
     
-    //document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = devices.length - 1;
     document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
 
     devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
@@ -177,26 +176,7 @@
             temp = Essentials.getType(devices[i].services);
         }
     }
-/*
-    if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
-    {
-        document.getElementById('activate-all').setAttribute('switch', 1);
-        document.getElementById('activate-all').setAttribute('class', 'gradient-green');
-        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
-    }
-    else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
-    {
-        document.getElementById('activate-all').setAttribute('switch', 0);
-        document.getElementById('activate-all').setAttribute('class', 'gradient-red');
-        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
-    }
-    else
-    {
-        document.getElementById('activate-all').setAttribute('switch', 0);
-        document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
-    }
-*/
-    //setupToolbar();
+
     checkConnection();
 
     for(var i = 0; i < deviceElements.length; i++)
@@ -247,18 +227,18 @@
         document.getElementById('rooms').appendChild(room);
     }
 
-    const ele = document.getElementById('rooms');
+    const roomBar = document.getElementById('rooms');
 
     let pos = { top: 0, left: 0, x: 0, y: 0 };
 
-    const mouseDownHandler = function(e) {
-        ele.style.cursor = 'grabbing';
-        ele.style.userSelect = 'none';
+    const mouseDownHandler = function(e)
+    {
+        roomBar.style.cursor = 'grabbing';
+        roomBar.style.userSelect = 'none';
 
         pos = {
-            left: ele.scrollLeft,
-            top: ele.scrollTop,
-            // Get the current mouse position
+            left: roomBar.scrollLeft,
+            top: roomBar.scrollTop,
             x: e.clientX,
             y: e.clientY,
         };
@@ -267,36 +247,35 @@
         document.addEventListener('mouseup', mouseUpHandler);
     };
 
-    const mouseMoveHandler = function(e) {
-        // How far the mouse has been moved
+    const mouseMoveHandler = function(e)
+    {
         const dx = e.clientX - pos.x;
         const dy = e.clientY - pos.y;
 
-        // Scroll the element
-        ele.scrollTop = pos.top - dy;
-        ele.scrollLeft = pos.left - dx;
+        roomBar.scrollTop = pos.top - dy;
+        roomBar.scrollLeft = pos.left - dx;
         
-        for(var i = 0; i < ele.children.length; i++)
+        for(var i = 0; i < roomBar.children.length; i++)
         {
-            ele.children[i].style.pointerEvents = 'none';
+            roomBar.children[i].style.pointerEvents = 'none';
         }
     };
 
-    const mouseUpHandler = function() {
-        ele.style.cursor = 'grab';
-        ele.style.removeProperty('user-select');
+    const mouseUpHandler = function()
+    {
+        roomBar.style.cursor = 'grab';
+        roomBar.style.removeProperty('user-select');
 
-        for(var i = 0; i < ele.children.length; i++)
+        for(var i = 0; i < roomBar.children.length; i++)
         {
-            ele.children[i].style.pointerEvents = 'all';
+            roomBar.children[i].style.pointerEvents = 'all';
         }
 
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
     };
 
-    // Attach the handler
-    ele.addEventListener('mousedown', mouseDownHandler);
+    roomBar.addEventListener('mousedown', mouseDownHandler);
 
     switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
 
@@ -473,8 +452,6 @@
                     {
                         restarting.push(devices[i].ip);
 
-                        console.log('RESTART', devices[i]);
-
                         Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
 
                             restartCounter[result != null ? 'success' : 'error']++;
@@ -584,16 +561,6 @@
     {
         if(!device.className.includes('update'))
         {
-            for(var i = 0; i < devices.length; i++)
-            {
-                /*
-                if()
-                {
-
-                }
-                */
-            }
-
             if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
             {
                 device.children[1].innerHTML = 'AKTIV';
@@ -651,7 +618,6 @@
         if(checkedUpdates == deviceElements.length)
         {
             setupToolbar();
-            //document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
         }
     }
     
