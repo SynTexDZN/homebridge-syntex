@@ -855,24 +855,21 @@
 
                             switchCounter['success']++;
 
-                            if(refresh == 'Success')
+                            var d = document.getElementById(this.device.ip);
+
+                            this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
+
+                            if(!d.className.includes('update'))
                             {
-                                var d = document.getElementById(this.device.ip);
-
-                                this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
-
-                                if(!d.className.includes('update'))
+                                if(btn.getAttribute('switch') == 0)
                                 {
-                                    if(btn.getAttribute('switch') == 0)
-                                    {
-                                        d.getElementsByClassName('connection')[0].style.color = '';
-                                        d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
-                                    }
-                                    else
-                                    {
-                                        d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                                        d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
-                                    }
+                                    d.getElementsByClassName('connection')[0].style.color = '';
+                                    d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                                }
+                                else
+                                {
+                                    d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                    d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
                                 }
                             }
 
