@@ -830,7 +830,7 @@
 
     async function switchAll(btn)
     {
-        var settings = [];
+        var noSwitchableDevices = true;
 
         var switchCounter = { success : 0, error : 0 };
 
@@ -845,7 +845,7 @@
                     active: btn.getAttribute('switch') == 1 ? 0 : 1
                 };
 
-                console.log(devices[i]);
+                noSwitchableDevices = false;
 
                 if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
                 {
@@ -856,7 +856,7 @@
                             var d = document.getElementById(this.device.ip);
 
                             switchCounter['success']++;
-                            
+
                             this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
                             d.setAttribute('active', this.active == 1 ? 'true' : 'false');
 
@@ -919,55 +919,13 @@
                 }
             }
         }
-/*
-        for(var i = 0; i < deviceElements.length; i++)
+
+        if(noSwitchableDevices)
         {
-            var settings = {
-                mac: deviceElements[i].getAttribute('onclick') != null ? deviceElements[i].getAttribute('onclick').split('mac=')[1].split("'")[0] : '',
-                active: btn.getAttribute('switch') == 1 ? 0 : 1
-            };
+            Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
 
-            console.log(deviceElements[i], deviceElements[i].getAttribute('id') != 'undefined' && (!(new URL(window.location.href)).searchParams.get('room') || deviceElements[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == deviceElements[i].getAttribute('room')) && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && real.includes(devices[i].ip) && !offline.includes(deviceElements[i].getAttribute('id')));
-
-            if(deviceElements[i].getAttribute('id') != 'undefined' && (!(new URL(window.location.href)).searchParams.get('room') || deviceElements[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == deviceElements[i].getAttribute('room')) && await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success' && real.includes(devices[i].ip) && !offline.includes(deviceElements[i].getAttribute('id')))
-            {
-                Query.complexFetch('http://' + deviceElements[i].getAttribute('id') + '/refresh', 10000, 2, {}, false).then(function (refresh) {
-
-                    switchCounter[refresh == 'Success' ? 'success' : 'error']++;
-
-                    console.log(JSON.stringify(switchCounter), switchCounter['success'] + switchCounter['error'], realDeviceCount - offlineCount);
-
-                    if(refresh == 'Success')
-                    {
-                        this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
-
-                        if(!this.device.className.includes('update'))
-                        {
-                            if(this.active == 1)
-                            {
-                                this.device.getElementsByClassName('connection')[0].style.color = '';
-                                this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
-                            }
-                            else
-                            {
-                                this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                                this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
-                            }
-                        }
-                    }
-
-                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
-                    {
-                        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
-                        btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
-
-                        Essentials.removeOverlays(btn, true);
-                    }
-
-                }.bind({ active : settings.active, device : deviceElements[i] }));
-            }
-        }*/
+            Essentials.removeOverlaysDelay(btn, 4000, true);
+        }
     }
 
 </script>
