@@ -298,10 +298,7 @@
     // Attach the handler
     ele.addEventListener('mousedown', mouseDownHandler);
 
-    if((new URL(window.location.href)).searchParams.get('room'))
-    {
-        switchRoom((new URL(window.location.href)).searchParams.get('room'), true);
-    }
+    switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
 
 </script>
 <script>
