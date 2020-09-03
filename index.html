@@ -832,7 +832,7 @@
     {
         var noSwitchableDevices = true;
 
-        var switchCounter = { success : 0, error : 0 };
+        var switchCounter = { success : 0, error : 0, idle : 0 };
 
         Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
 
@@ -874,7 +874,7 @@
                                 }
                             }
 
-                            if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
+                            if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
                             {
                                 var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
                                 var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
@@ -894,13 +894,17 @@
 
                         }.bind({ active : settings.active, device : devices[i] }));
                     }
+                    else
+                    {
+                        switchCounter['idle']++;
+                    }
                 }
                 else
                 {
                     switchCounter['error']++;
                 }
 
-                if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount)
+                if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
                 {
                     var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
                     var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
