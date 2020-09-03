@@ -143,11 +143,11 @@
 
     if((new URL(window.location.href)).searchParams.get('add') == '')
     {
-        switchPage('view', 'add', true);
+        Essentials.switchPage('view', 'add', true);
     }
     else if((new URL(window.location.href)).searchParams.get('edit') == '')
     {
-        switchPage('view', 'edit', true);
+        Essentials.switchPage('view', 'edit', true);
     }
 
 </script>
@@ -155,43 +155,23 @@
 
     async function openAddPage(previous)
     {
-        await switchPage(previous, 'add', false);
+        await Essentials.switchPage(previous, 'add', false);
 
         window.history.replaceState(null, null, '/automations?add');
     }
 
     async function openEditPage(previous)
     {
-        await switchPage(previous, 'edit', false);
+        await Essentials.switchPage(previous, 'edit', false);
 
         window.history.replaceState(null, null, '/automations?edit');
     }
 
     async function openViewPage(previous)
     {
-        await switchPage(previous, 'view', false);
+        await Essentials.switchPage(previous, 'view', false);
 
         window.history.replaceState(null, null, '/automations');
-    }
-
-    async function switchPage(previous, next, init)
-    {
-        if(!init)
-        {
-            document.getElementById(previous).style.opacity = 0;
-
-            await Essentials.newTimeout(300);
-        }
-
-        document.getElementById(previous).style.display = 'none';
-        document.getElementById(next).style.display = '';
-
-        if(!init)
-        {
-            await Essentials.newTimeout(50);
-        }
-
-        document.getElementById(next).style.opacity = 1;
     }
 
     function createAutomationPanels()

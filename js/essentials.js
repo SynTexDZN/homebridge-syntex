@@ -228,6 +228,26 @@ function typeToLetter(type)
     return letters[types.indexOf(type.toLowerCase())];
 }
 
+async function switchPage(previous, next, init)
+{
+    if(!init)
+    {
+        document.getElementById(previous).style.opacity = 0;
+
+        await Essentials.newTimeout(300);
+    }
+
+    document.getElementById(previous).style.display = 'none';
+    document.getElementById(next).style.display = '';
+
+    if(!init)
+    {
+        await Essentials.newTimeout(50);
+    }
+
+    document.getElementById(next).style.opacity = 1;
+}
+
 function removeOverlaysDelay(btn, delay, show)
 {
     setTimeout(function()
@@ -246,4 +266,4 @@ function SETUP(Q)
     Query = Q;
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage };

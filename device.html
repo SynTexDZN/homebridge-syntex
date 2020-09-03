@@ -458,7 +458,7 @@
 
     if((new URL(window.location.href)).searchParams.get('settings') == '')
     {
-        switchPage('infos', 'settings', true);
+        Essentials.switchPage('infos', 'settings', true);
     }
 
 </script>
@@ -1198,29 +1198,9 @@
         }
     }
 
-    async function switchPage(previous, next, init)
-    {
-        if(!init)
-        {
-            document.getElementById(previous).style.opacity = 0;
-
-            await Essentials.newTimeout(300);
-        }
-
-        document.getElementById(previous).style.display = 'none';
-        document.getElementById(next).style.display = '';
-
-        if(!init)
-        {
-            await Essentials.newTimeout(50);
-        }
-
-        document.getElementById(next).style.opacity = 1;
-    }
-
     async function openSettings(previous)
     {
-        await switchPage(previous, 'settings', false);
+        await Essentials.switchPage(previous, 'settings', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
         window.history.replaceState(null, null, "?mac=" + device.mac + "&settings");
@@ -1228,7 +1208,7 @@
     
     async function closeSettings(previous)
     {
-        await switchPage(previous, 'infos', false);
+        await Essentials.switchPage(previous, 'infos', false);
 
         document.getElementsByTagName('title')[0].innerHTML = device.name;
         window.history.replaceState(null, null, "?mac=" + device.mac);
