@@ -853,10 +853,11 @@
                     {
                         Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
-                            switchCounter['success']++;
-
                             var d = document.getElementById(this.device.ip);
 
+                            switchCounter['success']++;
+
+                            this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
                             this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
 
                             if(!d.className.includes('update'))
