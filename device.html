@@ -686,6 +686,8 @@
         var min = 0;
         var max = 1;
 
+        values.sort((a, b) => (a.time > b.time ? 1 : b.time > a.time ? -1 : 0));
+
         if(Object.keys(values).length != 0 && values[type + c].length != 0)
         {
             if(!isNaN(values[type + c][0].value))
@@ -1247,7 +1249,7 @@
             
                     if(temp[type + j] && state != temp[type + j])
                     {
-                        orginal[type + j].push({ time : Math.round(new Date().getTime()) / 1000, value : state });
+                        orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state });
 
                         console.log(state);
                         
