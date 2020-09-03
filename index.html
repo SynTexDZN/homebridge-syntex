@@ -898,24 +898,24 @@
                 else
                 {
                     switchCounter['error']++;
+                }
 
-                    if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
+                if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
+                {
+                    var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                    var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
+
+                    if(switchCounter['error'] > 0)
                     {
-                        var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
-                        var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
-
-                        if(switchCounter['error'] > 0)
-                        {
-                            responseText = 'Unterschiedlich';
-                            color = 'gray';
-                        }
-
-                        btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                        btn.setAttribute('class', 'gradient-' + color);
-                        btn.innerHTML = 'Aktiv: ' + responseText;
-
-                        Essentials.removeOverlays(btn, true);
+                        responseText = 'Unterschiedlich';
+                        color = 'gray';
                     }
+
+                    btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+                    btn.setAttribute('class', 'gradient-' + color);
+                    btn.innerHTML = 'Aktiv: ' + responseText;
+
+                    Essentials.removeOverlays(btn, true);
                 }
             }
         }
