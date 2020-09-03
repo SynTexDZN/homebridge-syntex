@@ -853,14 +853,10 @@
                     {
                         Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
 
-                            switchCounter[refresh == 'Success' ? 'success' : 'error']++;
-
-                            console.log(JSON.stringify(switchCounter), switchCounter['success'] + switchCounter['error'], realDeviceCount - offlineCount);
+                            switchCounter['success']++;
 
                             if(refresh == 'Success')
                             {
-                                //this.device.setAttribute('active', this.active == 1 ? 'true' : 'false');
-                                
                                 var d = document.getElementById(this.device.ip);
 
                                 this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
@@ -882,16 +878,18 @@
 
                             if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
                             {
-                                var mixed = false;
+                                var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                                var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
 
-                                for(var j = 0; j < devices.length; j++)
+                                if(switchCounter['error'] > 0)
                                 {
-                                    // TODO: Check ob die Geräte eine gemischte Aktivierung haben
+                                    responseText = 'Unterschiedlich';
+                                    color = 'gray';
                                 }
 
                                 btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                                btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
-                                btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                                btn.setAttribute('class', 'gradient-' + color);
+                                btn.innerHTML = 'Aktiv: ' + responseText;
 
                                 Essentials.removeOverlays(btn, true);
                             }
@@ -905,9 +903,18 @@
 
                     if(switchCounter['success'] + switchCounter['error'] >= realDeviceCount - offlineCount)
                     {
+                        var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                        var color = btn.getAttribute('switch') == 1 ? 'green' : 'red';
+
+                        if(switchCounter['error'] > 0)
+                        {
+                            responseText = 'Unterschiedlich';
+                            color = 'gray';
+                        }
+
                         btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                        btn.setAttribute('class', btn.getAttribute('switch') == 1 ? 'gradient-green' : 'gradient-red');
-                        btn.innerHTML = 'Aktiv: Alle ' + (btn.getAttribute('switch') == 1 ? 'An' : 'Aus');
+                        btn.setAttribute('class', 'gradient-' + color);
+                        btn.innerHTML = 'Aktiv: ' + responseText;
 
                         Essentials.removeOverlays(btn, true);
                     }
