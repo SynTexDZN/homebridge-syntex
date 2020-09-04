@@ -164,7 +164,9 @@
 
                     Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
+                    bridgeVersion = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
+
+                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + bridgeVersion;
 
                     await Essentials.newTimeout(4000);
 
@@ -172,7 +174,7 @@
 
                     await Essentials.newTimeout(300);
 
-                    if(document.getElementsByClassName('navigation-panel')[0].children[0].childElementCount == 1)
+                    if(Essentials.versionCount(newestWVersion) <= Essentials.versionCount(webhooksVersion))
                     {
                         document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
                     }
@@ -207,7 +209,9 @@
 
                     Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
+                    webhooksVersion = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
+
+                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + webhooksVersion;
 
                     await Essentials.newTimeout(4000);
 
@@ -215,7 +219,7 @@
 
                     await Essentials.newTimeout(300);
 
-                    if(document.getElementsByClassName('navigation-panel')[0].children[0].childElementCount == 1)
+                    if(Essentials.versionCount(newestBVersion) <= Essentials.versionCount(bridgeVersion))
                     {
                         document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
                     }
