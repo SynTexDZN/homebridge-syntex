@@ -1,16 +1,16 @@
 <html>
     <title>Dashboard: Bridge</title>
-    <body>
+    <body id="body" style="transition: .3s ease-in-out">
         <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
         <div class="main" style="margin-top: 10px">
             <p style="margin-bottom: 100px; margin-top: 20px">Bridge</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-                <input class="white" type="button" value="GERÄTE" onclick="window.location.href='/'" style="margin-right: 20px">
-                <input class="white" type="button" value="BRIDGE" onclick="window.location.href='/bridge'" disabled>
+                <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('body', '/')" style="margin-right: 20px">
+                <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('body', '/bridge')" disabled>
             </div>
-            <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-                <input class="white" type="button" value="AUTOMATION" id="a" onclick="window.location.href='/automations'" style="margin-right: 20px; display: none">
-                <input class="white" type="button" value="LOG" onclick="window.location.href='/log'">
+            <div class="main" style="margin-top: 10px; display: flex; margin-bottom: 100px">
+                <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('body', '/automations')" style="margin-right: 20px; display: none">
+                <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('body', '/log')">
             </div>
             <div class="widget" style="margin-left: 0">
                 <button class="widget-left gradient-red" disabled>Wichtig</button>
