@@ -15,26 +15,22 @@ if(!hasTouch())
 
             if(styleSheet.rules)
             {
-                console.log(styleSheet);
-
                 for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
                 {
+                    console.log(styleSheet.rules[ri].selectorText, styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'));
+
                     if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
                     {
-                        console.log(styleSheet.rules[ri].selectorText);
-
                         styleSheet.deleteRule(ri);
                     }
                     else if(styleSheet.rules[ri].cssRules)
                     {
-                        console.log(styleSheet.rules[ri].cssRules);
-
                         for(var rj = styleSheet.rules[ri].cssRules.length - 1; rj >= 0; rj--)
                         {
+                            console.log(styleSheet.rules[ri].cssRules[rj].selectorText, styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'));
+
                             if(styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'))
                             {
-                                console.log(styleSheet.rules[ri].cssRules[rj].selectorText);
-
                                 styleSheet.rules[ri].cssRules.deleteRule(ri);
                             }
                         }
