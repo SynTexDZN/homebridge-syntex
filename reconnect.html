@@ -12,8 +12,8 @@
             <div class="main navigation-panel">
                 <div class="sticky-inset">
                     <div style="display: flex">
-                        <input id="back-btn" type="button" value="Zurück" onclick="window.location.href='/'">
-                        <input id="setup-btn" style="margin-left: 20px" type="button" value="Gerät Neu Gekauft?" onclick="window.location.href='/setup'">
+                        <input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage('welcome', '/')">
+                        <input id="setup-btn" style="margin-left: 20px" type="button" value="Gerät Neu Gekauft?" onclick="Essentials.leavePage('welcome', '/setup')">
                     </div>
                 </div>
             </div>
@@ -80,8 +80,8 @@
 
     if(urlMac)
     {
-        document.getElementById('back-btn').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "&settings'");
-        document.getElementById('back-btn-wifi').setAttribute('onclick', "window.location.href='/device?mac=" + urlMac + "&settings'");
+        document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('welcome', '/device?mac=" + urlMac + "&settings')");
+        document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('wifi', '/device?mac=" + urlMac + "&settings')");
         document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
     }    
     
