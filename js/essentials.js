@@ -254,12 +254,17 @@ async function leavePage(previous, url)
 
     await Essentials.newTimeout(200);
 
-    window.addEventListener('beforeunload', function(event)
-    {
-        alert('I am the 3rd one.');
-        document.getElementById(previous).style.opacity = 1;
-    });
-
+    if ("onhashchange" in window) {
+        alert("Der Browser unterstützt das hashchange-Event!");
+    }
+    
+    function locationHashChanged() {
+        if (location.hash === "#irgendeinCoolesFeature") {
+            featureFunction();
+        }
+    }
+    
+    window.onhashchange = locationHashChanged;
     window.location.href = url;
 }
 
