@@ -254,13 +254,13 @@ async function leavePage(previous, url)
 
     await Essentials.newTimeout(200);
 
-    window.location.href = url;
-
     window.addEventListener('beforeunload', function(event)
     {
         alert('I am the 3rd one.');
         document.getElementById(previous).style.opacity = 1;
     });
+
+    window.location.href = url;
 }
 
 function removeOverlaysDelay(btn, delay, show)
