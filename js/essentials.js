@@ -256,7 +256,7 @@ async function leavePage(previous, url)
 
     window.location.href = url;
 
-    window.addEventListener('unload', function(event)
+    window.addEventListener('beforeunload', function(event)
     {
         alert('I am the 3rd one.');
         document.getElementById(previous).style.opacity = 1;
