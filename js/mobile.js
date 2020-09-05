@@ -7,6 +7,8 @@ function hasTouch()
 
 if(hasTouch())
 {
+    alert('Touch Gerät');
+
     try
     {
         for(var si in document.styleSheets)
