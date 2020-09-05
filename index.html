@@ -45,10 +45,10 @@
             <div id="devices" style="margin-top: 100px; transition: .3s ease-in-out"></div>
         </div>
         <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="window.location.href=window.location.protocol + '//' + window.location.hostname+':8000/settings.php'">
-            <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="window.location.href='/create'">
-            <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="window.location.href='/crossover'">
-            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="window.location.href='/setup'">
+            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage('body', window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+            <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="Essentials.leavePage('body', '/create')">
+            <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('body', '/crossover')">
+            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('body', '/setup')">
         </div>
     </body>
 </html>
@@ -162,7 +162,7 @@
 
             if(devices[i].mac != undefined)
             {
-                button.setAttribute('onclick', "window.location.href='/device?mac=" + devices[i].mac + "'");
+                button.setAttribute('onclick', "Essentials.leavePage('body', '/device?mac=" + devices[i].mac + "')");
             }
             else
             {
