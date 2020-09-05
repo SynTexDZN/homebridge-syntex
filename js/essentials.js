@@ -248,6 +248,15 @@ async function switchPage(previous, next, init)
     document.getElementById(next).style.opacity = 1;
 }
 
+async function leavePage(previous, url)
+{
+    document.getElementById(previous).style.opacity = 0;
+
+    await Essentials.newTimeout(300);
+
+    window.location.href = url;
+}
+
 function removeOverlaysDelay(btn, delay, show)
 {
     setTimeout(function()
@@ -266,4 +275,4 @@ function SETUP(Q)
     Query = Q;
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };

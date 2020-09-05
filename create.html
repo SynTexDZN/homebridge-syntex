@@ -14,7 +14,7 @@
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="window.location.href='/'">
+                            <input type="button" value="Zurück" onclick="Essentials.leavePage('create', '/');">
                             <div style="display: block; width: 100%; margin-left: 20px">
                                 <input id="create-btn" type="submit" value="Erstellen">
                             </div>
@@ -82,7 +82,7 @@
         {
             if(await Essentials.checkRestart('/serverside/check-restart'))
             {
-                window.location.href = url;
+                Essentials.leavePage('success', url);
             }
         }, 3000);
     }

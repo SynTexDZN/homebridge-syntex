@@ -96,7 +96,7 @@
         {
             if(await Essentials.checkRestart('/serverside/check-restart'))
             {
-                window.location.href = url;
+                Essentials.leavePage('success', url);
             }
         }, 3000);
     }
@@ -234,7 +234,7 @@
                     {
                         if(await Essentials.checkRestart('/serverside/check-restart'))
                         {
-                            window.location.href = '/setup';
+                            Essentials.leavePage('error', '/setup');
                         }
                     }, 10000); 
                 }
