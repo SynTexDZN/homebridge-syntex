@@ -23,6 +23,8 @@ if(hasTouch())
 
                 if(styleSheet.rules[ri].selectorText.match(':hover'))
                 {
+                    alert(styleSheet.rules[ri].selectorText);
+
                     styleSheet.deleteRule(ri);
                 }
             }
