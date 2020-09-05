@@ -31,7 +31,7 @@ if(!hasTouch())
 
                             if(styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'))
                             {
-                                //styleSheet.rules[ri].cssRules.deleteRule(rj);
+                                styleSheet.rules[ri].cssRules.deleteRule(rj);
                             }
                         }
                     }
