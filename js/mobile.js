@@ -13,7 +13,7 @@ if(!hasTouch())
         {
             var styleSheet = document.styleSheets[si];
 
-            if(styleSheet.rules)
+            if(styleSheet.rules && styleSheet.href)
             {
                 for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
                 {
