@@ -15,17 +15,16 @@ if(hasTouch())
 
             alert(styleSheet.href);
 
-            if(!styleSheet.rules) continue;
-
-            for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
+            if(styleSheet.rules)
             {
-                if(!styleSheet.rules[ri].selectorText) continue;
-
-                if(styleSheet.rules[ri].selectorText.includes(':hover'))
+                for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
                 {
-                    alert(styleSheet.rules[ri].selectorText);
+                    if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
+                    {
+                        alert(styleSheet.rules[ri].selectorText);
 
-                    styleSheet.deleteRule(ri);
+                        styleSheet.deleteRule(ri);
+                    }
                 }
             }
         }
