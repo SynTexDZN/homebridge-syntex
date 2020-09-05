@@ -256,9 +256,11 @@ async function leavePage(previous, url)
 
     window.location.href = url;
 
-    await Essentials.newTimeout(3000);
-
-    document.getElementById(previous).style.opacity = 1;
+    window.addEventListener('unload', function(event)
+    {
+        alert('I am the 3rd one.');
+        document.getElementById(previous).style.opacity = 1;
+    });
 }
 
 function removeOverlaysDelay(btn, delay, show)
