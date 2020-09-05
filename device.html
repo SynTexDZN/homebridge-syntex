@@ -10,7 +10,7 @@
                 <div class="sticky-inset">
                     <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
                     <div style="display: flex">
-                        <input type="button" value="Zurück" onclick="window.location.href='/'">
+                        <input type="button" value="Zurück" onclick="Essentials.leavePage('infos', '/')">
                         <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
                     </div>
                 </div>
@@ -206,7 +206,7 @@
     document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(device.services));
     document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
-    document.getElementById('reconnect-btn').setAttribute('onclick', "window.location.href='/reconnect?ip=" + device.ip + '&mac=' + device.mac + "'");
+    document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('settings', '/reconnect?ip=" + device.ip + '&mac=' + device.mac + "')");
 
     document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
