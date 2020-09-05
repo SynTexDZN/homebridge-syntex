@@ -5,7 +5,7 @@ function hasTouch()
         || navigator.msMaxTouchPoints > 0;
 }
 
-if(!hasTouch())
+if(hasTouch())
 {
     try
     {
