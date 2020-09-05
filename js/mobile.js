@@ -15,6 +15,8 @@ if(hasTouch())
         {
             var styleSheet = document.styleSheets[si];
 
+            alert(styleSheet);
+
             if(!styleSheet.rules) continue;
 
             for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
