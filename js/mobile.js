@@ -27,6 +27,8 @@ if(!hasTouch())
                     }
                     else if(styleSheet.rules[ri].cssRules)
                     {
+                        console.log(styleSheet.rules[ri].cssRules);
+                        
                         for(var rj = styleSheet.rules[ri].cssRules.length - 1; rj >= 0; rj--)
                         {
                             if(styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'))
