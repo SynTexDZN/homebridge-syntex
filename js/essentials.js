@@ -255,6 +255,8 @@ async function leavePage(previous, url)
     await Essentials.newTimeout(200);
 
     window.location.href = url;
+
+    document.getElementById(previous).style.opacity = 1;
 }
 
 function removeOverlaysDelay(btn, delay, show)
