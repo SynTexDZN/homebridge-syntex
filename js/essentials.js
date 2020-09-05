@@ -256,6 +256,8 @@ async function leavePage(previous, url)
 
     window.location.href = url;
 
+    await Essentials.newTimeout(3000);
+
     document.getElementById(previous).style.opacity = 1;
 }
 
