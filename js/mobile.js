@@ -7,15 +7,11 @@ function hasTouch()
 
 if(hasTouch())
 {
-    alert('Touch Gerät');
-
     try
     {
         for(var si in document.styleSheets)
         {
             var styleSheet = document.styleSheets[si];
-
-            alert(styleSheet);
 
             if(!styleSheet.rules) continue;
 
@@ -25,6 +21,8 @@ if(hasTouch())
 
                 if(styleSheet.rules[ri].selectorText.match(':hover'))
                 {
+                    alert(styleSheet.rules[ri]);
+
                     styleSheet.deleteRule(ri);
                 }
             }
