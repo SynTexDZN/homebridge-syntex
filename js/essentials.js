@@ -258,14 +258,14 @@ async function leavePage(previous, url)
         alert("Der Browser unterstützt das hashchange-Event!");
     }
     
-    function locationHashChanged() {
-        if (location.hash === "#irgendeinCoolesFeature") {
-            featureFunction();
-        }
-    }
-    
     window.onhashchange = locationHashChanged;
     window.location.href = url;
+}
+
+function locationHashChanged() {
+    if (location.hash === "#irgendeinCoolesFeature") {
+        document.getElementById(previous).style.opacity = 1;
+    }
 }
 
 function removeOverlaysDelay(btn, delay, show)
