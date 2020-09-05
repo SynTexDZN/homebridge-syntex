@@ -21,7 +21,7 @@ if(!hasTouch())
 
                     if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
                     {
-                        //styleSheet.deleteRule(ri);
+                        styleSheet.deleteRule(ri);
                     }
                     else if(styleSheet.rules[ri].cssRules)
                     {
