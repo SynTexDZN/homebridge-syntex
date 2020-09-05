@@ -243,7 +243,7 @@ SynTexPlatform.prototype = {
 
                                     if(error || stderr.includes('ERR!'))
                                     {
-                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                                        logger.log('error', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
                                     }
                                     else
                                     {
