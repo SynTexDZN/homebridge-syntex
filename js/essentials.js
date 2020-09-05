@@ -234,7 +234,7 @@ async function switchPage(previous, next, init)
     {
         document.getElementById(previous).style.opacity = 0;
 
-        await Essentials.newTimeout(300);
+        await Essentials.newTimeout(200);
     }
 
     document.getElementById(previous).style.display = 'none';
@@ -252,7 +252,7 @@ async function leavePage(previous, url)
 {
     document.getElementById(previous).style.opacity = 0;
 
-    await Essentials.newTimeout(300);
+    await Essentials.newTimeout(200);
 
     window.location.href = url;
 }
