@@ -34,6 +34,18 @@
         </div>
     </body>
 </html>
+<script type="module">
+
+    import { Query } from '/js/query.js';
+    import { Essentials } from '/js/essentials.js';
+
+    Query.SETUP(Essentials);
+    Essentials.SETUP(Query);
+
+    window.Query = Query;
+    window.Essentials = Essentials;
+
+</script>
 <script>
 
     var crossoverPlugins = JSON.parse('<%crossoverPlugins%>');
