@@ -76,7 +76,13 @@ input[type='radio']:active, input[type='radio']:checked
     border-width: 10px;
 }
 
-input[type='text']:focus, input[type='password']:focus, input[type='text']:hover, input[type='password']:hover, textarea:focus, textarea:hover
+input[type='text']:focus, input[type='password']:focus
+{
+    background: rgb(245, 245, 255);
+    color: rgb(20, 20, 30);
+}
+
+input[type='text']:hover, input[type='password']:hover, textarea:focus, textarea:hover
 {
     background: rgb(245, 245, 255);
     color: rgb(20, 20, 30);
@@ -653,14 +659,24 @@ canvas
         background: rgb(45, 45, 55);
     }
 
-    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled), .control-panel, .status-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+    .control-panel, .status-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
     {
         color: rgb(220, 220, 230);
     }
 
-    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled), h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+    h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
     {
         background: rgb(45, 45, 55);
+    }
+
+    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
+    {
+        background: rgb(45, 45, 55);
+    }
+
+    input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
+    {
+        color: rgb(220, 220, 230);
     }
 
     h2, p, label, input, textarea
