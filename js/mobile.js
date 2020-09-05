@@ -13,6 +13,8 @@ if(hasTouch())
         {
             var styleSheet = document.styleSheets[si];
 
+            alert(styleSheet.href);
+
             if(!styleSheet.rules) continue;
 
             for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
@@ -21,8 +23,6 @@ if(hasTouch())
 
                 if(styleSheet.rules[ri].selectorText.match(':hover'))
                 {
-                    alert(styleSheet.rules[ri]);
-
                     styleSheet.deleteRule(ri);
                 }
             }
