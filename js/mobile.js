@@ -5,7 +5,7 @@ function hasTouch()
         || navigator.msMaxTouchPoints > 0;
 }
 
-if(hasTouch())
+if(!hasTouch())
 {
     try
     {
@@ -13,15 +13,15 @@ if(hasTouch())
         {
             var styleSheet = document.styleSheets[si];
 
-            alert(styleSheet.href);
-
             if(styleSheet.rules)
             {
+                console.log(styleSheet);
+                
                 for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
                 {
                     if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
                     {
-                        alert(styleSheet.rules[ri].selectorText);
+                        console.log(styleSheet.rules[ri].selectorText);
 
                         styleSheet.deleteRule(ri);
                     }
