@@ -268,6 +268,18 @@ async function leavePage(previous, url)
 
         console.log(document.getElementsByTagName('script'));
 
+        for(var i = 0; i < document.getElementsByTagName('script').length; i++)
+        {
+            var script = document.createElement('script');
+
+            script.outerHTML = document.getElementsByTagName('script')[i].outerHTML;
+
+            var parent = document.getElementsByTagName('script')[i].parentElement;
+
+            parent.removeChild(document.getElementsByTagName('script')[i]);
+            parent.appendChild(script);
+        }
+
         //PageSETUP();
     }
 
