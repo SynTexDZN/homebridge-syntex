@@ -248,54 +248,63 @@ async function switchPage(previous, next, init)
     document.getElementById(next).style.opacity = 1;
 }
 
+var pageLoading = false;
+
 async function leavePage(previous, url)
 {
-    document.getElementById(previous).style.opacity = 0;
-
-    var pageContent = await Query.fetchURL(url, 3000);
-
-    console.log(pageContent);
-
-    if(pageContent != null)
+    if(!pageLoading)
     {
-        await Essentials.newTimeout(200);
+        pageLoading = true;
 
-        document.getElementsByTagName('body')[0].innerHTML = '<body' + eval(pageContent.split('<body')[1].split('</body>')) + '</body>';
+        document.getElementById(previous).style.opacity = 0;
 
-        document.getElementsByTagName('body')[0].style.opacity = 1;
+        var pageContent = await Query.fetchURL(url, 3000);
 
-        await Essentials.newTimeout(200);
+        console.log(pageContent);
 
-        console.log(document.getElementsByTagName('script'));
-
-        for(var i = 0; i < document.getElementsByTagName('script').length; i++)
+        if(pageContent != null)
         {
-            var script = document.createElement('script');
+            await Essentials.newTimeout(200);
 
-            script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
+            document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1].split('</body>')[0] + '</body>';
 
-            if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+            document.getElementsByTagName('body')[0].style.opacity = 1;
+
+            //window.history.replaceState(null, null, '?mac=' + device.mac + '&settings');
+
+            await Essentials.newTimeout(200);
+
+            for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
-                script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+                var script = document.createElement('script');
+
+                script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
+
+                if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+                {
+                    script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+                }
+
+                if(document.getElementsByTagName('script')[i].hasAttribute('async'))
+                {
+                    script.setAttribute('async', '');
+                }
+
+                if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
+                {
+                    script.setAttribute('defer', '');
+                }
+
+                var parent = document.getElementsByTagName('script')[i].parentElement;
+
+                parent.replaceChild(script, document.getElementsByTagName('script')[i]);
             }
-
-            if(document.getElementsByTagName('script')[i].hasAttribute('async'))
-            {
-                script.setAttribute('async', '');
-            }
-
-            if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
-            {
-                script.setAttribute('defer', '');
-            }
-
-            var parent = document.getElementsByTagName('script')[i].parentElement;
-
-            parent.replaceChild(script, document.getElementsByTagName('script')[i]);
         }
-    }
 
-    //window.location.href = url;
+        pageLoading = false;
+
+        //window.location.href = url;
+    }
 }
 
 function removeOverlaysDelay(btn, delay, show)
