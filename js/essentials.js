@@ -256,9 +256,7 @@ async function leavePage(previous, url)
 
     await Essentials.newTimeout(200);
 
-    document.getElementsByTagName('html')[0].innerHTML = '';
-
-    document.write(pageContent);
+    document.getElementsByTagName('body')[0].innerHTML = pageContent.split('<body>')[1].split('</body>')[0];
 
     //window.location.href = url;
 }
