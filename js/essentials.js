@@ -258,12 +258,16 @@ async function leavePage(previous, url)
 
     if(pageContent != null)
     {
+        await Essentials.newTimeout(200);
+
         document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1].split('</body>')[0];
 
         document.getElementsByTagName('body')[0].style.opacity = 1;
-    }
 
-    await Essentials.newTimeout(200);
+        await Essentials.newTimeout(200);
+
+        SETUP();
+    }
 
     //window.location.href = url;
 }
