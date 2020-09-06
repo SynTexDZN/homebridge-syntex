@@ -258,13 +258,23 @@ async function leavePage(previous, url)
 
         document.getElementById(previous).style.opacity = 0;
 
+        var timer = false;
+
+        setTimeout(function()
+        {
+            timer = true;
+        }, 200);
+
         var pageContent = await Query.fetchURL(url, 3000);
 
         console.log(pageContent);
 
         if(pageContent != null)
         {
-            await Essentials.newTimeout(200);
+            if(!timer)
+            {
+                await Essentials.newTimeout(200);
+            }
 
             document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
