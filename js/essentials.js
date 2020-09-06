@@ -266,7 +266,7 @@ async function leavePage(previous, url)
         {
             await Essentials.newTimeout(200);
 
-            document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1].split('</body>')[0] + '</body>';
+            document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
             document.getElementsByTagName('body')[0].style.opacity = 1;
 
