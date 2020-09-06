@@ -260,11 +260,13 @@ async function leavePage(previous, url)
     {
         await Essentials.newTimeout(200);
 
-        document.getElementsByTagName('body')[0].innerHTML = eval('<body' + pageContent.split('<body')[1].split('</body>') + '</body>');
+        document.getElementsByTagName('body')[0].innerHTML = '<body' + eval(pageContent.split('<body')[1].split('</body>')) + '</body>';
 
         document.getElementsByTagName('body')[0].style.opacity = 1;
 
         await Essentials.newTimeout(200);
+
+        console.log(document.getElementsByTagName('script'));
 
         //PageSETUP();
     }
