@@ -266,7 +266,7 @@ async function leavePage(previous, url)
 
         await Essentials.newTimeout(200);
 
-        SETUP();
+        PageSETUP();
     }
 
     //window.location.href = url;
