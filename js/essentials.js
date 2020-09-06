@@ -256,6 +256,8 @@ async function leavePage(previous, url)
 
     await Essentials.newTimeout(200);
 
+    document.getElementsByTagName('html')[0].innerHTML = '';
+
     document.write(pageContent);
 
     //window.location.href = url;
