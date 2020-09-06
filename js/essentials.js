@@ -266,16 +266,10 @@ async function leavePage(previous, url)
 
         await Essentials.newTimeout(200);
 
-        PageSETUP();
+        //PageSETUP();
     }
 
     //window.location.href = url;
-}
-
-function locationHashChanged() {
-    if (location.hash === "#irgendeinCoolesFeature") {
-        document.getElementById(previous).style.opacity = 1;
-    }
 }
 
 function removeOverlaysDelay(btn, delay, show)
