@@ -1,4 +1,4 @@
-var Query, PageSETUP;
+var Query;
 
 function versionCount(version)
 {
@@ -313,12 +313,9 @@ function newTimeout(ms)
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function SETUP(Q, P)
+function SETUP(Q)
 {
     Query = Q;
-    PageSETUP = P;
-
-    console.log(P);
 }
 
 export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
