@@ -252,14 +252,13 @@ async function leavePage(previous, url)
 {
     document.getElementById(previous).style.opacity = 0;
 
+    var pageContent = await Query.fetchURL(url, 3000);
+
     await Essentials.newTimeout(200);
 
-    if ("onhashchange" in window) {
-        alert("Der Browser unterstützt das hashchange-Event!");
-    }
-    
-    window.onhashchange = locationHashChanged;
-    window.location.href = url;
+    document.write(pageContent);
+
+    //window.location.href = url;
 }
 
 function locationHashChanged() {
