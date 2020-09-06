@@ -272,7 +272,22 @@ async function leavePage(previous, url)
         {
             var script = document.createElement('script');
 
-            script.outerHTML = document.getElementsByTagName('script')[i].outerHTML;
+            script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
+
+            if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+            {
+                script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+            }
+
+            if(document.getElementsByTagName('script')[i].hasAttribute('async'))
+            {
+                script.setAttribute('async', '');
+            }
+
+            if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
+            {
+                script.setAttribute('defer', '');
+            }
 
             var parent = document.getElementsByTagName('script')[i].parentElement;
 
