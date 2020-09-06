@@ -293,8 +293,6 @@ async function leavePage(previous, url)
 
             parent.replaceChild(script, document.getElementsByTagName('script')[i]);
         }
-
-        //PageSETUP();
     }
 
     //window.location.href = url;
