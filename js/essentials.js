@@ -295,6 +295,8 @@ function SETUP(Q, P)
 {
     Query = Q;
     PageSETUP = P;
+
+    console.log(P);
 }
 
 export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
