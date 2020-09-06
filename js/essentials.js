@@ -291,8 +291,7 @@ async function leavePage(previous, url)
 
             var parent = document.getElementsByTagName('script')[i].parentElement;
 
-            parent.removeChild(document.getElementsByTagName('script')[i]);
-            parent.appendChild(script);
+            parent.replaceChild(script, document.getElementsByTagName('script')[i]);
         }
 
         //PageSETUP();
