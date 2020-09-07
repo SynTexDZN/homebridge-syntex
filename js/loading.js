@@ -5,6 +5,6 @@ window.addEventListener("load", function ()
     setTimeout(function()
     {
         //document.getElementById("preloader").parentElement.removeChild(document.getElementById("preloader"));
-        document.getElementById("preloader").style.pointerEvents = none;
-    }, 300);
+        document.getElementById("preloader").style.pointerEvents = 'none';
+    }, 200);
 });
