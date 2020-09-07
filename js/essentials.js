@@ -256,7 +256,7 @@ async function leavePage(url)
     {
         pageLoading = true;
 
-        getElementById('preloader').style.opacity = 1;
+        document.getElementById('preloader').style.opacity = 1;
 
         var timer = false;
 
