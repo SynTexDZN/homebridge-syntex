@@ -265,6 +265,8 @@ async function leavePage(url)
 
         document.getElementsByTagName('body')[0].appendChild(preloader);
 
+        await Essentials.newTimeout(50);
+
         document.getElementById('preloader').style.opacity = 1;
 
         var timer = false;
