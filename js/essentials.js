@@ -283,7 +283,7 @@ async function leavePage(url)
                 await Essentials.newTimeout(200);
             }
 
-            document.getElementById('content').innerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
+            document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
 
             if(url.includes('syntex.local'))
             {
