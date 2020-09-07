@@ -287,7 +287,7 @@ async function leavePage(url)
 
             document.getElementsByTagName('body')[0].innerHTML += '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
-            preloader.style.opacity = 0;
+            document.getElementById('preloader').style.opacity = 0;
 
             if(url.includes('syntex.local'))
             {
