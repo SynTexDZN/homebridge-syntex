@@ -1,7 +1,11 @@
 <html>
     <body>
         <div id="content">
-            <script> document.getElementsByTagName('body')[0].setAttribute('onresize', 'repaintGraphs()'); </script>
+            <script>
+
+                document.getElementsByTagName('body')[0].setAttribute('onresize', 'repaintGraphs()');
+                
+            </script>
             <title class="loading-loop">Laden ..</title>
             <div class="main" id="infos" style="transition: .2s ease-in-out">
                 <div class="control-container"></div>
@@ -44,7 +48,6 @@
                     </div>
                 </form>
             </div>
-        
             <script type="module" defer>
 
                 import { Query } from '/js/query.js';
@@ -1016,7 +1019,7 @@
                         ctx.lineTo(i * (width + padding * 2) / 24, height + padding);
                         ctx.stroke();
                     }
-            /*
+                    /*
                     if(data.length < 75)
                     {
                         for(var i = 0; i < data.length; i++)

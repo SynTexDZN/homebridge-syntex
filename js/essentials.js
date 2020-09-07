@@ -286,7 +286,7 @@ async function leavePage(url)
                 await Essentials.newTimeout(1);
             }
 
-            document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
+            document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1].split('</body>')[0];
 
             for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
@@ -325,8 +325,6 @@ async function leavePage(url)
         }
 
         pageLoading = false;
-
-        //window.location.href = url;
     }
 }
 
