@@ -1,54 +1,56 @@
 <html>
     <title>Dashboard: Geräte</title>
-    <body id="body" style="transition: .2s ease-in-out; padding-bottom: 50px">
-        <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
-        <div class="main" style="margin-top: 10px; margin-bottom: 100px">
-            <p style="margin-bottom: 100px; margin-top: 20px">Geräte</p>
-            <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-                <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
-                <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
+    <body id="body">
+        <div id="content" style="transition: .2s ease-in-out; padding-bottom: 50px">
+            <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
+            <div class="main" style="margin-top: 10px; margin-bottom: 100px">
+                <p style="margin-bottom: 100px; margin-top: 20px">Geräte</p>
+                <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                    <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
+                    <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
+                </div>
+                <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
+                    <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px; display: none">
+                    <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
+                </div>
+                <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
+                    <div class="widget">
+                        <button class="widget-left" disabled>Geräte</button>
+                        <button class="widget-right gradient-blue" disabled>0</button>
+                    </div>
+                    <div class="widget">
+                        <button class="widget-left" disabled>Updates</button>
+                        <button class="widget-right gradient-purple" disabled>-</button>
+                    </div>
+                    <div class="widget">
+                        <button class="widget-left" disabled>Offline</button>
+                        <button class="widget-right gradient-red" disabled>0</button>
+                    </div>
+                    <div class="widget">
+                        <button class="widget-left" disabled>Online</button>
+                        <button class="widget-right gradient-green" disabled>-</button>
+                    </div>
+                </div>
+                <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
+                    <div>
+                        <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
+                    </div>
+                    <div>
+                        <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
+                    </div>
+                </div>
+                <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
+                    <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
+                    <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
+                </div>  
+                <div id="devices" style="margin-top: 100px; transition: .2s ease-in-out"></div>
             </div>
-            <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-                <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px; display: none">
-                <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
+            <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
+                <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+                <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="Essentials.leavePage('/create')">
+                <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
+                <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
             </div>
-            <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
-                <div class="widget">
-                    <button class="widget-left" disabled>Geräte</button>
-                    <button class="widget-right gradient-blue" disabled>0</button>
-                </div>
-                <div class="widget">
-                    <button class="widget-left" disabled>Updates</button>
-                    <button class="widget-right gradient-purple" disabled>-</button>
-                </div>
-                <div class="widget">
-                    <button class="widget-left" disabled>Offline</button>
-                    <button class="widget-right gradient-red" disabled>0</button>
-                </div>
-                <div class="widget">
-                    <button class="widget-left" disabled>Online</button>
-                    <button class="widget-right gradient-green" disabled>-</button>
-                </div>
-            </div>
-            <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
-                <div>
-                    <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
-                </div>
-                <div>
-                    <button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
-                </div>
-            </div>
-            <div id="toolbar" class="main" style="display: flex; margin-top: 100px">
-                <button id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-                <div id="rooms" style="display: flex; width: 100%; margin-left: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
-            </div>  
-            <div id="devices" style="margin-top: 100px; transition: .2s ease-in-out"></div>
-        </div>
-        <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-            <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="Essentials.leavePage('/create')">
-            <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
-            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
         </div>
     </body>
 </html>

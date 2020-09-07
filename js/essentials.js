@@ -256,8 +256,6 @@ async function leavePage(url)
     {
         pageLoading = true;
 
-        document.getElementsByTagName('body')[0].innerHTML = '';
-
         var preloader = document.createElement('div');
 
         preloader.setAttribute('id', 'preloader');
@@ -265,9 +263,7 @@ async function leavePage(url)
 
         document.getElementsByTagName('body')[0].appendChild(preloader);
 
-        await Essentials.newTimeout(50);
-
-        document.getElementById('preloader').style.opacity = 1;
+        preloader.style.opacity = 1;
 
         var timer = false;
 
@@ -287,7 +283,7 @@ async function leavePage(url)
                 await Essentials.newTimeout(200);
             }
 
-            document.getElementsByTagName('body')[0].innerHTML += '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
+            document.getElementById('content').innerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
 
             if(url.includes('syntex.local'))
             {
