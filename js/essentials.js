@@ -345,9 +345,11 @@ function SETUP(Q)
 {
     Query = Q;
 
-    window.onpopstate = function(event) {
-        alert("location: " + document.location);
+    window.onpopstate = function(event)
+    {
+        //alert("location: " + document.location);
         console.log(window.history.state);
+        location.reload();
     }
 }
 
