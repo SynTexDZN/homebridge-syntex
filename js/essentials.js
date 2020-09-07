@@ -256,7 +256,16 @@ async function leavePage(url)
     {
         pageLoading = true;
 
-        document.getElementById('preloader').style.opacity = 1;
+        document.getElementsByTagName('body')[0].innerHTML = '';
+
+        var preloader = document.createElement('div');
+
+        preloader.setAttribute('id', 'preloader');
+        preloader.innerHTML = '<div class="loader-4"><span></span></div>';
+
+        document.getElementsByTagName('body')[0].appendChild(preloader);
+
+        preloader.style.opacity = 1;
 
         var timer = false;
 
@@ -276,9 +285,9 @@ async function leavePage(url)
                 await Essentials.newTimeout(200);
             }
 
-            document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
+            document.getElementsByTagName('body')[0].innerHTML += '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
-            document.getElementById('preloader').style.opacity = 0;
+            preloader.style.opacity = 0;
 
             if(url.includes('syntex.local'))
             {
