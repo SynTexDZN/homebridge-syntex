@@ -258,6 +258,7 @@ async function leavePage(url)
 
         document.getElementById('preloader').style.opacity = 1;
         document.getElementById('preloader').style.pointerEvents = 'all';
+        document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
         document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
 
         var timer = false;
@@ -279,8 +280,6 @@ async function leavePage(url)
             {
                 window.history.replaceState(null, null, url);
             }
-
-            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
 
             if(!timer)
             {
@@ -321,6 +320,8 @@ async function leavePage(url)
 
             setTimeout(function()
             {
+                document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition  = '0s';
+                document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
                 document.getElementById('preloader').style.pointerEvents = 'none';
             }, 200);
         }
