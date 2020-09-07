@@ -1147,7 +1147,7 @@
                     await Essentials.switchPage(previous, 'settings', false);
 
                     document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
-                    window.history.replaceState(null, null, '?mac=' + device.mac + '&settings');
+                    window.history.pushState(null, null, '?mac=' + device.mac + '&settings');
                 }
                 
                 async function closeSettings(previous)
@@ -1155,7 +1155,7 @@
                     await Essentials.switchPage(previous, 'infos', false);
 
                     document.getElementsByTagName('title')[0].innerHTML = device.name;
-                    window.history.replaceState(null, null, '?mac=' + device.mac);
+                    window.history.pushState(null, null, '?mac=' + device.mac);
                     repaintGraphs();
                 }
 
@@ -1633,7 +1633,7 @@
                 
                 function redirect()
                 {
-                    window.history.replaceState(null, null, '?mac=' + device.mac);
+                    window.history.pushState(null, null, '?mac=' + device.mac);
                     location.reload();
                 }
 

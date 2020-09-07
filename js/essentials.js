@@ -274,11 +274,11 @@ async function leavePage(url)
         {
             if(url.includes('syntex.local'))
             {
-                window.history.pushState({ url : url }, null, url.split('syntex.local')[1]);
+                window.history.pushState(null, null, url.split('syntex.local')[1]);
             }
             else
             {
-                window.history.pushState({ url : 'http://syntex.local' + url }, null, url);
+                window.history.pushState(null, null, url);
             }
 
             while(!timer)
@@ -347,8 +347,6 @@ function SETUP(Q)
 
     window.onpopstate = function(event)
     {
-        //alert("location: " + document.location);
-        console.log(window.history.state);
         location.reload();
     }
 }

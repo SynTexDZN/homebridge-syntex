@@ -156,21 +156,21 @@
                 {
                     await Essentials.switchPage(previous, 'add', false);
 
-                    window.history.replaceState(null, null, '/automations?add');
+                    window.history.pushState(null, null, '/automations?add');
                 }
 
                 async function openEditPage(previous)
                 {
                     await Essentials.switchPage(previous, 'edit', false);
 
-                    window.history.replaceState(null, null, '/automations?edit');
+                    window.history.pushState(null, null, '/automations?edit');
                 }
 
                 async function openViewPage(previous)
                 {
                     await Essentials.switchPage(previous, 'view', false);
 
-                    window.history.replaceState(null, null, '/automations');
+                    window.history.pushState(null, null, '/automations');
                 }
 
                 function createAutomationPanels()

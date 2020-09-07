@@ -352,11 +352,11 @@
                         {
                             if(room == 'all')
                             {
-                                window.history.replaceState(null, null, '/');
+                                window.history.pushState(null, null, '/');
                             }
                             else
                             {
-                                window.history.replaceState(null, null, '?room=' + room);
+                                window.history.pushState(null, null, '?room=' + room);
                             }
 
                             document.getElementById('devices').style.opacity = 0;
