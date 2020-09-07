@@ -287,8 +287,6 @@ async function leavePage(url)
 
             document.getElementsByTagName('body')[0].innerHTML += '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
-            document.getElementById('preloader').style.opacity = 0;
-
             if(url.includes('syntex.local'))
             {
                 window.history.replaceState(null, null, url.split('syntex.local')[1]);
@@ -299,6 +297,8 @@ async function leavePage(url)
             }
 
             await Essentials.newTimeout(200);
+
+            document.getElementById('preloader').style.opacity = 0;
 
             for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
