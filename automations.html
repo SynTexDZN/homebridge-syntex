@@ -1,462 +1,464 @@
 <html>
     <title>Dashboard: Automation</title>
-    <body id="body" style="transition: .2s ease-in-out">
-        <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
-        <div class="main" style="margin-top: 10px; margin-bottom: 100px">
-            <p style="margin-bottom: 100px; margin-top: 20px">Automation</p>
-            <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-                <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
-                <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
-            </div>
-            <div class="main" style="margin-top: 10px; display: flex">
-                <input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px" disabled>
-                <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
-            </div>
-        </div>
-        <div id="view" style="transition: .2s ease-in-out">
-            <div class="main" id="automations" style="margin-bottom: 100px">
-                <div id="toolbar" class="main" style="display: flex; margin: 100px auto">
-                    <button id="view-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
-                    <input type="button" onclick="" value="Alle Automationen" class="white" style="margin-left: 20px">
+    <body id="body">
+        <div id="content" style="transition: .2s ease-in-out">
+            <h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
+            <div class="main" style="margin-top: 10px; margin-bottom: 100px">
+                <p style="margin-bottom: 100px; margin-top: 20px">Automation</p>
+                <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                    <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
+                    <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
+                </div>
+                <div class="main" style="margin-top: 10px; display: flex">
+                    <input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px" disabled>
+                    <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
                 </div>
             </div>
-            <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-                <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
+            <div id="view" style="transition: .2s ease-in-out">
+                <div class="main" id="automations" style="margin-bottom: 100px">
+                    <div id="toolbar" class="main" style="display: flex; margin: 100px auto">
+                        <button id="view-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(85%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+                        <input type="button" onclick="" value="Alle Automationen" class="white" style="margin-left: 20px">
+                    </div>
+                </div>
+                <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
+                    <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
+                </div>
             </div>
-        </div>
-        <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out"></div>
-        <div id="add" style="display: none; opacity: 0; transition: .2s ease-in-out">
-            <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
-                <div class="type-container">
-                    <div class="title-container" style="margin-bottom: 60px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+            <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out"></div>
+            <div id="add" style="display: none; opacity: 0; transition: .2s ease-in-out">
+                <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
+                    <div class="type-container">
+                        <div class="title-container" style="margin-bottom: 60px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+                        </div>
+                        <p><b>ID: <input type="button" style="max-width: 150px" disabled>
+                        <p style="margin-bottom: 40px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                     </div>
-                    <p><b>ID: <input type="button" style="max-width: 150px" disabled>
-                    <p style="margin-bottom: 40px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 60px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 60px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                        </div>
+                        <div id="trigger" style="text-align: center"></div>
                     </div>
-                    <div id="trigger" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 60px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 60px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                        </div>
+                        <div id="condition" style="text-align: center"></div>
                     </div>
-                    <div id="condition" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 60px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 60px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                        </div>
+                        <div id="result" style="text-align: center"></div>
                     </div>
-                    <div id="result" style="text-align: center"></div>
-                </div>
-                <div class="widget" id="infobox" style="margin-left: 0; display: none">
-                    <button class="widget-left gradient-red" disabled>Wichtig</button>
-                    <button class="widget-right" disabled>Mac Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>
-                </div>
-                <div class="navigation-panel">
-                    <div class="sticky-inset">
-                        <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="openViewPage('add')">
-                            <div style="display: block; width: 100%; margin-left: 20px">
-                                <input id="save-btn" type="submit" value="Erstellen">
+                    <div class="widget" id="infobox" style="margin-left: 0; display: none">
+                        <button class="widget-left gradient-red" disabled>Wichtig</button>
+                        <button class="widget-right" disabled>Mac Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>
+                    </div>
+                    <div class="navigation-panel">
+                        <div class="sticky-inset">
+                            <div style="display: flex">
+                                <input type="button" value="Zurück" onclick="openViewPage('add')">
+                                <div style="display: block; width: 100%; margin-left: 20px">
+                                    <input id="save-btn" type="submit" value="Erstellen">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+                import { Essentials } from '/js/essentials.js';
+
+                Query.SETUP(Essentials);
+                Essentials.SETUP(Query);
+
+                window.Query = Query;
+                window.Essentials = Essentials;
+
+                window.automations = [];
+                window.accessories = JSON.parse('<%accessories%>');
+
+                window.data = {
+                    motion: {
+                        active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    contact: {
+                        active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+                        inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    relais: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
+                    switch: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
+                    rain: {
+                        active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+                        inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    statelessswitch: {
+                        active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+                    humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+                    light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+                };  
+
+                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+
+                    automations = JSON.parse(a);
+
+                    createAutomationPanels();
+
+                    document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                });
+
+                var a = ['trigger', 'condition', 'result'];
+
+                for(var i = 0; i < a.length; i++)
+                {
+                    var addBtn = document.createElement('input');
+                    
+                    addBtn.setAttribute('value', '+');
+                    addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+                    addBtn.setAttribute('type', 'button');
+                    addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+                    addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 40px');
+
+                    document.getElementById(a[i]).appendChild(addBtn);
+                }
+
+                addTrigger();
+                addResult();
+
+                if((new URL(window.location.href)).searchParams.get('add') == '')
+                {
+                    Essentials.switchPage('view', 'add', true);
+                }
+                else if((new URL(window.location.href)).searchParams.get('edit') == '')
+                {
+                    Essentials.switchPage('view', 'edit', true);
+                }
+
+            </script>
+            <script>
+
+                async function openAddPage(previous)
+                {
+                    await Essentials.switchPage(previous, 'add', false);
+
+                    window.history.replaceState(null, null, '/automations?add');
+                }
+
+                async function openEditPage(previous)
+                {
+                    await Essentials.switchPage(previous, 'edit', false);
+
+                    window.history.replaceState(null, null, '/automations?edit');
+                }
+
+                async function openViewPage(previous)
+                {
+                    await Essentials.switchPage(previous, 'view', false);
+
+                    window.history.replaceState(null, null, '/automations');
+                }
+
+                function createAutomationPanels()
+                {
+                    for(var i = 0; i < automations.length; i++)
+                    {
+                        var title = document.createElement('h2');
+
+                        title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
+                        title.innerHTML = automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert');
+
+                        var titleContainer = document.createElement('div');
+
+                        titleContainer.setAttribute('class', 'title-container');
+
+                        titleContainer.appendChild(title);
+
+                        var typeContainer = document.createElement('button');
+
+                        typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
+                        typeContainer.setAttribute('class', 'type-container');
+                        typeContainer.appendChild(titleContainer);
+
+                        if(i == 0)
+                        {
+                            typeContainer.style.marginTop = '0';
+                        }
+
+                        var panel = document.createElement('button');
+                        var column = document.createElement('div');
+                        var category = document.createElement('div');
+
+                        column.style.display = 'flex';
+                        column.style.background = 'rgb(60, 60, 75)';
+
+                        category.innerHTML = 'AUSLÖSER';
+                        category.style.minWidth = '130px';
+                        category.style.maxWidth = '130px';
+                        category.style.background = 'rgb(80, 80, 90)';
+                        category.style.padding = '13px 18px 12px 18px';
+                        category.style.textAlign = 'center';
+
+                        column.appendChild(category);
+
+                        for(var j = 0; j < automations[i].trigger.length; j++)
+                        {
+                            var row = document.createElement('div');
+                            var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
+                            var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
+
+                            if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+                            {
+                                src = 'climate';
+                            }
+
+                            if(automations[i].trigger[j].name && automations[i].trigger[j].operation && automations[i].trigger[j].value)
+                            {
+                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
+                            }
+                        
+                            row.style.padding = '13px 18px 12px 18px';
+                            row.style.wordBreak = 'break-all';
+
+                            column.appendChild(row);
+                        }
+
+                        panel.appendChild(column);
+
+                        if(automations[i].condition && automations[i].condition.length > 0)
+                        {
+                            var column = document.createElement('div');
+                            var category = document.createElement('div');
+
+                            column.style.display = 'flex';
+                            column.style.marginTop = '3px';
+                            column.style.background = 'rgb(60, 60, 75)';
+
+                            category.innerHTML = 'BEDINGUNG';
+                            category.style.minWidth = '130px';
+                            category.style.maxWidth = '130px';
+                            category.style.background = 'rgb(80, 80, 90)';
+                            category.style.padding = '13px 18px 12px 18px';
+                            category.style.textAlign = 'center';
+
+                            column.appendChild(category);
+
+                            for(var j = 0; j < automations[i].condition.length; j++)
+                            {
+                                var row = document.createElement('div');
+                                var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
+                                var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
+
+                                if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+                                {
+                                    src = 'climate';
+                                }
+
+                                if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
+                                {
+                                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
+                                }
+
+                                row.style.padding = '13px 18px 12px 18px';
+                                row.style.wordBreak = 'break-all';
+
+                                column.appendChild(row);
+                            }
+
+                            panel.appendChild(column);
+                        }
+
+                        var column = document.createElement('div');
+                        var category = document.createElement('div');
+
+                        column.style.display = 'flex';
+                        column.style.marginTop = '3px';
+                        column.style.background = 'rgb(60, 60, 75)';
+
+                        category.innerHTML = 'AUSFÜHREN';
+                        category.style.minWidth = '130px';
+                        category.style.maxWidth = '130px';
+                        category.style.background = 'rgb(80, 80, 90)';
+                        category.style.padding = '13px 18px 12px 18px';
+                        category.style.textAlign = 'center';
+
+                        column.appendChild(category);
+
+                        for(var j = 0; j < automations[i].result.length; j++)
+                        {
+                            var row = document.createElement('div');
+                            var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+                            var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
+
+                            if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                            {
+                                src = 'climate';
+                            }
+
+                            if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
+                            {
+                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
+                            }
+                            else if(automations[i].result[j].url)
+                            {
+                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].result[j].url + '"';
+                            }
+
+                            row.style.padding = '13px 18px 12px 18px';
+                            row.style.wordBreak = 'break-all';
+
+                            column.appendChild(row);
+                        }
+
+                        panel.appendChild(column);
+
+                        panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
+                        
+                        typeContainer.appendChild(panel);
+                        document.getElementById('automations').appendChild(typeContainer);
+                    }
+                }
+
+                function addTrigger()
+                {
+                    var trigger = document.createElement('div');
+
+                    trigger.style.marginBottom = '40px';
+
+                    trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+                    trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
+                    trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
+                    trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
+                    trigger.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
+                    trigger.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
+                
+                    document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button')[0]);
+                }
+
+                function addCondition()
+                {
+                    var condition = document.createElement('div');
+
+                    condition.style.marginBottom = '40px';
+
+                    condition.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+                    condition.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
+                    condition.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
+                    condition.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
+                    condition.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
+                    condition.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
+                
+                    document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button')[0]);
+                }
+
+                function addResult()
+                {
+                    var result = document.createElement('div');
+
+                    result.style.marginBottom = '40px';
+
+                    result.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
+                    result.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
+                    result.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
+                    result.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
+                    result.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
+                    result.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
+                
+                    document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
+                }    
+
+                async function createAutomation()
+                {
+                    var automation = {};
+
+                    automation.id = parseInt(document.getElementById('add').getElementsByTagName('input')[0].value);
+                    automation.name = document.getElementById('add').getElementsByTagName('input')[1].value;
+                    automation.active = true;
+                    automation.trigger = [];
+
+                    for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
+                    {
+                        var t = document.getElementById('trigger').children[i], trigger = {};
+
+                        for(var j = 0; j < t.children.length; j++)
+                        {
+                            console.log(t, j);
+                            console.log(t.children[j]);
+                            console.log(t.children[j].getElementsByTagName('input'));
+
+                            trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].getElementsByTagName('input')[0].value;
+                        }
+
+                        automation.trigger.push(trigger);
+                    }
+
+                    if(document.getElementById('condition').childElementCount > 1)
+                    {
+                        automation.condition = [];
+
+                        for(var i = 0; i < document.getElementById('condition').children.length - 1; i++)
+                        {
+                            var c = document.getElementById('condition').children[i], condition = {};
+
+                            for(var j = 0; j < c.children.length; j++)
+                            {
+                                condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].getElementsByTagName('input')[0].value;
+                            }
+
+                            automation.condition.push(condition);
+                        }
+                    }
+
+                    automation.result = [];
+
+                    for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
+                    {
+                        var r = document.getElementById('result').children[i], result = {};
+
+                        for(var j = 0; j < r.children.length; j++)
+                        {
+                            result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].getElementsByTagName('input')[0].value;
+                        }
+
+                        automation.result.push(result);
+                    }
+
+                    console.log(automation);
+
+                    var overlays = {
+                        root : document.getElementById('save-btn'),
+                        id : 'save',
+                        pending : { value : 'Erstellen ..' },
+                        success : { value : 'Automation Erstellt!', remove : false },
+                        executeError : { value : 'Erstellung Fehlgeschlagen!' },
+                        connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                    };
+
+                    var created = await Query.complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
+
+                    if(created)
+                    {
+                        await Essentials.newTimeout(4000);
+
+                        Essentials.leavePage(window.location.href)
+                    }
+                }
+
+            </script>
         </div>
     </body>
 </html>
-<script type="module">
-
-    import { Query } from '/js/query.js';
-    import { Essentials } from '/js/essentials.js';
-
-    Query.SETUP(Essentials);
-    Essentials.SETUP(Query);
-
-    window.Query = Query;
-    window.Essentials = Essentials;
-
-    window.automations = [];
-    window.accessories = JSON.parse('<%accessories%>');
-
-    window.data = {
-        motion: {
-            active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-        },
-        contact: {
-            active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-            inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
-        },
-        relais: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        switch: {
-            active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-            inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-        },
-        rain: {
-            active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-            inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
-        },
-        statelessswitch: {
-            active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-            inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-        },
-        temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-        humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-        light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-    };  
-
-    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
-
-        automations = JSON.parse(a);
-
-        createAutomationPanels();
-
-        document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
-    });
-
-    var a = ['trigger', 'condition', 'result'];
-
-    for(var i = 0; i < a.length; i++)
-    {
-        var addBtn = document.createElement('input');
-        
-        addBtn.setAttribute('value', '+');
-        addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
-        addBtn.setAttribute('type', 'button');
-        addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-        addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 40px');
-
-        document.getElementById(a[i]).appendChild(addBtn);
-    }
-
-    addTrigger();
-    addResult();
-
-    if((new URL(window.location.href)).searchParams.get('add') == '')
-    {
-        Essentials.switchPage('view', 'add', true);
-    }
-    else if((new URL(window.location.href)).searchParams.get('edit') == '')
-    {
-        Essentials.switchPage('view', 'edit', true);
-    }
-
-</script>
-<script>
-
-    async function openAddPage(previous)
-    {
-        await Essentials.switchPage(previous, 'add', false);
-
-        window.history.replaceState(null, null, '/automations?add');
-    }
-
-    async function openEditPage(previous)
-    {
-        await Essentials.switchPage(previous, 'edit', false);
-
-        window.history.replaceState(null, null, '/automations?edit');
-    }
-
-    async function openViewPage(previous)
-    {
-        await Essentials.switchPage(previous, 'view', false);
-
-        window.history.replaceState(null, null, '/automations');
-    }
-
-    function createAutomationPanels()
-    {
-        for(var i = 0; i < automations.length; i++)
-        {
-            var title = document.createElement('h2');
-
-            title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
-            title.innerHTML = automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert');
-
-            var titleContainer = document.createElement('div');
-
-            titleContainer.setAttribute('class', 'title-container');
-
-            titleContainer.appendChild(title);
-
-            var typeContainer = document.createElement('button');
-
-            typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
-            typeContainer.setAttribute('class', 'type-container');
-            typeContainer.appendChild(titleContainer);
-
-            if(i == 0)
-            {
-                typeContainer.style.marginTop = '0';
-            }
-
-            var panel = document.createElement('button');
-            var column = document.createElement('div');
-            var category = document.createElement('div');
-
-            column.style.display = 'flex';
-            column.style.background = 'rgb(60, 60, 75)';
-
-            category.innerHTML = 'AUSLÖSER';
-            category.style.minWidth = '130px';
-            category.style.maxWidth = '130px';
-            category.style.background = 'rgb(80, 80, 90)';
-            category.style.padding = '13px 18px 12px 18px';
-            category.style.textAlign = 'center';
-
-            column.appendChild(category);
-
-            for(var j = 0; j < automations[i].trigger.length; j++)
-            {
-                var row = document.createElement('div');
-                var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
-                var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
-
-                if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
-                {
-                    src = 'climate';
-                }
-
-                if(automations[i].trigger[j].name && automations[i].trigger[j].operation && automations[i].trigger[j].value)
-                {
-                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
-                }
-            
-                row.style.padding = '13px 18px 12px 18px';
-                row.style.wordBreak = 'break-all';
-
-                column.appendChild(row);
-            }
-
-            panel.appendChild(column);
-
-            if(automations[i].condition && automations[i].condition.length > 0)
-            {
-                var column = document.createElement('div');
-                var category = document.createElement('div');
-
-                column.style.display = 'flex';
-                column.style.marginTop = '3px';
-                column.style.background = 'rgb(60, 60, 75)';
-
-                category.innerHTML = 'BEDINGUNG';
-                category.style.minWidth = '130px';
-                category.style.maxWidth = '130px';
-                category.style.background = 'rgb(80, 80, 90)';
-                category.style.padding = '13px 18px 12px 18px';
-                category.style.textAlign = 'center';
-
-                column.appendChild(category);
-
-                for(var j = 0; j < automations[i].condition.length; j++)
-                {
-                    var row = document.createElement('div');
-                    var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
-                    var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
-
-                    if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
-                    {
-                        src = 'climate';
-                    }
-
-                    if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
-                    {
-                        row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
-                    }
-
-                    row.style.padding = '13px 18px 12px 18px';
-                    row.style.wordBreak = 'break-all';
-
-                    column.appendChild(row);
-                }
-
-                panel.appendChild(column);
-            }
-
-            var column = document.createElement('div');
-            var category = document.createElement('div');
-
-            column.style.display = 'flex';
-            column.style.marginTop = '3px';
-            column.style.background = 'rgb(60, 60, 75)';
-
-            category.innerHTML = 'AUSFÜHREN';
-            category.style.minWidth = '130px';
-            category.style.maxWidth = '130px';
-            category.style.background = 'rgb(80, 80, 90)';
-            category.style.padding = '13px 18px 12px 18px';
-            category.style.textAlign = 'center';
-
-            column.appendChild(category);
-
-            for(var j = 0; j < automations[i].result.length; j++)
-            {
-                var row = document.createElement('div');
-                var src = Essentials.letterToType(automations[i].result[j].letters[0]);
-                var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
-
-                if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
-                {
-                    src = 'climate';
-                }
-
-                if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
-                {
-                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
-                }
-                else if(automations[i].result[j].url)
-                {
-                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].result[j].url + '"';
-                }
-
-                row.style.padding = '13px 18px 12px 18px';
-                row.style.wordBreak = 'break-all';
-
-                column.appendChild(row);
-            }
-
-            panel.appendChild(column);
-
-            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
-            
-            typeContainer.appendChild(panel);
-            document.getElementById('automations').appendChild(typeContainer);
-        }
-    }
-
-    function addTrigger()
-    {
-        var trigger = document.createElement('div');
-
-        trigger.style.marginBottom = '40px';
-
-        trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-        trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-        trigger.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
-        trigger.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
-    
-        document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button')[0]);
-    }
-
-    function addCondition()
-    {
-        var condition = document.createElement('div');
-
-        condition.style.marginBottom = '40px';
-
-        condition.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        condition.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-        condition.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-        condition.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-        condition.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
-        condition.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
-    
-        document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button')[0]);
-    }
-
-    function addResult()
-    {
-        var result = document.createElement('div');
-
-        result.style.marginBottom = '40px';
-
-        result.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-        result.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-        result.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-        result.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-        result.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
-        result.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
-    
-        document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
-    }    
-
-    async function createAutomation()
-    {
-        var automation = {};
-
-        automation.id = parseInt(document.getElementById('add').getElementsByTagName('input')[0].value);
-        automation.name = document.getElementById('add').getElementsByTagName('input')[1].value;
-        automation.active = true;
-        automation.trigger = [];
-
-        for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
-        {
-            var t = document.getElementById('trigger').children[i], trigger = {};
-
-            for(var j = 0; j < t.children.length; j++)
-            {
-                console.log(t, j);
-                console.log(t.children[j]);
-                console.log(t.children[j].getElementsByTagName('input'));
-
-                trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].getElementsByTagName('input')[0].value;
-            }
-
-            automation.trigger.push(trigger);
-        }
-
-        if(document.getElementById('condition').childElementCount > 1)
-        {
-            automation.condition = [];
-
-            for(var i = 0; i < document.getElementById('condition').children.length - 1; i++)
-            {
-                var c = document.getElementById('condition').children[i], condition = {};
-
-                for(var j = 0; j < c.children.length; j++)
-                {
-                    condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].getElementsByTagName('input')[0].value;
-                }
-
-                automation.condition.push(condition);
-            }
-        }
-
-        automation.result = [];
-
-        for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
-        {
-            var r = document.getElementById('result').children[i], result = {};
-
-            for(var j = 0; j < r.children.length; j++)
-            {
-                result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].getElementsByTagName('input')[0].value;
-            }
-
-            automation.result.push(result);
-        }
-
-        console.log(automation);
-
-        var overlays = {
-            root : document.getElementById('save-btn'),
-            id : 'save',
-            pending : { value : 'Erstellen ..' },
-            success : { value : 'Automation Erstellt!', remove : false },
-            executeError : { value : 'Erstellung Fehlgeschlagen!' },
-            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-        };
-
-        var created = await Query.complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
-
-        if(created)
-        {
-            await Essentials.newTimeout(4000);
-
-            Essentials.leavePage(window.location.href)
-        }
-    }
-
-</script>
