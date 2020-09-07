@@ -12,7 +12,7 @@
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="Essentials.leavePage('create', '/')">
+                            <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
                             <div style="display: block; width: 100%; margin-left: 20px">
                                 <input id="create-btn" type="submit" value="Weiter">
                             </div>
@@ -31,8 +31,8 @@
             <div class="main navigation-panel">
                 <div class="sticky-inset">
                     <div style="display: flex">
-                        <input type="button" value="Zurück" onclick="Essentials.leavePage('search', '/')">
-                        <input style="margin-left: 20px" type="button" value="Gerät Registriert?" onclick="Essentials.leavePage('search', '/reconnect')">
+                        <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
+                        <input style="margin-left: 20px" type="button" value="Gerät Registriert?" onclick="Essentials.leavePage('/reconnect')">
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@
             <div class="main navigation-panel">
                 <div class="sticky-inset">
                     <div style="display: flex">
-                        <input type="button" value="Zurück" onclick="Essentials.leavePage('wifi', '/')">
+                        <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
                         <input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px" type="button" value="Bitte Warten .." onclick="scanWifi(this)">
                     </div>
                 </div>
@@ -143,7 +143,7 @@
         {
             if(await Essentials.checkRestart('/serverside/check-restart'))
             {
-                Essentials.leavePage(url == '/setup' ? 'error' : 'success', url);
+                Essentials.leavePage(url);
             }
         }, 3000);
     }

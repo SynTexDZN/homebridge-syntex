@@ -250,13 +250,13 @@ async function switchPage(previous, next, init)
 
 var pageLoading = false;
 
-async function leavePage(previous, url)
+async function leavePage(url)
 {
     if(!pageLoading)
     {
         pageLoading = true;
 
-        document.getElementById(previous).style.opacity = 0;
+        getElementById('preloader').style.opacity = 1;
 
         var timer = false;
 
@@ -278,9 +278,16 @@ async function leavePage(previous, url)
 
             document.getElementsByTagName('body')[0].innerHTML = '<body' + pageContent.split('<body')[1]/*.split('</body>')[0] + '</body>'*/;
 
-            document.getElementsByTagName('body')[0].style.opacity = 1;
+            document.getElementById('preloader').style.opacity = 0;
 
-            //window.history.replaceState(null, null, '?mac=' + device.mac + '&settings');
+            if(url.includes('syntex.local'))
+            {
+                window.history.replaceState(null, null, url.split('syntex.local')[1]);
+            }
+            else
+            {
+                window.history.replaceState(null, null, url);
+            }
 
             await Essentials.newTimeout(200);
 

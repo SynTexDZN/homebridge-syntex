@@ -5,12 +5,12 @@
         <div class="main" style="margin-top: 10px; margin-bottom: 100px">
             <p style="margin-bottom: 100px; margin-top: 20px">Geräte</p>
             <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-                <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('body', '/')" style="margin-right: 20px" disabled>
-                <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('body', '/bridge')">
+                <input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
+                <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
             </div>
             <div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-                <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('body', '/automations')" style="margin-right: 20px; display: none">
-                <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('body', '/log')">
+                <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px; display: none">
+                <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
             </div>
             <div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
                 <div class="widget">
@@ -45,10 +45,10 @@
             <div id="devices" style="margin-top: 100px; transition: .2s ease-in-out"></div>
         </div>
         <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
-            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage('body', window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-            <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="Essentials.leavePage('body', '/create')">
-            <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('body', '/crossover')">
-            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('body', '/setup')">
+            <input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+            <input style="margin-bottom: 20px" type="button" value="Schalter Erstellen" onclick="Essentials.leavePage('/create')">
+            <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
+            <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
         </div>
     </body>
 </html>
@@ -162,7 +162,7 @@
 
             if(devices[i].mac != undefined)
             {
-                button.setAttribute('onclick', "Essentials.leavePage('body', '/device?mac=" + devices[i].mac + "')");
+                button.setAttribute('onclick', "Essentials.leavePage('/device?mac=" + devices[i].mac + "')");
             }
             else
             {
