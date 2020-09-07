@@ -256,16 +256,9 @@ async function leavePage(url)
     {
         pageLoading = true;
 
-        var preloader = document.createElement('div');
-
-        preloader.setAttribute('id', 'preloader');
-        preloader.innerHTML = '<div class="loader-4"><span></span></div>';
-
-        //document.getElementsByTagName('body')[0].appendChild(preloader);
-
         document.getElementById('preloader').style.opacity = 1;
-
-        //preloader.style.opacity = 1;
+        document.getElementById('preloader').style.pointerEvents = 'all';
+        document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
 
         var timer = false;
 
@@ -300,6 +293,7 @@ async function leavePage(url)
 
             document.getElementById('preloader').style.opacity = 0;
             document.getElementById('preloader').style.pointerEvents = 'none';
+            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
 
             for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
