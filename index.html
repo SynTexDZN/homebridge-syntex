@@ -51,793 +51,820 @@
                 <input style="margin-bottom: 20px" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
                 <input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
             </div>
-        </div>
-    </body>
-</html>
-<script type="module" defer>
+            <script type="module" defer>
 
-    import { Query } from '/js/query.js';
-    import { Essentials } from '/js/essentials.js';
+                import { Query } from '/js/query.js';
+                import { Essentials } from '/js/essentials.js';
 
-    Query.SETUP(Essentials);
-    Essentials.SETUP(Query);
+                Query.SETUP(Essentials);
+                Essentials.SETUP(Query);
 
-    window.Query = Query;
-    window.Essentials = Essentials;
+                window.Query = Query;
+                window.Essentials = Essentials;
 
-    window.devices = JSON.parse('<%devices%>');
-    window.offline = [];
-    window.update = [];
-    window.restarting = [];
-    window.updating = [];
-    window.real = [];
-    window.temp = '';
-    window.checkedUpdates = 0;
-    window.activationCounter = { active : 0, disabled : 0 };
-    window.deviceElements = document.getElementsByClassName('device');
-    window.updateCount = 0;
-    window.offlineCount = 0;
-    window.deviceCount = 0;
-    window.realDeviceCount = 0;
+                window.devices = JSON.parse('<%devices%>');
+                window.offline = [];
+                window.update = [];
+                window.restarting = [];
+                window.updating = [];
+                window.real = [];
+                window.temp = '';
+                window.checkedUpdates = 0;
+                window.activationCounter = { active : 0, disabled : 0 };
+                window.deviceElements = document.getElementsByClassName('device');
+                window.updateCount = 0;
+                window.offlineCount = 0;
+                window.deviceCount = 0;
+                window.realDeviceCount = 0;
 
-    console.log(devices);
-    
-    document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
-
-    devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
-    
-    for(const i in devices)
-    {
-        if(devices[i].mac != 'Bridge')
-        {
-            if(devices[i].ip != undefined && devices[i].active != undefined)
-            {
-                activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
-            }
-
-            if(temp != Essentials.getType(devices[i].services))
-            {
-                var title = document.createElement('h2');
-
-                title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
-                title.innerHTML = Essentials.getType(devices[i].services);
-
-                var titleContainer = document.createElement('div');
-
-                titleContainer.setAttribute('class', 'title-container');
-
-                titleContainer.appendChild(title);
+                console.log(devices);
                 
-                var typeDevices = document.createElement('div');
+                document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
 
-                typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
-                typeDevices.setAttribute('style', 'display: grid; grid-gap: 20px');
-                typeDevices.setAttribute('class', 'container');
-                /*
-                if(numOfType == 1)
+                devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
+                
+                for(const i in devices)
                 {
-                    typeDevices.style.gridTemplateColumns = '100%';
-                }
-                */
-                var typeContainer = document.createElement('div');
-
-                typeContainer.setAttribute('style', '');
-                typeContainer.setAttribute('class', 'type-container');
-                /*
-                if(numOfType == 1)
-                {
-                    typeDevices.style.gridTemplateColumns = '100%';
-                }
-                */
-                typeContainer.appendChild(titleContainer);
-                typeContainer.appendChild(typeDevices);
-                document.getElementById('devices').appendChild(typeContainer);
-            }
-
-            var button = document.createElement('button');
-
-            button.setAttribute('sensortype', Essentials.getType(devices[i].services));
-            button.setAttribute('version', devices[i].version);
-            button.setAttribute('id', devices[i].ip);
-            button.setAttribute('class', 'device');
-            button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
-
-            if(devices[i].room)
-            {
-                button.setAttribute('room', devices[i].room.toLowerCase());
-            }
-
-            button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
-
-            button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
-
-            if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
-            {
-                button.innerHTML += '<div class="connection">AKTIV</div>';
-            }
-            else
-            {
-                button.innerHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
-            }
-
-            button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
-
-            if(devices[i].mac != undefined)
-            {
-                button.setAttribute('onclick', "Essentials.leavePage('/device?mac=" + devices[i].mac + "')");
-            }
-            else
-            {
-                button.setAttribute('disabled', '');
-            }
-            
-            button.setAttribute('name', devices[i].name);
-
-            document.getElementById(Essentials.getType(devices[i].services)).appendChild(button);
-            
-            temp = Essentials.getType(devices[i].services);
-        }
-    }
-
-    checkConnection();
-
-    for(var i = 0; i < deviceElements.length; i++)
-    {
-        checkUpdates(deviceElements[i]);
-    }
-
-    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-        if(automations != null && automations.length > 0)
-        {
-            document.getElementById('a').style.display = '';
-        }
-    });
-
-    if(localStorage.getItem('view') == 'grid-view')
-    {
-        document.getElementById('toolbar').children[0].children[0].style.display = 'none';
-        document.getElementById('toolbar').children[0].children[1].style.display = '';
-        document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
-        document.getElementById('devices').className = 'grid-view';
-    }
-
-    var tmpRoom = [], rooms = [];
-
-    for(const i in devices)
-    {
-        if(devices[i].room && !tmpRoom.includes(devices[i].room.toLowerCase()))
-        {
-            rooms.push(devices[i].room);
-            tmpRoom.push(devices[i].room.toLowerCase());
-        }
-    }
-
-    rooms.sort();
-
-    for(const i in rooms)
-    {
-        var room = document.createElement('input');
-
-        room.setAttribute('type', 'button');
-        room.setAttribute('onclick', 'switchRoom("' + rooms[i].toLowerCase() + '", false)');
-        room.setAttribute('room', rooms[i].toLowerCase());
-        room.setAttribute('value', rooms[i]);
-        room.setAttribute('class', 'white');
-        room.setAttribute('style', 'margin-left: 20px; cursor: grab');
-        
-        document.getElementById('rooms').appendChild(room);
-    }
-
-    const roomBar = document.getElementById('rooms');
-
-    let pos = { top: 0, left: 0, x: 0, y: 0 };
-
-    const mouseDownHandler = function(e)
-    {
-        roomBar.style.cursor = 'grabbing';
-        roomBar.style.userSelect = 'none';
-
-        pos = {
-            left: roomBar.scrollLeft,
-            top: roomBar.scrollTop,
-            x: e.clientX,
-            y: e.clientY,
-        };
-
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-    };
-
-    const mouseMoveHandler = function(e)
-    {
-        const dx = e.clientX - pos.x;
-        const dy = e.clientY - pos.y;
-
-        roomBar.scrollTop = pos.top - dy;
-        roomBar.scrollLeft = pos.left - dx;
-        
-        for(var i = 0; i < roomBar.children.length; i++)
-        {
-            roomBar.children[i].style.pointerEvents = 'none';
-        }
-    };
-
-    const mouseUpHandler = function()
-    {
-        roomBar.style.cursor = 'grab';
-        roomBar.style.removeProperty('user-select');
-
-        for(var i = 0; i < roomBar.children.length; i++)
-        {
-            roomBar.children[i].style.pointerEvents = 'all';
-        }
-
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-    };
-
-    roomBar.addEventListener('mousedown', mouseDownHandler);
-
-    switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
-
-</script>
-<script>
-
-    function setupToolbar()
-    {
-        var room = (new URL(window.location.href)).searchParams.get('room');
-
-        activationCounter = { active : 0, disabled : 0 };
-        deviceCount = 0;
-        realDeviceCount = 0;
-        offlineCount = 0;
-        updateCount = 0;
-
-        for(var i = 0; i < devices.length; i++)
-        {
-            if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
-            {
-                deviceCount++;
-
-                if(offline.includes(devices[i].ip))
-                {
-                    offlineCount++;
-                }
-
-                if(update.includes(devices[i].ip))
-                {
-                    updateCount++;
-                }
-
-                if(devices[i].ip != undefined)
-                {
-                    if(devices[i].active != undefined)
+                    if(devices[i].mac != 'Bridge')
                     {
-                        realDeviceCount++;
-                        real.push(devices[i].ip);
-
-                        activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
-                    }
-                }
-            }
-        }
-
-        document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCount;
-        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
-        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCount;
-
-        if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
-        {
-            document.getElementById('activate-all').setAttribute('switch', 1);
-            document.getElementById('activate-all').setAttribute('class', 'gradient-green');
-            document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
-        }
-        else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
-        {
-            document.getElementById('activate-all').setAttribute('switch', 0);
-            document.getElementById('activate-all').setAttribute('class', 'gradient-red');
-            document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
-        }
-        else
-        {
-            document.getElementById('activate-all').setAttribute('switch', 0);
-            document.getElementById('activate-all').setAttribute('class', '');
-            document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
-        }
-    }
-
-    async function switchRoom(room, init)
-    {
-        if(init || (((new URL(window.location.href)).searchParams.get('room') || room != 'all') && (new URL(window.location.href)).searchParams.get('room') != room))
-        {
-            if(!init)
-            {
-                if(room == 'all')
-                {
-                    window.history.replaceState(null, null, '/');
-                }
-                else
-                {
-                    window.history.replaceState(null, null, '?room=' + room);
-                }
-
-                document.getElementById('devices').style.opacity = 0;
-
-                //Essentials.removeOverlays(document.getElementById('restart-all'), true);
-
-                await Essentials.newTimeout(300);
-
-                setupToolbar();
-            }
-
-            for(var i = 0; i < document.getElementById('devices').children.length; i++)
-            {
-                document.getElementById('devices').children[i].style.display = 'none';
-
-                for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
-                {
-                    var r = document.getElementById('devices').children[i].children[1].children[j];
-
-                    if(r.getAttribute('room') != room && room != 'all')
-                    {
-                        r.style.display = 'none';
-                    }
-                    else
-                    {
-                        r.style.display = '';
-                        document.getElementById('devices').children[i].style.display = '';
-                    }
-                }
-            }
-
-            for(var i = 0; i < document.getElementById('rooms').children.length; i++)
-            {
-                var r = document.getElementById('rooms').children[i];
-
-                if(r.getAttribute('room') == room)
-                {
-                    r.className = 'room-active';
-                    //r.style.filter = 'brightness(60%)';
-                }
-                else
-                {
-                    r.className = 'white';
-                    //r.style.filter = '';
-                }
-            }
-
-            document.getElementById('devices').style.opacity = 1;
-        }
-    }
-
-    function switchView(btn)
-    {
-        if(btn.getAttribute('view') == 'grid')
-        {
-            btn.children[0].style.display = '';
-            btn.children[1].style.display = 'none';
-
-            document.getElementById('devices').className = '';
-
-            localStorage.setItem('view', 'list-view');
-            btn.setAttribute('view', 'list');
-        }
-        else if(btn.getAttribute('view') == 'list')
-        {
-            btn.children[0].style.display = 'none';
-            btn.children[1].style.display = '';
-
-            document.getElementById('devices').className = 'grid-view';
-
-            localStorage.setItem('view', 'grid-view');
-            btn.setAttribute('view', 'grid');
-        }
-    }
-
-</script>
-<script>
-
-    async function restartAll(btn)
-    {
-        if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
-        {
-            var restartCounter = { success : 0, error : 0, idle : 0 };
-
-            restarting = [];
-        
-            Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
-
-            for(var i = 0; i < devices.length; i++)
-            {
-                if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
-                {
-                    if(!restarting.includes(devices[i].ip))
-                    {
-                        restarting.push(devices[i].ip);
-
-                        Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
-
-                            restartCounter[result != null ? 'success' : 'error']++;
-
-                            if(restartCounter['success'] + restartCounter['error'] + restartCounter['idle'] >= realDeviceCount - offlineCount)
-                            {
-                                await Essentials.newTimeout(1000);
-
-                                var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' Geräten Neugestartet!';
-                                var color = 'yellow';
-
-                                if(restartCounter['success'] >= (realDeviceCount - restartCounter['idle']))
-                                {
-                                    responseText = 'Alle Geräte Neugestartet!';
-                                    color = 'green';
-                                }
-                                else if(restartCounter['success'] == 0)
-                                {
-                                    responseText = 'Keine Geräte Neugestartet!';
-                                    color = 'red';
-                                }
-
-                                Essentials.showOverlay(btn, Essentials.createOverlay(2, 'restart-all-result', responseText, color));
-                                
-                                Essentials.removeOverlaysDelay(btn, 4000, true);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        restartCounter['idle']++;
-                    }
-                }
-            }
-
-            if(restarting.length == 0)
-            {
-                Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', 'Keine Geräte zum Neustarten!'));
-                                
-                Essentials.removeOverlaysDelay(btn, 4000, true);
-            }
-        }
-    }
-
-</script>
-<script>
-
-    async function checkConnection()
-    {
-        var offline = await Query.fetchURL('/serverside/offline-devices', 10000);
-
-        if(offline != null)
-        {
-            offline = JSON.parse(offline);
-
-            for(var i = 0; i < deviceElements.length; i++)
-            {
-                if(offline.includes(deviceElements[i].id))
-                {
-                    setOffline(deviceElements[i]);
-                }
-                else
-                {
-                    setOnline(deviceElements[i]);
-                }
-            }
-
-            var room = (new URL(window.location.href)).searchParams.get('room');
-            var offlineCounter = 0;
-
-            for(var i = 0; i < devices.length; i++)
-            {
-                if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
-                {
-                    if(offline.includes(devices[i].ip))
-                    {
-                        offlineCounter++;
-                    }
-                }
-            }
-
-            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
-
-            await Essentials.newTimeout(10000);
-        }
-
-        checkConnection();
-    }
-    
-    function setOffline(device)
-    {
-        if(!device.className.includes('update'))
-        {
-            device.children[1].innerHTML = 'OFFLINE';
-            device.children[1].style.color = 'hsl(350, 95%, 60%)';
-        }
-
-        if(!offline.includes(device.getAttribute('id')))
-        {
-            offline.push(device.getAttribute('id'));
-
-            offlineCount++;
-        }
-    }
-
-    function setOnline(device)
-    {
-        if(!device.className.includes('update'))
-        {
-            if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
-            {
-                device.children[1].innerHTML = 'AKTIV';
-                device.children[1].style.color = 'hsl(170, 90%, 50%)';
-            }
-            else
-            {
-                device.children[1].innerHTML = 'INAKTIV';
-                device.children[1].style.color = 'rgb(130, 130, 150)';
-            }
-        }
-
-        if(offline.includes(device.getAttribute('id')))
-        {
-            offline.splice(offline.indexOf(device.getAttribute('id')), 1);
-
-            offlineCount--;
-        }
-    }
-
-</script>
-<script defer>
-    
-    async function checkUpdates(device)
-    {
-        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
-
-        if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
-        {  
-            device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
-            device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-
-            device.setAttribute('class', 'device update');
-            device.setAttribute('newest-version', newestVersion);
-
-            if(document.getElementById('update-all') == null)
-            {
-                var updateButton = document.createElement('input');
-
-                updateButton.setAttribute('type', 'button');
-                updateButton.setAttribute('id', 'update-all');
-                updateButton.setAttribute('value', 'Updates Installieren');
-                updateButton.setAttribute('onclick', 'installAllUpdates(this)');
-
-                document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
-            }
-
-            update.push(device.getAttribute('id'));
-
-            updateCount++;
-        }
-
-        checkedUpdates++;
-
-        if(checkedUpdates == deviceElements.length)
-        {
-            setupToolbar();
-        }
-    }
-    
-    function installAllUpdates(btn)
-    {
-        var updateDevices = document.getElementsByClassName('update');
-        var updateCounter = { success : 0, error : 0 };
-
-        Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
-
-        for(var i = 0; i < updateDevices.length; i++)
-        {
-            if(!offline.includes(updateDevices[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevices[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevices[i].getAttribute('room')))
-            {
-                updateDevice(updateDevices[i]).then(async function(update) {
-
-                    updateCounter[update == true ? 'success' : 'error']++;
-
-                    if(updateCounter['success'] + updateCounter['error'] >= updateCount)
-                    {
-                        var responseText = updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!';
-                        var color = 'yellow';
-
-                        if(updateCounter['success'] >= updateCount)
+                        if(devices[i].ip != undefined && devices[i].active != undefined)
                         {
-                            responseText = 'Alle Geräte Aktualisiert!';
-                            color = 'green';
+                            activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
                         }
-                        else if(updateCounter['success'] == 0)
+
+                        if(temp != Essentials.getType(devices[i].services))
                         {
-                            responseText = 'Keine Geräte Aktualisiert!';
-                            color = 'red';
+                            var title = document.createElement('h2');
+
+                            title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
+                            title.innerHTML = Essentials.getType(devices[i].services);
+
+                            var titleContainer = document.createElement('div');
+
+                            titleContainer.setAttribute('class', 'title-container');
+
+                            titleContainer.appendChild(title);
+                            
+                            var typeDevices = document.createElement('div');
+
+                            typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
+                            typeDevices.setAttribute('style', 'display: grid; grid-gap: 20px');
+                            typeDevices.setAttribute('class', 'container');
+                            /*
+                            if(numOfType == 1)
+                            {
+                                typeDevices.style.gridTemplateColumns = '100%';
+                            }
+                            */
+                            var typeContainer = document.createElement('div');
+
+                            typeContainer.setAttribute('style', '');
+                            typeContainer.setAttribute('class', 'type-container');
+                            /*
+                            if(numOfType == 1)
+                            {
+                                typeDevices.style.gridTemplateColumns = '100%';
+                            }
+                            */
+                            typeContainer.appendChild(titleContainer);
+                            typeContainer.appendChild(typeDevices);
+                            document.getElementById('devices').appendChild(typeContainer);
+                        }
+
+                        var button = document.createElement('button');
+
+                        button.setAttribute('sensortype', Essentials.getType(devices[i].services));
+                        button.setAttribute('version', devices[i].version);
+                        button.setAttribute('id', devices[i].ip);
+                        button.setAttribute('class', 'device');
+                        button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+                        if(devices[i].room)
+                        {
+                            button.setAttribute('room', devices[i].room.toLowerCase());
+                        }
+
+                        button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
+
+                        button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
+
+                        if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
+                        {
+                            button.innerHTML += '<div class="connection">AKTIV</div>';
+                        }
+                        else
+                        {
+                            button.innerHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
+                        }
+
+                        button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
+
+                        if(devices[i].mac != undefined)
+                        {
+                            button.setAttribute('onclick', "Essentials.leavePage('/device?mac=" + devices[i].mac + "')");
+                        }
+                        else
+                        {
+                            button.setAttribute('disabled', '');
                         }
                         
-                        Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', responseText, color));
+                        button.setAttribute('name', devices[i].name);
 
-                        await Essentials.newTimeout(4000);
+                        document.getElementById(Essentials.getType(devices[i].services)).appendChild(button);
+                        
+                        temp = Essentials.getType(devices[i].services);
+                    }
+                }
 
-                        Essentials.removeOverlays(btn, update.length == 0 ? false : true);
+                checkConnection();
 
-                        updateCount -= updateCounter['success'];
+                for(var i = 0; i < deviceElements.length; i++)
+                {
+                    checkUpdates(deviceElements[i]);
+                }
+
+                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+                    if(automations != null && automations.length > 0)
+                    {
+                        document.getElementById('a').style.display = '';
                     }
                 });
-            }
-            else
-            {
-                updateCounter['error']++;
-            }
-        }
 
-        if(updating.length == 0)
-        {
-            Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
-
-            Essentials.removeOverlaysDelay(btn, 4000, true);
-        }
-    }
-
-    function updateDevice(device)
-    {
-        return new Promise(async function(resolve) {
-
-            var response = false;
-
-            if(!updating.includes(device.getAttribute('id')))
-            {
-                updating.push(device.getAttribute('id'));
-
-                device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
-                device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
-
-                var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
-
-                if(update == null)
+                if(localStorage.getItem('view') == 'grid-view')
                 {
-                    device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-                    device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
-
-                    setTimeout(function() {
-
-                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.newestVersion;
-                        device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-
-                    }.bind({ newVersion : device.getAttribute('newest-version') }), 4000);
+                    document.getElementById('toolbar').children[0].children[0].style.display = 'none';
+                    document.getElementById('toolbar').children[0].children[1].style.display = '';
+                    document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
+                    document.getElementById('devices').className = 'grid-view';
                 }
-                else if(update == 'Success')
+
+                var tmpRoom = [], rooms = [];
+
+                for(const i in devices)
                 {
-                    setOnline(device);
-
-                    device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
-                    device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
-
-                    await Essentials.newTimeout(3000);
-                    
-                    var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
-
-                    if(update == device.getAttribute('newest-version'))
+                    if(devices[i].room && !tmpRoom.includes(devices[i].room.toLowerCase()))
                     {
-                        device.getElementsByClassName('connection')[0].style.color = '';
-                        device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
-
-                        device.className = 'device';
-
-                        document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
-
-                        update.splice(update.indexOf(device.getAttribute('id')), 1);
-
-                        response = true;
+                        rooms.push(devices[i].room);
+                        tmpRoom.push(devices[i].room.toLowerCase());
                     }
-                    else if(update != null)
+                }
+
+                rooms.sort();
+
+                for(const i in rooms)
+                {
+                    var room = document.createElement('input');
+
+                    room.setAttribute('type', 'button');
+                    room.setAttribute('onclick', 'switchRoom("' + rooms[i].toLowerCase() + '", false)');
+                    room.setAttribute('room', rooms[i].toLowerCase());
+                    room.setAttribute('value', rooms[i]);
+                    room.setAttribute('class', 'white');
+                    room.setAttribute('style', 'margin-left: 20px; cursor: grab');
+                    
+                    document.getElementById('rooms').appendChild(room);
+                }
+
+                const roomBar = document.getElementById('rooms');
+
+                let pos = { top: 0, left: 0, x: 0, y: 0 };
+
+                const mouseDownHandler = function(e)
+                {
+                    roomBar.style.cursor = 'grabbing';
+                    roomBar.style.userSelect = 'none';
+
+                    pos = {
+                        left: roomBar.scrollLeft,
+                        top: roomBar.scrollTop,
+                        x: e.clientX,
+                        y: e.clientY,
+                    };
+
+                    document.addEventListener('mousemove', mouseMoveHandler);
+                    document.addEventListener('mouseup', mouseUpHandler);
+                };
+
+                const mouseMoveHandler = function(e)
+                {
+                    const dx = e.clientX - pos.x;
+                    const dy = e.clientY - pos.y;
+
+                    roomBar.scrollTop = pos.top - dy;
+                    roomBar.scrollLeft = pos.left - dx;
+                    
+                    for(var i = 0; i < roomBar.children.length; i++)
                     {
-                        device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-                        device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+                        roomBar.children[i].style.pointerEvents = 'none';
+                    }
+                };
+
+                const mouseUpHandler = function()
+                {
+                    roomBar.style.cursor = 'grab';
+                    roomBar.style.removeProperty('user-select');
+
+                    for(var i = 0; i < roomBar.children.length; i++)
+                    {
+                        roomBar.children[i].style.pointerEvents = 'all';
+                    }
+
+                    document.removeEventListener('mousemove', mouseMoveHandler);
+                    document.removeEventListener('mouseup', mouseUpHandler);
+                };
+
+                roomBar.addEventListener('mousedown', mouseDownHandler);
+
+                switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
+
+            </script>
+            <script>
+
+                function setupToolbar()
+                {
+                    var room = (new URL(window.location.href)).searchParams.get('room');
+
+                    activationCounter = { active : 0, disabled : 0 };
+                    deviceCount = 0;
+                    realDeviceCount = 0;
+                    offlineCount = 0;
+                    updateCount = 0;
+
+                    for(var i = 0; i < devices.length; i++)
+                    {
+                        if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+                        {
+                            deviceCount++;
+
+                            if(offline.includes(devices[i].ip))
+                            {
+                                offlineCount++;
+                            }
+
+                            if(update.includes(devices[i].ip))
+                            {
+                                updateCount++;
+                            }
+
+                            if(devices[i].ip != undefined)
+                            {
+                                if(devices[i].active != undefined)
+                                {
+                                    realDeviceCount++;
+                                    real.push(devices[i].ip);
+
+                                    activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
+                                }
+                            }
+                        }
+                    }
+
+                    document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCount;
+                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
+                    document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCount;
+
+                    if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
+                    {
+                        document.getElementById('activate-all').setAttribute('switch', 1);
+                        document.getElementById('activate-all').setAttribute('class', 'gradient-green');
+                        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
+                    }
+                    else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
+                    {
+                        document.getElementById('activate-all').setAttribute('switch', 0);
+                        document.getElementById('activate-all').setAttribute('class', 'gradient-red');
+                        document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
                     }
                     else
                     {
-                        device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-                        device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
-                    }
-
-                    setTimeout(function() {
-
-                        if(this.d.className.includes('update'))
-                        {
-                            this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
-                            this.d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                        }
-                        else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
-                        {
-                            this.device.getElementsByClassName('connection')[0].style.color = '';
-                            this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
-                        }
-                        else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
-                        {
-                            this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                            this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
-                        }
-
-                    }.bind({ device : this.device, d : device }), 4000);
-                }
-
-                if(response == true && updateCount == 0)
-                {
-                    document.getElementById('update-all').style.opacity = 0;
-                }
-
-                await Essentials.newTimeout(300);
-
-                if(response == true)
-                {
-                    if(updateCount == 0)
-                    {
-                        document.getElementById('update-all').style.setProperty('height', '0', 'important');
-                        document.getElementById('update-all').style.paddingTop = 0;
-                        document.getElementById('update-all').style.paddingBottom = 0;
-                        document.getElementById('update-all').style.marginTop = 0;
-                        document.getElementById('update-all').style.marginBottom = 0;
-                        document.getElementById('update-all').style.borderTopWidth = 0;
-                        document.getElementById('update-all').style.borderBottomWidth = 0;
-                    }
-
-                    await Essentials.newTimeout(300);
-
-                    if(updateCount == 0)
-                    {
-                        document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
+                        document.getElementById('activate-all').setAttribute('switch', 0);
+                        document.getElementById('activate-all').setAttribute('class', '');
+                        document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
                     }
                 }
 
-                updating.splice(updating.indexOf(device.getAttribute('id')), 1);
-            }
-            
-            resolve(response);
-        });
-    }
-
-    async function switchAll(btn)
-    {
-        var switchCounter = { success : 0, error : 0, idle : 0 };
-
-        Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
-
-        for(var i = 0; i < devices.length; i++)
-        {
-            if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()) && real.includes(devices[i].ip))
-            {
-                var settings = {
-                    mac: devices[i].mac,
-                    active: btn.getAttribute('switch') == 1 ? 0 : 1
-                };
-
-                if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
+                async function switchRoom(room, init)
                 {
-                    if(!offline.includes(devices[i].ip))
+                    if(init || (((new URL(window.location.href)).searchParams.get('room') || room != 'all') && (new URL(window.location.href)).searchParams.get('room') != room))
                     {
-                        Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
-
-                            var d = document.getElementById(this.device.ip);
-
-                            switchCounter['success']++;
-
-                            this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
-                            d.setAttribute('active', this.active == 1 ? 'true' : 'false');
-
-                            if(!d.className.includes('update'))
+                        if(!init)
+                        {
+                            if(room == 'all')
                             {
-                                if(btn.getAttribute('switch') == 0)
+                                window.history.replaceState(null, null, '/');
+                            }
+                            else
+                            {
+                                window.history.replaceState(null, null, '?room=' + room);
+                            }
+
+                            document.getElementById('devices').style.opacity = 0;
+
+                            //Essentials.removeOverlays(document.getElementById('restart-all'), true);
+
+                            await Essentials.newTimeout(300);
+
+                            setupToolbar();
+                        }
+
+                        for(var i = 0; i < document.getElementById('devices').children.length; i++)
+                        {
+                            document.getElementById('devices').children[i].style.display = 'none';
+
+                            for(var j = 0; j < document.getElementById('devices').children[i].children[1].children.length; j++)
+                            {
+                                var r = document.getElementById('devices').children[i].children[1].children[j];
+
+                                if(r.getAttribute('room') != room && room != 'all')
                                 {
-                                    d.getElementsByClassName('connection')[0].style.color = '';
-                                    d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                                    r.style.display = 'none';
                                 }
                                 else
                                 {
-                                    d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-                                    d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                                    r.style.display = '';
+                                    document.getElementById('devices').children[i].style.display = '';
                                 }
+                            }
+                        }
+
+                        for(var i = 0; i < document.getElementById('rooms').children.length; i++)
+                        {
+                            var r = document.getElementById('rooms').children[i];
+
+                            if(r.getAttribute('room') == room)
+                            {
+                                r.className = 'room-active';
+                                //r.style.filter = 'brightness(60%)';
+                            }
+                            else
+                            {
+                                r.className = 'white';
+                                //r.style.filter = '';
+                            }
+                        }
+
+                        document.getElementById('devices').style.opacity = 1;
+                    }
+                }
+
+                function switchView(btn)
+                {
+                    if(btn.getAttribute('view') == 'grid')
+                    {
+                        btn.children[0].style.display = '';
+                        btn.children[1].style.display = 'none';
+
+                        document.getElementById('devices').className = '';
+
+                        localStorage.setItem('view', 'list-view');
+                        btn.setAttribute('view', 'list');
+                    }
+                    else if(btn.getAttribute('view') == 'list')
+                    {
+                        btn.children[0].style.display = 'none';
+                        btn.children[1].style.display = '';
+
+                        document.getElementById('devices').className = 'grid-view';
+
+                        localStorage.setItem('view', 'grid-view');
+                        btn.setAttribute('view', 'grid');
+                    }
+                }
+
+            </script>
+            <script>
+
+                async function restartAll(btn)
+                {
+                    if(document.getElementById('restart-all-pending') == null && document.getElementById('restart-all-result') == null)
+                    {
+                        var restartCounter = { success : 0, error : 0, idle : 0 };
+
+                        restarting = [];
+                    
+                        Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
+
+                        for(var i = 0; i < devices.length; i++)
+                        {
+                            if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                            {
+                                if(!restarting.includes(devices[i].ip))
+                                {
+                                    restarting.push(devices[i].ip);
+
+                                    Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
+
+                                        restartCounter[result != null ? 'success' : 'error']++;
+
+                                        if(restartCounter['success'] + restartCounter['error'] + restartCounter['idle'] >= realDeviceCount - offlineCount)
+                                        {
+                                            await Essentials.newTimeout(1000);
+
+                                            var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' Geräten Neugestartet!';
+                                            var color = 'yellow';
+
+                                            if(restartCounter['success'] >= (realDeviceCount - restartCounter['idle']))
+                                            {
+                                                responseText = 'Alle Geräte Neugestartet!';
+                                                color = 'green';
+                                            }
+                                            else if(restartCounter['success'] == 0)
+                                            {
+                                                responseText = 'Keine Geräte Neugestartet!';
+                                                color = 'red';
+                                            }
+
+                                            Essentials.showOverlay(btn, Essentials.createOverlay(2, 'restart-all-result', responseText, color));
+                                            
+                                            Essentials.removeOverlaysDelay(btn, 4000, true);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    restartCounter['idle']++;
+                                }
+                            }
+                        }
+
+                        if(restarting.length == 0)
+                        {
+                            Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', 'Keine Geräte zum Neustarten!'));
+                                            
+                            Essentials.removeOverlaysDelay(btn, 4000, true);
+                        }
+                    }
+                }
+
+            </script>
+            <script>
+
+                async function checkConnection()
+                {
+                    var offline = await Query.fetchURL('/serverside/offline-devices', 10000);
+
+                    if(offline != null)
+                    {
+                        offline = JSON.parse(offline);
+
+                        for(var i = 0; i < deviceElements.length; i++)
+                        {
+                            if(offline.includes(deviceElements[i].id))
+                            {
+                                setOffline(deviceElements[i]);
+                            }
+                            else
+                            {
+                                setOnline(deviceElements[i]);
+                            }
+                        }
+
+                        var room = (new URL(window.location.href)).searchParams.get('room');
+                        var offlineCounter = 0;
+
+                        for(var i = 0; i < devices.length; i++)
+                        {
+                            if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+                            {
+                                if(offline.includes(devices[i].ip))
+                                {
+                                    offlineCounter++;
+                                }
+                            }
+                        }
+
+                        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
+
+                        await Essentials.newTimeout(10000);
+                    }
+
+                    checkConnection();
+                }
+                
+                function setOffline(device)
+                {
+                    if(!device.className.includes('update'))
+                    {
+                        device.children[1].innerHTML = 'OFFLINE';
+                        device.children[1].style.color = 'hsl(350, 95%, 60%)';
+                    }
+
+                    if(!offline.includes(device.getAttribute('id')))
+                    {
+                        offline.push(device.getAttribute('id'));
+
+                        offlineCount++;
+                    }
+                }
+
+                function setOnline(device)
+                {
+                    if(!device.className.includes('update'))
+                    {
+                        if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
+                        {
+                            device.children[1].innerHTML = 'AKTIV';
+                            device.children[1].style.color = 'hsl(170, 90%, 50%)';
+                        }
+                        else
+                        {
+                            device.children[1].innerHTML = 'INAKTIV';
+                            device.children[1].style.color = 'rgb(130, 130, 150)';
+                        }
+                    }
+
+                    if(offline.includes(device.getAttribute('id')))
+                    {
+                        offline.splice(offline.indexOf(device.getAttribute('id')), 1);
+
+                        offlineCount--;
+                    }
+                }
+
+            </script>
+            <script defer>
+                
+                async function checkUpdates(device)
+                {
+                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
+
+                    if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
+                    {  
+                        device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
+                        device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+
+                        device.setAttribute('class', 'device update');
+                        device.setAttribute('newest-version', newestVersion);
+
+                        if(document.getElementById('update-all') == null)
+                        {
+                            var updateButton = document.createElement('input');
+
+                            updateButton.setAttribute('type', 'button');
+                            updateButton.setAttribute('id', 'update-all');
+                            updateButton.setAttribute('value', 'Updates Installieren');
+                            updateButton.setAttribute('onclick', 'installAllUpdates(this)');
+
+                            document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
+                        }
+
+                        update.push(device.getAttribute('id'));
+
+                        updateCount++;
+                    }
+
+                    checkedUpdates++;
+
+                    if(checkedUpdates == deviceElements.length)
+                    {
+                        setupToolbar();
+                    }
+                }
+                
+                function installAllUpdates(btn)
+                {
+                    var updateDevices = document.getElementsByClassName('update');
+                    var updateCounter = { success : 0, error : 0 };
+
+                    Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
+
+                    for(var i = 0; i < updateDevices.length; i++)
+                    {
+                        if(!offline.includes(updateDevices[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevices[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevices[i].getAttribute('room')))
+                        {
+                            updateDevice(updateDevices[i]).then(async function(update) {
+
+                                updateCounter[update == true ? 'success' : 'error']++;
+
+                                if(updateCounter['success'] + updateCounter['error'] >= updateCount)
+                                {
+                                    var responseText = updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!';
+                                    var color = 'yellow';
+
+                                    if(updateCounter['success'] >= updateCount)
+                                    {
+                                        responseText = 'Alle Geräte Aktualisiert!';
+                                        color = 'green';
+                                    }
+                                    else if(updateCounter['success'] == 0)
+                                    {
+                                        responseText = 'Keine Geräte Aktualisiert!';
+                                        color = 'red';
+                                    }
+                                    
+                                    Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', responseText, color));
+
+                                    await Essentials.newTimeout(4000);
+
+                                    Essentials.removeOverlays(btn, update.length == 0 ? false : true);
+
+                                    updateCount -= updateCounter['success'];
+                                }
+                            });
+                        }
+                        else
+                        {
+                            updateCounter['error']++;
+                        }
+                    }
+
+                    if(updating.length == 0)
+                    {
+                        Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
+
+                        Essentials.removeOverlaysDelay(btn, 4000, true);
+                    }
+                }
+
+                function updateDevice(device)
+                {
+                    return new Promise(async function(resolve) {
+
+                        var response = false;
+
+                        if(!updating.includes(device.getAttribute('id')))
+                        {
+                            updating.push(device.getAttribute('id'));
+
+                            device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
+                            device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
+
+                            var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
+
+                            if(update == null)
+                            {
+                                device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                                device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+
+                                setTimeout(function() {
+
+                                    device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.newestVersion;
+                                    device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+
+                                }.bind({ newVersion : device.getAttribute('newest-version') }), 4000);
+                            }
+                            else if(update == 'Success')
+                            {
+                                setOnline(device);
+
+                                device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
+                                device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
+
+                                await Essentials.newTimeout(3000);
+                                
+                                var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
+
+                                if(update == device.getAttribute('newest-version'))
+                                {
+                                    device.getElementsByClassName('connection')[0].style.color = '';
+                                    device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
+
+                                    device.className = 'device';
+
+                                    document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
+
+                                    update.splice(update.indexOf(device.getAttribute('id')), 1);
+
+                                    response = true;
+                                }
+                                else if(update != null)
+                                {
+                                    device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                                    device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+                                }
+                                else
+                                {
+                                    device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
+                                    device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+                                }
+
+                                setTimeout(function() {
+
+                                    if(this.d.className.includes('update'))
+                                    {
+                                        this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
+                                        this.d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                    }
+                                    else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
+                                    {
+                                        this.device.getElementsByClassName('connection')[0].style.color = '';
+                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                                    }
+                                    else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
+                                    {
+                                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                                    }
+
+                                }.bind({ device : this.device, d : device }), 4000);
+                            }
+
+                            if(response == true && updateCount == 0)
+                            {
+                                document.getElementById('update-all').style.opacity = 0;
+                            }
+
+                            await Essentials.newTimeout(300);
+
+                            if(response == true)
+                            {
+                                if(updateCount == 0)
+                                {
+                                    document.getElementById('update-all').style.setProperty('height', '0', 'important');
+                                    document.getElementById('update-all').style.paddingTop = 0;
+                                    document.getElementById('update-all').style.paddingBottom = 0;
+                                    document.getElementById('update-all').style.marginTop = 0;
+                                    document.getElementById('update-all').style.marginBottom = 0;
+                                    document.getElementById('update-all').style.borderTopWidth = 0;
+                                    document.getElementById('update-all').style.borderBottomWidth = 0;
+                                }
+
+                                await Essentials.newTimeout(300);
+
+                                if(updateCount == 0)
+                                {
+                                    document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
+                                }
+                            }
+
+                            updating.splice(updating.indexOf(device.getAttribute('id')), 1);
+                        }
+                        
+                        resolve(response);
+                    });
+                }
+
+                async function switchAll(btn)
+                {
+                    var switchCounter = { success : 0, error : 0, idle : 0 };
+
+                    Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
+
+                    for(var i = 0; i < devices.length; i++)
+                    {
+                        if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()) && real.includes(devices[i].ip))
+                        {
+                            var settings = {
+                                mac: devices[i].mac,
+                                active: btn.getAttribute('switch') == 1 ? 0 : 1
+                            };
+
+                            if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
+                            {
+                                if(!offline.includes(devices[i].ip))
+                                {
+                                    Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
+
+                                        var d = document.getElementById(this.device.ip);
+
+                                        switchCounter['success']++;
+
+                                        this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
+                                        d.setAttribute('active', this.active == 1 ? 'true' : 'false');
+
+                                        if(!d.className.includes('update'))
+                                        {
+                                            if(btn.getAttribute('switch') == 0)
+                                            {
+                                                d.getElementsByClassName('connection')[0].style.color = '';
+                                                d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+                                            }
+                                            else
+                                            {
+                                                d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                                d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+                                            }
+                                        }
+
+                                        if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
+                                        {
+                                            var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+                                            var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
+
+                                            if(switchCounter['error'] > 0)
+                                            {
+                                                responseText = 'Unterschiedlich';
+                                                color = 'gray';
+                                            }
+
+                                            btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
+                                            btn.setAttribute('class', 'gradient-' + color);
+                                            btn.innerHTML = 'Aktiv: ' + responseText;
+
+                                            Essentials.removeOverlays(btn, true);
+                                        }
+
+                                    }.bind({ active : settings.active, device : devices[i] }));
+                                }
+                                else
+                                {
+                                    switchCounter['idle']++;
+                                }
+                            }
+                            else
+                            {
+                                switchCounter['error']++;
                             }
 
                             if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
@@ -857,45 +884,18 @@
 
                                 Essentials.removeOverlays(btn, true);
                             }
-
-                        }.bind({ active : settings.active, device : devices[i] }));
+                        }
                     }
-                    else
+
+                    if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] == 0)
                     {
-                        switchCounter['idle']++;
+                        Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
+
+                        Essentials.removeOverlaysDelay(btn, 4000, true);
                     }
                 }
-                else
-                {
-                    switchCounter['error']++;
-                }
 
-                if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
-                {
-                    var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
-                    var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
-
-                    if(switchCounter['error'] > 0)
-                    {
-                        responseText = 'Unterschiedlich';
-                        color = 'gray';
-                    }
-
-                    btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
-                    btn.setAttribute('class', 'gradient-' + color);
-                    btn.innerHTML = 'Aktiv: ' + responseText;
-
-                    Essentials.removeOverlays(btn, true);
-                }
-            }
-        }
-
-        if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] == 0)
-        {
-            Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
-
-            Essentials.removeOverlaysDelay(btn, 4000, true);
-        }
-    }
-
-</script>
+            </script>
+        </div>
+    </body>
+</html>

@@ -35,240 +35,235 @@
                     </div>
                 </div>
             </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+                import { Essentials } from '/js/essentials.js';
+
+                Query.SETUP(Essentials);
+                Essentials.SETUP(Query);
+
+                window.Query = Query;
+                window.Essentials = Essentials;
+
+                window.bridgeIP = '<%ip%>';
+                window.bridgeVersion = '<%version%>';
+                window.webhooksVersion = ''
+                window.newestBVersion = ''
+                window.newestWVersion = '';
+                window.updating = { bridge : false, webhooks: false }
+                window.restarting = false;
+
+                console.log('Hallo Welt!');
+
+                document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
+                document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
+
+                Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
+
+                    if(version != null)
+                    {
+                        webhooksVersion = version;
+
+                        document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
+
+                        fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
+
+                            if(version != null)
+                            {
+                                newestWVersion = version;
+                            }
+                        });
+                    }
+                    else
+                    {
+                        document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
+                        document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                    }
+                });
+
+                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
+
+                    if(automations != null && automations.length > 0)
+                    {
+                        document.getElementById('a').style.display = '';
+                    }
+                });
+
+                fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
+
+                    if(version != null)
+                    {
+                        newestBVersion = version;
+                    }
+                });
+
+            </script>
             <script>
 
-                console.log('Master World');
+                function fetchPluginUpdates(label, index, version, name)
+                {
+                    return new Promise(async function(resolve) {
+
+                        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
+
+                        if(newestVersion != null)
+                        {
+                            label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
+                            
+                            var installedVersion = Essentials.versionCount(version);
+
+                            if(Essentials.versionCount(newestVersion) > installedVersion)
+                            {
+                                var updateButton = document.createElement('input');
+
+                                updateButton.setAttribute('type', 'button');
+                                updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
+                                updateButton.setAttribute('onclick', 'update' + name + '(this)');
+                                updateButton.setAttribute('id', 'update-btn-' + name.toLowerCase());
+
+                                if(document.getElementById('update-btn-bridge') != null)
+                                {
+                                    updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+                                }
+
+                                document.getElementsByClassName('navigation-panel')[0].children[0].appendChild(updateButton);
+
+                                document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '20px';
+                            }
+                        }
+                        else
+                        {
+                            label.innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                        }
+
+                        resolve(newestVersion);
+                    });
+                }
+
+                async function updateBridge(btn)
+                {
+                    if(!restarting && !updating['bridge'] && !updating['webhooks'])
+                    {
+                        var overlays = {
+                            root : btn,
+                            id : 'update',
+                            pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                            executeError : { value : 'Update Fehlgeschlagen!' },
+                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                        };
+
+                        updating['bridge'] = true;
+
+                        if(await Query.complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
+                        {
+                            await Essentials.newTimeout(3000);
+
+                            if(await Essentials.checkRestart('/serverside/check-restart'))
+                            {
+                                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
+
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                                bridgeVersion = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
+
+                                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + bridgeVersion;
+
+                                await Essentials.newTimeout(4000);
+
+                                Essentials.removeOverlays(btn, false);
+
+                                await Essentials.newTimeout(300);
+
+                                if(Essentials.versionCount(newestWVersion) <= Essentials.versionCount(webhooksVersion))
+                                {
+                                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
+                                }
+
+                                updating['bridge'] = false;
+                            }
+                        }
+                    }
+                }
+
+                async function updateWebhooks(btn)
+                {
+                    if(!restarting && !updating['webhooks'] && !updating['bridge'])
+                    {
+                        var overlays = {
+                            root : btn,
+                            id : 'update',
+                            pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                            executeError : { value : 'Update Fehlgeschlagen!' },
+                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                        };
+
+                        updating['webhooks'] = true;
+
+                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
+                        {
+                            await Essentials.newTimeout(3000);
+
+                            if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
+                            {
+                                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
+
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                                webhooksVersion = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
+
+                                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + webhooksVersion;
+
+                                await Essentials.newTimeout(4000);
+
+                                Essentials.removeOverlays(btn, false);
+
+                                await Essentials.newTimeout(300);
+
+                                if(Essentials.versionCount(newestBVersion) <= Essentials.versionCount(bridgeVersion))
+                                {
+                                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
+                                }
+
+                                updating['webhooks'] = false;
+                            }
+                        }
+                    }
+                }
+                
+                async function restartBridge(btn)
+                {
+                    if(!restarting && !updating['bridge'] && !updating['webhooks'])
+                    {
+                        var overlays = {
+                            root : btn,
+                            id : 'restart',
+                            pending : { value : 'Neustarten ..' },
+                            executeError : { value : 'Neustart Fehlgeschlagen!' },
+                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                        };
+
+                        restarting = true;
+
+                        if(await Query.complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
+                        {
+                            await Essentials.newTimeout(3000);
+
+                            if(await Essentials.checkRestart('/serverside/check-restart'))
+                            {
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+
+                                await Essentials.newTimeout(4000);
+
+                                Essentials.removeOverlays(btn, true);
+
+                                restarting = false;
+                            }
+                        }
+                    }
+                }
 
             </script>
         </div>
     </body>
 </html>
-<script type="module">
-
-    import { Query } from '/js/query.js';
-    import { Essentials } from '/js/essentials.js';
-
-    Query.SETUP(Essentials);
-    Essentials.SETUP(Query);
-
-    window.Query = Query;
-    window.Essentials = Essentials;
-
-    window.bridgeIP = '<%ip%>';
-    window.bridgeVersion = '<%version%>';
-    window.webhooksVersion = ''
-    window.newestBVersion = ''
-    window.newestWVersion = '';
-    window.updating = { bridge : false, webhooks: false }
-    window.restarting = false;
-
-    console.log('Hallo Welt!');
-
-    document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
-    document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
-
-    Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
-
-        if(version != null)
-        {
-            webhooksVersion = version;
-
-            document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
-
-            fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
-
-                if(version != null)
-                {
-                    newestWVersion = version;
-                }
-            });
-        }
-        else
-        {
-            document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
-            document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
-        }
-    });
-
-    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-        if(automations != null && automations.length > 0)
-        {
-            document.getElementById('a').style.display = '';
-        }
-    });
-
-    fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
-
-        if(version != null)
-        {
-            newestBVersion = version;
-        }
-    });
-
-</script>
-<script>
-
-    function fetchPluginUpdates(label, index, version, name)
-    {
-        return new Promise(async function(resolve) {
-
-            var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
-
-            if(newestVersion != null)
-            {
-                label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
-                
-                var installedVersion = Essentials.versionCount(version);
-
-                if(Essentials.versionCount(newestVersion) > installedVersion)
-                {
-                    var updateButton = document.createElement('input');
-
-                    updateButton.setAttribute('type', 'button');
-                    updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
-                    updateButton.setAttribute('onclick', 'update' + name + '(this)');
-                    updateButton.setAttribute('id', 'update-btn-' + name.toLowerCase());
-
-                    if(document.getElementById('update-btn-bridge') != null)
-                    {
-                        updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-                    }
-
-                    document.getElementsByClassName('navigation-panel')[0].children[0].appendChild(updateButton);
-
-                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '20px';
-                }
-            }
-            else
-            {
-                label.innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
-            }
-
-            resolve(newestVersion);
-        });
-    }
-
-    async function updateBridge(btn)
-    {
-        if(!restarting && !updating['bridge'] && !updating['webhooks'])
-        {
-            var overlays = {
-                root : btn,
-                id : 'update',
-                pending : { value : 'Update wird Installiert ..', color : 'purple' },
-                executeError : { value : 'Update Fehlgeschlagen!' },
-                connectionError : { value : 'Keine Verbindung zur Bridge!' }
-            };
-
-            updating['bridge'] = true;
-
-            if(await Query.complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
-            {
-                await Essentials.newTimeout(3000);
-
-                if(await Essentials.checkRestart('/serverside/check-restart'))
-                {
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
-
-                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                    bridgeVersion = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
-
-                    document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + bridgeVersion;
-
-                    await Essentials.newTimeout(4000);
-
-                    Essentials.removeOverlays(btn, false);
-
-                    await Essentials.newTimeout(300);
-
-                    if(Essentials.versionCount(newestWVersion) <= Essentials.versionCount(webhooksVersion))
-                    {
-                        document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
-                    }
-
-                    updating['bridge'] = false;
-                }
-            }
-        }
-    }
-
-    async function updateWebhooks(btn)
-    {
-        if(!restarting && !updating['webhooks'] && !updating['bridge'])
-        {
-            var overlays = {
-                root : btn,
-                id : 'update',
-                pending : { value : 'Update wird Installiert ..', color : 'purple' },
-                executeError : { value : 'Update Fehlgeschlagen!' },
-                connectionError : { value : 'Keine Verbindung zur Bridge!' }
-            };
-
-            updating['webhooks'] = true;
-
-            if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
-            {
-                await Essentials.newTimeout(3000);
-
-                if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
-                {
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
-
-                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                    webhooksVersion = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
-
-                    document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + webhooksVersion;
-
-                    await Essentials.newTimeout(4000);
-
-                    Essentials.removeOverlays(btn, false);
-
-                    await Essentials.newTimeout(300);
-
-                    if(Essentials.versionCount(newestBVersion) <= Essentials.versionCount(bridgeVersion))
-                    {
-                        document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
-                    }
-
-                    updating['webhooks'] = false;
-                }
-            }
-        }
-    }
-    
-    async function restartBridge(btn)
-    {
-        if(!restarting && !updating['bridge'] && !updating['webhooks'])
-        {
-            var overlays = {
-                root : btn,
-                id : 'restart',
-                pending : { value : 'Neustarten ..' },
-                executeError : { value : 'Neustart Fehlgeschlagen!' },
-                connectionError : { value : 'Keine Verbindung zur Bridge!' }
-            };
-
-            restarting = true;
-
-            if(await Query.complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
-            {
-                await Essentials.newTimeout(3000);
-
-                if(await Essentials.checkRestart('/serverside/check-restart'))
-                {
-                    Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-
-                    await Essentials.newTimeout(4000);
-
-                    Essentials.removeOverlays(btn, true);
-
-                    restarting = false;
-                }
-            }
-        }
-    }
-
-</script>
