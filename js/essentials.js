@@ -269,17 +269,8 @@ async function leavePage(url)
 
         var pageContent = await Query.fetchURL(url, 3000);
 
-        console.log(pageContent);
-
         if(pageContent != null)
         {
-            if(!timer)
-            {
-                await Essentials.newTimeout(200);
-            }
-
-            document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
-
             if(url.includes('syntex.local'))
             {
                 window.history.replaceState(null, null, url.split('syntex.local')[1]);
@@ -289,11 +280,14 @@ async function leavePage(url)
                 window.history.replaceState(null, null, url);
             }
 
-            await Essentials.newTimeout(200);
+            if(!timer)
+            {
+                await Essentials.newTimeout(200);
+            }
 
-            document.getElementById('preloader').style.opacity = 0;
-            document.getElementById('preloader').style.pointerEvents = 'none';
-            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
+            document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1]/*.split('</body>')[0] + '</body>'*/;
+
+            //await Essentials.newTimeout(200);
 
             for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
@@ -320,6 +314,10 @@ async function leavePage(url)
 
                 parent.replaceChild(script, document.getElementsByTagName('script')[i]);
             }
+
+            document.getElementById('preloader').style.opacity = 0;
+            document.getElementById('preloader').style.pointerEvents = 'none';
+            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
         }
 
         pageLoading = false;
