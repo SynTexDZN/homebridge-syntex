@@ -299,6 +299,7 @@ async function leavePage(url)
             await Essentials.newTimeout(200);
 
             document.getElementById('preloader').style.opacity = 0;
+            document.getElementById('preloader').style.pointerEvents = 'none';
 
             for(var i = 0; i < document.getElementsByTagName('script').length; i++)
             {
