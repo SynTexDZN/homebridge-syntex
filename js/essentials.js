@@ -344,6 +344,11 @@ function newTimeout(ms)
 function SETUP(Q)
 {
     Query = Q;
+
+    window.onpopstate = function(event) {
+        alert("location: " + document.location);
+        console.log(window.history.state);
+    }
 }
 
 export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
