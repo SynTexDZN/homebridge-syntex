@@ -265,7 +265,7 @@ async function leavePage(url)
 
         document.getElementsByTagName('body')[0].appendChild(preloader);
 
-        preloader.style.opacity = 1;
+        document.getElementById('preloader').style.opacity = 1;
 
         var timer = false;
 
