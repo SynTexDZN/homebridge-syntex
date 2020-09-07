@@ -274,11 +274,11 @@ async function leavePage(url)
         {
             if(url.includes('syntex.local'))
             {
-                window.history.pushState(null, null, url.split('syntex.local')[1]);
+                window.history.pushState({ url : url }, null, url.split('syntex.local')[1]);
             }
             else
             {
-                window.history.pushState(null, null, url);
+                window.history.pushState({ url : url }, null, url);
             }
 
             while(!timer)
