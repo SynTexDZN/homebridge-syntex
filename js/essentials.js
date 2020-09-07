@@ -280,6 +280,8 @@ async function leavePage(url)
                 window.history.replaceState(null, null, url);
             }
 
+            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
+
             if(!timer)
             {
                 await Essentials.newTimeout(200);
@@ -316,8 +318,11 @@ async function leavePage(url)
             }
 
             document.getElementById('preloader').style.opacity = 0;
-            document.getElementById('preloader').style.pointerEvents = 'none';
-            document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 0;
+
+            setTimeout(function()
+            {
+                document.getElementById('preloader').style.pointerEvents = 'none';
+            }, 200);
         }
 
         pageLoading = false;
