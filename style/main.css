@@ -4,6 +4,14 @@
 @font-face { font-family: 'Rubik'; font-weight: 300; src: local('Rubik'), url('/style/Rubik-Medium.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 200; src: local('Rubik'), url('/style/Rubik-Regular.ttf'); }
 
+:root
+{
+    --dark-layer-one: rgb(20, 20, 30);
+    --dark-layer-two: rgb(30, 30, 40);
+    --light-layer-one: rgb(220, 220, 230);
+    --light-layer-two: rgb(245, 245, 255);
+}
+
 *
 {
     font-family: Rubik;
@@ -23,7 +31,7 @@ body
 {
     margin: 0;
     padding: 50px 25px;
-    background: rgb(20, 20, 30);
+    background: var(--dark-layer-one);
 }
 
 img
@@ -45,14 +53,14 @@ b
     font-weight: 300;
 }
 
-input, textarea, button, select, .select-selected,  .select-items
+input, textarea, button, select, .select-selected, .select-items
 {
     height: 50px;
     width: 100%!important;
     background: transparent;
-    color: rgb(245, 245, 255);
+    color: var(--light-layer-two);
     outline: none;
-    border: 3px solid rgb(245, 245, 255);
+    border: 3px solid var(--light-layer-two);
     border-radius: 16px;
     font-size: 16px;
     transition: .2s ease-out;
@@ -84,18 +92,39 @@ input[type='radio']:active, input[type='radio']:checked
 
 input[type='text']:focus, input[type='password']:focus
 {
-    background: rgb(245, 245, 255);
-    color: rgb(20, 20, 30);
+    background: var(--light-layer-two);
+    color: var(--dark-layer-one);
 }
 
 input[type='text']:hover, input[type='password']:hover, textarea:focus, textarea:hover
 {
-    background: rgb(245, 245, 255);
-    color: rgb(20, 20, 30);
+    background: var(--light-layer-two);
+    color: var(--dark-layer-one);
 }
 
 input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
 {
+    filter: brightness(120%);
+    transition: .2s ease-out;
+}
+
+.gradient-blue:not(:disabled):not(.control-panel):hover,
+.gradient-blue-green:not(:disabled):not(.control-panel):hover,
+.gradient-blue-purple:not(:disabled):not(.control-panel):hover,
+.gradient-cyan:not(:disabled):not(.control-panel):hover,
+.gradient-green:not(:disabled):not(.control-panel):hover,
+.gradient-orange:not(:disabled):not(.control-panel):hover,
+.gradient-purple:not(:disabled):not(.control-panel):hover,
+.gradient-red:not(:disabled):not(.control-panel):hover,
+.gradient-yellow:not(:disabled):not(.control-panel):hover
+{
+    filter: brightness(75%)!important;
+}
+
+
+.select-items div:not(.same-as-selected):hover
+{
+    transition: .2s ease-out;
     filter: brightness(80%);
 }
 
@@ -130,7 +159,7 @@ input[type='button'], input[type='submit'], button
 {
     background: rgb(60, 60, 75);
     border-width: 0;
-    color: rgb(20, 20, 30); 
+    color: var(--dark-layer-one); 
 }
 
 input[type='submit']
@@ -140,14 +169,14 @@ input[type='submit']
 
 input[type='button'].white, button.white
 {
-    background: rgb(245, 245, 255);
+    background: var(--light-layer-two);
 }
 
 input[type='button']:disabled, .outline
 {
     background: transparent!important;
-    color: rgb(245, 245, 255)!important;
-    border: 3px solid rgb(245, 245, 255)!important;
+    color: var(--light-layer-two)!important;
+    border: 3px solid var(--light-layer-two)!important;
     opacity: 1!important;
 }
 
@@ -175,8 +204,8 @@ h1, h2
 
 h1
 {
-    background: rgb(245, 245, 255);
-    color: rgb(20, 20, 30);
+    background: var(--light-layer-two);
+    color: var(--dark-layer-one);
     margin-top: 50px;
 }
 
@@ -213,7 +242,7 @@ a
 
 p, label
 {
-    color: rgb(245, 245, 255);
+    color: var(--light-layer-two);
 }
 
 p, a, label
@@ -241,8 +270,8 @@ h2
     margin-bottom: 20px;
     border-width: 3px;
     background: transparent;
-    color: rgb(245, 245, 255);
-    border: 3px solid rgb(245, 245, 255);
+    color: var(--light-layer-two);
+    border: 3px solid var(--light-layer-two);
 }
 
 .indicator
@@ -250,7 +279,7 @@ h2
     width: 20px;
     height: 20px;
     border-radius: 100%;
-    border: 2px solid rgb(245, 245, 255);
+    border: 2px solid var(--light-layer-two);
     margin: auto 20px auto 20px;
     transition: .3s ease;
 }
@@ -265,7 +294,7 @@ h2
     background: hsl(150, 75%, 50%);
 }
 
-.control-container, .status-container
+.control-container
 {
     min-width: 60%;
     width: 100%;
@@ -276,10 +305,11 @@ h2
     grid-gap: 20px;
 }
 
-.control-panel, .status-panel
+.control-panel
 {
-    color: rgb(20, 20, 30);
-    background-image: linear-gradient(to top, rgb(245, 245, 255) 0%, rgb(205, 205, 215) 100%);
+    color: var(--dark-layer-one);
+    transition: .3s ease-in-out;
+    background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .05) 100%);
     border-width: 0;
     height: 150px;
     padding: 10px 60px;
@@ -288,27 +318,12 @@ h2
     letter-spacing: 20px;
     font-weight: 400!important;
 }
-
-.control-panel
-{
-    transition: .3s ease-in-out;
-    background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .05) 100%)!important;
-    /*
-    background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
-    background-attachment: fixed!important;
-    */
-}
 /*
 .control-panel:nth-of-type(2n)
 {
     background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
 }
 */
-.status-panel
-{
-    margin-top: 20px;
-}
-
 .gradient-red
 {
     background: transparent;
@@ -381,15 +396,15 @@ h2
 
 ::-webkit-scrollbar-track, ::-webkit-scrollbar
 {
-    background: rgb(245, 245, 255);
+    background: var(--light-layer-two);
     /*border-radius: 13px 0 0 13px!important;*/
     border-radius: 0!important;
 }
 
 ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner
 {
-    background: rgb(30, 30, 40);
-    border: 2px solid rgb(245, 245, 255);
+    background: var(--dark-layer-two);
+    border: 2px solid var(--light-layer-two);
     border-radius: 26px!important;
     min-height: 26px;
 }
@@ -400,7 +415,7 @@ textarea::-webkit-scrollbar-thumb
     border-bottom-width: 0;
 }
 
-textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar
+textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar
 {
     border-radius: 0 13px 13px 0!important;
 }
@@ -412,7 +427,7 @@ textarea
 
 *
 {
-    scrollbar-color: rgb(30, 30, 40) rgb(245, 245, 255);
+    scrollbar-color: var(--dark-layer-two) var(--light-layer-two);
 }
 
 ::-webkit-scrollbar-track
@@ -457,12 +472,12 @@ textarea
     font-weight: 200;
     letter-spacing: 3px;
     box-sizing: border-box;
-    box-shadow: 0 0px 1px rgba(0,0,0,0.04), 
-                0 1px 2px rgba(0,0,0,0.06), 
-                0 2px 4px rgba(0,0,0,0.08), 
-                0 4px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
+                0 1px 2px rgba(0, 0, 0, 0.06), 
+                0 2px 4px rgba(0, 0, 0, 0.08), 
+                0 4px 8px rgba(0, 0, 0, 0.10);
     border-width: 0;    
-    color: rgb(20, 20, 30);
+    color: var(--dark-layer-one);
     padding: auto;
     overflow: hidden;
     white-space: normal;
@@ -571,7 +586,7 @@ textarea
 
 #devices button
 {
-    color: rgb(220, 220, 230);
+    color: var(--light-layer-one);
 }
 
 .device-name
@@ -594,7 +609,7 @@ textarea
 
 .title-container
 {
-    background: rgb(20, 20, 30);
+    background: var(--dark-layer-one);
     border-radius: 16px;
 }
 
@@ -634,7 +649,7 @@ canvas
 {
     /*border-radius: 16px;*/
     /*-webkit-mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, .75) 3%, rgba(0, 0, 0, 1) 5%, rgba(0, 0, 0, 1) 95%, rgba(0, 0, 0, .75) 97%, transparent);*/
-    background: rgb(245, 245, 255);
+    background: var(--light-layer-two);
     border-radius: 16px;
 }
 
@@ -645,7 +660,7 @@ canvas
     -webkit-appearance: none;
     min-width: 150px;
     margin: 0!important;
-    border-left: 1px solid rgb(20, 20, 30);
+    border-left: 1px solid var(--dark-layer-one);
     border-radius: 0;
     padding: 5px 15px;
     word-break: break-word;
@@ -673,58 +688,144 @@ button img
     pointer-events: none;
 }
 
+.custom-select
+{
+    position: relative;
+}
+
+.select-selected, select
+{
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    outline: none!important;
+    text-align: left;
+    padding: 12px 20px;
+}
+
+.select-selected:after
+{
+    position: absolute;
+    content: "";
+    top: 23px;
+    right: 14px;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-color: var(--light-layer-two) transparent transparent transparent;
+}
+
+.select-selected.select-active:after
+{
+    top: 17px;
+    border-color: transparent transparent var(--dark-layer-one) transparent;
+}
+
+.select-selected.select-active
+{
+    background: var(--light-layer-two);
+    color: var(--dark-layer-one);
+}
+
+.custom-select > .select-items div
+{
+    cursor: pointer;
+    padding: 15px 23px;
+    text-align: left;
+    background: var(--light-layer-one);
+    color: var(--dark-layer-one);
+    transition: 0.2s background-color;
+    -webkit-transition: 0.2s background-color;
+    -moz-transition: 0.2s background-color;
+    -o-transition: 0.2s background-color;
+}
+
+.select-items
+{
+    position: absolute;
+    border-radius: 16px;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    max-height: 245px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: auto;
+    border-width: 0;
+}
+
+.custom-select select, .select-hide
+{
+    display: none;
+}
+
+.same-as-selected
+{
+    background: var(--light-layer-two)!important;
+    cursor: default!important;
+}
+
 @media(prefers-color-scheme: light)
 {
-    body
+    :root
     {
-        background: rgb(220, 220, 230);
+        --dark-layer-one: rgb(220, 220, 230);
+        --dark-layer-two: rgb(245, 245, 255);
+        --light-layer-one: rgb(45, 45, 55);
+        --light-layer-two: rgb(60, 60, 70);
     }
 
-    .control-panel, .status-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+    body
     {
-        color: rgb(220, 220, 230);
+        background: var(--dark-layer-one);
+    }
+
+    .control-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+    {
+        color: var(--dark-layer-one);
     }
 
     h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
     {
-        background: rgb(45, 45, 55);
+        background: var(--light-layer-one);
     }
 
     input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
     {
-        background: rgb(45, 45, 55);
+        background: var(--light-layer-one);
     }
 
     input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
     {
-        color: rgb(220, 220, 230);
+        color: var(--dark-layer-one);
     }
 
-    h2, p, label, input, textarea
+    h2, p, label, input, textarea, .select-selected
     {
-        color: rgb(45, 45, 55);
+        color: var(--light-layer-one);
     }
 
     .gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan
     {
-        color: rgb(45, 45, 55)!important;
+        color: var(--light-layer-one)!important;
     }
 
-    h2, input[type='button']:disabled, .outline, input, textarea
+    h2, input[type='button']:disabled, .outline, input, textarea, .select-selected
     {
-        border-color: rgb(45, 45, 55);
+        border-color: var(--light-layer-one);
     }
 
     .outline
     {
-        border-color: rgb(45, 45, 55)!important;
-        color: rgb(45, 45, 55)!important;
+        border-color: var(--light-layer-one)!important;
+        color: var(--light-layer-one)!important;
     }
 
     input[type='button']:disabled
     {
-        border-color: rgb(45, 45, 55)!important;
-        color: rgb(45, 45, 55)!important;
+        border-color: var(--light-layer-one)!important;
+        color: var(--light-layer-one)!important;
     }
 
     input:hover:not(.control-panel):not(:disabled):not([type='radio']), textarea:hover:not(:disabled)
@@ -732,9 +833,9 @@ button img
         border-color: rgba(45, 45, 55, 0);
     }
 
-    .control-panel, .status-panel
+    .control-panel
     {
-        background-image: linear-gradient(to top, rgb(45, 45, 55) 0%, rgb(25, 25, 35) 100%);
+        background-image: linear-gradient(to top, var(--light-layer-one) 0%, rgb(25, 25, 35) 100%);
     }
 
     .setup-png
@@ -744,41 +845,59 @@ button img
 
     input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
     {
-        filter: brightness(80%);
+        filter: brightness(150%);
+    }
+
+    .gradient-blue:not(:disabled):not(.control-panel):hover,
+    .gradient-blue-green:not(:disabled):not(.control-panel):hover,
+    .gradient-blue-purple:not(:disabled):not(.control-panel):hover,
+    .gradient-cyan:not(:disabled):not(.control-panel):hover,
+    .gradient-green:not(:disabled):not(.control-panel):hover,
+    .gradient-orange:not(:disabled):not(.control-panel):hover,
+    .gradient-purple:not(:disabled):not(.control-panel):hover,
+    .gradient-red:not(:disabled):not(.control-panel):hover,
+    .gradient-yellow:not(:disabled):not(.control-panel):hover
+    {
+        filter: brightness(90%)!important;
+    }
+
+    .select-items div:not(.same-as-selected):hover
+    {
+        filter: brightness(100%);
     }
 
     ::-webkit-scrollbar-track, ::-webkit-scrollbar
     {
-        background: rgb(45, 45, 55);
+        background: var(--light-layer-one);
     }
 
     ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner
     {
-        background: rgb(245, 245, 255);
-        border: 2px solid rgb(45, 45, 55);
+        background: var(--dark-layer-two);
+        border: 2px solid var(--light-layer-one);
     }
 
     *
     {
-        scrollbar-color: rgb(245, 245, 255) rgb(45, 45, 55);
+        scrollbar-color: var(--dark-layer-two) var(--light-layer-one);
     }
 
     input, textarea, button, .widget
     {
-        box-shadow: 0 1px 1px -1px rgba(0,0,0,0.2),
-                    0 2px 2px -1px rgba(0,0,0,0.15),
-                    0 4px 4px -2px rgba(0,0,0,0.15),
-                    0 8px 8px -2px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 1px -1px rgba(0, 0, 0, 0.2),
+                    0 2px 2px -1px rgba(0, 0, 0, 0.15),
+                    0 4px 4px -2px rgba(0, 0, 0, 0.15),
+                    0 8px 8px -2px rgba(0, 0, 0, 0.1);
     }
 
     .type-container
     {
-        background: rgb(245, 245, 255);
+        background: var(--dark-layer-two);
     }
 
     .title-container
     {
-        background: rgb(220, 220, 230);
+        background: var(--dark-layer-one);
     }
 
     .navigation-panel .sticky-inset
@@ -788,17 +907,45 @@ button img
 
     #rooms
     {
-        background: rgb(45, 45, 55);
+        background: var(--light-layer-one);
     }
 
     #rooms input
     {
-        border-color: rgb(220, 220, 230);
+        border-color: var(--dark-layer-one);
     }
 
     .room-active
     {
         background: rgb(110, 110, 120)!important;
+    }
+
+    .select-selected.select-active, .same-as-selected
+    {
+        background: var(--light-layer-one)!important;
+        color: var(--dark-layer-one)!important;
+    }
+
+    .select-selected:after
+    {
+        border-color: var(--light-layer-one) transparent transparent transparent;
+    }
+
+    .select-selected.select-active:after
+    {
+        border-color: transparent transparent var(--dark-layer-one) transparent;
+    }
+    
+    .custom-select > .select-items div
+    {
+        background: rgb(20, 20, 30);
+        color: var(--dark-layer-one);
+    }
+
+    .custom-select > .select-items div:hover
+    {
+        background: var(--light-layer-two);
+        color: var(--dark-layer-one);
     }
 }
 
@@ -830,7 +977,7 @@ button img
         max-width: 100%;
     }
 
-    .control-panel, .status-panel
+    .control-panel
     {
         border-radius: 0!important;
         max-width: 100%!important;
@@ -839,7 +986,7 @@ button img
         padding: 10px 25px;
     }
 
-    .control-container, .status-container
+    .control-container
     {
         width: calc(100% + 50px)!important;
         left: -25px;
@@ -847,15 +994,8 @@ button img
         min-width: none;
         max-width: none;
     }
-    
-    .status-container
-    {
-        margin-top: 50px;
-        bottom: 0;
-        margin-bottom: -100px;
-    }
 
-    input, textarea, button, select, .select-selected
+    input, textarea, button, select, .select-selected, .select-items
     {
         font-size: 18px;
         font-weight: 300!important;
@@ -918,12 +1058,12 @@ button img
         box-shadow: none;
     }
 
-    textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar
+    textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar
     {
         border-radius: 0 26px 26px 0!important;
     }
 
-    textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner
+    textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .select-items::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-corner
     {
         border-radius: 0 26px 26px 0!important;
         border-left-width: 5px;
@@ -1046,5 +1186,26 @@ button img
     #rooms input:first-child
     {
         border-radius: 30px 0 0 30px;
+    }
+
+    .select-selected, select
+    {
+        padding: 17px 20px;
+    }
+
+    .select-selected:after
+    {
+        top: 28px;
+        right: 20px;
+    }
+
+    .select-selected.select-active:after
+    {
+        top: 22px;
+    }
+
+    .select-items
+    {
+        max-height: 205px;
     }
 }

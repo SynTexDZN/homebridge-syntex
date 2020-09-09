@@ -2,107 +2,6 @@
     <head>
         <script defer src="/js/replace-select.js"></script>
         <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
-        <style>
-
-            /* The container must be positioned relative: */
-            .custom-select, .custom-date
-            {
-                position: relative;
-            }
-
-            .custom-select select, .custom-date input
-            {
-                display: none; /*hide original SELECT element: */
-            }
-
-            .select-selected, select
-            {
-                overflow: hidden;
-                white-space: nowrap;
-                box-sizing: border-box;
-                outline: none!important;
-                text-align: left;
-                padding: 12px 20px;
-            }
-
-            /* Style the arrow inside the select element: */
-            .select-selected:after
-            {
-                position: absolute;
-                content: "";
-                top: 23px;
-                right: 14px;
-                width: 0;
-                height: 0;
-                border: 5px solid transparent;
-                border-color: rgb(245, 245, 255) transparent transparent transparent;
-            }
-
-            .select-selected.select-arrow-active
-            {
-                background: rgb(245, 245, 255);
-                color: rgb(20, 20, 30);
-            }
-
-            /* Point the arrow upwards when the select box is open (active): */
-            .select-selected.select-arrow-active:after {
-                top: 17px;
-            }
-
-            /* style the items (options), including the selected item: */
-            .custom-select > .select-items div
-            {
-                user-select: none!important;
-                cursor: pointer;
-                padding: 12px 0;
-            }
-
-            /* Style items (options): */
-            .select-items
-            {
-                position: absolute;
-                border-radius: 16px;
-                top: 70px;
-                left: 0;
-                right: 0;
-                z-index: 99;
-                max-height: 355px;
-                overflow: hidden;
-                overflow-y: auto;
-                text-align: center;
-            }
-
-            /* Hide the items when the select box is closed: */
-            .select-hide
-            {
-                display: none;
-            }
-
-            .select-items div:hover, .same-as-selected
-            {
-                transition: 0.15s background-color;
-                -webkit-transition: 0.15s background-color;
-                -moz-transition: 0.15s background-color;
-                -o-transition: 0.15s background-color;
-            }
-
-            .select-items div:hover, .same-as-selected {
-                background: rgb(30, 30, 40);
-            }
-
-            .select-items {
-                height: auto;
-            }
-
-            .select-selected:after {
-                border-color: rgb(245, 245, 255) transparent transparent transparent;
-            }
-
-            .select-selected.select-arrow-active:after {
-                border-color: transparent transparent rgb(20, 20, 30) transparent;
-            }
-
-        </style>
     </head>
     <body>
         <div id="content">
@@ -111,12 +10,20 @@
                 <h1>Schalter Erstellen</h1>
                 <p>( Ein virtuelles Gerät )</p>
                 <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
-                    <input id="form-mac" value="1" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px">
-                    <input id="form-mac" value="1" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="button" style="max-width: 325px">
+                    <input type="text">
+                    <input type="button" style="margin-top: 20px">
+                    <input type="button" style="margin-top: 20px" class="gradient-blue-green">
                     <div class="custom-select" style="margin-top: 20px">
                         <select>
                             <option value="0">1</option>
                             <option value="1">2</option>
+                            <option value="2">3</option>
+                            <option value="3">4</option>
+                            <option value="4">5</option>
+                            <option value="5">6</option>
+                            <option value="6">7</option>
+                            <option value="7">8</option>
+                            <option value="8">9</option>
                         </select>
                     </div>
                 </form>

@@ -67,7 +67,7 @@ for (i = 0; i < x.length; i++)
         e.stopPropagation();
         closeAllSelect(this);
         this.nextSibling.classList.toggle("select-hide");
-        this.classList.toggle("select-arrow-active");
+        this.classList.toggle("select-active");
     });
 }
 
@@ -86,7 +86,7 @@ function closeAllSelect(elmnt)
         }
         else
         {
-            y[i].classList.remove("select-arrow-active");
+            y[i].classList.remove("select-active");
         }
     }
 
