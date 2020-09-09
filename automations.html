@@ -338,21 +338,18 @@
 
                 function addTrigger()
                 {
-                    var trigger = document.createElement('div');
+                    var trigger = document.createElement('select');
 
                     trigger.style.marginBottom = '40px';
 
                     trigger.setAttribute('class', 'custom-select');
 
-                    var html = '<div class="select-selected"></div>';
-                    html += '<div class="select-items select-hide">';
+                    var html = '';
 
                     for(var i = 0; i < services.length; i++)
                     {
-                        html += '<div>' + services[i].name + '</div>';
+                        html += '<option>' + services[i].name + '</option>';
                     }
-
-                    html += '</div>';
 
                     trigger.innerHTML = html;
 
@@ -510,6 +507,7 @@
                 }
 
             </script>
+            <script defer src="/js/replace-select.js"></script>
         </div>
     </body>
 </html>
