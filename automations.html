@@ -123,6 +123,8 @@
                     document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
                 });
 
+                loadServices();
+
                 var a = ['trigger', 'condition', 'result'];
 
                 for(var i = 0; i < a.length; i++)
@@ -469,21 +471,21 @@
                             {
                                 if(accessories[i].services[j] instanceof Object)
                                 {
-                                    services.push(accessories[i].services[j].type);
+                                    services.push({ services : accessories[i].services[j].type, name : accessories[i].services[j].name });
                                 }
                                 else
                                 {
-                                    services.push(accessories[i].services[j]);
+                                    services.push({ services : accessories[i].services[j], name : accessories[i].name });
                                 }
                             }
                         }
                         else if(accessories[i].services instanceof Object)
                         {
-                            services.push(accessories[i].services.type);
+                            services.push({ service : accessories[i].services.type, name : accessories[i].services.name });
                         }
                         else
                         {
-                            services.push(accessories[i].services);
+                            services.push({ service : accessories[i].services, name : accessories[i].name });
                         }
                     }
 
