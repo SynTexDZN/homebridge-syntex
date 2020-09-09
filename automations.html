@@ -344,15 +344,17 @@
 
                     trigger.setAttribute('class', 'custom-select');
 
-                    trigger.innerHTML = '<div class="select-selected"></div>';
-                    trigger.innerHTML += '<div class="select-items select-hide">';
+                    var html = '<div class="select-selected"></div>';
+                    html += '<div class="select-items select-hide">';
 
                     for(var i = 0; i < services.length; i++)
                     {
-                        trigger.innerHTML += '<div>' + services[i].name + '</div>';
+                        html += '<div>' + services[i].name + '</div>';
                     }
 
-                    trigger.innerHTML += '</div>';
+                    html += '</div>';
+
+                    trigger.innerHTML = html;
 
                     /*
                     trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
