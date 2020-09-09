@@ -102,7 +102,7 @@ input[type='text']:hover, input[type='password']:hover, textarea:focus, textarea
     color: var(--dark-layer-one);
 }
 
-input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submit']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
+input[type='button']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
 {
     filter: brightness(120%);
     transition: .2s ease-out;
@@ -116,7 +116,8 @@ input[type='button']:not(:disabled):not(.control-panel):hover, input[type='submi
 .gradient-orange:not(:disabled):not(.control-panel):hover,
 .gradient-purple:not(:disabled):not(.control-panel):hover,
 .gradient-red:not(:disabled):not(.control-panel):hover,
-.gradient-yellow:not(:disabled):not(.control-panel):hover
+.gradient-yellow:not(:disabled):not(.control-panel):hover,
+input[type='submit']:not(:disabled):not(.control-panel):hover
 {
     filter: brightness(75%)!important;
 }
@@ -868,14 +869,9 @@ button img
         filter: brightness(90%)!important;
     }
 
-    .type-container:hover
+    .select-items div:not(.same-as-selected):hover, .type-container:hover
     {
-        filter: brightness(95%)!important;
-    }
-
-    .select-items div:not(.same-as-selected):hover
-    {
-        filter: brightness(100%);
+        filter: brightness(100%)!important;
     }
 
     ::-webkit-scrollbar-track, ::-webkit-scrollbar
