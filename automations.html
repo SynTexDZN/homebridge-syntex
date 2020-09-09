@@ -32,7 +32,7 @@
                         <div class="title-container" style="margin-bottom: 60px">
                             <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
                         </div>
-                        <p><b>ID: <input type="button" style="max-width: 150px" disabled>
+                        <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
                         <p autofocus style="margin-bottom: 40px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                     </div>
                     <div style="margin-top: 20px" class="type-container">
@@ -370,9 +370,10 @@
                     trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
                     trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
                     trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
+                    */
                     trigger.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
                     trigger.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
-                    */
+                    
                     document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button')[0]);
                 }
 
