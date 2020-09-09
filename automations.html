@@ -338,18 +338,20 @@
 
                 function addTrigger()
                 {
-                    var trigger = document.createElement('select');
+                    var trigger = document.createElement('div');
 
                     trigger.style.marginBottom = '40px';
 
                     trigger.setAttribute('class', 'custom-select');
 
-                    var html = '';
+                    var html = '<select>';
 
                     for(var i = 0; i < services.length; i++)
                     {
                         html += '<option>' + services[i].name + '</option>';
                     }
+
+                    html += '</select>';
 
                     trigger.innerHTML = html;
 
