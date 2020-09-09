@@ -340,20 +340,30 @@
                 {
                     var trigger = document.createElement('div');
 
-                    trigger.style.marginBottom = '40px';
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var selection = document.createElement('div');
 
-                    trigger.setAttribute('class', 'custom-select');
+                    selection.style.marginBottom = '40px';
+
+                    selection.setAttribute('class', 'custom-select');
 
                     var html = '<select>';
 
                     for(var i = 0; i < services.length; i++)
                     {
-                        html += '<option><img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                        html += '<option>' + services[i].name + '</option>';
                     }
 
                     html += '</select>';
 
-                    trigger.innerHTML = html;
+                    selection.innerHTML = html;
+
+                    b.innerHTML = 'Gerät: ';
+
+                    b.appendChild(selection);
+                    p.appendChild(b);
+                    trigger.appendChild(p);
 
                     /*
                     trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
