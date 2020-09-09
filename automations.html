@@ -82,6 +82,7 @@
 
                 window.automations = [];
                 window.accessories = JSON.parse('<%accessories%>');
+                window.services = [];
 
                 window.data = {
                     motion: {
@@ -456,6 +457,37 @@
 
                         Essentials.leavePage(window.location.href)
                     }
+                }
+
+                function loadServices()
+                {
+                    for(var i = 0; i < accessories.length; i++)
+                    {
+                        if(Array.isArray(accessories[i].services))
+                        {
+                            for(var j = 0; j < accessories[i].services.length; j++)
+                            {
+                                if(accessories[i].services[j] instanceof Object)
+                                {
+                                    services.push(accessories[i].services[j].type);
+                                }
+                                else
+                                {
+                                    services.push(accessories[i].services[j]);
+                                }
+                            }
+                        }
+                        else if(accessories[i].services instanceof Object)
+                        {
+                            services.push(accessories[i].services.type);
+                        }
+                        else
+                        {
+                            services.push(accessories[i].services);
+                        }
+                    }
+
+                    console.log('Services', services);
                 }
 
             </script>
