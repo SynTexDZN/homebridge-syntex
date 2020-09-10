@@ -91,11 +91,16 @@ function createSelect(container)
         });
         b.appendChild(c);
     }
+
     container.appendChild(b);
+
+    console.log('added important click event');
+
     a.addEventListener("click", function(e)
     {
         /* When the select box is clicked, close any other select boxes,
         and open/close the current select box: */
+        console.log('clicked!');
         e.stopPropagation();
         closeAllSelect(this);
         this.nextSibling.classList.toggle("select-hide");
