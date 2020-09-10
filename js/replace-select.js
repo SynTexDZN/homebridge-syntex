@@ -52,45 +52,8 @@ function createSelectMenu(container)
 
         console.log('added click event');
 
-        c.addEventListener("click", function(e)
-        {
-            /* When an item is clicked, update the original select box,
-            and the selected item: */
+        c.setAttribute('onclick', 'selectMenuItem(this)');
 
-            console.log('clicked!');
-
-            var y, i, k, s, h;
-            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-            h = this.parentNode.previousSibling;
-
-            console.log(s, h);
-
-            for(i = 0; i < s.length; i++)
-            {
-                console.log(s.options[i].innerHTML, this.innerHTML, s.options[i].innerHTML == this.innerHTML);
-
-                if(s.options[i].innerHTML == this.innerHTML || (this.innerHTML.includes('<img') && s.options[i].innerHTML == this.innerHTML.split('>')[1]))
-                {
-                    s.selectedIndex = i;
-                    h.innerHTML = this.innerHTML;
-                    y = this.parentNode.getElementsByClassName("same-as-selected");
-                    for (k = 0; k < y.length; k++)
-                    {
-                        y[k].removeAttribute("class");
-                    }
-                    this.setAttribute("class", "same-as-selected");
-                    break;
-                }
-            }
-
-            h.click();
-
-            if(s.getAttribute("onchange") != null)
-            {
-                var functionName = s.getAttribute("onchange").split("()")[0];
-                window[functionName]();
-            }
-        });
         b.appendChild(c);
     }
 
@@ -101,6 +64,46 @@ function createSelectMenu(container)
     selects.push(container);
 
     return container;
+}
+
+function selectMenuItem(elmnt)
+{
+    /* When an item is clicked, update the original select box,
+    and the selected item: */
+
+    console.log('clicked!');
+
+    var y, i, k, s, h;
+    s = elmt.parentNode.parentNode.getElementsByTagName("select")[0];
+    h = elmt.parentNode.previousSibling;
+
+    console.log(s, h);
+
+    for(i = 0; i < s.length; i++)
+    {
+        console.log(s.options[i].innerHTML, elmt.innerHTML, s.options[i].innerHTML == elmt.innerHTML);
+
+        if(s.options[i].innerHTML == elmt.innerHTML || (elmt.innerHTML.includes('<img') && s.options[i].innerHTML == elmt.innerHTML.split('>')[1]))
+        {
+            s.selectedIndex = i;
+            h.innerHTML = elmt.innerHTML;
+            y = elmt.parentNode.getElementsByClassName("same-as-selected");
+            for (k = 0; k < y.length; k++)
+            {
+                y[k].removeAttribute("class");
+            }
+            elmt.setAttribute("class", "same-as-selected");
+            break;
+        }
+    }
+
+    h.click();
+
+    if(s.getAttribute("onchange") != null)
+    {
+        var functionName = s.getAttribute("onchange").split("()")[0];
+        window[functionName]();
+    }
 }
 
 function openSelectMenu(btn)
