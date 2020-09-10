@@ -123,7 +123,7 @@ function openSelectMenu(btn)
 
 function closeAllSelect(elmnt)
 {
-    for(var i = 0; i < selects; i++)
+    for(var i = 0; i < selects.length; i++)
     {
         console.log(i, selects[i], elmnt);
         if(selects[i] != elmnt)
