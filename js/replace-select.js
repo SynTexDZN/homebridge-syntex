@@ -97,24 +97,26 @@ function createSelect(container)
     console.log('added important click event');
 
     a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
-
+    /*
     a.addEventListener("click", function(e)
     {
-        /* When the select box is clicked, close any other select boxes,
-        and open/close the current select box: */
         console.log('clicked!');
         e.stopPropagation();
         closeAllSelect(this);
         this.nextSibling.classList.toggle("select-hide");
         this.classList.toggle("select-active");
     });
-
+    */
     return container;
 }
 
-function openSelectMenu()
+function openSelectMenu(btn)
 {
-    alert('Hallo Welt');
+    console.log('clicked!');
+    e.stopPropagation();
+    closeAllSelect(this);
+    btn.nextSibling.classList.toggle("select-hide");
+    btn.classList.toggle("select-active");
 }
 
 function closeAllSelect(elmnt)
