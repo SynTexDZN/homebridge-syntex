@@ -52,7 +52,7 @@ function createSelectMenu(container)
 
         console.log('added click event');
 
-        c.setAttribute('onclick', 'selectMenuItem(this)');
+        c.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 
         b.appendChild(c);
     }
