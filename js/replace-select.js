@@ -67,7 +67,7 @@ function createSelectMenu(container)
             {
                 console.log(s.options[i].innerHTML, this.innerHTML, s.options[i].innerHTML == this.innerHTML);
 
-                if(s.options[i].innerHTML == this.innerHTML)
+                if(s.options[i].innerHTML == this.innerHTML || (this.innerHTML.includes('<img') && s.options[i].innerHTML == this.innerHTML.split('>')[1]))
                 {
                     s.selectedIndex = i;
                     h.innerHTML = this.innerHTML;
