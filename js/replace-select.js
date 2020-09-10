@@ -1,12 +1,11 @@
-var x, i, selects = [];
-/* Look for any elements with the class "custom-select": */
-x = document.getElementsByClassName("custom-select");
-for (i = 0; i < x.length; i++)
+var selects = [], x = document.getElementsByClassName('custom-select');
+
+for(var i = 0; i < x.length; i++)
 {
-    createSelect(x[i]);
+    createSelectMenu(x[i]);
 }
 
-function createSelect(container)
+function createSelectMenu(container)
 {
     var j, a, b, c, selElmnt;
 
@@ -94,19 +93,8 @@ function createSelect(container)
 
     container.appendChild(b);
 
-    console.log('added important click event');
-
     a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
-    /*
-    a.addEventListener("click", function(e)
-    {
-        console.log('clicked!');
-        e.stopPropagation();
-        closeAllSelect(this);
-        this.nextSibling.classList.toggle("select-hide");
-        this.classList.toggle("select-active");
-    });
-    */
+    
     selects.push(container);
 
     return container;
@@ -114,52 +102,22 @@ function createSelect(container)
 
 function openSelectMenu(btn)
 {
-    console.log('clicked!');
-    //e.stopPropagation();
-    
     btn.nextSibling.classList.toggle('select-hide');
     btn.classList.toggle('select-active');
-    closeAllSelect(btn);
+
+    closeOtherSelectMenus(btn);
 }
 
-function closeAllSelect(elmnt)
+function closeOtherSelectMenus(elmnt)
 {
     for(var i = 0; i < selects.length; i++)
     {
-        console.log(i, selects[i], elmnt.parentElement);
-        
         if(selects[i] != elmnt.parentElement)
         {
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
         }
     }
-    /*
-    var x, y, z, i, arrNo = [];
-    x = document.getElementsByClassName("select-items");
-    y = document.getElementsByClassName("select-selected");
-    //z = document.getElementsByClassName("select-arrows");
-
-    for (i = 0; i < y.length; i++)
-    {
-        if (elmnt == y[i] || elmnt == y[i].nextSibling.children[0].children[0] || elmnt == y[i].nextSibling.children[0].children[2] || elmnt == y[i].nextSibling.children[0].children[1])
-        {
-            arrNo.push(i)
-        }
-        else
-        {
-            y[i].classList.remove("select-active");
-        }
-    }
-
-    for (i = 0; i < x.length; i++)
-    {
-        if (arrNo.indexOf(i))
-        {
-            x[i].classList.add("select-hide");
-        }
-    }
-    */
 }
 
-export let Replacer = { createSelect, openSelectMenu };
+export let Replacer = { createSelectMenu, openSelectMenu };
