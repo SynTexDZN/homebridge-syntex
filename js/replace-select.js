@@ -65,6 +65,8 @@ function createSelectMenu(container)
             s = this.parentNode.parentNode.getElementsByTagName("select")[0];
             h = this.parentNode.previousSibling;
 
+            console.log(h, y, i, k, s);
+
             for(i = 0; i < s.length; i++)
             {
                 if (s.options[i].innerHTML == this.innerHTML)
@@ -80,7 +82,7 @@ function createSelectMenu(container)
                     break;
                 }
             }
-            
+
             console.log(h, y, i, k, s);
 
             h.click();
