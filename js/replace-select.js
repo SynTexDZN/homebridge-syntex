@@ -74,25 +74,25 @@ function selectMenuItem(elmnt)
     console.log('clicked!');
 
     var y, i, k, s, h;
-    s = elmt.parentNode.parentNode.getElementsByTagName("select")[0];
-    h = elmt.parentNode.previousSibling;
+    s = elmnt.parentNode.parentNode.getElementsByTagName("select")[0];
+    h = elmnt.parentNode.previousSibling;
 
     console.log(s, h);
 
     for(i = 0; i < s.length; i++)
     {
-        console.log(s.options[i].innerHTML, elmt.innerHTML, s.options[i].innerHTML == elmt.innerHTML);
+        console.log(s.options[i].innerHTML, elmnt.innerHTML, s.options[i].innerHTML == elmnt.innerHTML);
 
-        if(s.options[i].innerHTML == elmt.innerHTML || (elmt.innerHTML.includes('<img') && s.options[i].innerHTML == elmt.innerHTML.split('>')[1]))
+        if(s.options[i].innerHTML == elmnt.innerHTML || (elmnt.innerHTML.includes('<img') && s.options[i].innerHTML == elmnt.innerHTML.split('>')[1]))
         {
             s.selectedIndex = i;
-            h.innerHTML = elmt.innerHTML;
-            y = elmt.parentNode.getElementsByClassName("same-as-selected");
+            h.innerHTML = elmnt.innerHTML;
+            y = elmnt.parentNode.getElementsByClassName("same-as-selected");
             for (k = 0; k < y.length; k++)
             {
                 y[k].removeAttribute("class");
             }
-            elmt.setAttribute("class", "same-as-selected");
+            elmnt.setAttribute("class", "same-as-selected");
             break;
         }
     }
