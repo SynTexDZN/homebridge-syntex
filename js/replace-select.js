@@ -116,17 +116,19 @@ function openSelectMenu(btn)
 {
     console.log('clicked!');
     //e.stopPropagation();
+    
+    btn.nextSibling.classList.toggle('select-hide');
+    btn.classList.toggle('select-active');
     closeAllSelect(btn);
-    btn.nextSibling.classList.toggle("select-hide");
-    btn.classList.toggle("select-active");
 }
 
 function closeAllSelect(elmnt)
 {
     for(var i = 0; i < selects.length; i++)
     {
-        console.log(i, selects[i], elmnt);
-        if(selects[i] != elmnt)
+        console.log(i, selects[i], elmnt.parentElement);
+        
+        if(selects[i] != elmnt.parentElement)
         {
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
