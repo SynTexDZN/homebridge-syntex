@@ -96,6 +96,8 @@ function createSelect(container)
 
     console.log('added important click event');
 
+    a.setAttribute('onclick', 'openSelectMenu(this)');
+
     a.addEventListener("click", function(e)
     {
         /* When the select box is clicked, close any other select boxes,
@@ -108,6 +110,11 @@ function createSelect(container)
     });
 
     return container;
+}
+
+function openSelectMenu()
+{
+    console.log('Hallo Welt');
 }
 
 function closeAllSelect(elmnt)
