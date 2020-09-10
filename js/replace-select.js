@@ -123,6 +123,15 @@ function openSelectMenu(btn)
 
 function closeAllSelect(elmnt)
 {
+    for(var i = 0; i < selects; i++)
+    {
+        if(selects[i] != elmt)
+        {
+            selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
+            selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
+        }
+    }
+    /*
     var x, y, z, i, arrNo = [];
     x = document.getElementsByClassName("select-items");
     y = document.getElementsByClassName("select-selected");
@@ -147,6 +156,7 @@ function closeAllSelect(elmnt)
             x[i].classList.add("select-hide");
         }
     }
+    */
 }
 
 export let Replacer = { createSelect, openSelectMenu };
