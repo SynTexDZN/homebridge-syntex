@@ -349,7 +349,7 @@
 
                     select.className = 'custom-select';
                     select.style.marginRight = '20px';
-                    select.style.width = '50%';
+                    select.style.width = '100%';
 
                     trigger.style.display = 'flex';
                     trigger.style.marginBottom = '20px';
@@ -381,8 +381,8 @@
                     trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
                     trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
                     */
-                    trigger.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; max-width: 150px">';
-                    trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: auto!important">';        
+                    trigger.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; max-width: 200px">';
+                    trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 200px">';        
                     
                     document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button')[0]);
                 }
