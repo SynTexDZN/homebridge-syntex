@@ -1,26 +1,52 @@
-var x, i, j, selElmnt, a, b, c;
+var x, i;
 /* Look for any elements with the class "custom-select": */
 x = document.getElementsByClassName("custom-select");
 for (i = 0; i < x.length; i++)
 {
-    selElmnt = x[i].getElementsByTagName("select")[0];
+    createSelect(x[i]);
+}
 
-    /* For each element, create a new DIV that will act as the selected item: */
+function createSelect(container)
+{
+    var j, a, b, c, selElmnt;
+
+    selElmnt = container.getElementsByTagName("select")[0];
+
     a = document.createElement("DIV");
     a.setAttribute("class", "select-selected");
-    a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+
+    if(selElmnt.options[selElmnt.selectedIndex].hasAttribute('img'))
+    {
+        console.log(selElmnt.options[selElmnt.selectedIndex].getAttribute('img'));
+
+        a.style.paddingLeft = '12px';
+        a.innerHTML = '<img src="' + selElmnt.options[selElmnt.selectedIndex].getAttribute('img') + '">';
+    }
+
+    a.innerHTML += selElmnt.options[selElmnt.selectedIndex].innerHTML;
+
     a.setAttribute("name", selElmnt.getAttribute("name"));
 
-    x[i].appendChild(a);
+    container.appendChild(a);
     /* For each element, create a new DIV that will contain the option list: */
     b = document.createElement("DIV");
     b.setAttribute("class", "select-items select-hide");
-    for (j = 0; j < selElmnt.length; j++)
+    
+    for(j = 0; j < selElmnt.length; j++)
     {
         /* For each option in the original select element,
         create a new DIV that will act as an option item: */
         c = document.createElement("DIV");
-        c.innerHTML = selElmnt.options[j].innerHTML;
+
+        if(selElmnt.options[j].hasAttribute('img'))
+        {
+            console.log(selElmnt.options[j].getAttribute('img'));
+
+            c.style.paddingLeft = '15px';
+            c.innerHTML = '<img src="' + selElmnt.options[j].getAttribute('img') + '">';
+        }
+
+        c.innerHTML += selElmnt.options[j].innerHTML;
 
         if(c.innerHTML == a.innerHTML)
         {
@@ -34,7 +60,8 @@ for (i = 0; i < x.length; i++)
             var y, i, k, s, h;
             s = this.parentNode.parentNode.getElementsByTagName("select")[0];
             h = this.parentNode.previousSibling;
-            for (i = 0; i < s.length; i++)
+
+            for(i = 0; i < s.length; i++)
             {
                 if (s.options[i].innerHTML == this.innerHTML)
                 {
@@ -59,7 +86,7 @@ for (i = 0; i < x.length; i++)
         });
         b.appendChild(c);
     }
-    x[i].appendChild(b);
+    container.appendChild(b);
     a.addEventListener("click", function(e)
     {
         /* When the select box is clicked, close any other select boxes,
@@ -69,6 +96,8 @@ for (i = 0; i < x.length; i++)
         this.nextSibling.classList.toggle("select-hide");
         this.classList.toggle("select-active");
     });
+
+    return container;
 }
 
 function closeAllSelect(elmnt)
@@ -97,5 +126,6 @@ function closeAllSelect(elmnt)
             x[i].classList.add("select-hide");
         }
     }
-
 }
+
+export let Replacer = { createSelect };

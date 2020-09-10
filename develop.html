@@ -1,6 +1,5 @@
 <html>
     <head>
-        <script defer src="/js/replace-select.js"></script>
         <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
     </head>
     <body>
@@ -28,6 +27,35 @@
                     </div>
                 </form>
             </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+                import { Essentials } from '/js/essentials.js';
+                import { Replacer } from '/js/replace-select.js';
+            
+                Query.SETUP(Essentials);
+                Essentials.SETUP(Query);
+            
+                window.Query = Query;
+                window.Essentials = Essentials;
+                window.Replacer = Replacer;
+
+                create();
+            
+            </script>
+            <script>
+            
+                function create()
+                {
+                    var e = document.createElement('div');
+            
+                    e.className = 'custom-select';
+                    e.innerHTML = '<select><option img="/img/accessory/light.png">Wetter Süden</option><option>B</option></select>';
+                
+                    document.getElementsByClassName('main')[0].appendChild(Replacer.createSelect(e));
+                }
+            
+            </script>
         </div>
     </body>
 </html>

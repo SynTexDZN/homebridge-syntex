@@ -73,12 +73,14 @@
 
                 import { Query } from '/js/query.js';
                 import { Essentials } from '/js/essentials.js';
+                import { Replacer } from '/js/replace-select.js';
 
                 Query.SETUP(Essentials);
                 Essentials.SETUP(Query);
 
                 window.Query = Query;
                 window.Essentials = Essentials;
+                window.Replacer = Replacer;
 
                 window.automations = [];
                 window.accessories = JSON.parse('<%accessories%>');
@@ -341,29 +343,27 @@
                     var trigger = document.createElement('div');
                     var p = document.createElement('p');
                     var b = document.createElement('b');
-                    var selection = document.createElement('div');
+                    var select = document.createElement('div');
 
-                    selection.style.marginBottom = '20px';
+                    b.innerHTML = 'Gerät: ';
 
-                    selection.setAttribute('class', 'custom-select');
+                    select.className = 'custom-select';
+                    select.style.marginBottom = '20px';
 
                     var html = '<select>';
 
                     for(var i = 0; i < services.length; i++)
                     {
-                        html += '<option>' + services[i].name + '</option>';
+                        html += '<option img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
                     }
 
                     html += '</select>';
 
-                    selection.innerHTML = html;
+                    select.innerHTML = html;
 
-                    b.innerHTML = 'Gerät: ';
-
-                    b.appendChild(selection);
+                    b.appendChild(Replacer.createSelect(select));
                     p.appendChild(b);
                     trigger.appendChild(p);
-
                     /*
                     trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
                     trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
@@ -495,21 +495,21 @@
                             {
                                 if(accessories[i].services[j] instanceof Object)
                                 {
-                                    services.push({ services : accessories[i].services[j].type, name : accessories[i].services[j].name });
+                                    services.push({ service : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac });
                                 }
                                 else
                                 {
-                                    services.push({ services : accessories[i].services[j], name : accessories[i].name });
+                                    services.push({ service : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac });
                                 }
                             }
                         }
                         else if(accessories[i].services instanceof Object)
                         {
-                            services.push({ service : accessories[i].services.type, name : accessories[i].services.name });
+                            services.push({ service : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac });
                         }
                         else
                         {
-                            services.push({ service : accessories[i].services, name : accessories[i].name });
+                            services.push({ service : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac });
                         }
                     }
 
@@ -519,7 +519,6 @@
                 }
 
             </script>
-            <script defer src="/js/replace-select.js"></script>
         </div>
     </body>
 </html>

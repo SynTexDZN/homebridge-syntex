@@ -705,6 +705,21 @@ button img
     padding: 12px 20px;
 }
 
+.select-selected img, .select-items img
+{
+    filter: invert(85%) sepia(10%) hue-rotate(200deg);
+    height: 24px;
+    margin-right: 12px;
+    position: relative;
+    top: -17px;
+    margin-bottom: -24px
+}
+
+.select-selected.select-active img, .select-items img
+{
+    filter: invert(10%) sepia(10%) hue-rotate(200deg);
+}
+
 .select-selected:after
 {
     position: absolute;
@@ -950,6 +965,16 @@ button img
     {
         background: var(--light-layer-two);
         color: var(--dark-layer-one);
+    }
+
+    .select-selected img, .select-items img
+    {
+        filter: invert(10%) sepia(10%) hue-rotate(200deg);
+    }
+
+    .select-selected.select-active img, .select-items img
+    {
+        filter: invert(85%) sepia(10%) hue-rotate(200deg);
     }
 }
 
