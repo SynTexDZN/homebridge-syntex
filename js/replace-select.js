@@ -63,6 +63,8 @@ function createSelectMenu(container)
             s = this.parentNode.parentNode.getElementsByTagName("select")[0];
             h = this.parentNode.previousSibling;
 
+            console.log(s, h);
+
             for(i = 0; i < s.length; i++)
             {
                 console.log(s.options[i].innerHTML, this.innerHTML, s.options[i].innerHTML == this.innerHTML);
