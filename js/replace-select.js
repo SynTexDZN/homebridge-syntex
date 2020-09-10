@@ -1,4 +1,4 @@
-var x, i, selects;
+var x, i, selects = [];
 /* Look for any elements with the class "custom-select": */
 x = document.getElementsByClassName("custom-select");
 for (i = 0; i < x.length; i++)
