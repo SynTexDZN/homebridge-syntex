@@ -495,21 +495,21 @@
                             {
                                 if(accessories[i].services[j] instanceof Object)
                                 {
-                                    services.push({ service : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac });
+                                    services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac });
                                 }
                                 else
                                 {
-                                    services.push({ service : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac });
+                                    services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac });
                                 }
                             }
                         }
                         else if(accessories[i].services instanceof Object)
                         {
-                            services.push({ service : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac });
+                            services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac });
                         }
                         else
                         {
-                            services.push({ service : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac });
+                            services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac });
                         }
                     }
 
