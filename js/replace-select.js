@@ -113,7 +113,7 @@ function createSelect(container)
 function openSelectMenu(btn)
 {
     console.log('clicked!');
-    e.stopPropagation();
+    //e.stopPropagation();
     closeAllSelect(this);
     btn.nextSibling.classList.toggle("select-hide");
     btn.classList.toggle("select-active");
