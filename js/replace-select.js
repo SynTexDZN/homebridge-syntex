@@ -126,4 +126,4 @@ function closeOtherSelectMenus(elmnt)
     }
 }
 
-export let Replacer = { createSelectMenu, openSelectMenu };
+export let Replacer = { createSelectMenu, openSelectMenu, selectMenuItem };
