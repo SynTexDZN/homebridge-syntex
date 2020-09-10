@@ -53,10 +53,15 @@ function createSelect(container)
             c.className = "same-as-selected";
         }
 
+        console.log('added click event');
+
         c.addEventListener("click", function(e)
         {
             /* When an item is clicked, update the original select box,
             and the selected item: */
+
+            console.log('clicked!');
+
             var y, i, k, s, h;
             s = this.parentNode.parentNode.getElementsByTagName("select")[0];
             h = this.parentNode.previousSibling;
