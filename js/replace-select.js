@@ -1,4 +1,4 @@
-var x, i;
+var x, i, selects;
 /* Look for any elements with the class "custom-select": */
 x = document.getElementsByClassName("custom-select");
 for (i = 0; i < x.length; i++)
@@ -107,6 +107,8 @@ function createSelect(container)
         this.classList.toggle("select-active");
     });
     */
+    selects.push(container);
+
     return container;
 }
 
@@ -114,7 +116,7 @@ function openSelectMenu(btn)
 {
     console.log('clicked!');
     //e.stopPropagation();
-    //closeAllSelect(this);
+    closeAllSelect(btn);
     btn.nextSibling.classList.toggle("select-hide");
     btn.classList.toggle("select-active");
 }
