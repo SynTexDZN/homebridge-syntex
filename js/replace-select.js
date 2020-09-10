@@ -39,8 +39,6 @@ function createSelectMenu(container)
 
         if(selElmnt.options[j].hasAttribute('img'))
         {
-            console.log(selElmnt.options[j].getAttribute('img'));
-
             c.style.paddingLeft = '15px';
             c.innerHTML = '<img src="' + selElmnt.options[j].getAttribute('img') + '">';
         }
@@ -65,11 +63,11 @@ function createSelectMenu(container)
             s = this.parentNode.parentNode.getElementsByTagName("select")[0];
             h = this.parentNode.previousSibling;
 
-            console.log(h, y, i, k, s);
-
             for(i = 0; i < s.length; i++)
             {
-                if (s.options[i].innerHTML == this.innerHTML)
+                console.log(s.options[i].innerHTML, this.innerHTML, s.options[i].innerHTML == this.innerHTML);
+
+                if(s.options[i].innerHTML == this.innerHTML)
                 {
                     s.selectedIndex = i;
                     h.innerHTML = this.innerHTML;
@@ -82,8 +80,6 @@ function createSelectMenu(container)
                     break;
                 }
             }
-
-            console.log(h, y, i, k, s);
 
             h.click();
 
