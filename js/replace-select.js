@@ -96,7 +96,7 @@ function createSelect(container)
 
     console.log('added important click event');
 
-    a.setAttribute('onclick', 'openSelectMenu(this)');
+    a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
 
     a.addEventListener("click", function(e)
     {
