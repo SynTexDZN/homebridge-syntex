@@ -114,7 +114,7 @@ function createSelect(container)
 
 function openSelectMenu()
 {
-    console.log('Hallo Welt');
+    alert('Hallo Welt');
 }
 
 function closeAllSelect(elmnt)
@@ -145,4 +145,4 @@ function closeAllSelect(elmnt)
     }
 }
 
-export let Replacer = { createSelect };
+export let Replacer = { createSelect, openSelectMenu };
