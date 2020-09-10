@@ -125,6 +125,7 @@ function closeAllSelect(elmnt)
 {
     for(var i = 0; i < selects; i++)
     {
+        console.log(i, selects[i], elmnt);
         if(selects[i] != elmnt)
         {
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
