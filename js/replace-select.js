@@ -80,6 +80,9 @@ function createSelectMenu(container)
                     break;
                 }
             }
+            
+            console.log(h, y, i, k, s);
+
             h.click();
 
             if(s.getAttribute("onchange") != null)
