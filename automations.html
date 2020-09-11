@@ -356,11 +356,20 @@
 
                     var html = '<select>';
 
+                    var counter = { type : '', count : 0 };
+
                     for(var i = 0; i < services.length; i++)
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option letters="' + Essentials.typeToLetter(services[i].type) + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                            if(counter.type != services[i].type)
+                            {
+                                counter.count = 0;
+                            }
+
+                            html += '<option letters="' + Essentials.typeToLetter(services[i].type) + counter.count + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                        
+                            counter.count++;
                         }
                     }
 
