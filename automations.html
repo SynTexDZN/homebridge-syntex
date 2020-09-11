@@ -506,19 +506,26 @@
 
                             for(var j = 0; j < accessories[i].services.length; j++)
                             {
-                                if(counter.type != services[i].type)
-                                {
-                                    counter.count = 0;
-                                }
-
-                                counter.type = services[i].type;
-                                
                                 if(accessories[i].services[j] instanceof Object)
                                 {
+                                    if(counter.type != accessories[i].services[j].type)
+                                    {
+                                        counter.count = 0;
+                                    }
+
+                                    counter.type = accessories[i].services[j].type;
+                                    
                                     services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
                                 }
                                 else
                                 {
+                                    if(counter.type != accessories[i].services[j])
+                                    {
+                                        counter.count = 0;
+                                    }
+
+                                    counter.type = accessories[i].services[j];
+
                                     services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
                                 }
 
