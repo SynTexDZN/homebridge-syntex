@@ -180,6 +180,8 @@
 
                 function createAutomationPanels()
                 {
+                    document.getElementById('automations').innerHTML = '';
+
                     for(var i = 0; i < automations.length; i++)
                     {
                         var title = document.createElement('h2');
@@ -552,9 +554,11 @@
 
                     if(created)
                     {
+                        createAutomationPanels();
+
                         await Essentials.newTimeout(4000);
 
-                        Essentials.leavePage(window.location.href)
+                        Essentials.switchPage('add', 'view', false);
                     }
                 }
 
