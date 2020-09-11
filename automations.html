@@ -356,23 +356,11 @@
 
                     var html = '<select>';
 
-                    var counter = { mac : '', type : '', count : 0 };
-
                     for(var i = 0; i < services.length; i++)
                     {
                         if(services[i].type != 'lcd')
                         {
-                            if(counter.mac != services[i].mac || counter.type != services[i].type)
-                            {
-                                counter.count = 0;
-                            }
-
-                            counter.type = services[i].type;
-                            counter.mac = services[i].mac;
-
-                            html += '<option letters="' + Essentials.typeToLetter(services[i].type) + counter.count + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
-                        
-                            counter.count++;
+                            html += '<option letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
                         }
                     }
 
@@ -514,29 +502,40 @@
                     {
                         if(Array.isArray(accessories[i].services))
                         {
+                            var counter = { type : '', count : 0 };
+
                             for(var j = 0; j < accessories[i].services.length; j++)
                             {
+                                if(counter.type != services[i].type)
+                                {
+                                    counter.count = 0;
+                                }
+
+                                counter.type = services[i].type;
+                                
                                 if(accessories[i].services[j] instanceof Object)
                                 {
-                                    services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac });
+                                    services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
                                 }
                                 else
                                 {
-                                    services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac });
+                                    services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
                                 }
+
+                                counter.count++;
                             }
                         }
                         else if(accessories[i].services instanceof Object)
                         {
-                            services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac });
+                            services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
                         }
                         else
                         {
-                            services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac });
+                            services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
                         }
                     }
 
-                    //services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+                    services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
 
                     console.log('Services', services);
                 }
