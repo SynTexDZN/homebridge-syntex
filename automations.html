@@ -434,9 +434,6 @@
 
                         for(var j = 0; j < t.children.length; j++)
                         {
-                            console.log(t, j);
-                            console.log(t.children[j]);
-
                             if(t.children[j].className != 'custom-select')
                             {
                                 trigger[t.children[j].getAttribute('name')] = t.children[j].value;
@@ -446,7 +443,9 @@
                                 var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = t.children[j].getElementsByTagName('select')[0].children[o];
 
-                                console.log(option.value, option.getAttribute('mac'), option.getAttribute('name'));
+                                trigger.mac = option.getAttribute('mac');
+                                trigger.name = option.getAttribute('name');
+                                trigger.letters = option.getAttribute('letters');
                             }
                         }
 
