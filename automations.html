@@ -367,20 +367,8 @@
                     html += '</select>';
 
                     select.innerHTML = html;
-                    /*
-                    console.log(Replacer.createSelectMenu(select).outerHTML, Replacer.createSelectMenu(select).innerHTML, Replacer.createSelectMenu(select));
-
-                    b.innerHTML = 'Geräte ' + Replacer.createSelectMenu(select).outerHTML;
-
-                    p.appendChild(b);
-                    */
+               
                     trigger.appendChild(Replacer.createSelectMenu(select));
-                    /*
-                    trigger.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-                    trigger.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-                    trigger.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-                    trigger.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-                    */
                     trigger.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
                     trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';        
                     
@@ -390,15 +378,36 @@
                 function addCondition()
                 {
                     var condition = document.createElement('div');
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var select = document.createElement('div');
 
-                    condition.style.marginBottom = '40px';
+                    b.innerHTML = 'Gerät: ';
 
-                    condition.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-                    condition.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-                    condition.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-                    condition.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-                    condition.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
-                    condition.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
+                    select.className = 'custom-select';
+                    select.style.marginRight = '20px';
+                    select.style.width = '50%';
+
+                    condition.style.display = 'flex';
+                    condition.style.marginBottom = '20px';
+
+                    var html = '<select>';
+
+                    for(var i = 0; i < services.length; i++)
+                    {
+                        if(services[i].type != 'lcd')
+                        {
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                        }
+                    }
+
+                    html += '</select>';
+
+                    select.innerHTML = html;
+               
+                    condition.appendChild(Replacer.createSelectMenu(select));
+                    condition.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
+                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
                 
                     document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button')[0]);
                 }
@@ -406,15 +415,36 @@
                 function addResult()
                 {
                     var result = document.createElement('div');
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var select = document.createElement('div');
 
-                    result.style.marginBottom = '40px';
+                    b.innerHTML = 'Gerät: ';
 
-                    result.innerHTML = '<p><b>Mac: <input pattern="[a-zA-Z0-9-:]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="mac" type="text" style="max-width: 325px"></b></p>';
-                    result.innerHTML += '<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>';
-                    result.innerHTML += '<p><b>Type: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="type" type="text" style="max-width: 325px"></b></p>';
-                    result.innerHTML += '<p><b>Letters: <input pattern="[A-Z0-9]+" title="Bitte benutze nur Großuchstaben und Zahlen" required name="letters" type="text" style="max-width: 150px"></b></p>';
-                    result.innerHTML += '<p><b>Operation: <input pattern="[<>=]+" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="max-width: 150px"></b></p>';
-                    result.innerHTML += '<p><b>Value: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="max-width: 150px"></b></p>';        
+                    select.className = 'custom-select';
+                    select.style.marginRight = '20px';
+                    select.style.width = '50%';
+
+                    result.style.display = 'flex';
+                    result.style.marginBottom = '20px';
+
+                    var html = '<select>';
+
+                    for(var i = 0; i < services.length; i++)
+                    {
+                        if(services[i].type != 'lcd')
+                        {
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                        }
+                    }
+
+                    html += '</select>';
+
+                    select.innerHTML = html;
+               
+                    result.appendChild(Replacer.createSelectMenu(select));
+                    result.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
+                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
                 
                     document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
                 }    
@@ -462,7 +492,19 @@
 
                             for(var j = 0; j < c.children.length; j++)
                             {
-                                condition[c.children[j].getElementsByTagName('input')[0].getAttribute('name')] = c.children[j].getElementsByTagName('input')[0].value;
+                                if(c.children[j].className != 'custom-select')
+                                {
+                                    condition[c.children[j].getAttribute('name')] = c.children[j].value;
+                                }
+                                else
+                                {
+                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
+
+                                    condition.mac = option.getAttribute('mac');
+                                    condition.name = option.getAttribute('name');
+                                    condition.letters = option.getAttribute('letters');
+                                }
                             }
 
                             automation.condition.push(condition);
@@ -477,7 +519,19 @@
 
                         for(var j = 0; j < r.children.length; j++)
                         {
-                            result[r.children[j].getElementsByTagName('input')[0].getAttribute('name')] = r.children[j].getElementsByTagName('input')[0].value;
+                            if(r.children[j].className != 'custom-select')
+                            {
+                                result[r.children[j].getAttribute('name')] = r.children[j].value;
+                            }
+                            else
+                            {
+                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
+
+                                result.mac = option.getAttribute('mac');
+                                result.name = option.getAttribute('name');
+                                result.letters = option.getAttribute('letters');
+                            }
                         }
 
                         automation.result.push(result);
