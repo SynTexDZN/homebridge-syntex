@@ -436,11 +436,10 @@
                         {
                             console.log(t, j);
                             console.log(t.children[j]);
-                            console.log(t.children[j].getElementsByTagName('input'));
 
                             if(t.children[j].className != 'custom-select')
                             {
-                                trigger[t.children[j].getElementsByTagName('input')[0].getAttribute('name')] = t.children[j].getElementsByTagName('input')[0].value;
+                                trigger[t.children[j].getAttribute('name')] = t.children[j].value;
                             }
                             else
                             {
