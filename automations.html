@@ -554,11 +554,19 @@
 
                     if(created)
                     {
+                        var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
+
+                        automations = JSON.parse(a);
+
                         createAutomationPanels();
 
                         await Essentials.newTimeout(4000);
 
                         Essentials.switchPage('add', 'view', false);
+
+                        await Essentials.newTimeout(600);
+
+                        document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
                     }
                 }
 
