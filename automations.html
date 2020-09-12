@@ -687,7 +687,16 @@
                     var o = select.getElementsByTagName('select')[0].selectedIndex;
                     var option = select.getElementsByTagName('select')[0].children[o];
 
-                    console.log(option);
+                    console.log(option.getAttribute('type'), select.parentElement, select.parentElement.children[1]);
+
+                    if(option.type == 'boolean')
+                    {
+
+                    }
+                    else if(option.type == 'numeric')
+                    {
+
+                    }
                 }
 
             </script>
