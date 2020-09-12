@@ -104,7 +104,9 @@ function selectMenuItem(elmnt)
         var functionName = s.getAttribute('onchange').split('(')[0];
         var params = s.getAttribute('onchange').split('(')[1].split(')')[0];
 
-        window[functionName](params);
+        console.log(functionName, params, s);
+
+        window[functionName](eval(params));
     }
 }
 
