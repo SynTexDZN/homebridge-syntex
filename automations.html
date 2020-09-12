@@ -359,7 +359,7 @@
                     trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     trigger.style.marginBottom = '20px';
 
-                    var html = '<select name="service" onchange="updateDataTypes(this)">';
+                    var html = '<select name="service" onchange="updateOperation(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -405,7 +405,7 @@
                     condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     condition.style.marginBottom = '20px';
 
-                    var html = '<select name="service" onchange="updateDataTypes(this)">';
+                    var html = '<select name="service" onchange="updateOperation(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -451,7 +451,7 @@
                     result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     result.style.marginBottom = '20px';
 
-                    var html = '<select name="service" onchange="updateDataTypes(this)">';
+                    var html = '<select name="service" onchange="updateOperation(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -671,6 +671,18 @@
                 }
 
                 function getDataType(type)
+                {
+                    if(type == 'temperature')
+                    {
+                        return 'numeric';
+                    }
+                    else
+                    {
+                        return 'boolean';
+                    }
+                }
+
+                function updateOperation(type)
                 {
                     if(type == 'temperature')
                     {
