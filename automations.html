@@ -359,13 +359,13 @@
                     trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     trigger.style.marginBottom = '20px';
 
-                    var html = '<select name="service" onchange="updateDataTypes(this)">';
+                    var html = '<select name="service" onchange="updateDataTypes(trigger)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -411,7 +411,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -457,7 +457,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -670,9 +670,16 @@
                     console.log('Services', services);
                 }
 
-                function updateDataTypes(select)
+                function getDataType(type)
                 {
-                    console.log(select);
+                    if(type == 'temperature')
+                    {
+                        return 'numeric';
+                    }
+                    else
+                    {
+                        return 'boolean';
+                    }
                 }
 
             </script>
