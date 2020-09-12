@@ -101,8 +101,10 @@ function selectMenuItem(elmnt)
 
     if(s.getAttribute('onchange') != null)
     {
-        var functionName = s.getAttribute('onchange').split('()')[0];
-        window[functionName]();
+        var functionName = s.getAttribute('onchange').split('(')[0];
+        var params = s.getAttribute('onchange').split('(')[1].split(')')[0];
+
+        window[functionName](params);
     }
 }
 
