@@ -682,10 +682,12 @@
                     }
                 }
 
-                function updateOperation(type)
+                function updateOperation(select)
                 {
-                    console.log('hi');
-                    console.log(type);
+                    var o = select.getElementsByTagName('select')[0].selectedIndex;
+                    var option = select.getElementsByTagName('select')[0].children[o];
+
+                    console.log(option);
                 }
 
             </script>

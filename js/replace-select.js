@@ -106,7 +106,7 @@ function selectMenuItem(elmnt)
 
         console.log(functionName, s);
 
-        window[functionName](elmnt.parentElement);
+        window[functionName](elmnt.parentElement.parentElement);
     }
 }
 
