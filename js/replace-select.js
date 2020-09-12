@@ -135,6 +135,11 @@ function closeOtherSelectMenus(elmnt)
 
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
+
+            console.log(selects[i].getElementsByClassName('select-selected')[0],
+                        selects[i].getElementsByClassName('select-items')[0],
+                        selects[i].getElementsByClassName('select-selected')[0].classList,
+                        selects[i].getElementsByClassName('select-items')[0].classList);
         }
     }
 }
