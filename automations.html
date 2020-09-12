@@ -479,7 +479,14 @@
                             {
                                 trigger[t.children[j].getAttribute('name')] = t.children[j].value;
                             }
-                            else
+                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                            {
+                                var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = t.children[j].getElementsByTagName('select')[0].children[o];
+
+                                trigger.operation = option.value
+                            }
+                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
                             {
                                 var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = t.children[j].getElementsByTagName('select')[0].children[o];
