@@ -359,7 +359,7 @@
                     trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     trigger.style.marginBottom = '20px';
 
-                    var html = '<select name="service">';
+                    var html = '<select name="service" onchange="updateDataTypes(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -398,12 +398,14 @@
 
                     select.className = 'custom-select';
                     select.style.marginRight = '20px';
-                    select.style.width = '50%';
+                    select.style.width = '100%';
 
-                    condition.style.display = 'flex';
+                    condition.style.display = 'grid';
+                    condition.style.gridGap = '20px';
+                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     condition.style.marginBottom = '20px';
 
-                    var html = '<select name="service">';
+                    var html = '<select name="service" onchange="updateDataTypes(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -420,7 +422,7 @@
                     var operations = document.createElement('div');
 
                     operations.className = 'custom-select';
-                    operations.style.width = '20%';
+                    operations.style.width = '100%';
                     operations.style.marginRight = '20px';
                     operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
                
@@ -428,7 +430,7 @@
 
                     condition.appendChild(Replacer.createSelectMenu(select));
                     condition.appendChild(Replacer.createSelectMenu(operations));
-                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
+                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }
 
                 function addResult()
@@ -442,12 +444,14 @@
 
                     select.className = 'custom-select';
                     select.style.marginRight = '20px';
-                    select.style.width = '50%';
+                    select.style.width = '100%';
 
-                    result.style.display = 'flex';
+                    result.style.display = 'grid';
+                    result.style.gridGap = '20px';
+                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     result.style.marginBottom = '20px';
 
-                    var html = '<select name="service">';
+                    var html = '<select name="service" onchange="updateDataTypes(this)">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -464,7 +468,7 @@
                     var operations = document.createElement('div');
 
                     operations.className = 'custom-select';
-                    operations.style.width = '20%';
+                    operations.style.width = '100%';
                     operations.style.marginRight = '20px';
                     operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
                
@@ -472,7 +476,7 @@
 
                     result.appendChild(Replacer.createSelectMenu(select));
                     result.appendChild(Replacer.createSelectMenu(operations));
-                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
+                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }    
 
                 async function createAutomation()
