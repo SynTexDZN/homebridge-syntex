@@ -97,8 +97,6 @@ function selectMenuItem(elmnt)
         }
     }
 
-    console.log(i, s, h, k, y);
-
     h.click();
 
     if(s.getAttribute('onchange') != null)
@@ -108,7 +106,7 @@ function selectMenuItem(elmnt)
 
         console.log(functionName, s);
 
-        window[functionName](elmnt);
+        window[functionName](elmnt.parentElement);
     }
 }
 
