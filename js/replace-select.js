@@ -11,6 +11,8 @@ function createSelectMenu(container)
 
     selElmnt = container.getElementsByTagName("select")[0];
 
+    container.setAttribute('select-id', selects.length);
+
     a = document.createElement("DIV");
     a.setAttribute("class", "select-selected");
 
@@ -118,9 +120,9 @@ function closeOtherSelectMenus(elmnt)
 {
     for(var i = 0; i < selects.length; i++)
     {
-        console.log(selects[i], elmnt.parentElement, selects[i] != elmnt.parentElement);
+        console.log(selects[i].getAttribute('select-id'), elmnt.parentElement.getAttribute('select-id'), selects[i].getAttribute('select-id') != elmnt.parentElement.getAttribute('select-id'));
 
-        if(selects[i] != elmnt.parentElement)
+        if(selects[i].getAttribute('select-id') != elmnt.parentElement.getAttribute('select-id'))
         {
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
