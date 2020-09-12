@@ -5,6 +5,11 @@ for(var i = 0; i < x.length; i++)
     createSelectMenu(x[i]);
 }
 
+window.click(function()
+{
+    console.log('clicked anywhere');
+});
+
 function createSelectMenu(container)
 {
     var j, a, b, c, selElmnt;
@@ -60,6 +65,11 @@ function createSelectMenu(container)
     }
 
     container.appendChild(b);
+
+    a.click(function(event)
+    {
+        event.stopPropagation();
+    });
 
     a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
     
