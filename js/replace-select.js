@@ -120,6 +120,8 @@ function selectMenuItem(elmnt)
 
 function openSelectMenu(btn)
 {
+    event.preventDefault();
+    
     btn.nextSibling.classList.toggle('select-hide');
     btn.classList.toggle('select-active');
 
@@ -150,6 +152,8 @@ function closeOtherSelectMenus(elmnt)
             //selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
         }
     }
+
+    return false;
 }
 
 export let Replacer = { createSelectMenu, openSelectMenu, selectMenuItem };
