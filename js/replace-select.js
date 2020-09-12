@@ -128,6 +128,11 @@ function closeOtherSelectMenus(elmnt)
 
         if(selects[i].getAttribute('select-id') != elmnt.parentElement.getAttribute('select-id'))
         {
+            console.log(selects[i].getElementsByClassName('select-selected')[0],
+                        selects[i].getElementsByClassName('select-items')[0],
+                        selects[i].getElementsByClassName('select-selected')[0].classList,
+                        selects[i].getElementsByClassName('select-items')[0].classList);
+
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
         }
