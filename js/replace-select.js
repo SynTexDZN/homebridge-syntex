@@ -126,6 +126,8 @@ function openSelectMenu(btn)
     console.log('Open Select Menu');
 
     closeOtherSelectMenus(btn);
+
+    return false;
 }
 
 function closeOtherSelectMenus(elmnt)
