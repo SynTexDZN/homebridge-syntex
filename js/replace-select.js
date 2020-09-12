@@ -118,6 +118,8 @@ function closeOtherSelectMenus(elmnt)
 {
     for(var i = 0; i < selects.length; i++)
     {
+        console.log(selects[i], elmnt.parentElement, selects[i] != elmnt.parentElement);
+
         if(selects[i] != elmnt.parentElement)
         {
             selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
