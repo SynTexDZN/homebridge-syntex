@@ -66,12 +66,7 @@ function createSelectMenu(container)
 
     container.appendChild(b);
 
-    a.onclick = function(event)
-    {
-        return false;
-    };
-
-    a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
+    a.setAttribute('onclick', 'event.preventDefault(); Replacer.openSelectMenu(this)');
     
     selects.push(container);
 
@@ -120,16 +115,12 @@ function selectMenuItem(elmnt)
 
 function openSelectMenu(btn)
 {
-    event.preventDefault();
-    
     btn.nextSibling.classList.toggle('select-hide');
     btn.classList.toggle('select-active');
 
     console.log('Open Select Menu');
 
     closeOtherSelectMenus(btn);
-
-    return false;
 }
 
 function closeOtherSelectMenus(elmnt)
@@ -152,8 +143,6 @@ function closeOtherSelectMenus(elmnt)
             //selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
         }
     }
-
-    return false;
 }
 
 export let Replacer = { createSelectMenu, openSelectMenu, selectMenuItem };
