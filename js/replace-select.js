@@ -18,7 +18,7 @@ function createSelectMenu(container)
     {
         console.log(selElmnt.options[selElmnt.selectedIndex].getAttribute('img'));
 
-        a.style.paddingLeft = '12px';
+        a.style.paddingLeft = '15px';
         a.innerHTML = '<img src="' + selElmnt.options[selElmnt.selectedIndex].getAttribute('img') + '">';
     }
 
