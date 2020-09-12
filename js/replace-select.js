@@ -68,7 +68,7 @@ function createSelectMenu(container)
 
     a.onclick = function(event)
     {
-        event.stopPropagation();
+        return false;
     };
 
     a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
