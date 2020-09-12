@@ -134,7 +134,7 @@ function closeOtherSelectMenus(elmnt)
                         selects[i].getElementsByClassName('select-items')[0].classList);
 
             selects[i].getElementsByClassName('select-selected')[0].className = 'select-selected';
-            selects[i].getElementsByClassName('select-items')[0].className = 'select-items';
+            selects[i].getElementsByClassName('select-items')[0].className = 'select-items select-hide';
 
             //selects[i].getElementsByClassName('select-selected')[0].classList.remove('select-active');
             //selects[i].getElementsByClassName('select-items')[0].classList.add('select-hide');
