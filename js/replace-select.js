@@ -5,10 +5,10 @@ for(var i = 0; i < x.length; i++)
     createSelectMenu(x[i]);
 }
 
-window.onclick(function()
+window.onclick = function()
 {
     console.log('clicked anywhere');
-});
+};
 
 function createSelectMenu(container)
 {
@@ -66,10 +66,10 @@ function createSelectMenu(container)
 
     container.appendChild(b);
 
-    a.onclick(function(event)
+    a.onclick = function(event)
     {
         event.stopPropagation();
-    });
+    };
 
     a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
     
