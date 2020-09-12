@@ -691,7 +691,7 @@
 
                     var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
 
-                    if(option.type == 'boolean')
+                    if(option.getAttribute('type') == 'boolean')
                     {
                         for(var i = 0; i < options.length; i++)
                         {
@@ -705,7 +705,7 @@
                             }
                         }
                     }
-                    else if(option.type == 'numeric')
+                    else if(option.getAttribute('type') == 'numeric')
                     {
                         for(var i = 0; i < options.length; i++)
                         {
