@@ -5,7 +5,7 @@ for(var i = 0; i < x.length; i++)
     createSelectMenu(x[i]);
 }
 
-window.click(function()
+window.onclick(function()
 {
     console.log('clicked anywhere');
 });
@@ -66,7 +66,7 @@ function createSelectMenu(container)
 
     container.appendChild(b);
 
-    a.click(function(event)
+    a.onclick(function(event)
     {
         event.stopPropagation();
     });
