@@ -5,9 +5,16 @@ for(var i = 0; i < x.length; i++)
     createSelectMenu(x[i]);
 }
 
-window.onclick = function()
+window.onclick = function(event)
 {
     console.log('clicked anywhere');
+
+    if(!selects.includes(event.target.parentElement))
+    {
+        console.log('clicked on select');
+
+        closeOtherSelectMenus(event.target);
+    }
 };
 
 function createSelectMenu(container)
@@ -23,8 +30,6 @@ function createSelectMenu(container)
 
     if(selElmnt.options[selElmnt.selectedIndex].hasAttribute('img'))
     {
-        console.log(selElmnt.options[selElmnt.selectedIndex].getAttribute('img'));
-
         a.style.paddingLeft = '15px';
         a.innerHTML = '<img src="' + selElmnt.options[selElmnt.selectedIndex].getAttribute('img') + '">';
     }
@@ -57,8 +62,6 @@ function createSelectMenu(container)
             c.className = "same-as-selected";
         }
 
-        console.log('added click event');
-
         c.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 
         b.appendChild(c);
@@ -66,7 +69,7 @@ function createSelectMenu(container)
 
     container.appendChild(b);
 
-    a.setAttribute('onclick', 'console.log(event.target); Replacer.openSelectMenu(this)');
+    a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
     
     selects.push(container);
 
@@ -125,12 +128,10 @@ function openSelectMenu(btn)
 
 function closeOtherSelectMenus(elmnt)
 {
-    console.log('Close Menus', elmnt, selects);
+    console.log('Close Menus');
 
     for(var i = 0; i < selects.length; i++)
     {
-        console.log(selects[i].id, elmnt.parentElement.id, selects[i].id != elmnt.parentElement.id);
-
         if(selects[i].id != elmnt.parentElement.id)
         {
             document.getElementById(selects[i].id).getElementsByClassName('select-selected')[0].className = 'select-selected';
