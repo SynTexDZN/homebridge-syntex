@@ -102,11 +102,11 @@ function selectMenuItem(elmnt)
     if(s.getAttribute('onchange') != null)
     {
         var functionName = s.getAttribute('onchange').split('(')[0];
-        var params = eval(s.getAttribute('onchange').split('(')[1].split(')')[0]);
+        //var params = eval(s.getAttribute('onchange').split('(')[1].split(')')[0]);
 
-        console.log(functionName, params, s);
+        console.log(functionName, s);
 
-        window[functionName](params);
+        window[functionName](elmnt);
     }
 }
 
