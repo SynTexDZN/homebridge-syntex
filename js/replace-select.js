@@ -97,6 +97,8 @@ function selectMenuItem(elmnt)
         }
     }
 
+    console.log(i, s, h, k, y);
+
     h.click();
 
     if(s.getAttribute('onchange') != null)
