@@ -66,7 +66,7 @@ function createSelectMenu(container)
 
     container.appendChild(b);
 
-    a.setAttribute('onclick', 'event.preventDefault(); Replacer.openSelectMenu(this)');
+    a.setAttribute('onclick', 'console.log(event.target); Replacer.openSelectMenu(this)');
     
     selects.push(container);
 
