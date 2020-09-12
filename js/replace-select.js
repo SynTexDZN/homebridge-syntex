@@ -113,11 +113,15 @@ function openSelectMenu(btn)
     btn.nextSibling.classList.toggle('select-hide');
     btn.classList.toggle('select-active');
 
+    console.log('Open Select Menu');
+
     closeOtherSelectMenus(btn);
 }
 
 function closeOtherSelectMenus(elmnt)
 {
+    console.log('Close Menus', elmnt, selects);
+
     for(var i = 0; i < selects.length; i++)
     {
         console.log(selects[i].getAttribute('select-id'), elmnt.parentElement.getAttribute('select-id'), selects[i].getAttribute('select-id') != elmnt.parentElement.getAttribute('select-id'));
