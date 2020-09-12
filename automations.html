@@ -382,7 +382,6 @@
                 
                     trigger.appendChild(Replacer.createSelectMenu(select));
                     trigger.appendChild(Replacer.createSelectMenu(operations));
-                    //trigger.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
                     trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 30%!important">';        
                 }
 
@@ -402,7 +401,7 @@
                     condition.style.display = 'flex';
                     condition.style.marginBottom = '20px';
 
-                    var html = '<select>';
+                    var html = '<select name="service">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -415,12 +414,19 @@
                     html += '</select>';
 
                     select.innerHTML = html;
+
+                    var operations = document.createElement('div');
+
+                    operations.className = 'custom-select';
+                    operations.style.width = '20%';
+                    operations.style.marginRight = '20px';
+                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
                
-                    condition.appendChild(Replacer.createSelectMenu(select));
-                    condition.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
-                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
-                
                     document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button')[0]);
+
+                    condition.appendChild(Replacer.createSelectMenu(select));
+                    condition.appendChild(Replacer.createSelectMenu(operations));
+                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
                 }
 
                 function addResult()
@@ -439,7 +445,7 @@
                     result.style.display = 'flex';
                     result.style.marginBottom = '20px';
 
-                    var html = '<select>';
+                    var html = '<select name="service">';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -453,11 +459,18 @@
 
                     select.innerHTML = html;
                
-                    result.appendChild(Replacer.createSelectMenu(select));
-                    result.innerHTML += '<input pattern="[<>=]+" placeholder="Operation" title="Bitte benutze nur diese Sonderzeichen: < > =" required name="operation" type="text" style="margin-right: 20px; width: 25%!important">';
-                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
-                
+                    var operations = document.createElement('div');
+
+                    operations.className = 'custom-select';
+                    operations.style.width = '20%';
+                    operations.style.marginRight = '20px';
+                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+               
                     document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
+
+                    result.appendChild(Replacer.createSelectMenu(select));
+                    result.appendChild(Replacer.createSelectMenu(operations));
+                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 25%!important">';  
                 }    
 
                 async function createAutomation()
@@ -484,7 +497,7 @@
                                 var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = t.children[j].getElementsByTagName('select')[0].children[o];
 
-                                trigger.operation = option.value
+                                trigger.operation = option.value;
                             }
                             else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
                             {
@@ -514,7 +527,14 @@
                                 {
                                     condition[c.children[j].getAttribute('name')] = c.children[j].value;
                                 }
-                                else
+                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                                {
+                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
+
+                                    condition.operation = option.value;
+                                }
+                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
                                 {
                                     var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
                                     var option = c.children[j].getElementsByTagName('select')[0].children[o];
@@ -541,7 +561,14 @@
                             {
                                 result[r.children[j].getAttribute('name')] = r.children[j].value;
                             }
-                            else
+                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                            {
+                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
+
+                                result.operation = option.value
+                            }
+                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
                             {
                                 var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = r.children[j].getElementsByTagName('select')[0].children[o];
