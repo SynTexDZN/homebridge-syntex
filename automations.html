@@ -178,6 +178,8 @@
 
                 async function openEditPage(previous, id)
                 {
+                    setupEditPage(id);
+
                     await Essentials.switchPage(previous, 'edit', false);
 
                     window.history.pushState(null, null, '/automations?edit&id=' + id);
@@ -350,6 +352,17 @@
                         
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
+                    }
+                }
+
+                function setupEditPage(id)
+                {
+                    for(var i = 0; i < automations.length; i++)
+                    {
+                        if(automations[i].id == id)
+                        {
+                            document.getElementById('edit').getElementsByTagName('h1')[0].innerHTML = automations[i].name
+                        }
                     }
                 }
 
