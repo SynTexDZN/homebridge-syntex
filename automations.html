@@ -356,7 +356,7 @@
 
                     trigger.style.display = 'grid';
                     trigger.style.gridGap = '20px';
-                    trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(15% - 14px) calc(35% - 13px)';
+                    trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     trigger.style.marginBottom = '20px';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
@@ -405,7 +405,7 @@
 
                     condition.style.display = 'grid';
                     condition.style.gridGap = '20px';
-                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(15% - 14px) calc(35% - 13px)';
+                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     condition.style.marginBottom = '20px';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
@@ -454,7 +454,7 @@
 
                     result.style.display = 'grid';
                     result.style.gridGap = '20px';
-                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(15% - 14px) calc(35% - 13px)';
+                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
                     result.style.marginBottom = '20px';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
@@ -484,7 +484,7 @@
                     result.appendChild(Replacer.createSelectMenu(operations));
 
                     updateOperation(select);
-
+                    
                     result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }    
 
@@ -681,7 +681,7 @@
 
                 function getDataType(type)
                 {
-                    if(type == 'temperature')
+                    if(type == 'temperature' || type == 'humidity' || type == 'light')
                     {
                         return 'numeric';
                     }
