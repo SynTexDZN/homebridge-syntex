@@ -26,45 +26,6 @@
                     <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
                 </div>
             </div>
-            <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out">
-                <h1 class="loading-loop">Laden ..</h1>
-                <div id="info" class="main" style="margin-top: 10px; margin-bottom: 100px">
-                    <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
-                    <div class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
-                        </div>
-                        <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
-                        <p autofocus style="margin-bottom: 20px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
-                        </div>
-                        <div id="trigger" style="text-align: center"></div>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
-                        </div>
-                        <div id="condition" style="text-align: center"></div>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
-                        </div>
-                        <div id="result" style="text-align: center"></div>
-                    </div>
-                </div>
-                <div class="navigation-panel">
-                    <div class="sticky-inset">
-                        <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="openViewPage('edit')">
-                            <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div id="create" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
                     <div class="type-container">
@@ -188,10 +149,6 @@
                 {
                     Essentials.switchPage('view', 'create', true);
                 }
-                else if((new URL(window.location.href)).searchParams.get('edit') == '')
-                {
-                    Essentials.switchPage('view', 'edit', true);
-                }
 
             </script>
             <script>
@@ -201,15 +158,6 @@
                     await Essentials.switchPage(previous, 'create', false);
 
                     window.history.pushState(null, null, '/automations?create');
-                }
-
-                async function openEditPage(previous, id)
-                {
-                    setupEditPage(id);
-
-                    await Essentials.switchPage(previous, 'edit', false);
-
-                    window.history.pushState(null, null, '/automations?edit&id=' + id);
                 }
 
                 async function openViewPage(previous)
@@ -240,7 +188,7 @@
 
                         typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
                         typeContainer.setAttribute('class', 'type-container');
-                        typeContainer.setAttribute('onclick', 'openEditPage(' + "'view'" + ', ' + automations[i].id + ')');
+                        typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation?id=" + automations[i].id + "')");
                         typeContainer.appendChild(titleContainer);
 
                         if(i == 0)
@@ -379,18 +327,6 @@
                         
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
-                    }
-                }
-
-                function setupEditPage(id)
-                {
-                    for(var i = 0; i < automations.length; i++)
-                    {
-                        if(automations[i].id == id)
-                        {
-                            document.getElementById('edit').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
-                            document.getElementById('info').getElementsByTagName('p')[0].innerHTML = automations[i].active ? 'Aktiv' : 'Deaktiviert';
-                        }
                     }
                 }
 

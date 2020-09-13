@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+    </head>
+    <body id="body">
+        <div id="content" style="transition: .2s ease-in-out">
+            <title>Automations: Laden ..</title>
+            <h1 class="loading-loop">Laden ..</h1>
+            <div id="info" class="main" style="margin-top: 10px; margin-bottom: 100px">
+                <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+                <div class="type-container">
+                    <div class="title-container" style="margin-bottom: 40px">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+                    </div>
+                    <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
+                    <p autofocus style="margin-bottom: 20px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container" style="margin-bottom: 40px">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                    </div>
+                    <div id="trigger" style="text-align: center"></div>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container" style="margin-bottom: 40px">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                    </div>
+                    <div id="condition" style="text-align: center"></div>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container" style="margin-bottom: 40px">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                    </div>
+                    <div id="result" style="text-align: center"></div>
+                </div>
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <div style="display: flex">
+                            <input type="button" value="Zurück" onclick="openViewPage('edit')">
+                            <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+                import { Essentials } from '/js/essentials.js';
+                import { Replacer } from '/js/replace-select.js';
+
+                Query.SETUP(Essentials);
+                Essentials.SETUP(Query);
+
+                window.Query = Query;
+                window.Essentials = Essentials;
+                window.Replacer = Replacer;
+
+                window.automations = [];
+                //window.accessories = JSON.parse('<%accessories%>');
+                window.services = [];
+
+                window.data = {
+                    motion: {
+                        active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    contact: {
+                        active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+                        inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    relais: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
+                    switch: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
+                    rain: {
+                        active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+                        inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    statelessswitch: {
+                        active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    },
+                    temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+                    humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+                    light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+                };  
+
+                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+
+                    automations = JSON.parse(a);
+
+                    //createAutomationPanels();
+
+                    //document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                });
+
+                if((new URL(window.location.href)).searchParams.get('create') == '')
+                {
+                    Essentials.switchPage('view', 'create', true);
+                }
+
+            </script>
+            <script>
+
+                var id = (new URL(window.location.href)).searchParams.get('id');
+            
+                if(id != null)
+                {
+                    setupEditPage(id);
+                }
+            
+                function setupEditPage(id)
+                {
+                    for(var i = 0; i < automations.length; i++)
+                    {
+                        if(automations[i].id == id)
+                        {
+                            document.getElementById('edit').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
+                            document.getElementById('info').getElementsByTagName('p')[0].innerHTML = automations[i].active ? 'Aktiv' : 'Deaktiviert';
+                        }
+                    }
+                }
+            
+            </script>
+        </div>
+    </body>
+</html>
