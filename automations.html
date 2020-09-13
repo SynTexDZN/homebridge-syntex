@@ -26,8 +26,19 @@
                     <input class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
                 </div>
             </div>
-            <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out"></div>
-            <div id="add" style="display: none; opacity: 0; transition: .2s ease-in-out">
+            <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out">
+                <h1 class="loading-loop">Laden ..</h1>
+                <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <div style="display: flex">
+                            <input type="button" value="Zurück" onclick="openViewPage('edit')">
+                            <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="create" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
                     <div class="type-container">
                         <div class="title-container" style="margin-bottom: 40px">
@@ -61,7 +72,7 @@
                     <div class="navigation-panel">
                         <div class="sticky-inset">
                             <div style="display: flex">
-                                <input type="button" value="Zurück" onclick="openViewPage('add')">
+                                <input type="button" value="Zurück" onclick="openViewPage('create')">
                                 <div style="display: block; width: 100%; margin-left: 20px">
                                     <input id="save-btn" type="submit" value="Erstellen">
                                 </div>
@@ -123,7 +134,7 @@
 
                     createAutomationPanels();
 
-                    document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                    document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
                 });
 
                 loadServices();
@@ -146,9 +157,9 @@
                 addTrigger();
                 addResult();
 
-                if((new URL(window.location.href)).searchParams.get('add') == '')
+                if((new URL(window.location.href)).searchParams.get('create') == '')
                 {
-                    Essentials.switchPage('view', 'add', true);
+                    Essentials.switchPage('view', 'create', true);
                 }
                 else if((new URL(window.location.href)).searchParams.get('edit') == '')
                 {
@@ -160,9 +171,9 @@
 
                 async function openAddPage(previous)
                 {
-                    await Essentials.switchPage(previous, 'add', false);
+                    await Essentials.switchPage(previous, 'create', false);
 
-                    window.history.pushState(null, null, '/automations?add');
+                    window.history.pushState(null, null, '/automations?create');
                 }
 
                 async function openEditPage(previous)
@@ -200,6 +211,7 @@
 
                         typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
                         typeContainer.setAttribute('class', 'type-container');
+                        typeContainer.setAttribute('onclick', 'openEditPage("create")');
                         typeContainer.appendChild(titleContainer);
 
                         if(i == 0)
@@ -492,8 +504,8 @@
                 {
                     var automation = {};
 
-                    automation.id = parseInt(document.getElementById('add').getElementsByTagName('input')[0].value);
-                    automation.name = document.getElementById('add').getElementsByTagName('input')[1].value;
+                    automation.id = parseInt(document.getElementById('create').getElementsByTagName('input')[0].value);
+                    automation.name = document.getElementById('create').getElementsByTagName('input')[1].value;
                     automation.active = true;
                     automation.trigger = [];
 
@@ -620,11 +632,11 @@
 
                         await Essentials.newTimeout(4000);
 
-                        Essentials.switchPage('add', 'view', false);
+                        Essentials.switchPage('create', 'view', false);
 
                         await Essentials.newTimeout(600);
 
-                        document.getElementById('add').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                        document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
                     }
                 }
 
