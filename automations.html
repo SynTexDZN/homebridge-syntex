@@ -176,11 +176,11 @@
                     window.history.pushState(null, null, '/automations?create');
                 }
 
-                async function openEditPage(previous)
+                async function openEditPage(previous, id)
                 {
-                    await Essentials.switchPage(previous, 'edit', false);
+                    await Essentials.switchPage(previous, 'edit&id=' + id, false);
 
-                    window.history.pushState(null, null, '/automations?edit');
+                    window.history.pushState(null, null, '/automations?edit&id=' + id);
                 }
 
                 async function openViewPage(previous)
@@ -211,7 +211,7 @@
 
                         typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
                         typeContainer.setAttribute('class', 'type-container');
-                        typeContainer.setAttribute('onclick', 'openEditPage(' + "'view'" + ')');
+                        typeContainer.setAttribute('onclick', 'openEditPage(' + "'view'" + ', ' + automations[i].id + ')');
                         typeContainer.appendChild(titleContainer);
 
                         if(i == 0)
