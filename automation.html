@@ -59,6 +59,8 @@
                 //window.accessories = JSON.parse('<%accessories%>');
                 window.services = [];
 
+                window.id = (new URL(window.location.href)).searchParams.get('id');
+
                 window.data = {
                     motion: {
                         active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
@@ -89,26 +91,24 @@
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
                 };  
 
-                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+                if(id != null)
+                {
+                    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
-                    automations = JSON.parse(a);
+                        automations = JSON.parse(a);
 
-                    //createAutomationPanels();
+                        setupEditPage();
 
-                    //document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
-                });
+                        //createAutomationPanels();
+
+                        //document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                    });
+                }
 
             </script>
             <script>
 
-                var id = (new URL(window.location.href)).searchParams.get('id');
-            
-                if(id != null)
-                {
-                    setupEditPage(id);
-                }
-            
-                function setupEditPage(id)
+                function setupEditPage()
                 {
                     for(var i = 0; i < automations.length; i++)
                     {
