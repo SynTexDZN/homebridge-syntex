@@ -28,7 +28,9 @@
             </div>
             <div id="edit" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <h1 class="loading-loop">Laden ..</h1>
-                <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
+                <div id="info" class="main" style="margin-top: 10px; margin-bottom: 100px">
+                    <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+                </div>
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <div style="display: flex">
@@ -361,7 +363,8 @@
                     {
                         if(automations[i].id == id)
                         {
-                            document.getElementById('edit').getElementsByTagName('h1')[0].innerHTML = automations[i].name
+                            document.getElementById('edit').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
+                            document.getElementById('info').getElementsByTagName('p')[0].innerHTML = automations[i].active ? 'Aktiv' : 'Deaktiviert';
                         }
                     }
                 }
