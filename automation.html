@@ -98,10 +98,6 @@
                         automations = JSON.parse(a);
 
                         setupEditPage();
-
-                        //createAutomationPanels();
-
-                        //document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
                     });
                 }
 
@@ -114,8 +110,10 @@
                     {
                         if(automations[i].id == id)
                         {
+                            document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
                             document.getElementById('content').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
                             document.getElementById('info').getElementsByTagName('p')[0].innerHTML = automations[i].active ? 'Aktiv' : 'Deaktiviert';
+                            document.getElementById('info').getElementsByTagName('input')[0].value = automations[i].id;
                         }
                     }
                 }
