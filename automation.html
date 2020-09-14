@@ -5,30 +5,30 @@
     <body id="body">
         <div id="content" style="transition: .2s ease-in-out">
             <title>Automation: Laden ..</title>
-            <h1 class="loading-loop">Laden ..</h1>
-            <div id="info" class="main" style="margin-top: 10px">
-                <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+            <div id="infos" class="main" style="margin-top: 10px">
+                <h1 class="loading-loop">Laden ..</h1>
                 <div class="type-container">
                     <div class="title-container" style="margin-bottom: 40px">
                         <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
                     </div>
-                    <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
-                    <p autofocus style="margin-bottom: 20px"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                    <p><b>ID: </b></p>
+                    <p><b>Name: </b></p>
+                    <p style="margin-bottom: 20px"><b>Aktiv: </b></p>
                 </div>
                 <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 40px">
+                    <div class="title-container">
                         <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
                     </div>
                     <div id="trigger" style="text-align: center"></div>
                 </div>
                 <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 40px">
+                    <div class="title-container">
                         <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
                     </div>
                     <div id="condition" style="text-align: center"></div>
                 </div>
                 <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container" style="margin-bottom: 40px">
+                    <div class="title-container">
                         <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
                     </div>
                     <div id="result" style="text-align: center"></div>
@@ -38,6 +38,46 @@
                         <div style="display: flex">
                             <input type="button" value="Zurück" onclick="Essentials.leavePage('/automations')">
                             <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+                <h1 class="loading-loop">Einstellungen</h1>
+                <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+                <div class="type-container">
+                    <div class="title-container" style="margin-bottom: 40px">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+                    </div>
+                    <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
+                    <p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                    <p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                    </div>
+                    <div id="edit-trigger" style="text-align: center"></div>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                    </div>
+                    <div id="edit-condition" style="text-align: center"></div>
+                </div>
+                <div style="margin-top: 20px" class="type-container">
+                    <div class="title-container">
+                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                    </div>
+                    <div id="edit-result" style="text-align: center"></div>
+                </div>
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <div style="display: flex">
+                            <input type="button" value="Zurück" onclick="closeSettings('settings')">
+                            <div style="display: block; width: 100%; margin-left: 20px">
+                                <input id="save-btn" type="submit" value="Speichern">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -97,26 +137,501 @@
 
                         automations = JSON.parse(a);
 
-                        setupEditPage();
+                        setupViewPage();
+                        setupSettingsPage();
                     });
+                }
+                /*
+                automations = [
+                    {
+                        id: 1,
+                        name: 'Debug',
+                        active: true,
+                        trigger: [
+                            {
+                                mac: 'test1',
+                                name: 'Test 1',
+                                letters: 'F0',
+                                operation: '=',
+                                value: '100'
+                            },
+                            {
+                                mac: 'test1',
+                                name: 'Test 1',
+                                letters: 'F0',
+                                operation: '=',
+                                value: '2000'
+                            }
+                        ],
+                        condition: [
+                            {
+                                mac: 'test2',
+                                name: 'Bedingung 1',
+                                letters: 'D0',
+                                operation: '>',
+                                value: '50'
+                            },
+                            {
+                                mac: 'test2',
+                                name: 'Bedingung 2',
+                                letters: 'D0',
+                                operation: '>',
+                                value: '50'
+                            },
+                            {
+                                mac: 'test2',
+                                name: 'Bedingung 3',
+                                letters: 'D0',
+                                operation: '>',
+                                value: '50'
+                            }
+                        ],
+                        result: [
+                            {
+                                mac: 'test3',
+                                name: 'Test X',
+                                letters: 'B0',
+                                operation: '=',
+                                value: '1000'
+                            },
+                            {
+                                mac: 'test2',
+                                name: 'Test Y',
+                                letters: 'D0',
+                                operation: '>',
+                                value: '50'
+                            }
+                        ]
+                    }
+                ];
+                */
+                var a = ['trigger', 'condition', 'result'];
+
+                for(var i = 0; i < a.length; i++)
+                {
+                    var addBtn = document.createElement('input');
+                    
+                    addBtn.setAttribute('value', '+');
+                    addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+                    addBtn.setAttribute('type', 'button');
+                    addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+                    addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+
+                    document.getElementById('edit-' + a[i]).appendChild(addBtn);
+                }
+
+                addTrigger();
+                addResult();
+
+                if((new URL(window.location.href)).searchParams.get('settings') == '')
+                {
+                    Essentials.switchPage('infos', 'settings', true);
                 }
 
             </script>
             <script>
 
-                function setupEditPage()
+                async function openSettings(previous)
+                {
+                    await Essentials.switchPage(previous, 'settings', false);
+
+                    window.history.pushState(null, null, '/automation?id=' + id + '&settings');
+                }
+
+                async function closeSettings(previous)
+                {
+                    await Essentials.switchPage(previous, 'infos', false);
+
+                    window.history.pushState(null, null, '/automation?id=' + id);
+                }
+
+                function setupViewPage()
                 {
                     for(var i = 0; i < automations.length; i++)
                     {
                         if(automations[i].id == id)
                         {
                             document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
-                            document.getElementById('content').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
-                            document.getElementById('info').getElementsByTagName('p')[0].innerHTML = automations[i].active ? 'Aktiv' : 'Deaktiviert';
-                            document.getElementById('info').getElementsByTagName('input')[0].value = automations[i].id;
-                            document.getElementById('info').getElementsByTagName('input')[1].value = automations[i].name;
+                            document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
+                            document.getElementById('infos').getElementsByTagName('p')[0].innerHTML += automations[i].id;
+                            document.getElementById('infos').getElementsByTagName('p')[1].innerHTML += automations[i].name;
+                            document.getElementById('infos').getElementsByTagName('p')[2].innerHTML += automations[i].active ? 'An' : 'Aus';
+
+                            var panel = document.createElement('button');
+
+                            for(var j = 0; j < automations[i].trigger.length; j++)
+                            {
+                                var column = document.createElement('div');
+                                var category = document.createElement('div');
+                                var row = document.createElement('div');
+                                var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
+                                var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
+
+                                column.style.display = 'flex';
+                                column.style.background = 'rgb(60, 60, 75)';
+
+                                if(j != 0)
+                                {
+                                    column.style.marginTop = '3px';
+                                }
+
+                                category.innerHTML = j == 0 ? 'WENN' : 'ODER';
+                                category.style.minWidth = '130px';
+                                category.style.maxWidth = '130px';
+                                category.style.background = 'rgb(80, 80, 90)';
+                                category.style.padding = '13px 18px 12px 18px';
+                                category.style.textAlign = 'center';
+
+                                column.appendChild(category);
+
+                                if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+                                {
+                                    src = 'climate';
+                                }
+
+                                if(automations[i].trigger[j].name && automations[i].trigger[j].operation && automations[i].trigger[j].value)
+                                {
+                                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
+                                }
+                            
+                                row.style.padding = '13px 18px 12px 18px';
+                                row.style.wordBreak = 'break-all';
+
+                                column.appendChild(row);
+                                panel.appendChild(column);
+                            }
+
+                            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
+
+                            document.getElementById('trigger').appendChild(panel);
+
+                            var panel = document.createElement('button');
+
+                            if(automations[i].condition && automations[i].condition.length > 0)
+                            {
+                                for(var j = 0; j < automations[i].condition.length; j++)
+                                {
+                                    var column = document.createElement('div');
+                                    var category = document.createElement('div');
+                                    var row = document.createElement('div');
+                                    var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
+                                    var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
+
+                                    column.style.display = 'flex';
+                                    column.style.background = 'rgb(60, 60, 75)';
+
+                                    if(j != 0)
+                                    {
+                                        column.style.marginTop = '3px';
+                                    }
+
+                                    category.innerHTML = j == 0 ? 'WENN' : automations[i].combination == 'ALL' ? 'UND' : 'ODER';
+                                    category.style.minWidth = '130px';
+                                    category.style.maxWidth = '130px';
+                                    category.style.background = 'rgb(80, 80, 90)';
+                                    category.style.padding = '13px 18px 12px 18px';
+                                    category.style.textAlign = 'center';
+
+                                    column.appendChild(category);
+
+                                    if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+                                    {
+                                        src = 'climate';
+                                    }
+
+                                    if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
+                                    {
+                                        row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
+                                    }
+
+                                    row.style.padding = '13px 18px 12px 18px';
+                                    row.style.wordBreak = 'break-all';
+
+                                    column.appendChild(row);
+                                    panel.appendChild(column);
+                                }
+
+                                panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
+                            
+                                document.getElementById('condition').appendChild(panel);
+                            }
+
+                            var panel = document.createElement('button');
+
+                            for(var j = 0; j < automations[i].result.length; j++)
+                            {
+                                var column = document.createElement('div');
+                                var category = document.createElement('div');
+                                var row = document.createElement('div');
+                                var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+                                var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
+
+                                column.style.display = 'flex';
+                                column.style.background = 'rgb(60, 60, 75)';
+
+                                if(j != 0)
+                                {
+                                    column.style.marginTop = '3px';
+                                }
+
+                                category.innerHTML = j == 0 ? 'WENN' : 'UND';
+                                category.style.minWidth = '130px';
+                                category.style.maxWidth = '130px';
+                                category.style.background = 'rgb(80, 80, 90)';
+                                category.style.padding = '13px 18px 12px 18px';
+                                category.style.textAlign = 'center';
+
+                                column.appendChild(category);
+
+                                if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                                {
+                                    src = 'climate';
+                                }
+
+                                if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
+                                {
+                                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
+                                }
+                                else if(automations[i].result[j].url)
+                                {
+                                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].result[j].url + '"';
+                                }
+
+                                row.style.padding = '13px 18px 12px 18px';
+                                row.style.wordBreak = 'break-all';
+
+                                column.appendChild(row);
+                                panel.appendChild(column);
+                            }
+
+                            panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
+                            
+                            document.getElementById('result').appendChild(panel);
                         }
                     }
+                }
+
+                function setupSettingsPage()
+                {
+                    for(var i = 0; i < automations.length; i++)
+                    {
+                        if(automations[i].id == id)
+                        {
+                            document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automations[i].name + ' )';
+                            document.getElementById('settings').getElementsByTagName('input')[0].value = automations[i].id;
+                            document.getElementById('settings').getElementsByTagName('input')[1].value = automations[i].name;
+                            document.getElementById('settings').getElementsByTagName('input')[2].value = automations[i].active ? 'An' : 'Aus';
+                            document.getElementById('settings').getElementsByTagName('input')[2].className = automations[i].active ? 'white' : 'outline';
+                        }
+                    }
+                }
+
+                function switchFormButton(btn)
+                {
+                    if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+                    {
+                        btn.setAttribute('class', 'outline');
+                        btn.setAttribute('value', 'Aus');
+                    }
+                    else
+                    {
+                        btn.setAttribute('class', 'white');
+                        btn.setAttribute('value', 'An');
+                    }
+                }
+
+                function getDataType(type)
+                {
+                    if(type == 'temperature' || type == 'humidity' || type == 'light')
+                    {
+                        return 'numeric';
+                    }
+                    else
+                    {
+                        return 'boolean';
+                    }
+                }
+
+                function updateOperation(select)
+                {
+                    var o = select.getElementsByTagName('select')[0].selectedIndex;
+                    var option = select.getElementsByTagName('select')[0].children[o];
+
+                    console.log(option.getAttribute('type'), select.parentElement.children[1].getElementsByClassName('select-items')[0]);
+
+                    var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
+
+                    if(option.getAttribute('type') == 'boolean')
+                    {
+                        for(var i = 0; i < options.length; i++)
+                        {
+                            if(options[i].innerHTML == '=')
+                            {
+                                options[i].style.display = '';
+                                options[i].click();
+                            }
+                            else
+                            {
+                                options[i].style.display = 'none';
+                            }
+                        }
+                    }
+                    else if(option.getAttribute('type') == 'numeric')
+                    {
+                        for(var i = 0; i < options.length; i++)
+                        {
+                            options[i].style.display = '';
+                        }
+                    }
+                }
+
+                function addTrigger()
+                {
+                    var trigger = document.createElement('div');
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var select = document.createElement('div');
+
+                    b.innerHTML = 'Gerät: ';
+
+                    select.className = 'custom-select';
+                    select.style.marginRight = '20px';
+                    select.style.width = '100%';
+
+                    trigger.style.display = 'grid';
+                    trigger.style.gridGap = '20px';
+                    trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
+                    trigger.style.marginBottom = '20px';
+
+                    var html = '<select name="service" onchange="updateOperation(this)">';
+
+                    for(var i = 0; i < services.length; i++)
+                    {
+                        if(services[i].type != 'lcd')
+                        {
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                        }
+                    }
+
+                    html += '</select>';
+
+                    console.log(html);
+
+                    select.innerHTML = html;
+               
+                    var operations = document.createElement('div');
+
+                    operations.className = 'custom-select';
+                    operations.style.width = '100%';
+                    operations.style.marginRight = '20px';
+                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+
+                    document.getElementById('edit-trigger').insertBefore(trigger, document.getElementById('edit-trigger').getElementsByClassName('add-entry-button')[0]);
+                
+                    trigger.appendChild(Replacer.createSelectMenu(select));
+                    trigger.appendChild(Replacer.createSelectMenu(operations));
+
+                    updateOperation(select);
+
+                    trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+                }
+
+                function addCondition()
+                {
+                    var condition = document.createElement('div');
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var select = document.createElement('div');
+
+                    b.innerHTML = 'Gerät: ';
+
+                    select.className = 'custom-select';
+                    select.style.marginRight = '20px';
+                    select.style.width = '100%';
+
+                    condition.style.display = 'grid';
+                    condition.style.gridGap = '20px';
+                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
+                    condition.style.marginBottom = '20px';
+
+                    var html = '<select name="service" onchange="updateOperation(this)">';
+
+                    for(var i = 0; i < services.length; i++)
+                    {
+                        if(services[i].type != 'lcd')
+                        {
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                        }
+                    }
+
+                    html += '</select>';
+
+                    select.innerHTML = html;
+
+                    var operations = document.createElement('div');
+
+                    operations.className = 'custom-select';
+                    operations.style.width = '100%';
+                    operations.style.marginRight = '20px';
+                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+               
+                    document.getElementById('edit-condition').insertBefore(condition, document.getElementById('edit-condition').getElementsByClassName('add-entry-button')[0]);
+
+                    condition.appendChild(Replacer.createSelectMenu(select));
+                    condition.appendChild(Replacer.createSelectMenu(operations));
+
+                    updateOperation(select);
+
+                    condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                }
+
+                function addResult()
+                {
+                    var result = document.createElement('div');
+                    var p = document.createElement('p');
+                    var b = document.createElement('b');
+                    var select = document.createElement('div');
+
+                    b.innerHTML = 'Gerät: ';
+
+                    select.className = 'custom-select';
+                    select.style.marginRight = '20px';
+                    select.style.width = '100%';
+
+                    result.style.display = 'grid';
+                    result.style.gridGap = '20px';
+                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
+                    result.style.marginBottom = '20px';
+
+                    var html = '<select name="service" onchange="updateOperation(this)">';
+
+                    for(var i = 0; i < services.length; i++)
+                    {
+                        if(services[i].type != 'lcd')
+                        {
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                        }
+                    }
+
+                    html += '</select>';
+
+                    select.innerHTML = html;
+               
+                    var operations = document.createElement('div');
+
+                    operations.className = 'custom-select';
+                    operations.style.width = '100%';
+                    operations.style.marginRight = '20px';
+                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+               
+                    document.getElementById('edit-result').insertBefore(result, document.getElementById('edit-result').getElementsByClassName('add-entry-button')[0]);
+
+                    result.appendChild(Replacer.createSelectMenu(select));
+                    result.appendChild(Replacer.createSelectMenu(operations));
+
+                    updateOperation(select);
+                    
+                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }
             
             </script>
