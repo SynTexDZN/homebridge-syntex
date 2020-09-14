@@ -139,6 +139,44 @@
 
                         setupViewPage();
                         setupSettingsPage();
+
+                        var a = ['trigger', 'condition', 'result'];
+
+                        for(var i = 0; i < a.length; i++)
+                        {
+                            var addBtn = document.createElement('input');
+                            
+                            addBtn.setAttribute('value', '+');
+                            addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+                            addBtn.setAttribute('type', 'button');
+                            addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+                            addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+
+                            document.getElementById('edit-' + a[i]).appendChild(addBtn);
+                        }
+
+                        loadServices();
+
+                        for(var i = 0; i < automations.length; i++)
+                        {
+                            if(automations[i].id == id)
+                            {
+                                for(var j = 0; j < automations[i].trigger.length; j++)
+                                {
+                                    addTrigger();
+                                }
+
+                                for(var j = 0; j < automations[i].condition.length; j++)
+                                {
+                                    addCondition();
+                                }
+
+                                for(var j = 0; j < automations[i].result.length; j++)
+                                {
+                                    addResult();
+                                }
+                            }
+                        }
                     });
                 }
                 /*
@@ -205,44 +243,6 @@
                     }
                 ];
                 */
-                var a = ['trigger', 'condition', 'result'];
-
-                for(var i = 0; i < a.length; i++)
-                {
-                    var addBtn = document.createElement('input');
-                    
-                    addBtn.setAttribute('value', '+');
-                    addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
-                    addBtn.setAttribute('type', 'button');
-                    addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-                    addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
-
-                    document.getElementById('edit-' + a[i]).appendChild(addBtn);
-                }
-
-                loadServices();
-
-                for(var i = 0; i < automations.length; i++)
-                {
-                    if(automations[i].id == id)
-                    {
-                        for(var j = 0; j < automations[i].trigger.length; j++)
-                        {
-                            addTrigger();
-                        }
-
-                        for(var j = 0; j < automations[i].condition.length; j++)
-                        {
-                            addCondition();
-                        }
-
-                        for(var j = 0; j < automations[i].result.length; j++)
-                        {
-                            addResult();
-                        }
-                    }
-                }
-
                 if((new URL(window.location.href)).searchParams.get('settings') == '')
                 {
                     Essentials.switchPage('infos', 'settings', true);
