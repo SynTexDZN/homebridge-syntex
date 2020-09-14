@@ -138,7 +138,6 @@
                         automations = JSON.parse(a);
 
                         setupViewPage();
-                        loadServices();
                         setupSettingsPage();
                     });
                 }
@@ -221,6 +220,7 @@
                     document.getElementById('edit-' + a[i]).appendChild(addBtn);
                 }
 
+                loadServices();
                 addTrigger();
                 addResult();
 
