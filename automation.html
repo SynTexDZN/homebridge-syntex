@@ -221,8 +221,27 @@
                 }
 
                 loadServices();
-                addTrigger();
-                addResult();
+
+                for(var i = 0; i < automations.length; i++)
+                {
+                    if(automations[i].id == id)
+                    {
+                        for(var j = 0; j < automations[i].trigger.length; j++)
+                        {
+                            addTrigger();
+                        }
+
+                        for(var j = 0; j < automations[i].condition.length; j++)
+                        {
+                            addCondition();
+                        }
+
+                        for(var j = 0; j < automations[i].result.length; j++)
+                        {
+                            addResult();
+                        }
+                    }
+                }
 
                 if((new URL(window.location.href)).searchParams.get('settings') == '')
                 {
