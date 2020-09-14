@@ -551,7 +551,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (t.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (t.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (t.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (t && t.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (t.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (t.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
 
                     document.getElementById('edit-trigger').insertBefore(trigger, document.getElementById('edit-trigger').getElementsByClassName('add-entry-button')[0]);
                 
@@ -560,7 +560,7 @@
 
                     updateOperation(select);
 
-                    trigger.innerHTML += '<input value="' + t.value + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+                    trigger.innerHTML += '<input value="' + (t.value || '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
                 }
 
                 function addCondition(c)
@@ -600,7 +600,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (c.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (c.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (c.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (c && c.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (c.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (c.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
                
                     document.getElementById('edit-condition').insertBefore(condition, document.getElementById('edit-condition').getElementsByClassName('add-entry-button')[0]);
 
@@ -609,7 +609,7 @@
 
                     updateOperation(select);
 
-                    condition.innerHTML += '<input value="' + c.value + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    condition.innerHTML += '<input value="' + (c.value || '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }
 
                 function addResult(r)
@@ -651,7 +651,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (r.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (r.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (r.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (r && r.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (r.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (r.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
                
                     document.getElementById('edit-result').insertBefore(result, document.getElementById('edit-result').getElementsByClassName('add-entry-button')[0]);
 
@@ -660,7 +660,7 @@
 
                     updateOperation(select);
                     
-                    result.innerHTML += '<input value="' + r.value + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    result.innerHTML += '<input value="' + (r.value || '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }
 
                 function loadServices()
