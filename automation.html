@@ -532,7 +532,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (services[i].name != 'SynTex Gute Nacht' ? '' : 'selected') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -583,7 +583,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option ' + (services[i].name != 'SynTex Gute Nacht' ? '' : 'selected') + 'name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (services[i].name != 'SynTex Gute Nacht' ? '' : 'selected') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
