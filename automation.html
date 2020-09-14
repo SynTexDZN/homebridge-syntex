@@ -547,7 +547,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (t.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (t.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (t.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
 
                     document.getElementById('edit-trigger').insertBefore(trigger, document.getElementById('edit-trigger').getElementsByClassName('add-entry-button')[0]);
                 
@@ -596,7 +596,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (c.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (c.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (c.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
                
                     document.getElementById('edit-condition').insertBefore(condition, document.getElementById('edit-condition').getElementsByClassName('add-entry-button')[0]);
 
@@ -647,7 +647,7 @@
                     operations.className = 'custom-select';
                     operations.style.width = '100%';
                     operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+                    operations.innerHTML = '<select name="operation"><option ' + (r.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (r.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (r.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
                
                     document.getElementById('edit-result').insertBefore(result, document.getElementById('edit-result').getElementsByClassName('add-entry-button')[0]);
 
