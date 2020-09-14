@@ -593,7 +593,7 @@ SynTexPlatform.prototype = {
                                     response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));
                                     response.end();
                                 }
-                                else if(urlPath.startsWith('/automations'))
+                                else if(urlPath.startsWith('/automations') || urlPath.startsWith('/automation'))
                                 {
                                     var obj = {
                                         accessories: JSON.stringify(await DeviceManager.getAccessories())
