@@ -163,20 +163,20 @@
                             {
                                 for(var j = 0; j < automations[i].trigger.length; j++)
                                 {
-                                    addTrigger();
+                                    addTrigger(automations[i].trigger[j]);
                                 }
 
                                 if(automations[i].condition && automations[i].condition.length > 0)
                                 {
                                     for(var j = 0; j < automations[i].condition.length; j++)
                                     {
-                                        addCondition();
+                                        addCondition(automations[i].condition[j]);
                                     }
                                 }
 
                                 for(var j = 0; j < automations[i].result.length; j++)
                                 {
-                                    addResult();
+                                    addResult(automations[i].result[j]);
                                 }
                             }
                         }
@@ -508,7 +508,7 @@
                     }
                 }
 
-                function addTrigger()
+                function addTrigger(t)
                 {
                     var trigger = document.createElement('div');
                     var p = document.createElement('p');
@@ -559,7 +559,7 @@
                     trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
                 }
 
-                function addCondition()
+                function addCondition(c)
                 {
                     var condition = document.createElement('div');
                     var p = document.createElement('p');
@@ -583,7 +583,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (services[i].name != 'SynTex Gute Nacht' ? '' : 'selected') + 'name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -608,7 +608,7 @@
                     condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                 }
 
-                function addResult()
+                function addResult(r)
                 {
                     var result = document.createElement('div');
                     var p = document.createElement('p');
