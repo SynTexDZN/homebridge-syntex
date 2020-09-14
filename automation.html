@@ -138,6 +138,7 @@
                         automations = JSON.parse(a);
 
                         setupViewPage();
+                        loadServices();
                         setupSettingsPage();
                     });
                 }
@@ -632,6 +633,57 @@
                     updateOperation(select);
                     
                     result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                }
+
+                function loadServices()
+                {
+                    for(var i = 0; i < accessories.length; i++)
+                    {
+                        if(Array.isArray(accessories[i].services))
+                        {
+                            var counter = { type : '', count : 0 };
+
+                            for(var j = 0; j < accessories[i].services.length; j++)
+                            {
+                                if(accessories[i].services[j] instanceof Object)
+                                {
+                                    if(counter.type != accessories[i].services[j].type)
+                                    {
+                                        counter.count = 0;
+                                    }
+
+                                    counter.type = accessories[i].services[j].type;
+                                    
+                                    services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+                                }
+                                else
+                                {
+                                    if(counter.type != accessories[i].services[j])
+                                    {
+                                        counter.count = 0;
+                                    }
+
+                                    counter.type = accessories[i].services[j];
+
+                                    services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+                                }
+
+                                counter.count++;
+                            }
+                        }
+                        else if(accessories[i].services instanceof Object)
+                        {
+                            services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+                        }
+                        else
+                        {
+                            services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
+                        }
+                    }
+
+                    services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+                    console.log('Services', services);
                 }
             
             </script>
