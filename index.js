@@ -32,8 +32,12 @@ function SynTexPlatform(log, config, api)
 
             var devices = await DeviceManager.getDevices();
 
+            if(devices != null)
+            {
+                OfflineManager.SETUP(logger, devices);
+            }
+            
             Automations.SETUP(logger, config.cache_directory);
-            OfflineManager.SETUP(logger, devices);
 
             restart = false;
 
