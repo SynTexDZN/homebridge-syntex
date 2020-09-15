@@ -19,7 +19,7 @@ function SynTexPlatform(log, config, api)
 
         conf = store(api.user.storagePath());
 
-        logger.create("SynTex", this.logDirectory, api.user.storagePath());
+        logger.create('SynTex', this.logDirectory, api.user.storagePath());
 
         HTMLQuery.SETUP(logger);
 
@@ -28,16 +28,16 @@ function SynTexPlatform(log, config, api)
             if(config != null)
             {
                 DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
+                Automations.SETUP(logger, config.cache_directory);
             }
 
-            var devices = await DeviceManager.getDevices();
-
-            if(devices != null)
+            DeviceManager.getDevices().then(function(devices)
             {
-                OfflineManager.SETUP(logger, devices);
-            }
-            
-            Automations.SETUP(logger, config.cache_directory);
+                if(devices != null)
+                {
+                    OfflineManager.SETUP(logger, devices);
+                }
+            });
 
             restart = false;
 
