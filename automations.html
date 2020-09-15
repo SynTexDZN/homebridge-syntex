@@ -667,7 +667,7 @@
 
                     var created = await Query.complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
 
-                    if(created)
+                    if(created == 'Success')
                     {
                         var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
 
