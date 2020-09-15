@@ -393,22 +393,24 @@ SynTexPlatform.prototype = {
                                 post += data;
                             });
                             
-                            logger.debug(post);
-
+                            request.on('end', async function()
+                            {                       
+                                logger.debug(post);
+                                         
+                                response.write(await Automations.createAutomation(post) ? 'Success' : 'Error'); 
+                            });
+                            	/*
                             if(urlParams.id && urlParams.name && urlParams.active
                                             && urlParams.trigger && urlParams.result
                                             && urlParams.trigger)
                             {
-                                request.on('end', async function()
-                                {                                
-                                    response.write(await Automations.createAutomation(post) ? 'Success' : 'Error'); 
-                                });
+                                
                             }
                             else
                             {
                                 response.write('Error');
                             }
-
+                            */
                             response.end();
                         }
                     }
