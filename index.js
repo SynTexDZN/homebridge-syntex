@@ -395,23 +395,9 @@ SynTexPlatform.prototype = {
                             
                             request.on('end', async function()
                             {                       
-                                logger.debug(post);
-                                         
-                                response.write(await Automations.createAutomation(post) ? 'Success' : 'Error'); 
+                                response.write(await Automations.createAutomation(post) ? 'Success' : 'Error');
+                                response.end();
                             });
-                            	/*
-                            if(urlParams.id && urlParams.name && urlParams.active
-                                            && urlParams.trigger && urlParams.result
-                                            && urlParams.trigger)
-                            {
-                                
-                            }
-                            else
-                            {
-                                response.write('Error');
-                            }
-                            */
-                            response.end();
                         }
                     }
                     else
