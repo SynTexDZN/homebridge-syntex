@@ -23,36 +23,84 @@ function createAutomation(automation)
 {
     return new Promise(resolve => {
 
-        storage.load('automations', (err, obj) => {  
+        automation = JSON.parse(automation);
 
-            if(!obj || err)
-            {
-                obj = { id : 'automations', automations : [ automation ] };
-            }
-            else
-            {
-                obj.automations[obj.automations.length] = JSON.parse(automation);
-            }
+        if(isValid(automation))
+        {
+            storage.load('automations', (err, obj) => {  
 
-            logger.debug(obj);
-
-            storage.add(obj, (err) => {
-
-                if(err)
+                if(!obj || err)
                 {
-                    logger.log('error', 'bridge', 'Bridge', automation + '.json konnte nicht aktualisiert werden! ' + err);
-
-                    resolve(false);
+                    obj = { id : 'automations', automations : [ automation ] };
                 }
                 else
                 {
-                    logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert');
-
-                    resolve(true);
+                    obj.automations[obj.automations.length] = automation;
                 }
+    
+                storage.add(obj, (err) => {
+    
+                    if(err)
+                    {
+                        logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
+    
+                        resolve(false);
+                    }
+                    else
+                    {
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert');
+    
+                        resolve(true);
+                    }
+                });
             });
-        });
+        }
+        else
+        {
+            resolve(false);
+        }
     });
+}
+
+function isValid(automation)
+{
+    if(automation.id && automation.name && automation.active && automation.trigger && automation.result)
+    {
+        var valid = true;
+
+        for(var i = 0; i < automation.trigger.length; i++)
+        {
+            if(!automation.trigger[i].mac || !automation.trigger[i].name || !automation.trigger[i].letters || !automation.trigger[i].value || !automation.trigger[i].operation)
+            {
+                valid = false;
+            }
+        }
+
+        if(automation.condition)
+        {
+            for(var i = 0; i < automation.condition.length; i++)
+            {
+                if(!automation.condition[i].mac || !automation.condition[i].name || !automation.condition[i].letters || !automation.condition[i].value || !automation.condition[i].operation)
+                {
+                    valid = false;
+                }
+            }
+        }
+
+        for(var i = 0; i < automation.result.length; i++)
+        {
+            if(!automation.result[i].mac || !automation.result[i].name || !automation.result[i].letters || !automation.result[i].value || !automation.result[i].operation)
+            {
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 function SETUP(log, storagePath)
