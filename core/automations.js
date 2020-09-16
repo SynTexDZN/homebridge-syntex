@@ -76,13 +76,13 @@ function removeAutomation(id)
             }
             else
             {
-                for(var i = 0; i < obj.length; i++)
+                for(var i = 0; i < obj.automations.length; i++)
                 {
-                    console.log(id, obj[i].id);
+                    console.log(id, obj.automations[i].id);
 
-                    if(obj[i].id == id)
+                    if(obj.automations[i].id == id)
                     {
-                        obj.splice(i, 1);
+                        obj.automations.splice(i, 1);
 
                         resolve(true);
                     }
@@ -147,11 +147,11 @@ function modifyAutomation(automation)
             }
             else
             {
-                for(var i = 0; i < obj.length; i++)
+                for(var i = 0; i < obj.automations.length; i++)
                 {
-                    if(obj[i].id == id)
+                    if(obj.automations[i].id == id)
                     {
-                        obj[i] = JSON.parse(automation);
+                        obj.automations[i] = JSON.parse(automation);
 
                         resolve(true);
                     }
