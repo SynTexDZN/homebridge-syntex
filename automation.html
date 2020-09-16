@@ -293,9 +293,9 @@
                         {
                             document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
                             document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
-                            document.getElementById('infos').getElementsByTagName('p')[0].innerHTML += automations[i].id;
-                            document.getElementById('infos').getElementsByTagName('p')[1].innerHTML += automations[i].name;
-                            document.getElementById('infos').getElementsByTagName('p')[2].innerHTML += automations[i].active ? 'An' : 'Aus';
+                            document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<p><b>ID: </b>' + automations[i].id + '<p>';
+                            document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<p><b>Name: </b>' + automations[i].name + '<p>';
+                            document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<p><b>Aktiv: </b>' + (automations[i].active ? 'An' : 'Aus') + '<p>';
 
                             var panel = document.createElement('button');
 
@@ -343,9 +343,12 @@
 
                             panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
 
+                            document.getElementById('trigger').innerHTML = '';
                             document.getElementById('trigger').appendChild(panel);
 
                             var panel = document.createElement('button');
+
+                            document.getElementById('condition').innerHTML = '';
 
                             if(automations[i].condition && automations[i].condition.length > 0)
                             {
@@ -446,6 +449,7 @@
 
                             panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
                             
+                            document.getElementById('result').innerHTML = '';
                             document.getElementById('result').appendChild(panel);
                         }
                     }
