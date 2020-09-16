@@ -619,9 +619,16 @@ SynTexPlatform.prototype = {
                                 }
                                 else if(urlPath.startsWith('/automations') || urlPath.startsWith('/automation'))
                                 {
+                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
-                                        accessories: JSON.stringify(await DeviceManager.getAccessories())
+                                        accessories: JSON.stringify(await DeviceManager.getAccessories()),
+                                        wPort: 1710
                                     };
+
+                                    if(webhookConfig != null)
+                                    {
+                                        obj.wPort = webhookConfig.port;
+                                    }
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
                                     response.end();

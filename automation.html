@@ -45,7 +45,7 @@
             <div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <h1 class="loading-loop">Einstellungen</h1>
                 <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
-                <form onsubmit="event.preventDefault(); modifyAutomation(this);">
+                <form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
                     <div class="type-container">
                         <div class="title-container" style="margin-bottom: 40px">
                             <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
@@ -749,13 +749,21 @@
                         {
                             await Essentials.newTimeout(3000);
 
-                            if(await Essentials.checkRestart('/serverside/check-restart'))
+                            if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
                             {
                                 Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
 
                                 await Essentials.newTimeout(3000);
 
                                 Essentials.leavePage('/automations');
+                            }
+                            else
+                            {
+                                Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
+
+                                await Essentials.newTimeout(3000);
+
+                                Essentials.removeOverlays(document.getElementById('reset-btn'), true);
                             }
                         }
                         else
