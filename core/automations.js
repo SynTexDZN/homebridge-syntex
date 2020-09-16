@@ -68,6 +68,8 @@ function removeAutomation(id)
 
         storage.load('automations', (err, obj) => {  
 
+            console.log(obj);
+
             if(!obj || err)
             {
                 resolve(false);
