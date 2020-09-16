@@ -99,9 +99,9 @@
                 window.Replacer = Replacer;
 
                 window.automations = [];
-                //window.accessories = JSON.parse('<%accessories%>');
+                window.accessories = JSON.parse('<%accessories%>');
                 window.services = [];
-
+                /*
                 window.accessories = [
                     {
                         mac: 'test1',
@@ -110,7 +110,7 @@
                         services: ['switch']
                     }
                 ];
-
+                */
                 window.id = (new URL(window.location.href)).searchParams.get('id');
                 window.resetting = false;
 
@@ -149,7 +149,7 @@
                     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
                         automations = JSON.parse(a);
-
+                        /*
                         automations = [
                             {
                                 id: 1,
@@ -212,7 +212,7 @@
                                 ]
                             }
                         ];
-
+                        */
                         setupViewPage();
                         setupSettingsPage();
 

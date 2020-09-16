@@ -86,9 +86,9 @@
                 window.Replacer = Replacer;
 
                 window.automations = [];
-                //window.accessories = JSON.parse('<%accessories%>');
+                window.accessories = JSON.parse('<%accessories%>');
                 window.services = [];
-
+                /*
                 window.accessories = [
                     {
                         mac: 'test1',
@@ -97,7 +97,7 @@
                         services: ['switch']
                     }
                 ];
-
+                */
                 window.data = {
                     motion: {
                         active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
@@ -131,70 +131,70 @@
                 Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
                     automations = JSON.parse(a);
-
+                    /*
                     automations = [
-                    {
-                        id: 1,
-                        name: 'Debug',
-                        active: true,
-                        trigger: [
-                            {
-                                mac: 'test1',
-                                name: 'Test 1',
-                                letters: 'F0',
-                                operation: '=',
-                                value: '100'
-                            },
-                            {
-                                mac: 'test1',
-                                name: 'Test 1',
-                                letters: 'F0',
-                                operation: '=',
-                                value: '2000'
-                            }
-                        ],
-                        condition: [
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 1',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 2',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 3',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            }
-                        ],
-                        result: [
-                            {
-                                mac: 'test3',
-                                name: 'Test X',
-                                letters: 'B0',
-                                operation: '=',
-                                value: '1000'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Test Y',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            }
-                        ]
-                    }
-                ];
-
+                        {
+                            id: 1,
+                            name: 'Debug',
+                            active: true,
+                            trigger: [
+                                {
+                                    mac: 'test1',
+                                    name: 'Test 1',
+                                    letters: 'F0',
+                                    operation: '=',
+                                    value: '100'
+                                },
+                                {
+                                    mac: 'test1',
+                                    name: 'Test 1',
+                                    letters: 'F0',
+                                    operation: '=',
+                                    value: '2000'
+                                }
+                            ],
+                            condition: [
+                                {
+                                    mac: 'test2',
+                                    name: 'Bedingung 1',
+                                    letters: 'D0',
+                                    operation: '>',
+                                    value: '50'
+                                },
+                                {
+                                    mac: 'test2',
+                                    name: 'Bedingung 2',
+                                    letters: 'D0',
+                                    operation: '>',
+                                    value: '50'
+                                },
+                                {
+                                    mac: 'test2',
+                                    name: 'Bedingung 3',
+                                    letters: 'D0',
+                                    operation: '>',
+                                    value: '50'
+                                }
+                            ],
+                            result: [
+                                {
+                                    mac: 'test3',
+                                    name: 'Test X',
+                                    letters: 'B0',
+                                    operation: '=',
+                                    value: '1000'
+                                },
+                                {
+                                    mac: 'test2',
+                                    name: 'Test Y',
+                                    letters: 'D0',
+                                    operation: '>',
+                                    value: '50'
+                                }
+                            ]
+                        }
+                    ];
+                    */
                     createAutomationPanels();
 
                     document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
