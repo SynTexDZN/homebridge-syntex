@@ -10,7 +10,7 @@
                     <input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
                 </div>
                 <div class="main" style="margin-top: 10px; display: flex">
-                    <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px; display: none">
+                    <input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px">
                     <input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')" disabled>
                 </div>
             </div>
@@ -76,14 +76,6 @@
                 window.countLogs = true;
 
                 fetchLogs();
-
-                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(automations) {
-
-                    if(automations != null && automations.length > 0)
-                    {
-                        document.getElementById('a').style.display = '';
-                    }
-                });
 
             </script>
             <script>
