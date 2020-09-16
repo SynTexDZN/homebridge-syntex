@@ -388,7 +388,7 @@ SynTexPlatform.prototype = {
                             response.write(JSON.stringify(await Automations.loadAutomations())); 
                             response.end();
                         }
-                        else if(urlPath == '/create-automations' && request.method == 'POST')
+                        else if(urlPath == '/create-automation' && request.method == 'POST')
                         {
                             var post = '';
 
@@ -402,6 +402,26 @@ SynTexPlatform.prototype = {
                                 response.write(await Automations.createAutomation(post) ? 'Success' : 'Error');
                                 response.end();
                             });
+                        }
+                        else if(urlPath == '/modify-automation' && request.method == 'POST')
+                        {
+                            var post = '';
+
+                            request.on('data', function(data)
+                            {
+                                post += data;
+                            });
+                            
+                            request.on('end', async function()
+                            {                       
+                                response.write(await Automations.modifyAutomation(post) ? 'Success' : 'Error');
+                                response.end();
+                            });
+                        }
+                        else if(urlPath == '/remove-automation')
+                        {
+                            response.write(urlParams.id ? await Automations.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
+                            response.end();
                         }
                     }
                     else

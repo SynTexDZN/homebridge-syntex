@@ -45,42 +45,45 @@
             <div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <h1 class="loading-loop">Einstellungen</h1>
                 <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
-                <div class="type-container">
-                    <div class="title-container" style="margin-bottom: 40px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+                <form onsubmit="event.preventDefault(); modifyAutomation(this);">
+                    <div class="type-container">
+                        <div class="title-container" style="margin-bottom: 40px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+                        </div>
+                        <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
+                        <p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+                        <p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
                     </div>
-                    <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
-                    <p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                    <p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 40px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+                        </div>
+                        <div id="edit-trigger" style="text-align: center"></div>
                     </div>
-                    <div id="edit-trigger" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 40px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+                        </div>
+                        <div id="edit-condition" style="text-align: center"></div>
                     </div>
-                    <div id="edit-condition" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                    <div style="margin-top: 20px" class="type-container">
+                        <div class="title-container" style="margin-bottom: 40px">
+                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+                        </div>
+                        <div id="edit-result" style="text-align: center"></div>
                     </div>
-                    <div id="edit-result" style="text-align: center"></div>
-                </div>
-                <div class="navigation-panel">
-                    <div class="sticky-inset">
-                        <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="closeSettings('settings')">
-                            <div style="display: block; width: 100%; margin-left: 20px">
-                                <input id="save-btn" type="submit" value="Speichern">
+                    <div class="navigation-panel">
+                        <div class="sticky-inset">
+                            <input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)">
+                            <div style="display: flex; margin-top: 20px">
+                                <input type="button" value="Zurück" onclick="closeSettings('settings')">
+                                <div style="display: block; width: 100%; margin-left: 20px">
+                                    <input id="save-btn" type="submit" value="Speichern">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
             <script type="module">
 
@@ -96,10 +99,20 @@
                 window.Replacer = Replacer;
 
                 window.automations = [];
-                window.accessories = JSON.parse('<%accessories%>');
+                //window.accessories = JSON.parse('<%accessories%>');
                 window.services = [];
 
+                window.accessories = [
+                    {
+                        mac: 'test1',
+                        name: 'Test',
+                        letters: 'F2',
+                        services: ['switch']
+                    }
+                ];
+
                 window.id = (new URL(window.location.href)).searchParams.get('id');
+                window.resetting = false;
 
                 window.data = {
                     motion: {
@@ -136,6 +149,69 @@
                     Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
                         automations = JSON.parse(a);
+
+                        automations = [
+                            {
+                                id: 1,
+                                name: 'Debug',
+                                active: true,
+                                trigger: [
+                                    {
+                                        mac: 'test1',
+                                        name: 'Test 1',
+                                        letters: 'F0',
+                                        operation: '=',
+                                        value: '100'
+                                    },
+                                    {
+                                        mac: 'test1',
+                                        name: 'Test 1',
+                                        letters: 'F0',
+                                        operation: '=',
+                                        value: '2000'
+                                    }
+                                ],
+                                condition: [
+                                    {
+                                        mac: 'test2',
+                                        name: 'Bedingung 1',
+                                        letters: 'D0',
+                                        operation: '>',
+                                        value: '50'
+                                    },
+                                    {
+                                        mac: 'test2',
+                                        name: 'Bedingung 2',
+                                        letters: 'D0',
+                                        operation: '>',
+                                        value: '50'
+                                    },
+                                    {
+                                        mac: 'test2',
+                                        name: 'Bedingung 3',
+                                        letters: 'D0',
+                                        operation: '>',
+                                        value: '50'
+                                    }
+                                ],
+                                result: [
+                                    {
+                                        mac: 'test3',
+                                        name: 'Test X',
+                                        letters: 'B0',
+                                        operation: '=',
+                                        value: '1000'
+                                    },
+                                    {
+                                        mac: 'test2',
+                                        name: 'Test Y',
+                                        letters: 'D0',
+                                        operation: '>',
+                                        value: '50'
+                                    }
+                                ]
+                            }
+                        ];
 
                         setupViewPage();
                         setupSettingsPage();
@@ -186,70 +262,7 @@
                         }
                     });
                 }
-                /*
-                automations = [
-                    {
-                        id: 1,
-                        name: 'Debug',
-                        active: true,
-                        trigger: [
-                            {
-                                mac: 'test1',
-                                name: 'Test 1',
-                                letters: 'F0',
-                                operation: '=',
-                                value: '100'
-                            },
-                            {
-                                mac: 'test1',
-                                name: 'Test 1',
-                                letters: 'F0',
-                                operation: '=',
-                                value: '2000'
-                            }
-                        ],
-                        condition: [
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 1',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 2',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Bedingung 3',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            }
-                        ],
-                        result: [
-                            {
-                                mac: 'test3',
-                                name: 'Test X',
-                                letters: 'B0',
-                                operation: '=',
-                                value: '1000'
-                            },
-                            {
-                                mac: 'test2',
-                                name: 'Test Y',
-                                letters: 'D0',
-                                operation: '>',
-                                value: '50'
-                            }
-                        ]
-                    }
-                ];
-                */
+                
                 if((new URL(window.location.href)).searchParams.get('settings') == '')
                 {
                     Essentials.switchPage('infos', 'settings', true);
@@ -525,10 +538,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    trigger.style.display = 'grid';
-                    trigger.style.gridGap = '20px';
-                    trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    trigger.style.marginBottom = '20px';
+                    trigger.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -561,6 +571,7 @@
                     updateOperation(select);
 
                     trigger.innerHTML += '<input value="' + (t ? t.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+                    trigger.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 function addCondition(c)
@@ -576,10 +587,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    condition.style.display = 'grid';
-                    condition.style.gridGap = '20px';
-                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    condition.style.marginBottom = '20px';
+                    condition.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -610,6 +618,7 @@
                     updateOperation(select);
 
                     condition.innerHTML += '<input value="' + (c ? c.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    condition.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 function addResult(r)
@@ -625,10 +634,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    result.style.display = 'grid';
-                    result.style.gridGap = '20px';
-                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    result.style.marginBottom = '20px';
+                    result.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -636,8 +642,6 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            console.log(services[i].mac, r.mac, services[i].letters, r.letters, services[i].mac == r.mac && services[i].letters == r.letters);
-
                             html += '<option ' + (r && services[i].mac == r.mac && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
@@ -661,6 +665,7 @@
                     updateOperation(select);
                     
                     result.innerHTML += '<input value="' + (r ? r.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    result.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 function loadServices()
@@ -713,7 +718,201 @@
 
                     console.log('Services', services);
                 }
+
+                function removeAutomation(btn)
+                {
+                    var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+
+                    overlay.setAttribute('onclick', 'removeConfirm(this)');
+                    overlay.style.setProperty('cursor', 'pointer', 'important');
+
+                    Essentials.showOverlay(btn, overlay);
+                }
+                
+                async function removeConfirm(btn)
+                {
+                    if(!resetting)
+                    {
+                        var overlays = {
+                            root : btn,
+                            id : 'update',
+                            pending : { value : 'Löschen ..', z : 2 },
+                            executeError : { value : 'Entfernen Fehlgeschlagen!', z : 3 },
+                            connectionError : { value : 'Keine Verbindung zur Bridge', z : 3 }
+                        };
+
+                        var url = '/serverside/remove-automation?id=' + id;
+
+                        resetting = true;
+
+                        if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
+                        {
+                            await Essentials.newTimeout(3000);
+
+                            if(await Essentials.checkRestart('/serverside/check-restart'))
+                            {
+                                Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
+
+                                await Essentials.newTimeout(3000);
+
+                                Essentials.leavePage('/automations');
+                            }
+                        }
+                        else
+                        {
+                            await Essentials.newTimeout(4010);
+                            Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+                        }
+
+                        resetting = false;
+                    }
+                }
+
+                function removeEntry(btn)
+                {
+                    btn.parentElement.parentElement.removeChild(btn.parentElement);
+                }
             
+                function modifyAutomation(form)
+                {
+                    var automation = {};
+
+                    automation.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
+                    automation.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
+                    automation.active = true;
+                    automation.trigger = [];
+
+                    for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
+                    {
+                        var t = document.getElementById('edit-trigger').children[i], trigger = {};
+
+                        for(var j = 0; j < t.children.length; j++)
+                        {
+                            if(t.children[j].className != 'custom-select')
+                            {
+                                trigger[t.children[j].getAttribute('name')] = t.children[j].value;
+                            }
+                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                            {
+                                var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = t.children[j].getElementsByTagName('select')[0].children[o];
+
+                                trigger.operation = option.value;
+                            }
+                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
+                            {
+                                var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = t.children[j].getElementsByTagName('select')[0].children[o];
+
+                                trigger.mac = option.getAttribute('mac');
+                                trigger.name = option.getAttribute('name');
+                                trigger.letters = option.getAttribute('letters');
+                            }
+                        }
+
+                        automation.trigger.push(trigger);
+                    }
+
+                    if(document.getElementById('edit-condition').childElementCount > 1)
+                    {
+                        automation.condition = [];
+
+                        for(var i = 0; i < document.getElementById('edit-condition').children.length - 1; i++)
+                        {
+                            var c = document.getElementById('edit-condition').children[i], condition = {};
+
+                            for(var j = 0; j < c.children.length; j++)
+                            {
+                                if(c.children[j].className != 'custom-select')
+                                {
+                                    condition[c.children[j].getAttribute('name')] = c.children[j].value;
+                                }
+                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                                {
+                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
+
+                                    condition.operation = option.value;
+                                }
+                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
+                                {
+                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
+
+                                    condition.mac = option.getAttribute('mac');
+                                    condition.name = option.getAttribute('name');
+                                    condition.letters = option.getAttribute('letters');
+                                }
+                            }
+
+                            automation.condition.push(condition);
+                        }
+                    }
+
+                    automation.result = [];
+
+                    for(var i = 0; i < document.getElementById('edit-result').children.length - 1; i++)
+                    {
+                        var r = document.getElementById('edit-result').children[i], result = {};
+
+                        for(var j = 0; j < r.children.length; j++)
+                        {
+                            if(r.children[j].className != 'custom-select')
+                            {
+                                result[r.children[j].getAttribute('name')] = r.children[j].value;
+                            }
+                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
+                            {
+                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
+
+                                result.operation = option.value
+                            }
+                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
+                            {
+                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
+                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
+
+                                result.mac = option.getAttribute('mac');
+                                result.name = option.getAttribute('name');
+                                result.letters = option.getAttribute('letters');
+                            }
+                        }
+
+                        automation.result.push(result);
+                    }
+
+                    console.log(automation);
+
+                    var overlays = {
+                        root : document.getElementById('save-btn'),
+                        id : 'save',
+                        pending : { value : 'Aktualisieren ..' },
+                        success : { value : 'Automation Aktualisiert!', remove : false },
+                        executeError : { value : 'Aktualisierung Fehlgeschlagen!' },
+                        connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                    };
+
+                    var created = await Query.complexFetch('/serverside/modify-automation', 10000, 3, overlays, false, JSON.stringify(automation));
+
+                    if(created == 'Success')
+                    {
+                        var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
+
+                        automations = JSON.parse(a);
+
+                        createAutomationPanels();
+
+                        await Essentials.newTimeout(4000);
+
+                        Essentials.switchPage('settings', 'view', false);
+
+                        await Essentials.newTimeout(600);
+
+                        document.getElementById('settings').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                    }
+                }
+
             </script>
         </div>
     </body>

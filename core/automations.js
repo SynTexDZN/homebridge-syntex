@@ -62,6 +62,34 @@ function createAutomation(automation)
     });
 }
 
+function removeAutomation(id)
+{
+    return new Promise(resolve => {
+
+        storage.load('automations', (err, obj) => {  
+
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
+            {
+                for(var i = 0; i < obj.length; i++)
+                {
+                    if(obj[i].id == id)
+                    {
+                        obj.splice(i, 1);
+
+                        resolve(true);
+                    }
+                }
+                
+                resolve(false);
+            }
+        });
+    });
+}
+
 function isValid(automation)
 {
     if(automation.id && automation.name && automation.active && automation.trigger && automation.result)
@@ -103,6 +131,34 @@ function isValid(automation)
     }
 }
 
+function modifyAutomation(automation)
+{
+    return new Promise(resolve => {
+
+        storage.load('automations', (err, obj) => {  
+
+            if(!obj || err)
+            {
+                resolve(false);
+            }
+            else
+            {
+                for(var i = 0; i < obj.length; i++)
+                {
+                    if(obj[i].id == id)
+                    {
+                        obj[i] = JSON.parse(automation);
+
+                        resolve(true);
+                    }
+                }
+                
+                resolve(false);
+            }
+        });
+    });
+}
+
 function SETUP(log, storagePath)
 {
     logger = log;
@@ -112,5 +168,7 @@ function SETUP(log, storagePath)
 module.exports = {
     SETUP,
     loadAutomations,
-    createAutomation
+    createAutomation,
+    removeAutomation,
+    modifyAutomation
 };

@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div id="create" style="display: none; opacity: 0; transition: .2s ease-in-out">
-                <form class="main" onsubmit="event.preventDefault(); createAutomation(this);">
+                <form class="main" onsubmit="event.preventDefault(); createAutomation();">
                     <div class="type-container">
                         <div class="title-container" style="margin-bottom: 40px">
                             <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
@@ -86,8 +86,17 @@
                 window.Replacer = Replacer;
 
                 window.automations = [];
-                window.accessories = JSON.parse('<%accessories%>');
+                //window.accessories = JSON.parse('<%accessories%>');
                 window.services = [];
+
+                window.accessories = [
+                    {
+                        mac: 'test1',
+                        name: 'Test',
+                        letters: 'F2',
+                        services: ['switch']
+                    }
+                ];
 
                 window.data = {
                     motion: {
@@ -123,12 +132,7 @@
 
                     automations = JSON.parse(a);
 
-                    createAutomationPanels();
-
-                    document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
-                });
-                /*
-                automations = [
+                    automations = [
                     {
                         id: 1,
                         name: 'Debug',
@@ -191,8 +195,11 @@
                     }
                 ];
 
-                createAutomationPanels();
-                */
+                    createAutomationPanels();
+
+                    document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                });
+                
                 loadServices();
 
                 var a = ['trigger', 'condition', 'result'];
@@ -411,10 +418,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    trigger.style.display = 'grid';
-                    trigger.style.gridGap = '20px';
-                    trigger.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    trigger.style.marginBottom = '20px';
+                    trigger.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -445,6 +449,7 @@
                     updateOperation(select);
 
                     trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+                    trigger.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 function addCondition()
@@ -460,10 +465,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    condition.style.display = 'grid';
-                    condition.style.gridGap = '20px';
-                    condition.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    condition.style.marginBottom = '20px';
+                    condition.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -494,6 +496,7 @@
                     updateOperation(select);
 
                     condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    condition.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 function addResult()
@@ -509,10 +512,7 @@
                     select.style.marginRight = '20px';
                     select.style.width = '100%';
 
-                    result.style.display = 'grid';
-                    result.style.gridGap = '20px';
-                    result.style.gridTemplateColumns = 'calc(50% - 13px) calc(20% - 14px) calc(30% - 13px)';
-                    result.style.marginBottom = '20px';
+                    result.className = 'automation-device-entry';
 
                     var html = '<select name="service" onchange="updateOperation(this)">';
 
@@ -543,6 +543,7 @@
                     //updateOperation(select);
                     
                     result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    result.innerHTML += '<button onclick="removeEntry(this)" class="white"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
                 async function createAutomation()
@@ -665,7 +666,7 @@
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
 
-                    var created = await Query.complexFetch('/serverside/create-automations', 10000, 3, overlays, false, JSON.stringify(automation));
+                    var created = await Query.complexFetch('/serverside/create-automation', 10000, 3, overlays, false, JSON.stringify(automation));
 
                     if(created == 'Success')
                     {
@@ -779,6 +780,11 @@
                             options[i].style.display = '';
                         }
                     }
+                }
+
+                function removeEntry(btn)
+                {
+                    btn.parentElement.parentElement.removeChild(btn.parentElement);
                 }
 
             </script>
