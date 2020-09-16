@@ -906,11 +906,11 @@
                     {
                         if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
                         {
-                            Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
+                            Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
                         }
                         else
                         {
-                            Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
+                            Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
                         }
 
                         var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
@@ -921,7 +921,7 @@
 
                         await Essentials.newTimeout(4000);
 
-                        Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+                        Essentials.removeOverlays(document.getElementById('save-btn'), true);
 
                         Essentials.switchPage('settings', 'view', false);
                         /*
