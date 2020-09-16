@@ -896,7 +896,6 @@
                         root : document.getElementById('save-btn'),
                         id : 'save',
                         pending : { value : 'Aktualisieren ..' },
-                        success : { value : 'Automation Aktualisiert!', remove : false },
                         executeError : { value : 'Aktualisierung Fehlgeschlagen!' },
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
@@ -905,19 +904,31 @@
 
                     if(created == 'Success')
                     {
+                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
+                        {
+                            Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
+                        }
+                        else
+                        {
+                            Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
+                        }
+
                         var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
 
                         automations = JSON.parse(a);
 
-                        createAutomationPanels();
+                        setupViewPage();
 
                         await Essentials.newTimeout(4000);
 
-                        Essentials.switchPage('settings', 'view', false);
+                        Essentials.removeOverlays(document.getElementById('reset-btn'), true);
 
+                        Essentials.switchPage('settings', 'view', false);
+                        /*
                         await Essentials.newTimeout(600);
 
                         document.getElementById('settings').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+                        */
                     }
                 }
 
