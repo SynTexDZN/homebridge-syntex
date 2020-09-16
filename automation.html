@@ -791,7 +791,7 @@
 
                     automation.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
                     automation.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
-                    automation.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
+                    automation.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An' ? true : false;
                     automation.trigger = [];
 
                     for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
