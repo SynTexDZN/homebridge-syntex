@@ -76,6 +76,8 @@ function removeAutomation(id)
             {
                 for(var i = 0; i < obj.length; i++)
                 {
+                    console.log(id, obj[i].id);
+
                     if(obj[i].id == id)
                     {
                         obj.splice(i, 1);
