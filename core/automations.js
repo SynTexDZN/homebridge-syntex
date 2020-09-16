@@ -48,7 +48,7 @@ function createAutomation(automation)
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert');
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert!');
     
                         resolve(true);
                     }
@@ -94,7 +94,7 @@ function removeAutomation(id)
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + id + '] wurde erfolgreich entfernt');
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + id + '] wurde erfolgreich entfernt!');
     
                         resolve(true);
                     }
@@ -161,7 +161,7 @@ function modifyAutomation(automation)
             {
                 for(var i = 0; i < obj.automations.length; i++)
                 {
-                    if(obj.automations[i].id == id)
+                    if(obj.automations[i].id == automation.id)
                     {
                         obj.automations[i] = automation;
                     }
@@ -177,7 +177,7 @@ function modifyAutomation(automation)
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + automation.id + '] wurde erfolgreich aktualisiert');
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + automation.id + '] wurde erfolgreich aktualisiert!');
     
                         resolve(true);
                     }
