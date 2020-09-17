@@ -441,7 +441,10 @@
 
                     automations = JSON.parse(a);
 
-                    loadActivity();
+                    if(!device.plugin || device.plugin != 'SynTexMagicHome')
+                    {
+                        loadActivity();
+                    }
                 });
 
                 if(device.ip != undefined && (!device.plugin || device.plugin != 'SynTexMagicHome'))
