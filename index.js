@@ -476,6 +476,40 @@ SynTexPlatform.prototype = {
                                         }
                                     }
 
+                                    var magicHome = await getPluginConfig('MagicHome-Platform');
+
+                                    if(magicHome != null)
+                                    {
+                                        for(var i = 0; i < magicHome.lights.length; i++)
+                                        {
+                                            if(magicHome.lights[i].mac == urlParams.mac)
+                                            {
+                                                var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
+
+                                                for(const k in magicHome.lights[i])
+                                                {
+                                                    console.log(k);
+
+                                                    if(k == 'setup')
+                                                    {
+                                                        all['service'] = type;
+                                                    }
+                                                    else if(k != 'id' && k != 'type')
+                                                    {
+                                                        all[k] = device[k];
+                                                    }
+                                                }
+
+                                                all.spectrum = 'HSL';
+
+                                                if(!magicHome.lights[i].version)
+                                                {
+                                                    all.version = '99.99.99';
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                                     var obj = {
                                         device: JSON.stringify(all),
