@@ -501,6 +501,7 @@ SynTexPlatform.prototype = {
                                                 }
 
                                                 all.spectrum = 'HSL';
+                                                all.plugin = 'MagicHome-Platform';
 
                                                 if(!magicHome.lights[i].version)
                                                 {
@@ -511,14 +512,21 @@ SynTexPlatform.prototype = {
                                     }
 
                                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                                    var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
                                     var obj = {
                                         device: JSON.stringify(all),
-                                        wPort: 1710
+                                        wPort: 1710,
+                                        mPort: 1712
                                     };
 
                                     if(webhookConfig != null)
                                     {
                                         obj.wPort = webhookConfig.port;
+                                    }
+
+                                    if(magicHomeConfig != null)
+                                    {
+                                        obj.mPort = magicHomeConfig.port;
                                     }
 
                                     response.write(HTMLQuery.sendValues(head + data, obj));
@@ -558,6 +566,7 @@ SynTexPlatform.prototype = {
                                                 }
 
                                                 d.spectrum = 'HSL';
+                                                d.plugin = 'MagicHome-Platform';
 
                                                 if(!magicHome.lights[i].version)
                                                 {
