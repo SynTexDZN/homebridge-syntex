@@ -1181,7 +1181,7 @@
                                     var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000);
                                 }
                         
-                                if(temp[type + j] && state != temp[type + j])
+                                if(temp[type + j] && state != temp[type + j] && (!device.plugin || device.plugin != 'SynTexMagicHome'))
                                 {
                                     orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state });
 
