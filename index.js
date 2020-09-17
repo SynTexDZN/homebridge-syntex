@@ -492,7 +492,7 @@ SynTexPlatform.prototype = {
 
                                                     if(k == 'setup')
                                                     {
-                                                        all['service'] = type;
+                                                        all['services'] = type;
                                                     }
                                                     else if(k != 'id' && k != 'type')
                                                     {
