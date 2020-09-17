@@ -496,7 +496,7 @@ SynTexPlatform.prototype = {
                                                     }
                                                     else if(k != 'id' && k != 'type')
                                                     {
-                                                        all[k] = device[k];
+                                                        all[k] = magicHome.lights[i][k];
                                                     }
                                                 }
 
