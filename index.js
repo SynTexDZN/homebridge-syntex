@@ -501,7 +501,7 @@ SynTexPlatform.prototype = {
                                                 }
 
                                                 all.spectrum = 'HSL';
-                                                all.plugin = 'MagicHome-Platform';
+                                                all.plugin = 'SynTexMagicHome';
 
                                                 if(!magicHome.lights[i].version)
                                                 {
