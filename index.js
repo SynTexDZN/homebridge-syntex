@@ -542,7 +542,29 @@ SynTexPlatform.prototype = {
                                             if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
                                             {
                                                 var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                                                all.push({ ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' });
+                                                var d = {};
+                                                //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
+                                                
+                                                for(const k in magicHome.lights[i])
+                                                {
+                                                    if(k == 'setup')
+                                                    {
+                                                        d['services'] = type;
+                                                    }
+                                                    else if(k != 'id' && k != 'type')
+                                                    {
+                                                        d[k] = magicHome.lights[i][k];
+                                                    }
+                                                }
+
+                                                d.spectrum = 'HSL';
+
+                                                if(!magicHome.lights[i].version)
+                                                {
+                                                    d.version = '99.99.99';
+                                                }
+
+                                                all.push(d);
                                             }
                                         }
                                     }
