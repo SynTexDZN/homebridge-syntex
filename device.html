@@ -120,6 +120,11 @@
                     document.getElementById('reconnect-btn').style.display = 'none';
                 }
 
+                if(device.plugin && device.plugin == 'SynTexMagicHome')
+                {
+                    document.getElementById('reset-btn').style.display = 'none';
+                }
+
                 if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('statelessswitch') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('light') || device.services.includes('rain'))
                 {
                     settings.push({
