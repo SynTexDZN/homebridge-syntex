@@ -476,7 +476,7 @@ SynTexPlatform.prototype = {
                                         }
                                     }
 
-                                    var magicHome = await getPluginConfig('MagicHome-Platform');
+                                    var magicHome = await getPluginConfig('SynTexMagicHome');
 
                                     if(magicHome != null)
                                     {
@@ -541,7 +541,7 @@ SynTexPlatform.prototype = {
 
                                     all.push.apply(all, accessories);
 
-                                    var magicHome = await getPluginConfig('MagicHome-Platform');
+                                    var magicHome = await getPluginConfig('SynTexMagicHome');
 
                                     if(magicHome != null)
                                     {
@@ -566,7 +566,7 @@ SynTexPlatform.prototype = {
                                                 }
 
                                                 d.spectrum = 'HSL';
-                                                d.plugin = 'MagicHome-Platform';
+                                                d.plugin = 'SynTexMagicHome';
 
                                                 if(!magicHome.lights[i].version)
                                                 {
@@ -672,11 +672,11 @@ SynTexPlatform.prototype = {
                                         obj.push({ name : 'SynTex Tuya' });
                                     }
 
-                                    var t = getPluginConfig('MagicHome-Platform');
+                                    var t = getPluginConfig('SynTexMagicHome');
 
                                     if(t != null)
                                     {
-                                        obj.push({ name : 'MagicHome Platform' });
+                                        obj.push({ name : 'SynTex MagicHome' });
                                     }
 
                                     response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));

@@ -114,7 +114,7 @@
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
                 };
 
-                if(device.ip == undefined || device.plugin == 'MagicHome-Platform')
+                if(device.ip == undefined || device.plugin == 'SynTexMagicHome')
                 {
                     document.getElementById('restart-btn').style.display = 'none';
                     document.getElementById('reconnect-btn').style.display = 'none';
@@ -444,7 +444,7 @@
                     loadActivity();
                 });
 
-                if(device.ip != undefined && (!device.plugin || device.plugin != 'MagicHome-Platform'))
+                if(device.ip != undefined && (!device.plugin || device.plugin != 'SynTexMagicHome'))
                 {
                     pingESP();
                     checkUpdates();
@@ -1169,7 +1169,7 @@
                         {
                             for(var j = 0; j < typeCounter[type]; j++)
                             {
-                                if(device.plugin && device.plugin == 'MagicHome-Platform')
+                                if(device.plugin && device.plugin == 'SynTexMagicHome')
                                 {
                                     var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/get-device?mac=' + device.mac, 10000);
                                 }
