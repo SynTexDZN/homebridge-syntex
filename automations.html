@@ -646,12 +646,18 @@
                                 var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = r.children[j].getElementsByTagName('select')[0].children[o];
 
+                                console.log(option);
+
                                 if(option.getAttribute('type') == 'url')
                                 {
                                     result.url = r.children[2].value;
 
+                                    console.log(JSON.parse(result));
+
                                     delete result.operation;
                                     delete result.value;
+
+                                    console.log(JSON.parse(result));
                                 }
                                 else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
                                 {
