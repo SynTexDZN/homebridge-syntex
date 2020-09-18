@@ -108,13 +108,17 @@ function isValid(automation)
 {
     if(automation.id && automation.name && automation.active && automation.trigger && automation.result)
     {
-        var valid = true;
+        var valid = false;
 
         for(var i = 0; i < automation.trigger.length; i++)
         {
-            if(!automation.trigger[i].mac || !automation.trigger[i].name || !automation.trigger[i].letters || !automation.trigger[i].value || !automation.trigger[i].operation)
+            if(automation.trigger[i].mac && automation.trigger[i].name && automation.trigger[i].letters && automation.trigger[i].value && automation.trigger[i].operation)
             {
-                valid = false;
+                valid = true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -122,22 +126,30 @@ function isValid(automation)
         {
             for(var i = 0; i < automation.condition.length; i++)
             {
-                if(!automation.condition[i].mac || !automation.condition[i].name || !automation.condition[i].letters || !automation.condition[i].value || !automation.condition[i].operation)
+                if(automation.condition[i].mac && automation.condition[i].name && automation.condition[i].letters && automation.condition[i].value && automation.condition[i].operation)
                 {
-                    valid = false;
+                    valid = true;
+                }
+                else
+                {
+                    return false;
                 }
             }
         }
 
         for(var i = 0; i < automation.result.length; i++)
         {
-            if(!automation.result[i].url && (!automation.result[i].mac || !automation.result[i].name || !automation.result[i].letters || !automation.result[i].value || !automation.result[i].operation))
+            if(automation.result[i].mac && automation.result[i].name && automation.result[i].letters && automation.result[i].value && automation.result[i].operation)
             {
-                valid = false;
+                valid = true;
             }
-            else if(!automation.result[i].url)
+            else if(automation.result[i].url)
             {
-                valid = false;
+                valid = true;
+            }
+            else
+            {
+                return false;
             }
         }
 
