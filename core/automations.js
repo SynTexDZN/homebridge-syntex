@@ -108,13 +108,13 @@ function isValid(automation)
 {
     if(automation.id && automation.name && automation.active && automation.trigger && automation.result)
     {
-        var valid = false;
+        var valid = { trigger : false, condition : false, result : false };
 
         for(var i = 0; i < automation.trigger.length; i++)
         {
             if(automation.trigger[i].mac && automation.trigger[i].name && automation.trigger[i].letters && automation.trigger[i].value && automation.trigger[i].operation)
             {
-                valid = true;
+                valid.trigger = true;
             }
             else
             {
@@ -128,7 +128,7 @@ function isValid(automation)
             {
                 if(automation.condition[i].mac && automation.condition[i].name && automation.condition[i].letters && automation.condition[i].value && automation.condition[i].operation)
                 {
-                    valid = true;
+                    valid.condition = true;
                 }
                 else
                 {
@@ -141,11 +141,11 @@ function isValid(automation)
         {
             if(automation.result[i].mac && automation.result[i].name && automation.result[i].letters && automation.result[i].value && automation.result[i].operation)
             {
-                valid = true;
+                valid.result = true;
             }
             else if(automation.result[i].url)
             {
-                valid = true;
+                valid.result = true;
             }
             else
             {
@@ -153,7 +153,7 @@ function isValid(automation)
             }
         }
 
-        return valid;
+        return valid.trigger && valid.result ? true : false;
     }
     else
     {
