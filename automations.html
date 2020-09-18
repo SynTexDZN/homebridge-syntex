@@ -514,13 +514,13 @@
 
                     result.className = 'automation-device-entry';
 
-                    var html = '<select name="service"><option img="/img/link.png">URL Aufruf</option>';
+                    var html = '<select name="service"><option img="/img/link.png" type="url">Website Öffnen</option>';
 
                     for(var i = 0; i < services.length; i++)
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -577,17 +577,19 @@
                                 var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = t.children[j].getElementsByTagName('select')[0].children[o];
 
-                                trigger.mac = option.getAttribute('mac');
-                                trigger.name = option.getAttribute('name');
-                                trigger.letters = option.getAttribute('letters');
+                                if(option.getAttribute('type') == 'url')
+                                {
+                                    trigger.url = t.children[2].value;
+                                }
+                                else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
+                                {
+                                    trigger.mac = option.getAttribute('mac');
+                                    trigger.name = option.getAttribute('name');
+                                    trigger.letters = option.getAttribute('letters');
+                                }
                             }
                         }
-                        /*
-                        if(trigger.mac)
-                        {
-                            trigger.url = ;
-                        }
-                        */
+                        
                         automation.trigger.push(trigger);
                     }
 
