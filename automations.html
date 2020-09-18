@@ -290,19 +290,23 @@
                         for(var j = 0; j < automations[i].trigger.length; j++)
                         {
                             var row = document.createElement('div');
-                            var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
-                            var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
 
-                            if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+                            if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters)
                             {
-                                src = 'climate';
-                            }
+                                var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
 
-                            if(automations[i].trigger[j].name && automations[i].trigger[j].operation && automations[i].trigger[j].value)
-                            {
+                                if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+                                {
+                                    src = 'climate';
+                                }
+
                                 row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name/* + ' ' + automations[i].trigger[j].operation + ' ' + val*/;
                             }
-                        
+                            else if(automations[i].trigger[j].url)
+                            {
+                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].trigger[j].url + '"';
+                            }
+
                             row.style.padding = '13px 18px 12px 18px';
                             row.style.wordBreak = 'break-all';
 
@@ -332,17 +336,21 @@
                             for(var j = 0; j < automations[i].condition.length; j++)
                             {
                                 var row = document.createElement('div');
-                                var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
-                                var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
 
-                                if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+                                if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters)
                                 {
-                                    src = 'climate';
-                                }
+                                    var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
 
-                                if(automations[i].condition[j].name && automations[i].condition[j].operation && automations[i].condition[j].value)
-                                {
+                                    if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+                                    {
+                                        src = 'climate';
+                                    }
+
                                     row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name/* + ' ' + automations[i].condition[j].operation + ' ' + val*/;
+                                }
+                                else if(automations[i].condition[j].url)
+                                {
+                                    row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].condition[j].url + '"';
                                 }
 
                                 row.style.padding = '13px 18px 12px 18px';
@@ -373,15 +381,16 @@
                         for(var j = 0; j < automations[i].result.length; j++)
                         {
                             var row = document.createElement('div');
-                            var src = !automations[i].result[j].url ? Essentials.letterToType(automations[i].result[j].letters[0]) : '';
 
-                            if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                            if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters)
                             {
-                                src = 'climate';
-                            }
+                                var src = Essentials.letterToType(automations[i].result[j].letters[0]);
 
-                            if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
-                            {
+                                if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                                {
+                                    src = 'climate';
+                                }
+
                                 row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name/* + ' ' + automations[i].result[j].operation + ' ' + val*/;
                             }
                             else if(automations[i].result[j].url)
