@@ -373,8 +373,7 @@
                         for(var j = 0; j < automations[i].result.length; j++)
                         {
                             var row = document.createElement('div');
-                            var src = Essentials.letterToType(automations[i].result[j].letters[0]);
-                            var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
+                            var src = !automations[i].result[j].url ? Essentials.letterToType(automations[i].result[j].letters[0]) : '';
 
                             if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
                             {
@@ -665,9 +664,11 @@
                                     result.name = option.getAttribute('name');
                                     result.letters = option.getAttribute('letters');
                                 }
+
+                                console.log(result);
                             }
                         }
-
+                        console.log(result);
                         automation.result.push(result);
                     }
 
