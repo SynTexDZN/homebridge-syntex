@@ -131,7 +131,11 @@ function isValid(automation)
 
         for(var i = 0; i < automation.result.length; i++)
         {
-            if(!automation.result[i].mac || !automation.result[i].name || !automation.result[i].letters || !automation.result[i].value || !automation.result[i].operation)
+            if(!automation.result[i].url && (!automation.result[i].mac || !automation.result[i].name || !automation.result[i].letters || !automation.result[i].value || !automation.result[i].operation))
+            {
+                valid = false;
+            }
+            else if(!automation.result[i].url)
             {
                 valid = false;
             }

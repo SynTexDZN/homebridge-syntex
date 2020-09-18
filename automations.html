@@ -630,7 +630,7 @@
 
                         for(var j = 0; j < r.children.length; j++)
                         {
-                            if(r.children[j].className != 'custom-select')
+                            if(r.children[j].className != 'custom-select' && r.children[j].getAttribute('type') != 'button')
                             {
                                 result[r.children[j].getAttribute('name')] = r.children[j].value;
                             }
@@ -649,6 +649,9 @@
                                 if(option.getAttribute('type') == 'url')
                                 {
                                     result.url = r.children[2].value;
+
+                                    delete result.operation;
+                                    delete result.value;
                                 }
                                 else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
                                 {
