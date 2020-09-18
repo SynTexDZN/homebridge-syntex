@@ -638,8 +638,23 @@
 
                         for(var j = 0; j < r.children.length; j++)
                         {
-                            var deviceSelect = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+                            var device = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+                            var operation = r.children[1].getElementsByTagName('select')[0].children[r.children[1].getElementsByTagName('select')[0].selectedIndex];
+                            var value = r.children[2];
 
+                            if(device.getAttribute('type') == 'url')
+                            {
+                                result.url = value.value;
+                            }
+                            else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+                            {
+                                result.mac = device.getAttribute('mac');
+                                result.name = device.getAttribute('name');
+                                result.letters = device.getAttribute('letters');
+                                result.operation = operation.value;
+                                result.value = value.value;
+                            }
+                            /*
                             if(r.children[j].className != 'custom-select' && r.children[j].getAttribute('type') != 'button')
                             {
                                 result[r.children[j].getAttribute('name')] = r.children[j].value;
@@ -680,6 +695,7 @@
 
                                 console.log(result);
                             }
+                            */
                         }
                         console.log(result);
                         automation.result.push(result);
