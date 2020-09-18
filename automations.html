@@ -304,7 +304,7 @@
                             }
                             else if(automations[i].trigger[j].url)
                             {
-                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">"' + automations[i].trigger[j].url + '"';
+                                row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
                             }
 
                             row.style.padding = '13px 18px 12px 18px';
@@ -522,7 +522,7 @@
 
                     result.className = 'automation-device-entry';
 
-                    var html = '<select name="service"><option img="/img/link.png" type="url">Website Öffnen</option>';
+                    var html = '<select name="service"><option img="/img/link.png" type="url">Link Öffnen</option>';
 
                     for(var i = 0; i < services.length; i++)
                     {
@@ -550,7 +550,7 @@
 
                     //updateOperation(select);
                     
-                    result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+                    result.innerHTML += '<input placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
                     result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img style="height: 100%; filter: invert(10%) sepia(10%) hue-rotate(200deg)" src="/img/delete.png"></button>';
                 }
 
