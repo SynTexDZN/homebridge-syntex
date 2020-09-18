@@ -569,25 +569,21 @@
 
                         for(var j = 0; j < t.children.length; j++)
                         {
-                            if(t.children[j].className != 'custom-select')
-                            {
-                                trigger[t.children[j].getAttribute('name')] = t.children[j].value;
-                            }
-                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
-                            {
-                                var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                var option = t.children[j].getElementsByTagName('select')[0].children[o];
+                            var device = t.children[0].getElementsByTagName('select')[0].children[t.children[0].getElementsByTagName('select')[0].selectedIndex];
+                            var operation = t.children[1].getElementsByTagName('select')[0].children[t.children[1].getElementsByTagName('select')[0].selectedIndex];
+                            var value = t.children[2];
 
-                                trigger.operation = option.value;
-                            }
-                            else if(t.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
+                            if(device.getAttribute('type') == 'url')
                             {
-                                var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                var option = t.children[j].getElementsByTagName('select')[0].children[o];
-
-                                trigger.mac = option.getAttribute('mac');
-                                trigger.name = option.getAttribute('name');
-                                trigger.letters = option.getAttribute('letters');
+                                trigger.url = value.value;
+                            }
+                            else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+                            {
+                                trigger.mac = device.getAttribute('mac');
+                                trigger.name = device.getAttribute('name');
+                                trigger.letters = device.getAttribute('letters');
+                                trigger.operation = operation.value;
+                                trigger.value = value.value;
                             }
                         }
                         
@@ -604,25 +600,21 @@
 
                             for(var j = 0; j < c.children.length; j++)
                             {
-                                if(c.children[j].className != 'custom-select')
-                                {
-                                    condition[c.children[j].getAttribute('name')] = c.children[j].value;
-                                }
-                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
-                                {
-                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
+                                var device = c.children[0].getElementsByTagName('select')[0].children[c.children[0].getElementsByTagName('select')[0].selectedIndex];
+                                var operation = c.children[1].getElementsByTagName('select')[0].children[c.children[1].getElementsByTagName('select')[0].selectedIndex];
+                                var value = c.children[2];
 
-                                    condition.operation = option.value;
-                                }
-                                else if(c.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
+                                if(device.getAttribute('type') == 'url')
                                 {
-                                    var o = c.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                    var option = c.children[j].getElementsByTagName('select')[0].children[o];
-
-                                    condition.mac = option.getAttribute('mac');
-                                    condition.name = option.getAttribute('name');
-                                    condition.letters = option.getAttribute('letters');
+                                    condition.url = value.value;
+                                }
+                                else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+                                {
+                                    condition.mac = device.getAttribute('mac');
+                                    condition.name = device.getAttribute('name');
+                                    condition.letters = device.getAttribute('letters');
+                                    condition.operation = operation.value;
+                                    condition.value = value.value;
                                 }
                             }
 
@@ -654,50 +646,8 @@
                                 result.operation = operation.value;
                                 result.value = value.value;
                             }
-                            /*
-                            if(r.children[j].className != 'custom-select' && r.children[j].getAttribute('type') != 'button')
-                            {
-                                result[r.children[j].getAttribute('name')] = r.children[j].value;
-
-                                if(deviceSelect.getAttribute('type') == 'url')
-                                {
-                                    result.url = r.children[2].value;
-
-                                    console.log(result.operation);
-
-                                    delete result.operation;
-                                    delete result.value;
-
-                                    console.log(result, result.operation);
-                                }
-                                else if(deviceSelect.getAttribute('type') == 'boolean' || deviceSelect.getAttribute('type') == 'numeric')
-                                {
-                                    result.mac = option.getAttribute('mac');
-                                    result.name = option.getAttribute('name');
-                                    result.letters = option.getAttribute('letters');
-                                }
-                            }
-                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
-                            {
-                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
-
-                                result.operation = option.value
-                            }
-                            else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'service')
-                            {
-                                var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
-                                var option = r.children[j].getElementsByTagName('select')[0].children[o];
-
-                                result.mac = option.getAttribute('mac');
-                                result.name = option.getAttribute('name');
-                                result.letters = option.getAttribute('letters');
-
-                                console.log(result);
-                            }
-                            */
                         }
-                        console.log(result);
+
                         automation.result.push(result);
                     }
 

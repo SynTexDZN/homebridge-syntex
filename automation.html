@@ -406,8 +406,6 @@
                                 var column = document.createElement('div');
                                 var category = document.createElement('div');
                                 var row = document.createElement('div');
-                                var src = Essentials.letterToType(automations[i].result[j].letters[0]);
-                                var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
 
                                 column.style.display = 'flex';
                                 column.style.background = 'rgb(60, 60, 75)';
@@ -426,13 +424,16 @@
 
                                 column.appendChild(category);
 
-                                if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                                if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters && automations[i].result[j].operation && automations[i].result[j].value)
                                 {
-                                    src = 'climate';
-                                }
+                                    var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+                                    var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
 
-                                if(automations[i].result[j].name && automations[i].result[j].operation && automations[i].result[j].value)
-                                {
+                                    if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+                                    {
+                                        src = 'climate';
+                                    }
+
                                     row.innerHTML = '<img style="filter: invert(85%) sepia(10%) hue-rotate(200deg); height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
                                 }
                                 else if(automations[i].result[j].url)
