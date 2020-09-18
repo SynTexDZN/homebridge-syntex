@@ -652,12 +652,12 @@
                                 {
                                     result.url = r.children[2].value;
 
-                                    console.log(JSON.parse(result));
+                                    console.log(result.operation);
 
                                     delete result.operation;
                                     delete result.value;
 
-                                    console.log(JSON.parse(result));
+                                    console.log(result, result.operation);
                                 }
                                 else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
                                 {
