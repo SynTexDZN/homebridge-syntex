@@ -155,39 +155,46 @@ function modifyAutomation(automation)
 
         automation = JSON.parse(automation);
 
-        storage.load('automations', (err, obj) => {  
+        if(isValid(automation))
+        {
+            storage.load('automations', (err, obj) => {  
 
-            if(!obj || err)
-            {
-                resolve(false);
-            }
-            else
-            {
-                for(var i = 0; i < obj.automations.length; i++)
+                if(!obj || err)
                 {
-                    if(obj.automations[i].id == automation.id)
-                    {
-                        obj.automations[i] = automation;
-                    }
+                    resolve(false);
                 }
+                else
+                {
+                    for(var i = 0; i < obj.automations.length; i++)
+                    {
+                        if(obj.automations[i].id == automation.id)
+                        {
+                            obj.automations[i] = automation;
+                        }
+                    }
 
-                storage.add(obj, (err) => {
-    
-                    if(err)
-                    {
-                        logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
-    
-                        resolve(false);
-                    }
-                    else
-                    {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + automation.id + '] wurde erfolgreich aktualisiert!');
-    
-                        resolve(true);
-                    }
-                });
-            }
-        });
+                    storage.add(obj, (err) => {
+        
+                        if(err)
+                        {
+                            logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
+        
+                            resolve(false);
+                        }
+                        else
+                        {
+                            logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + automation.id + '] wurde erfolgreich aktualisiert!');
+        
+                            resolve(true);
+                        }
+                    });
+                }
+            });
+        }
+        else
+        {
+            resolve(false);
+        }
     });
 }
 
