@@ -638,9 +638,29 @@
 
                         for(var j = 0; j < r.children.length; j++)
                         {
+                            var deviceSelect = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+
                             if(r.children[j].className != 'custom-select' && r.children[j].getAttribute('type') != 'button')
                             {
                                 result[r.children[j].getAttribute('name')] = r.children[j].value;
+
+                                if(deviceSelect.getAttribute('type') == 'url')
+                                {
+                                    result.url = r.children[2].value;
+
+                                    console.log(result.operation);
+
+                                    delete result.operation;
+                                    delete result.value;
+
+                                    console.log(result, result.operation);
+                                }
+                                else if(deviceSelect.getAttribute('type') == 'boolean' || deviceSelect.getAttribute('type') == 'numeric')
+                                {
+                                    result.mac = option.getAttribute('mac');
+                                    result.name = option.getAttribute('name');
+                                    result.letters = option.getAttribute('letters');
+                                }
                             }
                             else if(r.children[j].getElementsByTagName('select')[0].getAttribute('name') == 'operation')
                             {
@@ -654,25 +674,9 @@
                                 var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = r.children[j].getElementsByTagName('select')[0].children[o];
 
-                                console.log(option);
-
-                                if(option.getAttribute('type') == 'url')
-                                {
-                                    result.url = r.children[2].value;
-
-                                    console.log(result.operation);
-
-                                    delete result.operation;
-                                    delete result.value;
-
-                                    console.log(result, result.operation);
-                                }
-                                else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
-                                {
-                                    result.mac = option.getAttribute('mac');
-                                    result.name = option.getAttribute('name');
-                                    result.letters = option.getAttribute('letters');
-                                }
+                                result.mac = option.getAttribute('mac');
+                                result.name = option.getAttribute('name');
+                                result.letters = option.getAttribute('letters');
 
                                 console.log(result);
                             }
