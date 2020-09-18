@@ -577,16 +577,9 @@
                                 var o = t.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = t.children[j].getElementsByTagName('select')[0].children[o];
 
-                                if(option.getAttribute('type') == 'url')
-                                {
-                                    trigger.url = t.children[2].value;
-                                }
-                                else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
-                                {
-                                    trigger.mac = option.getAttribute('mac');
-                                    trigger.name = option.getAttribute('name');
-                                    trigger.letters = option.getAttribute('letters');
-                                }
+                                trigger.mac = option.getAttribute('mac');
+                                trigger.name = option.getAttribute('name');
+                                trigger.letters = option.getAttribute('letters');
                             }
                         }
                         
@@ -653,9 +646,16 @@
                                 var o = r.children[j].getElementsByTagName('select')[0].selectedIndex;
                                 var option = r.children[j].getElementsByTagName('select')[0].children[o];
 
-                                result.mac = option.getAttribute('mac');
-                                result.name = option.getAttribute('name');
-                                result.letters = option.getAttribute('letters');
+                                if(option.getAttribute('type') == 'url')
+                                {
+                                    result.url = r.children[2].value;
+                                }
+                                else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'numeric')
+                                {
+                                    result.mac = option.getAttribute('mac');
+                                    result.name = option.getAttribute('name');
+                                    result.letters = option.getAttribute('letters');
+                                }
                             }
                         }
 
