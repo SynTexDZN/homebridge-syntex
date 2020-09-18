@@ -514,13 +514,13 @@
 
                     result.className = 'automation-device-entry';
 
-                    var html = '<select name="service" onchange="updateOperation(this)">';
+                    var html = '<select name="service"><option img="/img/link.png">URL Aufruf</option>';
 
                     for(var i = 0; i < services.length; i++)
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png">' + services[i].name + '</option>';
                         }
                     }
 
@@ -582,7 +582,12 @@
                                 trigger.letters = option.getAttribute('letters');
                             }
                         }
-
+                        /*
+                        if(trigger.mac)
+                        {
+                            trigger.url = ;
+                        }
+                        */
                         automation.trigger.push(trigger);
                     }
 
