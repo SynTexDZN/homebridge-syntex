@@ -651,7 +651,7 @@
 
                     result.className = 'automation-device-entry';
 
-                    var html = '<select name="service" onchange="updateOperation(this)"><option img="/img/link.png" type="url">Link Öffnen</option>';
+                    var html = '<select name="service" onchange="updateOperation(this)"><option ' + (r && r.url ? 'selected' : '') + ' img="/img/link.png" type="url">Link Öffnen</option>';
 
                     for(var i = 0; i < services.length; i++)
                     {
