@@ -528,7 +528,10 @@
                             }
                         }
 
-                        document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
+                        if(document.getElementById('widgets') != null && document.getElementById('widgets').children[2] != null)
+                        {
+                            document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
+                        }
 
                         await Essentials.newTimeout(10000);
                     }
