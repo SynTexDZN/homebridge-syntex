@@ -4,7 +4,9 @@ var presets = [
         name : 'SynTex Real Device',
         getResetURL : function(device) { return 'http://' + device.ip + '/reset' },
         getRestartURL : function(device) { return 'http://' + device.ip + '/restart' },
-        getReconnectURL : function(device) { return 'http://' + device.ip + '/restart' }
+        getReconnectURL : function(device) { return 'http://' + device.ip + '/restart' },
+        getUpdateURL : function(device) { return 'http://' + device.ip + '/update' },
+        getVersionURL : function(device) { return 'http://' + device.ip + '/version' }
     },
     {
         id : 'SynTexWebHooks',

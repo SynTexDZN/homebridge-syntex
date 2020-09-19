@@ -1448,7 +1448,7 @@
 
                             updating = true;
 
-                            if(await Query.complexFetch('http://' + device.ip + '/update', 10000, 3, overlays, true) == 'Success')
+                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device), 10000, 3, overlays, true) == 'Success')
                             {
                                 await Essentials.newTimeout(3000);
 
@@ -1458,7 +1458,7 @@
                                     connectionError : { value : 'Keine Verbindung zum Gerät!' }
                                 };
 
-                                var update = await Query.complexFetch('http://' + device.ip + '/version', 3000, 20, overlays, false);
+                                var update = await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 20, overlays, false);
 
                                 if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
                                 {  
@@ -1471,7 +1471,7 @@
                                     Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
                                 }
 
-                                document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch('http://' + device.ip + '/version', 3000, 3, {}, false);
+                                document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 3, {}, false);
 
                                 await Essentials.newTimeout(4000);
 
@@ -1525,14 +1525,7 @@
                             connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
                         };
 
-                        if(device.ip != undefined)
-                        {
-                            var url = 'http://' + device.ip + '/reset';
-                        }
-                        else
-                        {
-                            var url = '/serverside/remove-device?mac=' + device.mac;
-                        }
+                        var url = Presets.getPreset(device.plugin).getResetURL(device);
 
                         resetting = true;
 
@@ -1637,8 +1630,6 @@
                             console.log(Presets.getPreset(device.plugin).getRestartURL(device));
 
                             await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, true);
-
-                            //await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
                             
                             await Essentials.newTimeout(2000);
                                 
