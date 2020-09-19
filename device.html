@@ -458,10 +458,14 @@
                     }
                 });
 
+                if(Presets.getPreset(device.plugin).getVersionURL(device) != null)
+                {
+                    checkUpdates();
+                }
+
                 if(Presets.getPreset(device.plugin).getPingURL(device) != null)
                 {
                     pingESP();
-                    checkUpdates();
                 }
                 else
                 {
@@ -1192,7 +1196,7 @@
                                     var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000);
                                 }
                         
-                                if(temp[type + j] && state != temp[type + j] && (!device.plugin || device.plugin != 'SynTexMagicHome'))
+                                if(temp[type + j] && state != temp[type + j] && device.plugin != 'SynTexMagicHome')
                                 {
                                     orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state });
 
@@ -1619,23 +1623,24 @@
 
                         if(await Query.complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
                         {
-                            var overlays = {
-                                root : document.getElementById('save-btn'),
-                                id : 'refresh',
-                                success : { value : 'Hochgeladen!' },
-                                executeError : { value : 'Fehler beim Upload!' },
-                                connectionError : { value : 'Gespeichert!', color : 'yellow' }
-                            };
-
-                            console.log(Presets.getPreset(device.plugin).getRestartURL(device));
-
-                            await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, true);
+                            if(Presets.getPreset(device.plugin).getRestartURL(device) != null)
+                            {
+                                var overlays = {
+                                    root : document.getElementById('save-btn'),
+                                    id : 'refresh',
+                                    success : { value : 'Hochgeladen!' },
+                                    executeError : { value : 'Fehler beim Upload!' },
+                                    connectionError : { value : 'Gespeichert!', color : 'yellow' }
+                                };
+                                
+                                await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, true);
                             
-                            await Essentials.newTimeout(2000);
+                                await Essentials.newTimeout(2000);
+                            }
                                 
                             redirect();
                         }
-                        else
+                        else if(Presets.getPreset(device.plugin).getPingURL(device))
                         {
                             saving = false;
 
