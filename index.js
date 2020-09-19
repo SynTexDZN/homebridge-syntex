@@ -467,7 +467,7 @@ SynTexPlatform.prototype = {
                                     {
                                         console.log(device);
 
-                                        all.platform = 'SynTex';
+                                        all.plugin = 'SynTex';
 
                                         for(const k in device)
                                         {
