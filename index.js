@@ -459,15 +459,11 @@ SynTexPlatform.prototype = {
                                     var all = { ...accessory };
                                     var device = await DeviceManager.getDevice(urlParams.mac);
 
-                                    all.plugin = 'SynTexWebHooks';
-
                                     console.log(accessory);
 
                                     if(device != null)
                                     {
                                         console.log(device);
-
-                                        all.plugin = 'SynTex';
 
                                         for(const k in device)
                                         {
@@ -478,6 +474,15 @@ SynTexPlatform.prototype = {
                                                 all[k] = device[k];
                                             }
                                         }
+                                    }
+
+                                    if(all.ip && all.mac)
+                                    {
+                                        all.plugin = 'SynTex';
+                                    }
+                                    else
+                                    {
+                                        all.plugin = 'SynTexWebHooks';
                                     }
 
                                     var magicHome = await getPluginConfig('SynTexMagicHome');
