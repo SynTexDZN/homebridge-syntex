@@ -116,17 +116,17 @@
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
                 };
 
-                if(Preset.getPreset(device.plugin).getRestartURL(device.ip))
+                if(Presets.getPreset(device.plugin).getRestartURL(device.ip))
                 {
                     document.getElementById('restart-btn').style.display = 'none';
                 }
 
-                if(Preset.getPreset(device.plugin).getReconnectURL(device.ip))
+                if(Presets.getPreset(device.plugin).getReconnectURL(device.ip))
                 {
                     document.getElementById('reconnect-btn').style.display = 'none';
                 }
 
-                if(Preset.getPreset(device.plugin).getResetURL(device.ip))
+                if(Presets.getPreset(device.plugin).getResetURL(device.ip))
                 {
                     document.getElementById('reset-btn').style.display = 'none';
                 }
@@ -1354,7 +1354,7 @@
 
                         restarting = true;
 
-                        if(await Query.complexFetch(Preset.getPreset(device.plugin).getRestartURL(device.ip), 10000, 3, overlays, false) == null)
+                        if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device.ip), 10000, 3, overlays, false) == null)
                         {
                             Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
 
