@@ -442,13 +442,13 @@
 
                         for(var i = 0; i < devices.length; i++)
                         {
-                            if(Presets.getPreset(devices[i].plugin).getRestartURL() != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                            if(Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                             {
                                 if(!restarting.includes(devices[i].ip))
                                 {
                                     restarting.push(devices[i].ip);
 
-                                    Query.complexFetch(Presets.getPreset(devices[i].plugin).getRestartURL(), 20000, 1, {}, false).then(async function(result) {
+                                    Query.complexFetch(Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]), 20000, 1, {}, false).then(async function(result) {
 
                                         restartCounter[result != null ? 'success' : 'error']++;
 
