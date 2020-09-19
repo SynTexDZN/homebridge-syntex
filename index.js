@@ -459,11 +459,15 @@ SynTexPlatform.prototype = {
                                     var all = { ...accessory };
                                     var device = await DeviceManager.getDevice(urlParams.mac);
 
+                                    all.plugin = 'SynTexWebHooks';
+
                                     console.log(accessory);
 
                                     if(device != null)
                                     {
                                         console.log(device);
+
+                                        all.platform = 'SynTex';
 
                                         for(const k in device)
                                         {

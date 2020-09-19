@@ -52,12 +52,14 @@
 
                 import { Query } from '/js/query.js';
                 import { Essentials } from '/js/essentials.js';
+                import { Presets } from '/js/presets.js';
 
                 Query.SETUP(Essentials);
                 Essentials.SETUP(Query);
 
                 window.Query = Query;
                 window.Essentials = Essentials;
+                window.Presets = Presets;
 
                 window.device = JSON.parse('<%device%>')
                 window.values = {}
@@ -1628,7 +1630,11 @@
                                 connectionError : { value : 'Gespeichert!', color : 'yellow' }
                             };
 
-                            await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
+                            console.log(Presets.getPreset(device.plugin).getRestartURL(device));
+
+                            await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, true);
+
+                            //await Query.complexFetch('http://' + device.ip + '/restart', 10000, 3, overlays, true);
                             
                             await Essentials.newTimeout(2000);
                                 
