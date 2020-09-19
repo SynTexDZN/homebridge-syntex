@@ -1174,7 +1174,11 @@
 
                     document.getElementsByTagName('title')[0].innerHTML = device.name;
                     window.history.pushState(null, null, '?mac=' + device.mac);
-                    repaintGraphs();
+
+                    if(device.plugin != 'SynTexWebHooks')
+                    {
+                        repaintGraphs();
+                    }
                 }
 
                 async function fetchState()
@@ -1373,7 +1377,7 @@
 
                 async function pingESP()
                 {
-                    if(document.getElementById('updating') == null && !saving && document.getElementById('settings').hasAttribute('style'))
+                    if(document.getElementById('updating') == null && !saving && vdocument.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
                     {
                         if(await Query.fetchURL(Presets.getPreset(device.plugin).getPingURL(device), 10000) != null)
                         {
