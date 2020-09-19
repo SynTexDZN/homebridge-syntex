@@ -139,6 +139,7 @@
                         button.setAttribute('version', devices[i].version);
                         button.setAttribute('id', devices[i].ip);
                         button.setAttribute('class', 'device');
+                        button.setAttribute('device-id', i);
                         button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
                         if(devices[i].room)
@@ -441,13 +442,13 @@
 
                         for(var i = 0; i < devices.length; i++)
                         {
-                            if(devices[i].ip != undefined && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+                            if(Presets.getPreset(devices[i].plugin).getRestartURL() != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
                             {
                                 if(!restarting.includes(devices[i].ip))
                                 {
                                     restarting.push(devices[i].ip);
 
-                                    Query.complexFetch('http://' + devices[i].ip + '/restart', 20000, 1, {}, false).then(async function(result) {
+                                    Query.complexFetch(Presets.getPreset(devices[i].plugin).getRestartURL(), 20000, 1, {}, false).then(async function(result) {
 
                                         restartCounter[result != null ? 'success' : 'error']++;
 
@@ -687,7 +688,7 @@
                             device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
                             device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
 
-                            var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/update', 10000, 3, {}, false);
+                            var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')]).getUpdateURL(devices[device.getAttribute('device-id')]), 10000, 3, {}, false);
 
                             if(update == null)
                             {
@@ -710,7 +711,7 @@
 
                                 await Essentials.newTimeout(3000);
                                 
-                                var update = await Query.complexFetch('http://' + device.getAttribute('id') + '/version', 3000, 20, {}, false);
+                                var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')]).getVersionURL(devices[device.getAttribute('device-id')]), 3000, 20, {}, false);
 
                                 if(update == device.getAttribute('newest-version'))
                                 {
