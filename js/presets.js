@@ -6,21 +6,28 @@ var presets = [
         getRestartURL : function(device) { return 'http://' + device.ip + '/restart' },
         getReconnectURL : function(device) { return 'http://' + device.ip + '/restart' },
         getUpdateURL : function(device) { return 'http://' + device.ip + '/update' },
-        getVersionURL : function(device) { return 'http://' + device.ip + '/version' }
+        getVersionURL : function(device) { return 'http://' + device.ip + '/version' },
+        getPingURL : function(device) { return 'http://' + device.ip + '/' }
     },
     {
         id : 'SynTexWebHooks',
         name : 'SynTex Virtual Device',
         getResetURL : function(device) { return '/serverside/remove-device?mac=' + device.mac },
         getRestartURL : function() { return null },
-        getReconnectURL : function() { return null }
+        getReconnectURL : function() { return null },
+        getUpdateURL : function() { return null },
+        getVersionURL : function() { return null },
+        getPingURL : function() { return null }
     },
     {
         id : 'SynTexMagicHome',
         name : 'SynTex MagicHome Device',
         getResetURL : function() { return null },
         getRestartURL : function() { return null },
-        getReconnectURL : function() { return null }
+        getReconnectURL : function() { return null },
+        getUpdateURL : function() { return null },
+        getVersionURL : function() { return null },
+        getPingURL : function() { return null }
     }
 ];
 
