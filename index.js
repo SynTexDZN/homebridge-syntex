@@ -550,6 +550,18 @@ SynTexPlatform.prototype = {
 
                                     all.push.apply(all, accessories);
 
+                                    for(var i = 0; i < all.length; i++)
+                                    {
+                                        if(all[i].ip && all[i].mac)
+                                        {
+                                            all[i].plugin = 'SynTex';
+                                        }
+                                        else
+                                        {
+                                            all[i].plugin = 'SynTexWebHooks';
+                                        }
+                                    }
+
                                     var magicHome = await getPluginConfig('SynTexMagicHome');
 
                                     if(magicHome != null)
