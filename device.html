@@ -1377,7 +1377,7 @@
 
                 async function pingESP()
                 {
-                    if(document.getElementById('updating') == null && !saving && vdocument.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
+                    if(document.getElementById('updating') == null && !saving && document.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
                     {
                         if(await Query.fetchURL(Presets.getPreset(device.plugin).getPingURL(device), 10000) != null)
                         {
