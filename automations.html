@@ -291,6 +291,8 @@
                         {
                             var row = document.createElement('div');
 
+                            row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
                             if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters)
                             {
                                 var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
@@ -308,7 +310,6 @@
                             }
 
                             row.style.padding = '13px 18px 12px 18px';
-                            row.style.wordBreak = 'break-all';
 
                             column.appendChild(row);
                         }
@@ -337,6 +338,8 @@
                             {
                                 var row = document.createElement('div');
 
+                                row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
                                 if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters)
                                 {
                                     var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
@@ -354,7 +357,6 @@
                                 }
 
                                 row.style.padding = '13px 18px 12px 18px';
-                                row.style.wordBreak = 'break-all';
 
                                 column.appendChild(row);
                             }
@@ -382,6 +384,8 @@
                         {
                             var row = document.createElement('div');
 
+                            row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
                             if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters)
                             {
                                 var src = Essentials.letterToType(automations[i].result[j].letters[0]);
@@ -399,7 +403,6 @@
                             }
 
                             row.style.padding = '13px 18px 12px 18px';
-                            row.style.wordBreak = 'break-all';
 
                             column.appendChild(row);
                         }
