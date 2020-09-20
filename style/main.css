@@ -30,7 +30,6 @@ b, p, h1, h2, textarea, input[type='text'], input[type='password'], input[type='
 h1
 {
     box-sizing: border-box;
-    word-break: break-all!important;
 }
 
 body
@@ -231,8 +230,12 @@ h1, h2, p, a, label
     display: block;
     max-width: 100%;
     white-space: normal;
-    word-wrap: break-word;
-    word-break: keep-all;
+}
+
+#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #rooms input
+{
+    word-break: break-all;
+    word-break: break-word;
 }
 
 p, a, label
@@ -526,7 +529,6 @@ textarea
 #devices.grid-view input[type='button'], #devices.grid-view button
 {
     height: 100px;
-    word-break: break-word;
 }
 
 #devices.grid-view input[type='button'].update
@@ -672,7 +674,6 @@ canvas
     border-left: 1px solid var(--dark-layer-one);
     border-radius: 0;
     padding: 5px 15px;
-    word-break: break-word;
     letter-spacing: 3px!important;
 }
 
