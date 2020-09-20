@@ -314,6 +314,7 @@
                             column.appendChild(row);
                         }
 
+                        panel.className = 'table';
                         panel.appendChild(column);
 
                         if(automations[i].condition && automations[i].condition.length > 0)
@@ -361,6 +362,7 @@
                                 column.appendChild(row);
                             }
 
+                            panel.className = 'table';
                             panel.appendChild(column);
                         }
 
@@ -407,10 +409,9 @@
                             column.appendChild(row);
                         }
 
+                        panel.className = 'table';
                         panel.appendChild(column);
 
-                        panel.setAttribute('style', 'text-align: left; line-height: 25px; padding: 0; pointer-events: none; height: auto; color: rgb(220, 220, 230); overflow: hidden; background: rgb(40, 40, 55)');
-                        
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
                     }
