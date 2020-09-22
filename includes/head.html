@@ -212,7 +212,7 @@
     <link href="/style/menu.css" rel="stylesheet">
     <script src="/menu.js" defer>
     
-        if(desktopAppEnabled)
+        if((new URL(window.location.href)).searchParams.get('desktopApp'))
         {
             document.getElementById('menu').style.display = '';
         }
