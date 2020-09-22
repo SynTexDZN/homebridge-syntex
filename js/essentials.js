@@ -276,7 +276,14 @@ async function leavePage(url)
             {
                 if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
                 {
-                    window.history.pushState(null, null, url.split('syntex.local')[1] + '&desktopApp=true');
+                    if((new URL(window.location.href)).search.includes('?'))
+                    {
+                        window.history.pushState(null, null, url.split('syntex.local')[1] + '&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, url.split('syntex.local')[1] + '?desktopApp=true');
+                    }
                 }
                 else
                 {
@@ -287,7 +294,14 @@ async function leavePage(url)
             {
                 if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
                 {
-                    window.history.pushState(null, null, url + '&desktopApp=true');
+                    if((new URL(window.location.href)).search.includes('?'))
+                    {
+                        window.history.pushState(null, null, url + '&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, url + '?desktopApp=true');
+                    }
                 }
                 else
                 {
