@@ -274,11 +274,25 @@ async function leavePage(url)
         {
             if(url.includes('syntex.local'))
             {
-                window.history.pushState(null, null, url.split('syntex.local')[1]);
+                if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                {
+                    window.history.pushState(null, null, url.split('syntex.local')[1] + '&desktopApp=true');
+                }
+                else
+                {
+                    window.history.pushState(null, null, url.split('syntex.local')[1]);
+                }
             }
             else
             {
-                window.history.pushState(null, null, url);
+                if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                {
+                    window.history.pushState(null, null, url + '&desktopApp=true');
+                }
+                else
+                {
+                    window.history.pushState(null, null, url);
+                }
             }
 
             while(!timer)
