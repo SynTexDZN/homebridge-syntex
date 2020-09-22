@@ -211,17 +211,6 @@
     </script>
     <link href="/style/menu.css" rel="stylesheet">
     <script src="/js/menu.js" defer></script>
-    <script defer>
-
-        console.log((new URL(window.location.href)).searchParams.get('desktopApp'));
-        
-        if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-        {
-            document.getElementById('menu').style.display = '';
-            console.log('MENU');
-        }
-
-    </script>
 </head>
 <nav id="menu" style="display: none">
     <div id="menu-bar">
@@ -242,6 +231,17 @@
         </div>
     </div>
 </nav>
+<script>
+
+    console.log((new URL(window.location.href)).searchParams.get('desktopApp'));
+    
+    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+    {
+        document.getElementById('menu').style.display = '';
+        console.log('MENU');
+    }
+
+</script>
 <div id="preloader">
     <div class="loader-4"><span></span></div>
 </div>
