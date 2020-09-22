@@ -276,7 +276,7 @@ async function leavePage(url)
             {
                 if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
                 {
-                    if((new URL(window.location.href)).search.includes('?'))
+                    if(url.split('syntex.local')[1].includes('?'))
                     {
                         window.history.pushState(null, null, url.split('syntex.local')[1] + '&desktopApp=true');
                     }
@@ -294,7 +294,7 @@ async function leavePage(url)
             {
                 if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
                 {
-                    if((new URL(window.location.href)).search.includes('?'))
+                    if(url.includes('?'))
                     {
                         window.history.pushState(null, null, url + '&desktopApp=true');
                     }
