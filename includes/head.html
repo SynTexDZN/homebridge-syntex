@@ -205,11 +205,39 @@
 
     window.onpopstate = function(event)
     {
-        console.warn('Hiii');
+        //console.warn('Hiii');
     }
 
     </script>
+    <link href="/style/menu.css" rel="stylesheet">
+    <script src="/menu.js" defer>
+    
+        if(desktopAppEnabled)
+        {
+            document.getElementById('menu').style.display = '';
+        }
+
+    </script>
 </head>
+<nav id="menu" style="display: none">
+    <div id="menu-bar">
+        <img src="favicon-clean.ico">
+        <span id="menu-title" style="font-weight: 300">SYNTEX ELECTRON</span>
+        <span onclick="">DATEI</span>
+        <span onclick="window.location.reload()">REFRESH</span>
+    </div>
+    <div id="menu-buttons">
+        <div id="minimize">
+            <span>-</span>
+        </div>
+        <div id="maximize">
+            <span>+</span>
+        </div>
+        <div id="close" class="gradient-red">
+            <span>&times;</span>
+        </div>
+    </div>
+</nav>
 <div id="preloader">
     <div class="loader-4"><span></span></div>
 </div>
