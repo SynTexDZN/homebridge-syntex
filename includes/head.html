@@ -209,7 +209,7 @@
     }
 
     </script>
-    <link href="/style/menu.css" rel="stylesheet">
+    <link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
     <script src="/js/menu.js" defer></script>
 </head>
 <nav id="menu" style="display: none">
@@ -238,6 +238,7 @@
     if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
     {
         document.getElementById('menu').style.display = '';
+        document.getElementById('menu-style').removeAttribute('disabled');
         console.log('MENU');
     }
 
