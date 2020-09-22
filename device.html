@@ -1165,7 +1165,15 @@
                     await Essentials.switchPage(previous, 'settings', false);
 
                     document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
-                    window.history.pushState(null, null, '?mac=' + device.mac + '&settings');
+
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac + '&settings&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac + '&settings');
+                    }
                 }
                 
                 async function closeSettings(previous)
@@ -1173,7 +1181,15 @@
                     await Essentials.switchPage(previous, 'infos', false);
 
                     document.getElementsByTagName('title')[0].innerHTML = device.name;
-                    window.history.pushState(null, null, '?mac=' + device.mac);
+
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac + '&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac);
+                    }
 
                     if(device.plugin != 'SynTexMagicHome')
                     {
@@ -1659,7 +1675,15 @@
                 
                 function redirect()
                 {
-                    window.history.pushState(null, null, '?mac=' + device.mac);
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac + '&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '?mac=' + device.mac);
+                    }
+                    
                     location.reload();
                 }
 

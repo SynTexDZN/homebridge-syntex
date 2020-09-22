@@ -232,14 +232,28 @@
                 {
                     await Essentials.switchPage(previous, 'create', false);
 
-                    window.history.pushState(null, null, '/automations?create');
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '/automations?create&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '/automations?create');
+                    }
                 }
 
                 async function openViewPage(previous)
                 {
                     await Essentials.switchPage(previous, 'view', false);
 
-                    window.history.pushState(null, null, '/automations');
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '/automations?desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '/automations');
+                    }
                 }
 
                 function createAutomationPanels()

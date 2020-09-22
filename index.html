@@ -348,11 +348,25 @@
                         {
                             if(room == 'all')
                             {
-                                window.history.pushState(null, null, '/');
+                                if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                                {
+                                    window.history.pushState(null, null, '/?desktopApp=true');
+                                }
+                                else
+                                {
+                                    window.history.pushState(null, null, '/');
+                                }
                             }
                             else
                             {
-                                window.history.pushState(null, null, '?room=' + room);
+                                if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                                {
+                                    window.history.pushState(null, null, '?room=' + room + '&desktopApp=true');
+                                }
+                                else
+                                {
+                                    window.history.pushState(null, null, '?room=' + room);
+                                }
                             }
 
                             document.getElementById('devices').style.opacity = 0;

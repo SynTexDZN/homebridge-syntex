@@ -275,14 +275,28 @@
                 {
                     await Essentials.switchPage(previous, 'settings', false);
 
-                    window.history.pushState(null, null, '/automation?id=' + id + '&settings');
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '/automation?id=' + id + '&settings&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '/automation?id=' + id + '&settings');
+                    }
                 }
 
                 async function closeSettings(previous)
                 {
                     await Essentials.switchPage(previous, 'infos', false);
 
-                    window.history.pushState(null, null, '/automation?id=' + id);
+                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+                    {
+                        window.history.pushState(null, null, '/automation?id=' + id + '&desktopApp=true');
+                    }
+                    else
+                    {
+                        window.history.pushState(null, null, '/automation?id=' + id);
+                    }
                 }
 
                 function setupViewPage()
