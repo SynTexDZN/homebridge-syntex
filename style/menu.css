@@ -26,7 +26,6 @@ html.maximized #content::-webkit-scrollbar-track, html.maximized #content::-webk
     border-radius: 0px!important;
 }
 
-
 #content
 {
     border-radius: var(--menu-radius);
@@ -68,7 +67,9 @@ body, html
     left: 0;
     -webkit-app-region: drag;
     border-radius: var(--menu-radius);
-    overflow: hidden;
+    /*overflow: hidden;*/
+    z-index: 1000;
+    text-transform: uppercase;
 }
 
 #menu #menu-bar
@@ -101,7 +102,7 @@ body, html
 {
     padding: 0 10px;
     -webkit-app-region: no-drag;
-    transition: .2s ease-out;
+    display: block;
 }
 
 #menu #menu-bar span:not(#menu-title)
@@ -114,10 +115,20 @@ body, html
     -webkit-app-region: drag!important;
     padding-left: 5px!important;
 }
-
+/*
 #menu #menu-bar span:not(#menu-title):hover
 {
     background: rgb(40, 40, 50)!important;
+}
+*/
+#menu .menu-entry:not(#dropdown-active) span:not(#menu-title):hover
+{
+    background: rgb(40, 40, 50)!important;
+}
+
+#menu .menu-dropdown span:hover
+{
+    background: rgb(60, 60, 70)!important;
 }
 
 #menu #menu-buttons
@@ -140,15 +151,20 @@ body, html
     text-align: center;
     color: rgb(245, 245, 255)!important;
     font-size: 1.2em;
-    transition: .2s ease-out;
     font-weight: 300;
     background: var(--dark-layer-two);
 }
 
 #menu-buttons #close
 {
-    background: var(--dark-layer-two);
-    /*border-radius: 0 var(--menu-radius) var(--menu-radius) 0;*/
+    background: transparent;
+    background-image: linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)!important;
+    border-radius: 0 var(--menu-radius) 0 0;
+}
+
+#menu #menu-bar
+{
+    border-radius: var(--menu-radius) 0 0 0;
 }
 
 #menu-buttons #minimize:hover, #menu-buttons #maximize:hover
@@ -156,9 +172,44 @@ body, html
     background: rgb(40, 40, 50);
 }
 
-#menu-buttons #close:hover
+#menu .menu-dropdown
 {
-    background: hsl(350, 95%, 60%);
+    background: rgb(50, 50, 60);
+    top: var(--menu-height);
+    padding-top: 5px;
+    position: absolute;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#menu .menu-entry, #menu .menu-dropdown, #menu-buttons #minimize, #menu-buttons #maximize, #menu-buttons #close, #menu #menu-bar span
+{
+    transition: .2s ease-in-out;
+}
+
+#menu .menu-dropdown span
+{
+    height: var(--menu-height)!important;
+    display: block;
+    text-align: left!important;
+}
+
+#menu #dropdown-active.menu-entry
+{
+    background: rgb(50, 50, 60)!important;
+}
+
+#menu #dropdown-active .menu-dropdown
+{
+    opacity: 1;
+    padding-top: 0;
+    pointer-events: all;
+}
+
+#menu .menu-entry
+{
+    display: block;
 }
 
 #preloader
