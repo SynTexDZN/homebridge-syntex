@@ -32,6 +32,10 @@ try
             {
                 fullScreen();
             }
+            else if(event.key == 'F5')
+            {
+                window.location.reload();
+            }
             else if(event.key == 'q' && event.ctrlKey)
             {
                 closeApp();
