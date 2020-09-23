@@ -52,7 +52,7 @@ body, html
     left: 0;
     box-sizing: border-box;
     margin-top: var(--menu-height)!important;
-    background: rgb(20, 20, 30);
+    background: var(--dark-layer-one);
     box-sizing: border-box;
     overflow-y: scroll;
 }
@@ -250,6 +250,31 @@ body, html
     #menu #menu-bar img
     {
         filter: invert(1);
+    }
+
+    #menu .menu-entry:not(#dropdown-active) span:not(#menu-title):hover
+    {
+        background: rgb(55, 55, 65)!important;
+    }
+
+    #menu .menu-dropdown span:hover
+    {
+        background: rgb(75, 75, 85)!important;
+    }
+
+    #menu-buttons #minimize:hover, #menu-buttons #maximize:hover
+    {
+        background: rgb(55, 55, 65);
+    }
+
+    #menu .menu-dropdown
+    {
+        background: rgb(65, 65, 75);
+    }
+
+    #menu #dropdown-active.menu-entry
+    {
+        background: rgb(65, 65, 75)!important;
     }
 }
 
