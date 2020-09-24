@@ -239,7 +239,7 @@ function openConnectWindow()
 
     connectWindow.loadURL(url.format({
 
-        pathname : path.join(__dirname, 'connect.html'),
+        pathname : '/connect.html',
         protocol: 'file:',
         slashes: true
     }));
