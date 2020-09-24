@@ -222,8 +222,8 @@ function openConnectWindow()
 {
     connectWindow = new BrowserWindow({
 
-        width: 800,
-        height: 450,
+        width: 750,
+        height: 350,
         frame: false,
         transparent: true,
         center: true,
@@ -231,6 +231,7 @@ function openConnectWindow()
         icon: __dirname + '/favicon.ico',
         parent: win,
         show: false,
+        resizable: false,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true
