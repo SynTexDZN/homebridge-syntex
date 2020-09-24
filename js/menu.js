@@ -37,15 +37,17 @@ try
             if(!isMaximized && !isFullScreen)
             {
                 win.maximize();
-                isMaximized = true;
+                win.resizable = false;
                 document.getElementsByTagName('html')[0].className = 'maximized';
+                isMaximized = true;
             }
             else
             {
                 win.unmaximize();
+                win.resizable = true;
+                document.getElementsByTagName('html')[0].className = '';
                 isMaximized = false;
                 isFullScreen = false;
-                document.getElementsByTagName('html')[0].className = '';
             }
         };
 
@@ -89,8 +91,6 @@ catch(e)
 
 function openMenuDropdown(menus, id, parent)
 {
-    console.log(id);
-
     if(openedMenus.length > 0)
     {
         if(openedMenus[0] != id)
@@ -100,7 +100,7 @@ function openMenuDropdown(menus, id, parent)
             setTimeout(() => {
 
                 openMenuDropdown(menus, id, parent);
-            }, 200);
+            }, 100);
         }
         else
         {

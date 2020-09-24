@@ -216,13 +216,28 @@
     <img src="favicon-clean.ico">
     <span id="menu-title" style="font-weight: 300">SynTex Bridge</span>
     <div class="menu-entry">
-        <span onclick="openMenuDropdown([{ name : 'Verbinden (Crtl+O)', callback : openConnectWindow }, { name : 'Fenster Schießen (Crtl+W)', callback : closeWindow }, { name : 'App Beenden (Crtl+Q)', callback : closeApp }], 1, this)">Menü</span>
+        <span onclick="openMenuDropdown([], 1, this)">Menü</span>
+        <div class="menu-dropdown" id="menu-1">
+            <span onclick="closeMenuDropdown(id); openConnectWindow()">Verbinden (Crtl+O)</span>
+            <span onclick="closeMenuDropdown(id); closeWindow()">Fenster Schießen (Crtl+W)</span>
+            <span onclick="closeMenuDropdown(id); closeApp()">App Beenden (Crtl+Q)</span>
+        </div>
     </div>
     <div class="menu-entry">
-        <span onclick="openMenuDropdown([{ name : 'Zoom Zurücksetzen', callback : resetZoom }, { name : 'Inhalt Vergrößern (Crtl++)', callback : zoomInWindow }, { name : 'Inhalt Verkleinern (Crtl+-)', callback : zoomOutWindow }, { name : 'VOLLBILD (F12)', callback : fullScreen }], 2, this)">Fenster</span>
+        <span onclick="openMenuDropdown([], 2, this)">Fenster</span>
+        <div class="menu-dropdown" id="menu-2">
+            <span onclick="closeMenuDropdown(id); resetZoom()">Zoom Zurücksetzen</span>
+            <span onclick="closeMenuDropdown(id); zoomInWindow()">Inhalt Vergrößern (Crtl++)</span>
+            <span onclick="closeMenuDropdown(id); zoomOutWindow()">Inhalt Verkleinern (Crtl+-)</span>
+            <span onclick="closeMenuDropdown(id); fullScreen()">Vollbild (F12)</span>
+        </div>
     </div>
     <div class="menu-entry">
-        <span onclick="openMenuDropdown([{ name : 'Refresh (F5)', callback : () => window.location.reload() }, { name : 'Developer Tools', callback : openDevTools }], 3, this)">Debug</span>
+        <span onclick="openMenuDropdown([], 3, this)">Debug</span>
+        <div class="menu-dropdown" id="menu-3">
+            <span onclick="closeMenuDropdown(id); window.location.reload()">Refresh (F5)</span>
+            <span onclick="closeMenuDropdown(id); openDevTools()">Developer Tools</span>
+        </div>
     </div>
     <div id="menu-buttons">
         <div id="minimize">
