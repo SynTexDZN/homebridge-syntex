@@ -65,6 +65,11 @@ html.maximized #content
     height: calc(100% - var(--menu-height))!important;
 }
 
+html.maximized #content, html.maximized #menu
+{
+    border-width: 0;
+}
+
 #menu
 {
     display: flex;
@@ -171,7 +176,6 @@ html.maximized #menu #menu-buttons
 #menu .menu-dropdown
 {
     background: rgb(50, 50, 60);
-    top: var(--menu-height);
     padding-top: 5px;
     position: absolute;
     z-index: 1000;
@@ -206,7 +210,7 @@ html.maximized #menu #menu-buttons
 #menu .menu-entry
 {
     display: block;
-    height: var(--menu-height);
+    height: 100%;
 }
 
 #menu .menu-entry span

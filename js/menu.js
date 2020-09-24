@@ -169,6 +169,11 @@ function closeMenuDropdown(id)
 
 function closeWindow()
 {
+    if(win.getParentWindow() != null)
+    {
+        win.getParentWindow().focus();
+    }
+
     win.close();
 }
 
