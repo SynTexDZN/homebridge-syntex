@@ -15,7 +15,12 @@ try
         app = remote.app;
         BrowserWindow = remote.BrowserWindow;
 
-        desktopAppEnabled = true;
+        var title = document.getElementsByTagName('title')[0];
+
+        if(title != null)
+        {
+            document.getElementById('menu-title').innerHTML = title.innerHTML;
+        }
 
         document.getElementById('close').onclick = function()
         {
@@ -25,6 +30,23 @@ try
         document.getElementById('minimize').onclick = function()
         {
             win.minimize();
+        };
+
+        document.getElementById('maximize').onclick = function()
+        {
+            if(!isMaximized && !isFullScreen)
+            {
+                win.maximize();
+                isMaximized = true;
+                document.getElementsByTagName('html')[0].className = 'maximized';
+            }
+            else
+            {
+                win.unmaximize();
+                isMaximized = false;
+                isFullScreen = false;
+                document.getElementsByTagName('html')[0].className = '';
+            }
         };
 
         window.addEventListener('keyup', (event) => {
@@ -58,23 +80,6 @@ try
                 zoomOutWindow();
             }
         });
-
-        document.getElementById('maximize').onclick = function()
-        {
-            if(!isMaximized && !isFullScreen)
-            {
-                win.maximize();
-                isMaximized = true;
-                document.getElementsByTagName('html')[0].className = 'maximized';
-            }
-            else
-            {
-                win.unmaximize();
-                isMaximized = false;
-                isFullScreen = false;
-                document.getElementsByTagName('html')[0].className = '';
-            }
-        };
     }
 }
 catch(e)
@@ -187,12 +192,14 @@ function fullScreen()
     if(!isFullScreen)
     {
         win.fullScreen = true;
+        win.resizable = false;
         isFullScreen = true;
         document.getElementsByTagName('html')[0].className = 'maximized';
     }
     else
     {
         win.unmaximize();
+        win.resizable = true;
         isFullScreen = false;
         document.getElementsByTagName('html')[0].className = '';
     }
