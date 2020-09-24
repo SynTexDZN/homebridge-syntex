@@ -1,4 +1,4 @@
-var win, app, frame;
+var win, app, frame, BrowserWindow;
 var openedMenus = [];
 var isFullScreen = false;
 var isMaximized = false;
@@ -13,6 +13,7 @@ try
     {
         win = remote.getCurrentWindow();
         app = remote.app;
+        BrowserWindow = remote.BrowserWindow;
 
         desktopAppEnabled = true;
 
@@ -39,6 +40,14 @@ try
             else if(event.key == 'q' && event.ctrlKey)
             {
                 closeApp();
+            }
+            else if(event.key == 'w' && event.ctrlKey)
+            {
+                closeWindow();
+            }
+            else if(event.key == 'o' && event.ctrlKey)
+            {
+                openConnectWindow();
             }
             else if(event.key == '+' && event.ctrlKey)
             {
@@ -197,4 +206,29 @@ function zoomOutWindow()
 function resetZoom()
 {
     frame.setZoomFactor(1);
+}
+
+function openDevTools()
+{
+    win.openDevTools({ detach : true });
+}
+
+const path = require('path');
+const url = require('url');
+
+var connectWindow = null;
+
+function openConnectWindow()
+{
+    connectWindow.loadURL(url.format({
+
+        pathname : path.join(__dirname, 'connect.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    
+    connectWindow.once('ready-to-show', () => {
+
+        connectWindow.show();
+    });
 }

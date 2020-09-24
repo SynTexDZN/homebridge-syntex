@@ -6,7 +6,7 @@
 
 #content::-webkit-scrollbar-track, #content::-webkit-scrollbar
 {
-    border-radius: 0 0 13px 0!important;
+    border-radius: 0 0 15px 0!important;
 }
 
 /* Bar Theme */
@@ -21,14 +21,9 @@
     border-radius: 0 0 var(--menu-radius) var(--menu-radius)!important;
 }
 
-html.maximized #content::-webkit-scrollbar-track, html.maximized #content::-webkit-scrollbar, html.maximized #menu, html.maximized #content, html.maximized #menu-bar, html.maximized #close
+html.maximized #content::-webkit-scrollbar-track, html.maximized #content::-webkit-scrollbar, html.maximized #menu, html.maximized #content, html.maximized #menu, html.maximized #close
 {
     border-radius: 0px!important;
-}
-
-#content
-{
-    border-radius: var(--menu-radius);
 }
 
 body, html
@@ -38,15 +33,21 @@ body, html
     overflow: hidden;
 }
 
-#content
+html
 {
-    padding: 50px!important;
+    height: calc(100vh);
+}
+
+#menu, #content
+{
+    border: 1px solid rgb(50, 50, 60);
 }
 
 #content
 {
+    /*border-radius: var(--menu-radius);*/
+    padding: 50px!important;
     width: 100%;
-    height: calc(100vh - var(--menu-height));
     position: absolute;
     top: 0;
     left: 0;
@@ -55,6 +56,13 @@ body, html
     background: var(--dark-layer-one);
     box-sizing: border-box;
     overflow-y: scroll;
+    height: calc(100% - var(--menu-height) - 1px)!important;
+    border-top: none;
+}
+
+html.maximized #content
+{
+    height: calc(100% - var(--menu-height))!important;
 }
 
 #menu
@@ -66,30 +74,26 @@ body, html
     top: 0;
     left: 0;
     -webkit-app-region: drag;
-    border-radius: var(--menu-radius);
-    /*overflow: hidden;*/
+    /*border-radius: var(--menu-radius);*/
+    border-bottom: none;
+    box-sizing: border-box;
     z-index: 1000;
     text-transform: uppercase;
 }
 
-#menu #menu-bar
+#menu
 {
-    height: 100%;
     line-height: calc(var(--menu-height) + 2px);
     color: rgb(245, 245, 255);
     font-size: 12px;
     font-weight: 200;
     letter-spacing: 3px;
     display: flex;
-}
-
-#menu #menu-bar
-{
     background: var(--dark-layer-two);
     width: 100%;
 }
 
-#menu #menu-bar img
+#menu img
 {
     height: 100%;
     padding: calc(var(--menu-height) / 8);
@@ -98,14 +102,14 @@ body, html
     filter: invert(1);
 }
 
-#menu #menu-bar span
+#menu span
 {
     padding: 0 10px;
     -webkit-app-region: no-drag;
     display: block;
 }
 
-#menu #menu-bar span:not(#menu-title)
+#menu span:not(#menu-title)
 {
     cursor: pointer;
 }
@@ -115,12 +119,7 @@ body, html
     -webkit-app-region: drag!important;
     padding-left: 5px!important;
 }
-/*
-#menu #menu-bar span:not(#menu-title):hover
-{
-    background: rgb(40, 40, 50)!important;
-}
-*/
+
 #menu .menu-entry:not(#dropdown-active) span:not(#menu-title):hover
 {
     background: rgb(40, 40, 50)!important;
@@ -134,12 +133,20 @@ body, html
 #menu #menu-buttons
 {
     margin-left: auto;
-    width: 200px;
+    width: 180px;
     height: 100%;
     line-height: var(--menu-height);
     -webkit-app-region: no-drag;
     display: grid;
     grid-template-columns: 33.3% 33.3% 33.4%;
+    background: var(--dark-layer-two);
+    border-radius: 0 calc(var(--menu-radius) - 1px) 0 0;
+    overflow: hidden;
+}
+
+html.maximized #menu #menu-buttons
+{
+    border-radius: 0;
 }
 
 #menu-buttons #minimize, #menu-buttons #maximize, #menu-buttons #close
@@ -152,19 +159,12 @@ body, html
     color: rgb(245, 245, 255)!important;
     font-size: 1.2em;
     font-weight: 300;
-    background: var(--dark-layer-two);
 }
 
 #menu-buttons #close
 {
     background: transparent;
     background-image: linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)!important;
-    border-radius: 0 var(--menu-radius) 0 0;
-}
-
-#menu #menu-bar
-{
-    border-radius: var(--menu-radius) 0 0 0;
 }
 
 #menu-buttons #minimize:hover, #menu-buttons #maximize:hover
@@ -183,7 +183,7 @@ body, html
     pointer-events: none;
 }
 
-#menu .menu-entry, #menu .menu-dropdown, #menu-buttons #minimize, #menu-buttons #maximize, #menu-buttons #close, #menu #menu-bar span
+#menu .menu-entry, #menu .menu-dropdown, #menu-buttons #minimize, #menu-buttons #maximize, #menu-buttons #close, #menu span
 {
     transition: .2s ease-in-out;
 }
@@ -210,6 +210,7 @@ body, html
 #menu .menu-entry
 {
     display: block;
+    height: var(--menu-height);
 }
 
 #menu .menu-entry span
@@ -237,7 +238,7 @@ body, html
         background: rgb(220, 220, 230);
     }
 
-    #menu #menu-bar
+    #menu
     {
         background: var(--light-layer-one);
     }
@@ -247,7 +248,7 @@ body, html
         background: var(--light-layer-one);
     }
 
-    #menu #menu-bar img
+    #menu img
     {
         filter: invert(1);
     }
@@ -275,6 +276,16 @@ body, html
     #menu #dropdown-active.menu-entry
     {
         background: rgb(65, 65, 75)!important;
+    }
+
+    #menu, #content
+    {
+        border-color: var(--light-layer-two);
+    }
+
+    #menu #menu-buttons
+    {
+        background: var(--light-layer-one);
     }
 }
 

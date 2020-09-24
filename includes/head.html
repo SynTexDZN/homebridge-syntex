@@ -213,18 +213,16 @@
     <script src="/js/menu.js" defer></script>
 </head>
 <nav id="menu" style="display: none">
-    <div id="menu-bar">
-        <img src="favicon-clean.ico">
-        <span id="menu-title" style="font-weight: 300">SYNTEX ELECTRON</span>
-        <div class="menu-entry">
-            <span onclick="openMenuDropdown([{ name : 'Fenster Beenden (Crtl+W)', callback : closeWindow }, { name : 'App Beenden (Crtl+Q)', callback : closeApp }], 1, this)">Datei</span>
-        </div>
-        <div class="menu-entry">
-            <span onclick="openMenuDropdown([{ name : 'Zoom Zurücksetzen', callback : resetZoom }, { name : 'Inhalt Vergrößern (Crtl++)', callback : zoomInWindow }, { name : 'Inhalt Verkleinern (Crtl+-)', callback : zoomOutWindow }, { name : 'VOLLBILD (F12)', callback : fullScreen }], 2, this)">Fenster</span>
-        </div>
-        <div class="menu-entry">
-            <span onclick="openMenuDropdown([{ name : 'Refresh (F5)', callback : () => window.location.reload() }], 3, this)">Debug</span>
-        </div>
+    <img src="favicon-clean.ico">
+    <span id="menu-title" style="font-weight: 300">SynTex Bridge</span>
+    <div class="menu-entry">
+        <span onclick="openMenuDropdown([{ name : 'Verbinden (Crtl+O)', callback : openConnectWindow }, { name : 'Fenster Schießen (Crtl+W)', callback : closeWindow }, { name : 'App Beenden (Crtl+Q)', callback : closeApp }], 1, this)">Menü</span>
+    </div>
+    <div class="menu-entry">
+        <span onclick="openMenuDropdown([{ name : 'Zoom Zurücksetzen', callback : resetZoom }, { name : 'Inhalt Vergrößern (Crtl++)', callback : zoomInWindow }, { name : 'Inhalt Verkleinern (Crtl+-)', callback : zoomOutWindow }, { name : 'VOLLBILD (F12)', callback : fullScreen }], 2, this)">Fenster</span>
+    </div>
+    <div class="menu-entry">
+        <span onclick="openMenuDropdown([{ name : 'Refresh (F5)', callback : () => window.location.reload() }, { name : 'Developer Tools', callback : openDevTools }], 3, this)">Debug</span>
     </div>
     <div id="menu-buttons">
         <div id="minimize">
