@@ -220,6 +220,23 @@ var connectWindow = null;
 
 function openConnectWindow()
 {
+    connectWindow = new BrowserWindow({
+
+        width: 800,
+        height: 450,
+        frame: false,
+        transparent: true,
+        center: true,
+        backgroundColor: '#00ffffff',
+        icon: __dirname + '/favicon.ico',
+        parent: win,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+        }
+    });
+
     connectWindow.loadURL(url.format({
 
         pathname : path.join(__dirname, 'connect.html'),
