@@ -99,7 +99,7 @@ function drawGrid(canvas, data, outline)
 
     for(var i = 0; i < data.length; i++)
     {
-        ctx.strokeStyle = 'rgb(40, 40, 50)';
+        ctx.strokeStyle = 'rgb(40, 40, 55)';
 
         if(i == data.length - 1 || i == 0)
         {
