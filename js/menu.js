@@ -2,7 +2,6 @@ var win, app, frame, BrowserWindow, path, url;
 var openedMenus = [];
 var isFullScreen = false;
 var isMaximized = false;
-var 
 
 try
 {
