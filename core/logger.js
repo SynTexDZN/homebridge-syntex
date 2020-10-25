@@ -72,7 +72,7 @@ module.exports = class Logger
     {
         return new Promise(async function(resolve) {
             
-            store(logs).load(pluginName, (err, obj) => {    
+            logs.load(pluginName, (err, obj) => {    
 
                 if(obj && !err)
                 {    
@@ -100,7 +100,7 @@ module.exports = class Logger
     {
         return new Promise(async function(resolve) {
 
-            store(logs).list(function(err, objects)
+            logs.list(function(err, objects)
             {
                 if(!objects || err)
                 {
