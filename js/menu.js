@@ -1,13 +1,16 @@
-var win, app, frame, BrowserWindow;
+var win, app, frame, BrowserWindow, path, url;
 var openedMenus = [];
 var isFullScreen = false;
 var isMaximized = false;
+var 
 
 try
 {
     frame = require('electron').webFrame;
 
     const { remote } = require('electron');
+    path = require('path');
+    url = require('url');
 
     if(remote != undefined)
     {
@@ -224,9 +227,6 @@ function openDevTools()
 {
     win.openDevTools({ detach : true });
 }
-
-const path = require('path');
-const url = require('url');
 
 var connectWindow = null;
 

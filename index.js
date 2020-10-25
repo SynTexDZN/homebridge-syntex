@@ -19,7 +19,7 @@ function SynTexPlatform(log, config, api)
 
         conf = store(api.user.storagePath());
 
-        logger.create('SynTex', this.logDirectory, api.user.storagePath());
+        logger = new logger('SynTex', this.logDirectory, api.user.storagePath());
 
         HTMLQuery.SETUP(logger);
 
@@ -27,7 +27,7 @@ function SynTexPlatform(log, config, api)
 
             if(config != null)
             {
-                DeviceManager.SETUP(api.user.storagePath(), logger, this.cacheDirectory, config);
+                DeviceManager = new DeviceManager(api.user.storagePath(), logger, this.cacheDirectory, config);
                 Automations.SETUP(logger, config.cache_directory);
             }
 
