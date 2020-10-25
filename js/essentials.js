@@ -172,6 +172,8 @@ function getType(services)
             }
         }
 
+        console.log('S', s);
+
         if(s.length == 1)
         {
             return s[0];
