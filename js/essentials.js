@@ -172,11 +172,9 @@ function getType(services)
             }
         }
 
-        console.error('S', s);
-
         if(s.length == 1)
         {
-            return s[0];
+            return 'test';
         }
         else if(s.length == 2 && s.includes('temperature') && s.includes('humidity'))
         {
