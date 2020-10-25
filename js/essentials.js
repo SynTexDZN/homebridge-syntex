@@ -164,18 +164,12 @@ function getType(services)
     {
         var s = [ ...services ];
 
-        console.log(JSON.stringify(s));
-
         for(var i = 0; i < s.length; i++)
         {
-            console.log(JSON.stringify(s[i]));
-
             if(s[i] instanceof Object)
             {
                 s[i] = s[i].type;
             }
-
-            console.log(JSON.stringify(s[i]));
         }
 
         if(s.length == 1)
