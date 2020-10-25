@@ -174,7 +174,7 @@ function getType(services)
 
         if(s.length == 1)
         {
-            return 'test';
+            return s[0];
         }
         else if(s.length == 2 && s.includes('temperature') && s.includes('humidity'))
         {
@@ -209,7 +209,7 @@ function getType(services)
     }
     else
     {
-        return services;
+        return services instanceof Object ? services.type : services;
     }
 }
 
