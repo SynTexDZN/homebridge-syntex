@@ -172,7 +172,7 @@ function getType(services)
             }
         }
 
-        console.err('S', s);
+        console.error('S', s);
 
         if(s.length == 1)
         {
