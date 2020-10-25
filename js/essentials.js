@@ -172,7 +172,7 @@ function getType(services)
             }
         }
 
-        console.log('S', s);
+        console.err('S', s);
 
         if(s.length == 1)
         {
@@ -200,8 +200,6 @@ function getType(services)
 
             for(const i in s)
             {
-                console.log(lastType, s[i], lastType != s[i]);
-
                 if(lastType != s[i])
                 {
                     return 'special';
