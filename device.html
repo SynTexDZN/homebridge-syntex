@@ -1209,7 +1209,7 @@
                             {
                                 if(device.plugin && device.plugin == 'SynTexMagicHome')
                                 {
-                                    var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/get-device?ip=' + device.ip, 10000);
+                                    var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=light', 10000);
                                 }
                                 else
                                 {
