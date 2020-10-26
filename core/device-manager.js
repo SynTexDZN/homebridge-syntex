@@ -78,10 +78,12 @@ module.exports = class DeviceManager
 
     initDevice(mac, ip, name, type, version, interval, events, services)
     {
+        var self = this;
+
         return new Promise(async function(resolve) {
             
             var eventButton = await checkEventButton(mac);
-            var device = await this.getDevice(mac);
+            var device = await self.getDevice(mac);
 
             name = name.replace(new RegExp('%', 'g'), ' ');
 
