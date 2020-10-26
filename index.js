@@ -487,6 +487,9 @@ SynTexPlatform.prototype = {
                                         all.plugin = 'SynTexWebHooks';
                                     }
 
+                                    console.log('ALL');
+                                    console.log(all);
+
                                     var magicHome = await getPluginConfig('SynTexMagicHome');
 
                                     if(magicHome != null)
