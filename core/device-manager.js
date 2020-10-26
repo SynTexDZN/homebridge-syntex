@@ -142,7 +142,7 @@ module.exports = class DeviceManager
 
                 console.log(events, device['events']);
 
-                resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
+                resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + (device['events'] ? '[' + device['events'] + ']' : events) + '}']);
             }
             else if(await self.checkName(name))
             {
