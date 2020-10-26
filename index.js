@@ -461,7 +461,7 @@ SynTexPlatform.prototype = {
                                     var all = { ...accessory };
                                     var device = await DeviceManager.getDevice(urlParams.mac);
 
-                                    console.log(accessory);
+                                    console.log(device);
 
                                     if(device != null)
                                     {
