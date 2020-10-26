@@ -739,12 +739,14 @@ SynTexPlatform.prototype = {
                         }).catch(function(e) {
 
                             logger.err(e);
+                            console.log(e);
                         });
                     }
                 }
                 catch(e)
                 {
                     logger.err(e);
+                    console.log(e);
                 }
                 
             }).bind(this);
