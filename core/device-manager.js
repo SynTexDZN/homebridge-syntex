@@ -91,7 +91,7 @@ module.exports = class DeviceManager
             {
                 if(ip != device['ip'])
                 {
-                    this.setValue(mac, 'ip', ip);
+                    self.setValue(mac, 'ip', ip);
                 }
 
                 config.load('config', (err, obj) => {    
@@ -128,7 +128,7 @@ module.exports = class DeviceManager
                 /*
                 if(version != device['version'])
                 {
-                    this.setValue(mac, 'version', version);
+                    self.setValue(mac, 'version', version);
                 }
                 */
                 var status = 'Success';
@@ -140,7 +140,7 @@ module.exports = class DeviceManager
 
                 resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + ('[' + device['events'] + ']' || events) + '}']);
             }
-            else if(await this.checkName(name))
+            else if(await self.checkName(name))
             {
                 config.load('config', async function(err, obj) {
 
@@ -212,13 +212,15 @@ module.exports = class DeviceManager
 
     initSwitch(mac, name)
     {
+        var self = this;
+
         return new Promise(async function(resolve) {
             
             if(!await checkMac(mac))
             {
                 resolve(['Error', 'Mac ist bereits Vergeben!']);          
             }
-            else if(!await this.checkName(name))
+            else if(!await self.checkName(name))
             {
                 resolve(['Error', 'Name ist bereits Vergeben!']);
             }
