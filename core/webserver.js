@@ -25,8 +25,12 @@ module.exports = class WebServer
             {
                 var relPath = await exists(urlPath.substring(1));
                     
+                console.log(relPath);
+
                 if(relPath)
                 {
+                    console.log('LOAD WEBSITE');
+
                     var data = await read(relPath);
                     var head = await read(__dirname + '/includes/head.html');
                     var mimeType = {
@@ -51,6 +55,7 @@ module.exports = class WebServer
             else
             {
                 response.setHeader('Content-Type', 'application/json');
+                console.log('NO FILE SYSTEM');
             }
 
             for(var i = 0; i < pages.length; i++)
