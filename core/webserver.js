@@ -42,7 +42,12 @@ module.exports = class WebServer
 
                     response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
 
-                    content = head + data;
+                    if(path.parse(relPath).ext == '.html')
+                    {
+                        content += head;
+                    }
+
+                    content += data;
                 }
             }
             else
