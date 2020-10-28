@@ -44,9 +44,13 @@ module.exports = class WebServer
 
             for(var i = 0; i < pages.length; i++)
             {
+                console.log(urlPath, pages[i].path, (urlPath == pages[i].path || urlPath == pages[i].path + '.html'));
+
                 if(urlPath == pages[i].path || urlPath == pages[i].path + '.html')
                 {
                     found = true;
+
+                    console.log('FOUND');
 
                     if(request.method == 'POST')
                     {
@@ -82,6 +86,8 @@ module.exports = class WebServer
                     }
                 }
             }
+
+            console.log(found);
 
             if(!found)
             {
