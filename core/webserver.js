@@ -17,34 +17,36 @@ module.exports = class WebServer
             body = Buffer.concat(body).toString();
 
             response.statusCode = 200;
-            response.setHeader('Content-Type', 'application/json');
             response.setHeader('Access-Control-Allow-Origin', '*');
 
             var content = '', found = false;
 
             if(filesystem)
             {
-                exists(urlPath.substring(1)).then(async function(relPath)
-                {            
-                    if(relPath)
-                    {
-                        var data = await read(relPath);
-                        var head = await read(__dirname + '/includes/head.html');
-                        var mimeType = {
-                            ".html": "text/html; charset=utf-8",
-                            ".jpeg": "image/jpeg",
-                            ".jpg": "image/jpeg",
-                            ".png": "image/png",
-                            ".js": "text/javascript",
-                            ".css": "text/css",
-                            ".ttf": "font/ttf"
-                        };
+                var relPath = await exists(urlPath.substring(1));
+                    
+                if(relPath)
+                {
+                    var data = await read(relPath);
+                    var head = await read(__dirname + '/includes/head.html');
+                    var mimeType = {
+                        ".html": "text/html; charset=utf-8",
+                        ".jpeg": "image/jpeg",
+                        ".jpg": "image/jpeg",
+                        ".png": "image/png",
+                        ".js": "text/javascript",
+                        ".css": "text/css",
+                        ".ttf": "font/ttf"
+                    };
 
-                        response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+                    response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
 
-                        content = head + data;
-                    }
-                });
+                    content = head + data;
+                }
+            }
+            else
+            {
+                response.setHeader('Content-Type', 'application/json');
             }
 
             for(var i = 0; i < pages.length; i++)
