@@ -100,7 +100,7 @@
 
                             console.log(version);
                             
-                            var newestVersion = await fetchPluginUpdates(plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex'));
+                            var newestVersion = await fetchPluginUpdates(null, plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex'));
 
                             if(newestVersion != null)
                             {
