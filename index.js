@@ -1,4 +1,4 @@
-var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger'), WebServer = require('./webserver');
+var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger'), WebServer = require('./core/webserver');
 var http = require('http'), url = require('url'), path = require('path'), fs = require('fs'), store = require('json-fs-store');
 var conf, restart = true;
 
