@@ -83,11 +83,14 @@ module.exports = class WebServer
             {
                 if(data == '')
                 {
+                    console.log('NO DATA');
                     response.setHeader('Content-Type', 'text/html; charset=utf-8');
                     response.write(head + await read(__dirname + '/includes/not-found.html'));
                 }
                 else if(relPath)
                 {
+                    console.log(relPath);
+                    
                     var mimeType = {
                         ".html": "text/html; charset=utf-8",
                         ".jpeg": "image/jpeg",
