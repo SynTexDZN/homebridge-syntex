@@ -103,6 +103,8 @@
                             if(version != null)
                             {
                                 document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + version + '</p>';
+
+                                console.log(version);
                                 
                                 fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', version, 'Bridge').then(function(newestVersion) {
 
