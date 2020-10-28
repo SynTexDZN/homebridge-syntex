@@ -100,7 +100,7 @@
 
                             console.log(version);
                             
-                            fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', version, 'Bridge').then(function(newestVersion) {
+                            fetchPluginUpdates(document.getElementById('infos').children[2], plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex')).then(function(newestVersion) {
 
                                 if(version != null)
                                 {
