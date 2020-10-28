@@ -105,14 +105,23 @@ module.exports = class WebServer
             {
                 if(relPath && content == '' && path.parse(relPath).ext == '.html')
                 {
-                    content = await read(__dirname + '/includes/head.html');
+                    content = head;
                     content += await read(__dirname + '/includes/not-found.html');
                 }
 
-                console.log('NOTHING FOUND');
-                console.log(content);
+                var mimeType = {
+                    ".html": "text/html; charset=utf-8",
+                    ".jpeg": "image/jpeg",
+                    ".jpg": "image/jpeg",
+                    ".png": "image/png",
+                    ".js": "text/javascript",
+                    ".css": "text/css",
+                    ".ttf": "font/ttf",
+                    ".ico": "image/x-icon"
+                };
 
-                response.write(content);
+                response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+                response.write(data);
                 response.end();
             }
 
