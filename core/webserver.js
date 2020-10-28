@@ -94,7 +94,7 @@ module.exports = class WebServer
                 if(data == '')
                 {
                     console.log('NO DATA', urlPath);
-                    response.statusCode = 200;
+                    response.statusCode = 404;
                     response.setHeader('Content-Type', 'text/html; charset=utf-8');
                     response.write(head + await read(__dirname + '/includes/not-found.html'));
                 }
