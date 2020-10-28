@@ -1,4 +1,4 @@
-var http = require('http'), url = require('url');
+var http = require('http'), url = require('url'), fs = require('fs'), path = require('path');;
 var logger, pages = [];
 
 module.exports = class WebServer
