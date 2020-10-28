@@ -1,7 +1,5 @@
-var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger');
-var http = require('http'), url = require('url'), path = require('path'), fs = require('fs');
-var store = require('json-fs-store');
-const { isRegExp } = require('util');
+var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger'), WebServer = require('./webserver');
+var http = require('http'), url = require('url'), path = require('path'), fs = require('fs'), store = require('json-fs-store');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -20,6 +18,7 @@ function SynTexPlatform(log, config, api)
         conf = store(api.user.storagePath());
 
         logger = new logger('SynTex', this.logDirectory, api.user.storagePath());
+        WebServer = new WebServer('SynTexTuya', logger, this.port, true);
 
         HTMLQuery.SETUP(logger);
 
@@ -78,681 +77,773 @@ SynTexPlatform.prototype = {
             var accessories = [];
 
             callback(accessories);
-            
-            var createServerCallback = (async function(request, response)
-            {
-                try
+
+            WebServer.addPage('/serverside/init', async (response, urlParams, content) => {
+	
+                if(urlParams.name != null && urlParams.type != null && urlParams.mac != null && urlParams.ip != null && urlParams.version != null && urlParams.refresh != null && urlParams.buttons != null)
                 {
-                    var urlParts = url.parse(request.url, true);
-                    var urlParams = urlParts.query;
-                    var urlPath = urlParts.pathname;
+                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons, urlParams.services != undefined ? urlParams.services : '').then(function(res) {
 
-                    response.statusCode = 200;
-                    response.setHeader('Content-Type', 'text/plain');
-                    response.setHeader('Access-Control-Allow-Origin', '*');
+                        logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
 
-                    if(urlPath.startsWith('/serverside'))
-                    {
-                        urlPath = urlPath.split('/serverside')[1];
+                        response.write(res[1]);
+                        response.end();
 
-                        if(urlPath == '/init')
-                        {
-                            if(urlParams.name && urlParams.type && urlParams.mac && urlParams.ip && urlParams.version && urlParams.refresh && urlParams.buttons)
-                            {
-                                DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.type, urlParams.version, urlParams.refresh, urlParams.buttons, urlParams.services != undefined ? urlParams.services : '').then(function(res) {
-
-                                    console.log(res[0], res[1]);
-                                    logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
-
-                                    response.write(res[1]);
-                                    response.end();
-
-                                    if(res[0] == "Init")
-                                    {
-                                        restart = true;
-
-                                        const { exec } = require("child_process");
-
-                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                        exec("sudo systemctl restart homebridge");
-                                    }
-                                    
-                                }).catch(function(e) {
-
-                                    logger.err(e);
-                                });
-                            }
-                        }
-                        else if(urlPath == '/remove-device')
-                        {
-                            if(urlParams.mac)
-                            {
-                                DeviceManager.removeDevice(urlParams.mac).then(function(removed) {
-
-                                    response.write(removed ? 'Success' : 'Error');
-                                    response.end();
-
-                                    if(removed)
-                                    {
-                                        logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
-
-                                        restart = true;
-
-                                        const { exec } = require("child_process");
-
-                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                        exec("sudo systemctl restart homebridge");
-                                    }
-                                    else
-                                    {
-                                        logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
-                                    }
-                                    
-                                }).catch(function(e) {
-
-                                    logger.err(e);
-                                });
-                            }
-                            else
-                            {
-                                response.write("Error");
-                                response.end();
-                            }
-                        }
-                        else if(urlPath == '/init-switch')
-                        {
-                            if(urlParams.mac && urlParams.name)
-                            {
-                                DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
-
-                                    response.write(res[1]);
-                                    response.end();
-
-                                    if(res[0] == "Success")
-                                    {
-                                        restart = true;
-
-                                        const { exec } = require("child_process");
-
-                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-
-                                        exec("sudo systemctl restart homebridge");
-                                    }
-                                    
-                                }).catch(function(e) {
-
-                                    logger.err(e);
-                                });
-                            }
-                            else
-                            {
-                                response.write("Error");
-                                response.end();
-                            }
-                        }
-                        else if(urlPath == '/restart')
+                        if(res[0] == "Init")
                         {
                             restart = true;
 
                             const { exec } = require("child_process");
-                            
-                            response.write('Success');
-                            response.end();
 
                             logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
                             exec("sudo systemctl restart homebridge");
                         }
-                        else if(urlPath == '/check-restart')
-                        {
-                            response.write(restart.toString());
-                            response.end();
-                        }
-                        else if(urlPath == '/check-name')
-                        {
-                            if(urlParams.name)
-                            {
-                                DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
+                        
+                    }).catch(function(e) {
 
-                                    response.write(nameAvailable ? 'Success' : 'Error');
-                                    response.end();
-                                });
-                            }
-                        }
-                        else if(urlPath == '/version')
-                        {
-                            var pjson = require('./package.json');
+                        logger.err(e);
+                    });
+                }
+            });
 
-                            response.write(pjson.version);
-                            response.end();
-                        }
-                        else if(urlPath == '/update')
-                        {
-                            var version = 'latest';
+            WebServer.addPage('/serverside/remove-device', async (response, urlParams, content) => {
 
-                            if(urlParams.version)
-                            {
-                                version = urlParams.version;
-                            }
+                if(urlParams.mac != null)
+                {
+                    DeviceManager.removeDevice(urlParams.mac).then(function(removed) {
+
+                        response.write(removed ? 'Success' : 'Error');
+                        response.end();
+
+                        if(removed)
+                        {
+                            logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
+
+                            restart = true;
 
                             const { exec } = require("child_process");
-                            
-                            exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
 
-                                try
-                                {
-                                    response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
-                                    response.end();
+                            logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                                    if(error || stderr.includes('ERR!'))
-                                    {
-                                        logger.log('error', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
-                                    }
-                                    else
-                                    {
-                                        logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
-                                        
-                                        restart = true;
-
-                                        logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
-                                        
-                                        exec("sudo systemctl restart homebridge");
-                                    }
-                                }
-                                catch(e)
-                                {
-                                    logger.err(e);
-                                }
-                            });
+                            exec("sudo systemctl restart homebridge");
                         }
-                        else if(urlPath == '/activity')
+                        else
                         {
-                            var result = {};
+                            logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+                        }
+                        
+                    }).catch(function(e) {
 
-                            if(urlParams.mac)
+                        logger.err(e);
+                    });
+                }
+                else
+                {
+                    response.write('Error');
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/init-switch', async (response, urlParams, content) => {
+
+                if(urlParams.mac != null && urlParams.name != null)
+                {
+                    DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
+
+                        response.write(res[1]);
+                        response.end();
+
+                        if(res[0] == "Success")
+                        {
+                            restart = true;
+
+                            const { exec } = require("child_process");
+
+                            logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                            exec("sudo systemctl restart homebridge");
+                        }
+                        
+                    }).catch(function(e) {
+
+                        logger.err(e);
+                    });
+                }
+                else
+                {
+                    response.write("Error");
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/restart', async (response, urlParams, content) => {
+
+                restart = true;
+
+                const { exec } = require("child_process");
+                
+                response.write('Success');
+                response.end();
+
+                logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+
+                exec("sudo systemctl restart homebridge");
+            });
+
+            WebServer.addPage('/serverside/check-restart', async (response, urlParams, content) => {
+
+                response.write(restart.toString());
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/check-name', async (response, urlParams, content) => {
+
+                if(urlParams.name != null)
+                {
+                    DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
+
+                        response.write(nameAvailable ? 'Success' : 'Error');
+                        response.end();
+                    });
+                }
+            });
+
+            WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
+
+                var pjson = require('./package.json');
+
+                response.write(pjson.version);
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/update', async (response, urlParams, content) => {
+
+                var version = 'latest';
+
+                if(urlParams.version != null)
+                {
+                    version = urlParams.version;
+                }
+
+                const { exec } = require("child_process");
+                
+                exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
+
+                    try
+                    {
+                        response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+                        response.end();
+
+                        if(error || stderr.includes('ERR!'))
+                        {
+                            logger.log('error', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                        }
+                        else
+                        {
+                            logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+                            
+                            restart = true;
+
+                            logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+                            
+                            exec("sudo systemctl restart homebridge");
+                        }
+                    }
+                    catch(e)
+                    {
+                        logger.err(e);
+                    }
+                });
+            });
+
+            WebServer.addPage('/serverside/activity', async (response, urlParams, content) => {
+
+                var result = {};
+
+                if(urlParams.mac != null)
+                {
+                    var activity = await logger.load('SynTexWebHooks', urlParams.mac);
+
+                    activity = activity.concat(await logger.load('SynTexMagicHome', urlParams.mac));
+
+                    console.log(activity);
+
+                    if(activity != null)
+                    {
+                        var a = {};
+
+                        for(const i in activity[0])
+                        {
+                            a[i] = { update : [], success : [] };
+
+                            for(const j in activity[0][i])
                             {
-                                var activity = await logger.load('SynTexWebHooks', urlParams.mac);
-
-                                activity = activity.concat(await logger.load('SynTexMagicHome', urlParams.mac));
-
-                                console.log(activity);
-
-                                if(activity != null)
+                                if(activity[0][i][j].l == 'Update' || activity[0][i][j].l == 'Success')
                                 {
-                                    var a = {};
+                                    var value = activity[0][i][j].m.split('[')[2].split(']')[0];
 
-                                    for(const i in activity[0])
+                                    a[i][activity[0][i][j].l.toLowerCase()].push({ t : activity[0][i][j].t, v : value, s : activity[0][i][j].s });
+                                }
+                            }
+                        }
+
+                        result = a;
+                    }
+                }
+
+                response.write(JSON.stringify(result));
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/log', async (response, urlParams, content) => {
+
+                fs.readdir(this.logDirectory, async function(err, files)
+                {
+                    var obj = {};
+
+                    for(var i = 0; i < files.length; i++)
+                    {
+                        var file = files[i].split('.')[0];
+                        
+                        obj[file] = '[]';
+
+                        var logs = await logger.load(file, null);
+
+                        if(logs != null)
+                        {
+                            var logList = [];
+
+                            for(const j in logs)
+                            {
+                                for(const k in logs[j])
+                                {
+                                    for(const l in logs[j][k])
                                     {
-                                        a[i] = { update : [], success : [] };
-
-                                        for(const j in activity[0][i])
-                                        {
-                                            if(activity[0][i][j].l == 'Update' || activity[0][i][j].l == 'Success')
-                                            {
-                                                var value = activity[0][i][j].m.split('[')[2].split(']')[0];
-
-                                                a[i][activity[0][i][j].l.toLowerCase()].push({ t : activity[0][i][j].t, v : value, s : activity[0][i][j].s });
-                                            }
-                                        }
+                                        logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
                                     }
-
-                                    result = a;
                                 }
                             }
 
-                            response.write(JSON.stringify(result));
-                            response.end();
-                        }
-                        else if(urlPath == '/log')
-                        {
-                            fs.readdir(this.logDirectory, async function(err, files)
-                            {
-                                var obj = {};
+                            logList.sort(function(a, b) {
 
-                                for(var i = 0; i < files.length; i++)
-                                {
-                                    var file = files[i].split('.')[0];
-                                    
-                                    obj[file] = '[]';
-
-                                    var logs = await logger.load(file, null);
-
-                                    if(logs != null)
-                                    {
-                                        var logList = [];
-
-                                        for(const j in logs)
-                                        {
-                                            for(const k in logs[j])
-                                            {
-                                                for(const l in logs[j][k])
-                                                {
-                                                    logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
-                                                }
-                                            }
-                                        }
-
-                                        logList.sort(function(a, b) {
-
-                                            var keyA = new Date(a.t), keyB = new Date(b.t);
-                                            
-                                            if (keyA < keyB) return 1;
-                                            if (keyA > keyB) return -1;
-                                            
-                                            return 0;
-                                        });
-
-                                        obj[file] = JSON.stringify(logList);
-                                    }
-                                }
-
-                                response.write(JSON.stringify(obj));
-                                response.end();
-                            });
-                        }
-                        else if(urlPath == '/time')
-                        {
-                            response.write('' + (new Date().getTime() / 1000 + 7201));
-                            response.end();
-                        }
-                        else if(urlPath == '/offline-devices')
-                        {
-                            response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
-                            response.end();
-                        }
-                        else if(urlPath == '/check-device' && urlParams.mac)
-                        {
-                            var device = await DeviceManager.getDevice(urlParams.mac);
-
-                            response.write(device ? 'Success' : 'Error');
-                            response.end();
-                        }
-                        else if(urlPath == '/save-config' && request.method == 'POST')
-                        {
-                            var post = '';
-
-                            request.on('data', function(data)
-                            {
-                                post += data;
-                            });
-
-                            request.on('end', async function()
-                            {
-                                var json = JSON.parse(post);
+                                var keyA = new Date(a.t), keyB = new Date(b.t);
                                 
-                                response.write(await DeviceManager.setValues(json) ? 'Success' : 'Error'); 
-                                response.end();
+                                if (keyA < keyB) return 1;
+                                if (keyA > keyB) return -1;
+                                
+                                return 0;
                             });
-                        }
-                        else if(urlPath == '/automations')
-                        {
-                            response.write(JSON.stringify(await Automations.loadAutomations())); 
-                            response.end();
-                        }
-                        else if(urlPath == '/create-automation' && request.method == 'POST')
-                        {
-                            var post = '';
 
-                            request.on('data', function(data)
-                            {
-                                post += data;
-                            });
-                            
-                            request.on('end', async function()
-                            {                       
-                                response.write(await Automations.createAutomation(post) ? 'Success' : 'Error');
-                                response.end();
-                            });
+                            obj[file] = JSON.stringify(logList);
                         }
-                        else if(urlPath == '/modify-automation' && request.method == 'POST')
-                        {
-                            var post = '';
+                    }
 
-                            request.on('data', function(data)
-                            {
-                                post += data;
-                            });
-                            
-                            request.on('end', async function()
-                            {                       
-                                response.write(await Automations.modifyAutomation(post) ? 'Success' : 'Error');
-                                response.end();
-                            });
-                        }
-                        else if(urlPath == '/remove-automation')
+                    response.write(JSON.stringify(obj));
+                    response.end();
+                });
+            });
+
+            WebServer.addPage('/serverside/time', async (response, urlParams, content) => {
+
+                response.write('' + (new Date().getTime() / 1000 + 7201));
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/offline-devices', async (response, urlParams, content) => {
+
+                response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/check-device', async (response, urlParams, content) => {
+
+                if(urlParams.mac != null)
+                {
+                    response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/save-config', async (response, urlParams, content, postJSON) => {
+
+                if(postJSON != null)
+                {
+                    response.write(await DeviceManager.setValues(postJSON) ? 'Success' : 'Error'); 
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/automations', async (response, urlParams, content) => {
+
+                response.write(JSON.stringify(await Automations.loadAutomations())); 
+                response.end();
+            });
+
+            WebServer.addPage('/serverside/create-automation', async (response, urlParams, content, postJSON) => {
+
+                if(postJSON != null)
+                {
+                    response.write(await Automations.createAutomation(postJSON) ? 'Success' : 'Error');
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/modify-automation', async (response, urlParams, content, postJSON) => {
+
+                if(postJSON != null)
+                {
+                    response.write(await Automations.modifyAutomation(post) ? 'Success' : 'Error');
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/remove-automation', async (response, urlParams, content) => {
+
+                if(urlParams.id != null)
+                {
+                    response.write(urlParams.id ? await Automations.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/serverside/get-plugins', async (response, urlParams, content) => {
+
+                conf.load('config', (err, obj) => {    
+
+                    var plugins = [];
+
+                    if(obj && !err)
+                    {       
+                        for(const i in obj.platforms)
                         {
-                            response.write(urlParams.id ? await Automations.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
-                            response.end();
+                            if(i.platform != null && i.port != null)
+                            {
+                                plugins.push({ id : i.platform, port : i.port });
+                            }
                         }
+                    }
+    
+                    response.write(JSON.stringify(plugins));
+                    response.end();
+                });
+            });
+
+            WebServer.addPage('/device', async (response, urlParams, content) => {
+
+                if(urlParams.mac != null)
+                {
+                    var accessory = await DeviceManager.getAccessory(urlParams.mac);
+                    var all = { ...accessory };
+                    var device = await DeviceManager.getDevice(urlParams.mac);
+
+                    if(device != null)
+                    {
+                        for(const k in device)
+                        {
+                            if(k != 'id' && k != 'type')
+                            {
+                                all[k] = device[k];
+                            }
+                        }
+                    }
+
+                    if(all.ip && all.mac)
+                    {
+                        all.plugin = 'SynTex';
                     }
                     else
                     {
-                        HTMLQuery.exists(urlPath.substring(1)).then(async function(relPath)
-                        {            
-                            if(!relPath)
+                        all.plugin = 'SynTexWebHooks';
+                    }
+
+                    var magicHome = await getPluginConfig('SynTexMagicHome');
+
+                    if(magicHome != null)
+                    {
+                        for(var i = 0; i < magicHome.lights.length; i++)
+                        {
+                            if(magicHome.lights[i].mac == urlParams.mac)
                             {
-                                var data = await HTMLQuery.read(path.join(__dirname, '/notfound.html'));
-                                var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+                                var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
 
-                                response.setHeader('Content-Type', 'text/html; charset=utf-8');
-                                response.write(HTMLQuery.sendValues(head + data, obj));
-                                response.end();
-                            }
-                            else
-                            {
-                                var data = await HTMLQuery.read(relPath);
-                                var head = await HTMLQuery.read(__dirname + '/includes/head.html');
-                                var mimeType = {
-                                    ".html": "text/html; charset=utf-8",
-                                    ".jpeg": "image/jpeg",
-                                    ".jpg": "image/jpeg",
-                                    ".png": "image/png",
-                                    ".js": "text/javascript",
-                                    ".css": "text/css",
-                                    ".ttf": "font/ttf"
-                                };
-
-                                response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
-
-                                if(urlPath == '/device' && urlParams.mac)
+                                for(const k in magicHome.lights[i])
                                 {
-                                    var accessory = await DeviceManager.getAccessory(urlParams.mac);
-                                    var all = { ...accessory };
-                                    var device = await DeviceManager.getDevice(urlParams.mac);
-
-                                    console.log(device);
-
-                                    if(device != null)
+                                    if(k == 'setup')
                                     {
-                                        console.log(device);
-
-                                        for(const k in device)
-                                        {
-                                            console.log(k);
-
-                                            if(k != 'id' && k != 'type')
-                                            {
-                                                all[k] = device[k];
-                                            }
-                                        }
+                                        all['services'] = type;
                                     }
-
-                                    if(all.ip && all.mac)
+                                    else if(k != 'id' && k != 'type')
                                     {
-                                        all.plugin = 'SynTex';
+                                        all[k] = magicHome.lights[i][k];
                                     }
-                                    else
-                                    {
-                                        all.plugin = 'SynTexWebHooks';
-                                    }
-
-                                    console.log('ALL');
-                                    console.log(all);
-
-                                    var magicHome = await getPluginConfig('SynTexMagicHome');
-
-                                    if(magicHome != null)
-                                    {
-                                        for(var i = 0; i < magicHome.lights.length; i++)
-                                        {
-                                            if(magicHome.lights[i].mac == urlParams.mac)
-                                            {
-                                                var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-
-                                                for(const k in magicHome.lights[i])
-                                                {
-                                                    console.log(k);
-
-                                                    if(k == 'setup')
-                                                    {
-                                                        all['services'] = type;
-                                                    }
-                                                    else if(k != 'id' && k != 'type')
-                                                    {
-                                                        all[k] = magicHome.lights[i][k];
-                                                    }
-                                                }
-
-                                                all.spectrum = 'HSL';
-                                                all.plugin = 'SynTexMagicHome';
-
-                                                if(!magicHome.lights[i].version)
-                                                {
-                                                    all.version = '99.99.99';
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
-                                    var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
-                                    var obj = {
-                                        device: JSON.stringify(all),
-                                        wPort: 1710,
-                                        mPort: 1712
-                                    };
-
-                                    if(webhookConfig != null)
-                                    {
-                                        obj.wPort = webhookConfig.port;
-                                    }
-
-                                    if(magicHomeConfig != null)
-                                    {
-                                        obj.mPort = magicHomeConfig.port;
-                                    }
-
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
                                 }
-                                else if(urlPath == '/' || urlPath.startsWith('/index'))
+
+                                all.spectrum = 'HSL';
+                                all.plugin = 'SynTexMagicHome';
+
+                                if(!magicHome.lights[i].version)
                                 {
-                                    var all = [];
-                                    var accessories = await DeviceManager.getAccessories();
-                                    var devices = await DeviceManager.getDevices();
-                                    var bridgeData = await DeviceManager.getBridgeStorage();
-
-                                    all.push.apply(all, accessories);
-
-                                    for(var i = 0; i < all.length; i++)
-                                    {
-                                        if(all[i].ip && all[i].mac)
-                                        {
-                                            all[i].plugin = 'SynTex';
-                                        }
-                                        else
-                                        {
-                                            all[i].plugin = 'SynTexWebHooks';
-                                        }
-                                    }
-
-                                    var magicHome = await getPluginConfig('SynTexMagicHome');
-
-                                    if(magicHome != null)
-                                    {
-                                        for(var i = 0; i < magicHome.lights.length; i++)
-                                        {
-                                            if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
-                                            {
-                                                var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                                                var d = {};
-                                                //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
-                                                
-                                                for(const k in magicHome.lights[i])
-                                                {
-                                                    if(k == 'setup')
-                                                    {
-                                                        d['services'] = type;
-                                                    }
-                                                    else if(k != 'id' && k != 'type')
-                                                    {
-                                                        d[k] = magicHome.lights[i][k];
-                                                    }
-                                                }
-
-                                                d.spectrum = 'HSL';
-                                                d.plugin = 'SynTexMagicHome';
-
-                                                if(!magicHome.lights[i].version)
-                                                {
-                                                    d.version = '99.99.99';
-                                                }
-
-                                                all.push(d);
-                                            }
-                                        }
-                                    }
-
-                                    for(var i = 0; i < all.length; i++)
-                                    {
-                                        for(var j = 0; j < devices.length; j++)
-                                        {
-                                            if(all[i].mac == devices[j].id)
-                                            {
-                                                for(var k = 0; k < Object.keys(devices[j]).length; k++)
-                                                {
-                                                    all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    var obj = {
-                                        devices: JSON.stringify(all),
-                                        restart: '-'
-                                    };
-                                    
-                                    if(bridgeData != null && bridgeData.restart)
-                                    {
-                                        var restartDate = new Date(bridgeData.restart);
-                                        obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
-                                    }
-                                    
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/settings'))
-                                {
-                                    var devices = await DeviceManager.getDevices();
-
-                                    response.write(HTMLQuery.sendValue(head + data, 'devices', JSON.stringify(devices)));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/setup') || urlPath.startsWith('/reconnect'))
-                                {
-                                    var ifaces = require('os').networkInterfaces();
-                                    var address;
-
-                                    for(var dev in ifaces)
-                                    {
-                                        var iface = ifaces[dev].filter(function(details)
-                                        {
-                                            return details.family === 'IPv4' && details.internal === false;
-                                        });
-
-                                        if(iface.length > 0) address = iface[0].address;
-                                    }
-
-                                    response.write(HTMLQuery.sendValue(head + data, 'bridge-ip', address));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/bridge'))
-                                {
-                                    var pjson = require('./package.json');
-                                    var ifaces = require('os').networkInterfaces();
-                                    var address;
-
-                                    for(var dev in ifaces)
-                                    {
-                                        var iface = ifaces[dev].filter(function(details)
-                                        {
-                                            return details.family === 'IPv4' && details.internal === false;
-                                        });
-
-                                        if(iface.length > 0) address = iface[0].address;
-                                    }
-
-                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
-                                    var obj = {
-                                        ip: address,
-                                        version: pjson.version,
-                                        wPort: 1710
-                                    };
-
-                                    if(webhookConfig != null)
-                                    {
-                                        obj.wPort = webhookConfig.port;
-                                    }
-
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/crossover'))
-                                {
-                                    var obj = [];
-                                    var t = getPluginConfig('SynTexTuya');
-
-                                    if(t != null)
-                                    {
-                                        obj.push({ name : 'SynTex Tuya' });
-                                    }
-
-                                    var t = getPluginConfig('SynTexMagicHome');
-
-                                    if(t != null)
-                                    {
-                                        obj.push({ name : 'SynTex MagicHome' });
-                                    }
-
-                                    response.write(HTMLQuery.sendValues(head + data, { crossoverPlugins : JSON.stringify(obj) }));
-                                    response.end();
-                                }
-                                else if(urlPath.startsWith('/automations') || urlPath.startsWith('/automation'))
-                                {
-                                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
-                                    var obj = {
-                                        accessories: JSON.stringify(await DeviceManager.getAccessories()),
-                                        wPort: 1710
-                                    };
-
-                                    if(webhookConfig != null)
-                                    {
-                                        obj.wPort = webhookConfig.port;
-                                    }
-
-                                    response.write(HTMLQuery.sendValues(head + data, obj));
-                                    response.end();
-                                }
-                                else if(path.parse(relPath).ext == '.html')
-                                {
-                                    response.write(head + data);
-                                    response.end();
-                                }
-                                else
-                                {
-                                    response.write(data);
-                                    response.end();
+                                    all.version = '99.99.99';
                                 }
                             }
-                            
-                        }).catch(function(e) {
+                        }
+                    }
 
-                            logger.err(e);
-                        });
+                    console.log('ALL');
+                    console.log(all);
+
+                    var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                    var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
+                    var obj = {
+                        device: JSON.stringify(all),
+                        wPort: 1710,
+                        mPort: 1712
+                    };
+
+                    if(webhookConfig != null)
+                    {
+                        obj.wPort = webhookConfig.port;
+                    }
+
+                    if(magicHomeConfig != null)
+                    {
+                        obj.mPort = magicHomeConfig.port;
+                    }
+
+                    response.write(HTMLQuery.sendValues(content, obj));
+                    response.end();
+                }
+            });
+
+            WebServer.addPage('/', async (response, urlParams, content) => {
+
+                var all = [];
+                var accessories = await DeviceManager.getAccessories();
+                var devices = await DeviceManager.getDevices();
+                var bridgeData = await DeviceManager.getBridgeStorage();
+
+                all.push.apply(all, accessories);
+
+                for(var i = 0; i < all.length; i++)
+                {
+                    if(all[i].ip && all[i].mac)
+                    {
+                        all[i].plugin = 'SynTex';
+                    }
+                    else
+                    {
+                        all[i].plugin = 'SynTexWebHooks';
                     }
                 }
-                catch(e)
+
+                var magicHome = await getPluginConfig('SynTexMagicHome');
+
+                if(magicHome != null)
                 {
-                    logger.err(e);
+                    for(var i = 0; i < magicHome.lights.length; i++)
+                    {
+                        if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
+                        {
+                            var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
+                            var d = {};
+                            //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
+                            
+                            for(const k in magicHome.lights[i])
+                            {
+                                if(k == 'setup')
+                                {
+                                    d['services'] = type;
+                                }
+                                else if(k != 'id' && k != 'type')
+                                {
+                                    d[k] = magicHome.lights[i][k];
+                                }
+                            }
+
+                            d.spectrum = 'HSL';
+                            d.plugin = 'SynTexMagicHome';
+
+                            if(!magicHome.lights[i].version)
+                            {
+                                d.version = '99.99.99';
+                            }
+
+                            all.push(d);
+                        }
+                    }
+                }
+
+                for(var i = 0; i < all.length; i++)
+                {
+                    for(var j = 0; j < devices.length; j++)
+                    {
+                        if(all[i].mac == devices[j].id)
+                        {
+                            for(var k = 0; k < Object.keys(devices[j]).length; k++)
+                            {
+                                all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
+                            }
+                        }
+                    }
                 }
                 
-            }).bind(this);
+                var obj = {
+                    devices: JSON.stringify(all),
+                    restart: '-'
+                };
+                
+                if(bridgeData != null && bridgeData.restart)
+                {
+                    var restartDate = new Date(bridgeData.restart);
+                    obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
+                }
+                
+                response.write(HTMLQuery.sendValues(content, obj));
+                response.end();
+            });
 
-            http.createServer(createServerCallback).listen(this.port, "0.0.0.0");
+            WebServer.addPage('/index', async (response, urlParams, content) => {
+
+                var all = [];
+                var accessories = await DeviceManager.getAccessories();
+                var devices = await DeviceManager.getDevices();
+                var bridgeData = await DeviceManager.getBridgeStorage();
+
+                all.push.apply(all, accessories);
+
+                for(var i = 0; i < all.length; i++)
+                {
+                    if(all[i].ip && all[i].mac)
+                    {
+                        all[i].plugin = 'SynTex';
+                    }
+                    else
+                    {
+                        all[i].plugin = 'SynTexWebHooks';
+                    }
+                }
+
+                var magicHome = await getPluginConfig('SynTexMagicHome');
+
+                if(magicHome != null)
+                {
+                    for(var i = 0; i < magicHome.lights.length; i++)
+                    {
+                        if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
+                        {
+                            var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
+                            var d = {};
+                            //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
+                            
+                            for(const k in magicHome.lights[i])
+                            {
+                                if(k == 'setup')
+                                {
+                                    d['services'] = type;
+                                }
+                                else if(k != 'id' && k != 'type')
+                                {
+                                    d[k] = magicHome.lights[i][k];
+                                }
+                            }
+
+                            d.spectrum = 'HSL';
+                            d.plugin = 'SynTexMagicHome';
+
+                            if(!magicHome.lights[i].version)
+                            {
+                                d.version = '99.99.99';
+                            }
+
+                            all.push(d);
+                        }
+                    }
+                }
+
+                for(var i = 0; i < all.length; i++)
+                {
+                    for(var j = 0; j < devices.length; j++)
+                    {
+                        if(all[i].mac == devices[j].id)
+                        {
+                            for(var k = 0; k < Object.keys(devices[j]).length; k++)
+                            {
+                                all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
+                            }
+                        }
+                    }
+                }
+                
+                var obj = {
+                    devices: JSON.stringify(all),
+                    restart: '-'
+                };
+                
+                if(bridgeData != null && bridgeData.restart)
+                {
+                    var restartDate = new Date(bridgeData.restart);
+                    obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
+                }
+                
+                response.write(HTMLQuery.sendValues(content, obj));
+                response.end();
+            });
+
+            WebServer.addPage('/settings', async (response, urlParams, content) => {
+
+                var devices = await DeviceManager.getDevices();
+
+                response.write(HTMLQuery.sendValue(content, 'devices', JSON.stringify(devices)));
+                response.end();
+            });
+
+            WebServer.addPage('/setup', async (response, urlParams, content) => {
+
+                var ifaces = require('os').networkInterfaces();
+                var address;
+
+                for(var dev in ifaces)
+                {
+                    var iface = ifaces[dev].filter(function(details)
+                    {
+                        return details.family === 'IPv4' && details.internal === false;
+                    });
+
+                    if(iface.length > 0) address = iface[0].address;
+                }
+
+                response.write(HTMLQuery.sendValue(content, 'bridge-ip', address));
+                response.end();
+            });
+
+            WebServer.addPage('/reconnect', async (response, urlParams, content) => {
+
+                var ifaces = require('os').networkInterfaces();
+                var address;
+
+                for(var dev in ifaces)
+                {
+                    var iface = ifaces[dev].filter(function(details)
+                    {
+                        return details.family === 'IPv4' && details.internal === false;
+                    });
+
+                    if(iface.length > 0) address = iface[0].address;
+                }
+
+                response.write(HTMLQuery.sendValue(content, 'bridge-ip', address));
+                response.end();
+            });
+
+            WebServer.addPage('/bridge', async (response, urlParams, content) => {
+
+                var pjson = require('./package.json');
+                var ifaces = require('os').networkInterfaces();
+                var address;
+
+                for(var dev in ifaces)
+                {
+                    var iface = ifaces[dev].filter(function(details)
+                    {
+                        return details.family === 'IPv4' && details.internal === false;
+                    });
+
+                    if(iface.length > 0) address = iface[0].address;
+                }
+
+                var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                var obj = {
+                    ip: address,
+                    version: pjson.version,
+                    wPort: 1710
+                };
+
+                if(webhookConfig != null)
+                {
+                    obj.wPort = webhookConfig.port;
+                }
+
+                response.write(HTMLQuery.sendValues(content, obj));
+                response.end();
+            });
+
+            WebServer.addPage('/crossover', async (response, urlParams, content) => {
+
+                var obj = [];
+                var t = getPluginConfig('SynTexTuya');
+
+                if(t != null)
+                {
+                    obj.push({ name : 'SynTex Tuya' });
+                }
+
+                var t = getPluginConfig('SynTexMagicHome');
+
+                if(t != null)
+                {
+                    obj.push({ name : 'SynTex MagicHome' });
+                }
+
+                response.write(HTMLQuery.sendValues(content, { crossoverPlugins : JSON.stringify(obj) }));
+                response.end();
+            });
+
+            WebServer.addPage('/automation', async (response, urlParams, content) => {
+
+                var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                var obj = {
+                    accessories: JSON.stringify(await DeviceManager.getAccessories()),
+                    wPort: 1710
+                };
+
+                if(webhookConfig != null)
+                {
+                    obj.wPort = webhookConfig.port;
+                }
+
+                response.write(HTMLQuery.sendValues(content, obj));
+                response.end();
+            });
+
+            WebServer.addPage('/automations', async (response, urlParams, content) => {
+
+                var webhookConfig = await getPluginConfig('SynTexWebHooks');
+                var obj = {
+                    accessories: JSON.stringify(await DeviceManager.getAccessories()),
+                    wPort: 1710
+                };
+
+                if(webhookConfig != null)
+                {
+                    obj.wPort = webhookConfig.port;
+                }
+
+                response.write(HTMLQuery.sendValues(content, obj));
+                response.end();
+            });
+            /*
+            if(!relPath)
+            {
+                var data = await HTMLQuery.read(path.join(__dirname, '/notfound.html'));
+                var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+
+                response.setHeader('Content-Type', 'text/html; charset=utf-8');
+                response.write(HTMLQuery.sendValues(head + data, obj));
+                response.end();
+            }
             
-            logger.log('info', 'bridge', 'Bridge', 'Data Link Server läuft auf Port [' + this.port + ']');
+            if(path.parse(relPath).ext == '.html')
+            {
+                response.write(head + data);
+                response.end();
+            }
+            else
+            {
+                response.write(data);
+                response.end();
+            }
+            */
         }
         catch(e)
         {
@@ -761,7 +852,7 @@ SynTexPlatform.prototype = {
     }
 }
 
-async function getPluginConfig(pluginName)
+function getPluginConfig(pluginName)
 {
     return new Promise(resolve => {
         

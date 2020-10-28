@@ -216,7 +216,7 @@ module.exports = class DeviceManager
 
     initSwitch(mac, name)
     {
-        var self = this;
+        const self = this;
 
         return new Promise(async function(resolve) {
             
