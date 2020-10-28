@@ -103,13 +103,14 @@ module.exports = class WebServer
 
             if(!found)
             {
-                if(content == '' && path.parse(relPath).ext == '.html')
+                if(relPath && content == '' && path.parse(relPath).ext == '.html')
                 {
                     content = await read(__dirname + '/includes/head.html');
                     content += await read(__dirname + '/includes/not-found.html');
                 }
 
                 console.log('NOTHING FOUND');
+                console.log(content);
 
                 response.write(content);
                 response.end();
