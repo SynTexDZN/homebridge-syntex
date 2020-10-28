@@ -94,9 +94,6 @@ module.exports = class WebServer
                 {
                     content = await read(__dirname + '/includes/head.html');
                     content += await read(__dirname + '/includes/not-found.html');
-                    
-                    response.write(content);
-                    response.end();
                 }
 
                 response.write(content);
