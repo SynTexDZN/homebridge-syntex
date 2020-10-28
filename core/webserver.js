@@ -44,8 +44,11 @@ module.exports = class WebServer
 
                     if(path.parse(relPath).ext == '.html')
                     {
+                        console.log('INCLUDE HEAD');
                         content += head;
                     }
+
+                    console.log(mimeType[path.parse(relPath).ext], path.parse(relPath).ext);
 
                     content += data;
                 }
