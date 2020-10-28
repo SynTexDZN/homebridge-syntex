@@ -29,7 +29,10 @@ module.exports = class WebServer
 
                 if(relPath)
                 {
-                    console.log('LOAD WEBSITE');
+                    console.log('LOAD WEBSITE', __dirname);
+                    console.log(__dirname + '/includes/head.html');
+                    console.log(await read('/includes/head.html'));
+                    console.log(await read('../includes/head.html'));
 
                     var data = await read(relPath);
                     var head = await read(__dirname + '/includes/head.html');
@@ -42,10 +45,6 @@ module.exports = class WebServer
                         ".css": "text/css",
                         ".ttf": "font/ttf"
                     };
-
-                    console.log(head);
-                    console.log(await read('/includes/head.html'));
-                    console.log(await read('../includes/head.html'));
 
                     response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
 
