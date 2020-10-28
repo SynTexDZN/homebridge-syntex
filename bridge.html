@@ -90,6 +90,8 @@
 
                 Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(plugins) {
 
+                    plugins = JSON.parse(plugins);
+
                     for(var i = 0; i < plugins.length; i++)
                     {
                         console.log(plugins[i]);
