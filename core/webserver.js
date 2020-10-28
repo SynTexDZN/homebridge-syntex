@@ -24,12 +24,12 @@ module.exports = class WebServer
 
             if(filesystem)
             {
-                HTMLQuery.exists(urlPath.substring(1)).then(async function(relPath)
+                exists(urlPath.substring(1)).then(async function(relPath)
                 {            
                     if(relPath)
                     {
-                        var data = await HTMLQuery.read(relPath);
-                        var head = await HTMLQuery.read(__dirname + '/includes/head.html');
+                        var data = await read(relPath);
+                        var head = await read(__dirname + '/includes/head.html');
                         var mimeType = {
                             ".html": "text/html; charset=utf-8",
                             ".jpeg": "image/jpeg",
@@ -92,8 +92,8 @@ module.exports = class WebServer
             {
                 if(content == '')
                 {
-                    content = await HTMLQuery.read(__dirname + '/includes/head.html');
-                    content += await HTMLQuery.read(__dirname + '/includes/not-found.html');
+                    content = await read(__dirname + '/includes/head.html');
+                    content += await read(__dirname + '/includes/not-found.html');
                     
                     response.write(content);
                     response.end();
@@ -114,4 +114,55 @@ module.exports = class WebServer
     {
         pages.push({ path : path, callback : callback });
     }
+}
+
+function exists(reqPath)
+{
+    return new Promise(resolve => {
+        
+        var pathname = path.join(__dirname, '../' + reqPath);
+
+        var noext = false;
+
+        if(path.parse(pathname).ext == '')
+        {
+            noext = true;
+        }
+
+        fs.exists(pathname, function(exist)
+        {
+            if(exist && fs.statSync(pathname).isDirectory())
+            {
+                resolve(exists(reqPath + 'index.html'));
+            }
+            else if(exist)
+            {
+                resolve(pathname);
+            }
+            else if(noext)
+            {
+                resolve(exists(reqPath + '.html'));
+            }
+            else
+            {
+                resolve(false);
+            }
+        });
+    });
+}
+
+function read(reqPath)
+{
+    return new Promise(resolve => {
+        
+        fs.readFile(reqPath, function(err, res)
+        {          
+            if(!res || err)
+            {
+                res = "";
+            }
+
+            resolve(res);
+        });
+    });
 }
