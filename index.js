@@ -407,7 +407,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/get-plugins', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/plugins', async (response, urlParams, content) => {
 
                 conf.load('config', (err, obj) => {    
 
