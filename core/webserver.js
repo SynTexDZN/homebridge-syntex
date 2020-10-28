@@ -37,7 +37,8 @@ module.exports = class WebServer
                         ".png": "image/png",
                         ".js": "text/javascript",
                         ".css": "text/css",
-                        ".ttf": "font/ttf"
+                        ".ttf": "font/ttf",
+                        ".ico": "image/x-icon"
                     };
 
                     response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
@@ -107,6 +108,8 @@ module.exports = class WebServer
                     content = await read(__dirname + '/includes/head.html');
                     content += await read(__dirname + '/includes/not-found.html');
                 }
+
+                console.log('NOTHING FOUND');
 
                 response.write(content);
                 response.end();
