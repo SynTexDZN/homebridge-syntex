@@ -25,13 +25,16 @@ module.exports = class WebServer
             {
                 var relPath = await exists(urlPath.substring(1));
                     
-                data = await read(relPath);
-
-                if(relPath && path.parse(relPath).ext == '.html')
+                if(relPath)
                 {
-                    response.setHeader('Content-Type', 'text/html; charset=utf-8');
-                    
-                    content = head + data;
+                    data = await read(relPath);
+
+                    if(path.parse(relPath).ext == '.html')
+                    {
+                        response.setHeader('Content-Type', 'text/html; charset=utf-8');
+                        
+                        content = head + data;
+                    }
                 }
             }
             else
