@@ -92,7 +92,7 @@
 
                         var version = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false);
 
-                        document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex' + ' •</h2>';
+                        document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
 
                         if(version != null)
                         {
