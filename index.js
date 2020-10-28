@@ -419,7 +419,7 @@ SynTexPlatform.prototype = {
                     {       
                         for(const i in obj.platforms)
                         {
-                            if(obj.platforms[i].platform != null && obj.platforms[i].port != null)
+                            if(obj.platforms[i].platform != null && obj.platforms[i].platform != 'config' && obj.platforms[i].port != null)
                             {
                                 plugins.push({ id : obj.platforms[i].platform, port : obj.platforms[i].port });
                             }
