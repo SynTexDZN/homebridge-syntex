@@ -100,16 +100,15 @@
 
                             console.log(version);
                             
-                            fetchPluginUpdates(document.getElementById('infos').children[2], plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex')).then(function(newestVersion) {
+                            var newestVersion = await fetchPluginUpdates(plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex'));
 
-                                if(version != null)
-                                {
-                                    newestBVersion = version;
-                                }
-                            });
+                            if(newestVersion != null)
+                            {
+                                //newestBVersion = version;
+
+                                document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>' + newestVersion + '</p>';
+                            }
                         }
-
-                        document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>';
                     }
                 });
 
