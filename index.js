@@ -20,6 +20,8 @@ function SynTexPlatform(log, config, api)
         logger = new logger('SynTex', this.logDirectory, api.user.storagePath());
         WebServer = new WebServer('SynTexTuya', logger, this.port, true);
 
+        WebServer.setHead(__dirname + '/includes/head.html');
+
         HTMLQuery.SETUP(logger);
 
         getPluginConfig('SynTexWebHooks').then(async function(config) {

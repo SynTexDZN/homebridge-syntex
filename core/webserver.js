@@ -1,5 +1,5 @@
 var http = require('http'), url = require('url'), fs = require('fs'), path = require('path');;
-var logger, pages = [];
+var logger, pages = [], head = '';
 
 module.exports = class WebServer
 {
@@ -29,13 +29,7 @@ module.exports = class WebServer
 
                 if(relPath)
                 {
-                    console.log('LOAD WEBSITE', __dirname);
-                    console.log(__dirname + '/includes/head.html');
-                    console.log(await read('/includes/head.html'));
-                    console.log(await read('../includes/head.html'));
-
                     var data = await read(relPath);
-                    var head = await read(__dirname + '/includes/head.html');
                     var mimeType = {
                         ".html": "text/html; charset=utf-8",
                         ".jpeg": "image/jpeg",
@@ -120,6 +114,14 @@ module.exports = class WebServer
     addPage(path, callback)
     {
         pages.push({ path : path, callback : callback });
+    }
+
+    setHead(relPath)
+    {
+        read(relPath).then((H) => {
+
+            head = H;
+        });
     }
 }
 
