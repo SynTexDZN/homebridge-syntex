@@ -19,45 +19,23 @@ module.exports = class WebServer
             response.statusCode = 200;
             response.setHeader('Access-Control-Allow-Origin', '*');
 
-            var content = '', found = false;
+            var content = '', data = '', found = false;
 
             if(filesystem)
             {
                 var relPath = await exists(urlPath.substring(1));
                     
-                console.log(relPath);
-
-                if(relPath)
+                if(relPath && path.parse(relPath).ext == '.html')
                 {
-                    var data = await read(relPath);
-                    var mimeType = {
-                        ".html": "text/html; charset=utf-8",
-                        ".jpeg": "image/jpeg",
-                        ".jpg": "image/jpeg",
-                        ".png": "image/png",
-                        ".js": "text/javascript",
-                        ".css": "text/css",
-                        ".ttf": "font/ttf",
-                        ".ico": "image/x-icon"
-                    };
+                    response.setHeader('Content-Type', 'text/html; charset=utf-8');
 
-                    response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
-
-                    if(path.parse(relPath).ext == '.html')
-                    {
-                        console.log('INCLUDE HEAD');
-                        content += head;
-                    }
-
-                    console.log(mimeType[path.parse(relPath).ext], path.parse(relPath).ext);
-
-                    content += data;
+                    data = await read(relPath);
+                    content = head + data;
                 }
             }
             else
             {
                 response.setHeader('Content-Type', 'application/json');
-                console.log('NO FILE SYSTEM');
             }
 
             for(var i = 0; i < pages.length; i++)
@@ -103,25 +81,28 @@ module.exports = class WebServer
 
             if(!found)
             {
-                if(relPath && content == '' && path.parse(relPath).ext == '.html')
+                if(data == '')
                 {
-                    content = head;
-                    content += await read(__dirname + '/includes/not-found.html');
+                    response.setHeader('Content-Type', 'text/html; charset=utf-8');
+                    response.write(head + await read(__dirname + '/includes/not-found.html'));
                 }
+                else if(relPath)
+                {
+                    var mimeType = {
+                        ".html": "text/html; charset=utf-8",
+                        ".jpeg": "image/jpeg",
+                        ".jpg": "image/jpeg",
+                        ".png": "image/png",
+                        ".js": "text/javascript",
+                        ".css": "text/css",
+                        ".ttf": "font/ttf",
+                        ".ico": "image/x-icon"
+                    };
 
-                var mimeType = {
-                    ".html": "text/html; charset=utf-8",
-                    ".jpeg": "image/jpeg",
-                    ".jpg": "image/jpeg",
-                    ".png": "image/png",
-                    ".js": "text/javascript",
-                    ".css": "text/css",
-                    ".ttf": "font/ttf",
-                    ".ico": "image/x-icon"
-                };
-
-                response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
-                response.write(data);
+                    response.setHeader('Content-Type', mimeType[path.parse(relPath).ext] || 'text/html; charset=utf-8');
+                    response.write(data);
+                }
+                
                 response.end();
             }
 
