@@ -4,16 +4,16 @@ var conf, restart = true;
 
 module.exports = function(homebridge)
 {
-    homebridge.registerPlatform("homebridge-syntex", "SynTex", SynTexPlatform);
+    homebridge.registerPlatform('homebridge-syntex', 'SynTex', SynTexPlatform);
 };
 
 function SynTexPlatform(log, config, api)
 {
     try
     {
-        this.cacheDirectory = config["cache_directory"] || "./SynTex/data";
-        this.logDirectory = config["log_directory"] || "./SynTex/log";
-        this.port = config["port"] || 1711;
+        this.cacheDirectory = config['cache_directory'] || './SynTex/data';
+        this.logDirectory = config['log_directory'] || './SynTex/log';
+        this.port = config['port'] || 1711;
 
         conf = store(api.user.storagePath());
 
@@ -44,9 +44,9 @@ function SynTexPlatform(log, config, api)
 
             DeviceManager.setBridgeStorage('restart', new Date());
 
-            const { exec } = require("child_process");
+            const { exec } = require('child_process');
 
-            exec("sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711", (error, stdout, stderr) => {
+            exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
 
                 if(error || stderr.includes('ERR!'))
                 {
@@ -91,15 +91,15 @@ SynTexPlatform.prototype = {
                         response.write(res[1]);
                         response.end();
 
-                        if(res[0] == "Init")
+                        if(res[0] == 'Init')
                         {
                             restart = true;
 
-                            const { exec } = require("child_process");
+                            const { exec } = require('child_process');
 
                             logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                            exec("sudo systemctl restart homebridge");
+                            exec('sudo systemctl restart homebridge');
                         }
                         
                     }).catch(function(e) {
@@ -124,11 +124,11 @@ SynTexPlatform.prototype = {
 
                             restart = true;
 
-                            const { exec } = require("child_process");
+                            const { exec } = require('child_process');
 
                             logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                            exec("sudo systemctl restart homebridge");
+                            exec('sudo systemctl restart homebridge');
                         }
                         else
                         {
@@ -156,15 +156,15 @@ SynTexPlatform.prototype = {
                         response.write(res[1]);
                         response.end();
 
-                        if(res[0] == "Success")
+                        if(res[0] == 'Success')
                         {
                             restart = true;
 
-                            const { exec } = require("child_process");
+                            const { exec } = require('child_process');
 
                             logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                            exec("sudo systemctl restart homebridge");
+                            exec('sudo systemctl restart homebridge');
                         }
                         
                     }).catch(function(e) {
@@ -174,7 +174,7 @@ SynTexPlatform.prototype = {
                 }
                 else
                 {
-                    response.write("Error");
+                    response.write('Error');
                     response.end();
                 }
             });
@@ -183,14 +183,14 @@ SynTexPlatform.prototype = {
 
                 restart = true;
 
-                const { exec } = require("child_process");
+                const { exec } = require('child_process');
                 
                 response.write('Success');
                 response.end();
 
                 logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
 
-                exec("sudo systemctl restart homebridge");
+                exec('sudo systemctl restart homebridge');
             });
 
             WebServer.addPage('/serverside/check-restart', (response) => {
@@ -228,9 +228,9 @@ SynTexPlatform.prototype = {
                     version = urlParams.version;
                 }
 
-                const { exec } = require("child_process");
+                const { exec } = require('child_process');
                 
-                exec("sudo npm install homebridge-syntex@" + version + " -g", (error, stdout, stderr) => {
+                exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
 
                     try
                     {
@@ -249,7 +249,7 @@ SynTexPlatform.prototype = {
 
                             logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
                             
-                            exec("sudo systemctl restart homebridge");
+                            exec('sudo systemctl restart homebridge');
                         }
                     }
                     catch(e)
