@@ -131,7 +131,7 @@
                     Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 3, {}, false).then(function(l) {
 
                         logJSON = JSON.parse(l);
-                        logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
+                        //logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
 
                         for(var i = 0; i < plugins.length; i++)
                         {
