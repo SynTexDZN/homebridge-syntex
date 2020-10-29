@@ -211,7 +211,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/version', (response) => {
+            WebServer.addPage('/version', async (response, urlParams, content) => {
 
                 const pJSON = require('./package.json');
 

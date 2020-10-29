@@ -17,14 +17,7 @@
                     <button class="widget-left gradient-red" disabled>Wichtig</button>
                     <button class="widget-right" disabled>Bitte schließe während eines Updates oder Neustarts nicht diese Seite</button>
                 </div>
-                <div id="infos" style="margin: 100px 0">
-                    <h2 style="width: fit-content">• SynTex Bridge •</h2>
-                    <p class="loading-loop"><b>Version: </b>Laden ..</p>
-                    <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
-                    <h2 style="width: fit-content; margin-top: 100px">• SynTex WebHooks •</h2>
-                    <p class="loading-loop"><b>Version: </b>Laden ..</p>
-                    <p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>
-                </div>
+                <div id="infos" style="margin: 100px 0"></div>
                 <div class="widget" style="margin-left: 0">
                     <button class="widget-left" disabled>IP Adresse</button>
                     <button class="widget-right gradient-blue" disabled>-</button>
@@ -55,8 +48,9 @@
                 window.restarting = false;
 
                 document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
+                /*
                 document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
-
+                
                 Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
 
                     if(version != null)
@@ -87,38 +81,33 @@
                         newestBVersion = version;
                     }
                 });
-
-                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(plugins) {
+                */
+                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(async function(plugins) {
 
                     plugins = JSON.parse(plugins);
 
                     for(var i = 0; i < plugins.length; i++)
                     {
-                        if(plugins[i].id != 'SynTex')
+                        console.log(plugins[i]);
+
+                        var version = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false);
+
+                        document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+
+                        if(version != null)
                         {
-                            console.log(plugins[i]);
+                            document.getElementById('infos').innerHTML += '<p><b>Version: </b>' + version + '</p>';
 
-                            document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + plugins[i].id + ' •</h2>';
+                            console.log(version);
+                            
+                            var newestVersion = await fetchPluginUpdates(null, plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex'));
 
-                            Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then(function(version) {
+                            if(newestVersion != null && newestVersion != '')
+                            {
+                                //newestBVersion = version;
 
-                                if(version != null)
-                                {
-                                    document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + version + '</p>';
-
-                                    console.log(version);
-                                    
-                                    fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', version, 'Bridge').then(function(newestVersion) {
-
-                                        if(version != null)
-                                        {
-                                            newestBVersion = version;
-                                        }
-                                    });
-                                }
-                            });
-
-                            document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>';
+                                document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>' + newestVersion + '</p>';
+                            }
                         }
                     }
                 });
