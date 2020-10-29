@@ -126,29 +126,28 @@
             </script>
             <script>
 
-                function fetchLogs()
+                function fetchLogs(id)
                 {
-                    Query.complexFetch('/serverside/log', 10000, 3, {}, false).then(function(l) {
+                    Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 3, {}, false).then(function(l) {
 
                         logJSON = JSON.parse(l);
+                        logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
 
                         for(var i = 0; i < plugins.length; i++)
                         {
-                            if(plugins.length == 0)
+                            if(logJSON[plugins[i].id] == null || logJSON[plugins[i].id].length == 0)
                             {
-                                /*
                                 var label = document.createElement('h2');
 
                                 label.innerHTML = '↻ Neu Laden';
                                 label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
-                                label.setAttribute('onclick', 'fetchLogs()');
+                                label.setAttribute('onclick', 'fetchLogs("' + plugins[i].id + '")');
 
-                                document.getElementById(Object.keys(logJSON)[i]).appendChild(label);
-                                */
+                                document.getElementById(plugins[i].id).appendChild(label);
                             }
                             else
                             {
-                                createLog(document.getElementById(plugins[i]), logJSON[plugins[i]], null);
+                                createLog(document.getElementById(plugins[i].id), logJSON[plugins[i].id], null);
                             }
                         }
 
@@ -229,7 +228,9 @@
                 {
                     var filterLog = '';
 
-                    log = JSON.parse(log);
+                    console.log(log);
+
+                    //log = JSON.parse(log);
 
                     for(var i = 0; i < log.length; i++)
                     {
