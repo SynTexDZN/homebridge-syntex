@@ -74,8 +74,54 @@
                 window.counter = 0;
                 window.levelCounter = [0, 0, 0, 0, 0, 0, 0];
                 window.countLogs = true;
+                window.plugins = [];
 
-                fetchLogs();
+                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(P) {
+
+                    plugins = JSON.parse(P);
+                    plugins = [{id:'SynTex', port:'1710'}, {id:'SynTexWebHooks', port:'1710'}, {id:'SynTexTuya', port:'1710'}, {id:'SynTexMagicHome', port:'1710'}];
+
+                    for(var i = 0; i < plugins.length; i++)
+                    {
+                        var logTitle = document.createElement('h2');
+                        var logWindow = document.createElement('textarea');
+
+                        logTitle.setAttribute('style', 'width: fit-content');
+                        logTitle.innerHTML = '• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
+
+                        if(plugins[i].id == 'SynTex')
+                        {
+                            logTitle.innerHTML = '• Bridge Log •';
+                        }
+                        else if(plugins[i].id == 'SynTexWebHooks')
+                        {
+                            logTitle.innerHTML = '• WebHooks Log •';
+                        }
+                        else if(plugins[i].id == 'SynTexTuya')
+                        {
+                            logTitle.innerHTML = '• Tuya Log •';
+                        }
+                        else if(plugins[i].id == 'SynTexMagicHome')
+                        {
+                            logTitle.innerHTML = '• MagicHome Log •';
+                        }
+
+                        logWindow.setAttribute('readonly', '');
+                        logWindow.setAttribute('id', plugins[i].id);
+                        logWindow.style.height = '800px'; 
+                        logWindow.style.maxHeight = '800px'; 
+
+                        if(i < plugins.length - 1)
+                        {
+                            logWindow.style.marginBottom = '40px';    
+                        }
+
+                        document.getElementById('log-container').appendChild(logTitle);
+                        document.getElementById('log-container').appendChild(logWindow);
+                    }
+
+                    fetchLogs();
+                });
 
             </script>
             <script>
@@ -86,41 +132,9 @@
 
                         logJSON = JSON.parse(l);
 
-                        for(var i = 0; i < Object.keys(logJSON).length; i++)
+                        for(var i = 0; i < plugins.length; i++)
                         {
-                            var logTitle = document.createElement('h2');
-                            var logWindow = document.createElement('textarea');
-
-                            logTitle.setAttribute('style', 'width: fit-content');
-                            logTitle.innerHTML = '• ' + Object.keys(logJSON)[i] + ' Log •';
-
-                            if(Object.keys(logJSON)[i] == 'SynTex')
-                            {
-                                logTitle.innerHTML = '• Bridge Log •';
-                            }
-                            else if(Object.keys(logJSON)[i] == 'SynTexWebHooks')
-                            {
-                                logTitle.innerHTML = '• WebHooks Log •';
-                            }
-                            else if(Object.keys(logJSON)[i] == 'SynTexTuya')
-                            {
-                                logTitle.innerHTML = '• Tuya Log •';
-                            }
-
-                            logWindow.setAttribute('readonly', '');
-                            logWindow.setAttribute('id', Object.keys(logJSON)[i]);
-                            logWindow.style.height = '800px'; 
-                            logWindow.style.maxHeight = '800px'; 
-
-                            if(i < Object.keys(logJSON).length - 1)
-                            {
-                                logWindow.style.marginBottom = '40px';    
-                            }
-
-                            document.getElementById('log-container').appendChild(logTitle);
-                            document.getElementById('log-container').appendChild(logWindow);
-
-                            if(logJSON[Object.keys(logJSON)[i]].length == 0)
+                            if(plugins.length == 0)
                             {
                                 /*
                                 var label = document.createElement('h2');
@@ -134,7 +148,7 @@
                             }
                             else
                             {
-                                createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
+                                createLog(document.getElementById(plugins[i]), logJSON[plugins[i]], null);
                             }
                         }
 
