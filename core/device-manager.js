@@ -1,4 +1,4 @@
-var store = require('json-fs-store');
+const store = require('json-fs-store');
 var config, storage, dataStorage, logger, webhookPort, accessories;
 
 module.exports = class DeviceManager

@@ -1,4 +1,4 @@
-var request = require('request');
+const request = require('request');
 var logger, temp = [], offline = [];
 
 function checkConnection(ip)

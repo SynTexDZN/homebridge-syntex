@@ -1,5 +1,5 @@
 var DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger'), WebServer = require('./core/webserver');
-var http = require('http'), url = require('url'), path = require('path'), fs = require('fs'), store = require('json-fs-store');
+const fs = require('fs'), store = require('json-fs-store');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -24,7 +24,7 @@ function SynTexPlatform(log, config, api)
 
         HTMLQuery.SETUP(logger);
 
-        getPluginConfig('SynTexWebHooks').then(async function(config) {
+        getPluginConfig('SynTexWebHooks').then(function(config) {
 
             if(config != null)
             {
@@ -80,7 +80,7 @@ SynTexPlatform.prototype = {
 
             callback(accessories);
 
-            WebServer.addPage('/serverside/init', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/init', (response, urlParams) => {
 	
                 if(urlParams.name != null && urlParams.type != null && urlParams.mac != null && urlParams.ip != null && urlParams.version != null && urlParams.refresh != null && urlParams.buttons != null)
                 {
@@ -109,7 +109,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/remove-device', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/remove-device', (response, urlParams) => {
 
                 if(urlParams.mac != null)
                 {
@@ -147,7 +147,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/init-switch', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/init-switch', (response, urlParams) => {
 
                 if(urlParams.mac != null && urlParams.name != null)
                 {
@@ -179,7 +179,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/restart', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/restart', (response) => {
 
                 restart = true;
 
@@ -193,13 +193,13 @@ SynTexPlatform.prototype = {
                 exec("sudo systemctl restart homebridge");
             });
 
-            WebServer.addPage('/serverside/check-restart', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/check-restart', (response) => {
 
                 response.write(restart.toString());
                 response.end();
             });
 
-            WebServer.addPage('/serverside/check-name', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/check-name', (response, urlParams) => {
 
                 if(urlParams.name != null)
                 {
@@ -211,15 +211,15 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/version', (response) => {
 
-                var pjson = require('./package.json');
+                const pJSON = require('./package.json');
 
-                response.write(pjson.version);
+                response.write(pJSON.version);
                 response.end();
             });
 
-            WebServer.addPage('/serverside/update', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/update', (response, urlParams) => {
 
                 var version = 'latest';
 
@@ -259,7 +259,7 @@ SynTexPlatform.prototype = {
                 });
             });
 
-            WebServer.addPage('/serverside/activity', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/activity', async (response, urlParams) => {
 
                 var result = {};
 
@@ -298,7 +298,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/serverside/log', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/log', (response, urlParams) => {
 
                 fs.readdir(this.logDirectory, async function(err, files)
                 {
@@ -318,11 +318,14 @@ SynTexPlatform.prototype = {
 
                             for(const j in logs)
                             {
-                                for(const k in logs[j])
+                                if(urlParams.id == null || urlParams.id == j)
                                 {
-                                    for(const l in logs[j][k])
+                                    for(const k in logs[j])
                                     {
-                                        logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
+                                        for(const l in logs[j][k])
+                                        {
+                                            logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
+                                        }
                                     }
                                 }
                             }
@@ -346,19 +349,19 @@ SynTexPlatform.prototype = {
                 });
             });
 
-            WebServer.addPage('/serverside/time', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/time', (response) => {
 
                 response.write('' + (new Date().getTime() / 1000 + 7201));
                 response.end();
             });
 
-            WebServer.addPage('/serverside/offline-devices', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/offline-devices', (response) => {
 
                 response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
                 response.end();
             });
 
-            WebServer.addPage('/serverside/check-device', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/check-device', (response, urlParams) => {
 
                 if(urlParams.mac != null)
                 {
@@ -376,7 +379,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/automations', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/automations', async (response) => {
 
                 response.write(JSON.stringify(await Automations.loadAutomations())); 
                 response.end();
@@ -400,7 +403,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/remove-automation', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/remove-automation', async (response, urlParams) => {
 
                 if(urlParams.id != null)
                 {
@@ -409,7 +412,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/serverside/plugins', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/plugins', (response) => {
 
                 conf.load('config', (err, obj) => {    
 
@@ -700,9 +703,9 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/setup', async (response, urlParams, content) => {
+            WebServer.addPage('/setup', (response, urlParams, content) => {
 
-                var ifaces = require('os').networkInterfaces();
+                const ifaces = require('os').networkInterfaces();
                 var address;
 
                 for(var dev in ifaces)
@@ -719,9 +722,9 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/reconnect', async (response, urlParams, content) => {
+            WebServer.addPage('/reconnect', (response, urlParams, content) => {
 
-                var ifaces = require('os').networkInterfaces();
+                const ifaces = require('os').networkInterfaces();
                 var address;
 
                 for(var dev in ifaces)
@@ -740,8 +743,8 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/bridge', async (response, urlParams, content) => {
 
-                var pjson = require('./package.json');
-                var ifaces = require('os').networkInterfaces();
+                const pJSON = require('./package.json');
+                const ifaces = require('os').networkInterfaces();
                 var address;
 
                 for(var dev in ifaces)
@@ -757,7 +760,7 @@ SynTexPlatform.prototype = {
                 var webhookConfig = await getPluginConfig('SynTexWebHooks');
                 var obj = {
                     ip: address,
-                    version: pjson.version,
+                    version: pJSON.version,
                     wPort: 1710
                 };
 
@@ -770,7 +773,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/crossover', async (response, urlParams, content) => {
+            WebServer.addPage('/crossover', (response, urlParams, content) => {
 
                 var obj = [];
                 var t = getPluginConfig('SynTexTuya');

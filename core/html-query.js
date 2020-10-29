@@ -1,5 +1,4 @@
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs'), path = require('path');
 var logger;
 
 function sendValue(html, param, value)
