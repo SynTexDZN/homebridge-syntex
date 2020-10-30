@@ -68,30 +68,32 @@
 
                     for(var i = 0; i < plugins.length; i++)
                     {
-                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then((version) => {
+                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then(function (version) {
 
-                            console.log(plugins, plugins[i]);
+                            console.log(plugins, this.plugin, this.counter);
 
                             if(version != null)
                             {
-                                versions[plugins[i].id] = version;
+                                versions[this.plugin.id] = version;
 
-                                document.getElementById('infos').children[i*3+1].innerHTML = '<p><b>Version: </b>' + versions[plugins[i].id] + '</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin.id] + '</p>';
 
-                                fetchPluginUpdates(document.getElementById('infos').children[i*3+2], plugins[i].id, versions[plugins[i].id], (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex')).then((newestVersion) => {
+                                fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin.id, versions[this.plugin.id], (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex')).then(function (newestVersion) {
 
                                     if(newestVersion != null)
                                     {
-                                        newestVersions[plugins[i].id] = newestVersion;
+                                        newestVersions[this.plugin.id] = newestVersion;
                                     }
-                                });
+
+                                }.bind(this));
                             }
                             else
                             {
-                                document.getElementById('infos').children[i*3+1].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
-                                document.getElementById('infos').children[i*3+2].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
+                                document.getElementById('infos').children[this.counter + 1].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
                             }
-                        });
+
+                        }.bind({ plugin : plugins[i].id, counter : i * 3 + 1 }));
                     }
                 });
 
