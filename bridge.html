@@ -108,7 +108,7 @@
 
                         var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
 
-                        if(newestVersion != null)
+                        if(newestVersion != null && newestVersion != '')
                         {
                             label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
                             
