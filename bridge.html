@@ -68,24 +68,22 @@
 
                     for(var i = 0; i < plugins.length; i++)
                     {
-                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then(function (version) {
+                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then(async function (version) {
 
                             console.log(plugins, this.plugin, this.counter);
 
                             if(version != null)
                             {
-                                versions[this.plugin.id] = version;
+                                versions[this.plugin] = version;
 
-                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin.id] + '</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin] + '</p>';
 
-                                fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin.id, versions[this.plugin.id], (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex')).then(function (newestVersion) {
+                                var newestVersion = await fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin, versions[this.plugin], (this.plugin != 'SynTex' ? this.plugin.replace('SynTex', 'SynTex ') : 'SynTex'));
 
-                                    if(newestVersion != null)
-                                    {
-                                        newestVersions[this.plugin.id] = newestVersion;
-                                    }
-
-                                }.bind(this));
+                                if(newestVersion != null)
+                                {
+                                    newestVersions[this.plugin] = newestVersion;
+                                }
                             }
                             else
                             {
