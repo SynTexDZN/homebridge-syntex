@@ -1,6 +1,15 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+        <style>
+
+            .navigation-panel .sticky-inset
+            {
+                display: grid;
+                grid-gap: 20px;
+            }
+
+        </style>
     </head>
     <body>
         <div id="content">
@@ -25,6 +34,13 @@
                             <option value="8">9</option>
                         </select>
                     </div>
+                    <div class="navigation-panel">
+                        <div class="sticky-inset">
+                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0">
+                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out">
+                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out">
+                        </div>
+                    </div>
                 </form>
             </div>
             <script type="module">
@@ -40,7 +56,7 @@
                 window.Essentials = Essentials;
                 window.Replacer = Replacer;
 
-                create();
+                //create();
             
             </script>
             <script>

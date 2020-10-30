@@ -44,45 +44,16 @@
                 window.webhooksVersion = ''
                 window.newestBVersion = ''
                 window.newestWVersion = '';
+
+                window.versions = {};
+                window.newestVersions = {};
+
                 window.updating = { bridge : false, webhooks: false }
                 window.restarting = false;
 
                 document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
-                /*
-                document.getElementById('infos').children[1].innerHTML = '<p><b>Version: </b>' + bridgeVersion + '</p>';
                 
-                Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 3, {}, false).then(function(version) {
-
-                    if(version != null)
-                    {
-                        webhooksVersion = version;
-
-                        document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>' + webhooksVersion + '</p>';
-
-                        fetchPluginUpdates(document.getElementById('infos').children[5], 'syntex-webhooks', webhooksVersion, 'Webhooks').then(function(version) {
-
-                            if(version != null)
-                            {
-                                newestWVersion = version;
-                            }
-                        });
-                    }
-                    else
-                    {
-                        document.getElementById('infos').children[4].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
-                        document.getElementById('infos').children[5].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
-                    }
-                });
-
-                fetchPluginUpdates(document.getElementById('infos').children[2], 'syntex', bridgeVersion, 'Bridge').then(function(version) {
-
-                    if(version != null)
-                    {
-                        newestBVersion = version;
-                    }
-                });
-                */
-                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(async function(plugins) {
+                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(plugins) {
 
                     plugins = JSON.parse(plugins);
 
@@ -97,27 +68,28 @@
 
                     for(var i = 0; i < plugins.length; i++)
                     {
-                        var version = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false);
+                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then((version) => {
 
-                        if(version != null)
-                        {
-                            document.getElementById('infos').children[i*3+1].innerHTML = '<p><b>Version: </b>' + version + '</p>';
-
-                            console.log(version);
-                            
-                            var newestVersion = await fetchPluginUpdates(null, plugins[i].id, version, (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex'));
-
-                            if(newestVersion != null && newestVersion != '')
+                            if(version != null)
                             {
-                                //newestBVersion = version;
+                                versions[plugins[i].id] = version;
 
-                                document.getElementById('infos').children[i*3+2].innerHTML = '<p class="loading-loop"><b>Neuste Version: </b>' + newestVersion + '</p>';
+                                document.getElementById('infos').children[i*3+1].innerHTML = '<p><b>Version: </b>' + versions[plugins[i].id] + '</p>';
+
+                                fetchPluginUpdates(document.getElementById('infos').children[i*3+2], plugins[i].id, versions[plugins[i].id], (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex')).then((newestVersion) => {
+
+                                    if(newestVersion != null)
+                                    {
+                                        newestVersions[plugins[i].id] = newestVersion;
+                                    }
+                                });
                             }
                             else
                             {
-                                document.getElementById('infos').children[i*3+2].innerHTML = '<p class="loading-loop"><b>Neuste Version: </b>Fehler beim Laden</p>';
+                                document.getElementById('infos').children[i*3+1].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
+                                document.getElementById('infos').children[i*3+2].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
                             }
-                        }
+                        });
                     }
                 });
 
@@ -142,15 +114,11 @@
 
                                 updateButton.setAttribute('type', 'button');
                                 updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
-                                updateButton.setAttribute('onclick', 'update' + name + '(this)');
-                                updateButton.setAttribute('id', 'update-btn-' + name.toLowerCase());
-
-                                if(document.getElementById('update-btn-bridge') != null)
-                                {
-                                    updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-                                }
-
-                                document.getElementsByClassName('navigation-panel')[0].children[0].appendChild(updateButton);
+                                updateButton.setAttribute('onclick', 'update' + index + '(this)');
+                                updateButton.setAttribute('id', 'update-btn-' + index.toLowerCase());
+                                updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+                                
+                                document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementById('restart-btn'));
 
                                 document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '20px';
                             }
@@ -164,7 +132,7 @@
                     });
                 }
 
-                async function updateBridge(btn)
+                async function updateSynTexBridge(btn)
                 {
                     if(!restarting && !updating['bridge'] && !updating['webhooks'])
                     {
@@ -209,7 +177,7 @@
                     }
                 }
 
-                async function updateWebhooks(btn)
+                async function updateSynTexWebHooks(btn)
                 {
                     if(!restarting && !updating['webhooks'] && !updating['bridge'])
                     {
