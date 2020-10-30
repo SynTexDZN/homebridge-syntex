@@ -70,6 +70,8 @@
                     {
                         Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then((version) => {
 
+                            console.log(plugins, plugins[i]);
+
                             if(version != null)
                             {
                                 versions[plugins[i].id] = version;
