@@ -78,7 +78,11 @@
 
                                 document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin] + '</p>';
 
+                                console.log(document.getElementById('infos').children[this.counter + 1], this.plugin, versions[this.plugin], (this.plugin != 'SynTex' ? this.plugin.replace('SynTex', 'SynTex ') : 'SynTex'));
+
                                 var newestVersion = await fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin, versions[this.plugin], (this.plugin != 'SynTex' ? this.plugin.replace('SynTex', 'SynTex ') : 'SynTex'));
+
+                                console.log(newestVersion);
 
                                 if(newestVersion != null)
                                 {
