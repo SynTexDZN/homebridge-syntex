@@ -48,7 +48,7 @@
                 window.versions = {};
                 window.newestVersions = {};
 
-                window.updating = { bridge : false, webhooks: false }
+                window.updating = [];
                 window.restarting = false;
 
                 document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
@@ -132,7 +132,57 @@
                     });
                 }
 
+                async function updatePlugin(id, btn)
+                {
+                    if(!restarting && !updating.length == 0)
+                    {
+                        var overlays = {
+                            root : btn,
+                            id : 'update',
+                            pending : { value : 'Update wird Installiert ..', color : 'purple' },
+                            executeError : { value : 'Update Fehlgeschlagen!' },
+                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
+                        };
+
+                        updating.push(id);
+
+                        if(await Query.complexFetch('/serverside/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
+                        {
+                            await Essentials.newTimeout(3000);
+
+                            if(await Essentials.checkRestart('/serverside/check-restart'))
+                            {
+                                //document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
+
+                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+                                versions[id] = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
+
+                                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + versions[id];
+
+                                await Essentials.newTimeout(4000);
+
+                                Essentials.removeOverlays(btn, false);
+
+                                await Essentials.newTimeout(300);
+                                /*
+                                if(Essentials.versionCount(newestVersions[id]) <= Essentials.versionCount(versions[id]))
+                                {
+                                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
+                                }
+                                */
+                                updating.splice(updating.indexOf(id), 1);
+                            }
+                        }
+                    }
+                }
+
                 async function updateSynTexBridge(btn)
+                {
+                    
+                }
+
+                async function updateSynTexWebHooks(btn)
                 {
                     if(!restarting && !updating['bridge'] && !updating['webhooks'])
                     {
@@ -172,51 +222,6 @@
                                 }
 
                                 updating['bridge'] = false;
-                            }
-                        }
-                    }
-                }
-
-                async function updateSynTexWebHooks(btn)
-                {
-                    if(!restarting && !updating['webhooks'] && !updating['bridge'])
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'update',
-                            pending : { value : 'Update wird Installiert ..', color : 'purple' },
-                            executeError : { value : 'Update Fehlgeschlagen!' },
-                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                        };
-
-                        updating['webhooks'] = true;
-
-                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/update?version=' + newestWVersion, 120000, 3, overlays, false) == 'Success')
-                        {
-                            await Essentials.newTimeout(3000);
-
-                            if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/check-restart'))
-                            {
-                                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>Laden ..';
-
-                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                                webhooksVersion = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/version', 10000, 10, {}, false);
-
-                                document.getElementById('infos').children[4].innerHTML = '<b>Version: </b>' + webhooksVersion;
-
-                                await Essentials.newTimeout(4000);
-
-                                Essentials.removeOverlays(btn, false);
-
-                                await Essentials.newTimeout(300);
-
-                                if(Essentials.versionCount(newestBVersion) <= Essentials.versionCount(bridgeVersion))
-                                {
-                                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
-                                }
-
-                                updating['webhooks'] = false;
                             }
                         }
                     }
