@@ -120,13 +120,13 @@
 
                                 updateButton.setAttribute('type', 'button');
                                 updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
-                                updateButton.setAttribute('onclick', 'updatePlugin(this)');
+                                updateButton.setAttribute('onclick', 'updatePlugin("' + index + '", this)');
                                 updateButton.setAttribute('id', 'update-btn-' + index.toLowerCase());
                                 updateButton.setAttribute('style', 'margin-bottom: 20px'); 
                                 
                                 document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementById('restart-btn'));
 
-                                document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '20px';
+                                //document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '20px';
                             }
                         }
                         else
