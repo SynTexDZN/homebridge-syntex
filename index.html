@@ -20,7 +20,7 @@
                     </div>
                     <div class="widget">
                         <button class="widget-left" disabled>Updates</button>
-                        <button class="widget-right gradient-purple" disabled>-</button>
+                        <button class="widget-right gradient-purple" disabled>0</button>
                     </div>
                     <div class="widget">
                         <button class="widget-left" disabled>Offline</button>
@@ -43,7 +43,8 @@
                     <button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
                     <div id="rooms" style="display: flex; width: 100%; margin-left: 20px; margin-right: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
                     <button class="image-button" onclick="Essentials.leavePage('/setup')"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
-                </div>  
+                </div>
+                <div id="no-devices" style="display: none; opacity: 0; transition: .2s ease-in-out">Du hast noch keine Geräte</div>
                 <div id="devices" style="margin-top: 100px; transition: .2s ease-in-out"></div>
             </div>
             <div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
@@ -89,6 +90,8 @@
                 if(devices.length == 0)
                 {
                     document.getElementById('device-controls').style.display = 'none';
+                    document.getElementById('no-devices').style.display = '';
+                    document.getElementById('no-devices').style.opacity = 1;
                 }
 
                 for(const i in devices)
@@ -322,8 +325,6 @@
                             }
                         }
                     }
-
-                    console.log('UPDATE WIDGET');
 
                     document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCount;
                     document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
