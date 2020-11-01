@@ -152,6 +152,8 @@
 
                         updating.push(id);
 
+                        console.log(id, newestVersions[id]);
+
                         if(await Query.complexFetch('/serverside/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
