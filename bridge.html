@@ -70,23 +70,23 @@
                     {
                         Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/version', 10000, 3, {}, false).then(async function (version) {
 
-                            console.log(plugins, this.plugin, this.counter);
+                            console.log(plugins, this.plugin.id, this.counter);
 
                             if(version != null)
                             {
-                                versions[this.plugin] = version;
+                                versions[this.plugin.id] = version;
 
-                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin] + '</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin.id] + '</p>';
 
-                                console.log(document.getElementById('infos').children[this.counter + 1], this.plugin, versions[this.plugin], (this.plugin != 'SynTex' ? this.plugin.replace('SynTex', 'SynTex ') : 'SynTex'));
+                                console.log(document.getElementById('infos').children[this.counter + 1], this.plugin.id, versions[this.plugin.id], (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex'));
 
-                                var newestVersion = await fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin, versions[this.plugin], (this.plugin != 'SynTex' ? this.plugin.replace('SynTex', 'SynTex ') : 'SynTex'));
+                                var newestVersion = await fetchPluginUpdates(document.getElementById('infos').children[this.counter + 1], this.plugin.id, versions[this.plugin.id], (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex'), this.plugin.port);
 
                                 console.log(newestVersion);
 
                                 if(newestVersion != null)
                                 {
-                                    newestVersions[this.plugin] = newestVersion;
+                                    newestVersions[this.plugin.id] = newestVersion;
                                 }
                             }
                             else
@@ -95,14 +95,14 @@
                                 document.getElementById('infos').children[this.counter + 1].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
                             }
 
-                        }.bind({ plugin : plugins[i].id, counter : i * 3 + 1 }));
+                        }.bind({ plugin : plugins[i], counter : i * 3 + 1 }));
                     }
                 });
 
             </script>
             <script>
 
-                function fetchPluginUpdates(label, index, version, name)
+                function fetchPluginUpdates(label, index, version, name, port)
                 {
                     return new Promise(async function(resolve) {
 
@@ -120,7 +120,7 @@
 
                                 updateButton.setAttribute('type', 'button');
                                 updateButton.setAttribute('value', name + ' Aktualisieren ( v' + newestVersion + ' )');
-                                updateButton.setAttribute('onclick', 'updatePlugin("' + index + '", this)');
+                                updateButton.setAttribute('onclick', 'updatePlugin("' + index + '",' + port + ' , this)');
                                 updateButton.setAttribute('id', 'update-btn-' + index.toLowerCase());
                                 updateButton.setAttribute('style', 'margin-bottom: 20px'); 
                                 
@@ -138,7 +138,7 @@
                     });
                 }
 
-                async function updatePlugin(id, btn)
+                async function updatePlugin(id, port, btn)
                 {
                     console.log('UPDATE PLUGIN', id, btn, restarting, updating);
 
@@ -156,7 +156,7 @@
 
                         console.log(newestVersions[id]);
 
-                        if(await Query.complexFetch('/serverside/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
+                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
 
@@ -166,7 +166,7 @@
 
                                 Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-                                versions[id] = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
+                                versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/version', 10000, 10, {}, false);
 
                                 document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + versions[id];
 

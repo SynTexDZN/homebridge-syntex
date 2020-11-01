@@ -221,7 +221,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/serverside/update', (response, urlParams) => {
+            WebServer.addPage('/update', (response, urlParams) => {
 
                 var version = 'latest';
 
