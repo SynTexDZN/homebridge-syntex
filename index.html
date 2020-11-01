@@ -31,7 +31,7 @@
                         <button class="widget-right gradient-green" disabled>-</button>
                     </div>
                 </div>
-                <div style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
+                <div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
                     <div>
                         <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
                     </div>
@@ -86,6 +86,11 @@
 
                 devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
                 
+                if(devices.length == 0)
+                {
+                    document.getElementById('device-controls').style.display = 'none';
+                }
+
                 for(const i in devices)
                 {
                     if(devices[i].mac != 'Bridge')
