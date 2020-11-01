@@ -48,16 +48,18 @@ function SynTexPlatform(log, config, api)
 
             exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
 
-                if(error || stderr.includes('ERR!'))
-                {
-                    logger.log('error', 'bridge', 'Bridge', 'Umleitung der Bridge Website Fehlgeschlagen!');
-                }
-                else
-                {
-                    logger.log('warn', 'bridge', 'Bridge', 'Umleitung der Bridge Website zu Port [80]');
-                }
+                exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+                    if(error || stderr.includes('ERR!'))
+                    {
+                        logger.log('error', 'bridge', 'Bridge', 'Umleitung der Bridge Website Fehlgeschlagen!');
+                    }
+                    else
+                    {
+                        logger.log('warn', 'bridge', 'Bridge', 'Umleitung der Bridge Website zu Port [80]');
+                    }
+                });
             });
-            
             
         }.bind(this)).catch(function(e) {
 

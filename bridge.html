@@ -140,6 +140,8 @@
 
                 async function updatePlugin(id, btn)
                 {
+                    console.log('UPDATE PLUGIN', id, btn, restarting, updating);
+
                     if(!restarting && !updating.length == 0)
                     {
                         var overlays = {
@@ -152,7 +154,7 @@
 
                         updating.push(id);
 
-                        console.log(id, newestVersions[id]);
+                        console.log(newestVersions[id]);
 
                         if(await Query.complexFetch('/serverside/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
                         {
