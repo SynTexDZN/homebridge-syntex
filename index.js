@@ -213,7 +213,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/version', async (response, urlParams, content) => {
+            WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
 
                 const pJSON = require('./package.json');
 
@@ -221,7 +221,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/update', (response, urlParams) => {
+            WebServer.addPage('/serverside/update', (response, urlParams) => {
 
                 var version = 'latest';
 
