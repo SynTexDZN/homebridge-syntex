@@ -226,8 +226,11 @@
                     document.getElementById(a[i]).appendChild(addBtn);
                 }
 
-                addTrigger();
-                addResult();
+                if(services.length > 0)
+                {
+                    addTrigger();
+                    addResult();
+                }
 
                 if((new URL(window.location.href)).searchParams.get('create') == '')
                 {
