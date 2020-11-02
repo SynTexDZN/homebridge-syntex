@@ -158,20 +158,20 @@
                             button.setAttribute('room', devices[i].room.toLowerCase());
                         }
 
-                        button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div>';
+                        button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
 
                         button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
 
                         if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
                         {
-                            button.innerHTML += '<div class="connection">AKTIV</div>';
+                            button.innerHTML += '<div><div class="connection">AKTIV</div></div>';
                         }
                         else
                         {
-                            button.innerHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
+                            button.innerHTML += '<div><div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div></div>';
                         }
 
-                        button.innerHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
+                        button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
 
                         if(devices[i].mac != undefined)
                         {
@@ -587,13 +587,13 @@
                     {
                         if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
                         {
-                            device.children[1].innerHTML = 'AKTIV';
-                            device.children[1].style.color = 'hsl(170, 90%, 50%)';
+                            device.children[1].children[0].innerHTML = 'AKTIV';
+                            device.children[1].children[0].style.color = 'hsl(170, 90%, 50%)';
                         }
                         else
                         {
-                            device.children[1].innerHTML = 'INAKTIV';
-                            device.children[1].style.color = 'rgb(130, 130, 150)';
+                            device.children[1].children[0].innerHTML = 'INAKTIV';
+                            device.children[1].children[0].style.color = 'rgb(130, 130, 150)';
                         }
                     }
 
