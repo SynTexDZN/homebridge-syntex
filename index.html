@@ -158,7 +158,7 @@
                             button.setAttribute('room', devices[i].room.toLowerCase());
                         }
 
-                        button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png">';
+                        button.innerHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div>';
 
                         button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
 
@@ -171,7 +171,7 @@
                             button.innerHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
                         }
 
-                        button.innerHTML += '<div class="device-name">' + devices[i].name + '</div>';
+                        button.innerHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
 
                         if(devices[i].mac != undefined)
                         {
