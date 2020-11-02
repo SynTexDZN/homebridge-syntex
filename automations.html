@@ -23,11 +23,12 @@
                         <input type="button" onclick="" value="Alle Automationen" class="white" style="margin-right: 20px">
                         <button class="image-button" id="add-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
                     </div>
-                    <p id="no-automations" style="display: none; margin-top: 100px">Du hast noch keine Automationen<br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
-                    <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt noch keine Geräte<br>Du musst zuerst ein neues <a href="/" style="text-align: center">[ Gerät registrieren ]</a></p>
+                    <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
+                    <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
                     <div id="automations"></div>
                 </div>
                 <div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
+                    <input id="devices-button-big" class="gradient-orange" type="button" value="Zu den Geräten >" style="display: none" onclick="Essentials.leavePage('/')">
                     <input id="add-button-big" class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
                 </div>
             </div>
@@ -237,6 +238,7 @@
                     document.getElementById('no-devices').style.display = '';
                     document.getElementById('add-button').style.display = 'none';
                     document.getElementById('add-button-big').style.display = 'none';
+                    document.getElementById('devices-button-big').style.display = '';
                 }
 
                 if((new URL(window.location.href)).searchParams.get('create') == '')
@@ -698,7 +700,9 @@
                         
                         var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
 
-                        automations = JSON.parse(a); 
+                        automations = JSON.parse(a);
+
+                        document.getElementById('no-automations').style.display = 'none';
 
                         createAutomationPanels();
 

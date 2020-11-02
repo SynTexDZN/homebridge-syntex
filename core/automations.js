@@ -23,8 +23,6 @@ function createAutomation(automation)
 {
     return new Promise(resolve => {
 
-        automation = JSON.parse(automation);
-
         if(isValid(automation))
         {
             storage.load('automations', (err, obj) => {  
@@ -48,7 +46,7 @@ function createAutomation(automation)
                     }
                     else
                     {
-                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozesse wurden erfolgreich aktualisiert!');
+                        logger.log('success', 'bridge', 'Bridge', 'Hintergrundprozess [' + automation.id + '] wurde erfolgreich erstellt!');
     
                         resolve(true);
                     }
@@ -67,8 +65,6 @@ function removeAutomation(id)
     return new Promise(resolve => {
 
         storage.load('automations', (err, obj) => {  
-
-            console.log(obj);
 
             if(!obj || err)
             {
@@ -106,13 +102,13 @@ function removeAutomation(id)
 
 function isValid(automation)
 {
-    if(automation.id && automation.name && automation.active && automation.trigger && automation.result)
+    if(automation.id != null && automation.name != null && automation.active != null && automation.trigger != null && automation.result != null)
     {
         var valid = { trigger : false, condition : false, result : false };
 
         for(var i = 0; i < automation.trigger.length; i++)
         {
-            if(automation.trigger[i].mac && automation.trigger[i].name && automation.trigger[i].letters && automation.trigger[i].value && automation.trigger[i].operation)
+            if(automation.trigger[i].mac != null && automation.trigger[i].name != null && automation.trigger[i].letters != null && automation.trigger[i].value != null && automation.trigger[i].operation != null)
             {
                 valid.trigger = true;
             }
@@ -122,11 +118,11 @@ function isValid(automation)
             }
         }
 
-        if(automation.condition)
+        if(automation.condition != null)
         {
             for(var i = 0; i < automation.condition.length; i++)
             {
-                if(automation.condition[i].mac && automation.condition[i].name && automation.condition[i].letters && automation.condition[i].value && automation.condition[i].operation)
+                if(automation.condition[i].mac != null && automation.condition[i].name != null && automation.condition[i].letters != null && automation.condition[i].value != null && automation.condition[i].operation != null)
                 {
                     valid.condition = true;
                 }
@@ -139,7 +135,7 @@ function isValid(automation)
 
         for(var i = 0; i < automation.result.length; i++)
         {
-            if(automation.result[i].mac && automation.result[i].name && automation.result[i].letters && automation.result[i].value && automation.result[i].operation)
+            if(automation.result[i].mac != null && automation.result[i].name != null && automation.result[i].letters != null && automation.result[i].value != null && automation.result[i].operation != null)
             {
                 valid.result = true;
             }
@@ -164,8 +160,6 @@ function isValid(automation)
 function modifyAutomation(automation)
 {
     return new Promise(resolve => {
-
-        automation = JSON.parse(automation);
 
         if(isValid(automation))
         {

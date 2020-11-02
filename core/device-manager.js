@@ -83,9 +83,7 @@ module.exports = class DeviceManager
         return new Promise(async function(resolve) {
             
             var eventButton = await checkEventButton(mac);
-            console.log('EVENT BUTTON');
             var device = await self.getDevice(mac);
-            console.log('DEVICE');
 
             name = name.replace(new RegExp('%', 'g'), ' ');
 
@@ -135,12 +133,10 @@ module.exports = class DeviceManager
                 */
                 var status = 'Success';
 
-                if(!eventButton && device['events'] && (device['events'] || []).length != 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
+                if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
                 {
                     status = 'Init';
                 }
-
-                console.log(events, device['events']);
 
                 resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + (device['events'] ? '[' + device['events'] + ']' : events) + '}']);
             }
@@ -331,7 +327,6 @@ module.exports = class DeviceManager
                 
                 if(!obj || err)
                 {
-                    console.log('KEIN DEVICE GEFUDNEN');
                     resolve(null);
                 }
                 else
@@ -660,7 +655,7 @@ function addToConfig(obj, mac, ip, name, services, buttons)
                 var accessories = obj.platforms[i].accessories;
                 var index = accessories.length;
 
-                accessories[index] = { mac : mac, name : name, services : JSON.parse(services) };
+                accessories[index] = { mac : mac, name : name, services : services };
 
                 if(services.includes('relais'))
                 {

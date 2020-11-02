@@ -271,8 +271,6 @@ SynTexPlatform.prototype = {
 
                     activity = activity.concat(await logger.load('SynTexMagicHome', urlParams.mac));
 
-                    console.log(activity);
-
                     if(activity != null)
                     {
                         var a = {};
@@ -496,9 +494,6 @@ SynTexPlatform.prototype = {
                             }
                         }
                     }
-
-                    console.log('ALL');
-                    console.log(all);
 
                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                     var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
