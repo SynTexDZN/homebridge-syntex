@@ -236,9 +236,12 @@
                 else
                 {
                     document.getElementById('no-devices').style.display = '';
-                    document.getElementById('add-button').style.display = 'none';
+                    //document.getElementById('add-button').style.display = 'none';
                     document.getElementById('add-button-big').style.display = 'none';
                     document.getElementById('devices-button-big').style.display = '';
+
+                    document.getElementById('add-button').setAttribute('disabled', '');
+                    //document.getElementById('add-button-big').setAttribute('disabled', '');
                 }
 
                 if((new URL(window.location.href)).searchParams.get('create') == '')

@@ -398,7 +398,7 @@ SynTexPlatform.prototype = {
 
                 if(postJSON != null)
                 {
-                    response.write(await Automations.modifyAutomation(post) ? 'Success' : 'Error');
+                    response.write(await Automations.modifyAutomation(postJSON) ? 'Success' : 'Error');
                     response.end();
                 }
             });
