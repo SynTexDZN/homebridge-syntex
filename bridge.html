@@ -66,6 +66,8 @@
                         document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>';
                     }
 
+                    Preloader.finish();
+
                     for(var i = 0; i < plugins.length; i++)
                     {
                         Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/serverside/version', 10000, 3, {}, false).then(async function (version) {

@@ -192,13 +192,6 @@
                     }
                 }
 
-                checkConnection();
-
-                for(var i = 0; i < deviceElements.length; i++)
-                {
-                    checkUpdates(deviceElements[i]);
-                }
-
                 if(localStorage.getItem('view') == 'grid-view')
                 {
                     document.getElementById('toolbar').children[0].children[0].style.display = 'none';
@@ -285,6 +278,15 @@
                 roomBar.addEventListener('mousedown', mouseDownHandler);
 
                 switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
+
+                Preloader.finish();
+
+                checkConnection();
+
+                for(var i = 0; i < deviceElements.length; i++)
+                {
+                    checkUpdates(deviceElements[i]);
+                }
 
             </script>
             <script>

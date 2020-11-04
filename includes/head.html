@@ -179,7 +179,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
     <script src="/js/loading-loop.js"></script>
-    <script async src="/js/loading.js"></script>
+    <script type="module">
+
+        import { Preloader } from '/js/loading.js';
+    
+        window.Preloader = Preloader;
+    
+    </script>
     <script defer src="/js/mobile.js"></script>
     <script disabled>
 
@@ -200,14 +206,6 @@
     
         var head = new HeadLoader();
     
-    </script>
-    <script>
-
-    window.onpopstate = function(event)
-    {
-        //console.warn('Hiii');
-    }
-
     </script>
     <link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
     <script src="/js/menu.js" defer></script>

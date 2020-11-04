@@ -82,7 +82,9 @@
                     document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?mac=" + urlMac + "&settings')");
                     document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?mac=" + urlMac + "&settings')");
                     document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
-                }    
+                }
+
+                Preloader.finish();
                 
                 pingESP();
 
