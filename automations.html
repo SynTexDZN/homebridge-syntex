@@ -287,8 +287,8 @@
                     console.log(document.readyState);
 
                     // print state changes
-                    document.addEventListener('readystatechange', () => console.log(document.readyState));
-                    
+                    document.addEventListener('readystatechange', (e) => { console.log(document.readyState, e); Preloader.finish(); });
+
                     document.getElementById('automations').innerHTML = '';
 
                     for(var i = 0; i < automations.length; i++)
@@ -448,7 +448,7 @@
 
                     console.log(document.readyState);
 
-                    setTimeout(() => { Preloader.finish() }, 0)
+                    setTimeout(() => {  }, 0)
                 }
 
                 function addTrigger()
