@@ -120,8 +120,6 @@
                         document.getElementById('log-container').appendChild(logWindow);
                     }
 
-                    Preloader.finish();
-
                     fetchLogs();
                 });
 
@@ -167,6 +165,8 @@
                             document.getElementById('debug-widget').style.display = '';
                             document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
                         }
+
+                        Preloader.finish();
                     });
                 }
 
