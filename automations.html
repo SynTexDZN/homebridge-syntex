@@ -445,6 +445,11 @@
 
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
+
+                        typeContainer.onload = function()
+                        {
+                            console.log('ELEMENT LOADED', i);
+                        }
                     }
 
                     console.log(document.readyState);
