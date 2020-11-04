@@ -287,7 +287,8 @@
                     console.log(document.readyState);
 
                     // print state changes
-                    document.addEventListener('readystatechange', (e) => { console.log(document.readyState, e); Preloader.finish(); });
+                    document.addEventListener('readystatechange', (e) => { console.log(document.readyState, e); /*Preloader.finish();*/ });
+                    document.addEventListener('DOMContentLoaded', (e) => { console.log('CONTENT LOADED', e); Preloader.finish(); });
 
                     document.getElementById('automations').innerHTML = '';
 
