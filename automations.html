@@ -284,6 +284,11 @@
 
                 function createAutomationPanels()
                 {
+                    console.log(document.readyState);
+
+                    // print state changes
+                    document.addEventListener('readystatechange', () => console.log(document.readyState));
+                    
                     document.getElementById('automations').innerHTML = '';
 
                     for(var i = 0; i < automations.length; i++)
@@ -440,6 +445,8 @@
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
                     }
+
+                    console.log(document.readyState);
 
                     setTimeout(() => { Preloader.finish() }, 0)
                 }
