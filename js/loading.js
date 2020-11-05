@@ -36,16 +36,12 @@ function expandWrapper(wrapper)
     for(var i = 0; i < wrapper.children.length; i++)
     {
         length += wrapper.children[i].offsetHeight;
-
-        console.log(wrapper.children[i].offsetHeight, Math.ceil(wrapper.children[i].offsetHeight));
     }
 
-    console.log(length, Math.ceil(length));
-
-    wrapper.style.maxHeight = Math.ceil(length);
+    wrapper.style.maxHeight = length + 1;
     wrapper.style.opacity = 1;
 
-    setTimeout(() => { wrapper.style.maxHeight = 'none'; console.log(wrapper.children[0].offsetHeight) }, 2000);
+    setTimeout(() => { wrapper.style.maxHeight = 'none' }, 2000);
 }
 
 export let Preloader = { finish, expandWrapper };
