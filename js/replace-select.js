@@ -85,8 +85,8 @@ function selectMenuItem(elmnt)
     for(i = 0; i < s.length; i++)
     {
         console.log(elmnt, elmnt.getAttribute('counter'), i);
-        
-        if(s.options[i].innerHTML == elmnt.innerHTML || (elmnt.innerHTML.includes('<img') && s.options[i].innerHTML == elmnt.innerHTML.split('>')[1]))
+
+        if(elmnt.getAttribute('counter') == i)
         {
             s.selectedIndex = i;
             h.innerHTML = elmnt.innerHTML;
