@@ -771,11 +771,11 @@
                                 }
                             }
                         }
-                        else if(accessories[i].services instanceof Object && accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
+                        else if(accessories[i].services instanceof Object && accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
                         {
                             services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
                         }
-                        else if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
+                        else if(accessories[i].services != 'rgb' && accessories[i].services != 'rgbw')
                         {
                             services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
                         }
