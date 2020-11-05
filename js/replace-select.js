@@ -84,10 +84,10 @@ function selectMenuItem(elmnt)
 
     for(i = 0; i < s.length; i++)
     {
+        console.log(elmnt, elmnt.getAttribute('counter'), i);
+        
         if(s.options[i].innerHTML == elmnt.innerHTML || (elmnt.innerHTML.includes('<img') && s.options[i].innerHTML == elmnt.innerHTML.split('>')[1]))
         {
-            console.log(elmnt);
-
             s.selectedIndex = i;
             h.innerHTML = elmnt.innerHTML;
             y = elmnt.parentNode.getElementsByClassName('same-as-selected');
