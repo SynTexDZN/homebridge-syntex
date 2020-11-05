@@ -90,7 +90,7 @@
                             {
                                 versions[this.plugin.id] = version;
 
-                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>' + versions[this.plugin.id] + '</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
 
                                 console.log(document.getElementById('infos').children[this.counter + 1], this.plugin.id, versions[this.plugin.id], (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex'));
 
@@ -105,8 +105,8 @@
                             }
                             else
                             {
-                                document.getElementById('infos').children[this.counter].innerHTML = '<p><b>Version: </b>Fehler beim Laden</p>';
-                                document.getElementById('infos').children[this.counter + 1].innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                                document.getElementById('infos').children[this.counter].innerHTML = '<b>Version: </b>Fehler beim Laden';
+                                document.getElementById('infos').children[this.counter + 1].innerHTML = '<b>Neuste Version: </b>Fehler beim Laden';
                             }
 
                         }.bind({ plugin : plugins[i], counter : i * 3 + 1 }));
@@ -124,7 +124,7 @@
 
                         if(newestVersion != null && newestVersion != '')
                         {
-                            label.innerHTML = '<p><b>Neuste Version: </b>' + newestVersion + '</p>';
+                            label.innerHTML = '<b>Neuste Version: </b>' + newestVersion;
                             
                             var installedVersion = Essentials.versionCount(version);
 
@@ -145,7 +145,7 @@
                         }
                         else
                         {
-                            label.innerHTML = '<p><b>Neuste Version: </b>Fehler beim Laden</p>';
+                            label.innerHTML = '<b>Neuste Version: </b>Fehler beim Laden';
                         }
 
                         resolve(newestVersion);
