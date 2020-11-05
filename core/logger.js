@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var prefix, logs = [], que = [], debugLevel = 'success', inWork = false;
+var prefix, logs, que = [], debugLevel = 'success', inWork = false;
 
 module.exports = class Logger
 {
