@@ -453,11 +453,7 @@
 
                     Preloader.finish();
 
-                    setTimeout(() => {
-                        console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight);
-                        document.getElementsByClassName('wrapper')[0].style.maxHeight = (document.getElementById('automations').offsetHeight + 'px');
-                        document.getElementsByClassName('wrapper')[0].style.opacity = 1;
-                    }, 1000)
+                    setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                 }
 
                 function addTrigger()

@@ -29,4 +29,17 @@ function removePreloader()
     }
 }
 
-export let Preloader = { finish };
+function expandWrapper(wrapper)
+{
+    var length = 0;
+
+    for(var i = 0; i < wrapper.children.length; i++)
+    {
+        length += wrapper.children[i].offsetHeight;
+    }
+
+    wrapper.style.maxHeight = length;
+    wrapper.style.opacity = 1;
+}
+
+export let Preloader = { finish, expandWrapper };
