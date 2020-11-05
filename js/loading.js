@@ -45,7 +45,7 @@ function expandWrapper(wrapper)
     wrapper.style.maxHeight = Math.ceil(length);
     wrapper.style.opacity = 1;
 
-    setTimeout(() => { wrapper.style.maxHeight = 'none'; console.log(wrapper.children[i].offsetHeight) }, 2000);
+    setTimeout(() => { wrapper.style.maxHeight = 'none'; console.log(wrapper.children[0].offsetHeight) }, 2000);
 }
 
 export let Preloader = { finish, expandWrapper };
