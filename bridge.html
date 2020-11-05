@@ -63,7 +63,15 @@
                     {
                         console.log(plugins[i]);
 
-                        document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+                        if(i == 0)
+                        {
+                            document.getElementById('infos').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+                        }
+                        else
+                        {
+                            document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+                        }
+                        
                         document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Version: </b>Laden ..</p>';
                         document.getElementById('infos').innerHTML += '<p class="loading-loop"><b>Neuste Version: </b>Laden ..</p>';
                     }
