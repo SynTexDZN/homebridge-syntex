@@ -211,7 +211,9 @@
                     {
                         document.getElementById('no-automations').style.display = '';
 
-                        setTimeout(() => { Preloader.finish() }, 0)
+                        Preloader.finish();
+
+                        setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                     }
                 });
                 
@@ -286,12 +288,6 @@
 
                 function createAutomationPanels()
                 {
-                    console.log(document.readyState);
-
-                    // print state changes
-                    document.addEventListener('readystatechange', (e) => { console.log(document.readyState, e); /*Preloader.finish();*/ });
-                    document.addEventListener('DOMContentLoaded', (e) => { console.log('CONTENT LOADED', e); Preloader.finish(); });
-
                     document.getElementById('automations').innerHTML = '';
 
                     for(var i = 0; i < automations.length; i++)
