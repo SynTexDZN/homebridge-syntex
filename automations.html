@@ -444,8 +444,6 @@
 
                         typeContainer.appendChild(panel);
                         document.getElementById('automations').appendChild(typeContainer);
-
-                        console.log('1. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight);
                     }
 
                     Preloader.finish();
@@ -744,37 +742,40 @@
 
                             for(var j = 0; j < accessories[i].services.length; j++)
                             {
-                                if(accessories[i].services[j] instanceof Object)
+                                if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
                                 {
-                                    if(counter.type != accessories[i].services[j].type)
+                                    if(accessories[i].services[j] instanceof Object)
                                     {
-                                        counter.count = 0;
+                                        if(counter.type != accessories[i].services[j].type)
+                                        {
+                                            counter.count = 0;
+                                        }
+
+                                        counter.type = accessories[i].services[j].type;
+                                        
+                                        services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+                                    }
+                                    else
+                                    {
+                                        if(counter.type != accessories[i].services[j])
+                                        {
+                                            counter.count = 0;
+                                        }
+
+                                        counter.type = accessories[i].services[j];
+
+                                        services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
                                     }
 
-                                    counter.type = accessories[i].services[j].type;
-                                    
-                                    services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+                                    counter.count++;
                                 }
-                                else
-                                {
-                                    if(counter.type != accessories[i].services[j])
-                                    {
-                                        counter.count = 0;
-                                    }
-
-                                    counter.type = accessories[i].services[j];
-
-                                    services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
-                                }
-
-                                counter.count++;
                             }
                         }
-                        else if(accessories[i].services instanceof Object)
+                        else if(accessories[i].services instanceof Object && accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
                         {
                             services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
                         }
-                        else
+                        else if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
                         {
                             services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
                         }
@@ -801,9 +802,6 @@
                 {
                     var o = select.getElementsByTagName('select')[0].selectedIndex;
                     var option = select.getElementsByTagName('select')[0].children[o];
-
-                    console.log(option, o);
-
                     var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
 
                     if(option.getAttribute('type') == 'boolean')

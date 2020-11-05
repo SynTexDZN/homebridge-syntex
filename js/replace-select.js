@@ -75,17 +75,12 @@ function createSelectMenu(container)
 
 function selectMenuItem(elmnt)
 {
-    /* When an item is clicked, update the original select box,
-    and the selected item: */
-
     var y, i, k, s, h;
     s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
     h = elmnt.parentNode.previousSibling;
 
     for(i = 0; i < s.length; i++)
     {
-        console.log(elmnt, elmnt.getAttribute('counter'), i);
-
         if(elmnt.getAttribute('counter') == i)
         {
             s.selectedIndex = i;
@@ -106,8 +101,6 @@ function selectMenuItem(elmnt)
     {
         var functionName = s.getAttribute('onchange').split('(')[0];
         //var params = eval(s.getAttribute('onchange').split('(')[1].split(')')[0]);
-
-        console.log(functionName, s);
 
         window[functionName](elmnt.parentElement.parentElement);
     }
