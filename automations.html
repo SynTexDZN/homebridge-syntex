@@ -775,7 +775,7 @@
                         {
                             if(accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
                             {
-                                services.push({ type : accessories[i].services.type, name : accessories[i].services.name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+                                services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
                             }
                         }
                         else
