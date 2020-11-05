@@ -40,6 +40,8 @@ function expandWrapper(wrapper)
 
     wrapper.style.maxHeight = length;
     wrapper.style.opacity = 1;
+
+    setTimeout(() => { wrapper.style.maxHeight = 'none' }, 2000);
 }
 
 export let Preloader = { finish, expandWrapper };
