@@ -577,8 +577,8 @@
                 {
                     if(!device.className.includes('update'))
                     {
-                        device.children[1].innerHTML = 'OFFLINE';
-                        device.children[1].style.color = 'hsl(350, 95%, 60%)';
+                        device.children[1].children[0].innerHTML = 'OFFLINE';
+                        device.children[1].children[0].style.color = 'hsl(350, 95%, 60%)';
                     }
 
                     if(!offline.includes(device.getAttribute('id')))
