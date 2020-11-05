@@ -81,8 +81,14 @@ function selectMenuItem(elmnt)
     s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
     h = elmnt.parentNode.previousSibling;
 
+    var type = elmnt.innerHTML.split('<img src="/img/accessory/')[1].split('"')[0];
+
+    console.log(type, typeToLetter(type));
+
     for(i = 0; i < s.length; i++)
     {
+        console.log(s.options[i].getAttribute('letters')[0]);
+
         if(s.options[i].innerHTML == elmnt.innerHTML || (elmnt.innerHTML.includes('<img') && s.options[i].innerHTML == elmnt.innerHTML.split('>')[1]))
         {
             console.log(elmnt);
@@ -130,6 +136,19 @@ function closeOtherSelectMenus(elmnt)
             document.getElementById(selects[i].id).getElementsByClassName('select-items')[0].className = 'select-items select-hide';
         }
     }
+}
+
+var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
+var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6'];
+
+function letterToType(letter)
+{
+    return types[letters.indexOf(letter.toUpperCase())];
+}
+
+function typeToLetter(type)
+{
+    return letters[types.indexOf(type.toLowerCase())];
 }
 
 export let Replacer = { createSelectMenu, openSelectMenu, selectMenuItem };
