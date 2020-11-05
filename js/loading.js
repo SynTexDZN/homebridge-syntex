@@ -14,6 +14,11 @@ function finish()
     removePreloader();
 }
 
+function load()
+{
+    scriptsFinished = false;
+}
+
 function removePreloader()
 {
     if(scriptsFinished && loadFinished)
@@ -44,4 +49,4 @@ function expandWrapper(wrapper)
     setTimeout(() => { wrapper.style.maxHeight = 'none' }, 2000);
 }
 
-export let Preloader = { finish, expandWrapper };
+export let Preloader = { finish, load, expandWrapper };
