@@ -453,9 +453,9 @@
 
                     Preloader.finish();
 
-                    document.getElementsByClassName('wrapper')[0].style.maxHeight = (document.getElementById('automations').offsetHeight + 'px');
-
-                    setTimeout(() => { console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight); }, 1000)
+                    setTimeout(() => { console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight); }, 0)
+                    setTimeout(() => { console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight); }, 10)
+                    setTimeout(() => { console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight); document.getElementsByClassName('wrapper')[0].style.maxHeight = (document.getElementById('automations').offsetHeight + 'px'); }, 1000)
                 }
 
                 function addTrigger()
