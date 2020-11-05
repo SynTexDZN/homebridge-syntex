@@ -23,9 +23,9 @@
                         <input type="button" onclick="" value="Alle Automationen" class="white">
                         <button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
                     </div>
-                    <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
-                    <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
                     <div class="wrapper">
+                        <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
+                        <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
                         <div id="automations"></div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                     temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
                     humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-                };  
+                };
 
                 Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
 
@@ -215,44 +215,45 @@
 
                         setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                     }
+                    else
+                    {
+                        document.getElementById('no-devices').style.display = '';
+                        document.getElementById('add-button-big').style.display = 'none';
+                        document.getElementById('devices-button-big').style.display = '';
+                        document.getElementById('add-button').setAttribute('disabled', '');
+
+                        Preloader.finish();
+
+                        setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
+                    }
                 });
-                
+
                 loadServices();
-
-                var a = ['trigger', 'condition', 'result'];
-
-                for(var i = 0; i < a.length; i++)
-                {
-                    var addBtn = document.createElement('input');
-                    
-                    addBtn.setAttribute('value', '+');
-                    addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
-                    addBtn.setAttribute('type', 'button');
-                    addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-                    addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
-
-                    document.getElementById(a[i]).appendChild(addBtn);
-                }
-
+                
                 if(services.length > 0)
                 {
+                    var a = ['trigger', 'condition', 'result'];
+
+                    for(var i = 0; i < a.length; i++)
+                    {
+                        var addBtn = document.createElement('input');
+                        
+                        addBtn.setAttribute('value', '+');
+                        addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+                        addBtn.setAttribute('type', 'button');
+                        addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+                        addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+
+                        document.getElementById(a[i]).appendChild(addBtn);
+                    }
+                    
                     addTrigger();
                     addResult();
-                }
-                else
-                {
-                    document.getElementById('no-devices').style.display = '';
-                    //document.getElementById('add-button').style.display = 'none';
-                    document.getElementById('add-button-big').style.display = 'none';
-                    document.getElementById('devices-button-big').style.display = '';
 
-                    document.getElementById('add-button').setAttribute('disabled', '');
-                    //document.getElementById('add-button-big').setAttribute('disabled', '');
-                }
-
-                if((new URL(window.location.href)).searchParams.get('create') == '')
-                {
-                    Essentials.switchPage('view', 'create', true);
+                    if((new URL(window.location.href)).searchParams.get('create') == '')
+                    {
+                        Essentials.switchPage('view', 'create', true);
+                    }
                 }
 
             </script>
