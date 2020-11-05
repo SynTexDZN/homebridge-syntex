@@ -58,6 +58,7 @@ function createSelectMenu(container)
             c.className = 'same-as-selected';
         }
 
+        c.setAttribute('counter', j);
         c.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 
         b.appendChild(c);
