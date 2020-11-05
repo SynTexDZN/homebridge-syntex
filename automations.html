@@ -25,7 +25,9 @@
                     </div>
                     <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
                     <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
-                    <div id="automations"></div>
+                    <div class="wrapper">
+                        <div id="automations"></div>
+                    </div>
                 </div>
                 <div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
                     <input id="devices-button-big" class="gradient-orange" type="button" value="Zu den Geräten >" style="display: none" onclick="Essentials.leavePage('/')">
@@ -449,7 +451,9 @@
                         console.log('1. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight);
                     }
 
-                    console.log(document.readyState);
+                    Preloader.finish();
+
+                    document.getElementsByClassName('wrapper')[0].style.maxHeight = (document.getElementById('automations').offsetHeight + 'px');
 
                     setTimeout(() => { console.log('2. ELEMENT LOADED', i, document.getElementById('automations').offsetHeight); }, 1000)
                 }
