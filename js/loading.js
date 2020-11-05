@@ -38,7 +38,7 @@ function expandWrapper(wrapper)
         length += wrapper.children[i].offsetHeight;
     }
 
-    wrapper.style.maxHeight = length;
+    wrapper.style.maxHeight = Math.ceil(length);
     wrapper.style.opacity = 1;
 
     setTimeout(() => { wrapper.style.maxHeight = 'none' }, 2000);
