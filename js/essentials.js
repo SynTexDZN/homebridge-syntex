@@ -266,7 +266,7 @@ async function leavePage(url)
             timer = true;
         }, 200);
 
-        var pageContent = await Query.complexFetch('/serverside/automations', 3000, 3, {}, false);
+        var pageContent = await Query.complexFetch(url, 3000, 3, {}, false);
 
         if(pageContent != null)
         {
