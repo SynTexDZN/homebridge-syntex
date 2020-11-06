@@ -138,15 +138,14 @@
                     }
                 }
 
-                function redirectCountdown(url)
+                async function redirectCountdown(url)
                 {
-                    setTimeout(async function()
+                    await Essentials.newTimeout(3000);
+                    
+                    if(await Essentials.checkRestart('/serverside/check-restart'))
                     {
-                        if(await Essentials.checkRestart('/serverside/check-restart'))
-                        {
-                            Essentials.leavePage(url);
-                        }
-                    }, 3000);
+                        Essentials.leavePage(url);
+                    }
                 }
 
             </script>
@@ -238,15 +237,15 @@
                     }
                 }
                 
-                function setTimer(time)
+                async function setTimer(time)
                 {
                     timeRemaining = time - 100;
+
+                    await Essentials.newTimeout(100);
                     
-                    setTimeout(function()
-                    {
-                        document.getElementById('connecting').getElementsByClassName('progress')[0].style.width = (time / 600) + '%';
-                        setTimer(timeRemaining);
-                    }, 100);
+                    document.getElementById('connecting').getElementsByClassName('progress')[0].style.width = (time / 600) + '%';
+                    
+                    setTimer(timeRemaining);
                 }
                 
                 async function sendWifiSettings(form)

@@ -86,7 +86,7 @@ SynTexPlatform.prototype = {
 	
                 if(urlParams.name != null && urlParams.mac != null && urlParams.ip != null && urlParams.version != null && urlParams.refresh != null && urlParams.buttons != null)
                 {
-                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.version, urlParams.refresh, urlParams.buttons, urlParams.services != undefined ? urlParams.services : '').then(function(res) {
+                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.version, urlParams.refresh, urlParams.buttons, urlParams.services != null ? urlParams.services : []).then(function(res) {
 
                         logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
 
@@ -366,7 +366,7 @@ SynTexPlatform.prototype = {
                 if(urlParams.mac != null)
                 {
                     var device = await DeviceManager.getDevice(urlParams.mac);
-                    
+
                     response.write(device ? 'Success' : 'Error');
                     response.end();
                 }
