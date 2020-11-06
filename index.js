@@ -361,7 +361,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/serverside/check-device', (response, urlParams) => {
+            WebServer.addPage('/serverside/check-device', async (response, urlParams) => {
 
                 if(urlParams.mac != null)
                 {
