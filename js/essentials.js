@@ -266,7 +266,7 @@ async function leavePage(url)
             timer = true;
         }, 200);
 
-        var pageContent = await Query.fetchURL(url, 3000);
+        var pageContent = await Query.complexFetch('/serverside/automations', 3000, 3, {}, false);
 
         if(pageContent != null)
         {
@@ -341,6 +341,10 @@ async function leavePage(url)
             }
 
             Preloader.load();
+        }
+        else
+        {
+            // TODO : Seite nicht erreichbar
         }
 
         pageLoading = false;
