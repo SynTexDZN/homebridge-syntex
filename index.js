@@ -365,7 +365,9 @@ SynTexPlatform.prototype = {
 
                 if(urlParams.mac != null)
                 {
-                    response.write(await DeviceManager.getDevice(urlParams.mac) ? 'Success' : 'Error');
+                    var device = await DeviceManager.getDevice(urlParams.mac);
+                    
+                    response.write(device ? 'Success' : 'Error');
                     response.end();
                 }
             });
