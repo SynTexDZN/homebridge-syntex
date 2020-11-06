@@ -23,11 +23,9 @@
                         <input type="button" onclick="" value="Alle Automationen" class="white">
                         <button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
                     </div>
-                    <div class="wrapper">
-                        <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
-                        <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
-                        <div id="automations"></div>
-                    </div>
+                    <p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
+                    <p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
+                    <div id="automations"></div>
                 </div>
                 <div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
                     <input id="devices-button-big" class="gradient-orange" type="button" value="Zu den Geräten >" style="display: none" onclick="Essentials.leavePage('/')">
@@ -212,8 +210,6 @@
                         document.getElementById('no-automations').style.display = '';
 
                         Preloader.finish();
-
-                        setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                     }
                     else
                     {
@@ -223,8 +219,6 @@
                         document.getElementById('add-button').setAttribute('disabled', '');
 
                         Preloader.finish();
-
-                        setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                     }
                 });
 
@@ -447,8 +441,6 @@
                     }
 
                     Preloader.finish();
-
-                    setTimeout(() => Preloader.expandWrapper(document.getElementsByClassName('wrapper')[0]), 250);
                 }
 
                 function addTrigger()
