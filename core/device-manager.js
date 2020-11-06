@@ -153,7 +153,7 @@ module.exports = class DeviceManager
                             configObj = await removeFromConfig(obj, mac);
                         }
 
-                        configObj = await addToConfig(configObj || obj, mac, ip, name, services, JSON.parse(events).length);
+                        configObj = await addToConfig(configObj || obj, mac, ip, name, JSON.parse(services), JSON.parse(events).length);
 
                         config.add(configObj, async function(err) {
 
