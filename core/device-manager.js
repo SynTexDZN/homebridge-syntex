@@ -76,7 +76,7 @@ module.exports = class DeviceManager
         });
     }
 
-    initDevice(mac, ip, name, type, version, interval, events, services)
+    initDevice(mac, ip, name, version, interval, events, services)
     {
         const self = this;
 
@@ -169,7 +169,6 @@ module.exports = class DeviceManager
                                     id: mac,
                                     ip: ip,
                                     name: name,
-                                    type: type,
                                     version: version,
                                     active: 1,
                                     interval: parseInt(interval),
@@ -242,7 +241,7 @@ module.exports = class DeviceManager
                             }
                             else
                             {
-                                var device = { id: mac, name: name, type: 'switch', active: 1 };
+                                var device = { id: mac, name: name, active: 1 };
 
                                 storage.add(device, (err) => {
 
