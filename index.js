@@ -351,7 +351,7 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/serverside/time', (response) => {
 
-                response.write('' + (new Date().getTime() / 1000 + 7101));
+                response.write('' + (new Date().getTime() / 1000 + 3601));
                 response.end();
             });
 
