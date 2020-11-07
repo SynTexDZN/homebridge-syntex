@@ -686,9 +686,11 @@
 
                                     await Essentials.newTimeout(4000);
 
-                                    Essentials.removeOverlays(btn, update.length == 0 ? false : true);
-
                                     updateCount -= updateCounter['success'];
+
+                                    console.log('UPDATE COUNT', updateCount);
+
+                                    Essentials.removeOverlays(btn, updateCount == 0 ? false : true);
                                 }
                             });
                         }
