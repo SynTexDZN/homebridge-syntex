@@ -770,12 +770,12 @@
 
                                 setTimeout(function() {
 
-                                    console.log(this.d, this.device, device);
+                                    console.log(this.device, device);
 
-                                    if(this.d.className.includes('update'))
+                                    if(this.device.className.includes('update'))
                                     {
-                                        this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
-                                        this.d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
+                                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                                     }
                                     else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
                                     {
@@ -788,7 +788,7 @@
                                         this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
                                     }
 
-                                }.bind({ device : this.device, d : device }), 4000);
+                                }.bind({ device : device }), 4000);
                             }
 
                             if(response == true && updateCount == 0)
