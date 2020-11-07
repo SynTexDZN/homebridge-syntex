@@ -2,10 +2,10 @@ var presets = [
     {
         id : 'SynTex',
         name : 'SynTex Real Device',
-        getResetURL : function(device) { return 'http://' + device.ip + '/reset' },
+        getResetURL : function(device, params) { return 'http://' + device.ip + '/reset?type=' + params.type },
         getRestartURL : function(device) { return 'http://' + device.ip + '/restart' },
         getReconnectURL : function(device) { return 'http://' + device.ip + '/restart' },
-        getUpdateURL : function(device) { return 'http://' + device.ip + '/update' },
+        getUpdateURL : function(device, params) { return 'http://' + device.ip + '/update?type=' + params.type },
         getVersionURL : function(device) { return 'http://' + device.ip + '/version' },
         getPingURL : function(device) { return 'http://' + device.ip + '/' }
     },

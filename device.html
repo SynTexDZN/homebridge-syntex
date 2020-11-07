@@ -126,7 +126,7 @@
                     document.getElementById('reconnect-btn').style.display = 'none';
                 }
 
-                if(Presets.getPreset(device.plugin).getResetURL(device) == null)
+                if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(device.services) }) == null)
                 {
                     document.getElementById('reset-btn').style.display = 'none';
                 }
@@ -1471,7 +1471,7 @@
 
                             updating = true;
 
-                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device), 10000, 3, overlays, true) == 'Success')
+                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(device.services) }), 10000, 3, overlays, true) == 'Success')
                             {
                                 await Essentials.newTimeout(3000);
 
@@ -1548,7 +1548,7 @@
                             connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
                         };
 
-                        var url = Presets.getPreset(device.plugin).getResetURL(device);
+                        var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(device.services) });
 
                         resetting = true;
 
