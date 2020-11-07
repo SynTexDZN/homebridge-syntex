@@ -146,14 +146,14 @@ function removeOverlays(btn, show)
         {
             if(overlays[i].reference == btn)
             {
-                //btn.parentElement.removeChild(overlays[i].overlay);
+                btn.parentElement.removeChild(overlays[i].overlay);
                 overlays.splice(overlays.indexOf(overlays[i]), 1);
             }
         }
 
         if(!show)
         {
-            //btn.parentElement.removeChild(btn);
+            btn.parentElement.removeChild(btn);
         }
     }, 600);
 }
