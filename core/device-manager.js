@@ -76,7 +76,7 @@ module.exports = class DeviceManager
         });
     }
 
-    initDevice(mac, ip, name, version, interval, events, services)
+    initDevice(mac, ip, name, version, events, services)
     {
         const self = this;
 
@@ -138,7 +138,7 @@ module.exports = class DeviceManager
                     status = 'Init';
                 }
 
-                resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || interval) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + (device['events'] ? '[' + device['events'] + ']' : events) + '}']);
+                resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '", "events": ' + (device['events'] ? '[' + device['events'] + ']' : events) + '}']);
             }
             else if(await self.checkName(name))
             {
@@ -171,7 +171,7 @@ module.exports = class DeviceManager
                                     name: name,
                                     version: version,
                                     active: 1,
-                                    interval: parseInt(interval),
+                                    interval: 10000,
                                     led: 1,
                                     events: JSON.parse(events)
                                 };
@@ -188,7 +188,7 @@ module.exports = class DeviceManager
                                     {
                                         logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
 
-                                        resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "' + interval + '", "led": "1", "port": "' + webhookPort + '", "events": ' + events + '}']);
+                                        resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '", "events": ' + events + '}']);
                                     }
                                 });
                             }
