@@ -770,6 +770,8 @@
 
                                 setTimeout(function() {
 
+                                    console.log(this.d, this.device, device);
+
                                     if(this.d.className.includes('update'))
                                     {
                                         this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
