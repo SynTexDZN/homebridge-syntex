@@ -296,7 +296,14 @@
                     document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
                 }
 
-                if(counter > 3)
+                var c = counter;
+
+                for(var x = 0; x < device.services.length; i++)
+                {
+                    if(device.services[x] == 'lcd') c--;
+                }
+
+                if(c > 3)
                 {
                     document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
                 }
