@@ -719,7 +719,7 @@
                             device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
                             device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
 
-                            var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')]).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 10000, 3, {}, false);
+                            var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')]).getUpdateURL(devices[device.getAttribute('device-id')].plugin, { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 10000, 3, {}, false);
 
                             if(update == null)
                             {
