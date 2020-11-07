@@ -742,7 +742,7 @@
 
                                 await Essentials.newTimeout(3000);
                                 
-                                var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')]).getVersionURL(devices[device.getAttribute('device-id')]), 3000, 20, {}, false);
+                                var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getVersionURL(devices[device.getAttribute('device-id')]), 3000, 20, {}, false);
 
                                 if(update == device.getAttribute('newest-version'))
                                 {
