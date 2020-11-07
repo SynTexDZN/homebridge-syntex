@@ -123,6 +123,14 @@ module.exports = class DeviceManager
                                 }
                             }
                         }
+
+                        for(var i = 0; i < accessories.length; i++)
+                        {
+                            if(accessories[i].mac == mac)
+                            {
+                                accessories[i].version = version;
+                            }
+                        }
                     }
                 });
                 /*
