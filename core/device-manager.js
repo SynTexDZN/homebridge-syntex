@@ -360,7 +360,7 @@ module.exports = class DeviceManager
             
             for(var i = 0; i < accessories.length; i++)
             {
-                if(accessories[i].mac == mac)
+                if(accessories[i].mac == mac/* && accessories[i].services != 'statelessswitch'*/)
                 {
                     resolve(accessories[i]);
                 }

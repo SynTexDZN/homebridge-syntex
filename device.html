@@ -76,6 +76,7 @@
                 window.saving = false;
                 window.settings = [];
                 window.activity = [];
+                window.services = [];
                 window.temp = {};
 
                 window.data = {
@@ -116,6 +117,8 @@
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
                 };
 
+                loadServices();
+
                 if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
                 {
                     document.getElementById('restart-btn').style.display = 'none';
@@ -126,12 +129,12 @@
                     document.getElementById('reconnect-btn').style.display = 'none';
                 }
 
-                if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(device.services) }) == null)
+                if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) }) == null)
                 {
                     document.getElementById('reset-btn').style.display = 'none';
                 }
 
-                if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('statelessswitch') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('light') || device.services.includes('rain'))
+                if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
                 {
                     settings.push({
                         index: 'active',
@@ -139,7 +142,7 @@
                     });
                 }
 
-                if(device.services.includes('contact') || device.services.includes('motion') || device.services.includes('relais') || device.services.includes('statelessswitch') || device.services.includes('lcd'))
+                if(services.includes('contact') || services.includes('motion') || services.includes('relais') || services.includes('statelessswitch') || services.includes('lcd'))
                 {
                     settings.push({
                         index: 'led',
@@ -147,15 +150,15 @@
                     });
                 }
 
-                if(device.services.includes('motion') || device.services.includes('light') || device.services.includes('temperature') || device.services.includes('humidity') || device.services.includes('lcd'))
+                if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
                 {
                     settings.push({
                         index: 'interval',
-                        name: device.services.includes('motion') ? 'Delay' : 'Interval'
+                        name: services.includes('motion') ? 'Delay' : 'Interval'
                     });
                 }
 
-                if(device.services.includes('statelessswitch'))
+                if(services.includes('statelessswitch'))
                 {
                     settings.push({
                         index: 'events',
@@ -175,7 +178,7 @@
                     infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
                 }
                 
-                infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(device.services) + '</p>';
+                infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(services) + '</p>';
 
                 if(device.version != undefined)
                 {
@@ -189,11 +192,11 @@
 
                 for(const i in settings)
                 {
-                    if(settings[i].index == 'interval' && !device.services.includes('motion'))
+                    if(settings[i].index == 'interval' && !services.includes('motion'))
                     {
                         infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
                     }
-                    else if(settings[i].index == 'interval' && device.services.includes('motion'))
+                    else if(settings[i].index == 'interval' && services.includes('motion'))
                     {
                         infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
                     }
@@ -218,7 +221,7 @@
                     }
                 }
 
-                document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(device.services));
+                document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
                 document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
                 document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/reconnect?ip=" + device.ip + '&mac=' + device.mac + "')");
@@ -232,11 +235,11 @@
 
                 for(const i in settings)
                 {
-                    if(settings[i].index == 'interval' && !device.services.includes('motion'))
+                    if(settings[i].index == 'interval' && !services.includes('motion'))
                     {
                         settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
                     }
-                    else if(settings[i].index == 'interval' && device.services.includes('motion'))
+                    else if(settings[i].index == 'interval' && services.includes('motion'))
                     {
                         settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
                     }
@@ -288,24 +291,12 @@
 
                 settingsForm.setAttribute('mac', device.mac);
                 settingsForm.setAttribute('ip', device.ip);
-                settingsForm.setAttribute('type', Essentials.getType(device.services));
+                settingsForm.setAttribute('type', Essentials.getType(services));
 
-                if(device.services.includes('statelessswitch'))
+                if(services.includes('statelessswitch'))
                 {
                     document.getElementById('infobox').style.display = '';
                     document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
-                }
-
-                var c = counter;
-
-                for(var x = 0; x < device.services.length; x++)
-                {
-                    if(device.services[x] == 'lcd') c--;
-                }
-
-                if(c > 3)
-                {
-                    document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
                 }
 
                 for(var i = 0; i < counter; i++)
@@ -322,12 +313,16 @@
                     }
                 }
 
+                var c = counter;
+
                 for(var i = 0; i < Object.keys(typeCounter).length; i++)
                 {
                     var type = Object.keys(typeCounter)[i];
 
                     if(type != 'lcd')
                     {
+                        c--;
+
                         for(var j = 0; j < typeCounter[type]; j++)
                         {
                             var statusField = document.createElement('input');
@@ -455,6 +450,11 @@
                     }
                 }
 
+                if(c > 3)
+                {
+                    document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+                }
+
                 Preloader.finish();
 
                 Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
@@ -491,6 +491,36 @@
 
             </script>
             <script>
+
+                function loadServices()
+                {
+                    if(Array.isArray(device.services))
+                    {
+                        for(var j = 0; j < device.services.length; j++)
+                        {
+                            if(device.services[j] instanceof Object)
+                            {
+                                services.push(device.services[j].type);
+                            }
+                            else
+                            {
+                                services.push(device.services[j]);
+                            }
+                        }
+                    }
+                    else if(device.services instanceof Object)
+                    {
+                        services.push(device.services.type);
+                    }
+                    else
+                    {
+                        services.push(device.services);
+                    }
+
+                    services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+                    console.log('Services', services);
+                }
 
                 async function controlSwitch(button)
                 {
@@ -1478,7 +1508,7 @@
 
                             updating = true;
 
-                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(device.services) }), 10000, 3, overlays, true) == 'Success')
+                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(services) }), 10000, 3, overlays, true) == 'Success')
                             {
                                 await Essentials.newTimeout(3000);
 
@@ -1555,7 +1585,7 @@
                             connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
                         };
 
-                        var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(device.services) });
+                        var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) });
 
                         resetting = true;
 
@@ -1598,11 +1628,11 @@
                             {
                                 if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
                                 {
-                                    if(!device.services.includes('motion'))
+                                    if(!services.includes('motion'))
                                     {
                                         settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
                                     }
-                                    else if(device.services.includes('motion'))
+                                    else if(services.includes('motion'))
                                     {
                                         settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
                                     }
