@@ -690,41 +690,11 @@
 
                                     console.log('UPDATE COUNT', updateCount);
 
-                                    Essentials.removeOverlays(btn, updateCount != 0 ? false : true);
+                                    Essentials.removeOverlays(btn, updateCount == 0 ? false : true);
 
                                     await Essentials.newTimeout(300);
 
                                     document.getElementById('device-controls').style.marginBottom = 0;
-
-                                    /*
-                                    if(response == true && updateCount == 0)
-                                    {
-                                        document.getElementById('update-all').style.opacity = 0;
-                                    }
-
-                                    await Essentials.newTimeout(300);
-
-                                    if(response == true)
-                                    {
-                                        if(updateCount == 0)
-                                        {
-                                            document.getElementById('update-all').style.setProperty('height', '0', 'important');
-                                            document.getElementById('update-all').style.paddingTop = 0;
-                                            document.getElementById('update-all').style.paddingBottom = 0;
-                                            document.getElementById('update-all').style.marginTop = 0;
-                                            document.getElementById('update-all').style.marginBottom = 0;
-                                            document.getElementById('update-all').style.borderTopWidth = 0;
-                                            document.getElementById('update-all').style.borderBottomWidth = 0;
-                                        }
-
-                                        await Essentials.newTimeout(300);
-
-                                        if(updateCount == 0)
-                                        {
-                                            document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
-                                        }
-                                    }
-                                    */
                                 }
                             });
                         }
