@@ -305,7 +305,7 @@
 
                     for(var i = 0; i < devices.length; i++)
                     {
-                        if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+                        if(devices[i].services != 'statelessswitch' && room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
                         {
                             deviceCount++;
 
