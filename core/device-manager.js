@@ -463,6 +463,8 @@ function reloadAccessories()
                 accessories = accessories.concat(configOBJ.platforms[i].resetSwitches);
             }
         }
+
+        console.log(accessories);
     }
 }
 
