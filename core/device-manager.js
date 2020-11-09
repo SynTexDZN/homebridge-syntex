@@ -23,30 +23,33 @@ module.exports = class DeviceManager
 
     removeDevice(mac)
     {
-        if(configOBJ != null)
-        {
-            while(!checkMac(mac))
+        return new Promise((resolve) => {
+
+            if(configOBJ != null)
             {
-                removeFromConfig(mac);
-            }
-
-            saveAccessories().then(async (success) => {
-
-                if(success)
+                while(!checkMac(mac))
                 {
-                    await removeFromSettingsStorage(mac)
-                    await removeFromDataStorage(mac);
+                    removeFromConfig(mac);
                 }
 
-                resolve(success);
-            });
-        }
-        else
-        {
-            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
-    
-            resolve(false);
-        }
+                saveAccessories().then(async (success) => {
+
+                    if(success)
+                    {
+                        await removeFromSettingsStorage(mac)
+                        await removeFromDataStorage(mac);
+                    }
+
+                    resolve(success);
+                });
+            }
+            else
+            {
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
+        
+                resolve(false);
+            }
+        });
     }
 
     initDevice(mac, ip, name, version, events, services)
@@ -225,11 +228,11 @@ module.exports = class DeviceManager
         {
             if(accessories[i].name == name)
             {
-                resolve(false);
+                return false;
             }
         }
 
-        resolve(true);
+        return true;
     }
 
     getValue(mac, param)
@@ -271,11 +274,11 @@ module.exports = class DeviceManager
         {
             if(accessories[i].mac == mac)
             {
-                resolve(accessories[i]);
+                return accessories[i];
             }
         }
 
-        resolve(null);
+        return null;
     }
 
     getAccessories()
@@ -502,11 +505,11 @@ function checkMac(mac)
     {
         if(accessories[i].mac == mac)
         {
-            resolve(false);
+            return false;
         }
     }
 
-    resolve(true);
+    return true;
 }
 
 function checkEventButton(mac)
@@ -515,11 +518,11 @@ function checkEventButton(mac)
     {
         if(accessories[j].mac === mac && accessories[j].services.includes('statelessswitch'))
         {
-            resolve(true);
+            return true;
         }
     }
 
-    resolve(false);
+    return false;
 }
 
 function addToConfig(mac, ip, name, services, buttons)
