@@ -427,6 +427,8 @@ function reloadAccessories()
 {
     console.log('RELOAD ACCESSORIES');
 
+    accessories = [];
+
     for(const i in configOBJ.platforms)
     {
         console.log(configOBJ.platforms[i].platform);
@@ -479,7 +481,6 @@ function reloadConfig()
             else
             {
                 configOBJ = obj;
-                accessories = [];
 
                 resolve(true);
             }
