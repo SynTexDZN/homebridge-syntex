@@ -74,12 +74,6 @@ module.exports = class DeviceManager
 
                 if(configOBJ != null)
                 {
-                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
-
-                    resolve(['Error', '']);
-                }
-                else
-                {
                     for(const i in configOBJ.platforms)
                     {
                         if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
@@ -95,6 +89,12 @@ module.exports = class DeviceManager
                             }
                         }
                     }
+                }
+                else
+                {
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
+
+                    resolve(['Error', '']);
                 }
 
                 var status = 'Success';
