@@ -70,8 +70,6 @@ module.exports = class DeviceManager
                     self.setValue(mac, 'ip', ip);
                 }
 
-                console.log(configOBJ);
-
                 if(configOBJ != null)
                 {
                     for(const i in configOBJ.platforms)
@@ -427,18 +425,12 @@ function saveAccessories()
 
 function reloadAccessories()
 {
-    console.log('RELOAD ACCESSORIES');
-
     accessories = [];
 
     for(const i in configOBJ.platforms)
     {
-        console.log(configOBJ.platforms[i].platform);
-
         if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
         {
-            console.log('WEBHOOKS');
-
             accessories = accessories.concat(configOBJ.platforms[i].accessories);
         }
         /*
@@ -446,22 +438,16 @@ function reloadAccessories()
         {
             if(configOBJ.platforms[i].lights != null)
             {
-                console.log('LIGHTS');
-
                 accessories = accessories.concat(configOBJ.platforms[i].lights);
             }
 
             if(configOBJ.platforms[i].presetSwitches != null)
             {
-                console.log('PRESET');
-
                 accessories = accessories.concat(configOBJ.platforms[i].presetSwitches);
             }
 
             if(configOBJ.platforms[i].resetSwitches != null)
             {
-                console.log('RESET');
-
                 accessories = accessories.concat(configOBJ.platforms[i].resetSwitches);
             }
         }

@@ -88,8 +88,10 @@ SynTexPlatform.prototype = {
                 {
                     DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then(function(res) {
 
-                        console.log(res);
-                        logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
+                        if(res[0] != 'Error')
+                        {
+                            logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
+                        }
 
                         response.write(res[1]);
                         response.end();
