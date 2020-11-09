@@ -14,8 +14,6 @@ module.exports = class DeviceManager
         
         reloadConfig().then((success) => {
 
-            console.log(configOBJ);
-
             if(success)
             {
                 reloadAccessories();
@@ -467,8 +465,6 @@ function reloadConfig()
             {
                 configOBJ = obj;
                 accessories = [];
-
-                console.log('CONFIG GELADEN');
 
                 resolve(true);
             }
