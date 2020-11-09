@@ -70,11 +70,13 @@ module.exports = class DeviceManager
                     self.setValue(mac, 'ip', ip);
                 }
 
+                console.log(configOBJ);
+
                 if(configOBJ != null)
                 {
                     logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
 
-                    resolve(false);
+                    resolve(['Error', '']);
                 }
                 else
                 {
