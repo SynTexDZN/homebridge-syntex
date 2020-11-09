@@ -439,7 +439,7 @@ function reloadAccessories()
 
             accessories = accessories.concat(configOBJ.platforms[i].accessories);
         }
-
+        /*
         if(configOBJ.platforms[i].platform === 'SynTexMagicHome')
         {
             if(configOBJ.platforms[i].lights != null)
@@ -463,7 +463,7 @@ function reloadAccessories()
                 accessories = accessories.concat(configOBJ.platforms[i].resetSwitches);
             }
         }
-
+        */
         console.log(accessories);
     }
 }
