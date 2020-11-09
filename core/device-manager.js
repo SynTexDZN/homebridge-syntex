@@ -12,7 +12,15 @@ module.exports = class DeviceManager
         logger = slog;
         webhookPort = wConf.port;
         
-        reloadConfig().then(reloadAccessories());
+        reloadConfig().then((success) => {
+
+            console.log(configOBJ);
+
+            if(success)
+            {
+                reloadAccessories();
+            }
+        });
     }
 
     removeDevice(mac)
@@ -459,6 +467,8 @@ function reloadConfig()
             {
                 configOBJ = obj;
                 accessories = [];
+
+                console.log('CONFIG GELADEN');
 
                 resolve(true);
             }
