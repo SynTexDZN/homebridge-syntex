@@ -30,10 +30,6 @@
                         <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
                         <p><b>Raum: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
                     </div>
-                    <div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; display: none">
-                        <button class="widget-left gradient-yellow" disabled>Infobox</button>
-                        <button class="widget-right" disabled></button>
-                    </div>
                     <input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
                     <input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
                     <div class="navigation-panel">
@@ -158,14 +154,6 @@
                     });
                 }
 
-                if(services.includes('statelessswitch'))
-                {
-                    settings.push({
-                        index: 'events',
-                        name: 'Events'
-                    });
-                }
-
                 document.getElementsByTagName('title')[0].innerHTML = device.name;
                 document.getElementsByTagName('h1')[0].innerHTML = device.name;
 
@@ -211,10 +199,6 @@
                             infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
                         }
                     }
-                    else if(settings[i].index == 'events' && device[settings[i].index] == '')
-                    {
-                        infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Keine</p>';
-                    }
                     else
                     {
                         infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
@@ -243,42 +227,6 @@
                     {
                         settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
                     }
-                    else if(settings[i].index == 'events')
-                    {
-                        var events = JSON.parse('[' + device[settings[i].index] + ']');
-                        var main = document.createElement('div');
-                        var container = document.createElement('div');
-                        var controls = document.createElement('div');
-                        var addBtn = document.createElement('input');
-
-                        main.innerHTML = '<p style="margin: 16px 14px 0 auto"><b>' + settings[i].name + ': </b></p>';
-                        main.setAttribute('style', 'display: flex');
-
-                        container.setAttribute('id', 'events');
-                        container.setAttribute('style', 'max-width: 150px; margin-right: 16px');
-
-                        controls.setAttribute('id', 'controls');
-                        controls.setAttribute('style', 'width: 100px; margin-right: auto');
-
-                        addBtn.setAttribute('value', '+');
-                        addBtn.setAttribute('onclick', 'addEventInput("0")');
-                        addBtn.setAttribute('type', 'button');
-                        addBtn.setAttribute('class', 'gradient-blue-green');
-                        addBtn.setAttribute('id', 'add-event-btn');
-                        addBtn.setAttribute('style', '');
-
-                        main.appendChild(container);
-                        main.appendChild(controls);
-                        
-                        settingsForm.appendChild(main);
-
-                        for(const j in events)
-                        {
-                            addEventInput(events[j]);
-                        }
-
-                        controls.appendChild(addBtn);
-                    }
                     else if(settings[i].index == 'led' || settings[i].index == 'active')
                     {
                         settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
@@ -292,12 +240,6 @@
                 settingsForm.setAttribute('mac', device.mac);
                 settingsForm.setAttribute('ip', device.ip);
                 settingsForm.setAttribute('type', Essentials.getType(services));
-
-                if(services.includes('statelessswitch'))
-                {
-                    document.getElementById('infobox').style.display = '';
-                    document.getElementById('infobox').children[1].innerHTML = 'Die Event Einstellungen dienen zur Bestimmung der Pins an denen Knöpfe angeschlossen sind';
-                }
 
                 for(var i = 0; i < counter; i++)
                 {
@@ -1144,44 +1086,6 @@
                     }
                 }
 
-                function addEventInput(value)
-                {
-                    var input = document.createElement('input');
-                    var control = document.createElement('input');
-
-                    input.setAttribute('value', value);
-                    input.setAttribute('name', 'events');
-                    input.setAttribute('type', 'text');
-                    input.setAttribute('pattern', '-?[0-9]+');
-                    input.setAttribute('title', 'Bitte benutze nur Zahlen');
-                    input.setAttribute('required', '');
-                    input.setAttribute('style', 'margin-bottom: 16px');
-
-                    control.setAttribute('value', '-');
-                    control.setAttribute('type', 'button');
-                    control.setAttribute('onclick', 'removeEventInput(this)');
-                    control.setAttribute('style', 'margin-bottom: 16px');
-
-                    document.getElementById('events').appendChild(input);
-
-                    if(document.getElementById('add-event-btn') == null)
-                    {
-                        document.getElementById('controls').appendChild(control);
-                    }
-                    else
-                    {
-                        document.getElementById('controls').insertBefore(control, document.getElementById('add-event-btn'));
-                    }
-                }
-
-                function removeEventInput(button)
-                {
-                    var i = Array.prototype.indexOf.call(button.parentElement.children, button);
-
-                    document.getElementById('events').removeChild(document.getElementById('events').children[i]);
-                    document.getElementById('controls').removeChild(button);
-                }
-
                 function switchFormButton(btn)
                 {
                     if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
@@ -1640,19 +1544,6 @@
                                     {
                                         settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
                                     }
-                                }
-                                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'events')
-                                {
-                                    var concat = '[' + document.getElementById('events').getElementsByTagName('input')[0].value;
-
-                                    for(var j = 1; j < document.getElementById('events').getElementsByTagName('input').length; j++)
-                                    {
-                                        concat += ',' + document.getElementById('events').getElementsByTagName('input')[j].value;
-                                    }
-
-                                    concat += ']';
-
-                                    settings['events'] = JSON.parse(concat);
                                 }
                                 else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
                                 {

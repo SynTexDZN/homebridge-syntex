@@ -130,7 +130,7 @@ function removeOverlays(btn, show)
     {
         setTimeout(function()
         {
-            btn.style.height = 0;
+            btn.style.setProperty('height', '0', 'important');
             btn.style.paddingTop = 0;
             btn.style.paddingBottom = 0;
             btn.style.marginTop = 0;

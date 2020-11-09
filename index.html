@@ -31,7 +31,7 @@
                         <button class="widget-right gradient-green" disabled>-</button>
                     </div>
                 </div>
-                <div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px">
+                <div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
                     <div>
                         <button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
                     </div>
@@ -305,7 +305,7 @@
 
                     for(var i = 0; i < devices.length; i++)
                     {
-                        if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+                        if(devices[i].services != 'statelessswitch' && room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
                         {
                             deviceCount++;
 
@@ -640,6 +640,8 @@
 
                         update.push(device.getAttribute('id'));
 
+                        console.log('COUNTER ++', device);
+
                         updateCount++;
                     }
 
@@ -686,9 +688,15 @@
 
                                     await Essentials.newTimeout(4000);
 
-                                    Essentials.removeOverlays(btn, update.length == 0 ? false : true);
-
                                     updateCount -= updateCounter['success'];
+
+                                    console.log('UPDATE COUNT', updateCount);
+
+                                    Essentials.removeOverlays(btn, updateCount == 0 ? false : true);
+
+                                    await Essentials.newTimeout(300);
+
+                                    document.getElementById('device-controls').style.marginBottom = 0;
                                 }
                             });
                         }
@@ -753,7 +761,7 @@
 
                                     document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
 
-                                    update.splice(update.indexOf(device.getAttribute('id')), 1);
+                                    window.update.splice(window.update.indexOf(device.getAttribute('id')), 1);
 
                                     response = true;
                                 }
@@ -770,10 +778,12 @@
 
                                 setTimeout(function() {
 
-                                    if(this.d.className.includes('update'))
+                                    console.log(this.device, device);
+
+                                    if(this.device.className.includes('update'))
                                     {
-                                        this.d.getElementsByClassName('connection')[0].innerHTML = 'V' + this.d.getAttribute('newest-version');
-                                        this.d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
+                                        this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
+                                        this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
                                     }
                                     else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
                                     {
@@ -786,36 +796,10 @@
                                         this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
                                     }
 
-                                }.bind({ device : this.device, d : device }), 4000);
+                                }.bind({ device : device }), 4000);
                             }
 
-                            if(response == true && updateCount == 0)
-                            {
-                                document.getElementById('update-all').style.opacity = 0;
-                            }
-
-                            await Essentials.newTimeout(300);
-
-                            if(response == true)
-                            {
-                                if(updateCount == 0)
-                                {
-                                    document.getElementById('update-all').style.setProperty('height', '0', 'important');
-                                    document.getElementById('update-all').style.paddingTop = 0;
-                                    document.getElementById('update-all').style.paddingBottom = 0;
-                                    document.getElementById('update-all').style.marginTop = 0;
-                                    document.getElementById('update-all').style.marginBottom = 0;
-                                    document.getElementById('update-all').style.borderTopWidth = 0;
-                                    document.getElementById('update-all').style.borderBottomWidth = 0;
-                                }
-
-                                await Essentials.newTimeout(300);
-
-                                if(updateCount == 0)
-                                {
-                                    document.getElementById('update-all').parentElement.removeChild(document.getElementById('update-all'));
-                                }
-                            }
+                            console.log(response, updateCount);
 
                             updating.splice(updating.indexOf(device.getAttribute('id')), 1);
                         }
