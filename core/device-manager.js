@@ -464,7 +464,7 @@ function reloadAccessories()
             }
         }
         */
-        console.log(accessories);
+        //console.log(accessories);
     }
 }
 
