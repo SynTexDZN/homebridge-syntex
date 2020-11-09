@@ -24,7 +24,7 @@ module.exports = class DeviceManager
                 removeFromConfig(mac);
             }
 
-            saveAccessories().then((success) => {
+            saveAccessories().then(async (success) => {
 
                 if(success)
                 {
