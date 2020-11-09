@@ -18,7 +18,7 @@ function SynTexPlatform(log, config, api)
         conf = store(api.user.storagePath());
 
         logger = new logger('SynTex', this.logDirectory, api.user.storagePath());
-        WebServer = new WebServer('SynTexTuya', logger, this.port, true);
+        WebServer = new WebServer('SynTex Bridge', logger, this.port, true);
 
         WebServer.setHead(__dirname + '/includes/head.html');
 

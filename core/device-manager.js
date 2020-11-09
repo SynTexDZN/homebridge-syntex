@@ -1,5 +1,6 @@
 const store = require('json-fs-store');
 var config, storage, dataStorage, logger, webhookPort, accessories;
+var configOBJ = null;
 
 module.exports = class DeviceManager
 {
@@ -10,70 +11,36 @@ module.exports = class DeviceManager
         dataStorage = store(storagePath.replace('/data', '/'));
         logger = slog;
         webhookPort = wConf.port;
-        accessories = wConf.accessories;
+        
+        reloadConfig().then(reloadAccessories());
     }
 
     removeDevice(mac)
     {
-        return new Promise(resolve => {
+        if(configOBJ != null)
+        {
+            while(!checkMac(mac))
+            {
+                removeFromConfig(mac);
+            }
 
-            config.load('config', async function(err, obj) {
+            saveAccessories().then((success) => {
 
-                if(obj && !err)
+                if(success)
                 {
-                    var configObj = null;
-
-                    while(await existsInConfig(obj, mac))
-                    {
-                        configObj = await removeFromConfig(obj, mac);
-                    }
-
-                    if(configObj != null)
-                    {
-                        config.add(configObj, async function(err) {
-
-                            if(err)
-                            {
-                                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
-            
-                                resolve(false);
-                            }
-                            else
-                            {
-                                if(await removeFromSettingsStorage(mac))
-                                {
-                                    await removeFromDataStorage(mac);
-
-                                    resolve(true);
-                                }
-                                else
-                                {
-                                    resolve(false);
-                                }
-                            }
-                        });
-                    }
-                    else if(await removeFromSettingsStorage(mac))
-                    {
-                        await removeFromDataStorage(mac);
-
-                        resolve(true);
-                    }
-                    else
-                    {
-                        await removeFromDataStorage(mac);
-
-                        resolve(true);
-                    }
+                    await removeFromSettingsStorage(mac)
+                    await removeFromDataStorage(mac);
                 }
-                else
-                {
-                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
-            
-                    resolve(false);
-                }
+
+                resolve(success);
             });
-        });
+        }
+        else
+        {
+            logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
+    
+            resolve(false);
+        }
     }
 
     initDevice(mac, ip, name, version, events, services)
@@ -82,7 +49,7 @@ module.exports = class DeviceManager
 
         return new Promise(async function(resolve) {
             
-            var eventButton = await checkEventButton(mac);
+            var eventButton = checkEventButton(mac);
             var device = await self.getDevice(mac);
 
             name = name.replace(new RegExp('%', 'g'), ' ');
@@ -94,51 +61,31 @@ module.exports = class DeviceManager
                     self.setValue(mac, 'ip', ip);
                 }
 
-                config.load('config', (err, obj) => {    
+                if(configOBJ != null)
+                {
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
 
-                    if(!obj || err)
+                    resolve(false);
+                }
+                else
+                {
+                    for(const i in configOBJ.platforms)
                     {
-                        logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
-                    }
-                    else
-                    {                            
-                        for(const i in obj.platforms)
+                        if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
                         {
-                            if(obj.platforms[i].platform === 'SynTexWebHooks')
+                            for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
                             {
-                                for(var j = 0; j < obj.platforms[i].accessories.length; j++)
+                                if(configOBJ.platforms[i].accessories[j].mac == mac && version != configOBJ.platforms[i].accessories[j].version)
                                 {
-                                    if(obj.platforms[i].accessories[j].mac == mac && version != obj.platforms[i].accessories[j].version)
-                                    {
-                                        obj.platforms[i].accessories[j].version = version;
+                                    configOBJ.platforms[i].accessories[j].version = version;
 
-                                        config.add(obj, (err) => {
-
-                                            if(err)
-                                            {
-                                                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
-                                            }
-                                        }); 
-                                    }
+                                    saveAccessories(); 
                                 }
                             }
                         }
-
-                        for(var i = 0; i < accessories.length; i++)
-                        {
-                            if(accessories[i].mac == mac)
-                            {
-                                accessories[i].version = version;
-                            }
-                        }
                     }
-                });
-                /*
-                if(version != device['version'])
-                {
-                    self.setValue(mac, 'version', version);
                 }
-                */
+
                 var status = 'Success';
 
                 if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
@@ -148,66 +95,58 @@ module.exports = class DeviceManager
 
                 resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '"}']);
             }
-            else if(await self.checkName(name))
+            else if(self.checkName(name))
             {
-                config.load('config', async function(err, obj) {
-
-                    if(obj && !err)
+                if(configOBJ != null)
+                {
+                    while(!checkMac(mac))
                     {
-                        var configObj = null;
+                        removeFromConfig(mac);
+                    }
 
-                        while(await existsInConfig(obj, mac))
+                    addToConfig(mac, ip, name, JSON.parse(services), JSON.parse(events).length);
+
+                    saveAccessories().then(async (success) => {
+
+                        if(success)
                         {
-                            configObj = await removeFromConfig(obj, mac);
+                            var device = {
+                                id: mac,
+                                ip: ip,
+                                name: name,
+                                active: 1,
+                                interval: 10000,
+                                led: 1
+                            };
+
+                            storage.add(device, (err) => {
+
+                                if(err)
+                                {
+                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
+
+                                    resolve(['Error', '']);
+                                }
+                                else
+                                {
+                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+
+                                    resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
+                                }
+                            });
                         }
+                        else
+                        {
+                            resolve(['Error', '']);
+                        }
+                    });
+                }
+                else
+                {
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
 
-                        configObj = await addToConfig(configObj || obj, mac, ip, name, JSON.parse(services), JSON.parse(events).length);
-
-                        config.add(configObj, async function(err) {
-
-                            if(err)
-                            {
-                                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
-
-                                resolve(['Error', '']);
-                            }
-                            else
-                            {
-                                var device = {
-                                    id: mac,
-                                    ip: ip,
-                                    name: name,
-                                    version: version,
-                                    active: 1,
-                                    interval: 10000,
-                                    led: 1
-                                };
-
-                                storage.add(device, (err) => {
-
-                                    if(err)
-                                    {
-                                        logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
-
-                                        resolve(['Error', '']);
-                                    }
-                                    else
-                                    {
-                                        logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
-
-                                        resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    else
-                    {
-                        logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
-
-                        resolve(['Error', '']);
-                    }
-                });
+                    resolve(['Error', '']);
+                }
             }
             else
             {
@@ -220,91 +159,71 @@ module.exports = class DeviceManager
     {
         const self = this;
 
-        return new Promise(async function(resolve) {
+        return new Promise(function(resolve) {
             
-            if(!await checkMac(mac))
+            if(!checkMac(mac))
             {
                 resolve(['Error', 'Mac ist bereits Vergeben!']);          
             }
-            else if(!await self.checkName(name))
+            else if(!self.checkName(name))
             {
                 resolve(['Error', 'Name ist bereits Vergeben!']);
             }
             else
             {
-                config.load('config', async function(err, obj) {
+                if(configOBJ != null)
+                {
+                    addToConfig(mac, null, name, 'switch', 0);
 
-                    if(obj && !err)
-                    {
-                        var configObj = await addToConfig(obj, mac, null, name, 'switch', 0);
+                    saveAccessories().then((success) => {
 
-                        config.add(configObj, async function(err) {
+                        if(success)
+                        {
+                            var device = { id: mac, name: name, active: 1 };
 
-                            if(err)
-                            {
-                                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
+                            storage.add(device, (err) => {
 
-                                resolve(['Error', 'Fehler beim Erstellen!']);
-                            }
-                            else
-                            {
-                                var device = { id: mac, name: name, active: 1 };
+                                if(err)
+                                {
+                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
 
-                                storage.add(device, (err) => {
+                                    resolve(['Error', 'Fehler beim Erstellen!']);
+                                }
+                                else
+                                {
+                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
 
-                                    if(err)
-                                    {
-                                        logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
+                                    resolve(['Success', 'Success']);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            resolve(['Error', 'Fehler beim Erstellen!']);
+                        }
+                    });
+                }
+                else
+                {
+                    logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
 
-                                        resolve(['Error', 'Fehler beim Erstellen!']);
-                                    }
-                                    else
-                                    {
-                                        logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
-
-                                        resolve(['Success', 'Success']);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    else
-                    {
-                        logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
-
-                        resolve(['Error', 'Fehler beim Erstellen!']);
-                    }
-                });
+                    resolve(['Error', 'Fehler beim Erstellen!']);
+                }
             }
         });
     }
 
     checkName(name)
     {
-        return new Promise(resolve => {
-            
-            config.load('config', (err, obj) => {    
+        for(const i in accessories)
+        {
+            if(accessories[i].name == name)
+            {
+                resolve(false);
+            }
+        }
 
-                if(obj)
-                {                            
-                    for(const i in obj.platforms)
-                    {
-                        if(obj.platforms[i].platform === 'SynTexWebHooks')
-                        {
-                            for(const j in obj.platforms[i].accessories)
-                            {
-                                if(obj.platforms[i].accessories[j].name === name)
-                                {
-                                    resolve(false);
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                resolve(true);
-            });
-        });
+        resolve(true);
     }
 
     getValue(mac, param)
@@ -313,14 +232,7 @@ module.exports = class DeviceManager
             
             storage.load(mac, (err, obj) => {  
 
-                if(!obj || err)
-                {
-                    resolve(null);
-                }
-                else
-                {
-                    resolve(obj[param]);
-                }
+                resolve(!obj || err ? null : obj[param]);
             });
         });
     }
@@ -331,14 +243,7 @@ module.exports = class DeviceManager
             
             storage.load(mac, (err, obj) => {  
                 
-                if(!obj || err)
-                {
-                    resolve(null);
-                }
-                else
-                {
-                    resolve(obj);
-                }
+                resolve(!obj || err ? null : obj);
             });
         });
     }
@@ -349,40 +254,27 @@ module.exports = class DeviceManager
             
             storage.list((err, objs) => {  
 
-                if(!objs || err)
-                {
-                    resolve(null);
-                }
-                else
-                {
-                    resolve(objs);
-                }
+                resolve(!objs || err ? null : objs);
             });
         });
     }
 
     getAccessory(mac)
     {
-        return new Promise(resolve => {
-            
-            for(var i = 0; i < accessories.length; i++)
+        for(var i = 0; i < accessories.length; i++)
+        {
+            if(accessories[i].mac == mac)
             {
-                if(accessories[i].mac == mac/* && accessories[i].services != 'statelessswitch'*/)
-                {
-                    resolve(accessories[i]);
-                }
+                resolve(accessories[i]);
             }
+        }
 
-            resolve(null);
-        });
+        resolve(null);
     }
 
     getAccessories()
     {
-        return new Promise(resolve => {
-            
-            resolve(accessories);
-        });
+        return accessories;
     }
 
     setValue(mac, param, value)
@@ -421,9 +313,7 @@ module.exports = class DeviceManager
 
                 if(!obj || err)
                 {
-                    var obj = {
-                        id: values.mac
-                    };
+                    obj = { id : values.mac };
                     
                     for(const i in values)
                     {
@@ -432,16 +322,6 @@ module.exports = class DeviceManager
                             obj[i] = values[i];
                         }
                     }
-
-                    storage.add(obj, (err) => {
-
-                        if(err)
-                        {
-                            logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
-                        }
-
-                        resolve(err ? false : true);
-                    });
                 }
                 else
                 {
@@ -452,17 +332,17 @@ module.exports = class DeviceManager
                             obj[i] = values[i];
                         }
                     }                
-                    
-                    storage.add(obj, (err) => {
-
-                        if(err)
-                        {
-                            logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
-                        }
-
-                        resolve(err ? false : true);
-                    });
                 }
+
+                storage.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
+                    }
+
+                    resolve(err ? false : true);
+                });
             });
         });
     }
@@ -493,56 +373,96 @@ module.exports = class DeviceManager
 
                 if(!obj || err)
                 {
-                    var entry = { id : 'Bridge', data : { [key] : value } };
-
-                    storage.add(entry, (err) => {
-
-                        if(err)
-                        {
-                            logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
-                        }
-
-                        resolve(err ? false : true);
-                    });
+                    obj = { id : 'Bridge', data : { [key] : value } };
                 }
                 else
                 {
                     obj.data[key] = value;              
-                    
-                    storage.add(obj, (err) => {
-
-                        if(err)
-                        {
-                            logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
-                        }
-
-                        resolve(err ? false : true);
-                    });
                 }
+
+                storage.add(obj, (err) => {
+
+                    if(err)
+                    {
+                        logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+                    }
+
+                    resolve(err ? false : true);
+                });
             });
         });
     }
 }
 
-function existsInConfig(obj, mac)
+function saveAccessories()
 {
     return new Promise(resolve => {
 
-        for(const i in obj.platforms)
-        {
-            if(obj.platforms[i].platform === 'SynTexWebHooks')
+        config.add(configOBJ, function(err) {
+
+            if(err)
             {
-                for(const j in obj.platforms[i].accessories)
-                {
-                    if(obj.platforms[i].accessories[j].mac === mac)
-                    {
-                        resolve(true);
-                    }
-                }
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
             }
+            else
+            {
+                reloadAccessories();
+            }
+
+            resolve(err ? false : true);
+        });
+    });
+}
+
+function reloadAccessories()
+{
+    for(const i in configOBJ.platforms)
+    {
+        if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+        {
+            accessories = accessories.concat(configOBJ.platforms[i].accessories);
         }
 
-        resolve(false);
+        if(configOBJ.platforms[i].platform === 'SynTexMagicHome')
+        {
+            if(configOBJ.platforms[i].lights != null)
+            {
+                accessories = accessories.concat(configOBJ.platforms[i].lights);
+            }
+
+            if(configOBJ.platforms[i].presetSwitches != null)
+            {
+                accessories = accessories.concat(configOBJ.platforms[i].presetSwitches);
+            }
+
+            if(configOBJ.platforms[i].resetSwitches != null)
+            {
+                accessories = accessories.concat(configOBJ.platforms[i].resetSwitches);
+            }
+        }
+    }
+}
+
+function reloadConfig()
+{
+    return new Promise(resolve => {
+
+        config.load('config', (err, obj) => {    
+
+            if(!obj || err)
+            {
+                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
+
+                resolve(false);
+            }
+            else
+            {
+                configOBJ = obj;
+                accessories = [];
+
+                resolve(true);
+            }
+        });
     });
 }
 
@@ -550,139 +470,80 @@ function createEventButton(mac, name, buttons)
 {
     return new Promise(resolve => {
 
-        config.load('config', (err, obj) => {    
-
-            if(!obj || err)
+        for(const i in configOBJ.platforms)
+        {
+            if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
             {
-                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
-
-                resolve(false);
+                configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { mac : mac, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
             }
-            else
-            {                            
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        obj.platforms[i].accessories[obj.platforms[i].accessories.length] = { mac : mac, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
-                    }
-                }
+        }
 
-                config.add(obj, (err) => {
+        saveAccessories().then((success) => {
 
-                    if(err)
-                    {
-                        logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
-                    }
-                    else
-                    {
-                        logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
-                    }
-
-                    resolve(err ? false : true);
-                });    
+            if(success)
+            {
+                logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
             }
-        });
+
+            resolve(success ? true : false);
+        });    
     });
 }
 
 function checkMac(mac)
 {
-    return new Promise(resolve => {
-        
-        config.load('config', (err, obj) => {    
+    for(const i in accessories)
+    {
+        if(accessories[i].mac == mac)
+        {
+            resolve(false);
+        }
+    }
 
-            if(obj)
-            {                            
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        for(const j in obj.platforms[i].accessories)
-                        {
-                            if(obj.platforms[i].accessories[j].mac === mac)
-                            {
-                                resolve(false);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            resolve(true);
-        });
-    });
+    resolve(true);
 }
 
 function checkEventButton(mac)
 {
-    return new Promise(resolve => {
+    for(const j in accessories)
+    {
+        if(accessories[j].mac === mac && accessories[j].services.includes('statelessswitch'))
+        {
+            resolve(true);
+        }
+    }
 
-        config.load('config', (err, obj) => {    
-
-            if(!obj || err)
-            {
-                logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
-
-                resolve(false);
-            }
-            else
-            {                            
-                var found = false;
-
-                for(const i in obj.platforms)
-                {
-                    if(obj.platforms[i].platform === 'SynTexWebHooks')
-                    {
-                        for(const j in obj.platforms[i].accessories)
-                        {
-                            if(obj.platforms[i].accessories[j].mac === mac && obj.platforms[i].accessories[j].services.includes('statelessswitch'))
-                            {
-                                found = true;
-                            }
-                        }
-                    }
-                }
-
-                resolve(found ? true : false);
-            }
-        });
-    });
+    resolve(false);
 }
 
-function addToConfig(obj, mac, ip, name, services, buttons)
+function addToConfig(mac, ip, name, services, buttons)
 {
-    return new Promise(async function(resolve) {
-
-        for(const i in obj.platforms)
+    for(const i in configOBJ.platforms)
+    {
+        if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
         {
-            if(obj.platforms[i].platform === 'SynTexWebHooks')
+            var accessories = configOBJ.platforms[i].accessories;
+            var index = accessories.length;
+
+            accessories[index] = { mac : mac, name : name, services : services };
+
+            if(services.includes('relais'))
             {
-                var accessories = obj.platforms[i].accessories;
-                var index = accessories.length;
-
-                accessories[index] = { mac : mac, name : name, services : services };
-
-                if(services.includes('relais'))
-                {
-                    accessories[index]['on_url'] = 'http://' + ip + '/relais?value=true';
-                    accessories[index]['on_method'] = 'GET';
-                    accessories[index]['off_url'] = 'http://' + ip + '/relais?value=false';
-                    accessories[index]['off_method'] = 'GET';
-                }
-                else if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
-                {
-                    accessories[index]['url'] = 'http://' + ip + '/color';
-                }
-                else if(services.includes('statelessswitch'))
-                {
-                    accessories[index]['buttons'] = buttons;
-                }
+                accessories[index]['on_url'] = 'http://' + ip + '/relais?value=true';  // TODO : New Request System
+                accessories[index]['on_method'] = 'GET';
+                accessories[index]['off_url'] = 'http://' + ip + '/relais?value=false';
+                accessories[index]['off_method'] = 'GET';
+            }
+            else if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
+            {
+                accessories[index]['url'] = 'http://' + ip + '/color';
+            }
+            else if(services.includes('statelessswitch'))
+            {
+                accessories[index]['buttons'] = buttons;
             }
         }
-
-        resolve(obj);
-    });
+    }
 }
 
 function removeFromDataStorage(mac)
@@ -707,26 +568,21 @@ function removeFromDataStorage(mac)
     });
 }
 
-function removeFromConfig(obj, mac)
+function removeFromConfig(mac)
 {
-    return new Promise(resolve => {
-
-        for(const i in obj.platforms)
+    for(const i in configOBJ.platforms)
+    {
+        if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
         {
-            if(obj.platforms[i].platform === 'SynTexWebHooks')
+            for(const j in configOBJ.platforms[i].accessories)
             {
-                for(const j in obj.platforms[i].accessories)
+                if(configOBJ.platforms[i].accessories[j].mac === mac)
                 {
-                    if(obj.platforms[i].accessories[j].mac === mac)
-                    {
-                        obj.platforms[i].accessories.splice(j, 1);
-                    }
+                    configOBJ.platforms[i].accessories.splice(j, 1);
                 }
             }
         }
-
-        resolve(obj);
-    });
+    }
 }
 
 function removeFromSettingsStorage(mac)
