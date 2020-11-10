@@ -522,94 +522,7 @@ SynTexPlatform.prototype = {
                 }
             });
 
-            WebServer.addPage('/', async (response, urlParams, content) => {
-
-                var all = [];
-                var accessories = DeviceManager.getAccessories();
-                var devices = await DeviceManager.getDevices();
-                var bridgeData = await DeviceManager.getBridgeStorage();
-
-                all.push.apply(all, accessories);
-
-                for(var i = 0; i < all.length; i++)
-                {
-                    if(all[i].ip && all[i].mac)
-                    {
-                        all[i].plugin = 'SynTex';
-                    }
-                    else
-                    {
-                        all[i].plugin = 'SynTexWebHooks';
-                    }
-                }
-
-                var magicHome = await getPluginConfig('SynTexMagicHome');
-
-                if(magicHome != null)
-                {
-                    for(var i = 0; i < magicHome.lights.length; i++)
-                    {
-                        if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
-                        {
-                            var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                            var d = {};
-                            //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
-                            
-                            for(const k in magicHome.lights[i])
-                            {
-                                if(k == 'setup')
-                                {
-                                    d['services'] = type;
-                                }
-                                else if(k != 'id' && k != 'type')
-                                {
-                                    d[k] = magicHome.lights[i][k];
-                                }
-                            }
-
-                            d.spectrum = 'HSL';
-                            d.plugin = 'SynTexMagicHome';
-
-                            if(!magicHome.lights[i].version)
-                            {
-                                d.version = '99.99.99';
-                            }
-
-                            all.push(d);
-                        }
-                    }
-                }
-
-                for(var i = 0; i < all.length; i++)
-                {
-                    for(var j = 0; j < devices.length; j++)
-                    {
-                        if(all[i].mac == devices[j].id)
-                        {
-                            for(var k = 0; k < Object.keys(devices[j]).length; k++)
-                            {
-                                all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
-                            }
-                        }
-                    }
-                }
-                
-                var obj = {
-                    devices: JSON.stringify(all),
-                    restart: '-'
-                };
-                
-                if(bridgeData != null && bridgeData.restart)
-                {
-                    var restartDate = new Date(bridgeData.restart);
-                    obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
-                }
-                
-                response.write(HTMLQuery.sendValues(content, obj));
-                response.end();
-            });
-
-            WebServer.addPage('/index', async (response, urlParams, content) => {
+            WebServer.addPage(['/', '/index'], async (response, urlParams, content) => {
 
                 var all = [];
                 var accessories = DeviceManager.getAccessories();
@@ -704,26 +617,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/setup', (response, urlParams, content) => {
-
-                const ifaces = require('os').networkInterfaces();
-                var address;
-
-                for(var dev in ifaces)
-                {
-                    var iface = ifaces[dev].filter(function(details)
-                    {
-                        return details.family === 'IPv4' && details.internal === false;
-                    });
-
-                    if(iface.length > 0) address = iface[0].address;
-                }
-
-                response.write(HTMLQuery.sendValue(content, 'bridge-ip', address));
-                response.end();
-            });
-
-            WebServer.addPage('/reconnect', (response, urlParams, content) => {
+            WebServer.addPage(['/setup', '/reconnect'], (response, urlParams, content) => {
 
                 const ifaces = require('os').networkInterfaces();
                 var address;
@@ -795,24 +689,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/automation', async (response, urlParams, content) => {
-
-                var webhookConfig = await getPluginConfig('SynTexWebHooks');
-                var obj = {
-                    accessories: JSON.stringify(DeviceManager.getAccessories()),
-                    wPort: 1710
-                };
-
-                if(webhookConfig != null)
-                {
-                    obj.wPort = webhookConfig.port;
-                }
-
-                response.write(HTMLQuery.sendValues(content, obj));
-                response.end();
-            });
-
-            WebServer.addPage('/automations', async (response, urlParams, content) => {
+            WebServer.addPage(['/automation', '/automations'], async (response, urlParams, content) => {
 
                 var webhookConfig = await getPluginConfig('SynTexWebHooks');
                 var obj = {
