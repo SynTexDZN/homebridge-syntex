@@ -8,10 +8,10 @@ module.exports = class DeviceManager
     {
         config = store(configPath);
         storage = store(storagePath);
-        dataStorage = store(storagePath.replace('/data', '/'));
+        dataStorage = store(wConf.cache_directory);
         logger = slog;
         webhookPort = wConf.port;
-        
+
         reloadConfig().then((success) => {
 
             if(success)
@@ -36,7 +36,7 @@ module.exports = class DeviceManager
 
                     if(success)
                     {
-                        await removeFromSettingsStorage(mac)
+                        await removeFromSettingsStorage(mac);
                         await removeFromDataStorage(mac);
                     }
 
@@ -560,7 +560,7 @@ function addToConfig(mac, ip, name, services, buttons)
 
 function removeFromDataStorage(mac)
 {
-    return new Promise(async function(resolve) {
+    return new Promise(function(resolve) {
 
         dataStorage.list((err, objs) => {  
 
@@ -570,7 +570,7 @@ function removeFromDataStorage(mac)
                 {
                     if(objs[i].id.startsWith(mac))
                     {
-                        dataStorage.remove(objs[i], (err) => {});
+                        dataStorage.remove(objs[i].id, (err) => {});
                     }
                 }
             }
@@ -588,13 +588,15 @@ function removeFromConfig(mac)
         {
             for(const j in configOBJ.platforms[i].accessories)
             {
-                if(configOBJ.platforms[i].accessories[j].mac === mac)
+                if(configOBJ.platforms[i].accessories[j].mac == mac)
                 {
                     configOBJ.platforms[i].accessories.splice(j, 1);
                 }
             }
         }
     }
+
+    reloadAccessories();
 }
 
 function removeFromSettingsStorage(mac)
