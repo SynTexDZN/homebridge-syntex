@@ -208,11 +208,10 @@ SynTexPlatform.prototype = {
 
                 if(urlParams.name != null)
                 {
-                    DeviceManager.checkName(urlParams.name).then(function(nameAvailable) {
+                    var nameAvailable = DeviceManager.checkName(urlParams.name);
 
-                        response.write(nameAvailable ? 'Success' : 'Error');
-                        response.end();
-                    });
+                    response.write(nameAvailable ? 'Success' : 'Error');
+                    response.end();
                 }
             });
 
@@ -443,7 +442,7 @@ SynTexPlatform.prototype = {
 
                 if(urlParams.mac != null)
                 {
-                    var accessory = await DeviceManager.getAccessory(urlParams.mac);
+                    var accessory = DeviceManager.getAccessory(urlParams.mac);
                     var all = { ...accessory };
                     var device = await DeviceManager.getDevice(urlParams.mac);
 
@@ -526,7 +525,7 @@ SynTexPlatform.prototype = {
             WebServer.addPage('/', async (response, urlParams, content) => {
 
                 var all = [];
-                var accessories = await DeviceManager.getAccessories();
+                var accessories = DeviceManager.getAccessories();
                 var devices = await DeviceManager.getDevices();
                 var bridgeData = await DeviceManager.getBridgeStorage();
 
@@ -613,7 +612,7 @@ SynTexPlatform.prototype = {
             WebServer.addPage('/index', async (response, urlParams, content) => {
 
                 var all = [];
-                var accessories = await DeviceManager.getAccessories();
+                var accessories = DeviceManager.getAccessories();
                 var devices = await DeviceManager.getDevices();
                 var bridgeData = await DeviceManager.getBridgeStorage();
 
@@ -800,7 +799,7 @@ SynTexPlatform.prototype = {
 
                 var webhookConfig = await getPluginConfig('SynTexWebHooks');
                 var obj = {
-                    accessories: JSON.stringify(await DeviceManager.getAccessories()),
+                    accessories: JSON.stringify(DeviceManager.getAccessories()),
                     wPort: 1710
                 };
 
@@ -817,7 +816,7 @@ SynTexPlatform.prototype = {
 
                 var webhookConfig = await getPluginConfig('SynTexWebHooks');
                 var obj = {
-                    accessories: JSON.stringify(await DeviceManager.getAccessories()),
+                    accessories: JSON.stringify(DeviceManager.getAccessories()),
                     wPort: 1710
                 };
 
