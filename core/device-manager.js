@@ -427,11 +427,33 @@ function reloadAccessories()
 {
     accessories = [];
 
+    var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
+
     for(const i in configOBJ.platforms)
     {
-        if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+        if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
         {
             accessories = accessories.concat(configOBJ.platforms[i].accessories);
+
+            for(var j = 0; j < accessories.length; j++)
+            {
+                accessories[j].plugin = configOBJ.platforms[i].platform;
+
+                if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip && accessories[j].mac)
+                {
+                    accessories[j].plugin = 'SynTex';
+                }
+
+                if(accessories[j].plugin == 'SynTexMagicHome')
+                {
+                    accessories[j].spectrum = 'HSL';
+
+                    if(accessories[j].version == null)
+                    {
+                        accessories[j].version = '99.99.99';
+                    }
+                }
+            }
         }
         /*
         if(configOBJ.platforms[i].platform === 'SynTexMagicHome')

@@ -530,56 +530,7 @@ SynTexPlatform.prototype = {
                 var bridgeData = await DeviceManager.getBridgeStorage();
 
                 all.push.apply(all, accessories);
-
-                for(var i = 0; i < all.length; i++)
-                {
-                    if(all[i].ip && all[i].mac)
-                    {
-                        all[i].plugin = 'SynTex';
-                    }
-                    else
-                    {
-                        all[i].plugin = 'SynTexWebHooks';
-                    }
-                }
-
-                var magicHome = await getPluginConfig('SynTexMagicHome');
-
-                if(magicHome != null)
-                {
-                    for(var i = 0; i < magicHome.lights.length; i++)
-                    {
-                        if(magicHome.lights[i].setup == 'RGB' || magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' || magicHome.lights[i].setup == 'RGBCW')
-                        {
-                            var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-                            var d = {};
-                            //var d = { ip : magicHome.lights[i].ip, name : magicHome.lights[i].name, services : type, version : '99.99.99' };
-                            
-                            for(const k in magicHome.lights[i])
-                            {
-                                if(k == 'setup')
-                                {
-                                    d['services'] = type;
-                                }
-                                else if(k != 'id' && k != 'type')
-                                {
-                                    d[k] = magicHome.lights[i][k];
-                                }
-                            }
-
-                            d.spectrum = 'HSL';
-                            d.plugin = 'SynTexMagicHome';
-
-                            if(!magicHome.lights[i].version)
-                            {
-                                d.version = '99.99.99';
-                            }
-
-                            all.push(d);
-                        }
-                    }
-                }
-
+                
                 for(var i = 0; i < all.length; i++)
                 {
                     for(var j = 0; j < devices.length; j++)
@@ -599,10 +550,9 @@ SynTexPlatform.prototype = {
                     restart: '-'
                 };
                 
-                if(bridgeData != null && bridgeData.restart)
+                if(bridgeData != null && bridgeData.restart != null)
                 {
-                    var restartDate = new Date(bridgeData.restart);
-                    obj.restart = formatTimestamp(new Date().getTime() / 1000 - restartDate.getTime() / 1000);
+                    obj.restart = formatTimestamp(new Date().getTime() / 1000 - new Date(bridgeData.restart).getTime() / 1000);
                 }
                 
                 response.write(HTMLQuery.sendValues(content, obj));
