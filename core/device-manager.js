@@ -437,7 +437,10 @@ function reloadAccessories()
 
             for(var j = 0; j < accessories.length; j++)
             {
-                accessories[j].plugin = configOBJ.platforms[i].platform;
+                if(accessories[j].plugin == null)
+                {
+                    accessories[j].plugin = configOBJ.platforms[i].platform;
+                }
 
                 if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip && accessories[j].mac)
                 {
@@ -446,7 +449,12 @@ function reloadAccessories()
 
                 if(accessories[j].plugin == 'SynTexMagicHome')
                 {
-                    accessories[j].spectrum = 'HSL';
+                    accessories[j].active = 1;
+
+                    if(accessories[j].type == "light")
+                    {
+                        accessories[j].spectrum = 'HSL'; 
+                    }
 
                     if(accessories[j].version == null)
                     {
