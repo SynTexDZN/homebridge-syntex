@@ -442,15 +442,13 @@ function reloadAccessories()
                     accessories[j].plugin = configOBJ.platforms[i].platform;
                 }
 
-                if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip && accessories[j].mac)
+                if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
                 {
                     accessories[j].plugin = 'SynTex';
                 }
 
                 if(accessories[j].plugin == 'SynTexMagicHome')
                 {
-                    accessories[j].active = 1;
-
                     if(accessories[j].type == "light")
                     {
                         accessories[j].spectrum = 'HSL'; 
@@ -463,26 +461,6 @@ function reloadAccessories()
                 }
             }
         }
-        /*
-        if(configOBJ.platforms[i].platform === 'SynTexMagicHome')
-        {
-            if(configOBJ.platforms[i].lights != null)
-            {
-                accessories = accessories.concat(configOBJ.platforms[i].lights);
-            }
-
-            if(configOBJ.platforms[i].presetSwitches != null)
-            {
-                accessories = accessories.concat(configOBJ.platforms[i].presetSwitches);
-            }
-
-            if(configOBJ.platforms[i].resetSwitches != null)
-            {
-                accessories = accessories.concat(configOBJ.platforms[i].resetSwitches);
-            }
-        }
-        */
-        //console.log(accessories);
     }
 }
 
