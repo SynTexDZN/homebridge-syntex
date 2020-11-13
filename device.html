@@ -1317,14 +1317,20 @@
                                             name = n[j];
                                         }
 
-                                        document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+                                        if(!busy.includes(button.getAttribute('id')))
+                                        {
+                                            document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+                                        }
                                     }
-                                    else
+                                    else if(!busy.includes(button.getAttribute('id')))
                                     {
                                         document.getElementById('status-' + type + '-' + j).value = value;
                                     }
 
-                                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+                                    if(!busy.includes(button.getAttribute('id')))
+                                    {
+                                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+                                    }
                                 }
                                 else if(type == 'statelessswitch')	
                                 {	
