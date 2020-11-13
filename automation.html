@@ -146,7 +146,7 @@
 
                 if(id != null)
                 {
-                    Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+                    Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
 
                         automations = JSON.parse(a);
                         /*
@@ -777,7 +777,7 @@
 
                         resetting = true;
 
-                        if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
+                        if(await Query.complexFetch(url, 5000, 2, overlays, true) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
 
@@ -920,7 +920,7 @@
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
 
-                    var created = await Query.complexFetch('/serverside/modify-automation', 10000, 3, overlays, false, JSON.stringify(automation));
+                    var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automation));
 
                     if(created == 'Success')
                     {
@@ -933,7 +933,7 @@
                             Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
                         }
 
-                        var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
+                        var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
 
                         automations = JSON.parse(a);
 

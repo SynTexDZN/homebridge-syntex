@@ -55,7 +55,7 @@
 
                 document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
                 
-                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(plugins) {
+                Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then(function(plugins) {
 
                     plugins = JSON.parse(plugins);
 
@@ -80,7 +80,7 @@
 
                     for(var i = 0; i < plugins.length; i++)
                     {
-                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/serverside/version', 10000, 3, {}, false).then(async function (version) {
+                        Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
 
                             console.log(plugins, this.plugin.id, this.counter);
 
@@ -118,7 +118,7 @@
                 {
                     return new Promise(async function(resolve) {
 
-                        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 3, {}, false);
+                        var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 2, {}, false);
 
                         if(newestVersion != null && newestVersion != '')
                         {
@@ -168,7 +168,7 @@
 
                         console.log(newestVersions[id]);
 
-                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + newestVersions[id], 120000, 3, overlays, false) == 'Success')
+                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + newestVersions[id], 120000, 2, overlays, false) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
 
@@ -193,52 +193,7 @@
                         }
                     }
                 }
-                /*
-                async function updateSynTexWebHooks(btn)
-                {
-                    if(!restarting && !updating['bridge'] && !updating['webhooks'])
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'update',
-                            pending : { value : 'Update wird Installiert ..', color : 'purple' },
-                            executeError : { value : 'Update Fehlgeschlagen!' },
-                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                        };
-
-                        updating['bridge'] = true;
-
-                        if(await Query.complexFetch('/serverside/update?version=' + newestBVersion, 120000, 3, overlays, false) == 'Success')
-                        {
-                            await Essentials.newTimeout(3000);
-
-                            if(await Essentials.checkRestart('/serverside/check-restart'))
-                            {
-                                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>Laden ..';
-
-                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-                                bridgeVersion = await Query.complexFetch('/serverside/version', 10000, 10, {}, false);
-
-                                document.getElementById('infos').children[1].innerHTML = '<b>Version: </b>' + bridgeVersion;
-
-                                await Essentials.newTimeout(4000);
-
-                                Essentials.removeOverlays(btn, false);
-
-                                await Essentials.newTimeout(300);
-
-                                if(Essentials.versionCount(newestWVersion) <= Essentials.versionCount(webhooksVersion))
-                                {
-                                    document.getElementsByClassName('navigation-panel')[0].children[0].children[0].style.marginBottom = '0px';
-                                }
-
-                                updating['bridge'] = false;
-                            }
-                        }
-                    }
-                }
-                */
+                
                 async function restartBridge(btn)
                 {
                     if(!restarting && !updating['bridge'] && !updating['webhooks'])
@@ -253,7 +208,7 @@
 
                         restarting = true;
 
-                        if(await Query.complexFetch('/serverside/restart', 10000, 3, overlays, true) == 'Success')
+                        if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
 

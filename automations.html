@@ -131,7 +131,7 @@
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
                 };
 
-                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+                Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
 
                     automations = JSON.parse(a);
                     /*
@@ -691,7 +691,7 @@
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
 
-                    var created = await Query.complexFetch('/serverside/create-automation', 10000, 3, overlays, false, JSON.stringify(automation));
+                    var created = await Query.complexFetch('/serverside/create-automation', 5000, 2, overlays, false, JSON.stringify(automation));
 
                     if(created == 'Success')
                     {
@@ -704,7 +704,7 @@
                             Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Erstellung Fehlgeschlagen!', 'red'));
                         }
                         
-                        var a = await Query.complexFetch('/serverside/automations', 10000, 3, {}, false);
+                        var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
 
                         automations = JSON.parse(a);
 

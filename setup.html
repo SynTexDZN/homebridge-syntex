@@ -116,7 +116,7 @@
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
 
-                    var created = await Query.complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 10000, 3, overlays, true);
+                    var created = await Query.complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 5000, 2, overlays, true);
 
                     await Essentials.newTimeout(1000);
 
@@ -220,7 +220,7 @@
                 
                 async function checkDB(mac)
                 {
-                    if(await Query.fetchURL('/serverside/check-device?mac=' + mac, 10000) == 'Success')
+                    if(await Query.fetchURL('/serverside/check-device?mac=' + mac, 5000) == 'Success')
                     {  
                         success = true;
 
@@ -255,7 +255,7 @@
                     formData.append('bridge-ip', bridgeIP);
                     formData.append('device-name', deviceName);
 
-                    var mac = await Query.complexFetch('http://192.168.4.1/settings', 10000, 3, {}, false, formData);
+                    var mac = await Query.complexFetch('http://192.168.4.1/settings', 20000, 1, {}, false, formData);
 
                     if(mac != null)
                     {
@@ -267,7 +267,7 @@
 
                         setTimeout(async function()
                         {
-                            if(await Query.fetchURL('/create', 10000) != null)
+                            if(await Query.fetchURL('/serverside/version', 10000) != null)
                             {
                                 ping = true;
                             }

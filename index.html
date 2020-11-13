@@ -528,7 +528,7 @@
 
                 async function checkConnection()
                 {
-                    var offline = await Query.fetchURL('/serverside/offline-devices', 10000);
+                    var offline = await Query.fetchURL('/serverside/offline-devices', 5000);
 
                     if(offline != null)
                     {
@@ -616,7 +616,7 @@
                 
                 async function checkUpdates(device)
                 {
-                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 3, {}, false);
+                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 2, {}, false);
 
                     if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
                     {  
@@ -727,7 +727,7 @@
                             device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
                             device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
 
-                            var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 10000, 3, {}, false);
+                            var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 20000, 1, {}, false);
 
                             if(update == null)
                             {
@@ -825,11 +825,11 @@
 
                             switchableDevices = true;
 
-                            if(await Query.complexFetch('/serverside/save-config', 10000, 3, {}, false, JSON.stringify(settings)) == 'Success')
+                            if(await Query.complexFetch('/serverside/save-config', 5000, 2, {}, false, JSON.stringify(settings)) == 'Success')
                             {
                                 if(!offline.includes(devices[i].ip))
                                 {
-                                    Query.complexFetch('http://' + devices[i].ip + '/refresh', 10000, 2, {}, false).then(function (refresh) {
+                                    Query.complexFetch('http://' + devices[i].ip + '/refresh', 20000, 1, {}, false).then(function (refresh) {
 
                                         var d = document.getElementById(this.device.ip);
 

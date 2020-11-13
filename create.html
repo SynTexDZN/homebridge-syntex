@@ -57,7 +57,7 @@
                         connectionError : { value : 'Keine Verbindung zur Bridge!' }
                     };
 
-                    var created = await Query.complexFetch('serverside/init-switch?mac=' + document.getElementById('form-mac').value + '&name=' + document.getElementById('form-name').value, 10000, 3, overlays, false);
+                    var created = await Query.complexFetch('/serverside/init-switch?mac=' + document.getElementById('form-mac').value + '&name=' + document.getElementById('form-name').value, 5000, 2, overlays, false);
 
                     await Essentials.newTimeout(1000);
 

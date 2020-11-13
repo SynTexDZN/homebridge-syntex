@@ -399,7 +399,7 @@
 
                 Preloader.finish();
 
-                Query.complexFetch('/serverside/automations', 10000, 3, {}, false).then(function(a) {
+                Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
 
                     automations = JSON.parse(a);
 
@@ -478,22 +478,22 @@
                         {
                             if(value == 'true')
                             {
-                                var state = await Query.complexFetch(device.on_url, 10000, 3, {}, false);
+                                var state = await Query.complexFetch(device.on_url, 20000, 1, {}, false);
                             }
                             else if(value == 'false')
                             {
-                                var state = await Query.complexFetch(device.off_url, 10000, 3, {}, false);
+                                var state = await Query.complexFetch(device.off_url, 20000, 1, {}, false);
                             }
 
-                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
                         }
                         else if(device.ip != undefined)
                         {
-                            var state = await Query.complexFetch('http://' + device.ip + '/switch', 10000, 3, {}, false);
+                            var state = await Query.complexFetch('http://' + device.ip + '/switch', 20000, 1, {}, false);
                         }
                         else
                         {
-                            var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 3, {}, false);
+                            var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
                         }
 
                         if(state != null)
@@ -521,7 +521,7 @@
 
                 async function loadActivity()
                 {
-                    activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + device.mac, 10000, 3, {}, false));
+                    activity = JSON.parse(await Query.complexFetch('/serverside/activity?mac=' + device.mac, 10000, 2, {}, false));
 
                     for(var i = 0; i < Object.keys(typeCounter).length; i++)
                     {
@@ -1318,7 +1318,7 @@
 
                         restarting = true;
 
-                        if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, false) == null)
+                        if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, false) == null)
                         {
                             Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
 
@@ -1412,7 +1412,7 @@
 
                             updating = true;
 
-                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(services) }), 10000, 3, overlays, true) == 'Success')
+                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(services) }), 20000, 1, overlays, true) == 'Success')
                             {
                                 await Essentials.newTimeout(3000);
 
@@ -1451,7 +1451,7 @@
 
                 async function checkUpdates()
                 {
-                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 3, {}, false);
+                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 2, {}, false);
 
                     if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
                     {
@@ -1493,7 +1493,7 @@
 
                         resetting = true;
 
-                        if(await Query.complexFetch(url, 10000, 2, overlays, true) == 'Success')
+                        if(await Query.complexFetch(url, 20000, 1, overlays, true) == 'Success')
                         {
                             await Essentials.newTimeout(3000);
 
@@ -1568,7 +1568,7 @@
 
                         saving = true;
 
-                        if(await Query.complexFetch('/serverside/save-config', 10000, 3, overlays, true, JSON.stringify(settings)) == 'Success')
+                        if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
                         {
                             if(Presets.getPreset(device.plugin).getRestartURL(device) != null)
                             {
@@ -1580,7 +1580,7 @@
                                     connectionError : { value : 'Gespeichert!', color : 'yellow' }
                                 };
                                 
-                                await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 10000, 3, overlays, true);
+                                await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, true);
                             
                                 await Essentials.newTimeout(2000);
                             }

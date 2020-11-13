@@ -76,7 +76,7 @@
                 window.countLogs = true;
                 window.plugins = [];
 
-                Query.complexFetch('/serverside/plugins', 10000, 3, {}, false).then(function(P) {
+                Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then(function(P) {
 
                     plugins = JSON.parse(P);
                     //plugins = [{id:'SynTex', port:'1710'}, {id:'SynTexWebHooks', port:'1710'}, {id:'SynTexTuya', port:'1710'}, {id:'SynTexMagicHome', port:'1710'}];
@@ -128,7 +128,7 @@
 
                 function fetchLogs(id)
                 {
-                    Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 3, {}, false).then(function(l) {
+                    Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 2, {}, false).then(function(l) {
 
                         logJSON = JSON.parse(l);
                         //logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};

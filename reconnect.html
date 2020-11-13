@@ -198,7 +198,7 @@
 
                     formData.append('bridge-ip', bridgeIP);
 
-                    var mac = await Query.complexFetch(ip + 'settings', 10000, 3, {}, false, formData);
+                    var mac = await Query.complexFetch(ip + 'settings', 20000, 1, {}, false, formData);
 
                     if(mac != null)
                     {
@@ -210,7 +210,7 @@
 
                         setTimeout(async function()
                         {
-                            if(await Query.fetchURL('/create', 10000) != null)
+                            if(await Query.fetchURL('/serverside/version', 10000) != null)
                             {
                                 ping = true;
                             }
