@@ -421,7 +421,7 @@
                     {
                         if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
                         {
-                            //fetchState();
+                            fetchState();
                         }
                     }, 300);
                 }
@@ -549,6 +549,8 @@
 
                         if(index > -1)
                         {
+                            await newTimeout(300);
+
                             busy.splice(index, 1);
                         }
                     }
@@ -1400,7 +1402,7 @@
                                 {
                                     if(!updating && !saving && !resetting)
                                     {
-                                        //fetchState();
+                                        fetchState();
                                     }
                                 }, i);
                             }
