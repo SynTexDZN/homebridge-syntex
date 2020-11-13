@@ -243,11 +243,11 @@ SynTexPlatform.prototype = {
 
                         if(error || stderr.includes('ERR!'))
                         {
-                            logger.log('error', 'bridge', 'Bridge', 'Die Homebridge konnte nicht aktualisiert werden! ' + (error || stderr));
+                            logger.log('error', 'bridge', 'Bridge', 'Die SynTex Bridge konnte nicht aktualisiert werden! ' + (error || stderr));
                         }
                         else
                         {
-                            logger.log('success', 'bridge', 'Bridge', 'Die Homebridge wurde auf die Version [' + version + '] aktualisiert!');
+                            logger.log('success', 'bridge', 'Bridge', 'Die SynTex Bridge wurde auf die Version [' + version + '] aktualisiert!');
                             
                             restart = true;
 
