@@ -487,6 +487,10 @@
 
                             await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
                         }
+                        else if(device.plugin == 'SynTexMagicHome')
+                        {
+                            var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
+                        }
                         else if(device.ip != undefined)
                         {
                             var state = await Query.complexFetch('http://' + device.ip + '/switch', 20000, 1, {}, false);
