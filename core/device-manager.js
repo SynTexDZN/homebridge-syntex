@@ -547,18 +547,23 @@ function addToConfig(mac, ip, name, services, buttons)
 
             accessories[index] = { mac : mac, name : name, services : services };
 
+            if(services.includes('relais') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
+            {
+                accessories[index]['requests'] = [];
+            }
+
             if(services.includes('relais'))
             {
-                accessories[index]['on_url'] = 'http://' + ip + '/relais?value=true';  // TODO : New Request System
-                accessories[index]['on_method'] = 'GET';
-                accessories[index]['off_url'] = 'http://' + ip + '/relais?value=false';
-                accessories[index]['off_method'] = 'GET';
+                accessories[index]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + ip + '/relais?value=true' });
+                accessories[index]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + ip + '/relais?value=false' });
             }
-            else if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
+            
+            if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
             {
-                accessories[index]['url'] = 'http://' + ip + '/color';
+                accessories[index]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
             }
-            else if(services.includes('statelessswitch'))
+            
+            if(services.includes('statelessswitch'))
             {
                 accessories[index]['buttons'] = buttons;
             }
