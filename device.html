@@ -1319,17 +1319,17 @@
                                             name = n[j];
                                         }
 
-                                        if(!busy.includes(device.mac))
+                                        if(!busy.includes('status-' + type + '-' + j))
                                         {
                                             document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
                                         }
                                     }
-                                    else if(!busy.includes(device.mac))
+                                    else if(!busy.includes('status-' + type + '-' + j))
                                     {
                                         document.getElementById('status-' + type + '-' + j).value = value;
                                     }
 
-                                    if(!busy.includes(device.mac))
+                                    if(!busy.includes('status-' + type + '-' + j))
                                     {
                                         document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
                                     }
