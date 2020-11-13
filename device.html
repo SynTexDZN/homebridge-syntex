@@ -85,12 +85,12 @@
                         inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
                     },
                     relais: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                        active : { text : 'An', color : 'rgb(60, 60, 80)' },
+                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
                     },
                     switch: {
                         active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
                     },
                     rain: {
                         active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
@@ -274,7 +274,7 @@
                             statusField.setAttribute('type', 'button');
                             statusField.setAttribute('value', 'LADEN ..');
 
-                            if(type == 'relais' || type == 'switch')
+                            if(type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
                             {
                                 statusField.setAttribute('onclick', 'controlSwitch(this)');
                                 statusField.style.cursor = 'pointer';
@@ -474,15 +474,15 @@
                         var type = button.getAttribute('id').split('-')[1];
                         var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
 
-                        if(device.on_url != undefined && device.off_url != undefined)
+                        if(type == 'relais') // TOOD : New Request System
                         {
                             if(value == 'true')
                             {
-                                var state = await Query.complexFetch(device.on_url, 20000, 1, {}, false);
+                                var state = await Query.complexFetch(device.requests[0].url, 20000, 1, {}, false);
                             }
                             else if(value == 'false')
                             {
-                                var state = await Query.complexFetch(device.off_url, 20000, 1, {}, false);
+                                var state = await Query.complexFetch(device.requests[1].url, 20000, 1, {}, false);
                             }
 
                             await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
@@ -496,9 +496,38 @@
                             var state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
                         }
 
-                        if(state != null)
+                        if(state != null && state != 'Error')
                         {
-                            button.style.backgroundColor = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'hsl(205, 75%, 55%)' : 'hsl(18, 75%, 55%)';
+                            var color = 'rgb(60, 60, 80)';
+
+                            if(state == 'true')
+                            {
+                                color = data[type].active.color;
+                            }
+                            else if(state == 'false')
+                            {
+                                color = data[type].inactive.color;
+                            }
+                            else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                            {
+                                if(state.split(':')[0] == 'true')
+                                {
+                                    if(device.spectrum == 'HSL')
+                                    {
+                                        color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
+                                    }
+                                    else
+                                    {
+                                        color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
+                                    }
+                                }
+                                else if(state.split(':')[0] == 'false')
+                                {
+                                    color = 'rgb(60, 60, 80)';
+                                }
+                            }
+
+                            button.style.backgroundColor = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'rgb(60, 60, 80)' : 'hsl(18, 75%, 55%)';
                         
                             if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
                             {
