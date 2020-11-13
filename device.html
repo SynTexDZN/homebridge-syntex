@@ -1317,17 +1317,17 @@
                                             name = n[j];
                                         }
 
-                                        if(!busy.includes(button.getAttribute('id')))
+                                        if(!busy.includes(device.mac))
                                         {
                                             document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
                                         }
                                     }
-                                    else if(!busy.includes(button.getAttribute('id')))
+                                    else if(!busy.includes(device.mac))
                                     {
                                         document.getElementById('status-' + type + '-' + j).value = value;
                                     }
 
-                                    if(!busy.includes(button.getAttribute('id')))
+                                    if(!busy.includes(device.mac))
                                     {
                                         document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
                                     }
