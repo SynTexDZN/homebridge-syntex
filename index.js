@@ -457,48 +457,6 @@ SynTexPlatform.prototype = {
                         }
                     }
 
-                    if(all.ip && all.mac)
-                    {
-                        all.plugin = 'SynTex';
-                    }
-                    else
-                    {
-                        all.plugin = 'SynTexWebHooks';
-                    }
-
-                    var magicHome = await getPluginConfig('SynTexMagicHome');
-
-                    if(magicHome != null)
-                    {
-                        for(var i = 0; i < magicHome.lights.length; i++)
-                        {
-                            if(magicHome.lights[i].mac == urlParams.mac)
-                            {
-                                var type = magicHome.lights[i].setup == 'RGBW' || magicHome.lights[i].setup == 'RGBWW' ? 'rgb' :  magicHome.lights[i].setup.toLowerCase();
-
-                                for(const k in magicHome.lights[i])
-                                {
-                                    if(k == 'setup')
-                                    {
-                                        all['services'] = type;
-                                    }
-                                    else if(k != 'id' && k != 'type')
-                                    {
-                                        all[k] = magicHome.lights[i][k];
-                                    }
-                                }
-
-                                all.spectrum = 'HSL';
-                                all.plugin = 'SynTexMagicHome';
-
-                                if(!magicHome.lights[i].version)
-                                {
-                                    all.version = '99.99.99';
-                                }
-                            }
-                        }
-                    }
-
                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                     var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
                     var obj = {
