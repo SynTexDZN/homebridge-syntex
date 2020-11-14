@@ -493,11 +493,11 @@
                             {
                                 if(device.spectrum == 'HSL')
                                 {
-                                    color = 'hsl(' + parseInt(values[0].split(':')[1]) + ', ' + parseInt(values[0].split(':')[2]) + '%, ' + (25 + parseInt(values[0].split(':')[3]) / 2.5) + '%)';
+                                    color = 'hsl(' + parseInt(values[type + counter][0].value.split(':')[1]) + ', ' + parseInt(values[type + counter][0].value.split(':')[2]) + '%, ' + (25 + parseInt(values[type + counter][0].value.split(':')[3]) / 2.5) + '%)';
                                 }
                                 else
                                 {
-                                    color = 'rgb(' + (parseInt(values[0].split(':')[1]) + 60) + ', ' + (parseInt(values[0].split(':')[2]) + 60) + ', ' + (parseInt(values[0].split(':')[3]) + 60) + ')';
+                                    color = 'rgb(' + (parseInt(values[type + counter][0].value.split(':')[1]) + 60) + ', ' + (parseInt(values[type + counter][0].value.split(':')[2]) + 60) + ', ' + (parseInt(values[type + counter][0].value.split(':')[3]) + 60) + ')';
                                 }
                             }
                             else if(value == 'false')
