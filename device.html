@@ -476,7 +476,7 @@
                         var type = button.getAttribute('id').split('-')[1];
                         var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
 
-                        if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                        if(type == 'switch' || type == 'relais')
                         {
                             if(value == 'true')
                             {
@@ -486,28 +486,36 @@
                             {
                                 color = data[type].inactive.color;
                             }
-                            else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                        }
+                        else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                        {
+                            if(value == 'true')
                             {
-                                if(value == 'true')
+                                if(device.spectrum == 'HSL')
                                 {
-                                    if(device.spectrum == 'HSL')
-                                    {
-                                        color = 'hsl(' + parseInt(values[0].split(':')[1]) + ', ' + parseInt(values[0].split(':')[2]) + '%, ' + (25 + parseInt(values[0].split(':')[3]) / 2.5) + '%)';
-                                    }
-                                    else
-                                    {
-                                        color = 'rgb(' + (parseInt(values[0].split(':')[1]) + 60) + ', ' + (parseInt(values[0].split(':')[2]) + 60) + ', ' + (parseInt(values[0].split(':')[3]) + 60) + ')';
-                                    }
+                                    color = 'hsl(' + parseInt(values[0].split(':')[1]) + ', ' + parseInt(values[0].split(':')[2]) + '%, ' + (25 + parseInt(values[0].split(':')[3]) / 2.5) + '%)';
                                 }
-                                else if(value == 'false')
+                                else
                                 {
-                                    color = 'rgb(60, 60, 80)';
+                                    color = 'rgb(' + (parseInt(values[0].split(':')[1]) + 60) + ', ' + (parseInt(values[0].split(':')[2]) + 60) + ', ' + (parseInt(values[0].split(':')[3]) + 60) + ')';
                                 }
+                            }
+                            else if(value == 'false')
+                            {
+                                color = 'rgb(60, 60, 80)';
                             }
                         }
 
                         button.style.backgroundColor = color;
-                        button.value = value;
+                        
+                        if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
+                        {
+                            button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
+                        }
+                        else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+                        {
+                            button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
+                        }
 
                         if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
                         {
