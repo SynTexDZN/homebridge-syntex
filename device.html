@@ -85,7 +85,7 @@
                         inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
                     },
                     relais: {
-                        active : { text : 'An', color : 'rgb(60, 60, 80)' },
+                        active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
                         inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
                     },
                     switch: {
@@ -108,10 +108,18 @@
                         active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
                         inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
                     },
+                    rgbww: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
+                    rgbcw: {
+                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+                    },
                     temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
                     humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
                     light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-                };
+                }; 
 
                 loadServices();
 
@@ -470,7 +478,6 @@
                     {
                         busy.push(button.getAttribute('id'));
 
-                        var state = null;
                         var color = 'rgb(60, 60, 80)';
                         var counter = button.getAttribute('id').split('-')[2];
                         var type = button.getAttribute('id').split('-')[1];
@@ -519,47 +526,13 @@
 
                         if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
                         {
-                            state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
+                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
                         }
                         else if(device.plugin == 'SynTexMagicHome')
                         {
-                            state = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
+                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
                         }
 
-                        console.log(state);
-                        /*
-                        if(state != null && state != 'Error')
-                        {
-                            var color = 'rgb(60, 60, 80)';
-
-                            if(state == 'true')
-                            {
-                                color = data[type].active.color;
-                            }
-                            else if(state == 'false')
-                            {
-                                color = data[type].inactive.color;
-                            }
-                            else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-                            {
-                                if(state.split(':')[0] == 'true')
-                                {
-                                    if(device.spectrum == 'HSL')
-                                    {
-                                        color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
-                                    }
-                                    else
-                                    {
-                                        color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
-                                    }
-                                }
-                                else if(state.split(':')[0] == 'false')
-                                {
-                                    color = 'rgb(60, 60, 80)';
-                                }
-                            }
-                        }
-                        */
                         const index = busy.indexOf(button.getAttribute('id'));
 
                         if(index > -1)
