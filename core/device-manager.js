@@ -452,7 +452,7 @@ async function reloadAccessories()
                 {
                     if(devices[k].id == accessories[j].mac)
                     {
-                        for(var l = 0; l < Object.keys(devices[j]).length; l++)
+                        for(var l = 0; l < Object.keys(devices[k]).length; l++)
                         {
                             accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
                         }
