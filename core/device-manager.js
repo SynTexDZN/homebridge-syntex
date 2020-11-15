@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var config, storage, dataStorage, logger, webhookPort, accessories;
+var config, storage, dataStorage, logger, webhookPort, accessories, DeviceManager;
 var configOBJ = null;
 
 module.exports = class DeviceManager
@@ -11,6 +11,8 @@ module.exports = class DeviceManager
         dataStorage = store(wConf.cache_directory);
         logger = slog;
         webhookPort = wConf.port;
+
+        DeviceManager = this;
 
         reloadConfig().then((success) => {
 
