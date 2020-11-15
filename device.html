@@ -606,7 +606,14 @@
                                             {
                                                 for(var k = activity[l].update.length - 1; k >= 0; k--)
                                                 {
-                                                    values[type + j].push({ time : activity[l].update[k].t, value : activity[l].update[k].v });
+                                                    var val = activity[l].update[k].v;
+
+                                                    if(val.includes(':'))
+                                                    {
+                                                        val = val.split(':')[0];
+                                                    }
+
+                                                    values[type + j].push({ time : activity[l].update[k].t, value : val });
                                                 }
                                             }
                                         }
