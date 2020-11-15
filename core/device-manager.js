@@ -74,6 +74,8 @@ module.exports = class DeviceManager
 
                 if(configOBJ != null)
                 {
+                    var needToSave = false;
+
                     for(const i in configOBJ.platforms)
                     {
                         if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
@@ -86,10 +88,15 @@ module.exports = class DeviceManager
 
                                     console.log(1, 'SAVE ACCESSORIES');
 
-                                    saveAccessories(); 
+                                    needToSave = true;
                                 }
                             }
                         }
+                    }
+
+                    if(needToSave)
+                    {
+                        saveAccessories();
                     }
                 }
                 else
@@ -143,6 +150,8 @@ module.exports = class DeviceManager
                                 else
                                 {
                                     logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+
+                                    reloadAccessories();
 
                                     resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
                                 }
@@ -205,6 +214,8 @@ module.exports = class DeviceManager
                                 else
                                 {
                                     logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+
+                                    reloadAccessories();
 
                                     resolve(['Success', 'Success']);
                                 }
@@ -439,63 +450,72 @@ function saveAccessories()
     });
 }
 
+var reloading = false;
+
 async function reloadAccessories()
 {
-    accessories = [];
-
-    console.log(4, 'RELOAD ACCESSORIES', accessories);
-
-    var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
-    var devices = await deviceManager.getDevices();
-
-    for(const i in configOBJ.platforms)
+    if(!reloading)
     {
-        if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
+        reloading = true;
+
+        var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
+        var devices = await deviceManager.getDevices();
+
+        accessories = [];
+
+        console.log(4, 'RELOAD ACCESSORIES', accessories);
+
+        for(const i in configOBJ.platforms)
         {
-            accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
-
-            console.log(5, 'PUSH APPLY', accessories.length);
-
-            for(var j = 0; j < accessories.length; j++)
+            if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
             {
-                for(const k in devices)
+                accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
+
+                console.log(5, 'PUSH APPLY', accessories.length);
+
+                for(var j = 0; j < accessories.length; j++)
                 {
-                    if(devices[k].id == accessories[j].mac)
+                    for(const k in devices)
                     {
-                        for(var l = 0; l < Object.keys(devices[k]).length; l++)
+                        if(devices[k].id == accessories[j].mac)
                         {
-                            accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+                            for(var l = 0; l < Object.keys(devices[k]).length; l++)
+                            {
+                                accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+                            }
                         }
                     }
-                }
 
-                if(accessories[j].plugin == null)
-                {
-                    accessories[j].plugin = configOBJ.platforms[i].platform;
-                }
-
-                if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
-                {
-                    accessories[j].plugin = 'SynTex';
-                }
-
-                if(accessories[j].plugin == 'SynTexMagicHome')
-                {
-                    if(accessories[j].type == "light")
+                    if(accessories[j].plugin == null)
                     {
-                        accessories[j].spectrum = 'HSL'; 
+                        accessories[j].plugin = configOBJ.platforms[i].platform;
                     }
 
-                    if(accessories[j].version == null)
+                    if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
                     {
-                        accessories[j].version = '99.99.99';
+                        accessories[j].plugin = 'SynTex';
+                    }
+
+                    if(accessories[j].plugin == 'SynTexMagicHome')
+                    {
+                        if(accessories[j].type == "light")
+                        {
+                            accessories[j].spectrum = 'HSL'; 
+                        }
+
+                        if(accessories[j].version == null)
+                        {
+                            accessories[j].version = '99.99.99';
+                        }
                     }
                 }
             }
         }
-    }
 
-    console.log(6, 'PUSH APPLY', accessories.length);
+        reloading = false;
+
+        console.log(6, 'PUSH APPLY', accessories.length);
+    }
 }
 
 function reloadConfig()
