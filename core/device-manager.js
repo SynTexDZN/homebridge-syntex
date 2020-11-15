@@ -444,7 +444,7 @@ async function reloadAccessories()
     {
         if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
         {
-            accessories = accessories.concat(configOBJ.platforms[i].accessories);
+            accessories.push.apply(accessories, configOBJ.platforms[i].accessories);
 
             for(var j = 0; j < accessories.length; j++)
             {
