@@ -72,16 +72,24 @@ module.exports = class DeviceManager
                     self.setValue(mac, 'ip', ip);
                 }
 
+                console.log('DEVICE NOT NULL');
+
                 if(configOBJ != null)
                 {
+                    console.log('CONFIG NOT NULL');
+
                     for(const i in configOBJ.platforms)
                     {
                         if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
                         {
+                            console.log('WEBHOOKS PLATFORM');
+
                             for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
                             {
                                 if(configOBJ.platforms[i].accessories[j].mac == mac && version != configOBJ.platforms[i].accessories[j].version)
                                 {
+                                    console.log('CHANGE VERSION');
+
                                     configOBJ.platforms[i].accessories[j].version = version;
 
                                     saveAccessories(); 
