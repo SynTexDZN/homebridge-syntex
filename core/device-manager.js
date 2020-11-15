@@ -86,8 +86,6 @@ module.exports = class DeviceManager
                                 {
                                     configOBJ.platforms[i].accessories[j].version = version;
 
-                                    console.log(1, 'SAVE ACCESSORIES');
-
                                     needToSave = true;
                                 }
                             }
@@ -428,8 +426,6 @@ module.exports = class DeviceManager
 
 function saveAccessories()
 {
-    console.log(2, 'SAVE ACCESSORIES');
-
     return new Promise(resolve => {
 
         config.add(configOBJ, function(err) {
@@ -440,8 +436,6 @@ function saveAccessories()
             }
             else
             {
-                console.log(3, 'RELOAD ACCESSORIES');
-
                 reloadAccessories();
             }
 
@@ -463,15 +457,11 @@ async function reloadAccessories()
 
         accessories = [];
 
-        console.log(4, 'RELOAD ACCESSORIES', accessories);
-
         for(const i in configOBJ.platforms)
         {
             if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
             {
                 accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
-
-                console.log(5, 'PUSH APPLY', accessories.length);
 
                 for(var j = 0; j < accessories.length; j++)
                 {
@@ -513,8 +503,6 @@ async function reloadAccessories()
         }
 
         reloading = false;
-
-        console.log(6, 'PUSH APPLY', accessories.length);
     }
 }
 
