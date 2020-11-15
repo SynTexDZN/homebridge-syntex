@@ -1,5 +1,5 @@
 const store = require('json-fs-store');
-var config, storage, dataStorage, logger, webhookPort, accessories, DeviceManager;
+var config, storage, dataStorage, logger, webhookPort, accessories, deviceManager;
 var configOBJ = null;
 
 module.exports = class DeviceManager
@@ -12,8 +12,6 @@ module.exports = class DeviceManager
         logger = slog;
         webhookPort = wConf.port;
 
-        DeviceManager = this;
-
         reloadConfig().then((success) => {
 
             if(success)
@@ -21,6 +19,8 @@ module.exports = class DeviceManager
                 reloadAccessories();
             }
         });
+
+        deviceManager = this;
     }
 
     removeDevice(mac)
@@ -437,7 +437,7 @@ async function reloadAccessories()
 {
     accessories = null;
 
-    accessories = await DeviceManager.getDevices();
+    accessories = await deviceManager.getDevices();
 
     var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
 
