@@ -72,25 +72,19 @@ module.exports = class DeviceManager
                     self.setValue(mac, 'ip', ip);
                 }
 
-                console.log('DEVICE NOT NULL');
-
                 if(configOBJ != null)
                 {
-                    console.log('CONFIG NOT NULL');
-
                     for(const i in configOBJ.platforms)
                     {
                         if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
                         {
-                            console.log('WEBHOOKS PLATFORM');
-
                             for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
                             {
                                 if(configOBJ.platforms[i].accessories[j].mac == mac && version != configOBJ.platforms[i].accessories[j].version)
                                 {
-                                    console.log('CHANGE VERSION');
-
                                     configOBJ.platforms[i].accessories[j].version = version;
+
+                                    console.log(1, 'SAVE ACCESSORIES');
 
                                     saveAccessories(); 
                                 }
@@ -423,6 +417,8 @@ module.exports = class DeviceManager
 
 function saveAccessories()
 {
+    console.log(2, 'SAVE ACCESSORIES');
+
     return new Promise(resolve => {
 
         config.add(configOBJ, function(err) {
@@ -433,6 +429,8 @@ function saveAccessories()
             }
             else
             {
+                console.log(3, 'RELOAD ACCESSORIES');
+
                 reloadAccessories();
             }
 
@@ -445,6 +443,8 @@ async function reloadAccessories()
 {
     accessories = [];
 
+    console.log(4, 'RELOAD ACCESSORIES', accessories);
+
     var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
     var devices = await deviceManager.getDevices();
 
@@ -453,6 +453,8 @@ async function reloadAccessories()
         if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
         {
             accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
+
+            console.log(5, 'PUSH APPLY', accessories.length);
 
             for(var j = 0; j < accessories.length; j++)
             {
@@ -492,6 +494,8 @@ async function reloadAccessories()
             }
         }
     }
+
+    console.log(6, 'PUSH APPLY', accessories.length);
 }
 
 function reloadConfig()
