@@ -306,6 +306,10 @@ module.exports = class DeviceManager
                         {
                             logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
                         }
+                        else
+                        {
+                            reloadAccessories();
+                        }
 
                         resolve(err ? false : true);
                     });
@@ -348,6 +352,10 @@ module.exports = class DeviceManager
                     if(err)
                     {
                         logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
+                    }
+                    else
+                    {
+                        reloadAccessories();
                     }
 
                     resolve(err ? false : true);
@@ -423,9 +431,11 @@ function saveAccessories()
     });
 }
 
-function reloadAccessories()
+async function reloadAccessories()
 {
-    accessories = [];
+    accessories = null;
+
+    accessories = await DeviceManager.getDevices();
 
     var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
 

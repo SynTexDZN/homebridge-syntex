@@ -442,25 +442,10 @@ SynTexPlatform.prototype = {
 
                 if(urlParams.mac != null)
                 {
-                    var accessory = DeviceManager.getAccessory(urlParams.mac);
-                    var all = { ...accessory };
-                    var device = await DeviceManager.getDevice(urlParams.mac);
-
-                    if(device != null)
-                    {
-                        for(const k in device)
-                        {
-                            if(k != 'id' && k != 'type')
-                            {
-                                all[k] = device[k];
-                            }
-                        }
-                    }
-
                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                     var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
                     var obj = {
-                        device: JSON.stringify(all),
+                        device: JSON.stringify(DeviceManager.getAccessory(urlParams.mac)),
                         wPort: 1710,
                         mPort: 1712
                     };
@@ -482,29 +467,10 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage(['/', '/index'], async (response, urlParams, content) => {
 
-                var all = [];
-                var accessories = DeviceManager.getAccessories();
-                var devices = await DeviceManager.getDevices();
                 var bridgeData = await DeviceManager.getBridgeStorage();
 
-                all.push.apply(all, accessories);
-                
-                for(var i = 0; i < all.length; i++)
-                {
-                    for(var j = 0; j < devices.length; j++)
-                    {
-                        if(all[i].mac == devices[j].id)
-                        {
-                            for(var k = 0; k < Object.keys(devices[j]).length; k++)
-                            {
-                                all[i][Object.keys(devices[j])[k]] = devices[j][Object.keys(devices[j])[k]];
-                            }
-                        }
-                    }
-                }
-                
                 var obj = {
-                    devices: JSON.stringify(all),
+                    devices: JSON.stringify(DeviceManager.getAccessories()),
                     restart: '-'
                 };
                 
