@@ -169,19 +169,19 @@
 
                 infos.innerHTML += '<p><b>Mac: </b>' + device.mac + '</p>';
 
-                if(device.ip != undefined)
+                if(device.ip != null)
                 {
                     infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
                 }
                 
                 infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(services) + '</p>';
 
-                if(device.version != undefined)
+                if(device.version != null && device.version != '99.99.99')
                 {
                     infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
                 }
 
-                if(device.room != undefined)
+                if(device.room != null)
                 {
                     infos.innerHTML += '<p><b>Raum: </b>' + device.room + '</p>';
                 }
@@ -1524,7 +1524,7 @@
                             id : 'update',
                             pending : { value : 'Zurücksetzen ..', z : 2 },
                             executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
-                            connectionError : { value : 'Keine Verbindung ' + (device.ip == undefined ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+                            connectionError : { value : 'Keine Verbindung ' + (device.ip == null ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
                         };
 
                         var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) });
