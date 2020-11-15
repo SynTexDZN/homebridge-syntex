@@ -435,11 +435,10 @@ function saveAccessories()
 
 async function reloadAccessories()
 {
-    accessories = null;
-
-    accessories = await deviceManager.getDevices();
+    accessories = [];
 
     var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
+    var devices = await deviceManager.getDevices();
 
     for(const i in configOBJ.platforms)
     {
@@ -449,6 +448,17 @@ async function reloadAccessories()
 
             for(var j = 0; j < accessories.length; j++)
             {
+                for(const k in devices)
+                {
+                    if(devices[k].id == accessories[j].mac)
+                    {
+                        for(var l = 0; l < Object.keys(devices[j]).length; l++)
+                        {
+                            accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+                        }
+                    }
+                }
+
                 if(accessories[j].plugin == null)
                 {
                     accessories[j].plugin = configOBJ.platforms[i].platform;
