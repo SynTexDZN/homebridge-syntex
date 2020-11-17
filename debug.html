@@ -52,7 +52,9 @@
                     <input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('style', 'config', false)" disabled>
                 </div>
                 <textarea style="margin-top: 100px; white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" readonly>Laden ..</textarea>
-                <input value="Config Kopieren" type="button" style="margin-top: 20px; margin-bottom: 100px" class="gradient-blue-green" onclick="copyConfig()">
+                <div class="main" style="margin: 0 auto; width: 100%; max-width: 400px">
+                    <input value="Config Kopieren" type="button" style="margin-top: 20px; margin-bottom: 100px" class="gradient-blue-green" onclick="copyConfig()">
+                </div>
                 <div class="navigation-panel">
                     <div class="sticky-inset">
                         <input type="button" value="Zum Dashboard" onclick="Essentials.leavePage('/')">
@@ -76,7 +78,7 @@
 
                 window.configJSON = '<%configJSON%>';
 
-                document.getElementById('config-container').innerHTML = JSON.stringify(JSON.parse(configJSON), null, '\t');
+                document.getElementById('config-container').value = JSON.stringify(JSON.parse(configJSON), null, '\t');
 
                 Preloader.finish();
             
