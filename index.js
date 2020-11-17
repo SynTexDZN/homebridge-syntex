@@ -587,7 +587,7 @@ SynTexPlatform.prototype = {
                 response.end();
             });
 
-            WebServer.addPage('/debug', async (response) => {
+            WebServer.addPage('/debug', async (response, urlParams, content) => {
 
                 conf.load('config', (err, json) => {    
 
