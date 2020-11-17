@@ -21,7 +21,7 @@ function load()
 
 function removePreloader()
 {
-    if(scriptsFinished && loadFinished)
+    if(document.getElementById('preloader') != null && scriptsFinished && loadFinished)
     {
         document.getElementById('preloader').style.opacity = 0;
         document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = '.2s';
