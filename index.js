@@ -586,6 +586,23 @@ SynTexPlatform.prototype = {
                 response.write(HTMLQuery.sendValues(content, obj));
                 response.end();
             });
+
+            WebServer.addPage('/debug', async (response) => {
+
+                conf.load('config', (err, json) => {    
+
+                    if(json && !err)
+                    {
+                        var obj = {
+                            configJSON: JSON.stringify(json)
+                        };
+
+                        response.write(HTMLQuery.sendValues(content, obj));
+                        response.end();
+                    }
+                });
+            });
+
             /*
             if(!relPath)
             {

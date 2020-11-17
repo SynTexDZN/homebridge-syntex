@@ -12,12 +12,19 @@
         </style>
     </head>
     <body>
+        <div id="preloader">
+            <div class="loader-4"><span></span></div>
+        </div>
         <div id="content">
-            <title>Gerät Erstellen</title>
-            <div id="create" style="transition: .2s ease-in-out">
-                <h1>Schalter Erstellen</h1>
-                <p>( Ein virtuelles Gerät )</p>
-                <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+            <title>Debug Mode</title>
+            <h1 style="margin-bottom: 0; margin-top: 32px">Debug</h1>
+            <div id="style" class="main" style="margin-top: 10px; transition: .2s ease-in-out">
+                <p style="margin-bottom: 100px; margin-top: 20px">Style</p>
+                <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                    <input class="white" type="button" value="STYLE" onclick="Essentials.switchPage('config', 'style', false)" style="margin-right: 20px" disabled>
+                    <input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('style', 'config', false)">
+                </div>
+                <div style="margin: 100px 0">
                     <input type="text">
                     <input type="button" style="margin-top: 20px">
                     <input type="button" style="margin-top: 20px" class="gradient-blue-green">
@@ -34,49 +41,51 @@
                             <option value="8">9</option>
                         </select>
                     </div>
-                    <div class="navigation-panel">
-                        <div class="sticky-inset">
-                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0">
-                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out">
-                            <input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out">
-                        </div>
+                </div>
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <input type="button" value="Zum Dashboard" onclick="Essentials.leavePage('/')">
                     </div>
-                </form>
+                </div>
+            </div>
+            <div id="config" class="main" style="display: none; opacity: 0; transition: .2s ease-in-out">
+                <p style="margin-bottom: 100px; margin-top: 20px">Config</p>
+                <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                    <input class="white" type="button" value="STYLE" onclick="Essentials.switchPage('config', 'style', false)" style="margin-right: 20px">
+                    <input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('style', 'config', false)" disabled>
+                </div>
+                <textarea style="margin: 100px 0" id="config-container"></textarea>
+                <div class="navigation-panel">
+                    <div class="sticky-inset">
+                        <input type="button" value="Zum Dashboard" onclick="Essentials.leavePage('/')">
+                    </div>
+                </div>
             </div>
             <script type="module">
 
                 import { Query } from '/js/query.js';
                 import { Essentials } from '/js/essentials.js';
                 import { Replacer } from '/js/replace-select.js';
-            
+                import { Preloader } from '/js/loading.js';
+    
                 Query.SETUP(Essentials);
                 Essentials.SETUP(Query, Preloader);
             
                 window.Query = Query;
                 window.Essentials = Essentials;
                 window.Replacer = Replacer;
+                window.Preloader = Preloader;
 
-                //create();
+                window.configJSON = '<%configJSON%>';
+
+                document.getElementById('config-container').innerHTML = configJSON;
 
                 Preloader.finish();
             
             </script>
             <script>
             
-                function create()
-                {
-                    var e = document.createElement('div');
-            
-                    e.className = 'custom-select';
-                    e.innerHTML = '<select><option img="/img/accessory/light.png">Wetter Süden</option><option>B</option></select>';
                 
-                    document.getElementsByClassName('main')[0].appendChild(Replacer.createSelectMenu(e));
-
-                    var o = document.getElementsByClassName('custom-select')[0].getElementsByTagName('select')[0].selectedIndex;
-                    var option = document.getElementsByClassName('custom-select')[0].getElementsByTagName('select')[0].children[o];
-
-                    console.log(option.value, option.getAttribute('mac'), option.getAttribute('name'));
-                }
             
             </script>
         </div>

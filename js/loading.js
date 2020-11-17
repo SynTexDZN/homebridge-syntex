@@ -41,6 +41,16 @@ function expandWrapper(wrapper)
     for(var i = 0; i < wrapper.children.length; i++)
     {
         length += wrapper.children[i].offsetHeight;
+
+        if(wrapper.children[i].style.marginTop)
+        {
+            length += parseInt(wrapper.children[i].style.marginTop);
+        }
+
+        if(wrapper.children[i].style.marginBottom)
+        {
+            length += parseInt(wrapper.children[i].style.marginBottom);
+        }
     }
 
     wrapper.style.maxHeight = length + 1;
