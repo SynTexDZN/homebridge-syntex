@@ -41,21 +41,23 @@
                 </div>
                 <div class="navigation-panel">
                     <div class="sticky-inset">
-                        <input type="button" value="Zum Dashboard" onclick="Essentials.leavePage('/')">
+                        <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
                     </div>
                 </div>
             </div>
             <div id="config" class="main" style="display: none; opacity: 0; transition: .2s ease-in-out">
                 <p style="margin-bottom: 100px; margin-top: 20px">Config</p>
-                <div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+                <div class="main" style="margin-top: 10px; display: flex">
                     <input class="white" type="button" value="STYLE" onclick="Essentials.switchPage('config', 'style', false)" style="margin-right: 20px">
                     <input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('style', 'config', false)" disabled>
                 </div>
-                <textarea style="margin-top: 100px; white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" readonly>Laden ..</textarea>
+                <textarea style="margin: 100px 0; white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" readonly>Laden ..</textarea>
                 <div class="navigation-panel">
                     <div class="sticky-inset">
-                        <input type="button" value="Zum Dashboard" onclick="Essentials.leavePage('/')">
-                        <input value="Config Kopieren" type="button" class="gradient-blue-green" onclick="copyConfig()">
+                        <div style="display: flex">
+                            <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
+                            <input value="Config Kopieren" type="button" class="gradient-blue-green" style="margin-left: 20px" onclick="copyConfig()">
+                        </div>
                     </div>
                 </div>
             </div>
