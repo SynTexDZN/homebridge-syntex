@@ -591,20 +591,26 @@ function addToConfig(mac, ip, name, services, buttons)
 
             if(services.includes('relais') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
             {
-                accessories[index]['requests'] = [];
+                for(var j = 0; j < services.length; j++)
+                {
+                    if(services[i] == 'relais' || services[i] == 'rgb' || services[i] == 'rgbw' || services[i] == 'rgbww' || services[i] == 'rgbcw')
+                    {
+                        accessories[index]['services'][j] = { type : accessories[index]['services'][j], requests : [] };
+                    }
+
+                    if(services[i] == 'relais')
+                    {
+                        accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + ip + '/relais?value=true' });
+                        accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + ip + '/relais?value=false' });
+                    }
+                    
+                    if(services[i] == 'rgb' || services[i] == 'rgbw' || services[i] == 'rgbww' || services[i] == 'rgbcw')
+                    {
+                        accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
+                    }
+                }
             }
 
-            if(services.includes('relais'))
-            {
-                accessories[index]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + ip + '/relais?value=true' });
-                accessories[index]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + ip + '/relais?value=false' });
-            }
-            
-            if(services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
-            {
-                accessories[index]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
-            }
-            
             if(services.includes('statelessswitch'))
             {
                 accessories[index]['buttons'] = buttons;
