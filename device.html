@@ -1177,11 +1177,11 @@
                             {
                                 if(device.plugin && device.plugin == 'SynTexMagicHome')
                                 {
-                                    var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=light', 10000);
+                                    var state = JSON.parse(await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?mac=' + device.mac + '&type=light', 10000));
                                 }
                                 else
                                 {
-                                    var state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000);
+                                    var state = JSON.parse(await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?mac=' + device.mac + '&type=' + type + '&counter=' + j, 10000));
                                 }
                         
                                 if(temp[type + j] && state != temp[type + j] && device.plugin != 'SynTexMagicHome')
