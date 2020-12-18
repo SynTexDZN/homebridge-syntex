@@ -283,7 +283,7 @@
                             }
                             else
                             {*/
-                                if(message.includes('(') && message.includes(')'))
+                                if(message.includes('( ') && message.includes(' )'))
                                 {
                                     filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
                                 }

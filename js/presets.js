@@ -12,7 +12,7 @@ var presets = [
     {
         id : 'SynTexWebHooks',
         name : 'SynTex Virtual Device',
-        getResetURL : function(device) { return '/serverside/remove-device?mac=' + device.mac },
+        getResetURL : function(device) { return '/serverside/remove-device?id=' + device.id },
         getRestartURL : function() { return null },
         getReconnectURL : function() { return null },
         getUpdateURL : function() { return null },

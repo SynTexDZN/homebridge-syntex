@@ -70,17 +70,17 @@
                 window.Query = Query;
                 window.Essentials = Essentials;
 
-                window.urlMac = (new URL(window.location.href)).searchParams.get('mac');
+                window.urlID = (new URL(window.location.href)).searchParams.get('id');
                 window.ping = false;
                 window.ip = 'http://192.168.4.1/';
                 window.ipp = (new URL(window.location.href)).searchParams.get('ip');
                 window.bridgeIP = 'http://<%bridge-ip%>';
                 window.timeRemaining = 0;
 
-                if(urlMac)
+                if(urlID)
                 {
-                    document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?mac=" + urlMac + "&settings')");
-                    document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?mac=" + urlMac + "&settings')");
+                    document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + urlID + "&settings')");
+                    document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + urlID + "&settings')");
                     document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
                 }
 
@@ -244,7 +244,7 @@
 
                         Essentials.switchPage('connecting', 'success', false);
 
-                        redirectCountdown('/device?mac=' + mac);     
+                        redirectCountdown('/device?id=' + mac);     
                     }
                     
                     return false;

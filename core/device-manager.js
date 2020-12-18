@@ -23,23 +23,23 @@ module.exports = class DeviceManager
         deviceManager = this;
     }
 
-    removeDevice(mac)
+    removeDevice(id)
     {
         return new Promise((resolve) => {
 
             if(configOBJ != null)
             {
-                while(!checkMac(mac))
+                while(!checkID(id))
                 {
-                    removeFromConfig(mac);
+                    removeFromConfig(id);
                 }
 
                 saveAccessories().then(async (success) => {
 
                     if(success)
                     {
-                        await removeFromSettingsStorage(mac);
-                        await removeFromDataStorage(mac);
+                        await removeFromSettingsStorage(id);
+                        await removeFromDataStorage(id);
                     }
 
                     resolve(success);
@@ -54,14 +54,14 @@ module.exports = class DeviceManager
         });
     }
 
-    initDevice(mac, ip, name, version, events, services)
+    initDevice(id, ip, name, version, events, services)
     {
         const self = this;
 
         return new Promise(async function(resolve) {
             
-            var eventButton = checkEventButton(mac);
-            var device = await self.getDevice(mac);
+            var eventButton = checkEventButton(id);
+            var device = await self.getDevice(id);
 
             name = name.replace(new RegExp('%', 'g'), ' ');
 
@@ -69,7 +69,7 @@ module.exports = class DeviceManager
             {
                 if(ip != device['ip'])
                 {
-                    self.setValue(mac, 'ip', ip);
+                    self.setValue(id, 'ip', ip);
                 }
 
                 if(configOBJ != null)
@@ -82,7 +82,7 @@ module.exports = class DeviceManager
                         {
                             for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
                             {
-                                if(configOBJ.platforms[i].accessories[j].mac == mac && version != configOBJ.platforms[i].accessories[j].version)
+                                if(configOBJ.platforms[i].accessories[j].id == id && version != configOBJ.platforms[i].accessories[j].version)
                                 {
                                     configOBJ.platforms[i].accessories[j].version = version;
 
@@ -106,7 +106,7 @@ module.exports = class DeviceManager
 
                 var status = 'Success';
 
-                if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await createEventButton(mac, device['name'], (device['events'] || []).length))
+                if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await createEventButton(id, device['name'], (device['events'] || []).length))
                 {
                     status = 'Init';
                 }
@@ -117,19 +117,19 @@ module.exports = class DeviceManager
             {
                 if(configOBJ != null)
                 {
-                    while(!checkMac(mac))
+                    while(!checkID(id))
                     {
-                        removeFromConfig(mac);
+                        removeFromConfig(id);
                     }
 
-                    addToConfig(mac, ip, name, JSON.parse(services), JSON.parse(events).length);
+                    addToConfig(id, ip, name, JSON.parse(services), JSON.parse(events).length);
 
                     saveAccessories().then(async (success) => {
 
                         if(success)
                         {
                             var device = {
-                                id: mac,
+                                id: id,
                                 ip: ip,
                                 name: name,
                                 active: 1,
@@ -141,13 +141,13 @@ module.exports = class DeviceManager
 
                                 if(err)
                                 {
-                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
+                                    logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', '']);
                                 }
                                 else
                                 {
-                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+                                    logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
 
                                     reloadAccessories();
 
@@ -175,15 +175,15 @@ module.exports = class DeviceManager
         });
     }
 
-    initSwitch(mac, name)
+    initSwitch(id, name)
     {
         const self = this;
 
         return new Promise(function(resolve) {
             
-            if(!checkMac(mac))
+            if(!checkID(id))
             {
-                resolve(['Error', 'Mac ist bereits Vergeben!']);          
+                resolve(['Error', 'ID ist bereits Vergeben!']);          
             }
             else if(!self.checkName(name))
             {
@@ -193,25 +193,25 @@ module.exports = class DeviceManager
             {
                 if(configOBJ != null)
                 {
-                    addToConfig(mac, null, name, 'switch', 0);
+                    addToConfig(id, null, name, 'switch', 0);
 
                     saveAccessories().then((success) => {
 
                         if(success)
                         {
-                            var device = { id: mac, name: name, active: 1 };
+                            var device = { id: id, name: name, active: 1 };
 
                             storage.add(device, (err) => {
 
                                 if(err)
                                 {
-                                    logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht erstellt werden! ' + err);
+                                    logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht erstellt werden! ' + err);
 
                                     resolve(['Error', 'Fehler beim Erstellen!']);
                                 }
                                 else
                                 {
-                                    logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+                                    logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
 
                                     reloadAccessories();
 
@@ -248,22 +248,22 @@ module.exports = class DeviceManager
         return true;
     }
 
-    getValue(mac, param)
+    getValue(id, param)
     {
         return new Promise(resolve => {
             
-            storage.load(mac, (err, obj) => {  
+            storage.load(id, (err, obj) => {  
 
                 resolve(!obj || err ? null : obj[param]);
             });
         });
     }
 
-    getDevice(mac)
+    getDevice(id)
     {
         return new Promise(resolve => {
             
-            storage.load(mac, (err, obj) => {  
+            storage.load(id, (err, obj) => {  
                 
                 resolve(!obj || err ? null : obj);
             });
@@ -281,11 +281,11 @@ module.exports = class DeviceManager
         });
     }
 
-    getAccessory(mac)
+    getAccessory(id)
     {
         for(var i = 0; i < accessories.length; i++)
         {
-            if(accessories[i].mac == mac)
+            if(accessories[i].id == id)
             {
                 return accessories[i];
             }
@@ -299,11 +299,11 @@ module.exports = class DeviceManager
         return accessories;
     }
 
-    setValue(mac, param, value)
+    setValue(id, param, value)
     {
         return new Promise(resolve => {
             
-            storage.load(mac, (err, obj) => {  
+            storage.load(id, (err, obj) => {  
 
                 if(!obj || err)
                 {
@@ -317,7 +317,7 @@ module.exports = class DeviceManager
 
                         if(err)
                         {
-                            logger.log('error', 'bridge', 'Bridge', mac + '.json konnte nicht aktualisiert werden! ' + err);
+                            logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht aktualisiert werden! ' + err);
                         }
                         else
                         {
@@ -335,15 +335,15 @@ module.exports = class DeviceManager
     {
         return new Promise(resolve => {
             
-            storage.load(values.mac, (err, obj) => {  
+            storage.load(values.id, (err, obj) => {  
 
                 if(!obj || err)
                 {
-                    obj = { id : values.mac };
+                    obj = { id : values.id };
                     
                     for(const i in values)
                     {
-                        if(i != 'mac')
+                        if(i != 'id')
                         {
                             obj[i] = values[i];
                         }
@@ -353,7 +353,7 @@ module.exports = class DeviceManager
                 {
                     for(const i in values)
                     {
-                        if(i != 'mac')
+                        if(i != 'id')
                         {
                             obj[i] = values[i];
                         }
@@ -364,7 +364,7 @@ module.exports = class DeviceManager
 
                     if(err)
                     {
-                        logger.log('error', 'bridge', 'Bridge', values.mac + '.json konnte nicht aktualisiert werden! ' + err);
+                        logger.log('error', 'bridge', 'Bridge', values.id + '.json konnte nicht aktualisiert werden! ' + err);
                     }
                     else
                     {
@@ -467,7 +467,7 @@ async function reloadAccessories()
                 {
                     for(const k in devices)
                     {
-                        if(devices[k].id == accessories[j].mac)
+                        if(devices[k].id == accessories[j].id)
                         {
                             for(var l = 0; l < Object.keys(devices[k]).length; l++)
                             {
@@ -528,7 +528,7 @@ function reloadConfig()
     });
 }
 
-function createEventButton(mac, name, buttons)
+function createEventButton(id, name, buttons)
 {
     return new Promise(resolve => {
 
@@ -536,7 +536,7 @@ function createEventButton(mac, name, buttons)
         {
             if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
             {
-                configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { mac : mac, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
+                configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { id : id, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
             }
         }
 
@@ -544,7 +544,7 @@ function createEventButton(mac, name, buttons)
 
             if(success)
             {
-                logger.log('success', mac, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + mac + ' )');
+                logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
             }
 
             resolve(success ? true : false);
@@ -552,11 +552,11 @@ function createEventButton(mac, name, buttons)
     });
 }
 
-function checkMac(mac)
+function checkID(id)
 {
     for(const i in accessories)
     {
-        if(accessories[i].mac == mac)
+        if(accessories[i].id == id)
         {
             return false;
         }
@@ -565,11 +565,11 @@ function checkMac(mac)
     return true;
 }
 
-function checkEventButton(mac)
+function checkEventButton(id)
 {
     for(const j in accessories)
     {
-        if(accessories[j].mac === mac && accessories[j].services.includes('statelessswitch'))
+        if(accessories[j].id === id && accessories[j].services.includes('statelessswitch'))
         {
             return true;
         }
@@ -578,7 +578,7 @@ function checkEventButton(mac)
     return false;
 }
 
-function addToConfig(mac, ip, name, services, buttons)
+function addToConfig(id, ip, name, services, buttons)
 {
     for(const i in configOBJ.platforms)
     {
@@ -587,7 +587,7 @@ function addToConfig(mac, ip, name, services, buttons)
             var accessories = configOBJ.platforms[i].accessories;
             var index = accessories.length;
 
-            accessories[index] = { mac : mac, name : name, services : services };
+            accessories[index] = { id : id, name : name, services : services };
 
             if(services.includes('relais') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
             {
@@ -619,7 +619,7 @@ function addToConfig(mac, ip, name, services, buttons)
     }
 }
 
-function removeFromDataStorage(mac)
+function removeFromDataStorage(id)
 {
     return new Promise(function(resolve) {
 
@@ -629,7 +629,7 @@ function removeFromDataStorage(mac)
             {
                 for(var i = 0; i < objs.length; i++)
                 {
-                    if(objs[i].id.startsWith(mac))
+                    if(objs[i].id.startsWith(id))
                     {
                         dataStorage.remove(objs[i].id, (err) => {});
                     }
@@ -641,7 +641,7 @@ function removeFromDataStorage(mac)
     });
 }
 
-function removeFromConfig(mac)
+function removeFromConfig(id)
 {
     for(const i in configOBJ.platforms)
     {
@@ -649,7 +649,7 @@ function removeFromConfig(mac)
         {
             for(const j in configOBJ.platforms[i].accessories)
             {
-                if(configOBJ.platforms[i].accessories[j].mac == mac)
+                if(configOBJ.platforms[i].accessories[j].id == id)
                 {
                     configOBJ.platforms[i].accessories.splice(j, 1);
                 }
@@ -660,11 +660,11 @@ function removeFromConfig(mac)
     reloadAccessories();
 }
 
-function removeFromSettingsStorage(mac)
+function removeFromSettingsStorage(id)
 {
     return new Promise(resolve => {
 
-        storage.remove(mac, (err) => {
+        storage.remove(id, (err) => {
                                 
             if(err)
             {

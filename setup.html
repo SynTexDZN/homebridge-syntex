@@ -218,21 +218,21 @@
                     btn.value = 'Suchen';
                 }
                 
-                async function checkDB(mac)
+                async function checkDB(id)
                 {
-                    if(await Query.fetchURL('/serverside/check-device?mac=' + mac, 5000) == 'Success')
+                    if(await Query.fetchURL('/serverside/check-device?id=' + id, 5000) == 'Success')
                     {  
                         success = true;
 
                         Essentials.switchPage('connecting', 'success', false);
 
-                        redirectCountdown('/device?mac=' + mac);
+                        redirectCountdown('/device?id=' + id);
                     }
                     else
                     {
                         setTimeout(function()
                         {
-                            checkDB(mac);
+                            checkDB(id);
                         }, 2000);
                     }
                 }

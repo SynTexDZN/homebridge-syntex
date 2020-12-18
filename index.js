@@ -84,13 +84,13 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/serverside/init', (response, urlParams) => {
 	
-                if(urlParams.name != null && urlParams.mac != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
+                if(urlParams.name != null && urlParams.id != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
                 {
-                    DeviceManager.initDevice(urlParams.mac, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then(function(res) {
+                    DeviceManager.initDevice(urlParams.id, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then(function(res) {
 
                         if(res[0] != 'Error')
                         {
-                            logger.log('info', urlParams.mac, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.mac + ' | ' +  urlParams.ip + ' )');
+                            logger.log('info', urlParams.id, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
                         }
 
                         response.write(res[1]);
@@ -116,16 +116,16 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/serverside/remove-device', (response, urlParams) => {
 
-                if(urlParams.mac != null)
+                if(urlParams.id != null)
                 {
-                    DeviceManager.removeDevice(urlParams.mac).then(function(removed) {
+                    DeviceManager.removeDevice(urlParams.id).then(function(removed) {
 
                         response.write(removed ? 'Success' : 'Error');
                         response.end();
 
                         if(removed)
                         {
-                            logger.log('success', urlParams.mac, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.mac + ' )');
+                            logger.log('success', urlParams.id, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.id + ' )');
 
                             restart = true;
 
@@ -137,7 +137,7 @@ SynTexPlatform.prototype = {
                         }
                         else
                         {
-                            logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.mac + ' )');
+                            logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.id + ' )');
                         }
                         
                     }).catch(function(e) {
@@ -154,9 +154,9 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/serverside/init-switch', (response, urlParams) => {
 
-                if(urlParams.mac != null && urlParams.name != null)
+                if(urlParams.id != null && urlParams.name != null)
                 {
-                    DeviceManager.initSwitch(urlParams.mac, urlParams.name).then(function(res) {
+                    DeviceManager.initSwitch(urlParams.id, urlParams.name).then(function(res) {
 
                         response.write(res[1]);
                         response.end();
@@ -267,17 +267,17 @@ SynTexPlatform.prototype = {
 
                 var result = {};
 
-                if(urlParams.mac != null)
+                if(urlParams.id != null)
                 {
-                    var activity = await logger.load('SynTexWebHooks', urlParams.mac);
+                    var activity = await logger.load('SynTexWebHooks', urlParams.id);
 
                     if(activity != null)
                     {
-                        activity = activity.concat(await logger.load('SynTexMagicHome', urlParams.mac));
+                        activity = activity.concat(await logger.load('SynTexMagicHome', urlParams.id));
                     }
                     else
                     {
-                        activity = await logger.load('SynTexMagicHome', urlParams.mac);
+                        activity = await logger.load('SynTexMagicHome', urlParams.id);
                     }
 
                     if(activity != null)
@@ -372,9 +372,9 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/serverside/check-device', async (response, urlParams) => {
 
-                if(urlParams.mac != null)
+                if(urlParams.id != null)
                 {
-                    var device = await DeviceManager.getDevice(urlParams.mac);
+                    var device = await DeviceManager.getDevice(urlParams.id);
 
                     response.write(device ? 'Success' : 'Error');
                     response.end();
@@ -447,12 +447,12 @@ SynTexPlatform.prototype = {
 
             WebServer.addPage('/device', async (response, urlParams, content) => {
 
-                if(urlParams.mac != null)
+                if(urlParams.id != null)
                 {
                     var webhookConfig = await getPluginConfig('SynTexWebHooks');
                     var magicHomeConfig = await getPluginConfig('SynTexMagicHome');
                     var obj = {
-                        device: JSON.stringify(DeviceManager.getAccessory(urlParams.mac)),
+                        device: JSON.stringify(DeviceManager.getAccessory(urlParams.id)),
                         wPort: 1710,
                         mPort: 1712
                     };

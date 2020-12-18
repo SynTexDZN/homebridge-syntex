@@ -104,7 +104,7 @@
                 /*
                 window.accessories = [
                     {
-                        mac: 'test1',
+                        id: 'test1',
                         name: 'Test',
                         letters: 'F2',
                         services: ['switch']
@@ -173,14 +173,14 @@
                                 active: true,
                                 trigger: [
                                     {
-                                        mac: 'test1',
+                                        id: 'test1',
                                         name: 'Test 1',
                                         letters: 'F0',
                                         operation: '=',
                                         value: '100'
                                     },
                                     {
-                                        mac: 'test1',
+                                        id: 'test1',
                                         name: 'Test 1',
                                         letters: 'F0',
                                         operation: '=',
@@ -189,21 +189,21 @@
                                 ],
                                 condition: [
                                     {
-                                        mac: 'test2',
+                                        id: 'test2',
                                         name: 'Bedingung 1',
                                         letters: 'D0',
                                         operation: '>',
                                         value: '50'
                                     },
                                     {
-                                        mac: 'test2',
+                                        id: 'test2',
                                         name: 'Bedingung 2',
                                         letters: 'D0',
                                         operation: '>',
                                         value: '50'
                                     },
                                     {
-                                        mac: 'test2',
+                                        id: 'test2',
                                         name: 'Bedingung 3',
                                         letters: 'D0',
                                         operation: '>',
@@ -212,14 +212,14 @@
                                 ],
                                 result: [
                                     {
-                                        mac: 'test3',
+                                        id: 'test3',
                                         name: 'Test X',
                                         letters: 'B0',
                                         operation: '=',
                                         value: '1000'
                                     },
                                     {
-                                        mac: 'test2',
+                                        id: 'test2',
                                         name: 'Test Y',
                                         letters: 'D0',
                                         operation: '>',
@@ -585,7 +585,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option ' + (t && services[i].mac == t.mac && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -634,7 +634,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option ' + (c && services[i].mac == c.mac && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -681,7 +681,7 @@
                     {
                         if(services[i].type != 'lcd')
                         {
-                            html += '<option ' + (r && services[i].mac == r.mac && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" mac="' + services[i].mac + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+                            html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
                         }
                     }
 
@@ -728,7 +728,7 @@
 
                                         counter.type = accessories[i].services[j].type;
                                         
-                                        services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+                                        services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
                                     }
                                     else
                                     {
@@ -739,7 +739,7 @@
 
                                         counter.type = accessories[i].services[j];
 
-                                        services.push({ type : accessories[i].services[j], name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+                                        services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
                                     }
 
                                     counter.count++;
@@ -750,14 +750,14 @@
                         {
                             if(accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
                             {
-                                services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+                                services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
                             }
                         }
                         else
                         {
                             if(accessories[i].services != 'rgb' && accessories[i].services != 'rgbw')
                             {
-                                services.push({ type : accessories[i].services, name : accessories[i].name, mac : accessories[i].mac, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
+                                services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
                             }
                         }
                     }
@@ -854,7 +854,7 @@
                             }
                             else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
                             {
-                                trigger.mac = device.getAttribute('mac');
+                                trigger.id = device.getAttribute('id');
                                 trigger.name = device.getAttribute('name');
                                 trigger.letters = device.getAttribute('letters');
                                 trigger.operation = operation.value;
@@ -885,7 +885,7 @@
                                 }
                                 else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
                                 {
-                                    condition.mac = device.getAttribute('mac');
+                                    condition.id = device.getAttribute('id');
                                     condition.name = device.getAttribute('name');
                                     condition.letters = device.getAttribute('letters');
                                     condition.operation = operation.value;
@@ -915,7 +915,7 @@
                             }
                             else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
                             {
-                                result.mac = device.getAttribute('mac');
+                                result.id = device.getAttribute('id');
                                 result.name = device.getAttribute('name');
                                 result.letters = device.getAttribute('letters');
                                 result.operation = operation.value;
