@@ -1,6 +1,14 @@
 # Homebridge SynTex
-A plugin to control SynTex accessory.
+A plugin to control SynTex accessory.<br>
+It offers an UI to manage all your SynTex Plugins.
 
+[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
+[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
+[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex/commits)
+[![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex?color=purple)](https://www.npmjs.com/package/homebridge-syntex)
+[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex?color=0af)](https://github.com/SynTexDZN/homebridge-syntex)
+
+<br>
 
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
