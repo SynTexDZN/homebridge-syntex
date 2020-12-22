@@ -1175,75 +1175,97 @@
                         {
                             for(var j = 0; j < typeCounter[type]; j++)
                             {
+                                var state = null;
+
                                 if(device.plugin && device.plugin == 'SynTexMagicHome')
                                 {
-                                    var state = JSON.parse(await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000));
+                                    state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000);
                                 }
                                 else
                                 {
-                                    var state = JSON.parse(await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000));
+                                    state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000);
                                 }
-                        
-                                if(temp[type + j] && state != temp[type + j] && device.plugin != 'SynTexMagicHome')
-                                {
-                                    orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state });
-
-                                    console.log(state);
-                                    
-                                    calcValues(orginal, type, j);
-                                }
-
-                                temp[type + j] = state;
 
                                 if(state != null && state != 'Error')
                                 {
-                                    if(state == 'true')
+                                    state = JSON.parse(state);
+                                }
+
+                                if(temp[type + j] && state.state != temp[type + j] && device.plugin != 'SynTexMagicHome')
+                                {
+                                    orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state });
+
+                                    calcValues(orginal, type, j);
+                                }
+
+                                temp[type + j] = state.state;
+
+                                console.log(state != null, state != 'Error', state.state != null);
+
+                                if(state != null && state != 'Error' && state.state != null)
+                                {
+                                    if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+                                    {
+                                        console.log(state);
+
+                                        if(state.state == true)
+                                        {
+                                            value = 'AN';
+                                            color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+                                        }
+                                        else if(state.state == false)
+                                        {
+                                            value = 'AUS';
+                                            color = 'rgb(60, 60, 80)';
+                                        }
+                                    }
+                                    else if(state.state == true)
                                     {
                                         value = data[type].active.text.toUpperCase();
                                         color = data[type].active.color;
                                     }
-                                    else if(state == 'false')
+                                    else if(state.state == false)
                                     {
                                         value = data[type].inactive.text.toUpperCase();
                                         color = data[type].inactive.color;
                                     }
                                     else
                                     {
-                                        var color = 'rgb(60, 60, 80)', value = state;
+                                        var color = 'rgb(60, 60, 80)', value = state.state;
 
                                         if(type == 'temperature')
                                         {
                                             var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
-                                            value = ((Math.round(state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+                                            value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
 
-                                            if(state < 18)
+                                            if(state.state < 18)
                                             {
                                                 color = 'hsl(220, 75%, 55%)';
                                             }
-                                            else if(state > 26)
+                                            else if(state.state > 26)
                                             {
                                                 color = 'hsl(0, 75%, 55%)';
                                             }
                                             else
                                             {
-                                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                                                color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
                                             }
                                         }
                                         else if(type == 'humidity')
                                         {
                                             var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
-                                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+                                            value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
 
-                                            if(state > 50)
+                                            if(state.state > 50)
                                             {	
                                                 cRange = [280, 0];
                                             }	
 
-                                            if(state < 45 || state > 55)	
+                                            if(state.state < 45 || state.state > 55)	
                                             {	
-                                                color = 'hsl(' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+                                                color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
                                             }	
                                             else	
                                             {	
@@ -1254,42 +1276,23 @@
                                         {
                                             var cRange = data[type].colorRange, vRange = data[type].valueRange;
 
-                                            value = Math.round(state) + ' ' + data[type].text.toUpperCase();
+                                            value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
 
-                                            if(state > 1000)
+                                            if(state.state > 1000)
                                             {
                                                 color = data[type].color;
                                             }
                                             else
                                             {
-                                                color = 'hsl(40, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-                                            }
-                                        }
-                                        else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-                                        {
-                                            if(state.split(':')[0] == 'true')
-                                            {
-                                                value = 'AN';
-
-                                                if(device.spectrum == 'HSL')
-                                                {
-                                                    color = 'hsl(' + parseInt(state.split(':')[1]) + ', ' + parseInt(state.split(':')[2]) + '%, ' + (25 + parseInt(state.split(':')[3]) / 2.5) + '%)';
-                                                }
-                                                else
-                                                {
-                                                    color = 'rgb(' + (parseInt(state.split(':')[1]) + 60) + ', ' + (parseInt(state.split(':')[2]) + 60) + ', ' + (parseInt(state.split(':')[3]) + 60) + ')';
-                                                }
-                                            }
-                                            else if(state.split(':')[0] == 'false')
-                                            {
-                                                value = 'AUS';
-                                                color = 'rgb(60, 60, 80)';
+                                                color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
                                             }
                                         }
                                         else
                                         {
-                                            value = state + ' ' + data[type].text.toUpperCase();
+                                            value = state.state + ' ' + data[type].active.text.toUpperCase();
                                         }
+
+                                        console.log(type);
                                     }
 
                                     if(typeCounter[type] > 1)
