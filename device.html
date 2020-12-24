@@ -80,6 +80,10 @@
                         active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
                         inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
                     },
+                    occupancy: {
+                        active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
+                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+                    },
                     contact: {
                         active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
                         inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
@@ -245,7 +249,7 @@
                     }
                 }
 
-                settingsForm.setAttribute('id', device.id);
+                settingsForm.setAttribute('device_id', device.id);
                 settingsForm.setAttribute('ip', device.ip);
                 settingsForm.setAttribute('type', Essentials.getType(services));
 
@@ -269,7 +273,7 @@
                 {
                     var type = Object.keys(typeCounter)[i];
 
-                    if(type != 'lcd')
+                    if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
                     {
                         c--;
 
@@ -431,6 +435,7 @@
                         {
                             fetchState();
                         }
+
                     }, 300);
                 }
 
@@ -498,14 +503,7 @@
                         {
                             if(value == 'true')
                             {
-                                if(device.spectrum == 'HSL')
-                                {
-                                    color = 'hsl(' + parseInt(values[type + counter][0].value.split(':')[1]) + ', ' + parseInt(values[type + counter][0].value.split(':')[2]) + '%, ' + (25 + parseInt(values[type + counter][0].value.split(':')[3]) / 2.5) + '%)';
-                                }
-                                else
-                                {
-                                    color = 'rgb(' + (parseInt(values[type + counter][0].value.split(':')[1]) + 60) + ', ' + (parseInt(values[type + counter][0].value.split(':')[2]) + 60) + ', ' + (parseInt(values[type + counter][0].value.split(':')[3]) + 60) + ')';
-                                }
+                                color = 'hsl(' + parseInt(values[type + counter][0].hue) + ', ' + parseInt(values[type + counter][0].saturation) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) / 2.5) + '%)';
                             }
                             else if(value == 'false')
                             {
@@ -606,14 +604,52 @@
                                             {
                                                 for(var k = activity[l].update.length - 1; k >= 0; k--)
                                                 {
-                                                    var val = activity[l].update[k].v;
+                                                    var obj = { time : activity[l].update[k].t };
+                                                    var orginalValues = activity[l].update[k].v
 
-                                                    if(val.includes(':'))
+                                                    obj.value = orginalValues;
+
+                                                    if(orginalValues.includes('power: '))
                                                     {
-                                                        val = val.split(':')[0];
+                                                        obj.value = orginalValues.split('power: ')[1];
                                                     }
 
-                                                    values[type + j].push({ time : activity[l].update[k].t, value : val });
+                                                    if(orginalValues.includes('hue: '))
+                                                    {
+                                                        obj.hue = orginalValues.split('hue: ')[1];
+                                                    }
+
+                                                    if(orginalValues.includes('saturation: '))
+                                                    {
+                                                        obj.saturation = orginalValues.split('saturation: ')[1];
+                                                    }
+
+                                                    if(orginalValues.includes('brightness: '))
+                                                    {
+                                                        obj.brightness = orginalValues.split('brightness: ')[1];
+                                                    }
+
+                                                    if(obj.value.includes(', '))
+                                                    {
+                                                        obj.value = obj.value.split(', ')[0];
+                                                    }
+
+                                                    if(obj.hue != null && obj.hue.includes(', '))
+                                                    {
+                                                        obj.hue = obj.hue.split(', ')[0];
+                                                    }
+
+                                                    if(obj.saturation != null && obj.saturation.includes(', '))
+                                                    {
+                                                        obj.saturation = obj.saturation.split(', ')[0];
+                                                    }
+
+                                                    if(obj.brightness != null && obj.brightness.includes(', '))
+                                                    {
+                                                        obj.brightness = obj.brightness.split(', ')[0];
+                                                    }
+
+                                                    values[type + j].push(obj);
                                                 }
                                             }
                                         }
@@ -1398,12 +1434,14 @@
                                     {
                                         fetchState();
                                     }
+
                                 }, i);
                             }
 
                             setTimeout(function()
                             {
                                 pingESP();
+
                             }, 5000);
                         }
                         else

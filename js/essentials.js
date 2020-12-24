@@ -160,6 +160,8 @@ function removeOverlays(btn, show)
 
 function getType(services)
 {
+    var finalType = 'special';
+
     if(Array.isArray(services))
     {
         var s = [ ...services ];
@@ -174,43 +176,58 @@ function getType(services)
 
         if(s.length == 1)
         {
-            return s[0];
+            finalType = s[0];
         }
-        else if(s.length == 2 && s.includes('temperature') && s.includes('humidity'))
+        
+        if(s.includes('temperature') && s.includes('humidity'))
         {
-            return 'climate';
+            finalType = 'climate';
+
+            console.log('FINAL TYPE', finalType);
         }
-        else if(s.length == 2 && s.includes('light') && s.includes('rain'))
+        
+        if(s.includes('light') && s.includes('rain'))
         {
-            return 'weather';
+            finalType = 'weather';
         }
-        else if(s.length == 2 && s.includes('rgb') && s.includes('switch'))
+
+        if(s.includes('lcd'))
         {
-            return 'rgbw';
+            finalType = 'special';
+        }
+        
+        if(s.length == 2 && s.includes('rgb') && s.includes('switch'))
+        {
+            finalType = 'rgbw';
         }
         else if(s.includes('rgb'))
         {
-            return 'rgb';
+            finalType = 'rgb';
         }
         else
         {
-            var lastType = s[0];
+            var lastType = s[0], sameServices = true;
 
             for(const i in s)
             {
                 if(lastType != s[i])
                 {
-                    return 'special';
+                    sameServices = false;
                 }
             }
 
-            return lastType;
+            if(sameServices)
+            {
+                finalType = lastType;
+            }
         }
     }
     else
     {
-        return services instanceof Object ? services.type : services;
+        finalType = services instanceof Object ? services.type : services;
     }
+
+    return finalType;
 }
 
 var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch'];
