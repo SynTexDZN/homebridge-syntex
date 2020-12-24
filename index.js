@@ -1,5 +1,5 @@
 let DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('./core/logger'), WebServer = require('./core/webserver');
-const fs = require('fs'), store = require('json-fs-store');
+const fs = require('fs'), store = require('json-fs-store'), request = require('request');
 var conf, restart = true;
 
 module.exports = function(homebridge)
@@ -60,8 +60,6 @@ function SynTexPlatform(log, config, api)
                     }
                 });
             });
-
-            const { exec } = require('child_process');
 
             exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
 
