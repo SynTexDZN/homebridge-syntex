@@ -33,6 +33,8 @@ function createAutomation(automation)
                 }
                 else
                 {
+                    obj.id = 'automations';
+
                     obj.automations[obj.automations.length] = automation;
                 }
     
@@ -72,6 +74,8 @@ function removeAutomation(id)
             }
             else
             {
+                obj.id = 'automations';
+
                 for(var i = 0; i < obj.automations.length; i++)
                 {
                     if(obj.automations[i].id == id)
@@ -171,6 +175,8 @@ function modifyAutomation(automation)
                 }
                 else
                 {
+                    obj.id = 'automations';
+
                     for(var i = 0; i < obj.automations.length; i++)
                     {
                         if(obj.automations[i].id == automation.id)
