@@ -14,7 +14,7 @@ It offers an UI to manage all your SynTex Plugins.
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
-3. Install this plugin using: `sudo npm install -g homebridge-syntex-webhooks`
+3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks`
 4. Update your configuration file. See snippet below.
 
 
