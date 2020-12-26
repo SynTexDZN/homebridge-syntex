@@ -14,10 +14,11 @@ function SynTexPlatform(log, config, api)
         this.cacheDirectory = config['cache_directory'] || './SynTex/data';
         this.logDirectory = config['log_directory'] || './SynTex/log';
         this.port = config['port'] || 1711;
+        this.debug = config['debug'] || false;
 
         conf = store(api.user.storagePath());
 
-        logger = new logger('SynTex', this.logDirectory, api.user.storagePath());
+        logger = new logger('SynTex', this.logDirectory, this.debug);
         WebServer = new WebServer('SynTex Bridge', logger, this.port, true);
 
         WebServer.setHead(__dirname + '/includes/head.html');

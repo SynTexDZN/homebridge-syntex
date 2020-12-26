@@ -1,225 +1,220 @@
 const store = require('json-fs-store');
-var prefix, logs, logger, que = [], debugLevel = 'success', inWork = false;
+var prefix, logs, logger, debugLevel = 'success', allLogs = {}, ready = false;
 
 module.exports = class Logger
 {
-    constructor(pluginName, logDirectory, configDirectory)
-    {
-        prefix = pluginName;
-        logs = store(logDirectory);
+	constructor(pluginName, logDirectory, debug)
+	{
+		prefix = pluginName;
+		logs = store(logDirectory);
+		logger = this;
 
-        logger = this;
-    }
+		if(debug)
+		{
+			debugLevel = 'debug';
+		}
 
-    log(level, id, letters, message)
-    {
-        var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
+		allLogs.id = pluginName;
 
-        if(levels.indexOf(level) >= levels.indexOf(debugLevel))
-        {
-            if(typeof message !== 'string')
-            {
-                message = JSON.stringify(message);
-            };
+		logs.load(pluginName, (err, obj) => {    
 
-            var color = '';
+			if(obj && !err)
+			{
+				for(const id in obj)
+				{
+					if(id != 'id')
+					{
+						for(const letters in obj[id])
+						{
+							if(allLogs[id] == null)
+							{
+								allLogs[id] = {};
+							}
 
-            if(level == 'success')
-            {
-                color = '\x1b[92m';
-            }
-            else if(level == 'update')
-            {
-                color = '\x1b[96m';
-            }
-            else if(level == 'read')
-            {
-                color = '\x1b[36m';
-            }
-            else if(level == 'info')
-            {
-                color = '\x1b[93m';
-            }
-            else if(level == 'warn')
-            {
-                color = '\x1b[93m';
-            }
-            else if(level == 'debug')
-            {
-                color = '\x1b[35m';
-            }
-            else
-            {
-                color = '\x1b[31m';
-            }
+							if(allLogs[id][letters] == null)
+							{
+								allLogs[id][letters] = [];
+							}
 
-            console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
+							allLogs[id][letters] = obj[id][letters].concat(allLogs[id][letters]);
+						}
+					}
+				}
 
-            saveLog(level[0].toUpperCase() + level.substring(1), id, letters, Math.round(new Date().getTime() / 1000), message);
-        }
-    }
+				removeExpired();
 
-    err(error)
-    {
-        var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
-        
-        this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
-    
-        console.log(error);
-    }
+				logs.add(allLogs, (err) => {
 
-    debug(message)
-    {
-        this.log('debug', 'bridge', 'Bridge', message);
-    }
+					if(err)
+					{
+						logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err); // REMOVE?
+					}
 
-    load(pluginName, group)
-    {
-        return new Promise((resolve) => {
-            
-            logs.load(pluginName, (err, obj) => {    
+					ready = true;
+				});
+			}
+			else
+			{
+				ready = true;
+			}
+		});
+	}
 
-                if(obj && !err)
-                {    
-                    var logs = [];
+	log(level, id, letters, message)
+	{
+		var levels = ['debug', 'success', 'update', 'read', 'info', 'warn', 'error'];
 
-                    for(const i in obj)
-                    {
-                        if(i != 'id' && (group == null || group == i))
-                        {
-                            logs.push(obj[i]);
-                        }
-                    }
+		if(levels.indexOf(level) >= levels.indexOf(debugLevel))
+		{
+			if(typeof message !== 'string')
+			{
+				message = JSON.stringify(message);
+			};
 
-                    resolve(logs);
-                }
-                else
-                {
-                    resolve(null);
-                }
-            });
-        });
-    }
+			var color = '';
 
-    list()
-    {
-        return new Promise((resolve) => {
+			if(level == 'success')
+			{
+				color = '\x1b[92m';
+			}
+			else if(level == 'update')
+			{
+				color = '\x1b[96m';
+			}
+			else if(level == 'read')
+			{
+				color = '\x1b[36m';
+			}
+			else if(level == 'info')
+			{
+				color = '\x1b[93m';
+			}
+			else if(level == 'warn')
+			{
+				color = '\x1b[93m';
+			}
+			else if(level == 'debug')
+			{
+				color = '\x1b[35m';
+			}
+			else
+			{
+				color = '\x1b[31m';
+			}
 
-            logs.list((err, objects) => {
+			console.log('[' + prefix + '] ' + color + '[' + level.toUpperCase() + '] \x1b[0m' + message);
 
-                if(!objects || err)
-                {
-                    resolve([]);
-                }
-                else
-                {
-                    resolve(objects);
-                }
-            });
-        });
-    }
+			saveLog(level[0].toUpperCase() + level.substring(1), id, letters, Math.round(new Date().getTime() / 1000), message);
+		}
+	}
+
+	err(error)
+	{
+		var s = (error.stack.split('\n')[1].split('\n')[0].match(/\//g) || []).length;
+		
+		this.log('error', 'bridge', 'Bridge', 'Code Fehler: ' + error.message + ' ( [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[0] + '] bei Zeile [' + error.stack.split('\n')[1].split('\n')[0].split('/')[s].split(':')[1] + '] )');
+	
+		console.log(error);
+	}
+
+	debug(message)
+	{
+		this.log('debug', 'bridge', 'Bridge', message);
+	}
+
+	load(pluginName, group)
+	{
+		return new Promise((resolve) => {
+			
+			logs.load(pluginName, (err, obj) => {    
+
+				if(obj && !err)
+				{    
+					var l = [];
+
+					for(const i in obj)
+					{
+						if(i != 'id' && (group == null || group == i))
+						{
+							l.push(obj[i]);
+						}
+					}
+
+					resolve(l);
+				}
+				else
+				{
+					resolve(null);
+				}
+			});
+		});
+	}
+
+	list()
+	{
+		return new Promise((resolve) => {
+
+			logs.list((err, objects) => {
+
+				if(!objects || err)
+				{
+					resolve([]);
+				}
+				else
+				{
+					resolve(objects);
+				}
+			});
+		});
+	}
 }
 
 function saveLog(level, id, letters, time, message)
 {
-    var queOBJ = { id : id, letters : letters, time : time, level : level, message : message };
+	if(allLogs[id] == null)
+	{
+		allLogs[id] = {};
+	}
 
-    if(inWork)
-    {
-        if(!que.some(element => element.time == time && element.message == message))
-        {
-            que.push(queOBJ);
-        }
-    }
-    else
-    {
-        inWork = true;
+	if(allLogs[id][letters] == null)
+	{
+		allLogs[id][letters] = [];
+	}
 
-        if(que.some(element => element.time == time && element.message == message))
-        {
-            que.shift();
-        }
+	removeExpired();
 
-        logs.load(prefix, (err, device) => {    
+	allLogs[id][letters].push({ t : time, l : level, m : message });
 
-            if(device && !err)
-            {    
-                device = removeExpired(device);
+	if(ready)
+	{
+		logs.add(allLogs, (err) => {
 
-                if(!device[id])
-                {
-                    device[id] = {};
-                }
-
-                if(!device[id][letters])
-                {
-                    device[id][letters] = [];
-                }
-
-                device[id][letters][device[id][letters].length] = { t : time, l : level, m : message };
-
-                logs.add(device, (err) => {
-
-                    inWork = false;
-
-                    if(err)
-                    {
-                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
-                    }
-
-                    if(que.length != 0)
-                    {
-                        saveLog(que[0].level, que[0].id, que[0].letters, que[0].time, que[0].message);
-                    }
-                });
-            }
-            else
-            {
-                var entry = { id : prefix };
-
-                entry[id] = {};
-
-                entry[id][letters] = [ { t : time, l : level, m : message } ];
-
-                logs.add(entry, (err) => {
-
-                    inWork = false;
-
-                    if(err)
-                    {
-                        logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err);
-                    }
-
-                    if(que.length != 0)
-                    {
-                        saveLog(que[0].level, que[0].id, que[0].letters, que[0].time, que[0].message);
-                    }
-                });
-            }
-        });
-    }
+			if(err)
+			{
+				logger.log('error', 'bridge', 'Bridge', prefix + '.json konnte nicht aktualisiert werden! ' + err); // REMOVE?
+			}
+		});
+	}
 }
 
-function removeExpired(obj)
+function removeExpired()
 {
-    for(const i in obj)
-    {
-        if(i != 'id')
-        {
-            for(const j in obj[i])
-            {
-                for(var k = 1; k < obj[i][j].length + 1; k++)
-                {
-                    var time = obj[i][j][obj[i][j].length - k].t;
+	for(const i in allLogs)
+	{
+		if(i != 'id')
+		{
+			for(const j in allLogs[i])
+			{
+				for(var k = 1; k < allLogs[i][j].length + 1; k++)
+				{
+					var time = allLogs[i][j][allLogs[i][j].length - k].t;
 
-                    if(new Date() - new Date(time * 1000) > 86400000)
-                    {
-                        obj[i][j].splice(obj[i][j].length - k, 1);
-                    }
-                }
-            }
-        }
-    }
-    
-    return obj;
+					if(new Date() - new Date(time * 1000) > 86400000)
+					{
+						allLogs[i][j].splice(allLogs[i][j].length - k, 1);
+					}
+				}
+			}
+		}
+	}
 }
