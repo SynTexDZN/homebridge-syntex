@@ -1,94 +1,94 @@
 <html>
-    <body>
-        <div id="content">
-            <title>Gerät Erstellen</title>
-            <div id="create" style="transition: .2s ease-in-out">
-                <h1>Schalter Erstellen</h1>
-                <p>( Ein virtuelles Gerät )</p>
-                <form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
-                    <p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
-                    <p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                    <div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
-                        <button class="widget-left gradient-red" disabled>Wichtig</button>
-                        <button class="widget-right" disabled>Die ID muss eindeutig sein<br>Diese können frei gewählt werden</button>
-                    </div>
-                    <div class="navigation-panel">
-                        <div class="sticky-inset">
-                            <div style="display: flex">
-                                <input type="button" value="Zurück" onclick="Essentials.leavePage('/');">
-                                <div style="display: block; width: 100%; margin-left: 20px">
-                                    <input id="create-btn" type="submit" value="Erstellen">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
-                <h1>Erfolgreich Erstellt</h1>
-                <div class="main" style="margin-top: 100px">
-                    <img src="img/success.png" class="setup-png">
-                    <input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
-                    <p>Das Gerät ist<br>jetzt Einsatzbereit</p>
-                </div>
-            </div>
-            <script type="module">
+	<body>
+		<div id="content">
+			<title>Gerät Erstellen</title>
+			<div id="create" style="transition: .2s ease-in-out">
+				<h1>Schalter Erstellen</h1>
+				<p>( Ein virtuelles Gerät )</p>
+				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+					<p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
+					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
+						<button class="widget-left gradient-red" disabled>Wichtig</button>
+						<button class="widget-right" disabled>Die ID muss eindeutig sein<br>Diese können frei gewählt werden</button>
+					</div>
+					<div class="navigation-panel">
+						<div class="sticky-inset">
+							<div style="display: flex">
+								<input type="button" value="Zurück" onclick="Essentials.leavePage('/');">
+								<div style="display: block; width: 100%; margin-left: 20px">
+									<input id="create-btn" type="submit" value="Erstellen">
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<h1>Erfolgreich Erstellt</h1>
+				<div class="main" style="margin-top: 100px">
+					<img src="img/success.png" class="setup-png">
+					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
+					<p>Das Gerät ist<br>jetzt Einsatzbereit</p>
+				</div>
+			</div>
+			<script type="module">
 
-                import { Query } from '/js/query.js';
-                import { Essentials } from '/js/essentials.js';
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
 
-                Query.SETUP(Essentials);
-                Essentials.SETUP(Query, Preloader);
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
 
-                window.Query = Query;
-                window.Essentials = Essentials;
+				window.Query = Query;
+				window.Essentials = Essentials;
 
-                Preloader.finish();
+				Preloader.finish();
 
-            </script>
-            <script>
+			</script>
+			<script>
 
-                async function createSwitch(form)
-                {
-                    var overlays = {
-                        root : document.getElementById('create-btn'),
-                        id : 'create',
-                        pending : { value : 'Erstellen ..' },
-                        connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                    };
+				async function createSwitch(form)
+				{
+					var overlays = {
+						root : document.getElementById('create-btn'),
+						id : 'create',
+						pending : { value : 'Erstellen ..' },
+						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+					};
 
-                    var created = await Query.complexFetch('/serverside/init-switch?id=' + document.getElementById('form-id').value + '&name=' + document.getElementById('form-name').value, 5000, 2, overlays, false);
+					var created = await Query.complexFetch('/serverside/init-switch?id=' + document.getElementById('form-id').value + '&name=' + document.getElementById('form-name').value, 5000, 2, overlays, false);
 
-                    await Essentials.newTimeout(1000);
+					await Essentials.newTimeout(1000);
 
-                    if(created == 'Success')
-                    {
-                        Essentials.switchPage('create', 'success', false);
+					if(created == 'Success')
+					{
+						Essentials.switchPage('create', 'success', false);
 
-                        redirectCountdown('/device?id=' + document.getElementById('form-id').value);
-                    }
-                    else
-                    {
-                        Essentials.showOverlay(document.getElementById('create-btn'), Essentials.createErrorOverlay('create-result', created));
+						redirectCountdown('/device?id=' + document.getElementById('form-id').value);
+					}
+					else
+					{
+						Essentials.showOverlay(document.getElementById('create-btn'), Essentials.createErrorOverlay('create-result', created));
 
-                        await Essentials.newTimeout(4000);
+						await Essentials.newTimeout(4000);
 
-                        Essentials.removeOverlays(document.getElementById('create-btn'), true);
-                    }
-                }
+						Essentials.removeOverlays(document.getElementById('create-btn'), true);
+					}
+				}
 
-                function redirectCountdown(url)
-                {
-                    setTimeout(async function()
-                    {
-                        if(await Essentials.checkRestart('/serverside/check-restart'))
-                        {
-                            Essentials.leavePage(url);
-                        }
-                    }, 3000);
-                }
+				function redirectCountdown(url)
+				{
+					setTimeout(async function()
+					{
+						if(await Essentials.checkRestart('/serverside/check-restart'))
+						{
+							Essentials.leavePage(url);
+						}
+					}, 3000);
+				}
 
-            </script>
-        </div>
-    </body>
+			</script>
+		</div>
+	</body>
 </html>

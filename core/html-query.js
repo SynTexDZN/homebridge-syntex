@@ -3,85 +3,85 @@ var logger;
 
 function sendValue(html, param, value)
 {
-    var res = html.toString();
+	var res = html.toString();
 
-    res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
-    
-    return res;
+	res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
+	
+	return res;
 }
 
 function sendValues(html, obj)
 {
-    var res = html.toString();
+	var res = html.toString();
 
-    for(const i in obj)
-    {
-        res = res.replace(new RegExp('<%' + i + '%>', 'g'), obj[i]);
-    }
-    
-    return res;
+	for(const i in obj)
+	{
+		res = res.replace(new RegExp('<%' + i + '%>', 'g'), obj[i]);
+	}
+	
+	return res;
 }
 
 function exists(reqPath)
 {
-    return new Promise(resolve => {
-        
-        var pathname = path.join(__dirname, '../' + reqPath);
+	return new Promise(resolve => {
+		
+		var pathname = path.join(__dirname, '../' + reqPath);
 
-        var noext = false;
+		var noext = false;
 
-        if(path.parse(pathname).ext == '')
-        {
-            noext = true;
-        }
+		if(path.parse(pathname).ext == '')
+		{
+			noext = true;
+		}
 
-        fs.exists(pathname, function(exist)
-        {
-            if(exist && fs.statSync(pathname).isDirectory())
-            {
-                resolve(exists(reqPath + 'index.html'));
-            }
-            else if(exist)
-            {
-                resolve(pathname);
-            }
-            else if(noext)
-            {
-                resolve(exists(reqPath + '.html'));
-            }
-            else
-            {
-                resolve(false);
-            }
-        });
-    });
+		fs.exists(pathname, function(exist)
+		{
+			if(exist && fs.statSync(pathname).isDirectory())
+			{
+				resolve(exists(reqPath + 'index.html'));
+			}
+			else if(exist)
+			{
+				resolve(pathname);
+			}
+			else if(noext)
+			{
+				resolve(exists(reqPath + '.html'));
+			}
+			else
+			{
+				resolve(false);
+			}
+		});
+	});
 }
 
 function read(reqPath)
 {
-    return new Promise(resolve => {
-        
-        fs.readFile(reqPath, function(err, res)
-        {          
-            if(!res || err)
-            {
-                res = "";
-            }
+	return new Promise(resolve => {
+		
+		fs.readFile(reqPath, function(err, res)
+		{          
+			if(!res || err)
+			{
+				res = "";
+			}
 
-            resolve(res);
-        });
-    });
+			resolve(res);
+		});
+	});
 }
 
 function SETUP(slog)
 {
-    logger = slog;
+	logger = slog;
 };
 
 module.exports = {
-    SETUP,
-    sendValue,
-    sendValues,
-    read,
-    exists
+	SETUP,
+	sendValue,
+	sendValues,
+	read,
+	exists
 };

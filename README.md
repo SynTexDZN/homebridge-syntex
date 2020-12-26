@@ -25,19 +25,19 @@ It offers an UI to manage all your SynTex Plugins.
 
 ```
 "platforms": [
-    {
-        "platform": "SynTex",
-        "cache_directory": "./SynTex/settings",
-        "log_directory": "./SynTex/log",
-        "port": 1711
-    },
-    {
-        "platform": "SynTexWebHooks",
-        "cache_directory": "./SynTex/devices",
-        "log_directory": "./SynTex/log",
-        "port": 1710,
-        "accessories": []
-    }
+	{
+		"platform": "SynTex",
+		"cache_directory": "./SynTex/settings",
+		"log_directory": "./SynTex/log",
+		"port": 1711
+	},
+	{
+		"platform": "SynTexWebHooks",
+		"cache_directory": "./SynTex/devices",
+		"log_directory": "./SynTex/log",
+		"port": 1710,
+		"accessories": []
+	}
 ]
 ```
 

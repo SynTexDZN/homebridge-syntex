@@ -1,1695 +1,1695 @@
 <html>
-    <body>
-        <div id="content">
-            <script>
-
-                document.getElementsByTagName('body')[0].setAttribute('onresize', 'repaintGraphs()');
-                
-            </script>
-            <title class="loading-loop">Laden ..</title>
-            <div class="main" id="infos" style="transition: .2s ease-in-out">
-                <div class="control-container"></div>
-                <h1 class="loading-loop">Laden ..</h1>
-                <div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
-                <div id="activity"></div>
-                <div class="navigation-panel">
-                    <div class="sticky-inset">
-                        <input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-                        <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-                            <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-                <h1>Einstellungen</h1>
-                <p class="loading-loop">( Laden .. )</p>
-                <form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
-                    <div id="settings-form" style="margin-bottom: 100px">
-                        <p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                        <p><b>Raum: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
-                    </div>
-                    <input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
-                    <input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
-                    <div class="navigation-panel">
-                        <div class="sticky-inset">
-                            <div style="display: flex">
-                                <input type="button" value="Zurück" onclick="closeSettings('settings')">
-                                <div style="display: block; width: 100%; margin-left: 20px">
-                                    <input id="save-btn" type="submit" value="Speichern">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <script type="module" defer>
-
-                import { Query } from '/js/query.js';
-                import { Essentials } from '/js/essentials.js';
-                import { Presets } from '/js/presets.js';
-
-                Query.SETUP(Essentials);
-                Essentials.SETUP(Query, Preloader);
-
-                window.Query = Query;
-                window.Essentials = Essentials;
-                window.Presets = Presets;
-
-                window.device = JSON.parse('<%device%>')
-                window.values = {};
-                window.orginal = {};
-                window.typeCounter = {};
-                window.counter = Array.isArray(device.services) ? device.services.length : 1;
-                window.padding = 50;
-                window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-                window.automations = []
-                window.busy = [];
-                window.restarting = false
-                window.resetting = false
-                window.updating = false
-                window.saving = false;
-                window.settings = [];
-                window.activity = [];
-                window.services = [];
-                window.temp = {};
-
-                window.data = {
-                    motion: {
-                        active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    occupancy: {
-                        active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
-                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    contact: {
-                        active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-                        inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    relais: {
-                        active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
-                    },
-                    switch: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
-                    },
-                    rain: {
-                        active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-                        inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    statelessswitch: {
-                        active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    rgb: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbw: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbww: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbcw: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-                    humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-                    light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-                }; 
-
-                loadServices();
-
-                if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
-                {
-                    document.getElementById('restart-btn').style.display = 'none';
-                }
-
-                if(Presets.getPreset(device.plugin).getReconnectURL(device) == null)
-                {
-                    document.getElementById('reconnect-btn').style.display = 'none';
-                }
-
-                if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) }) == null)
-                {
-                    document.getElementById('reset-btn').style.display = 'none';
-                }
-
-                if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
-                {
-                    settings.push({
-                        index: 'active',
-                        name: 'Aktiviert'
-                    });
-                }
-
-                if(services.includes('contact') || services.includes('motion') || services.includes('relais') || services.includes('statelessswitch') || services.includes('lcd'))
-                {
-                    settings.push({
-                        index: 'led',
-                        name: 'LED'
-                    });
-                }
-
-                if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
-                {
-                    settings.push({
-                        index: 'interval',
-                        name: services.includes('motion') ? 'Delay' : 'Interval'
-                    });
-                }
-
-                document.getElementsByTagName('title')[0].innerHTML = device.name;
-                document.getElementsByTagName('h1')[0].innerHTML = device.name;
-
-                var infos = document.getElementById('info');
-
-                infos.innerHTML += '<p><b>ID: </b>' + device.id + '</p>';
-
-                if(device.ip != null)
-                {
-                    infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
-                }
-                
-                infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(services) + '</p>';
-
-                if(device.version != null && device.version != '99.99.99')
-                {
-                    infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
-                }
-
-                if(device.room != null)
-                {
-                    infos.innerHTML += '<p><b>Raum: </b>' + device.room + '</p>';
-                }
-
-                for(const i in settings)
-                {
-                    if(settings[i].index == 'interval' && !services.includes('motion'))
-                    {
-                        infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
-                    }
-                    else if(settings[i].index == 'interval' && services.includes('motion'))
-                    {
-                        infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
-                    }
-                    else if(settings[i].index == 'led' || settings[i].index == 'active')
-                    {
-                        if(device[settings[i].index] == 1)
-                        {
-                            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
-                        }
-                        else
-                        {
-                            infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
-                        }
-                    }
-                    else
-                    {
-                        infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
-                    }
-                }
-
-                document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
-                document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
-
-                document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/reconnect?ip=" + device.ip + '&id=' + device.id + "')");
-
-                document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
-
-                var settingsForm = document.getElementById('settings-form');
-
-                settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
-                settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.room || '');
-
-                for(const i in settings)
-                {
-                    if(settings[i].index == 'interval' && !services.includes('motion'))
-                    {
-                        settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
-                    }
-                    else if(settings[i].index == 'interval' && services.includes('motion'))
-                    {
-                        settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
-                    }
-                    else if(settings[i].index == 'led' || settings[i].index == 'active')
-                    {
-                        settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
-                    }
-                    else
-                    {
-                        settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
-                    }
-                }
-
-                settingsForm.setAttribute('device_id', device.id);
-                settingsForm.setAttribute('ip', device.ip);
-                settingsForm.setAttribute('type', Essentials.getType(services));
-
-                for(var i = 0; i < counter; i++)
-                {
-                    var type = Array.isArray(device.services) ? device.services[i] : device.services;
-
-                    if(type instanceof Object)
-                    {
-                        typeCounter[type.type] = typeCounter[type.type] ? typeCounter[type.type] + 1 : 1;
-                    }
-                    else
-                    {
-                        typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
-                    }
-                }
-
-                var c = counter;
-
-                for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                {
-                    var type = Object.keys(typeCounter)[i];
-
-                    if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
-                    {
-                        c--;
-
-                        for(var j = 0; j < typeCounter[type]; j++)
-                        {
-                            var statusField = document.createElement('input');
-                        
-                            statusField.setAttribute('id', 'status-' + type + '-' + j);
-                            statusField.setAttribute('class', 'control-panel loading-loop');
-                            statusField.setAttribute('type', 'button');
-                            statusField.setAttribute('value', 'LADEN ..');
-
-                            if(type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-                            {
-                                statusField.setAttribute('onclick', 'controlSwitch(this)');
-                                statusField.style.cursor = 'pointer';
-                            }
-
-                            if(typeCounter[type] > 1)
-                            {
-                                statusField.style.setProperty('font-size', '30px', 'important');
-                            }
-
-                            if(counter > 1)
-                            {
-                                statusField.style.height = '100px';
-                            }
-
-                            if(i == counter - 1) // TODO
-                            {
-                                statusField.style.setProperty('margin-bottom', '0', 'important');
-                            }
-
-                            document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-                            var frame = document.createElement('div'), canvas = document.createElement('canvas');
-
-                            frame.setAttribute('style', 'border-radius: 32px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
-
-                            document.getElementById('activity').appendChild(frame);
-
-                            if(i != counter - 1) // TODO
-                            {
-                                frame.style.marginBottom = '20px';
-                            }
-
-                            var height = frame.offsetHeight - 4;
-
-                            canvas.setAttribute('class', 'canvas');
-                            canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-                            canvas.setAttribute('style', 'border-radius: 32px');
-
-                            canvas.width = document.getElementById('infos').offsetWidth - 4;
-                            canvas.height = height;
-                            canvas.style.background = 'rgb(20, 20, 30)';
-
-                            frame.appendChild(canvas);
-
-                            //drawGrid(canvas, [], 10);
-
-                            var infoMin = document.createElement('div');
-
-                            infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
-                            infoMin.setAttribute('class', 'min');
-
-                            frame.appendChild(infoMin);
-
-                            var infoMax = document.createElement('div');
-
-                            infoMax.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
-                            infoMax.setAttribute('class', 'max');
-
-                            frame.appendChild(infoMax);
-
-                            var infoType = document.createElement('div');
-
-                            infoType.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300');
-
-                            if(type == 'rgb' || type == 'rgbw')
-                            {
-                                type = type.toUpperCase();
-                            }
-                            else if(type == 'statelessswitch')
-                            {
-                                type = 'Stateless Switch';
-                            }
-
-                            var name = type[0].toUpperCase() + type.substring(1), n = [];
-
-                            if(typeCounter[type] > 1)
-                            {
-                                name = device.name + ' ' + type[0].toUpperCase() + type.substring(1) + ' ' + j;
-                            }
-                            else if(counter > 1)
-                            {
-                                //name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
-                            }
-
-                            for(var k = 0; k < device.services.length; k++)
-                            {
-                                if(device.services[k] instanceof Object && device.services[k].type == type)
-                                {
-                                    n.push(device.services[k].name);
-                                }
-                            }
-
-                            if(n.length > 0)
-                            {
-                                name = n[j];
-                            }
-
-                            if(name.includes(device.name))
-                            {
-                                name = name.replace(device.name, '');
-                            }
-
-                            infoType.innerHTML = name;
-
-                            frame.appendChild(infoType);
-
-                            var infoUpdate = document.createElement('div');
-
-                            infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
-                            infoUpdate.setAttribute('class', 'update');
-
-                            frame.appendChild(infoUpdate);
-                        }
-                    }
-                }
-
-                if(c > 3)
-                {
-                    document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
-                }
-
-                Preloader.finish();
-
-                Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
-
-                    automations = JSON.parse(a);
-
-                    loadActivity();
-                });
-
-                if(Presets.getPreset(device.plugin).getVersionURL(device) != null)
-                {
-                    checkUpdates();
-                }
-
-                if(Presets.getPreset(device.plugin).getPingURL(device) != null)
-                {
-                    pingESP();
-                }
-                else
-                {
-                    setInterval(function()
-                    {
-                        if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
-                        {
-                            fetchState();
-                        }
-
-                    }, 300);
-                }
-
-                if((new URL(window.location.href)).searchParams.get('settings') == '')
-                {
-                    Essentials.switchPage('infos', 'settings', true);
-                }
-
-            </script>
-            <script>
-
-                function loadServices()
-                {
-                    if(Array.isArray(device.services))
-                    {
-                        for(var j = 0; j < device.services.length; j++)
-                        {
-                            if(device.services[j] instanceof Object)
-                            {
-                                services.push(device.services[j].type);
-                            }
-                            else
-                            {
-                                services.push(device.services[j]);
-                            }
-                        }
-                    }
-                    else if(device.services instanceof Object)
-                    {
-                        services.push(device.services.type);
-                    }
-                    else
-                    {
-                        services.push(device.services);
-                    }
-
-                    services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
-
-                    console.log('Services', services);
-                }
-
-                async function controlSwitch(button)
-                {
-                    if(!busy.includes(button.getAttribute('id')))
-                    {
-                        busy.push(button.getAttribute('id'));
-
-                        var color = 'rgb(60, 60, 80)';
-                        var counter = button.getAttribute('id').split('-')[2];
-                        var type = button.getAttribute('id').split('-')[1];
-                        var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
-
-                        if(type == 'switch' || type == 'relais')
-                        {
-                            if(value == 'true')
-                            {
-                                color = data[type].active.color;
-                            }
-                            else if(value == 'false')
-                            {
-                                color = data[type].inactive.color;
-                            }
-                        }
-                        else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-                        {
-                            if(value == 'true')
-                            {
-                                color = 'hsl(' + parseInt(values[type + counter][0].hue) + ', ' + parseInt(values[type + counter][0].saturation) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) / 2.5) + '%)';
-                            }
-                            else if(value == 'false')
-                            {
-                                color = 'rgb(60, 60, 80)';
-                            }
-                        }
-
-                        button.style.backgroundColor = color;
-                        
-                        if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
-                        {
-                            button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
-                        }
-                        else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
-                        {
-                            button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
-                        }
-
-                        if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
-                        {
-                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
-                        }
-                        else if(device.plugin == 'SynTexMagicHome')
-                        {
-                            await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
-                        }
-
-                        const index = busy.indexOf(button.getAttribute('id'));
-
-                        if(index > -1)
-                        {
-                            await Essentials.newTimeout(310);
-
-                            busy.splice(index, 1);
-                        }
-                    }
-                }
-
-                async function loadActivity()
-                {
-                    activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
-
-                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                    {
-                        var type = Object.keys(typeCounter)[i];
-
-                        if(type != 'lcd')
-                        {
-                            for(var j = 0; j < typeCounter[type]; j++)
-                            {
-                                var name = device.name, n = [];
-
-                                if(typeCounter[type] > 1)
-                                {
-                                    name = device.name + ' ' + type + ' ' + j;
-                                }
-                                else if(counter > 1)
-                                {
-                                    name = device.name + ' ' + type;
-                                }
-
-                                for(var k = 0; k < device.services.length; k++)
-                                {
-                                    if(device.services[k] instanceof Object && device.services[k].type == type)
-                                    {
-                                        n.push(device.services[k].name);
-                                    }
-                                }
-
-                                if(n.length > 0)
-                                {
-                                    name = n[j];
-                                }
-
-                                if(!values[type + j])
-                                {
-                                    values[type + j] = [];
-                                }
-
-                                for(const l in activity)
-                                {
-                                    if(l == Essentials.typeToLetter(type) + j)
-                                    {
-                                        if(activity[l].update.length > 0 || activity[l].success.length > 0)
-                                        {
-                                            if(type == 'statelessswitch')
-                                            {
-                                                for(var k = activity[l].success.length - 1; k >= 0; k--)
-                                                {
-                                                    if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
-                                                    {
-                                                        values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
-                                                        values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                for(var k = activity[l].update.length - 1; k >= 0; k--)
-                                                {
-                                                    var obj = { time : activity[l].update[k].t };
-                                                    var orginalValues = activity[l].update[k].v
-
-                                                    obj.value = orginalValues;
-
-                                                    if(orginalValues.includes('power: '))
-                                                    {
-                                                        obj.value = orginalValues.split('power: ')[1];
-                                                    }
-
-                                                    if(orginalValues.includes('hue: '))
-                                                    {
-                                                        obj.hue = orginalValues.split('hue: ')[1];
-                                                    }
-
-                                                    if(orginalValues.includes('saturation: '))
-                                                    {
-                                                        obj.saturation = orginalValues.split('saturation: ')[1];
-                                                    }
-
-                                                    if(orginalValues.includes('brightness: '))
-                                                    {
-                                                        obj.brightness = orginalValues.split('brightness: ')[1];
-                                                    }
-
-                                                    if(obj.value.includes(', '))
-                                                    {
-                                                        obj.value = obj.value.split(', ')[0];
-                                                    }
-
-                                                    if(obj.hue != null && obj.hue.includes(', '))
-                                                    {
-                                                        obj.hue = obj.hue.split(', ')[0];
-                                                    }
-
-                                                    if(obj.saturation != null && obj.saturation.includes(', '))
-                                                    {
-                                                        obj.saturation = obj.saturation.split(', ')[0];
-                                                    }
-
-                                                    if(obj.brightness != null && obj.brightness.includes(', '))
-                                                    {
-                                                        obj.brightness = obj.brightness.split(', ')[0];
-                                                    }
-
-                                                    values[type + j].push(obj);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    orginal = { ...values };
-
-                    repaintGraphs();
-                }
-
-                function repaintGraphs()
-                {
-                    for(const i in typeCounter)
-                    {
-                        if(i != 'lcd')
-                        {
-                            for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
-                            {
-                                calcValues(values, i instanceof Object ? i.type : i, j);
-                            }
-                        }
-                    }
-                }
-
-                function calcValues(values, type, c)
-                {
-                    var color = 'hsl(200, 98%, 60%)';
-                    var canvas = document.getElementById('canvas-' + type + '-' + c);
-                    var v = [], a = [];
-
-                    //drawGrid(canvas, [], 10);
-
-                    canvas.width = document.getElementById('infos').offsetWidth - 4;
-
-                    drawGrid(canvas, [], 10);
-
-                    if(data[type].active && data[type].active.color)
-                    {
-                        color = data[type].active.color;
-                    }
-
-                    if(data[type].color)
-                    {
-                        color = data[type].color;
-                    }
-
-                    var min = 0;
-                    var max = 1;
-
-                    values[type + c].sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
-
-                    if(Object.keys(values).length != 0 && values[type + c].length != 0)
-                    {
-                        if(!isNaN(values[type + c][0].value))
-                        {
-                            min = 100000;
-                            max = 0;
-
-                            for(const j in values[type + c])
-                            {
-                                if(parseFloat(values[type + c][j].value) < min)
-                                {
-                                    min = parseFloat(values[type + c][j].value);
-                                }
-
-                                if(parseFloat(values[type + c][j].value) > max)
-                                {
-                                    max = parseFloat(values[type + c][j].value);
-                                }
-                            }
-                        }
-
-                        var unterteilungen = 24 * 15,
-                            date = new Date();
-
-                        if(!isNaN(values[type + c][0].value))
-                        {
-                            unterteilungen = 24 * 6;
-                            //unterteilungen = 24 * 60;
-                        }
-
-                        for(var k = unterteilungen; k >= 0; k--)
-                        {
-                            var x = [], sum = 0, triggered = false;
-
-                            for(const j in values[type + c])
-                            {
-                                if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
-                                {
-                                    var value = values[type + c][j].value;
-
-                                    if(!isNaN(values[type + c][0].value))
-                                    {
-                                        value = (values[type + c][j].value - min) / (max - min) * 100;
-
-                                        sum += parseFloat(value);
-                                    }
-
-                                    if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
-                                    {
-                                        triggered = true;
-                                    }
-                                    
-                                    x.push(value);
-                                }
-                            }
-
-                            if(x.length > 0)
-                            {
-                                if(!isNaN(values[type + c][0].value))
-                                {
-                                    v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
-
-                                    //v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
-                                }
-                                else if(!(x.includes('true') && x.includes('false')))
-                                {
-                                    v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
-                                }
-                                else
-                                {
-                                    v[unterteilungen - k - 2] = 100;
-                                    v[unterteilungen - k - 1] = 0;
-                                }
-
-                                //v[unterteilungen - k - 1] = sum / x.length;
-                            }
-                            else
-                            {
-                                if(!isNaN(v[unterteilungen - k - 2]))
-                                {
-                                    v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
-                                }
-                                else if(!isNaN(values[type + c][0].value))
-                                {
-                                    v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
-                                }
-                                else
-                                {
-                                    v[unterteilungen - k - 1] = 0;
-                                }
-                            }
-
-                            if(triggered)
-                            {
-                                a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
-                            }
-                            else
-                            {
-                                a[unterteilungen - k - 1] = -1;
-                            }
-                        }
-                        /*
-                        for(const j in values[type])
-                        {
-                            var value = values[type][j];
-
-                            value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-                            v.push((value - min) / (max - min) * 100);
-                        }
-                        */
-                        if(isNaN(values[type + c][0].value))
-                        {
-                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
-                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
-                        }
-                        else
-                        {
-                            canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                            canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
-                        }
-
-                        canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
-                    
-                        if(canvas.parentElement.getElementsByTagName('h2').length > 0)
-                        {
-                            canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
-                        }
-
-                        canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
-                        canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
-                        canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
-                    }
-                    else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
-                    {
-                        var label = document.createElement('h2');
-
-                        label.innerHTML = '↻ Neu Laden';
-                        label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
-                        label.setAttribute('onclick', 'loadActivity()');
-
-                        canvas.parentElement.appendChild(label);
-                    }
-
-                    var w = [];
-
-                    for(var i = 0; i < automations.length; i++)
-                    {
-                        for(var j = 0; j < automations[i].trigger.length; j++)
-                        {
-                            if(automations[i].trigger[j].id == device.id && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automations[i].trigger[j].value - min) / (max - min) * 100 > 0)
-                            {
-                                w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
-                            }
-                        }
-                    }
-
-                    //drawGrid(canvas, [], 10);
-                    drawAutomations(canvas, w);
-
-                    if(type == 'temperature')
-                    {
-                        var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                        if(min < data[type].valueRange[0])
-                        {
-                            min = data[type].valueRange[0];
-                        }
-                        else if(min > data[type].valueRange[1])
-                        {
-                            min = data[type].valueRange[1];
-                        }
-
-                        if(max > data[type].valueRange[1])
-                        {
-                            max = data[type].valueRange[1];
-                        }
-                        else if(max < data[type].valueRange[0])
-                        {
-                            max = data[type].valueRange[0];
-                        }
-
-                        var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-                        var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                        drawFill(canvas, v, [maxClr, minClr], 0);
-                        drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-                        drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
-                    }
-                    else if(type == 'humidity')
-                    {
-                        var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                        if(min < data[type].valueRange[0])
-                        {
-                            min = data[type].valueRange[0];
-                        }
-
-                        if(max > data[type].valueRange[1])
-                        {
-                            max = data[type].valueRange[1];
-                        }
-
-                        if(min > 50)
-                        {	
-                            cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                        }
-
-                        var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-
-                        if(max > 50)
-                        {	
-                            cRange = [data[type].colorRange[1], data[type].colorRange[0]];
-                        }
-                        else
-                        {
-                            cRange = [data[type].colorRange[0], data[type].colorRange[1]];
-                        }
-
-                        var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-                        drawFill(canvas, v, [maxClr, minClr], 0);
-                        drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-                        drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
-                    }
-                    else if(type == 'light')
-                    {
-                        drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
-                        drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
-                        drawEvents(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
-                    }
-                    else
-                    {
-                        drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
-                        drawGraph(canvas, v, [color, color], false);
-                        drawEvents(canvas, a, [color, color]);
-                    }
-
-                    canvas.style.opacity = 1;
-                }
-
-                function drawGraph(canvas, data, gradients, points)
-                {
-                    var ctx = canvas.getContext('2d');
-                    var height = canvas.offsetHeight - padding * 2 - 2;
-                    var width = canvas.offsetWidth - padding * 2;
-                    var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                    for(var i = 0; i < gradients.length; i++)
-                    {
-                        grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                    }
-
-                    ctx.lineWidth = 2;
-                    ctx.lineCap = 'round';
-                    ctx.strokeStyle = grd;
-                    ctx.setLineDash([]);
-
-                    for(var i = 1; i < data.length; i++)
-                    {
-                        if(points)
-                        {
-                            ctx.fillStyle = gradients[0];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 10, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                            ctx.fillStyle = gradients[1];
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 5, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                        }
-
-                        ctx.beginPath();
-                        ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding);
-                        ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
-                        ctx.stroke();
-                    }
-
-                    if(points)
-                    {
-                        ctx.fillStyle = gradients[0];
-                        ctx.beginPath();
-                        ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 10, 0, 360);
-                        ctx.fill();
-                        ctx.closePath();
-                        ctx.fillStyle = gradients[1];
-                        ctx.beginPath();
-                        ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 5, 0, 360);
-                        ctx.fill();
-                        ctx.closePath();
-                    }
-                }
-
-                function drawFill(canvas, data, gradients, smoothing)
-                {
-                    var ctx = canvas.getContext('2d');
-                    var height = canvas.offsetHeight - padding * 2 - 2;
-                    var width = canvas.offsetWidth - padding * 2;
-                    var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                    for(var i = 0; i < gradients.length; i++)
-                    {
-                        grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                    }
-
-                    ctx.fillStyle = grd;
-                    ctx.setLineDash([]);
-
-                    ctx.beginPath();
-                    ctx.moveTo(0, height + padding);
-                    ctx.lineTo(0, height - data[0] * height / 100 + padding);
-
-                    for(var i = 1; i < data.length; i++)
-                    {
-                        if(smoothing == 0)
-                        {
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
-                        }
-                        else
-                        {
-                            // TODO
-                            ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
-                        }
-                    }
-
-                    ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
-
-                    ctx.closePath();
-                    ctx.fill();
-                }
-
-                function drawGrid(canvas, data, unterteilungen)
-                {
-                    var ctx = canvas.getContext('2d');
-                    var height = canvas.offsetHeight - padding * 2 - 2;
-                    var width = canvas.offsetWidth - padding * 2;
-
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    ctx.lineCap = 'butt';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([]);
-
-                    for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
-                    {
-                        ctx.strokeStyle = 'rgb(25, 25, 35)';
-
-                        if(i == unterteilungen || i == 0)
-                        {
-                            ctx.strokeStyle = 'rgb(50, 50, 70)';
-                        }
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, padding + (height / unterteilungen) * i);
-                        ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
-                        ctx.stroke();
-                    }
-
-                    for(var i = 0; i < 25; i++)
-                    {
-                        ctx.strokeStyle = 'rgb(40, 40, 55)';
-                        
-                        if(i == 24 || i == 0)
-                        {
-                            ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                        }
-                        
-                        ctx.beginPath();
-                        ctx.moveTo(i * (width + padding * 2) / 24, padding);
-                        ctx.lineTo(i * (width + padding * 2) / 24, height + padding);
-                        ctx.stroke();
-                    }
-                    /*
-                    if(data.length < 75)
-                    {
-                        for(var i = 0; i < data.length; i++)
-                        {
-                            ctx.strokeStyle = 'rgb(40, 40, 55)';
-                            
-                            if(i == data.length - 1 || i == 0)
-                            {
-                                ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                            }
-                            
-                            ctx.beginPath();
-                            ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
-                            ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
-                            ctx.stroke();
-                        }
-                    }
-                    */
-                }
-
-                function drawAutomations(canvas, data)
-                {
-                    var ctx = canvas.getContext('2d');
-                    var height = canvas.offsetHeight - padding * 2 - 2;
-                    var width = canvas.offsetWidth - padding * 2;
-
-                    ctx.lineCap = 'butt';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([10, 15]);
-
-                    for(var i = 0; i < data.length; i++)
-                    {
-                        ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
-
-                        ctx.beginPath();
-                        ctx.moveTo(0, height - data[i] * height / 100 + padding);
-                        ctx.lineTo(width + padding * 2, height - data[i] * height / 100 + padding)
-                        ctx.stroke();
-                    }
-                }
-
-                function drawEvents(canvas, data, gradients)
-                {
-                    var ctx = canvas.getContext('2d');
-                    var height = canvas.offsetHeight - padding * 2 - 2;
-                    var width = canvas.offsetWidth - padding * 2;
-                    var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
-
-                    for(var i = 0; i < gradients.length; i++)
-                    {
-                        grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-                    }
-
-                    ctx.fillStyle = grd;
-                    ctx.lineCap = 'butt';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([]);
-
-                    for(var i = 1; i < data.length; i++)
-                    {
-                        if(data[i - 1] != -1)
-                        {
-                            ctx.beginPath();
-                            ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 4, 0, 360);
-                            ctx.fill();
-                            ctx.closePath();
-                        }
-                    }
-                }
-
-                function switchFormButton(btn)
-                {
-                    if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
-                    {
-                        btn.setAttribute('class', 'outline');
-                        btn.setAttribute('value', 'Aus');
-                    }
-                    else
-                    {
-                        btn.setAttribute('class', 'white');
-                        btn.setAttribute('value', 'An');
-                    }
-                }
-
-                async function openSettings(previous)
-                {
-                    await Essentials.switchPage(previous, 'settings', false);
-
-                    document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
-
-                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id + '&settings&desktopApp=true');
-                    }
-                    else
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id + '&settings');
-                    }
-                }
-                
-                async function closeSettings(previous)
-                {
-                    await Essentials.switchPage(previous, 'infos', false);
-
-                    document.getElementsByTagName('title')[0].innerHTML = device.name;
-
-                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
-                    }
-                    else
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id);
-                    }
-
-                    if(device.plugin != 'SynTexMagicHome')
-                    {
-                        repaintGraphs();
-                    }
-                }
-
-                async function fetchState()
-                {
-                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
-                    {
-                        var type = Object.keys(typeCounter)[i];
-
-                        if(type != 'lcd')
-                        {
-                            for(var j = 0; j < typeCounter[type]; j++)
-                            {
-                                var state = null;
-
-                                if(device.plugin && device.plugin == 'SynTexMagicHome')
-                                {
-                                    state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000);
-                                }
-                                else
-                                {
-                                    state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000);
-                                }
-
-                                if(state != null && state != 'Error')
-                                {
-                                    state = JSON.parse(state);
-                                }
-
-                                if(temp[type + j] && state.state != temp[type + j] && device.plugin != 'SynTexMagicHome')
-                                {
-                                    orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state });
-
-                                    calcValues(orginal, type, j);
-                                }
-
-                                temp[type + j] = state.state;
-
-                                console.log(state != null, state != 'Error', state.state != null);
-
-                                if(state != null && state != 'Error' && state.state != null)
-                                {
-                                    if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-                                    {
-                                        console.log(state);
-
-                                        if(state.state == true)
-                                        {
-                                            value = 'AN';
-                                            color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
-                                        }
-                                        else if(state.state == false)
-                                        {
-                                            value = 'AUS';
-                                            color = 'rgb(60, 60, 80)';
-                                        }
-                                    }
-                                    else if(state.state == true)
-                                    {
-                                        value = data[type].active.text.toUpperCase();
-                                        color = data[type].active.color;
-                                    }
-                                    else if(state.state == false)
-                                    {
-                                        value = data[type].inactive.text.toUpperCase();
-                                        color = data[type].inactive.color;
-                                    }
-                                    else
-                                    {
-                                        var color = 'rgb(60, 60, 80)', value = state.state;
-
-                                        if(type == 'temperature')
-                                        {
-                                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                                            value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-
-                                            if(state.state < 18)
-                                            {
-                                                color = 'hsl(220, 75%, 55%)';
-                                            }
-                                            else if(state.state > 26)
-                                            {
-                                                color = 'hsl(0, 75%, 55%)';
-                                            }
-                                            else
-                                            {
-                                                color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-                                            }
-                                        }
-                                        else if(type == 'humidity')
-                                        {
-                                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                                            value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-                                            if(state.state > 50)
-                                            {	
-                                                cRange = [280, 0];
-                                            }	
-
-                                            if(state.state < 45 || state.state > 55)	
-                                            {	
-                                                color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-                                            }	
-                                            else	
-                                            {	
-                                                color = data[type].color;	
-                                            }
-                                        }
-                                        else if(type == 'light')
-                                        {
-                                            var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-                                            value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-                                            if(state.state > 1000)
-                                            {
-                                                color = data[type].color;
-                                            }
-                                            else
-                                            {
-                                                color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-                                            }
-                                        }
-                                        else
-                                        {
-                                            value = state.state + ' ' + data[type].active.text.toUpperCase();
-                                        }
-
-                                        console.log(type);
-                                    }
-
-                                    if(typeCounter[type] > 1)
-                                    {
-                                        var name = device.name + ' ' + type + ' ' + j;
-                                        var n = [];
-
-                                        for(var k = 0; k < device.services.length; k++)
-                                        {
-                                            if(device.services[k] instanceof Object && device.services[k].type == type)
-                                            {
-                                                n.push(device.services[k].name);
-                                            }
-                                        }
-
-                                        if(n.length > 0)
-                                        {
-                                            name = n[j];
-                                        }
-
-                                        if(!busy.includes('status-' + type + '-' + j))
-                                        {
-                                            document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
-                                        }
-                                    }
-                                    else if(!busy.includes('status-' + type + '-' + j))
-                                    {
-                                        document.getElementById('status-' + type + '-' + j).value = value;
-                                    }
-
-                                    if(!busy.includes('status-' + type + '-' + j))
-                                    {
-                                        document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
-                                    }
-                                }
-                                else if(type == 'statelessswitch')	
-                                {	
-                                    document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
-                                    document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
-                                }
-                                else if(state == 'Error')
-                                {
-                                    document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
-                                }
-                            }
-                        }
-                    }
-                }
-
-                async function restartDevice(btn)
-                {
-                    if(!restarting && !updating && !saving && !resetting)
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'restart',
-                            pending : { value : 'Neustart ..' },
-                            connectionError : { value : 'Keine Verbindung zum Gerät!' }
-                        };
-
-                        restarting = true;
-
-                        if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, false) == null)
-                        {
-                            Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
-
-                            await Essentials.newTimeout(4000);
-
-                            Essentials.removeOverlays(btn, true);
-
-                            await Essentials.newTimeout(300);
-                        }
-                    }
-                }
-
-                async function pingESP()
-                {
-                    if(document.getElementById('updating') == null && !saving && document.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
-                    {
-                        if(await Query.fetchURL(Presets.getPreset(device.plugin).getPingURL(device), 10000) != null)
-                        {
-                            console.log('ESP Gefunden');
-
-                            if(restarting == true)
-                            {
-                                Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                                
-                                await Essentials.newTimeout(4000);
-                                
-                                Essentials.removeOverlays(document.getElementById('restart-btn'), true);
-
-                                setTimeout(function()
-                                {
-                                    restarting = false;
-                                }, 300);
-                            }
-
-                            for(var i = 0; i <= 4000; i += 1000)
-                            {
-                                setTimeout(function()
-                                {
-                                    if(!updating && !saving && !resetting)
-                                    {
-                                        fetchState();
-                                    }
-
-                                }, i);
-                            }
-
-                            setTimeout(function()
-                            {
-                                pingESP();
-
-                            }, 5000);
-                        }
-                        else
-                        {
-                            document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
-                            document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
-
-                            for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
-                            {
-                                document.getElementsByClassName('control-panel')[i].style.backgroundColor = 'rgb(60, 60, 80)';
-                                document.getElementsByClassName('control-panel')[i].value = '-';
-                            }
-
-                            await Essentials.newTimeout(1000);
-                            
-                            pingESP();
-                        }
-                    }
-                    else
-                    {
-                        await Essentials.newTimeout(1000);
-                            
-                        pingESP();
-                    }
-                }    
-
-                function updateDevice(btn)
-                {
-                    return new Promise(async function(resolve) {
-
-                        var response = false;
-
-                        if(!updating && !restarting && !saving && !resetting)
-                        {
-                            var overlays = {
-                                root : btn,
-                                id : 'update',
-                                pending : { value : 'Bitte Warten ..' },
-                                success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
-                                executeError : { value : 'Update Fehlgeschlagen!' },
-                                connectionError : { value : 'Keine Verbindung zum Gerät!' }
-                            };
-
-                            updating = true;
-
-                            if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(services) }), 20000, 1, overlays, true) == 'Success')
-                            {
-                                await Essentials.newTimeout(3000);
-
-                                var overlays = {
-                                    root : btn,
-                                    id : 'update-installation',
-                                    connectionError : { value : 'Keine Verbindung zum Gerät!' }
-                                };
-
-                                var update = await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 20, overlays, false);
-
-                                if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
-                                {  
-                                    Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
-
-                                    response = true;
-                                }
-                                else
-                                {
-                                    Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
-                                }
-
-                                document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 3, {}, false);
-
-                                await Essentials.newTimeout(4000);
-
-                                Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
-                            }
-
-                            updating = false;
-                        }
-
-                        resolve(response);
-                    });
-                }
-
-                async function checkUpdates()
-                {
-                    var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 2, {}, false);
-
-                    if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
-                    {
-                        var update = document.createElement('input');
-
-                        update.setAttribute('type', 'button');
-                        update.setAttribute('value', 'Update Installieren ( v' + newestVersion + ' )');
-                        update.setAttribute('style', 'margin-bottom: 20px;');
-                        update.setAttribute('onclick', 'updateDevice(this)');
-                        update.setAttribute('id', 'update-btn');
-
-                        document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(update, document.getElementById('restart-btn'));
-                    }
-                }
-
-                function resetDevice(btn)
-                {
-                    var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
-
-                    overlay.setAttribute('onclick', 'resetConfirm(this)');
-                    overlay.style.setProperty('cursor', 'pointer', 'important');
-
-                    Essentials.showOverlay(btn, overlay);
-                }
-                
-                async function resetConfirm(btn)
-                {
-                    if(!resetting && !updating && !restarting && !saving)
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'update',
-                            pending : { value : 'Zurücksetzen ..', z : 2 },
-                            executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
-                            connectionError : { value : 'Keine Verbindung ' + (device.ip == null ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
-                        };
-
-                        var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) });
-
-                        resetting = true;
-
-                        if(await Query.complexFetch(url, 20000, 1, overlays, true) == 'Success')
-                        {
-                            await Essentials.newTimeout(3000);
-
-                            if(await Essentials.checkRestart('/serverside/check-restart'))
-                            {
-                                Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
-
-                                await Essentials.newTimeout(3000);
-
-                                Essentials.leavePage('/');
-                            }
-                        }
-                        else
-                        {
-                            await Essentials.newTimeout(4010);
-                            Essentials.removeOverlays(document.getElementById('reset-btn'), true);
-                        }
-
-                        resetting = false;
-                    }
-                }
-
-                async function saveConfig()
-                {
-                    if(!saving && !updating && !restarting && !resetting)
-                    {
-                        var settings = {
-                            id: device.id
-                        };
-
-                        var form = document.getElementById('settings-form');
-
-                        for(var i = 0; i < form.childElementCount; i++)
-                        {
-                            if(!form.children[i].hasAttribute('type'))
-                            {
-                                if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
-                                {
-                                    if(!services.includes('motion'))
-                                    {
-                                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-                                    }
-                                    else if(services.includes('motion'))
-                                    {
-                                        settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-                                    }
-                                    else
-                                    {
-                                        settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-                                    }
-                                }
-                                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
-                                {
-                                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
-                                }
-                                else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
-                                {
-                                    settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
-                                }
-                            }
-                        }
-
-                        console.log(settings);
-
-                        var overlays = {
-                            root : document.getElementById('save-btn'),
-                            id : 'saving',
-                            pending : { value : 'Hochladen ..', remove : false },
-                            executeError : { value : 'Update Fehlgeschlagen!' },
-                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                        };
-
-                        saving = true;
-
-                        if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
-                        {
-                            if(Presets.getPreset(device.plugin).getRestartURL(device) != null)
-                            {
-                                var overlays = {
-                                    root : document.getElementById('save-btn'),
-                                    id : 'refresh',
-                                    success : { value : 'Hochgeladen!' },
-                                    executeError : { value : 'Fehler beim Upload!' },
-                                    connectionError : { value : 'Gespeichert!', color : 'yellow' }
-                                };
-                                
-                                await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, true);
-                            
-                                await Essentials.newTimeout(2000);
-                            }
-                                
-                            redirect();
-                        }
-                        else if(Presets.getPreset(device.plugin).getPingURL(device))
-                        {
-                            saving = false;
-
-                            await Essentials.newTimeout(500);
-
-                            pingESP();
-                        }
-
-                        saving = false;
-                    }
-                }
-                
-                function redirect()
-                {
-                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
-                    }
-                    else
-                    {
-                        window.history.pushState(null, null, '?id=' + device.id);
-                    }
-                    
-                    location.reload();
-                }
-
-            </script>
-        </div>
-    </body>
+	<body>
+		<div id="content">
+			<script>
+
+				document.getElementsByTagName('body')[0].setAttribute('onresize', 'repaintGraphs()');
+				
+			</script>
+			<title class="loading-loop">Laden ..</title>
+			<div class="main" id="infos" style="transition: .2s ease-in-out">
+				<div class="control-container"></div>
+				<h1 class="loading-loop">Laden ..</h1>
+				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
+				<div id="activity"></div>
+				<div class="navigation-panel">
+					<div class="sticky-inset">
+						<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
+						<div style="display: flex">
+							<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
+							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<h1>Einstellungen</h1>
+				<p class="loading-loop">( Laden .. )</p>
+				<form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
+					<div id="settings-form" style="margin-bottom: 100px">
+						<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+						<p><b>Raum: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
+					</div>
+					<input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
+					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
+					<div class="navigation-panel">
+						<div class="sticky-inset">
+							<div style="display: flex">
+								<input type="button" value="Zurück" onclick="closeSettings('settings')">
+								<div style="display: block; width: 100%; margin-left: 20px">
+									<input id="save-btn" type="submit" value="Speichern">
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<script type="module" defer>
+
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+				import { Presets } from '/js/presets.js';
+
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+
+				window.Query = Query;
+				window.Essentials = Essentials;
+				window.Presets = Presets;
+
+				window.device = JSON.parse('<%device%>')
+				window.values = {};
+				window.orginal = {};
+				window.typeCounter = {};
+				window.counter = Array.isArray(device.services) ? device.services.length : 1;
+				window.padding = 50;
+				window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
+				window.automations = []
+				window.busy = [];
+				window.restarting = false
+				window.resetting = false
+				window.updating = false
+				window.saving = false;
+				window.settings = [];
+				window.activity = [];
+				window.services = [];
+				window.temp = {};
+
+				window.data = {
+					motion: {
+						active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					occupancy: {
+						active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					contact: {
+						active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+						inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+					},
+					relais: {
+						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+					},
+					switch: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+					},
+					rain: {
+						active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+						inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+					},
+					statelessswitch: {
+						active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					rgb: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbw: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbww: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbcw: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+				}; 
+
+				loadServices();
+
+				if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
+				{
+					document.getElementById('restart-btn').style.display = 'none';
+				}
+
+				if(Presets.getPreset(device.plugin).getReconnectURL(device) == null)
+				{
+					document.getElementById('reconnect-btn').style.display = 'none';
+				}
+
+				if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) }) == null)
+				{
+					document.getElementById('reset-btn').style.display = 'none';
+				}
+
+				if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
+				{
+					settings.push({
+						index: 'active',
+						name: 'Aktiviert'
+					});
+				}
+
+				if(services.includes('contact') || services.includes('motion') || services.includes('relais') || services.includes('statelessswitch') || services.includes('lcd'))
+				{
+					settings.push({
+						index: 'led',
+						name: 'LED'
+					});
+				}
+
+				if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
+				{
+					settings.push({
+						index: 'interval',
+						name: services.includes('motion') ? 'Delay' : 'Interval'
+					});
+				}
+
+				document.getElementsByTagName('title')[0].innerHTML = device.name;
+				document.getElementsByTagName('h1')[0].innerHTML = device.name;
+
+				var infos = document.getElementById('info');
+
+				infos.innerHTML += '<p><b>ID: </b>' + device.id + '</p>';
+
+				if(device.ip != null)
+				{
+					infos.innerHTML += '<p><b>IP: </b>' + device.ip + '</p>';
+				}
+				
+				infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(services) + '</p>';
+
+				if(device.version != null && device.version != '99.99.99')
+				{
+					infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+				}
+
+				if(device.room != null)
+				{
+					infos.innerHTML += '<p><b>Raum: </b>' + device.room + '</p>';
+				}
+
+				for(const i in settings)
+				{
+					if(settings[i].index == 'interval' && !services.includes('motion'))
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+					}
+					else if(settings[i].index == 'interval' && services.includes('motion'))
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+					}
+					else if(settings[i].index == 'led' || settings[i].index == 'active')
+					{
+						if(device[settings[i].index] == 1)
+						{
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
+						}
+						else
+						{
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
+						}
+					}
+					else
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+					}
+				}
+
+				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
+				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
+
+				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/reconnect?ip=" + device.ip + '&id=' + device.id + "')");
+
+				document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+
+				var settingsForm = document.getElementById('settings-form');
+
+				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.room || '');
+
+				for(const i in settings)
+				{
+					if(settings[i].index == 'interval' && !services.includes('motion'))
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+					}
+					else if(settings[i].index == 'interval' && services.includes('motion'))
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+					}
+					else if(settings[i].index == 'led' || settings[i].index == 'active')
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+					}
+					else
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+					}
+				}
+
+				settingsForm.setAttribute('device_id', device.id);
+				settingsForm.setAttribute('ip', device.ip);
+				settingsForm.setAttribute('type', Essentials.getType(services));
+
+				for(var i = 0; i < counter; i++)
+				{
+					var type = Array.isArray(device.services) ? device.services[i] : device.services;
+
+					if(type instanceof Object)
+					{
+						typeCounter[type.type] = typeCounter[type.type] ? typeCounter[type.type] + 1 : 1;
+					}
+					else
+					{
+						typeCounter[type] = typeCounter[type] ? typeCounter[type] + 1 : 1;
+					}
+				}
+
+				var c = counter;
+
+				for(var i = 0; i < Object.keys(typeCounter).length; i++)
+				{
+					var type = Object.keys(typeCounter)[i];
+
+					if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
+					{
+						c--;
+
+						for(var j = 0; j < typeCounter[type]; j++)
+						{
+							var statusField = document.createElement('input');
+						
+							statusField.setAttribute('id', 'status-' + type + '-' + j);
+							statusField.setAttribute('class', 'control-panel loading-loop');
+							statusField.setAttribute('type', 'button');
+							statusField.setAttribute('value', 'LADEN ..');
+
+							if(type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+							{
+								statusField.setAttribute('onclick', 'controlSwitch(this)');
+								statusField.style.cursor = 'pointer';
+							}
+
+							if(typeCounter[type] > 1)
+							{
+								statusField.style.setProperty('font-size', '30px', 'important');
+							}
+
+							if(counter > 1)
+							{
+								statusField.style.height = '100px';
+							}
+
+							if(i == counter - 1) // TODO
+							{
+								statusField.style.setProperty('margin-bottom', '0', 'important');
+							}
+
+							document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+							var frame = document.createElement('div'), canvas = document.createElement('canvas');
+
+							frame.setAttribute('style', 'border-radius: 32px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
+
+							document.getElementById('activity').appendChild(frame);
+
+							if(i != counter - 1) // TODO
+							{
+								frame.style.marginBottom = '20px';
+							}
+
+							var height = frame.offsetHeight - 4;
+
+							canvas.setAttribute('class', 'canvas');
+							canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+							canvas.setAttribute('style', 'border-radius: 32px');
+
+							canvas.width = document.getElementById('infos').offsetWidth - 4;
+							canvas.height = height;
+							canvas.style.background = 'rgb(20, 20, 30)';
+
+							frame.appendChild(canvas);
+
+							//drawGrid(canvas, [], 10);
+
+							var infoMin = document.createElement('div');
+
+							infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+							infoMin.setAttribute('class', 'min');
+
+							frame.appendChild(infoMin);
+
+							var infoMax = document.createElement('div');
+
+							infoMax.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+							infoMax.setAttribute('class', 'max');
+
+							frame.appendChild(infoMax);
+
+							var infoType = document.createElement('div');
+
+							infoType.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300');
+
+							if(type == 'rgb' || type == 'rgbw')
+							{
+								type = type.toUpperCase();
+							}
+							else if(type == 'statelessswitch')
+							{
+								type = 'Stateless Switch';
+							}
+
+							var name = type[0].toUpperCase() + type.substring(1), n = [];
+
+							if(typeCounter[type] > 1)
+							{
+								name = device.name + ' ' + type[0].toUpperCase() + type.substring(1) + ' ' + j;
+							}
+							else if(counter > 1)
+							{
+								//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
+							}
+
+							for(var k = 0; k < device.services.length; k++)
+							{
+								if(device.services[k] instanceof Object && device.services[k].type == type)
+								{
+									n.push(device.services[k].name);
+								}
+							}
+
+							if(n.length > 0)
+							{
+								name = n[j];
+							}
+
+							if(name.includes(device.name))
+							{
+								name = name.replace(device.name, '');
+							}
+
+							infoType.innerHTML = name;
+
+							frame.appendChild(infoType);
+
+							var infoUpdate = document.createElement('div');
+
+							infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+							infoUpdate.setAttribute('class', 'update');
+
+							frame.appendChild(infoUpdate);
+						}
+					}
+				}
+
+				if(c > 3)
+				{
+					document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+				}
+
+				Preloader.finish();
+
+				Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
+
+					automations = JSON.parse(a);
+
+					loadActivity();
+				});
+
+				if(Presets.getPreset(device.plugin).getVersionURL(device) != null)
+				{
+					checkUpdates();
+				}
+
+				if(Presets.getPreset(device.plugin).getPingURL(device) != null)
+				{
+					pingESP();
+				}
+				else
+				{
+					setInterval(function()
+					{
+						if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+						{
+							fetchState();
+						}
+
+					}, 300);
+				}
+
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					Essentials.switchPage('infos', 'settings', true);
+				}
+
+			</script>
+			<script>
+
+				function loadServices()
+				{
+					if(Array.isArray(device.services))
+					{
+						for(var j = 0; j < device.services.length; j++)
+						{
+							if(device.services[j] instanceof Object)
+							{
+								services.push(device.services[j].type);
+							}
+							else
+							{
+								services.push(device.services[j]);
+							}
+						}
+					}
+					else if(device.services instanceof Object)
+					{
+						services.push(device.services.type);
+					}
+					else
+					{
+						services.push(device.services);
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('Services', services);
+				}
+
+				async function controlSwitch(button)
+				{
+					if(!busy.includes(button.getAttribute('id')))
+					{
+						busy.push(button.getAttribute('id'));
+
+						var color = 'rgb(60, 60, 80)';
+						var counter = button.getAttribute('id').split('-')[2];
+						var type = button.getAttribute('id').split('-')[1];
+						var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
+
+						if(type == 'switch' || type == 'relais')
+						{
+							if(value == 'true')
+							{
+								color = data[type].active.color;
+							}
+							else if(value == 'false')
+							{
+								color = data[type].inactive.color;
+							}
+						}
+						else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+						{
+							if(value == 'true')
+							{
+								color = 'hsl(' + parseInt(values[type + counter][0].hue) + ', ' + parseInt(values[type + counter][0].saturation) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) / 2.5) + '%)';
+							}
+							else if(value == 'false')
+							{
+								color = 'rgb(60, 60, 80)';
+							}
+						}
+
+						button.style.backgroundColor = color;
+						
+						if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
+						{
+							button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
+						}
+						else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+						{
+							button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
+						}
+
+						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+						{
+							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
+						}
+						else if(device.plugin == 'SynTexMagicHome')
+						{
+							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
+						}
+
+						const index = busy.indexOf(button.getAttribute('id'));
+
+						if(index > -1)
+						{
+							await Essentials.newTimeout(310);
+
+							busy.splice(index, 1);
+						}
+					}
+				}
+
+				async function loadActivity()
+				{
+					activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
+
+					for(var i = 0; i < Object.keys(typeCounter).length; i++)
+					{
+						var type = Object.keys(typeCounter)[i];
+
+						if(type != 'lcd')
+						{
+							for(var j = 0; j < typeCounter[type]; j++)
+							{
+								var name = device.name, n = [];
+
+								if(typeCounter[type] > 1)
+								{
+									name = device.name + ' ' + type + ' ' + j;
+								}
+								else if(counter > 1)
+								{
+									name = device.name + ' ' + type;
+								}
+
+								for(var k = 0; k < device.services.length; k++)
+								{
+									if(device.services[k] instanceof Object && device.services[k].type == type)
+									{
+										n.push(device.services[k].name);
+									}
+								}
+
+								if(n.length > 0)
+								{
+									name = n[j];
+								}
+
+								if(!values[type + j])
+								{
+									values[type + j] = [];
+								}
+
+								for(const l in activity)
+								{
+									if(l == Essentials.typeToLetter(type) + j)
+									{
+										if(activity[l].update.length > 0 || activity[l].success.length > 0)
+										{
+											if(type == 'statelessswitch')
+											{
+												for(var k = activity[l].success.length - 1; k >= 0; k--)
+												{
+													if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
+													{
+														values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
+														values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
+													}
+												}
+											}
+											else
+											{
+												for(var k = activity[l].update.length - 1; k >= 0; k--)
+												{
+													var obj = { time : activity[l].update[k].t };
+													var orginalValues = activity[l].update[k].v
+
+													obj.value = orginalValues;
+
+													if(orginalValues.includes('power: '))
+													{
+														obj.value = orginalValues.split('power: ')[1];
+													}
+
+													if(orginalValues.includes('hue: '))
+													{
+														obj.hue = orginalValues.split('hue: ')[1];
+													}
+
+													if(orginalValues.includes('saturation: '))
+													{
+														obj.saturation = orginalValues.split('saturation: ')[1];
+													}
+
+													if(orginalValues.includes('brightness: '))
+													{
+														obj.brightness = orginalValues.split('brightness: ')[1];
+													}
+
+													if(obj.value.includes(', '))
+													{
+														obj.value = obj.value.split(', ')[0];
+													}
+
+													if(obj.hue != null && obj.hue.includes(', '))
+													{
+														obj.hue = obj.hue.split(', ')[0];
+													}
+
+													if(obj.saturation != null && obj.saturation.includes(', '))
+													{
+														obj.saturation = obj.saturation.split(', ')[0];
+													}
+
+													if(obj.brightness != null && obj.brightness.includes(', '))
+													{
+														obj.brightness = obj.brightness.split(', ')[0];
+													}
+
+													values[type + j].push(obj);
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					orginal = { ...values };
+
+					repaintGraphs();
+				}
+
+				function repaintGraphs()
+				{
+					for(const i in typeCounter)
+					{
+						if(i != 'lcd')
+						{
+							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
+							{
+								calcValues(values, i instanceof Object ? i.type : i, j);
+							}
+						}
+					}
+				}
+
+				function calcValues(values, type, c)
+				{
+					var color = 'hsl(200, 98%, 60%)';
+					var canvas = document.getElementById('canvas-' + type + '-' + c);
+					var v = [], a = [];
+
+					//drawGrid(canvas, [], 10);
+
+					canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+					drawGrid(canvas, [], 10);
+
+					if(data[type].active && data[type].active.color)
+					{
+						color = data[type].active.color;
+					}
+
+					if(data[type].color)
+					{
+						color = data[type].color;
+					}
+
+					var min = 0;
+					var max = 1;
+
+					values[type + c].sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
+
+					if(Object.keys(values).length != 0 && values[type + c].length != 0)
+					{
+						if(!isNaN(values[type + c][0].value))
+						{
+							min = 100000;
+							max = 0;
+
+							for(const j in values[type + c])
+							{
+								if(parseFloat(values[type + c][j].value) < min)
+								{
+									min = parseFloat(values[type + c][j].value);
+								}
+
+								if(parseFloat(values[type + c][j].value) > max)
+								{
+									max = parseFloat(values[type + c][j].value);
+								}
+							}
+						}
+
+						var unterteilungen = 24 * 15,
+							date = new Date();
+
+						if(!isNaN(values[type + c][0].value))
+						{
+							unterteilungen = 24 * 6;
+							//unterteilungen = 24 * 60;
+						}
+
+						for(var k = unterteilungen; k >= 0; k--)
+						{
+							var x = [], sum = 0, triggered = false;
+
+							for(const j in values[type + c])
+							{
+								if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
+								{
+									var value = values[type + c][j].value;
+
+									if(!isNaN(values[type + c][0].value))
+									{
+										value = (values[type + c][j].value - min) / (max - min) * 100;
+
+										sum += parseFloat(value);
+									}
+
+									if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
+									{
+										triggered = true;
+									}
+									
+									x.push(value);
+								}
+							}
+
+							if(x.length > 0)
+							{
+								if(!isNaN(values[type + c][0].value))
+								{
+									v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
+
+									//v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
+								}
+								else if(!(x.includes('true') && x.includes('false')))
+								{
+									v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
+								}
+								else
+								{
+									v[unterteilungen - k - 2] = 100;
+									v[unterteilungen - k - 1] = 0;
+								}
+
+								//v[unterteilungen - k - 1] = sum / x.length;
+							}
+							else
+							{
+								if(!isNaN(v[unterteilungen - k - 2]))
+								{
+									v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
+								}
+								else if(!isNaN(values[type + c][0].value))
+								{
+									v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
+								}
+								else
+								{
+									v[unterteilungen - k - 1] = 0;
+								}
+							}
+
+							if(triggered)
+							{
+								a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
+							}
+							else
+							{
+								a[unterteilungen - k - 1] = -1;
+							}
+						}
+						/*
+						for(const j in values[type])
+						{
+							var value = values[type][j];
+
+							value = value == 'true' ? 1 : value == 'false' ? 0 : value;
+
+							v.push((value - min) / (max - min) * 100);
+						}
+						*/
+						if(isNaN(values[type + c][0].value))
+						{
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+						}
+						else
+						{
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+						}
+
+						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • Letzte Aktivität';
+					
+						if(canvas.parentElement.getElementsByTagName('h2').length > 0)
+						{
+							canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
+						}
+
+						canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
+						canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
+						canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
+					}
+					else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
+					{
+						var label = document.createElement('h2');
+
+						label.innerHTML = '↻ Neu Laden';
+						label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+						label.setAttribute('onclick', 'loadActivity()');
+
+						canvas.parentElement.appendChild(label);
+					}
+
+					var w = [];
+
+					for(var i = 0; i < automations.length; i++)
+					{
+						for(var j = 0; j < automations[i].trigger.length; j++)
+						{
+							if(automations[i].trigger[j].id == device.id && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automations[i].trigger[j].value - min) / (max - min) * 100 > 0)
+							{
+								w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
+							}
+						}
+					}
+
+					//drawGrid(canvas, [], 10);
+					drawAutomations(canvas, w);
+
+					if(type == 'temperature')
+					{
+						var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+						if(min < data[type].valueRange[0])
+						{
+							min = data[type].valueRange[0];
+						}
+						else if(min > data[type].valueRange[1])
+						{
+							min = data[type].valueRange[1];
+						}
+
+						if(max > data[type].valueRange[1])
+						{
+							max = data[type].valueRange[1];
+						}
+						else if(max < data[type].valueRange[0])
+						{
+							max = data[type].valueRange[0];
+						}
+
+						var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+						var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+						drawFill(canvas, v, [maxClr, minClr], 0);
+						drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+						drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+					}
+					else if(type == 'humidity')
+					{
+						var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+						if(min < data[type].valueRange[0])
+						{
+							min = data[type].valueRange[0];
+						}
+
+						if(max > data[type].valueRange[1])
+						{
+							max = data[type].valueRange[1];
+						}
+
+						if(min > 50)
+						{	
+							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+						}
+
+						var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+
+						if(max > 50)
+						{	
+							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+						}
+						else
+						{
+							cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+						}
+
+						var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+
+						drawFill(canvas, v, [maxClr, minClr], 0);
+						drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
+						drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+					}
+					else if(type == 'light')
+					{
+						drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
+						drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
+						drawEvents(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
+					}
+					else
+					{
+						drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
+						drawGraph(canvas, v, [color, color], false);
+						drawEvents(canvas, a, [color, color]);
+					}
+
+					canvas.style.opacity = 1;
+				}
+
+				function drawGraph(canvas, data, gradients, points)
+				{
+					var ctx = canvas.getContext('2d');
+					var height = canvas.offsetHeight - padding * 2 - 2;
+					var width = canvas.offsetWidth - padding * 2;
+					var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+					for(var i = 0; i < gradients.length; i++)
+					{
+						grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+					}
+
+					ctx.lineWidth = 2;
+					ctx.lineCap = 'round';
+					ctx.strokeStyle = grd;
+					ctx.setLineDash([]);
+
+					for(var i = 1; i < data.length; i++)
+					{
+						if(points)
+						{
+							ctx.fillStyle = gradients[0];
+							ctx.beginPath();
+							ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 10, 0, 360);
+							ctx.fill();
+							ctx.closePath();
+							ctx.fillStyle = gradients[1];
+							ctx.beginPath();
+							ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 5, 0, 360);
+							ctx.fill();
+							ctx.closePath();
+						}
+
+						ctx.beginPath();
+						ctx.moveTo((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding);
+						ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
+						ctx.stroke();
+					}
+
+					if(points)
+					{
+						ctx.fillStyle = gradients[0];
+						ctx.beginPath();
+						ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 10, 0, 360);
+						ctx.fill();
+						ctx.closePath();
+						ctx.fillStyle = gradients[1];
+						ctx.beginPath();
+						ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + padding, 5, 0, 360);
+						ctx.fill();
+						ctx.closePath();
+					}
+				}
+
+				function drawFill(canvas, data, gradients, smoothing)
+				{
+					var ctx = canvas.getContext('2d');
+					var height = canvas.offsetHeight - padding * 2 - 2;
+					var width = canvas.offsetWidth - padding * 2;
+					var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+					for(var i = 0; i < gradients.length; i++)
+					{
+						grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+					}
+
+					ctx.fillStyle = grd;
+					ctx.setLineDash([]);
+
+					ctx.beginPath();
+					ctx.moveTo(0, height + padding);
+					ctx.lineTo(0, height - data[0] * height / 100 + padding);
+
+					for(var i = 1; i < data.length; i++)
+					{
+						if(smoothing == 0)
+						{
+							ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height - data[i] * height / 100 + padding);
+						}
+						else
+						{
+							// TODO
+							ctx.bezierCurveTo(i * (width + padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - padding , i * width / (data.length - 1) + padding, height - data[i] * multiplicator - padding );
+						}
+					}
+
+					ctx.lineTo((data.length - 1) * (width + padding * 2) / (data.length - 1), height + padding);
+
+					ctx.closePath();
+					ctx.fill();
+				}
+
+				function drawGrid(canvas, data, unterteilungen)
+				{
+					var ctx = canvas.getContext('2d');
+					var height = canvas.offsetHeight - padding * 2 - 2;
+					var width = canvas.offsetWidth - padding * 2;
+
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+					ctx.lineCap = 'butt';
+					ctx.lineWidth = 1.5;
+					ctx.setLineDash([]);
+
+					for(var i = 0; i < unterteilungen + 1; i++) // TODO Auto Adjust
+					{
+						ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+						if(i == unterteilungen || i == 0)
+						{
+							ctx.strokeStyle = 'rgb(50, 50, 70)';
+						}
+
+						ctx.beginPath();
+						ctx.moveTo(0, padding + (height / unterteilungen) * i);
+						ctx.lineTo(width + padding * 2, padding + (height / unterteilungen) * i)
+						ctx.stroke();
+					}
+
+					for(var i = 0; i < 25; i++)
+					{
+						ctx.strokeStyle = 'rgb(40, 40, 55)';
+						
+						if(i == 24 || i == 0)
+						{
+							ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+						}
+						
+						ctx.beginPath();
+						ctx.moveTo(i * (width + padding * 2) / 24, padding);
+						ctx.lineTo(i * (width + padding * 2) / 24, height + padding);
+						ctx.stroke();
+					}
+					/*
+					if(data.length < 75)
+					{
+						for(var i = 0; i < data.length; i++)
+						{
+							ctx.strokeStyle = 'rgb(40, 40, 55)';
+							
+							if(i == data.length - 1 || i == 0)
+							{
+								ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+							}
+							
+							ctx.beginPath();
+							ctx.moveTo(i * (width + padding * 2) / (data.length - 1), padding);
+							ctx.lineTo(i * (width + padding * 2) / (data.length - 1), height + padding);
+							ctx.stroke();
+						}
+					}
+					*/
+				}
+
+				function drawAutomations(canvas, data)
+				{
+					var ctx = canvas.getContext('2d');
+					var height = canvas.offsetHeight - padding * 2 - 2;
+					var width = canvas.offsetWidth - padding * 2;
+
+					ctx.lineCap = 'butt';
+					ctx.lineWidth = 1.5;
+					ctx.setLineDash([10, 15]);
+
+					for(var i = 0; i < data.length; i++)
+					{
+						ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
+
+						ctx.beginPath();
+						ctx.moveTo(0, height - data[i] * height / 100 + padding);
+						ctx.lineTo(width + padding * 2, height - data[i] * height / 100 + padding)
+						ctx.stroke();
+					}
+				}
+
+				function drawEvents(canvas, data, gradients)
+				{
+					var ctx = canvas.getContext('2d');
+					var height = canvas.offsetHeight - padding * 2 - 2;
+					var width = canvas.offsetWidth - padding * 2;
+					var grd = ctx.createLinearGradient(0, padding, 0, (height + padding * 2 + 2) - padding);
+
+					for(var i = 0; i < gradients.length; i++)
+					{
+						grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+					}
+
+					ctx.fillStyle = grd;
+					ctx.lineCap = 'butt';
+					ctx.lineWidth = 1.5;
+					ctx.setLineDash([]);
+
+					for(var i = 1; i < data.length; i++)
+					{
+						if(data[i - 1] != -1)
+						{
+							ctx.beginPath();
+							ctx.arc((i - 1) * (width + padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + padding, 4, 0, 360);
+							ctx.fill();
+							ctx.closePath();
+						}
+					}
+				}
+
+				function switchFormButton(btn)
+				{
+					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+					{
+						btn.setAttribute('class', 'outline');
+						btn.setAttribute('value', 'Aus');
+					}
+					else
+					{
+						btn.setAttribute('class', 'white');
+						btn.setAttribute('value', 'An');
+					}
+				}
+
+				async function openSettings(previous)
+				{
+					await Essentials.switchPage(previous, 'settings', false);
+
+					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&settings&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&settings');
+					}
+				}
+				
+				async function closeSettings(previous)
+				{
+					await Essentials.switchPage(previous, 'infos', false);
+
+					document.getElementsByTagName('title')[0].innerHTML = device.name;
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id);
+					}
+
+					if(device.plugin != 'SynTexMagicHome')
+					{
+						repaintGraphs();
+					}
+				}
+
+				async function fetchState()
+				{
+					for(var i = 0; i < Object.keys(typeCounter).length; i++)
+					{
+						var type = Object.keys(typeCounter)[i];
+
+						if(type != 'lcd')
+						{
+							for(var j = 0; j < typeCounter[type]; j++)
+							{
+								var state = null;
+
+								if(device.plugin && device.plugin == 'SynTexMagicHome')
+								{
+									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000);
+								}
+								else
+								{
+									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000);
+								}
+
+								if(state != null && state != 'Error')
+								{
+									state = JSON.parse(state);
+								}
+
+								if(temp[type + j] && state.state != temp[type + j] && device.plugin != 'SynTexMagicHome')
+								{
+									orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state });
+
+									calcValues(orginal, type, j);
+								}
+
+								temp[type + j] = state.state;
+
+								console.log(state != null, state != 'Error', state.state != null);
+
+								if(state != null && state != 'Error' && state.state != null)
+								{
+									if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+									{
+										console.log(state);
+
+										if(state.state == true)
+										{
+											value = 'AN';
+											color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+										}
+										else if(state.state == false)
+										{
+											value = 'AUS';
+											color = 'rgb(60, 60, 80)';
+										}
+									}
+									else if(state.state == true)
+									{
+										value = data[type].active.text.toUpperCase();
+										color = data[type].active.color;
+									}
+									else if(state.state == false)
+									{
+										value = data[type].inactive.text.toUpperCase();
+										color = data[type].inactive.color;
+									}
+									else
+									{
+										var color = 'rgb(60, 60, 80)', value = state.state;
+
+										if(type == 'temperature')
+										{
+											var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+											value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+											if(state.state < 18)
+											{
+												color = 'hsl(220, 75%, 55%)';
+											}
+											else if(state.state > 26)
+											{
+												color = 'hsl(0, 75%, 55%)';
+											}
+											else
+											{
+												color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+											}
+										}
+										else if(type == 'humidity')
+										{
+											var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+											value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
+
+											if(state.state > 50)
+											{	
+												cRange = [280, 0];
+											}	
+
+											if(state.state < 45 || state.state > 55)	
+											{	
+												color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+											}	
+											else	
+											{	
+												color = data[type].color;	
+											}
+										}
+										else if(type == 'light')
+										{
+											var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+											value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
+
+											if(state.state > 1000)
+											{
+												color = data[type].color;
+											}
+											else
+											{
+												color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+											}
+										}
+										else
+										{
+											value = state.state + ' ' + data[type].active.text.toUpperCase();
+										}
+
+										console.log(type);
+									}
+
+									if(typeCounter[type] > 1)
+									{
+										var name = device.name + ' ' + type + ' ' + j;
+										var n = [];
+
+										for(var k = 0; k < device.services.length; k++)
+										{
+											if(device.services[k] instanceof Object && device.services[k].type == type)
+											{
+												n.push(device.services[k].name);
+											}
+										}
+
+										if(n.length > 0)
+										{
+											name = n[j];
+										}
+
+										if(!busy.includes('status-' + type + '-' + j))
+										{
+											document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+										}
+									}
+									else if(!busy.includes('status-' + type + '-' + j))
+									{
+										document.getElementById('status-' + type + '-' + j).value = value;
+									}
+
+									if(!busy.includes('status-' + type + '-' + j))
+									{
+										document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+									}
+								}
+								else if(type == 'statelessswitch')	
+								{	
+									document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
+									document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
+								}
+								else if(state == 'Error')
+								{
+									document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
+								}
+							}
+						}
+					}
+				}
+
+				async function restartDevice(btn)
+				{
+					if(!restarting && !updating && !saving && !resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'restart',
+							pending : { value : 'Neustart ..' },
+							connectionError : { value : 'Keine Verbindung zum Gerät!' }
+						};
+
+						restarting = true;
+
+						if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, false) == null)
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, true);
+
+							await Essentials.newTimeout(300);
+						}
+					}
+				}
+
+				async function pingESP()
+				{
+					if(document.getElementById('updating') == null && !saving && document.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
+					{
+						if(await Query.fetchURL(Presets.getPreset(device.plugin).getPingURL(device), 10000) != null)
+						{
+							console.log('ESP Gefunden');
+
+							if(restarting == true)
+							{
+								Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+								
+								await Essentials.newTimeout(4000);
+								
+								Essentials.removeOverlays(document.getElementById('restart-btn'), true);
+
+								setTimeout(function()
+								{
+									restarting = false;
+								}, 300);
+							}
+
+							for(var i = 0; i <= 4000; i += 1000)
+							{
+								setTimeout(function()
+								{
+									if(!updating && !saving && !resetting)
+									{
+										fetchState();
+									}
+
+								}, i);
+							}
+
+							setTimeout(function()
+							{
+								pingESP();
+
+							}, 5000);
+						}
+						else
+						{
+							document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
+							document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+
+							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
+							{
+								document.getElementsByClassName('control-panel')[i].style.backgroundColor = 'rgb(60, 60, 80)';
+								document.getElementsByClassName('control-panel')[i].value = '-';
+							}
+
+							await Essentials.newTimeout(1000);
+							
+							pingESP();
+						}
+					}
+					else
+					{
+						await Essentials.newTimeout(1000);
+							
+						pingESP();
+					}
+				}    
+
+				function updateDevice(btn)
+				{
+					return new Promise(async function(resolve) {
+
+						var response = false;
+
+						if(!updating && !restarting && !saving && !resetting)
+						{
+							var overlays = {
+								root : btn,
+								id : 'update',
+								pending : { value : 'Bitte Warten ..' },
+								success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
+								executeError : { value : 'Update Fehlgeschlagen!' },
+								connectionError : { value : 'Keine Verbindung zum Gerät!' }
+							};
+
+							updating = true;
+
+							if(await Query.complexFetch(Presets.getPreset(device.plugin).getUpdateURL(device, { type : Essentials.getType(services) }), 20000, 1, overlays, true) == 'Success')
+							{
+								await Essentials.newTimeout(3000);
+
+								var overlays = {
+									root : btn,
+									id : 'update-installation',
+									connectionError : { value : 'Keine Verbindung zum Gerät!' }
+								};
+
+								var update = await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 20, overlays, false);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{  
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+
+									response = true;
+								}
+								else
+								{
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+								}
+
+								document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 3, {}, false);
+
+								await Essentials.newTimeout(4000);
+
+								Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+							}
+
+							updating = false;
+						}
+
+						resolve(response);
+					});
+				}
+
+				async function checkUpdates()
+				{
+					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 2, {}, false);
+
+					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
+					{
+						var update = document.createElement('input');
+
+						update.setAttribute('type', 'button');
+						update.setAttribute('value', 'Update Installieren ( v' + newestVersion + ' )');
+						update.setAttribute('style', 'margin-bottom: 20px;');
+						update.setAttribute('onclick', 'updateDevice(this)');
+						update.setAttribute('id', 'update-btn');
+
+						document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(update, document.getElementById('restart-btn'));
+					}
+				}
+
+				function resetDevice(btn)
+				{
+					var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+
+					overlay.setAttribute('onclick', 'resetConfirm(this)');
+					overlay.style.setProperty('cursor', 'pointer', 'important');
+
+					Essentials.showOverlay(btn, overlay);
+				}
+				
+				async function resetConfirm(btn)
+				{
+					if(!resetting && !updating && !restarting && !saving)
+					{
+						var overlays = {
+							root : btn,
+							id : 'update',
+							pending : { value : 'Zurücksetzen ..', z : 2 },
+							executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
+							connectionError : { value : 'Keine Verbindung ' + (device.ip == null ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+						};
+
+						var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) });
+
+						resetting = true;
+
+						if(await Query.complexFetch(url, 20000, 1, overlays, true) == 'Success')
+						{
+							await Essentials.newTimeout(3000);
+
+							if(await Essentials.checkRestart('/serverside/check-restart'))
+							{
+								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+
+								await Essentials.newTimeout(3000);
+
+								Essentials.leavePage('/');
+							}
+						}
+						else
+						{
+							await Essentials.newTimeout(4010);
+							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+						}
+
+						resetting = false;
+					}
+				}
+
+				async function saveConfig()
+				{
+					if(!saving && !updating && !restarting && !resetting)
+					{
+						var settings = {
+							id: device.id
+						};
+
+						var form = document.getElementById('settings-form');
+
+						for(var i = 0; i < form.childElementCount; i++)
+						{
+							if(!form.children[i].hasAttribute('type'))
+							{
+								if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+								{
+									if(!services.includes('motion'))
+									{
+										settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
+									}
+									else if(services.includes('motion'))
+									{
+										settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
+									}
+									else
+									{
+										settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
+									}
+								}
+								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+								{
+									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+								}
+								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+								{
+									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+								}
+							}
+						}
+
+						console.log(settings);
+
+						var overlays = {
+							root : document.getElementById('save-btn'),
+							id : 'saving',
+							pending : { value : 'Hochladen ..', remove : false },
+							executeError : { value : 'Update Fehlgeschlagen!' },
+							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+						};
+
+						saving = true;
+
+						if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
+						{
+							if(Presets.getPreset(device.plugin).getRestartURL(device) != null)
+							{
+								var overlays = {
+									root : document.getElementById('save-btn'),
+									id : 'refresh',
+									success : { value : 'Hochgeladen!' },
+									executeError : { value : 'Fehler beim Upload!' },
+									connectionError : { value : 'Gespeichert!', color : 'yellow' }
+								};
+								
+								await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, true);
+							
+								await Essentials.newTimeout(2000);
+							}
+								
+							redirect();
+						}
+						else if(Presets.getPreset(device.plugin).getPingURL(device))
+						{
+							saving = false;
+
+							await Essentials.newTimeout(500);
+
+							pingESP();
+						}
+
+						saving = false;
+					}
+				}
+				
+				function redirect()
+				{
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id);
+					}
+					
+					location.reload();
+				}
+
+			</script>
+		</div>
+	</body>
 </html>

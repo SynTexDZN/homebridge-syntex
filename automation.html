@@ -1,969 +1,969 @@
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
-    </head>
-    <body id="body">
-        <div id="content">
-            <title>Automation: Laden ..</title>
-            <div id="infos" class="main" style="transition: .2s ease-in-out; margin-top: 10px">
-                <h1 style="margin-bottom: 100px" class="loading-loop">Laden ..</h1>
-                <div class="type-container">
-                    <div class="title-container" style="margin-bottom: 40px">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
-                    </div>
-                    <p><b>ID: </b></p>
-                    <p><b>Name: </b></p>
-                    <p style="margin-bottom: 20px"><b>Aktiv: </b></p>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
-                    </div>
-                    <div id="trigger" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
-                    </div>
-                    <div id="condition" style="text-align: center"></div>
-                </div>
-                <div style="margin-top: 20px" class="type-container">
-                    <div class="title-container">
-                        <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
-                    </div>
-                    <div id="result" style="text-align: center"></div>
-                </div>
-                <div class="navigation-panel">
-                    <div class="sticky-inset">
-                        <div style="display: flex">
-                            <input type="button" value="Zurück" onclick="Essentials.leavePage('/automations')">
-                            <input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-                <h1 class="loading-loop">Einstellungen</h1>
-                <p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
-                <form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
-                    <div class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
-                        </div>
-                        <p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
-                        <p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-                        <p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
-                        </div>
-                        <div id="edit-trigger" style="text-align: center"></div>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
-                        </div>
-                        <div id="edit-condition" style="text-align: center"></div>
-                    </div>
-                    <div style="margin-top: 20px" class="type-container">
-                        <div class="title-container" style="margin-bottom: 40px">
-                            <h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
-                        </div>
-                        <div id="edit-result" style="text-align: center"></div>
-                    </div>
-                    <div class="navigation-panel">
-                        <div class="sticky-inset">
-                            <input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)">
-                            <div style="display: flex; margin-top: 20px">
-                                <input type="button" value="Zurück" onclick="closeSettings('settings')">
-                                <div style="display: block; width: 100%; margin-left: 20px">
-                                    <input id="save-btn" type="submit" value="Speichern">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <script type="module">
-
-                import { Query } from '/js/query.js';
-                import { Essentials } from '/js/essentials.js';
-                import { Replacer } from '/js/replace-select.js';
-
-                Query.SETUP(Essentials);
-                Essentials.SETUP(Query, Preloader);
-
-                window.Query = Query;
-                window.Essentials = Essentials;
-                window.Replacer = Replacer;
-
-                window.automations = [];
-                window.accessories = JSON.parse('<%accessories%>');
-                window.services = [];
-                /*
-                window.accessories = [
-                    {
-                        id: 'test1',
-                        name: 'Test',
-                        letters: 'F2',
-                        services: ['switch']
-                    }
-                ];
-                */
-                window.id = (new URL(window.location.href)).searchParams.get('id');
-                window.resetting = false;
-
-                window.data = {
-                    motion: {
-                        active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    contact: {
-                        active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-                        inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    relais: {
-                        active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
-                    },
-                    switch: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
-                    },
-                    rain: {
-                        active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-                        inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    statelessswitch: {
-                        active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-                        inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
-                    },
-                    rgb: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbw: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbww: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    rgbcw: {
-                        active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-                        inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
-                    },
-                    temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-                    humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-                    light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-                }; 
-
-                if(id != null)
-                {
-                    Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
-
-                        automations = JSON.parse(a);
-                        /*
-                        automations = [
-                            {
-                                id: 1,
-                                name: 'Debug',
-                                active: true,
-                                trigger: [
-                                    {
-                                        id: 'test1',
-                                        name: 'Test 1',
-                                        letters: 'F0',
-                                        operation: '=',
-                                        value: '100'
-                                    },
-                                    {
-                                        id: 'test1',
-                                        name: 'Test 1',
-                                        letters: 'F0',
-                                        operation: '=',
-                                        value: '2000'
-                                    }
-                                ],
-                                condition: [
-                                    {
-                                        id: 'test2',
-                                        name: 'Bedingung 1',
-                                        letters: 'D0',
-                                        operation: '>',
-                                        value: '50'
-                                    },
-                                    {
-                                        id: 'test2',
-                                        name: 'Bedingung 2',
-                                        letters: 'D0',
-                                        operation: '>',
-                                        value: '50'
-                                    },
-                                    {
-                                        id: 'test2',
-                                        name: 'Bedingung 3',
-                                        letters: 'D0',
-                                        operation: '>',
-                                        value: '50'
-                                    }
-                                ],
-                                result: [
-                                    {
-                                        id: 'test3',
-                                        name: 'Test X',
-                                        letters: 'B0',
-                                        operation: '=',
-                                        value: '1000'
-                                    },
-                                    {
-                                        id: 'test2',
-                                        name: 'Test Y',
-                                        letters: 'D0',
-                                        operation: '>',
-                                        value: '50'
-                                    }
-                                ]
-                            }
-                        ];
-                        */
-                        setupViewPage();
-                        setupSettingsPage();
-
-                        var a = ['trigger', 'condition', 'result'];
-
-                        for(var i = 0; i < a.length; i++)
-                        {
-                            var addBtn = document.createElement('input');
-                            
-                            addBtn.setAttribute('value', '+');
-                            addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
-                            addBtn.setAttribute('type', 'button');
-                            addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-                            addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
-
-                            document.getElementById('edit-' + a[i]).appendChild(addBtn);
-                        }
-
-                        loadServices();
-
-                        for(var i = 0; i < automations.length; i++)
-                        {
-                            if(automations[i].id == id)
-                            {
-                                for(var j = 0; j < automations[i].trigger.length; j++)
-                                {
-                                    addTrigger(automations[i].trigger[j]);
-                                }
-
-                                if(automations[i].condition && automations[i].condition.length > 0)
-                                {
-                                    for(var j = 0; j < automations[i].condition.length; j++)
-                                    {
-                                        addCondition(automations[i].condition[j]);
-                                    }
-                                }
-                                else
-                                {
-                                    document.getElementById('condition').parentElement.style.display = 'none';
-                                }
-
-                                for(var j = 0; j < automations[i].result.length; j++)
-                                {
-                                    addResult(automations[i].result[j]);
-                                }
-                            }
-                        }
-
-                        Preloader.finish();
-                    });
-                }
-                else
-                {
-                    Preloader.finish();
-                }
-                
-                if((new URL(window.location.href)).searchParams.get('settings') == '')
-                {
-                    Essentials.switchPage('infos', 'settings', true);
-                }
-
-            </script>
-            <script>
-
-                async function openSettings(previous)
-                {
-                    await Essentials.switchPage(previous, 'settings', false);
-
-                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-                    {
-                        window.history.pushState(null, null, '/automation?id=' + id + '&settings&desktopApp=true');
-                    }
-                    else
-                    {
-                        window.history.pushState(null, null, '/automation?id=' + id + '&settings');
-                    }
-                }
-
-                async function closeSettings(previous)
-                {
-                    await Essentials.switchPage(previous, 'infos', false);
-
-                    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-                    {
-                        window.history.pushState(null, null, '/automation?id=' + id + '&desktopApp=true');
-                    }
-                    else
-                    {
-                        window.history.pushState(null, null, '/automation?id=' + id);
-                    }
-                }
-
-                function setupViewPage()
-                {
-                    for(var i = 0; i < automations.length; i++)
-                    {
-                        if(automations[i].id == id)
-                        {
-                            document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
-                            document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
-                            document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automations[i].id;
-                            document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automations[i].name;
-                            document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automations[i].active ? 'An' : 'Aus');
-
-                            var panel = document.createElement('button');
-
-                            for(var j = 0; j < automations[i].trigger.length; j++)
-                            {
-                                var column = document.createElement('div');
-                                var category = document.createElement('div');
-                                var row = document.createElement('div');
-
-                                row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-                                column.className = 'column';
-
-                                if(j != 0)
-                                {
-                                    column.style.marginTop = '3px';
-                                }
-
-                                category.innerHTML = j == 0 ? 'WENN' : 'ODER';
-                                category.className = 'primary';
-
-                                column.appendChild(category);
-
-                                if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters && automations[i].trigger[j].operation && automations[i].trigger[j].value)
-                                {
-                                    var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
-                                    var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
-
-                                    if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
-                                    {
-                                        src = 'climate';
-                                    }
-
-                                    row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
-                                }
-                                else if(automations[i].trigger[j].url)
-                                {
-                                    row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].trigger[j].url + '"';
-                                }
-                            
-                                row.style.padding = '13px 18px 12px 18px';
-
-                                column.appendChild(row);
-                                panel.appendChild(column);
-                            }
-
-                            panel.className = 'table';
-
-                            document.getElementById('trigger').innerHTML = '';
-                            document.getElementById('trigger').appendChild(panel);
-
-                            var panel = document.createElement('button');
-
-                            document.getElementById('condition').innerHTML = '';
-
-                            if(automations[i].condition && automations[i].condition.length > 0)
-                            {
-                                for(var j = 0; j < automations[i].condition.length; j++)
-                                {
-                                    var column = document.createElement('div');
-                                    var category = document.createElement('div');
-                                    var row = document.createElement('div');
-
-                                    row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-                                    column.className = 'column';
-
-                                    if(j != 0)
-                                    {
-                                        column.style.marginTop = '3px';
-                                    }
-
-                                    category.innerHTML = j == 0 ? 'WENN' : automations[i].combination == 'ALL' ? 'UND' : 'ODER';
-                                    category.className = 'primary';
-
-                                    column.appendChild(category);
-
-                                    if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters && automations[i].condition[j].operation && automations[i].condition[j].value)
-                                    {
-                                        var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
-                                        var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
-
-                                        if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
-                                        {
-                                            src = 'climate';
-                                        }
-
-                                        row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
-                                    }
-                                    else if(automations[i].condition[j].url)
-                                    {
-                                        row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].condition[j].url + '"';
-                                    }
-
-                                    row.style.padding = '13px 18px 12px 18px';
-
-                                    column.appendChild(row);
-                                    panel.appendChild(column);
-                                }
-
-                                panel.className = 'table';
-                            
-                                document.getElementById('condition').appendChild(panel);
-                            }
-
-                            var panel = document.createElement('button');
-
-                            for(var j = 0; j < automations[i].result.length; j++)
-                            {
-                                var column = document.createElement('div');
-                                var category = document.createElement('div');
-                                var row = document.createElement('div');
-
-                                row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-                                column.className = 'column';
-
-                                if(j != 0)
-                                {
-                                    column.style.marginTop = '3px';
-                                }
-
-                                category.innerHTML = j == 0 ? 'DANN' : 'UND';
-                                category.className = 'primary';
-
-                                column.appendChild(category);
-
-                                if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters && automations[i].result[j].operation && automations[i].result[j].value)
-                                {
-                                    var src = Essentials.letterToType(automations[i].result[j].letters[0]);
-                                    var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
-
-                                    if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
-                                    {
-                                        src = 'climate';
-                                    }
-
-                                    row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
-                                }
-                                else if(automations[i].result[j].url)
-                                {
-                                    row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].result[j].url + '"';
-                                }
-
-                                row.style.padding = '13px 18px 12px 18px';
-
-                                column.appendChild(row);
-                                panel.appendChild(column);
-                            }
-
-                            panel.className = 'table';
-
-                            document.getElementById('result').innerHTML = '';
-                            document.getElementById('result').appendChild(panel);
-                        }
-                    }
-                }
-
-                function setupSettingsPage()
-                {
-                    for(var i = 0; i < automations.length; i++)
-                    {
-                        if(automations[i].id == id)
-                        {
-                            document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automations[i].name + ' )';
-                            document.getElementById('settings').getElementsByTagName('input')[0].value = automations[i].id;
-                            document.getElementById('settings').getElementsByTagName('input')[1].value = automations[i].name;
-                            document.getElementById('settings').getElementsByTagName('input')[2].value = automations[i].active ? 'An' : 'Aus';
-                            document.getElementById('settings').getElementsByTagName('input')[2].className = automations[i].active ? 'white' : 'outline';
-                        }
-                    }
-                }
-
-                function switchFormButton(btn)
-                {
-                    if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
-                    {
-                        btn.setAttribute('class', 'outline');
-                        btn.setAttribute('value', 'Aus');
-                    }
-                    else
-                    {
-                        btn.setAttribute('class', 'white');
-                        btn.setAttribute('value', 'An');
-                    }
-                }
-
-                function getDataType(type)
-                {
-                    if(type == 'temperature' || type == 'humidity' || type == 'light')
-                    {
-                        return 'numeric';
-                    }
-                    else
-                    {
-                        return 'boolean';
-                    }
-                }
-
-                function updateOperation(select)
-                {
-                    var o = select.getElementsByTagName('select')[0].selectedIndex;
-                    var option = select.getElementsByTagName('select')[0].children[o];
-
-                    console.log(option.getAttribute('type'), select.parentElement.children[1].getElementsByClassName('select-items')[0]);
-
-                    var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
-
-                    if(option.getAttribute('type') == 'boolean')
-                    {
-                        for(var i = 0; i < options.length; i++)
-                        {
-                            if(options[i].innerHTML == '=')
-                            {
-                                options[i].style.display = '';
-                                options[i].click();
-                            }
-                            else
-                            {
-                                options[i].style.display = 'none';
-                            }
-                        }
-                    }
-                    else if(option.getAttribute('type') == 'numeric')
-                    {
-                        for(var i = 0; i < options.length; i++)
-                        {
-                            options[i].style.display = '';
-                        }
-                    }
-                }
-
-                function addTrigger(t)
-                {
-                    var trigger = document.createElement('div');
-                    var p = document.createElement('p');
-                    var b = document.createElement('b');
-                    var select = document.createElement('div');
-
-                    b.innerHTML = 'Gerät: ';
-
-                    select.className = 'custom-select';
-                    select.style.marginRight = '20px';
-                    select.style.width = '100%';
-
-                    trigger.className = 'automation-device-entry';
-
-                    var html = '<select name="service" onchange="updateOperation(this)">';
-
-                    for(var i = 0; i < services.length; i++)
-                    {
-                        if(services[i].type != 'lcd')
-                        {
-                            html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
-                        }
-                    }
-
-                    html += '</select>';
-
-                    console.log(html);
-
-                    select.innerHTML = html;
-               
-                    var operations = document.createElement('div');
-
-                    operations.className = 'custom-select';
-                    operations.style.width = '100%';
-                    operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (t && t.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (t && t.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (t && t.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
-
-                    document.getElementById('edit-trigger').insertBefore(trigger, document.getElementById('edit-trigger').getElementsByClassName('add-entry-button')[0]);
-                
-                    trigger.appendChild(Replacer.createSelectMenu(select));
-                    trigger.appendChild(Replacer.createSelectMenu(operations));
-
-                    updateOperation(select);
-
-                    trigger.innerHTML += '<input value="' + (t ? t.url ? t.url : t.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
-                    trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
-                }
-
-                function addCondition(c)
-                {
-                    var condition = document.createElement('div');
-                    var p = document.createElement('p');
-                    var b = document.createElement('b');
-                    var select = document.createElement('div');
-
-                    b.innerHTML = 'Gerät: ';
-
-                    select.className = 'custom-select';
-                    select.style.marginRight = '20px';
-                    select.style.width = '100%';
-
-                    condition.className = 'automation-device-entry';
-
-                    var html = '<select name="service" onchange="updateOperation(this)">';
-
-                    for(var i = 0; i < services.length; i++)
-                    {
-                        if(services[i].type != 'lcd')
-                        {
-                            html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
-                        }
-                    }
-
-                    html += '</select>';
-
-                    select.innerHTML = html;
-
-                    var operations = document.createElement('div');
-
-                    operations.className = 'custom-select';
-                    operations.style.width = '100%';
-                    operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (c && c.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (c && c.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (c && c.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
-               
-                    document.getElementById('edit-condition').insertBefore(condition, document.getElementById('edit-condition').getElementsByClassName('add-entry-button')[0]);
-
-                    condition.appendChild(Replacer.createSelectMenu(select));
-                    condition.appendChild(Replacer.createSelectMenu(operations));
-
-                    updateOperation(select);
-
-                    condition.innerHTML += '<input value="' + (c ? c.url ? c.url : c.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
-                    condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
-                }
-
-                function addResult(r)
-                {
-                    var result = document.createElement('div');
-                    var p = document.createElement('p');
-                    var b = document.createElement('b');
-                    var select = document.createElement('div');
-
-                    b.innerHTML = 'Gerät: ';
-
-                    select.className = 'custom-select';
-                    select.style.marginRight = '20px';
-                    select.style.width = '100%';
-
-                    result.className = 'automation-device-entry';
-
-                    var html = '<select name="service" onchange="updateOperation(this)"><option ' + (r && r.url ? 'selected' : '') + ' img="/img/link.png" type="url">Link Öffnen</option>';
-
-                    for(var i = 0; i < services.length; i++)
-                    {
-                        if(services[i].type != 'lcd')
-                        {
-                            html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
-                        }
-                    }
-
-                    html += '</select>';
-
-                    select.innerHTML = html;
-               
-                    var operations = document.createElement('div');
-
-                    operations.className = 'custom-select';
-                    operations.style.width = '100%';
-                    operations.style.marginRight = '20px';
-                    operations.innerHTML = '<select name="operation"><option ' + (r && r.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (r && r.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (r && r.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
-               
-                    document.getElementById('edit-result').insertBefore(result, document.getElementById('edit-result').getElementsByClassName('add-entry-button')[0]);
-
-                    result.appendChild(Replacer.createSelectMenu(select));
-                    result.appendChild(Replacer.createSelectMenu(operations));
-
-                    updateOperation(select);
-                    
-                    result.innerHTML += '<input value="' + (r ? r.url ? r.url : r.value : '') + '" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
-                    result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
-                }
-
-                function loadServices()
-                {
-                    for(var i = 0; i < accessories.length; i++)
-                    {
-                        if(Array.isArray(accessories[i].services))
-                        {
-                            var counter = { type : '', count : 0 };
-
-                            for(var j = 0; j < accessories[i].services.length; j++)
-                            {
-                                if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
-                                {
-                                    if(accessories[i].services[j] instanceof Object)
-                                    {
-                                        if(counter.type != accessories[i].services[j].type)
-                                        {
-                                            counter.count = 0;
-                                        }
-
-                                        counter.type = accessories[i].services[j].type;
-                                        
-                                        services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
-                                    }
-                                    else
-                                    {
-                                        if(counter.type != accessories[i].services[j])
-                                        {
-                                            counter.count = 0;
-                                        }
-
-                                        counter.type = accessories[i].services[j];
-
-                                        services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
-                                    }
-
-                                    counter.count++;
-                                }
-                            }
-                        }
-                        else if(accessories[i].services instanceof Object)
-                        {
-                            if(accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
-                            {
-                                services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
-                            }
-                        }
-                        else
-                        {
-                            if(accessories[i].services != 'rgb' && accessories[i].services != 'rgbw')
-                            {
-                                services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
-                            }
-                        }
-                    }
-
-                    services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
-
-                    console.log('Services', services);
-                }
-
-                function removeAutomation(btn)
-                {
-                    var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
-
-                    overlay.setAttribute('onclick', 'removeConfirm(this)');
-                    overlay.style.setProperty('cursor', 'pointer', 'important');
-
-                    Essentials.showOverlay(btn, overlay);
-                }
-                
-                async function removeConfirm(btn)
-                {
-                    if(!resetting)
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'update',
-                            pending : { value : 'Löschen ..', z : 2 },
-                            executeError : { value : 'Entfernen Fehlgeschlagen!', z : 3 },
-                            connectionError : { value : 'Keine Verbindung zur Bridge', z : 3 }
-                        };
-
-                        var url = '/serverside/remove-automation?id=' + id;
-
-                        resetting = true;
-
-                        if(await Query.complexFetch(url, 5000, 2, overlays, true) == 'Success')
-                        {
-                            await Essentials.newTimeout(3000);
-
-                            if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
-                            {
-                                Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
-
-                                await Essentials.newTimeout(3000);
-
-                                Essentials.leavePage('/automations');
-                            }
-                            else
-                            {
-                                Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
-
-                                await Essentials.newTimeout(3000);
-
-                                Essentials.removeOverlays(document.getElementById('reset-btn'), true);
-                            }
-                        }
-                        else
-                        {
-                            await Essentials.newTimeout(4010);
-                            Essentials.removeOverlays(document.getElementById('reset-btn'), true);
-                        }
-
-                        resetting = false;
-                    }
-                }
-
-                function removeEntry(btn)
-                {
-                    btn.parentElement.parentElement.removeChild(btn.parentElement);
-                }
-            
-                async function modifyAutomation(form)
-                {
-                    var automation = {};
-
-                    automation.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
-                    automation.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
-                    automation.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
-                    automation.trigger = [];
-
-                    for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
-                    {
-                        var t = document.getElementById('edit-trigger').children[i], trigger = {};
-
-                        for(var j = 0; j < t.children.length; j++)
-                        {
-                            var device = t.children[0].getElementsByTagName('select')[0].children[t.children[0].getElementsByTagName('select')[0].selectedIndex];
-                            var operation = t.children[1].getElementsByTagName('select')[0].children[t.children[1].getElementsByTagName('select')[0].selectedIndex];
-                            var value = t.children[2];
-
-                            if(device.getAttribute('type') == 'url')
-                            {
-                                trigger.url = value.value;
-                            }
-                            else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
-                            {
-                                trigger.id = device.getAttribute('id');
-                                trigger.name = device.getAttribute('name');
-                                trigger.letters = device.getAttribute('letters');
-                                trigger.operation = operation.value;
-                                trigger.value = value.value;
-                            }
-                        }
-                        
-                        automation.trigger.push(trigger);
-                    }
-
-                    if(document.getElementById('edit-condition').childElementCount > 1)
-                    {
-                        automation.condition = [];
-
-                        for(var i = 0; i < document.getElementById('edit-condition').children.length - 1; i++)
-                        {
-                            var c = document.getElementById('edit-condition').children[i], condition = {};
-
-                            for(var j = 0; j < c.children.length; j++)
-                            {
-                                var device = c.children[0].getElementsByTagName('select')[0].children[c.children[0].getElementsByTagName('select')[0].selectedIndex];
-                                var operation = c.children[1].getElementsByTagName('select')[0].children[c.children[1].getElementsByTagName('select')[0].selectedIndex];
-                                var value = c.children[2];
-
-                                if(device.getAttribute('type') == 'url')
-                                {
-                                    condition.url = value.value;
-                                }
-                                else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
-                                {
-                                    condition.id = device.getAttribute('id');
-                                    condition.name = device.getAttribute('name');
-                                    condition.letters = device.getAttribute('letters');
-                                    condition.operation = operation.value;
-                                    condition.value = value.value;
-                                }
-                            }
-
-                            automation.condition.push(condition);
-                        }
-                    }
-
-                    automation.result = [];
-
-                    for(var i = 0; i < document.getElementById('edit-result').children.length - 1; i++)
-                    {
-                        var r = document.getElementById('edit-result').children[i], result = {};
-
-                        for(var j = 0; j < r.children.length; j++)
-                        {
-                            var device = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
-                            var operation = r.children[1].getElementsByTagName('select')[0].children[r.children[1].getElementsByTagName('select')[0].selectedIndex];
-                            var value = r.children[2];
-
-                            if(device.getAttribute('type') == 'url')
-                            {
-                                result.url = value.value;
-                            }
-                            else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
-                            {
-                                result.id = device.getAttribute('id');
-                                result.name = device.getAttribute('name');
-                                result.letters = device.getAttribute('letters');
-                                result.operation = operation.value;
-                                result.value = value.value;
-                            }
-                        }
-
-                        automation.result.push(result);
-                    }
-
-                    console.log(automation);
-
-                    var overlays = {
-                        root : document.getElementById('save-btn'),
-                        id : 'save',
-                        pending : { value : 'Aktualisieren ..' },
-                        executeError : { value : 'Aktualisierung Fehlgeschlagen!' },
-                        connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                    };
-
-                    var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automation));
-
-                    if(created == 'Success')
-                    {
-                        if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
-                        {
-                            Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
-                        }
-                        else
-                        {
-                            Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
-                        }
-
-                        var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
-
-                        automations = JSON.parse(a);
-
-                        setupViewPage();
-
-                        await Essentials.newTimeout(4000);
-
-                        Essentials.removeOverlays(document.getElementById('save-btn'), true);
-
-                        closeSettings('settings');
-                    }
-                }
-
-            </script>
-        </div>
-    </body>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+	</head>
+	<body id="body">
+		<div id="content">
+			<title>Automation: Laden ..</title>
+			<div id="infos" class="main" style="transition: .2s ease-in-out; margin-top: 10px">
+				<h1 style="margin-bottom: 100px" class="loading-loop">Laden ..</h1>
+				<div class="type-container">
+					<div class="title-container" style="margin-bottom: 40px">
+						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+					</div>
+					<p><b>ID: </b></p>
+					<p><b>Name: </b></p>
+					<p style="margin-bottom: 20px"><b>Aktiv: </b></p>
+				</div>
+				<div style="margin-top: 20px" class="type-container">
+					<div class="title-container">
+						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+					</div>
+					<div id="trigger" style="text-align: center"></div>
+				</div>
+				<div style="margin-top: 20px" class="type-container">
+					<div class="title-container">
+						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+					</div>
+					<div id="condition" style="text-align: center"></div>
+				</div>
+				<div style="margin-top: 20px" class="type-container">
+					<div class="title-container">
+						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+					</div>
+					<div id="result" style="text-align: center"></div>
+				</div>
+				<div class="navigation-panel">
+					<div class="sticky-inset">
+						<div style="display: flex">
+							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automations')">
+							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<h1 class="loading-loop">Einstellungen</h1>
+				<p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
+					<div class="type-container">
+						<div class="title-container" style="margin-bottom: 40px">
+							<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Informationen</h2>
+						</div>
+						<p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
+						<p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+						<p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+					</div>
+					<div style="margin-top: 20px" class="type-container">
+						<div class="title-container" style="margin-bottom: 40px">
+							<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Auslöser</h2>
+						</div>
+						<div id="edit-trigger" style="text-align: center"></div>
+					</div>
+					<div style="margin-top: 20px" class="type-container">
+						<div class="title-container" style="margin-bottom: 40px">
+							<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Bedingung</h2>
+						</div>
+						<div id="edit-condition" style="text-align: center"></div>
+					</div>
+					<div style="margin-top: 20px" class="type-container">
+						<div class="title-container" style="margin-bottom: 40px">
+							<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Ausführen</h2>
+						</div>
+						<div id="edit-result" style="text-align: center"></div>
+					</div>
+					<div class="navigation-panel">
+						<div class="sticky-inset">
+							<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)">
+							<div style="display: flex; margin-top: 20px">
+								<input type="button" value="Zurück" onclick="closeSettings('settings')">
+								<div style="display: block; width: 100%; margin-left: 20px">
+									<input id="save-btn" type="submit" value="Speichern">
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<script type="module">
+
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+				import { Replacer } from '/js/replace-select.js';
+
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+
+				window.Query = Query;
+				window.Essentials = Essentials;
+				window.Replacer = Replacer;
+
+				window.automations = [];
+				window.accessories = JSON.parse('<%accessories%>');
+				window.services = [];
+				/*
+				window.accessories = [
+					{
+						id: 'test1',
+						name: 'Test',
+						letters: 'F2',
+						services: ['switch']
+					}
+				];
+				*/
+				window.id = (new URL(window.location.href)).searchParams.get('id');
+				window.resetting = false;
+
+				window.data = {
+					motion: {
+						active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					contact: {
+						active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
+						inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+					},
+					relais: {
+						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+					},
+					switch: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+					},
+					rain: {
+						active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
+						inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+					},
+					statelessswitch: {
+						active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					rgb: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbw: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbww: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					rgbcw: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
+					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
+					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
+				}; 
+
+				if(id != null)
+				{
+					Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
+
+						automations = JSON.parse(a);
+						/*
+						automations = [
+							{
+								id: 1,
+								name: 'Debug',
+								active: true,
+								trigger: [
+									{
+										id: 'test1',
+										name: 'Test 1',
+										letters: 'F0',
+										operation: '=',
+										value: '100'
+									},
+									{
+										id: 'test1',
+										name: 'Test 1',
+										letters: 'F0',
+										operation: '=',
+										value: '2000'
+									}
+								],
+								condition: [
+									{
+										id: 'test2',
+										name: 'Bedingung 1',
+										letters: 'D0',
+										operation: '>',
+										value: '50'
+									},
+									{
+										id: 'test2',
+										name: 'Bedingung 2',
+										letters: 'D0',
+										operation: '>',
+										value: '50'
+									},
+									{
+										id: 'test2',
+										name: 'Bedingung 3',
+										letters: 'D0',
+										operation: '>',
+										value: '50'
+									}
+								],
+								result: [
+									{
+										id: 'test3',
+										name: 'Test X',
+										letters: 'B0',
+										operation: '=',
+										value: '1000'
+									},
+									{
+										id: 'test2',
+										name: 'Test Y',
+										letters: 'D0',
+										operation: '>',
+										value: '50'
+									}
+								]
+							}
+						];
+						*/
+						setupViewPage();
+						setupSettingsPage();
+
+						var a = ['trigger', 'condition', 'result'];
+
+						for(var i = 0; i < a.length; i++)
+						{
+							var addBtn = document.createElement('input');
+							
+							addBtn.setAttribute('value', '+');
+							addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+							addBtn.setAttribute('type', 'button');
+							addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+							addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+
+							document.getElementById('edit-' + a[i]).appendChild(addBtn);
+						}
+
+						loadServices();
+
+						for(var i = 0; i < automations.length; i++)
+						{
+							if(automations[i].id == id)
+							{
+								for(var j = 0; j < automations[i].trigger.length; j++)
+								{
+									addTrigger(automations[i].trigger[j]);
+								}
+
+								if(automations[i].condition && automations[i].condition.length > 0)
+								{
+									for(var j = 0; j < automations[i].condition.length; j++)
+									{
+										addCondition(automations[i].condition[j]);
+									}
+								}
+								else
+								{
+									document.getElementById('condition').parentElement.style.display = 'none';
+								}
+
+								for(var j = 0; j < automations[i].result.length; j++)
+								{
+									addResult(automations[i].result[j]);
+								}
+							}
+						}
+
+						Preloader.finish();
+					});
+				}
+				else
+				{
+					Preloader.finish();
+				}
+				
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					Essentials.switchPage('infos', 'settings', true);
+				}
+
+			</script>
+			<script>
+
+				async function openSettings(previous)
+				{
+					await Essentials.switchPage(previous, 'settings', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation?id=' + id + '&settings&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation?id=' + id + '&settings');
+					}
+				}
+
+				async function closeSettings(previous)
+				{
+					await Essentials.switchPage(previous, 'infos', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation?id=' + id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation?id=' + id);
+					}
+				}
+
+				function setupViewPage()
+				{
+					for(var i = 0; i < automations.length; i++)
+					{
+						if(automations[i].id == id)
+						{
+							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
+							document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automations[i].id;
+							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automations[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automations[i].active ? 'An' : 'Aus');
+
+							var panel = document.createElement('button');
+
+							for(var j = 0; j < automations[i].trigger.length; j++)
+							{
+								var column = document.createElement('div');
+								var category = document.createElement('div');
+								var row = document.createElement('div');
+
+								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+								column.className = 'column';
+
+								if(j != 0)
+								{
+									column.style.marginTop = '3px';
+								}
+
+								category.innerHTML = j == 0 ? 'WENN' : 'ODER';
+								category.className = 'primary';
+
+								column.appendChild(category);
+
+								if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters && automations[i].trigger[j].operation && automations[i].trigger[j].value)
+								{
+									var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
+									var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
+
+									if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+									{
+										src = 'climate';
+									}
+
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
+								}
+								else if(automations[i].trigger[j].url)
+								{
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].trigger[j].url + '"';
+								}
+							
+								row.style.padding = '13px 18px 12px 18px';
+
+								column.appendChild(row);
+								panel.appendChild(column);
+							}
+
+							panel.className = 'table';
+
+							document.getElementById('trigger').innerHTML = '';
+							document.getElementById('trigger').appendChild(panel);
+
+							var panel = document.createElement('button');
+
+							document.getElementById('condition').innerHTML = '';
+
+							if(automations[i].condition && automations[i].condition.length > 0)
+							{
+								for(var j = 0; j < automations[i].condition.length; j++)
+								{
+									var column = document.createElement('div');
+									var category = document.createElement('div');
+									var row = document.createElement('div');
+
+									row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+									column.className = 'column';
+
+									if(j != 0)
+									{
+										column.style.marginTop = '3px';
+									}
+
+									category.innerHTML = j == 0 ? 'WENN' : automations[i].combination == 'ALL' ? 'UND' : 'ODER';
+									category.className = 'primary';
+
+									column.appendChild(category);
+
+									if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters && automations[i].condition[j].operation && automations[i].condition[j].value)
+									{
+										var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
+										var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
+
+										if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+										{
+											src = 'climate';
+										}
+
+										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
+									}
+									else if(automations[i].condition[j].url)
+									{
+										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].condition[j].url + '"';
+									}
+
+									row.style.padding = '13px 18px 12px 18px';
+
+									column.appendChild(row);
+									panel.appendChild(column);
+								}
+
+								panel.className = 'table';
+							
+								document.getElementById('condition').appendChild(panel);
+							}
+
+							var panel = document.createElement('button');
+
+							for(var j = 0; j < automations[i].result.length; j++)
+							{
+								var column = document.createElement('div');
+								var category = document.createElement('div');
+								var row = document.createElement('div');
+
+								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+								column.className = 'column';
+
+								if(j != 0)
+								{
+									column.style.marginTop = '3px';
+								}
+
+								category.innerHTML = j == 0 ? 'DANN' : 'UND';
+								category.className = 'primary';
+
+								column.appendChild(category);
+
+								if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters && automations[i].result[j].operation && automations[i].result[j].value)
+								{
+									var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+									var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
+
+									if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+									{
+										src = 'climate';
+									}
+
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
+								}
+								else if(automations[i].result[j].url)
+								{
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].result[j].url + '"';
+								}
+
+								row.style.padding = '13px 18px 12px 18px';
+
+								column.appendChild(row);
+								panel.appendChild(column);
+							}
+
+							panel.className = 'table';
+
+							document.getElementById('result').innerHTML = '';
+							document.getElementById('result').appendChild(panel);
+						}
+					}
+				}
+
+				function setupSettingsPage()
+				{
+					for(var i = 0; i < automations.length; i++)
+					{
+						if(automations[i].id == id)
+						{
+							document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automations[i].name + ' )';
+							document.getElementById('settings').getElementsByTagName('input')[0].value = automations[i].id;
+							document.getElementById('settings').getElementsByTagName('input')[1].value = automations[i].name;
+							document.getElementById('settings').getElementsByTagName('input')[2].value = automations[i].active ? 'An' : 'Aus';
+							document.getElementById('settings').getElementsByTagName('input')[2].className = automations[i].active ? 'white' : 'outline';
+						}
+					}
+				}
+
+				function switchFormButton(btn)
+				{
+					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+					{
+						btn.setAttribute('class', 'outline');
+						btn.setAttribute('value', 'Aus');
+					}
+					else
+					{
+						btn.setAttribute('class', 'white');
+						btn.setAttribute('value', 'An');
+					}
+				}
+
+				function getDataType(type)
+				{
+					if(type == 'temperature' || type == 'humidity' || type == 'light')
+					{
+						return 'numeric';
+					}
+					else
+					{
+						return 'boolean';
+					}
+				}
+
+				function updateOperation(select)
+				{
+					var o = select.getElementsByTagName('select')[0].selectedIndex;
+					var option = select.getElementsByTagName('select')[0].children[o];
+
+					console.log(option.getAttribute('type'), select.parentElement.children[1].getElementsByClassName('select-items')[0]);
+
+					var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
+
+					if(option.getAttribute('type') == 'boolean')
+					{
+						for(var i = 0; i < options.length; i++)
+						{
+							if(options[i].innerHTML == '=')
+							{
+								options[i].style.display = '';
+								options[i].click();
+							}
+							else
+							{
+								options[i].style.display = 'none';
+							}
+						}
+					}
+					else if(option.getAttribute('type') == 'numeric')
+					{
+						for(var i = 0; i < options.length; i++)
+						{
+							options[i].style.display = '';
+						}
+					}
+				}
+
+				function addTrigger(t)
+				{
+					var trigger = document.createElement('div');
+					var p = document.createElement('p');
+					var b = document.createElement('b');
+					var select = document.createElement('div');
+
+					b.innerHTML = 'Gerät: ';
+
+					select.className = 'custom-select';
+					select.style.marginRight = '20px';
+					select.style.width = '100%';
+
+					trigger.className = 'automation-device-entry';
+
+					var html = '<select name="service" onchange="updateOperation(this)">';
+
+					for(var i = 0; i < services.length; i++)
+					{
+						if(services[i].type != 'lcd')
+						{
+							html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+						}
+					}
+
+					html += '</select>';
+
+					console.log(html);
+
+					select.innerHTML = html;
+			   
+					var operations = document.createElement('div');
+
+					operations.className = 'custom-select';
+					operations.style.width = '100%';
+					operations.style.marginRight = '20px';
+					operations.innerHTML = '<select name="operation"><option ' + (t && t.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (t && t.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (t && t.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+
+					document.getElementById('edit-trigger').insertBefore(trigger, document.getElementById('edit-trigger').getElementsByClassName('add-entry-button')[0]);
+				
+					trigger.appendChild(Replacer.createSelectMenu(select));
+					trigger.appendChild(Replacer.createSelectMenu(operations));
+
+					updateOperation(select);
+
+					trigger.innerHTML += '<input value="' + (t ? t.url ? t.url : t.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+					trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+				}
+
+				function addCondition(c)
+				{
+					var condition = document.createElement('div');
+					var p = document.createElement('p');
+					var b = document.createElement('b');
+					var select = document.createElement('div');
+
+					b.innerHTML = 'Gerät: ';
+
+					select.className = 'custom-select';
+					select.style.marginRight = '20px';
+					select.style.width = '100%';
+
+					condition.className = 'automation-device-entry';
+
+					var html = '<select name="service" onchange="updateOperation(this)">';
+
+					for(var i = 0; i < services.length; i++)
+					{
+						if(services[i].type != 'lcd')
+						{
+							html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+						}
+					}
+
+					html += '</select>';
+
+					select.innerHTML = html;
+
+					var operations = document.createElement('div');
+
+					operations.className = 'custom-select';
+					operations.style.width = '100%';
+					operations.style.marginRight = '20px';
+					operations.innerHTML = '<select name="operation"><option ' + (c && c.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (c && c.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (c && c.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+			   
+					document.getElementById('edit-condition').insertBefore(condition, document.getElementById('edit-condition').getElementsByClassName('add-entry-button')[0]);
+
+					condition.appendChild(Replacer.createSelectMenu(select));
+					condition.appendChild(Replacer.createSelectMenu(operations));
+
+					updateOperation(select);
+
+					condition.innerHTML += '<input value="' + (c ? c.url ? c.url : c.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+					condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+				}
+
+				function addResult(r)
+				{
+					var result = document.createElement('div');
+					var p = document.createElement('p');
+					var b = document.createElement('b');
+					var select = document.createElement('div');
+
+					b.innerHTML = 'Gerät: ';
+
+					select.className = 'custom-select';
+					select.style.marginRight = '20px';
+					select.style.width = '100%';
+
+					result.className = 'automation-device-entry';
+
+					var html = '<select name="service" onchange="updateOperation(this)"><option ' + (r && r.url ? 'selected' : '') + ' img="/img/link.png" type="url">Link Öffnen</option>';
+
+					for(var i = 0; i < services.length; i++)
+					{
+						if(services[i].type != 'lcd')
+						{
+							html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+						}
+					}
+
+					html += '</select>';
+
+					select.innerHTML = html;
+			   
+					var operations = document.createElement('div');
+
+					operations.className = 'custom-select';
+					operations.style.width = '100%';
+					operations.style.marginRight = '20px';
+					operations.innerHTML = '<select name="operation"><option ' + (r && r.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (r && r.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (r && r.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+			   
+					document.getElementById('edit-result').insertBefore(result, document.getElementById('edit-result').getElementsByClassName('add-entry-button')[0]);
+
+					result.appendChild(Replacer.createSelectMenu(select));
+					result.appendChild(Replacer.createSelectMenu(operations));
+
+					updateOperation(select);
+					
+					result.innerHTML += '<input value="' + (r ? r.url ? r.url : r.value : '') + '" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+					result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+				}
+
+				function loadServices()
+				{
+					for(var i = 0; i < accessories.length; i++)
+					{
+						if(Array.isArray(accessories[i].services))
+						{
+							var counter = { type : '', count : 0 };
+
+							for(var j = 0; j < accessories[i].services.length; j++)
+							{
+								if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
+								{
+									if(accessories[i].services[j] instanceof Object)
+									{
+										if(counter.type != accessories[i].services[j].type)
+										{
+											counter.count = 0;
+										}
+
+										counter.type = accessories[i].services[j].type;
+										
+										services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+									}
+									else
+									{
+										if(counter.type != accessories[i].services[j])
+										{
+											counter.count = 0;
+										}
+
+										counter.type = accessories[i].services[j];
+
+										services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+									}
+
+									counter.count++;
+								}
+							}
+						}
+						else if(accessories[i].services instanceof Object)
+						{
+							if(accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
+							{
+								services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+							}
+						}
+						else
+						{
+							if(accessories[i].services != 'rgb' && accessories[i].services != 'rgbw')
+							{
+								services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
+							}
+						}
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('Services', services);
+				}
+
+				function removeAutomation(btn)
+				{
+					var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+
+					overlay.setAttribute('onclick', 'removeConfirm(this)');
+					overlay.style.setProperty('cursor', 'pointer', 'important');
+
+					Essentials.showOverlay(btn, overlay);
+				}
+				
+				async function removeConfirm(btn)
+				{
+					if(!resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'update',
+							pending : { value : 'Löschen ..', z : 2 },
+							executeError : { value : 'Entfernen Fehlgeschlagen!', z : 3 },
+							connectionError : { value : 'Keine Verbindung zur Bridge', z : 3 }
+						};
+
+						var url = '/serverside/remove-automation?id=' + id;
+
+						resetting = true;
+
+						if(await Query.complexFetch(url, 5000, 2, overlays, true) == 'Success')
+						{
+							await Essentials.newTimeout(3000);
+
+							if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
+							{
+								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
+
+								await Essentials.newTimeout(3000);
+
+								Essentials.leavePage('/automations');
+							}
+							else
+							{
+								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
+
+								await Essentials.newTimeout(3000);
+
+								Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+							}
+						}
+						else
+						{
+							await Essentials.newTimeout(4010);
+							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+						}
+
+						resetting = false;
+					}
+				}
+
+				function removeEntry(btn)
+				{
+					btn.parentElement.parentElement.removeChild(btn.parentElement);
+				}
+			
+				async function modifyAutomation(form)
+				{
+					var automation = {};
+
+					automation.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
+					automation.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
+					automation.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
+					automation.trigger = [];
+
+					for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
+					{
+						var t = document.getElementById('edit-trigger').children[i], trigger = {};
+
+						for(var j = 0; j < t.children.length; j++)
+						{
+							var device = t.children[0].getElementsByTagName('select')[0].children[t.children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = t.children[1].getElementsByTagName('select')[0].children[t.children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = t.children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								trigger.url = value.value;
+							}
+							else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+							{
+								trigger.id = device.getAttribute('id');
+								trigger.name = device.getAttribute('name');
+								trigger.letters = device.getAttribute('letters');
+								trigger.operation = operation.value;
+								trigger.value = value.value;
+							}
+						}
+						
+						automation.trigger.push(trigger);
+					}
+
+					if(document.getElementById('edit-condition').childElementCount > 1)
+					{
+						automation.condition = [];
+
+						for(var i = 0; i < document.getElementById('edit-condition').children.length - 1; i++)
+						{
+							var c = document.getElementById('edit-condition').children[i], condition = {};
+
+							for(var j = 0; j < c.children.length; j++)
+							{
+								var device = c.children[0].getElementsByTagName('select')[0].children[c.children[0].getElementsByTagName('select')[0].selectedIndex];
+								var operation = c.children[1].getElementsByTagName('select')[0].children[c.children[1].getElementsByTagName('select')[0].selectedIndex];
+								var value = c.children[2];
+
+								if(device.getAttribute('type') == 'url')
+								{
+									condition.url = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+								{
+									condition.id = device.getAttribute('id');
+									condition.name = device.getAttribute('name');
+									condition.letters = device.getAttribute('letters');
+									condition.operation = operation.value;
+									condition.value = value.value;
+								}
+							}
+
+							automation.condition.push(condition);
+						}
+					}
+
+					automation.result = [];
+
+					for(var i = 0; i < document.getElementById('edit-result').children.length - 1; i++)
+					{
+						var r = document.getElementById('edit-result').children[i], result = {};
+
+						for(var j = 0; j < r.children.length; j++)
+						{
+							var device = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = r.children[1].getElementsByTagName('select')[0].children[r.children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = r.children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								result.url = value.value;
+							}
+							else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+							{
+								result.id = device.getAttribute('id');
+								result.name = device.getAttribute('name');
+								result.letters = device.getAttribute('letters');
+								result.operation = operation.value;
+								result.value = value.value;
+							}
+						}
+
+						automation.result.push(result);
+					}
+
+					console.log(automation);
+
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'save',
+						pending : { value : 'Aktualisieren ..' },
+						executeError : { value : 'Aktualisierung Fehlgeschlagen!' },
+						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+					};
+
+					var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automation));
+
+					if(created == 'Success')
+					{
+						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
+						{
+							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
+						}
+						else
+						{
+							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
+						}
+
+						var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
+
+						automations = JSON.parse(a);
+
+						setupViewPage();
+
+						await Essentials.newTimeout(4000);
+
+						Essentials.removeOverlays(document.getElementById('save-btn'), true);
+
+						closeSettings('settings');
+					}
+				}
+
+			</script>
+		</div>
+	</body>
 </html>

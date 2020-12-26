@@ -1,263 +1,263 @@
 <head>
-    <style>
+	<style>
 
-        #preloader
-        {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: calc(100vh + env(safe-area-inset-bottom) + env(safe-area-inset-top));
-            background: rgb(20, 20, 30);
-            /*transition: .2s opacity cubic-bezier(0, 0, 0.2, 1);*/
-            transition: .2s opacity ease-in-out;
-            z-index: 10000;
-        }
-    
-        .loader-4
-        {
-            opacity: 1;
-            height: 32px;
-            width: 32px;
-            animation: loader-4-5 2s cubic-bezier(0.770, 0.000, 0.175, 1.000);
-            transition: opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s;
-        }
+		#preloader
+		{
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100vw;
+			height: calc(100vh + env(safe-area-inset-bottom) + env(safe-area-inset-top));
+			background: rgb(20, 20, 30);
+			/*transition: .2s opacity cubic-bezier(0, 0, 0.2, 1);*/
+			transition: .2s opacity ease-in-out;
+			z-index: 10000;
+		}
+	
+		.loader-4
+		{
+			opacity: 1;
+			height: 32px;
+			width: 32px;
+			animation: loader-4-5 2s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+			transition: opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s;
+		}
 
-        .loader-4::after
-        {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-            bottom: 0; right: 0;
-            margin: auto;
-            width: 12px;
-            height: 12px;
-            top: 0; left: 0;
-            bottom: 0; right: 0;
-            margin: auto;
-            background: rgb(245, 245, 255);
-            border-radius: 50%;
-            -webkit-animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-                    animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-        }
+		.loader-4::after
+		{
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0; left: 0;
+			bottom: 0; right: 0;
+			margin: auto;
+			width: 12px;
+			height: 12px;
+			top: 0; left: 0;
+			bottom: 0; right: 0;
+			margin: auto;
+			background: rgb(245, 245, 255);
+			border-radius: 50%;
+			-webkit-animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+					animation: loader-4-1 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+		}
 
-        @-webkit-keyframes loader-4-1
-        {
-            0%   { -webkit-transform: scale(0); opacity: 0; }
-            50%  { -webkit-transform: scale(1); opacity: 1; }
-            100% { -webkit-transform: scale(0); opacity: 0; }
-        }
+		@-webkit-keyframes loader-4-1
+		{
+			0%   { -webkit-transform: scale(0); opacity: 0; }
+			50%  { -webkit-transform: scale(1); opacity: 1; }
+			100% { -webkit-transform: scale(0); opacity: 0; }
+		}
 
-        @keyframes loader-4-1 {
-            0%   { transform: scale(0); opacity: 0; }
-            50%  { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0); opacity: 0; }
-        }
+		@keyframes loader-4-1 {
+			0%   { transform: scale(0); opacity: 0; }
+			50%  { transform: scale(1); opacity: 1; }
+			100% { transform: scale(0); opacity: 0; }
+		}
 
-        .loader-4 span
-        {
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-            bottom: 0; right: 0;
-            margin: auto;
-            height: 32px;
-            width: 32px;
-            -webkit-animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-                    animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-        }
+		.loader-4 span
+		{
+			display: block;
+			position: absolute;
+			top: 0; left: 0;
+			bottom: 0; right: 0;
+			margin: auto;
+			height: 32px;
+			width: 32px;
+			-webkit-animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+					animation: loader-4-2 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+		}
 
-        @-webkit-keyframes loader-4-2
-        {
-            0%   { -webkit-transform: rotate(0deg); }
-            50%  { -webkit-transform: rotate(180deg); }
-            100% { -webkit-transform: rotate(360deg); }
-        }
+		@-webkit-keyframes loader-4-2
+		{
+			0%   { -webkit-transform: rotate(0deg); }
+			50%  { -webkit-transform: rotate(180deg); }
+			100% { -webkit-transform: rotate(360deg); }
+		}
 
-        @keyframes loader-4-2
-        {
-            0%   { transform: rotate(0deg); }
-            50%  { transform: rotate(180deg); }
-            100% { transform: rotate(360deg); }
-        }
+		@keyframes loader-4-2
+		{
+			0%   { transform: rotate(0deg); }
+			50%  { transform: rotate(180deg); }
+			100% { transform: rotate(360deg); }
+		}
 
-        .loader-4 span::before, .loader-4 span::after
-        {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-            bottom: 0; right: 0;
-            margin: auto;
-            height: 12px;
-            width: 12px;
-            background: rgb(245, 245, 255);
-            border-radius: 50%;
-            -webkit-animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-                    animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-        }
+		.loader-4 span::before, .loader-4 span::after
+		{
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0; left: 0;
+			bottom: 0; right: 0;
+			margin: auto;
+			height: 12px;
+			width: 12px;
+			background: rgb(245, 245, 255);
+			border-radius: 50%;
+			-webkit-animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+					animation: loader-4-3 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+		}
 
-        @-webkit-keyframes loader-4-3
-        {
-            0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
-            50%  { -webkit-transform: translate3d(-16px, 0, 0) scale(.5); }
-            100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
-        }
+		@-webkit-keyframes loader-4-3
+		{
+			0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+			50%  { -webkit-transform: translate3d(-16px, 0, 0) scale(.5); }
+			100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+		}
 
-        @keyframes loader-4-3
-        {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            50%  { transform: translate3d(-16px, 0, 0) scale(.5); }
-            100% { transform: translate3d(0, 0, 0) scale(1); }
-        }
-        
-        .loader-4 span::after
-        {
-            -webkit-animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-                    animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
-        }
+		@keyframes loader-4-3
+		{
+			0%   { transform: translate3d(0, 0, 0) scale(1); }
+			50%  { transform: translate3d(-16px, 0, 0) scale(.5); }
+			100% { transform: translate3d(0, 0, 0) scale(1); }
+		}
+		
+		.loader-4 span::after
+		{
+			-webkit-animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+					animation: loader-4-4 2s cubic-bezier(0.770, 0.000, 0.175, 1.000) infinite;
+		}
 
-        @-webkit-keyframes loader-4-4
-        {
-            0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
-            50%  { -webkit-transform: translate3d(16px, 0, 0) scale(.5); }
-            100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
-        }
+		@-webkit-keyframes loader-4-4
+		{
+			0%   { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+			50%  { -webkit-transform: translate3d(16px, 0, 0) scale(.5); }
+			100% { -webkit-transform: translate3d(0, 0, 0) scale(1); }
+		}
 
-        @keyframes loader-4-4 
-        {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            50%  { transform: translate3d(16px, 0, 0) scale(.5); }
-            100% { transform: translate3d(0, 0, 0) scale(1); }
-        }
-    
-        @-webkit-keyframes loader-4-5
-        {
-            0%   { opacity: 0; }
-            50%  { opacity: 0; }
-            100% { opacity: 1; }
-        }
+		@keyframes loader-4-4 
+		{
+			0%   { transform: translate3d(0, 0, 0) scale(1); }
+			50%  { transform: translate3d(16px, 0, 0) scale(.5); }
+			100% { transform: translate3d(0, 0, 0) scale(1); }
+		}
+	
+		@-webkit-keyframes loader-4-5
+		{
+			0%   { opacity: 0; }
+			50%  { opacity: 0; }
+			100% { opacity: 1; }
+		}
 
-        @keyframes loader-4-5
-        {
-            0%   { opacity: 0; }
-            50%  { opacity: 0; }
-            100% { opacity: 1; }
-        }
+		@keyframes loader-4-5
+		{
+			0%   { opacity: 0; }
+			50%  { opacity: 0; }
+			100% { opacity: 1; }
+		}
 
-        @media(prefers-color-scheme: light)
-        {
-            #preloader
-            {
-                background: rgb(220, 220, 230);
-            }
+		@media(prefers-color-scheme: light)
+		{
+			#preloader
+			{
+				background: rgb(220, 220, 230);
+			}
 
-            .loader-4::after
-            {
-                background: rgb(45, 45, 60);
-            }
+			.loader-4::after
+			{
+				background: rgb(45, 45, 60);
+			}
 
-            .loader-4 span::before, .loader-4 span::after
-            {
-                background: rgb(45, 45, 60);
-            }
-        }
-    
-    </style>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.65, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-title" content="SynTex Bridge">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="/img/logo-180.png" sizes="180x180">
-    <link rel="apple-touch-icon" href="/img/logo-192.png" sizes="192x192">
-    <link rel="apple-touch-icon" href="/img/logo-180.png">
-    <link rel="apple-touch-startup-image" href="https://syntex.sytes.net/img/splashscreen.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="https://syntex.sytes.net/img/splashscreen.png" media="(min-device-width: 1024px) and (max-device-width: 2048) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
-    <script src="/js/loading-loop.js"></script>
-    <script type="module">
+			.loader-4 span::before, .loader-4 span::after
+			{
+				background: rgb(45, 45, 60);
+			}
+		}
+	
+	</style>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.65, user-scalable=no, viewport-fit=cover">
+	<meta name="apple-mobile-web-app-title" content="SynTex Bridge">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="apple-touch-icon" href="/img/logo-180.png" sizes="180x180">
+	<link rel="apple-touch-icon" href="/img/logo-192.png" sizes="192x192">
+	<link rel="apple-touch-icon" href="/img/logo-180.png">
+	<link rel="apple-touch-startup-image" href="https://syntex.sytes.net/img/splashscreen.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+	<link rel="apple-touch-startup-image" href="https://syntex.sytes.net/img/splashscreen.png" media="(min-device-width: 1024px) and (max-device-width: 2048) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+	<script src="/js/loading-loop.js"></script>
+	<script type="module">
 
-        import { Preloader } from '/js/loading.js';
-    
-        window.Preloader = Preloader;
-    
-    </script>
-    <script defer src="/js/mobile.js"></script>
-    <script disabled>
+		import { Preloader } from '/js/loading.js';
+	
+		window.Preloader = Preloader;
+	
+	</script>
+	<script defer src="/js/mobile.js"></script>
+	<script disabled>
 
-        function HeadLoader()
-        {
-            this.load = function(link, callback)
-            {
-                var element = document.createElement('script');
-    
-                element.onerror = function() { console.error('Das Script konnte nicht geladen werden', link); };
-                element.onload = callback;
-    
-                document.head.appendChild(element);
-    
-                element.src = link;
-            }
-        }
-    
-        var head = new HeadLoader();
-    
-    </script>
-    <link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
-    <script src="/js/menu.js" defer></script>
+		function HeadLoader()
+		{
+			this.load = function(link, callback)
+			{
+				var element = document.createElement('script');
+	
+				element.onerror = function() { console.error('Das Script konnte nicht geladen werden', link); };
+				element.onload = callback;
+	
+				document.head.appendChild(element);
+	
+				element.src = link;
+			}
+		}
+	
+		var head = new HeadLoader();
+	
+	</script>
+	<link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
+	<script src="/js/menu.js" defer></script>
 </head>
 <nav id="menu" style="display: none">
-    <img src="favicon-clean.ico">
-    <span id="menu-title" style="font-weight: 300">SynTex Bridge</span>
-    <div class="menu-entry">
-        <span onclick="openMenuDropdown([], 1, this)">Menü</span>
-        <div class="menu-dropdown" id="menu-1">
-            <span onclick="closeMenuDropdown(1); openConnectWindow()">Verbinden (Crtl+O)</span>
-            <span onclick="closeMenuDropdown(1); closeWindow()">Fenster Schießen (Crtl+W)</span>
-            <span onclick="closeMenuDropdown(1); closeApp()">App Beenden (Crtl+Q)</span>
-        </div>
-    </div>
-    <div class="menu-entry">
-        <span onclick="openMenuDropdown([], 2, this)">Fenster</span>
-        <div class="menu-dropdown" id="menu-2">
-            <span onclick="closeMenuDropdown(2); resetZoom()">Zoom Zurücksetzen</span>
-            <span onclick="closeMenuDropdown(2); zoomInWindow()">Inhalt Vergrößern (Crtl++)</span>
-            <span onclick="closeMenuDropdown(2); zoomOutWindow()">Inhalt Verkleinern (Crtl+-)</span>
-            <span onclick="closeMenuDropdown(2); fullScreen()">Vollbild (F12)</span>
-        </div>
-    </div>
-    <div class="menu-entry">
-        <span onclick="openMenuDropdown([], 3, this)">Debug</span>
-        <div class="menu-dropdown" id="menu-3">
-            <span onclick="closeMenuDropdown(3); window.location.reload()">Refresh (F5)</span>
-            <span onclick="closeMenuDropdown(3); openDevTools()">Developer Tools</span>
-        </div>
-    </div>
-    <div id="menu-buttons">
-        <div id="minimize">
-            <span>-</span>
-        </div>
-        <div id="maximize">
-            <span>+</span>
-        </div>
-        <div id="close" class="gradient-red">
-            <span>&times;</span>
-        </div>
-    </div>
+	<img src="favicon-clean.ico">
+	<span id="menu-title" style="font-weight: 300">SynTex Bridge</span>
+	<div class="menu-entry">
+		<span onclick="openMenuDropdown([], 1, this)">Menü</span>
+		<div class="menu-dropdown" id="menu-1">
+			<span onclick="closeMenuDropdown(1); openConnectWindow()">Verbinden (Crtl+O)</span>
+			<span onclick="closeMenuDropdown(1); closeWindow()">Fenster Schießen (Crtl+W)</span>
+			<span onclick="closeMenuDropdown(1); closeApp()">App Beenden (Crtl+Q)</span>
+		</div>
+	</div>
+	<div class="menu-entry">
+		<span onclick="openMenuDropdown([], 2, this)">Fenster</span>
+		<div class="menu-dropdown" id="menu-2">
+			<span onclick="closeMenuDropdown(2); resetZoom()">Zoom Zurücksetzen</span>
+			<span onclick="closeMenuDropdown(2); zoomInWindow()">Inhalt Vergrößern (Crtl++)</span>
+			<span onclick="closeMenuDropdown(2); zoomOutWindow()">Inhalt Verkleinern (Crtl+-)</span>
+			<span onclick="closeMenuDropdown(2); fullScreen()">Vollbild (F12)</span>
+		</div>
+	</div>
+	<div class="menu-entry">
+		<span onclick="openMenuDropdown([], 3, this)">Debug</span>
+		<div class="menu-dropdown" id="menu-3">
+			<span onclick="closeMenuDropdown(3); window.location.reload()">Refresh (F5)</span>
+			<span onclick="closeMenuDropdown(3); openDevTools()">Developer Tools</span>
+		</div>
+	</div>
+	<div id="menu-buttons">
+		<div id="minimize">
+			<span>-</span>
+		</div>
+		<div id="maximize">
+			<span>+</span>
+		</div>
+		<div id="close" class="gradient-red">
+			<span>&times;</span>
+		</div>
+	</div>
 </nav>
 <script>
 
-    if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-    {
-        document.getElementById('menu').style.display = '';
-        document.getElementById('menu-style').removeAttribute('disabled');
-    }
+	if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+	{
+		document.getElementById('menu').style.display = '';
+		document.getElementById('menu-style').removeAttribute('disabled');
+	}
 
 </script>
 <div id="preloader">
-    <div class="loader-4"><span></span></div>
+	<div class="loader-4"><span></span></div>
 </div>
