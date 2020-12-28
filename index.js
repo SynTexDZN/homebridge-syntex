@@ -68,7 +68,7 @@ function SynTexPlatform(log, config, api)
 				{
 					var theRequest = {
 						method : 'GET',
-						url : 'http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout,
+						url : 'http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version,
 						timeout : 10000
 					};
 
