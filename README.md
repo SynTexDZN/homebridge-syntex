@@ -16,28 +16,29 @@ It offers an UI to manage all your SynTex Plugins.
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
 3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks`
 4. Update your configuration file. See snippet below.
+5. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`
 
 
 ## Example Config
-**Info:** If the directory for the storage can't be created you have to do it by yourself and give it full write permissions!
+**Info:** If the `log_directory` for the storage can't be created you have to do it by yourself and give it full write permissions!
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 
 ```
 "platforms": [
-	{
-		"platform": "SynTex",
-		"cache_directory": "./SynTex/settings",
-		"log_directory": "./SynTex/log",
-		"port": 1711
-	},
-	{
-		"platform": "SynTexWebHooks",
-		"cache_directory": "./SynTex/devices",
-		"log_directory": "./SynTex/log",
-		"port": 1710,
-		"accessories": []
-	}
+    {
+        "platform": "SynTex",
+        "cache_directory": "./SynTex/settings",
+        "log_directory": "./SynTex/log",
+        "port": 1711
+    },
+    {
+        "platform": "SynTexWebHooks",
+        "cache_directory": "./SynTex/devices",
+        "log_directory": "./SynTex/log",
+        "port": 1710,
+        "accessories": []
+    }
 ]
 ```
 
@@ -51,7 +52,9 @@ It offers an UI to manage all your SynTex Plugins.
 - Rain Sensor
 - Motion Sensor
 - Contact Sensor
+- Occupancy Sensor
 - Relais
 - Switch
+- Stateless Switch
 - LED Controller
 - Special Devices
