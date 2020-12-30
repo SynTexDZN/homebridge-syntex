@@ -11,8 +11,8 @@ function SynTexPlatform(log, config, api)
 {
 	try
 	{
-		this.cacheDirectory = config['cache_directory'] || './SynTex/data';
-		this.logDirectory = config['log_directory'] || './SynTex/log';
+		this.cacheDirectory = config['cacheDirectory'] || './SynTex/data';
+		this.logDirectory = config['logDirectory'] || './SynTex/log';
 		this.port = config['port'] || 1711;
 		this.debug = config['debug'] || false;
 
@@ -30,7 +30,7 @@ function SynTexPlatform(log, config, api)
 			if(config != null)
 			{
 				DeviceManager = new DeviceManager(api.user.storagePath(), logger, this.cacheDirectory, config);
-				Automations.SETUP(logger, config.cache_directory);
+				Automations.SETUP(logger, config.cacheDirectory);
 			}
 
 			DeviceManager.getDevices().then(function(devices)

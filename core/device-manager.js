@@ -8,7 +8,7 @@ module.exports = class DeviceManager
 	{
 		config = store(configPath);
 		storage = store(storagePath);
-		dataStorage = store(wConf.cache_directory);
+		dataStorage = store(wConf.cacheDirectory);
 		logger = slog;
 		webhookPort = wConf.port;
 
