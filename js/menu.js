@@ -1,4 +1,4 @@
-var win, app, frame, BrowserWindow, path, url;
+var win, app, frame, BrowserWindow, url;
 var openedMenus = [];
 var isFullScreen = false;
 var isMaximized = false;
@@ -8,7 +8,6 @@ try
 	frame = require('electron').webFrame;
 
 	const { remote } = require('electron');
-	path = require('path');
 	url = require('url');
 
 	if(remote != undefined)
@@ -24,15 +23,9 @@ try
 			document.getElementById('menu-title').innerHTML = title.innerHTML;
 		}
 
-		document.getElementById('close').onclick = function()
-		{
-			closeWindow();
-		};
+		document.getElementById('close').onclick = () => closeWindow();
 
-		document.getElementById('minimize').onclick = function()
-		{
-			win.minimize();
-		};
+		document.getElementById('minimize').onclick = () => win.minimize();
 
 		document.getElementById('maximize').onclick = function()
 		{
@@ -99,10 +92,7 @@ function openMenuDropdown(menus, id, parent)
 		{
 			closeMenuDropdown(openedMenus[0]);
 
-			setTimeout(() => {
-
-				openMenuDropdown(menus, id, parent);
-			}, 100);
+			setTimeout(() => openMenuDropdown(menus, id, parent), 100);
 		}
 		else
 		{

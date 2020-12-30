@@ -39,5 +39,6 @@ if(hasTouch())
 				}
 			}
 		}
-	} catch (ex) {}
+	}
+	catch(e) {}
 }

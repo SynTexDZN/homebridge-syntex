@@ -32,13 +32,7 @@ function searchLoop()
 		}
 	}
 
-	setTimeout(function()
-	{
-		searchLoop();
-	}, 500);
+	setTimeout(() => searchLoop(), 500);
 }
 
-setTimeout(function()
-{
-	searchLoop();
-}, 1000);
+setTimeout(() => searchLoop(), 1000);

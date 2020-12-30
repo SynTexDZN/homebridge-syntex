@@ -2,14 +2,7 @@ var Query, Preloader;
 
 function versionCount(version)
 {
-	if(version.includes('-'))
-	{
-		var intVersion = -1;
-	}
-	else
-	{
-		var intVersion = 0;
-	}
+	var intVersion = version.includes('-') ? -1 : 0;
 
 	for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
 	{
@@ -28,7 +21,7 @@ function versionCount(version)
 
 function checkRestart(url)
 {
-	return new Promise(async function(resolve) {
+	return new Promise(async (resolve) => {
 
 		var restart = await Query.fetchURL(url, 3000); //TODO: Auf Modul Umstellen
 
@@ -40,10 +33,7 @@ function checkRestart(url)
 		}
 		else
 		{
-			setTimeout(function()
-			{
-				resolve(checkRestart(url));
-			}, 500);
+			setTimeout(() => resolve(checkRestart(url)), 500);
 		}
 	});
 }
@@ -87,8 +77,8 @@ function showOverlay(btn, overlay)
 
 	btn.parentElement.insertBefore(overlay, btn);
 
-	setTimeout(function()
-	{
+	setTimeout(() => {
+
 		btn.style.opacity = 0;
 		
 		for(var i = 0; i < overlays.length; i++)
@@ -100,15 +90,13 @@ function showOverlay(btn, overlay)
 		}
 
 		overlay.style.opacity = 1;
+
 	}, 10);
 }
 
 function showOverlayDelay(btn, overlay, delay)
 {
-	setTimeout(function()
-	{
-		showOverlay(btn, overlay);
-	}, delay);
+	setTimeout(() => showOverlay(btn, overlay), delay);
 }
 
 function removeOverlays(btn, show)
@@ -128,8 +116,8 @@ function removeOverlays(btn, show)
 
 	if(!show)
 	{
-		setTimeout(function()
-		{
+		setTimeout(() => {
+
 			btn.style.setProperty('height', '0', 'important');
 			btn.style.paddingTop = 0;
 			btn.style.paddingBottom = 0;
@@ -137,16 +125,18 @@ function removeOverlays(btn, show)
 			btn.style.marginBottom = 0;
 			btn.style.borderTopWidth = 0;
 			btn.style.borderBottomWidth = 0;
+
 		}, 300);
 	}
 
-	setTimeout(function()
-	{
+	setTimeout(() => {
+
 		for(var i = overlays.length - 1; i >= 0; i--)
 		{
 			if(overlays[i].reference == btn)
 			{
 				btn.parentElement.removeChild(overlays[i].overlay);
+
 				overlays.splice(overlays.indexOf(overlays[i]), 1);
 			}
 		}
@@ -155,6 +145,7 @@ function removeOverlays(btn, show)
 		{
 			btn.parentElement.removeChild(btn);
 		}
+
 	}, 600);
 }
 
@@ -278,9 +269,10 @@ async function leavePage(url)
 
 		var timer = false;
 
-		setTimeout(function()
-		{
+		setTimeout(() => {
+
 			timer = true;
+			
 		}, 200);
 
 		var pageContent = await Query.complexFetch(url, 3000, 3, {}, false);
@@ -291,14 +283,7 @@ async function leavePage(url)
 			{
 				if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 				{
-					if(url.split('syntex.local')[1].includes('?'))
-					{
-						window.history.pushState(null, null, url.split('syntex.local')[1] + '&desktopApp=true');
-					}
-					else
-					{
-						window.history.pushState(null, null, url.split('syntex.local')[1] + '?desktopApp=true');
-					}
+					window.history.pushState(null, null, url.split('syntex.local')[1] + (url.split('syntex.local')[1].includes('?') ? '&' : '?') + 'desktopApp=true');
 				}
 				else
 				{
@@ -309,14 +294,7 @@ async function leavePage(url)
 			{
 				if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 				{
-					if(url.includes('?'))
-					{
-						window.history.pushState(null, null, url + '&desktopApp=true');
-					}
-					else
-					{
-						window.history.pushState(null, null, url + '?desktopApp=true');
-					}
+					window.history.pushState(null, null, url + (url.includes('?') ? '&' : '?') + 'desktopApp=true');
 				}
 				else
 				{
@@ -370,10 +348,7 @@ async function leavePage(url)
 
 function removeOverlaysDelay(btn, delay, show)
 {
-	setTimeout(function()
-	{
-		removeOverlays(btn, show);
-	}, delay);
+	setTimeout(() => removeOverlays(btn, show), delay);
 }
 
 function newTimeout(ms)
@@ -386,10 +361,7 @@ function SETUP(Q, P)
 	Query = Q;
 	Preloader = P;
 
-	window.onpopstate = function(event)
-	{
-		location.reload();
-	}
+	window.onpopstate = (event) => location.reload();
 }
 
 export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };

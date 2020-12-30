@@ -119,10 +119,7 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
 
 				if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
 				{
-					setTimeout(function()
-					{
-						Essentials.removeOverlays(overlays.root, true);
-					}, 4000);
+					setTimeout(() => Essentials.removeOverlays(overlays.root, true), 4000);
 				}
 			}
 			else if(fetch != 'Success' && overlays.root && overlays.executeError)
@@ -154,10 +151,7 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
 
 				if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
 				{
-					setTimeout(function()
-					{
-						Essentials.removeOverlays(overlays.root, true);
-					}, 4000);
+					setTimeout(() => Essentials.removeOverlays(overlays.root, true), 4000);
 				}
 			}
 			else if(overlays.root && overlays.success)
@@ -189,10 +183,7 @@ function complexFetch(url, timeout, tries, overlays, remove, post)
 
 				if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
 				{
-					setTimeout(function()
-					{
-						Essentials.removeOverlays(overlays.root, remove);
-					}, 4000);
+					setTimeout(() => Essentials.removeOverlays(overlays.root, remove), 4000);
 				}
 			}
 
