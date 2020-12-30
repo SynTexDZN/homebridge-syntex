@@ -42,10 +42,6 @@
 				window.Essentials = Essentials;
 
 				window.bridgeIP = '<%ip%>';
-				window.bridgeVersion = '<%version%>';
-				window.webhooksVersion = ''
-				window.newestBVersion = ''
-				window.newestWVersion = '';
 
 				window.versions = {};
 				window.newestVersions = {};
@@ -55,9 +51,18 @@
 
 				document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
 				
-				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then(function(plugins) {
+				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((plugins) => {
 
-					plugins = JSON.parse(plugins);
+					try
+					{
+						plugins = JSON.parse(plugins);
+					}
+					catch(e)
+					{
+						plugins = [];
+
+						console.log(e);
+					}
 
 					for(var i = 0; i < plugins.length; i++)
 					{
@@ -116,7 +121,7 @@
 
 				function fetchPluginUpdates(label, index, version, name, port, counter)
 				{
-					return new Promise(async function(resolve) {
+					return new Promise(async (resolve) => {
 
 						var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + index, 10000, 2, {}, false);
 
@@ -124,9 +129,7 @@
 						{
 							label.innerHTML = '<b>Neuste Version: </b>' + newestVersion;
 							
-							var installedVersion = Essentials.versionCount(version);
-
-							if(Essentials.versionCount(newestVersion) > installedVersion)
+							if(Essentials.versionCount(newestVersion) > Essentials.versionCount(version))
 							{
 								var updateButton = document.createElement('input');
 
@@ -152,8 +155,6 @@
 
 				async function updatePlugin(id, port, counter, btn)
 				{
-					console.log('UPDATE PLUGIN', id, btn, restarting, updating);
-
 					if(!restarting && updating.length == 0)
 					{
 						var overlays = {
@@ -165,8 +166,6 @@
 						};
 
 						updating.push(id);
-
-						console.log(newestVersions[id]);
 
 						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + newestVersions[id], 120000, 2, overlays, false) == 'Success')
 						{
@@ -181,22 +180,26 @@
 								versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
 
 								document.getElementById('infos').children[counter].innerHTML = '<b>Version: </b>' + versions[id];
-
-								await Essentials.newTimeout(4000);
-
-								Essentials.removeOverlays(btn, false);
-
-								await Essentials.newTimeout(300);
-								
-								updating.splice(updating.indexOf(id), 1);
 							}
+							else
+							{
+								Essentials.showOverlay(btn, Essentials.createErrorSuccessOverlay('update-result', 'Homebridge Startet Nicht!'));
+							}
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, false);
+
+							await Essentials.newTimeout(300);
+							
+							updating.splice(updating.indexOf(id), 1);
 						}
 					}
 				}
 				
 				async function restartBridge(btn)
 				{
-					if(!restarting && !updating['bridge'] && !updating['webhooks'])
+					if(!restarting && updating.length == 0)
 					{
 						var overlays = {
 							root : btn,
@@ -215,13 +218,17 @@
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-
-								await Essentials.newTimeout(4000);
-
-								Essentials.removeOverlays(btn, true);
-
-								restarting = false;
 							}
+							else
+							{
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+							}
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, true);
+
+							restarting = false;
 						}
 					}
 				}
