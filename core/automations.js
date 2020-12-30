@@ -42,7 +42,7 @@ function createAutomation(automation)
 	
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
+						logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
 	
 						resolve(false);
 					}
@@ -88,7 +88,7 @@ function removeAutomation(id)
 	
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
+						logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
 	
 						resolve(false);
 					}
@@ -189,7 +189,7 @@ function modifyAutomation(automation)
 		
 						if(err)
 						{
-							logger.log('error', 'bridge', 'Bridge', 'Automations.json konnte nicht aktualisiert werden! ' + err);
+							logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
 		
 							resolve(false);
 						}

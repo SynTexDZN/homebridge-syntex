@@ -47,7 +47,7 @@ module.exports = class DeviceManager
 			}
 			else
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
 		
 				resolve(false);
 			}
@@ -99,7 +99,7 @@ module.exports = class DeviceManager
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 					resolve(['Error', '']);
 				}
@@ -163,7 +163,7 @@ module.exports = class DeviceManager
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
 
 					resolve(['Error', '']);
 				}
@@ -227,7 +227,7 @@ module.exports = class DeviceManager
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
 
 					resolve(['Error', 'Fehler beim Erstellen!']);
 				}
@@ -317,7 +317,7 @@ module.exports = class DeviceManager
 
 						if(err)
 						{
-							logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht aktualisiert werden! ' + err);
+							logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
 						}
 						else
 						{
@@ -364,7 +364,7 @@ module.exports = class DeviceManager
 
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', values.id + '.json konnte nicht aktualisiert werden! ' + err);
+						logger.log('error', 'bridge', 'Bridge', values.id + '.json %update_error%! ' + err);
 					}
 					else
 					{
@@ -414,7 +414,7 @@ module.exports = class DeviceManager
 
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Bridge.json konnte nicht aktualisiert werden! ' + err);
+						logger.log('error', 'bridge', 'Bridge', 'Bridge.json %update_error%! ' + err);
 					}
 
 					resolve(err ? false : true);
@@ -432,7 +432,7 @@ function saveAccessories()
 
 			if(err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht aktualisiert werden! ' + err);
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
 			}
 			else
 			{
@@ -514,7 +514,7 @@ function reloadConfig()
 
 			if(!obj || err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json konnte nicht geladen werden!');
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 				resolve(false);
 			}

@@ -103,7 +103,7 @@ class SynTexPlatform
 
 						const { exec } = require('child_process');
 
-						this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 
 						exec('sudo systemctl restart homebridge');
 					}
@@ -132,7 +132,7 @@ class SynTexPlatform
 
 						const { exec } = require('child_process');
 
-						this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 
 						exec('sudo systemctl restart homebridge');
 					}
@@ -168,7 +168,7 @@ class SynTexPlatform
 
 						const { exec } = require('child_process');
 
-						this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 
 						exec('sudo systemctl restart homebridge');
 					}
@@ -194,7 +194,7 @@ class SynTexPlatform
 			response.write('Success');
 			response.end();
 
-			this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+			this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 
 			exec('sudo systemctl restart homebridge');
 		});
@@ -252,7 +252,7 @@ class SynTexPlatform
 						
 						restart = true;
 
-						this.logger.log('warn', 'bridge', 'Bridge', 'Die Homebridge wird neu gestartet ..');
+						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 						
 						exec('sudo systemctl restart homebridge');
 					}
