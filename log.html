@@ -78,7 +78,17 @@
 
 				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then(function(P) {
 
-					plugins = JSON.parse(P);
+					try
+					{
+						plugins = JSON.parse(P);
+					}
+					catch(e)
+					{
+						plugins = [];
+
+						console.log(e);
+					}
+					
 					//plugins = [{id:'SynTex', port:'1710'}, {id:'SynTexWebHooks', port:'1710'}, {id:'SynTexTuya', port:'1710'}, {id:'SynTexMagicHome', port:'1710'}];
 
 					for(var i = 0; i < plugins.length; i++)
@@ -130,7 +140,17 @@
 				{
 					Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 2, {}, false).then(function(l) {
 
-						logJSON = JSON.parse(l);
+						try
+						{
+							logJSON = JSON.parse(l);
+						}
+						catch(e)
+						{
+							logJSON = [];
+
+							console.log(e);
+						}
+						
 						//logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
 
 						for(var i = 0; i < plugins.length; i++)
@@ -232,8 +252,17 @@
 
 					//console.log(log);
 
-					log = JSON.parse(log);
+					try
+					{
+						log = JSON.parse(log);
+					}
+					catch(e)
+					{
+						log = [];
 
+						console.log(e);
+					}
+					
 					console.log(typeof log, log);
 
 					for(var i = 0; i < log.length; i++)
