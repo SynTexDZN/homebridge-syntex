@@ -30,17 +30,33 @@ It offers an UI to manage all your SynTex Plugins.
         "platform": "SynTex",
         "cacheDirectory": "./SynTex/settings",
         "logDirectory": "./SynTex/log",
-        "port": 1711
+        "port": 1711,
+        "language": "us",
+        "debug": false
     },
     {
         "platform": "SynTexWebHooks",
         "cacheDirectory": "./SynTex/devices",
         "logDirectory": "./SynTex/log",
         "port": 1710,
+        "language": "us",
+        "debug": false,
         "accessories": []
     }
 ]
 ```
+### Required Parameters
+- `platform` is always `SynTexMagicHome`
+- `logDirectory` The path where your logs are stored.
+- `cacheDirectory` The path where your data is stored.
+
+### Optional Parameters
+- `port` To control your accessory over HTTP calls.
+- `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- `debug` For further information because of troubleshooting and bug reports.
+
+
+---
 
 
 ## Currently Supported
