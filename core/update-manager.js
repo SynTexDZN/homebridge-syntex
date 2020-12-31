@@ -4,6 +4,8 @@ module.exports = class UpdateManager
 {
     constructor(interval)
     {
+        this.fetchUpdates();
+        
         this.updateInterval = setInterval(() => {
 
             this.fetchUpdates();
