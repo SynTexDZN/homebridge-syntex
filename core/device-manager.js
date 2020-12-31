@@ -528,9 +528,37 @@ module.exports = class DeviceManager
 					logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
 				}
 
-				this.reloadAccessories();
+				reloadConfig().then((success) => {
+
+					if(success)
+					{
+						this.reloadAccessories();
+					}
+				});
 
 				resolve(err ? false : true);
+			});
+		});
+	}
+
+	removeFromDataStorage(id)
+	{
+		return new Promise(function(resolve) {
+
+			dataStorage.list((err, objs) => {  
+
+				if(objs && !err)
+				{
+					for(var i = 0; i < objs.length; i++)
+					{
+						if(objs[i].id.startsWith(id))
+						{
+							dataStorage.remove(objs[i].id, (err) => {});
+						}
+					}
+				}
+
+				resolve();
 			});
 		});
 	}
