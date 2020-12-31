@@ -483,7 +483,7 @@ class SynTexPlatform
 
 			var obj = {
 				devices: JSON.stringify(DeviceManager.getAccessories()),
-				updates: UpdateManager.getNesestVersions(),
+				updates: UpdateManager.getLatestVersions(),
 				restart: '-'
 			};
 			

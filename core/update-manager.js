@@ -50,7 +50,7 @@ module.exports = class UpdateManager
         });
     }
 
-    getNewestVersions()
+    getLatestVersions()
     {
         return this.newestVersions || [];
     }
