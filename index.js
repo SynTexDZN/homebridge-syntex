@@ -14,19 +14,20 @@ class SynTexPlatform
 		this.logDirectory = config['logDirectory'] || './SynTex/log';
 		this.port = config['port'] || 1711;
 		this.debug = config['debug'] || false;
+		this.language = config['language'] || 'en';
 
 		this.config = store(api.user.storagePath());
 
-		this.logger = new logger('SynTex', this.logDirectory, this.debug);
+		this.logger = new logger('SynTex', this.logDirectory, this.debug, this.language);
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, true);
 
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 
-		this.initWebServer();
-
 		HTMLQuery = new HTMLQuery(this.logger);
 
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
+
+			console.log(1, config != null);
 
 			if(config != null)
 			{
@@ -36,10 +37,14 @@ class SynTexPlatform
 
 			DeviceManager.getDevices().then((devices) => {
 
+				console.log(2, devices != null);
+
 				if(devices != null)
 				{
 					OfflineManager = new OfflineManager(this.logger, devices);
 				}
+
+				this.initWebServer();
 			});
 
 			UpdateManager = new UpdateManager(600);
