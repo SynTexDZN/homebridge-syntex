@@ -91,6 +91,8 @@ class SynTexPlatform
 			{
 				response.write(await DeviceManager.removeFromSettingsStorage(urlParams.id) ? 'Success' : 'Error');
 				response.end();
+
+				await DeviceManager.removeFromDataStorage(urlParams.id);
 			}
 		});
 
