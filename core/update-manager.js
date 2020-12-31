@@ -21,7 +21,7 @@ module.exports = class UpdateManager
 
         request(theRequest, (error, response, body) => {
 
-            console.log(response);
+            console.log(body);
         });
     }
 }
