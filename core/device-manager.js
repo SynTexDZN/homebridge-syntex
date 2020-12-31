@@ -516,6 +516,24 @@ module.exports = class DeviceManager
 
 		this.reloadAccessories();
 	}
+
+	removeFromSettingsStorage(id)
+	{
+		return new Promise(resolve => {
+
+			storage.remove(id, (err) => {
+									
+				if(err)
+				{
+					logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
+				}
+
+				this.reloadAccessories();
+
+				resolve(err ? false : true);
+			});
+		});
+	}
 }
 
 function reloadConfig()
