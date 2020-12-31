@@ -550,7 +550,7 @@
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd')
+						if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
@@ -668,7 +668,7 @@
 				{
 					for(const i in typeCounter)
 					{
-						if(i != 'lcd')
+						if(i != 'lcd' && (i != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
 							{
@@ -816,7 +816,7 @@
 							v.push((value - min) / (max - min) * 100);
 						}
 						*/
-						if(isNaN(values[type + c][0].value))
+						if(isNaN(values[type + c][0].value) && data[type].active.text != null && data[type].inactive.text != null)
 						{
 							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
@@ -1207,7 +1207,7 @@
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd')
+						if(type != 'lcd' && (i != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
@@ -1229,7 +1229,7 @@
 
 								if(temp[type + j] && state.state != temp[type + j] && device.plugin != 'SynTexMagicHome')
 								{
-									orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state });
+									orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state.toString() });
 
 									calcValues(orginal, type, j);
 								}
