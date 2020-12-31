@@ -85,6 +85,15 @@ class SynTexPlatform
 
 	initWebServer()
 	{
+		this.WebServer.addPage('/serverside/remove-device', async (response, urlParams) => {
+
+			if(urlParams.id != null)
+			{
+				response.write(await DeviceManager.removeFromSettingsStorage(urlParams.id) ? 'Success' : 'Error');
+				response.end();
+			}
+		});
+
 		this.WebServer.addPage('/serverside/init', (response, urlParams) => {
 	
 			if(urlParams.name != null && urlParams.id != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
