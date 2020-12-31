@@ -557,7 +557,7 @@ function checkEventButton(id)
 {
 	for(const j in accessories)
 	{
-		if(accessories[j].id === id && accessories[j].services.includes('statelessswitch'))
+		if(accessories[j].id === id && accessories[j].services.toString().includes('statelessswitch'))
 		{
 			return true;
 		}
@@ -581,18 +581,20 @@ function addToConfig(id, ip, name, services, buttons)
 			{
 				for(var j = 0; j < services.length; j++)
 				{
-					if(services[i] == 'relais' || services[i] == 'rgb' || services[i] == 'rgbw' || services[i] == 'rgbww' || services[i] == 'rgbcw')
+					var type = services[j];
+
+					if(type == 'relais' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
 						accessories[index]['services'][j] = { type : accessories[index]['services'][j], requests : [] };
 					}
 
-					if(services[i] == 'relais')
+					if(type == 'relais')
 					{
 						accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + ip + '/relais?value=true' });
 						accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + ip + '/relais?value=false' });
 					}
 					
-					if(services[i] == 'rgb' || services[i] == 'rgbw' || services[i] == 'rgbww' || services[i] == 'rgbcw')
+					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
 						accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
 					}
