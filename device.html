@@ -821,7 +821,7 @@
 							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
 						}
-						else
+						else if(data[type].text != null)
 						{
 							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
@@ -1585,6 +1585,8 @@
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
 								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+
+								await Query.complexFetch('/serverside/reload-accessories', 20000, 1, {}, false);
 
 								await Essentials.newTimeout(3000);
 

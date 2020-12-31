@@ -113,41 +113,6 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/remove-device', (response, urlParams) => {
-
-			if(urlParams.id != null)
-			{
-				DeviceManager.removeDevice(urlParams.id).then((removed) => {
-
-					response.write(removed ? 'Success' : 'Error');
-					response.end();
-
-					if(removed)
-					{
-						this.logger.log('success', urlParams.id, '', 'Ein Gerät wurde entfernt! ( ' + urlParams.id + ' )');
-
-						restart = true;
-
-						const { exec } = require('child_process');
-
-						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
-
-						exec('sudo systemctl restart homebridge');
-					}
-					else
-					{
-						this.logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.id + ' )');
-					}
-					
-				}).catch((e) => this.logger.err(e));
-			}
-			else
-			{
-				response.write('Error');
-				response.end();
-			}
-		});
-
 		this.WebServer.addPage('/serverside/init-switch', (response, urlParams) => {
 
 			if(urlParams.id != null && urlParams.name != null)
@@ -414,6 +379,14 @@ class SynTexPlatform
 				response.write(urlParams.id ? await Automations.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
 				response.end();
 			}
+		});
+
+		this.WebServer.addPage('/serverside/reload-accessories', async (response, urlParams) => {
+
+			DeviceManager.reloadAccessories();
+
+			response.write('Success');
+			response.end();
 		});
 
 		this.WebServer.addPage('/serverside/plugins', (response) => {

@@ -12,46 +12,17 @@ module.exports = class DeviceManager
 		logger = slog;
 		webhookPort = wConf.port;
 
+		this.reloading = false;
+
 		reloadConfig().then((success) => {
 
 			if(success)
 			{
-				reloadAccessories();
+				this.reloadAccessories();
 			}
 		});
 
 		deviceManager = this;
-	}
-
-	removeDevice(id)
-	{
-		return new Promise((resolve) => {
-
-			if(configOBJ != null)
-			{
-				while(!checkID(id))
-				{
-					removeFromConfig(id);
-				}
-
-				saveAccessories().then(async (success) => {
-
-					if(success)
-					{
-						await removeFromSettingsStorage(id);
-						await removeFromDataStorage(id);
-					}
-
-					resolve(success);
-				});
-			}
-			else
-			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
-		
-				resolve(false);
-			}
-		});
 	}
 
 	initDevice(id, ip, name, version, events, services)
@@ -94,7 +65,7 @@ module.exports = class DeviceManager
 
 					if(needToSave)
 					{
-						saveAccessories();
+						this.saveAccessories();
 					}
 				}
 				else
@@ -106,7 +77,7 @@ module.exports = class DeviceManager
 
 				var status = 'Success';
 
-				if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await createEventButton(id, device['name'], (device['events'] || []).length))
+				if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await this.createEventButton(id, device['name'], (device['events'] || []).length))
 				{
 					status = 'Init';
 				}
@@ -119,12 +90,12 @@ module.exports = class DeviceManager
 				{
 					while(!checkID(id))
 					{
-						removeFromConfig(id);
+						this.removeFromConfig(id);
 					}
 
 					addToConfig(id, ip, name, JSON.parse(services), JSON.parse(events).length);
 
-					saveAccessories().then(async (success) => {
+					this.saveAccessories().then(async (success) => {
 
 						if(success)
 						{
@@ -149,7 +120,7 @@ module.exports = class DeviceManager
 								{
 									logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
 
-									reloadAccessories();
+									this.reloadAccessories();
 
 									resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
 								}
@@ -195,7 +166,7 @@ module.exports = class DeviceManager
 				{
 					addToConfig(id, null, name, 'switch', 0);
 
-					saveAccessories().then((success) => {
+					this.saveAccessories().then((success) => {
 
 						if(success)
 						{
@@ -213,7 +184,7 @@ module.exports = class DeviceManager
 								{
 									logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
 
-									reloadAccessories();
+									this.reloadAccessories();
 
 									resolve(['Success', 'Success']);
 								}
@@ -321,7 +292,7 @@ module.exports = class DeviceManager
 						}
 						else
 						{
-							reloadAccessories();
+							this.reloadAccessories();
 						}
 
 						resolve(err ? false : true);
@@ -368,7 +339,7 @@ module.exports = class DeviceManager
 					}
 					else
 					{
-						reloadAccessories();
+						this.reloadAccessories();
 					}
 
 					resolve(err ? false : true);
@@ -422,87 +393,128 @@ module.exports = class DeviceManager
 			});
 		});
 	}
-}
 
-function saveAccessories()
-{
-	return new Promise(resolve => {
-
-		config.add(configOBJ, function(err) {
-
-			if(err)
-			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
-			}
-			else
-			{
-				reloadAccessories();
-			}
-
-			resolve(err ? false : true);
-		});
-	});
-}
-
-var reloading = false;
-
-async function reloadAccessories()
-{
-	if(!reloading)
+	async reloadAccessories()
 	{
-		reloading = true;
-
-		var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
-		var devices = await deviceManager.getDevices();
-
-		accessories = [];
-
-		for(const i in configOBJ.platforms)
+		if(!this.reloading)
 		{
-			if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
-			{
-				accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
+			this.reloading = true;
 
-				for(var j = 0; j < accessories.length; j++)
+			var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
+			var devices = await deviceManager.getDevices();
+
+			accessories = [];
+
+			for(const i in configOBJ.platforms)
+			{
+				if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
 				{
-					for(const k in devices)
+					accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
+
+					for(var j = 0; j < accessories.length; j++)
 					{
-						if(devices[k].id == accessories[j].id)
+						for(const k in devices)
 						{
-							for(var l = 0; l < Object.keys(devices[k]).length; l++)
+							if(devices[k].id == accessories[j].id)
 							{
-								accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+								for(var l = 0; l < Object.keys(devices[k]).length; l++)
+								{
+									accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+								}
+							}
+						}
+
+						if(accessories[j].plugin == null)
+						{
+							accessories[j].plugin = configOBJ.platforms[i].platform;
+						}
+
+						if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
+						{
+							accessories[j].plugin = 'SynTex';
+						}
+
+						if(accessories[j].plugin == 'SynTexMagicHome')
+						{
+							if(accessories[j].type == "light")
+							{
+								accessories[j].spectrum = 'HSL'; 
+							}
+
+							if(accessories[j].version == null)
+							{
+								accessories[j].version = '99.99.99';
 							}
 						}
 					}
+				}
+			}
 
-					if(accessories[j].plugin == null)
+			this.reloading = false;
+		}
+	}
+
+	saveAccessories()
+	{
+		return new Promise(resolve => {
+
+			config.add(configOBJ, function(err) {
+
+				if(err)
+				{
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+				}
+				else
+				{
+					this.reloadAccessories();
+				}
+
+				resolve(err ? false : true);
+			});
+		});
+	}
+
+	createEventButton(id, name, buttons)
+	{
+		return new Promise(resolve => {
+
+			for(const i in configOBJ.platforms)
+			{
+				if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
+				{
+					configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { id : id, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
+				}
+			}
+
+			this.saveAccessories().then((success) => {
+
+				if(success)
+				{
+					logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
+				}
+
+				resolve(success ? true : false);
+			});    
+		});
+	}
+
+	removeFromConfig(id)
+	{
+		for(const i in configOBJ.platforms)
+		{
+			if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
+			{
+				for(const j in configOBJ.platforms[i].accessories)
+				{
+					if(configOBJ.platforms[i].accessories[j].id == id)
 					{
-						accessories[j].plugin = configOBJ.platforms[i].platform;
-					}
-
-					if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
-					{
-						accessories[j].plugin = 'SynTex';
-					}
-
-					if(accessories[j].plugin == 'SynTexMagicHome')
-					{
-						if(accessories[j].type == "light")
-						{
-							accessories[j].spectrum = 'HSL'; 
-						}
-
-						if(accessories[j].version == null)
-						{
-							accessories[j].version = '99.99.99';
-						}
+						configOBJ.platforms[i].accessories.splice(j, 1);
 					}
 				}
 			}
 		}
 
-		reloading = false;
+		this.reloadAccessories();
 	}
 }
 
@@ -525,30 +537,6 @@ function reloadConfig()
 				resolve(true);
 			}
 		});
-	});
-}
-
-function createEventButton(id, name, buttons)
-{
-	return new Promise(resolve => {
-
-		for(const i in configOBJ.platforms)
-		{
-			if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
-			{
-				configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { id : id, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
-			}
-		}
-
-		saveAccessories().then((success) => {
-
-			if(success)
-			{
-				logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
-			}
-
-			resolve(success ? true : false);
-		});    
 	});
 }
 
@@ -617,61 +605,4 @@ function addToConfig(id, ip, name, services, buttons)
 			}
 		}
 	}
-}
-
-function removeFromDataStorage(id)
-{
-	return new Promise(function(resolve) {
-
-		dataStorage.list((err, objs) => {  
-
-			if(objs && !err)
-			{
-				for(var i = 0; i < objs.length; i++)
-				{
-					if(objs[i].id.startsWith(id))
-					{
-						dataStorage.remove(objs[i].id, (err) => {});
-					}
-				}
-			}
-
-			resolve();
-		});
-	});
-}
-
-function removeFromConfig(id)
-{
-	for(const i in configOBJ.platforms)
-	{
-		if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
-		{
-			for(const j in configOBJ.platforms[i].accessories)
-			{
-				if(configOBJ.platforms[i].accessories[j].id == id)
-				{
-					configOBJ.platforms[i].accessories.splice(j, 1);
-				}
-			}
-		}
-	}
-
-	reloadAccessories();
-}
-
-function removeFromSettingsStorage(id)
-{
-	return new Promise(resolve => {
-
-		storage.remove(id, (err) => {
-								
-			if(err)
-			{
-				logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
-			}
-
-			resolve(err ? false : true);
-		});
-	});
 }
