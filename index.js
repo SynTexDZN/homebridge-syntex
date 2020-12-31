@@ -26,7 +26,7 @@ class SynTexPlatform
 
 		HTMLQuery = new HTMLQuery(this.logger);
 
-		this.getPluginConfig('SynTexWebHooks').then(function(config) {
+		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
 			if(config != null)
 			{
@@ -79,10 +79,7 @@ class SynTexPlatform
 				}
 			});
 			
-		}.bind(this)).catch(function(e) {
-
-			this.logger.err(e);
-		});
+		}).catch((e) => this.logger.err(e));
 	}
 
 	initWebServer()
@@ -91,7 +88,7 @@ class SynTexPlatform
 	
 			if(urlParams.name != null && urlParams.id != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
 			{
-				DeviceManager.initDevice(urlParams.id, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then(function(res) {
+				DeviceManager.initDevice(urlParams.id, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then((res) => {
 
 					if(res[0] != 'Error')
 					{
@@ -112,10 +109,7 @@ class SynTexPlatform
 						exec('sudo systemctl restart homebridge');
 					}
 					
-				}).catch(function(e) {
-
-					this.logger.err(e);
-				});
+				}).catch((e) => this.logger.err(e));
 			}
 		});
 
@@ -123,7 +117,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				DeviceManager.removeDevice(urlParams.id).then(function(removed) {
+				DeviceManager.removeDevice(urlParams.id).then((removed) => {
 
 					response.write(removed ? 'Success' : 'Error');
 					response.end();
@@ -145,10 +139,7 @@ class SynTexPlatform
 						this.logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht entfernt werden! ( ' + urlParams.id + ' )');
 					}
 					
-				}).catch(function(e) {
-
-					this.logger.err(e);
-				});
+				}).catch((e) => this.logger.err(e));
 			}
 			else
 			{
@@ -161,7 +152,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null && urlParams.name != null)
 			{
-				DeviceManager.initSwitch(urlParams.id, urlParams.name).then(function(res) {
+				DeviceManager.initSwitch(urlParams.id, urlParams.name).then((res) => {
 
 					response.write(res[1]);
 					response.end();
@@ -177,10 +168,7 @@ class SynTexPlatform
 						exec('sudo systemctl restart homebridge');
 					}
 					
-				}).catch(function(e) {
-
-					this.logger.err(e);
-				});
+				}).catch((e) => this.logger.err(e));
 			}
 			else
 			{
@@ -314,8 +302,8 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/log', (response, urlParams) => {
 
-			fs.readdir(this.logDirectory, async function(err, files)
-			{
+			fs.readdir(this.logDirectory, async (err, files) => {
+
 				var obj = {};
 
 				for(var i = 0; i < files.length; i++)
@@ -344,7 +332,7 @@ class SynTexPlatform
 							}
 						}
 
-						logList.sort(function(a, b) {
+						logList.sort((a, b) => {
 
 							var keyA = new Date(a.t), keyB = new Date(b.t);
 							
@@ -511,8 +499,8 @@ class SynTexPlatform
 
 			for(var dev in ifaces)
 			{
-				var iface = ifaces[dev].filter(function(details)
-				{
+				var iface = ifaces[dev].filter((details) =>	{
+
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
@@ -531,8 +519,8 @@ class SynTexPlatform
 
 			for(var dev in ifaces)
 			{
-				var iface = ifaces[dev].filter(function(details)
-				{
+				var iface = ifaces[dev].filter((details) => {
+
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
