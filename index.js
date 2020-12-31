@@ -56,11 +56,11 @@ class SynTexPlatform
 
 					if(error || stderr.includes('ERR!'))
 					{
-						this.logger.log('error', 'bridge', 'Bridge', 'Umleitung der Bridge Website Fehlgeschlagen!');
+						this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!');
 					}
 					else
 					{
-						this.logger.log('warn', 'bridge', 'Bridge', 'Umleitung der Bridge Website zu Port [80]');
+						this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
 					}
 				});
 			});
@@ -92,7 +92,7 @@ class SynTexPlatform
 
 					if(res[0] != 'Error')
 					{
-						this.logger.log('info', urlParams.id, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] hat sich mit der Bridge verbunden! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
+						this.logger.log('info', urlParams.id, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] %accessory_connected%! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
 					}
 
 					response.write(res[1]);
@@ -236,11 +236,11 @@ class SynTexPlatform
 
 					if(error || stderr.includes('ERR!'))
 					{
-						this.logger.log('error', 'bridge', 'Bridge', 'Die SynTex Bridge konnte nicht aktualisiert werden! ' + (error || stderr));
+						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%! ' + (error || stderr));
 					}
 					else
 					{
-						this.logger.log('success', 'bridge', 'Bridge', 'Die SynTex Bridge wurde auf die Version [' + version + '] aktualisiert!');
+						this.logger.log('success', 'bridge', 'Bridge', '%bridge_update_success[0]% [' + version + '] %bridge_update_success[1]%!');
 						
 						restart = true;
 
