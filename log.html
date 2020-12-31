@@ -208,14 +208,14 @@
 
 				async function searchLog()
 				{
+					var params = document.getElementById('search-params').value;
+					var level = document.getElementById('search-level').value;
+					var search = null;
+					
 					counter = 0;
 					document.getElementById('search-btn').value = 'Suchen ..';
 
 					await Essentials.newTimeout(500);
-
-					var params = document.getElementById('search-params').value;
-					var level = document.getElementById('search-level').value;
-					var search = null;
 
 					if(level != '' && params != '')
 					{
@@ -250,8 +250,6 @@
 				{
 					var filterLog = '';
 
-					//console.log(log);
-
 					try
 					{
 						log = JSON.parse(log);
@@ -262,8 +260,6 @@
 
 						console.log(e);
 					}
-					
-					console.log(typeof log, log);
 
 					for(var i = 0; i < log.length; i++)
 					{

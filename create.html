@@ -79,12 +79,13 @@
 
 				function redirectCountdown(url)
 				{
-					setTimeout(async function()
-					{
+					setTimeout(async () => {
+						
 						if(await Essentials.checkRestart('/serverside/check-restart'))
 						{
 							Essentials.leavePage(url);
 						}
+
 					}, 3000);
 				}
 
