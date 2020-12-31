@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
+let DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
 const fs = require('fs'), store = require('json-fs-store'), request = require('request');
 
@@ -41,6 +41,8 @@ class SynTexPlatform
 					OfflineManager = new OfflineManager(this.logger, devices);
 				}
 			});
+
+			UpdateManager = new UpdateManager();
 
 			restart = false;
 
