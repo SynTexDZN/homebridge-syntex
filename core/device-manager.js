@@ -29,7 +29,7 @@ module.exports = class DeviceManager
 	{
 		const self = this;
 
-		return new Promise(async function(resolve) {
+		return new Promise(async (resolve) => {
 			
 			var eventButton = checkEventButton(id);
 			var device = await self.getDevice(id);
@@ -150,7 +150,7 @@ module.exports = class DeviceManager
 	{
 		const self = this;
 
-		return new Promise(function(resolve) {
+		return new Promise((resolve) => {
 			
 			if(!checkID(id))
 			{
@@ -458,7 +458,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			config.add(configOBJ, function(err) {
+			config.add(configOBJ, (err) => {
 
 				if(err)
 				{
