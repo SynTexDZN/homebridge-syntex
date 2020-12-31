@@ -1,5 +1,7 @@
 let DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
+
 const fs = require('fs'), store = require('json-fs-store'), request = require('request');
+
 var restart = true;
 
 module.exports = (homebridge) => homebridge.registerPlatform('homebridge-syntex', 'SynTex', SynTexPlatform);
@@ -22,7 +24,7 @@ class SynTexPlatform
 
 		this.initWebServer();
 
-		HTMLQuery.SETUP(this.logger);
+		HTMLQuery = new HTMLQuery(this.logger);
 
 		this.getPluginConfig('SynTexWebHooks').then(function(config) {
 
@@ -32,11 +34,11 @@ class SynTexPlatform
 				Automations.SETUP(this.logger, config.cacheDirectory);
 			}
 
-			DeviceManager.getDevices().then(function(devices)
-			{
+			DeviceManager.getDevices().then((devices) => {
+
 				if(devices != null)
 				{
-					OfflineManager.SETUP(this.logger, devices);
+					OfflineManager = new OfflineManager(this.logger, devices);
 				}
 			});
 

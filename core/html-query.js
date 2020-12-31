@@ -1,87 +1,70 @@
 const fs = require('fs'), path = require('path');
-var logger;
 
-function sendValue(html, param, value)
+module.exports = class HTMLQuery
 {
-	var res = html.toString();
-
-	res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
-	
-	return res;
-}
-
-function sendValues(html, obj)
-{
-	var res = html.toString();
-
-	for(const i in obj)
+	constructor(logger)
 	{
-		res = res.replace(new RegExp('<%' + i + '%>', 'g'), obj[i]);
+		this.logger = logger;
 	}
-	
-	return res;
-}
 
-function exists(reqPath)
-{
-	return new Promise(resolve => {
+	sendValue(html, param, value)
+	{
+		var res = html.toString();
+
+		res = res.replace(new RegExp('<%' + param + '%>', 'g'), value);
 		
-		var pathname = path.join(__dirname, '../' + reqPath);
+		return res;
+	}
 
-		var noext = false;
+	sendValues(html, obj)
+	{
+		var res = html.toString();
 
-		if(path.parse(pathname).ext == '')
+		for(const i in obj)
 		{
-			noext = true;
+			res = this.sendValue(res, i, obj[i]);
 		}
-
-		fs.exists(pathname, function(exist)
-		{
-			if(exist && fs.statSync(pathname).isDirectory())
-			{
-				resolve(exists(reqPath + 'index.html'));
-			}
-			else if(exist)
-			{
-				resolve(pathname);
-			}
-			else if(noext)
-			{
-				resolve(exists(reqPath + '.html'));
-			}
-			else
-			{
-				resolve(false);
-			}
-		});
-	});
-}
-
-function read(reqPath)
-{
-	return new Promise(resolve => {
 		
-		fs.readFile(reqPath, function(err, res)
-		{          
-			if(!res || err)
+		return res;
+	}
+
+	exists(reqPath)
+	{
+		return new Promise(resolve => {
+			
+			var pathname = path.join(__dirname, '../' + reqPath);
+			var noext = false;
+
+			if(path.parse(pathname).ext == '')
 			{
-				res = "";
+				noext = true;
 			}
 
-			resolve(res);
+			fs.exists(pathname, function(exist)
+			{
+				if(exist && fs.statSync(pathname).isDirectory())
+				{
+					resolve(exists(reqPath + 'index.html'));
+				}
+				else if(exist)
+				{
+					resolve(pathname);
+				}
+				else if(noext)
+				{
+					resolve(exists(reqPath + '.html'));
+				}
+				else
+				{
+					resolve(false);
+				}
+			});
 		});
-	});
+	}
+
+	read(reqPath)
+	{
+		return new Promise(resolve => fs.readFile(reqPath, 
+			(err, res) => resolve(res || '')));
+	}
 }
-
-function SETUP(slog)
-{
-	logger = slog;
-};
-
-module.exports = {
-	SETUP,
-	sendValue,
-	sendValues,
-	read,
-	exists
-};

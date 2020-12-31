@@ -1,5 +1,20 @@
 const request = require('request');
-var logger, temp = [], offline = [];
+var temp = [], offline = [];
+
+module.exports = class OfflineManager
+{
+	constructor(logger, devices)
+	{
+		this.logger = logger;
+
+		pingDevices(devices);
+	}
+
+	getOfflineDevices()
+	{
+		return offline;
+	}
+}
 
 function checkConnection(ip)
 {
@@ -49,25 +64,5 @@ function pingDevices(devices)
 		}
 	}
 
-	setTimeout(function()
-	{
-		pingDevices(devices);
-	}, 30000);
+	setTimeout(() => pingDevices(devices), 30000);
 }
-
-function getOfflineDevices()
-{
-	return offline;
-}
-
-function SETUP(log, devices)
-{
-	logger = log;
-
-	pingDevices(devices);
-}
-
-module.exports = {
-	SETUP,
-	getOfflineDevices
-};
