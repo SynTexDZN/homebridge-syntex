@@ -74,6 +74,7 @@
 				window.activity = [];
 				window.services = [];
 				window.temp = {};
+				window.plugins = [];
 
 				window.data = {
 					motion: {
@@ -126,6 +127,18 @@
 				}; 
 
 				loadServices();
+
+				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((plugins) => {
+
+					try
+					{
+						plugins = JSON.parse(plugins);
+					}
+					catch(e)
+					{
+						console.log(e);
+					}
+				});
 
 				if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
 				{
@@ -1566,11 +1579,11 @@
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
 
-						for(var i = 0; i < plugin.length; i++)
+						for(var i = 0; i < plugins.length; i++)
 						{
-							if(plugin[i].id == device.plugin)
+							if(plugins[i].id == device.plugin)
 							{
-								url = window.location.protocol + '//' + window.location.hostname + ':' + plugin[i].port;
+								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port;
 							}
 						}
 
