@@ -42,7 +42,7 @@ class SynTexPlatform
 				}
 			});
 
-			UpdateManager = new UpdateManager(10);
+			UpdateManager = new UpdateManager(600);
 
 			restart = false;
 

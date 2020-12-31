@@ -5,7 +5,7 @@ module.exports = class UpdateManager
     constructor(interval)
     {
         this.fetchUpdates();
-        
+
         this.updateInterval = setInterval(() => {
 
             this.fetchUpdates();
@@ -27,19 +27,19 @@ module.exports = class UpdateManager
             {
                 var updates = JSON.parse(body);
                 var updateOBJ = {
-                    plugins : [],
-                    devices : []
+                    plugins : {},
+                    devices : {}
                 };
 
                 for(const update in updates)
                 {
                     if(updates[update].type.startsWith('SynTex'))
                     {
-                        updateOBJ['plugins'].push(updates[update]);
+                        updateOBJ['plugins'][updates[update].type] = updates[update].version;
                     }
                     else
                     {
-                        updateOBJ['devices'].push(updates[update]);
+                        updateOBJ['devices'][updates[update].type] = updates[update].version;
                     }
                 }
 
