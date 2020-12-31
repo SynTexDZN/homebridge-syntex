@@ -430,7 +430,7 @@
 				else
 				{
 					setInterval(() => {
-						
+
 						if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
 						{
 							fetchState();
@@ -1564,7 +1564,17 @@
 							connectionError : { value : 'Keine Verbindung ' + (device.ip == null ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
 						};
 
-						var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) });
+						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
+
+						for(var i = 0; i < plugin.length; i++)
+						{
+							if(plugin[i].id == device.plugin)
+							{
+								url = window.location.protocol + '//' + window.location.hostname + ':' + plugin[i].port;
+							}
+						}
+
+						var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services), url : url });
 
 						resetting = true;
 

@@ -12,7 +12,7 @@ var presets = [
 	{
 		id : 'SynTexWebHooks',
 		name : 'SynTex Virtual Device',
-		getResetURL : function(device) { return '/serverside/remove-device?id=' + device.id },
+		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
 		getRestartURL : function() { return null },
 		getReconnectURL : function() { return null },
 		getUpdateURL : function() { return null },
@@ -22,7 +22,17 @@ var presets = [
 	{
 		id : 'SynTexMagicHome',
 		name : 'SynTex MagicHome Device',
-		getResetURL : function() { return null },
+		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
+		getRestartURL : function() { return null },
+		getReconnectURL : function() { return null },
+		getUpdateURL : function() { return null },
+		getVersionURL : function() { return null },
+		getPingURL : function() { return null }
+	},
+	{
+		id : 'SynTexTuya',
+		name : 'SynTex Tuya Device',
+		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
 		getRestartURL : function() { return null },
 		getReconnectURL : function() { return null },
 		getUpdateURL : function() { return null },
