@@ -21,7 +21,37 @@ module.exports = class UpdateManager
 
         request(theRequest, (error, response, body) => {
 
-            console.log(body);
+            try
+            {
+                var updates = JSON.parse(body);
+                var updateOBJ = {
+                    plugins : [],
+                    devices : []
+                };
+
+                for(const update in updates)
+                {
+                    if(updates[update].type.startsWith('SynTex'))
+                    {
+                        updateOBJ['plugins'].push(updates[update]);
+                    }
+                    else
+                    {
+                        updateOBJ['devices'].push(updates[update]);
+                    }
+                }
+
+                this.newestVersions = updateOBJ;
+            }
+            catch(e)
+            {
+                logger.err(e);
+            }
         });
+    }
+
+    getNewestVersions()
+    {
+        return this.newestVersions || [];
     }
 }

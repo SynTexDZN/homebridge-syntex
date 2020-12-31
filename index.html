@@ -69,6 +69,7 @@
 				window.Presets = Presets;
 
 				window.devices = JSON.parse('<%devices%>');
+				window.latestVersions = JSON.parse('<%updates%>');
 				window.offline = [];
 				window.update = [];
 				window.restarting = [];
@@ -616,7 +617,8 @@
 				
 				async function checkUpdates(device)
 				{
-					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 2, {}, false);
+					//var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + device.getAttribute('sensortype'), 10000, 2, {}, false);
+					var newestVersion = latestVersions['plugins'][device.getAttribute('sensortype')];
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
 					{  
