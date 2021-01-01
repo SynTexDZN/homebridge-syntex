@@ -750,8 +750,9 @@
 
 							for(var j = 0; j < accessories[i].services.length; j++)
 							{
+								/*
 								if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
-								{
+								{*/
 									if(accessories[i].services[j] instanceof Object)
 									{
 										if(counter.type != accessories[i].services[j].type)
@@ -776,22 +777,16 @@
 									}
 
 									counter.count++;
-								}
+								//}
 							}
 						}
 						else if(accessories[i].services instanceof Object)
 						{
-							if(accessories[i].services.type != 'rgb' && accessories[i].services.type != 'rgbw')
-							{
-								services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
-							}
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
 						}
 						else
 						{
-							if(accessories[i].services != 'rgb' && accessories[i].services != 'rgbw')
-							{
-								services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
-							}
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
 						}
 					}
 
