@@ -112,13 +112,13 @@ module.exports = class DeviceManager
 
 								if(err)
 								{
-									logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht erstellt werden! ' + err);
+									logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
 
 									resolve(['Error', '']);
 								}
 								else
 								{
-									logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
+									logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
 									this.reloadAccessories();
 
@@ -176,13 +176,13 @@ module.exports = class DeviceManager
 
 								if(err)
 								{
-									logger.log('error', 'bridge', 'Bridge', id + '.json konnte nicht erstellt werden! ' + err);
+									logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
 
 									resolve(['Error', 'Fehler beim Erstellen!']);
 								}
 								else
 								{
-									logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
+									logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
 									this.reloadAccessories();
 
@@ -490,7 +490,7 @@ module.exports = class DeviceManager
 
 				if(success)
 				{
-					logger.log('success', id, name, '[' + name + '] wurde dem System hinzugefügt! ( ' + id + ' )');
+					logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 				}
 
 				resolve(success ? true : false);
@@ -525,7 +525,7 @@ module.exports = class DeviceManager
 									
 				if(err)
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Das Gerät konnte nicht aus der Settings Storage entfernt werden! ' + err);
+					logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%! ' + err);
 				}
 
 				reloadConfig().then((success) => {
