@@ -195,7 +195,7 @@ function modifyAutomation(automation)
 						}
 						else
 						{
-							logger.log('success', 'bridge', 'Bridge', '%automation_updated[0]% [' + automation.id + '] %automation_updated[0]%!');
+							logger.log('success', 'bridge', 'Bridge', '%automation_updated[0]% [' + automation.id + '] %automation_updated[1]%!');
 		
 							resolve(true);
 						}
