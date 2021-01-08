@@ -11,7 +11,7 @@ class SynTexPlatform
 	constructor(log, config, api)
 	{
 		this.cacheDirectory = config['cacheDirectory'] || './SynTex/data';
-		this.logDirectory = config['logDirectory'] || './SynTex/log';
+		this.logDirectory = config['logDirectory'];
 		this.port = config['port'] || 1711;
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
