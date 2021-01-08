@@ -47,7 +47,7 @@ module.exports = class UpdateManager
             }
             catch(e)
             {
-                logger.err(e);
+                console.log(e);
             }
         });
     }
