@@ -85,9 +85,17 @@
 						active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
 						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
 					},
+					smoke: {
+						active : { text : 'Rauch', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
 					contact: {
 						active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
 						inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+					},
+					outlet: {
+						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
 					},
 					relais: {
 						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
@@ -104,6 +112,14 @@
 					statelessswitch: {
 						active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
 						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+					},
+					led: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+					},
+					dimmer: {
+						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgb: {
 						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
@@ -123,8 +139,9 @@
 					},
 					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
 					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] }
-				}; 
+					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
+					airquality: { text : 'Luftqualität', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
+				};
 
 				loadServices();
 
