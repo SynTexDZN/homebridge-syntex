@@ -478,7 +478,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd')
+						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -525,7 +525,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd')
+						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -750,34 +750,30 @@
 
 							for(var j = 0; j < accessories[i].services.length; j++)
 							{
-								/*
-								if(accessories[i].services[j].type != 'rgb' && accessories[i].services[j].type != 'rgbw')
-								{*/
-									if(accessories[i].services[j] instanceof Object)
+								if(accessories[i].services[j] instanceof Object)
+								{
+									if(counter.type != accessories[i].services[j].type)
 									{
-										if(counter.type != accessories[i].services[j].type)
-										{
-											counter.count = 0;
-										}
-
-										counter.type = accessories[i].services[j].type;
-										
-										services.push({ type : accessories[i].services[j].type, name : accessories[i].services[j].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
-									}
-									else
-									{
-										if(counter.type != accessories[i].services[j])
-										{
-											counter.count = 0;
-										}
-
-										counter.type = accessories[i].services[j];
-
-										services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+										counter.count = 0;
 									}
 
-									counter.count++;
-								//}
+									counter.type = accessories[i].services[j].type;
+									
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+								}
+								else
+								{
+									if(counter.type != accessories[i].services[j])
+									{
+										counter.count = 0;
+									}
+
+									counter.type = accessories[i].services[j];
+
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+								}
+
+								counter.count++;
 							}
 						}
 						else if(accessories[i].services instanceof Object)
