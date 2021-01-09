@@ -5,7 +5,7 @@ function loadAutomations()
 {
 	return new Promise(resolve => {
 
-		storage.load('automations', (err, obj) => {  
+		storage.load('automation', (err, obj) => {  
 
 			if(!obj || err)
 			{
@@ -13,7 +13,7 @@ function loadAutomations()
 			}
 			else
 			{
-				resolve(obj.automations);
+				resolve(obj.automation);
 			}
 		});
 	});
@@ -25,24 +25,24 @@ function createAutomation(automation)
 
 		if(isValid(automation))
 		{
-			storage.load('automations', (err, obj) => {  
+			storage.load('automation', (err, obj) => {  
 
 				if(!obj || err)
 				{
-					obj = { id : 'automations', automations : [ automation ] };
+					obj = { id : 'automation', automation : [ automation ] };
 				}
 				else
 				{
-					obj.id = 'automations';
+					obj.id = 'automation';
 
-					obj.automations[obj.automations.length] = automation;
+					obj.automation[obj.automation.length] = automation;
 				}
 	
 				storage.add(obj, (err) => {
 	
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
+						logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
 	
 						resolve(false);
 					}
@@ -66,7 +66,7 @@ function removeAutomation(id)
 {
 	return new Promise(resolve => {
 
-		storage.load('automations', (err, obj) => {  
+		storage.load('automation', (err, obj) => {  
 
 			if(!obj || err)
 			{
@@ -74,13 +74,13 @@ function removeAutomation(id)
 			}
 			else
 			{
-				obj.id = 'automations';
+				obj.id = 'automation';
 
-				for(var i = 0; i < obj.automations.length; i++)
+				for(var i = 0; i < obj.automation.length; i++)
 				{
-					if(obj.automations[i].id == id)
+					if(obj.automation[i].id == id)
 					{
-						obj.automations.splice(i, 1);
+						obj.automation.splice(i, 1);
 					}
 				}
 
@@ -88,7 +88,7 @@ function removeAutomation(id)
 	
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
+						logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
 	
 						resolve(false);
 					}
@@ -167,7 +167,7 @@ function modifyAutomation(automation)
 
 		if(isValid(automation))
 		{
-			storage.load('automations', (err, obj) => {  
+			storage.load('automation', (err, obj) => {  
 
 				if(!obj || err)
 				{
@@ -175,13 +175,13 @@ function modifyAutomation(automation)
 				}
 				else
 				{
-					obj.id = 'automations';
+					obj.id = 'automation';
 
-					for(var i = 0; i < obj.automations.length; i++)
+					for(var i = 0; i < obj.automation.length; i++)
 					{
-						if(obj.automations[i].id == automation.id)
+						if(obj.automation[i].id == automation.id)
 						{
-							obj.automations[i] = automation;
+							obj.automation[i] = automation;
 						}
 					}
 
@@ -189,7 +189,7 @@ function modifyAutomation(automation)
 		
 						if(err)
 						{
-							logger.log('error', 'bridge', 'Bridge', 'Automations.json %update_error%! ' + err);
+							logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
 		
 							resolve(false);
 						}
