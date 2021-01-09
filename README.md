@@ -36,8 +36,8 @@ It offers an UI to manage all your SynTex Plugins.
     },
     {
         "platform": "SynTexWebHooks",
-        "cacheDirectory": "./SynTex/devices",
         "logDirectory": "./SynTex/log",
+        "automationDirectory": "./SynTex/automation",
         "port": 1710,
         "language": "us",
         "debug": false,
