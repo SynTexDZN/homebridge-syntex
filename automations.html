@@ -13,7 +13,7 @@
 					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
 				</div>
 				<div class="main" style="margin-top: 10px; display: flex">
-					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px" disabled>
+					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automation')" style="margin-right: 20px" disabled>
 					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
 				</div>
 			</div>
@@ -23,9 +23,9 @@
 						<input type="button" onclick="" value="Alle Automationen" class="white">
 						<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 					</div>
-					<p id="no-automations" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
+					<p id="no-automation" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
 					<p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
-					<div id="automations"></div>
+					<div id="automation"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="Zu den Geräten >" style="display: none" onclick="Essentials.leavePage('/')">
@@ -88,7 +88,7 @@
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
 
-				window.automations = [];
+				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
 				window.services = [];
 				/*
@@ -168,11 +168,11 @@
 					airquality: { text : 'Luftqualität', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
-				Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
+				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
-					automations = JSON.parse(a);
+					automation = JSON.parse(a);
 					/*
-					automations = [
+					automation = [
 						{
 							id: 1,
 							name: 'Debug',
@@ -236,15 +236,15 @@
 					];
 					*/
 
-					if(automations.length > 0)
+					if(automation.length > 0)
 					{
 						createAutomationPanels();
 
-						document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
 					}
 					else if(services.length > 0)
 					{
-						document.getElementById('no-automations').style.display = '';
+						document.getElementById('no-automation').style.display = '';
 
 						Preloader.finish();
 					}
@@ -296,11 +296,11 @@
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automations?create&desktopApp=true');
+						window.history.pushState(null, null, '/automation?create&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automations?create');
+						window.history.pushState(null, null, '/automation?create');
 					}
 				}
 
@@ -310,24 +310,24 @@
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automations?desktopApp=true');
+						window.history.pushState(null, null, '/automation?desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automations');
+						window.history.pushState(null, null, '/automation');
 					}
 				}
 
 				function createAutomationPanels()
 				{
-					document.getElementById('automations').innerHTML = '';
+					document.getElementById('automation').innerHTML = '';
 
-					for(var i = 0; i < automations.length; i++)
+					for(var i = 0; i < automation.length; i++)
 					{
 						var title = document.createElement('h2');
 
 						title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
-						title.innerHTML = automations[i].name + ' • ' + (automations[i].active ? 'Aktiv' : 'Deaktiviert');
+						title.innerHTML = automation[i].name + ' • ' + (automation[i].active ? 'Aktiv' : 'Deaktiviert');
 
 						var titleContainer = document.createElement('div');
 
@@ -339,7 +339,7 @@
 
 						typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
 						typeContainer.setAttribute('class', 'type-container');
-						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation?id=" + automations[i].id + "')");
+						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation?id=" + automation[i].id + "')");
 						typeContainer.appendChild(titleContainer);
 
 						if(i == 0)
@@ -358,24 +358,24 @@
 
 						column.appendChild(category);
 
-						for(var j = 0; j < automations[i].trigger.length; j++)
+						for(var j = 0; j < automation[i].trigger.length; j++)
 						{
 							var row = document.createElement('div');
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
-							if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters)
+							if(!automation[i].trigger[j].url && automation[i].trigger[j].name && automation[i].trigger[j].letters)
 							{
-								var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
+								var src = Essentials.letterToType(automation[i].trigger[j].letters[0]);
 
-								if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+								if(Essentials.letterToType(automation[i].trigger[j].letters[0]) == 'temperature')
 								{
 									src = 'climate';
 								}
 
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name/* + ' ' + automations[i].trigger[j].operation + ' ' + val*/;
+								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name/* + ' ' + automation[i].trigger[j].operation + ' ' + val*/;
 							}
-							else if(automations[i].trigger[j].url)
+							else if(automation[i].trigger[j].url)
 							{
 								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
 							}
@@ -388,7 +388,7 @@
 						panel.className = 'table';
 						panel.appendChild(column);
 
-						if(automations[i].condition && automations[i].condition.length > 0)
+						if(automation[i].condition && automation[i].condition.length > 0)
 						{
 							var column = document.createElement('div');
 							var category = document.createElement('div');
@@ -401,24 +401,24 @@
 
 							column.appendChild(category);
 
-							for(var j = 0; j < automations[i].condition.length; j++)
+							for(var j = 0; j < automation[i].condition.length; j++)
 							{
 								var row = document.createElement('div');
 
 								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
-								if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters)
+								if(!automation[i].condition[j].url && automation[i].condition[j].name && automation[i].condition[j].letters)
 								{
-									var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
+									var src = Essentials.letterToType(automation[i].condition[j].letters[0]);
 
-									if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+									if(Essentials.letterToType(automation[i].condition[j].letters[0]) == 'temperature')
 									{
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name/* + ' ' + automations[i].condition[j].operation + ' ' + val*/;
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name/* + ' ' + automation[i].condition[j].operation + ' ' + val*/;
 								}
-								else if(automations[i].condition[j].url)
+								else if(automation[i].condition[j].url)
 								{
 									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
 								}
@@ -443,24 +443,24 @@
 
 						column.appendChild(category);
 
-						for(var j = 0; j < automations[i].result.length; j++)
+						for(var j = 0; j < automation[i].result.length; j++)
 						{
 							var row = document.createElement('div');
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
-							if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters)
+							if(!automation[i].result[j].url && automation[i].result[j].name && automation[i].result[j].letters)
 							{
-								var src = Essentials.letterToType(automations[i].result[j].letters[0]);
+								var src = Essentials.letterToType(automation[i].result[j].letters[0]);
 
-								if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+								if(Essentials.letterToType(automation[i].result[j].letters[0]) == 'temperature')
 								{
 									src = 'climate';
 								}
 
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name/* + ' ' + automations[i].result[j].operation + ' ' + val*/;
+								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name/* + ' ' + automation[i].result[j].operation + ' ' + val*/;
 							}
-							else if(automations[i].result[j].url)
+							else if(automation[i].result[j].url)
 							{
 								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
 							}
@@ -474,7 +474,7 @@
 						panel.appendChild(column);
 
 						typeContainer.appendChild(panel);
-						document.getElementById('automations').appendChild(typeContainer);
+						document.getElementById('automation').appendChild(typeContainer);
 					}
 
 					Preloader.finish();
@@ -501,7 +501,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -548,7 +548,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -595,7 +595,7 @@
 					{
 						if(services[i].type != 'lcd')
 						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -649,6 +649,7 @@
 								trigger.id = device.getAttribute('id');
 								trigger.name = device.getAttribute('name');
 								trigger.letters = device.getAttribute('letters');
+								trigger.plugin = device.getAttribute('plugin');
 								trigger.operation = operation.value;
 								trigger.value = value.value;
 							}
@@ -680,6 +681,7 @@
 									condition.id = device.getAttribute('id');
 									condition.name = device.getAttribute('name');
 									condition.letters = device.getAttribute('letters');
+									condition.plugin = device.getAttribute('plugin');
 									condition.operation = operation.value;
 									condition.value = value.value;
 								}
@@ -710,6 +712,7 @@
 								result.id = device.getAttribute('id');
 								result.name = device.getAttribute('name');
 								result.letters = device.getAttribute('letters');
+								result.plugin = device.getAttribute('plugin');
 								result.operation = operation.value;
 								result.value = value.value;
 							}
@@ -741,11 +744,11 @@
 							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Erstellung Fehlgeschlagen!', 'red'));
 						}
 						
-						var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
+						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
 
-						automations = JSON.parse(a);
+						automation = JSON.parse(a);
 
-						document.getElementById('no-automations').style.display = 'none';
+						document.getElementById('no-automation').style.display = 'none';
 
 						createAutomationPanels();
 
@@ -757,7 +760,7 @@
 
 						Essentials.removeOverlays(document.getElementById('save-btn'), true);
 
-						document.getElementById('create').getElementsByTagName('input')[0].value = automations[automations.length - 1].id + 1;
+						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
 					}
 				}
 
@@ -765,6 +768,11 @@
 				{
 					for(var i = 0; i < accessories.length; i++)
 					{
+						if(accessories[i].plugin == 'SynTex')
+						{
+							accessories[i].plugin = 'SynTexWebHooks'
+						}
+
 						if(Array.isArray(accessories[i].services))
 						{
 							var counter = { type : '', count : 0 };
@@ -780,7 +788,7 @@
 
 									counter.type = accessories[i].services[j].type;
 									
-									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin });
 								}
 								else
 								{
@@ -791,7 +799,7 @@
 
 									counter.type = accessories[i].services[j];
 
-									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin });
 								}
 
 								counter.count++;
@@ -799,11 +807,11 @@
 						}
 						else if(accessories[i].services instanceof Object)
 						{
-							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin });
 						}
 						else
 						{
-							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin });
 						}
 					}
 

@@ -36,7 +36,7 @@
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automations')">
+							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automation')">
 							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
 						</div>
 					</div>
@@ -98,7 +98,7 @@
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
 
-				window.automations = [];
+				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
 				window.services = [];
 				/*
@@ -183,11 +183,11 @@
 
 				if(id != null)
 				{
-					Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
+					Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
-						automations = JSON.parse(a);
+						automation = JSON.parse(a);
 						/*
-						automations = [
+						automation = [
 							{
 								id: 1,
 								name: 'Debug',
@@ -270,20 +270,20 @@
 
 						loadServices();
 
-						for(var i = 0; i < automations.length; i++)
+						for(var i = 0; i < automation.length; i++)
 						{
-							if(automations[i].id == id)
+							if(automation[i].id == id)
 							{
-								for(var j = 0; j < automations[i].trigger.length; j++)
+								for(var j = 0; j < automation[i].trigger.length; j++)
 								{
-									addTrigger(automations[i].trigger[j]);
+									addTrigger(automation[i].trigger[j]);
 								}
 
-								if(automations[i].condition && automations[i].condition.length > 0)
+								if(automation[i].condition && automation[i].condition.length > 0)
 								{
-									for(var j = 0; j < automations[i].condition.length; j++)
+									for(var j = 0; j < automation[i].condition.length; j++)
 									{
-										addCondition(automations[i].condition[j]);
+										addCondition(automation[i].condition[j]);
 									}
 								}
 								else
@@ -291,9 +291,9 @@
 									document.getElementById('condition').parentElement.style.display = 'none';
 								}
 
-								for(var j = 0; j < automations[i].result.length; j++)
+								for(var j = 0; j < automation[i].result.length; j++)
 								{
-									addResult(automations[i].result[j]);
+									addResult(automation[i].result[j]);
 								}
 							}
 						}
@@ -344,19 +344,19 @@
 
 				function setupViewPage()
 				{
-					for(var i = 0; i < automations.length; i++)
+					for(var i = 0; i < automation.length; i++)
 					{
-						if(automations[i].id == id)
+						if(automation[i].id == id)
 						{
-							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automations[i].name;
-							document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automations[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automations[i].id;
-							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automations[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automations[i].active ? 'An' : 'Aus');
+							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automation[i].id;
+							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
 
 							var panel = document.createElement('button');
 
-							for(var j = 0; j < automations[i].trigger.length; j++)
+							for(var j = 0; j < automation[i].trigger.length; j++)
 							{
 								var column = document.createElement('div');
 								var category = document.createElement('div');
@@ -376,21 +376,21 @@
 
 								column.appendChild(category);
 
-								if(!automations[i].trigger[j].url && automations[i].trigger[j].name && automations[i].trigger[j].letters && automations[i].trigger[j].operation && automations[i].trigger[j].value)
+								if(!automation[i].trigger[j].url && automation[i].trigger[j].name && automation[i].trigger[j].letters && automation[i].trigger[j].operation && automation[i].trigger[j].value)
 								{
-									var src = Essentials.letterToType(automations[i].trigger[j].letters[0]);
-									var val = automations[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].active.text : automations[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automations[i].trigger[j].letters[0])].inactive.text : automations[i].trigger[j].value;
+									var src = Essentials.letterToType(automation[i].trigger[j].letters[0]);
+									var val = automation[i].trigger[j].value == 'true' ? data[Essentials.letterToType(automation[i].trigger[j].letters[0])].active.text : automation[i].trigger[j].value == 'false' ? data[Essentials.letterToType(automation[i].trigger[j].letters[0])].inactive.text : automation[i].trigger[j].value;
 
-									if(Essentials.letterToType(automations[i].trigger[j].letters[0]) == 'temperature')
+									if(Essentials.letterToType(automation[i].trigger[j].letters[0]) == 'temperature')
 									{
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].trigger[j].name + ' ' + automations[i].trigger[j].operation + ' ' + val;
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name + ' ' + automation[i].trigger[j].operation + ' ' + val;
 								}
-								else if(automations[i].trigger[j].url)
+								else if(automation[i].trigger[j].url)
 								{
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].trigger[j].url + '"';
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automation[i].trigger[j].url + '"';
 								}
 							
 								row.style.padding = '13px 12px 12px 12px';
@@ -408,9 +408,9 @@
 
 							document.getElementById('condition').innerHTML = '';
 
-							if(automations[i].condition && automations[i].condition.length > 0)
+							if(automation[i].condition && automation[i].condition.length > 0)
 							{
-								for(var j = 0; j < automations[i].condition.length; j++)
+								for(var j = 0; j < automation[i].condition.length; j++)
 								{
 									var column = document.createElement('div');
 									var category = document.createElement('div');
@@ -425,26 +425,26 @@
 										column.style.marginTop = '3px';
 									}
 
-									category.innerHTML = j == 0 ? 'WENN' : automations[i].combination == 'ALL' ? 'UND' : 'ODER';
+									category.innerHTML = j == 0 ? 'WENN' : automation[i].combination == 'ALL' ? 'UND' : 'ODER';
 									category.className = 'primary';
 
 									column.appendChild(category);
 
-									if(!automations[i].condition[j].url && automations[i].condition[j].name && automations[i].condition[j].letters && automations[i].condition[j].operation && automations[i].condition[j].value)
+									if(!automation[i].condition[j].url && automation[i].condition[j].name && automation[i].condition[j].letters && automation[i].condition[j].operation && automation[i].condition[j].value)
 									{
-										var src = Essentials.letterToType(automations[i].condition[j].letters[0]);
-										var val = automations[i].condition[j].value == 'true' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].active.text : automations[i].condition[j].value == 'false' ? data[Essentials.letterToType(automations[i].condition[j].letters[0])].inactive.text : automations[i].condition[j].value;
+										var src = Essentials.letterToType(automation[i].condition[j].letters[0]);
+										var val = automation[i].condition[j].value == 'true' ? data[Essentials.letterToType(automation[i].condition[j].letters[0])].active.text : automation[i].condition[j].value == 'false' ? data[Essentials.letterToType(automation[i].condition[j].letters[0])].inactive.text : automation[i].condition[j].value;
 
-										if(Essentials.letterToType(automations[i].condition[j].letters[0]) == 'temperature')
+										if(Essentials.letterToType(automation[i].condition[j].letters[0]) == 'temperature')
 										{
 											src = 'climate';
 										}
 
-										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].condition[j].name + ' ' + automations[i].condition[j].operation + ' ' + val;
+										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name + ' ' + automation[i].condition[j].operation + ' ' + val;
 									}
-									else if(automations[i].condition[j].url)
+									else if(automation[i].condition[j].url)
 									{
-										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].condition[j].url + '"';
+										row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automation[i].condition[j].url + '"';
 									}
 
 									row.style.padding = '13px 12px 12px 12px';
@@ -460,7 +460,7 @@
 
 							var panel = document.createElement('button');
 
-							for(var j = 0; j < automations[i].result.length; j++)
+							for(var j = 0; j < automation[i].result.length; j++)
 							{
 								var column = document.createElement('div');
 								var category = document.createElement('div');
@@ -480,21 +480,21 @@
 
 								column.appendChild(category);
 
-								if(!automations[i].result[j].url && automations[i].result[j].name && automations[i].result[j].letters && automations[i].result[j].operation && automations[i].result[j].value)
+								if(!automation[i].result[j].url && automation[i].result[j].name && automation[i].result[j].letters && automation[i].result[j].operation && automation[i].result[j].value)
 								{
-									var src = Essentials.letterToType(automations[i].result[j].letters[0]);
-									var val = automations[i].result[j].value == 'true' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].active.text : automations[i].result[j].value == 'false' ? data[Essentials.letterToType(automations[i].result[j].letters[0])].inactive.text : automations[i].result[j].value;
+									var src = Essentials.letterToType(automation[i].result[j].letters[0]);
+									var val = automation[i].result[j].value == 'true' ? data[Essentials.letterToType(automation[i].result[j].letters[0])].active.text : automation[i].result[j].value == 'false' ? data[Essentials.letterToType(automation[i].result[j].letters[0])].inactive.text : automation[i].result[j].value;
 
-									if(Essentials.letterToType(automations[i].result[j].letters[0]) == 'temperature')
+									if(Essentials.letterToType(automation[i].result[j].letters[0]) == 'temperature')
 									{
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automations[i].result[j].name + ' ' + automations[i].result[j].operation + ' ' + val;
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name + ' ' + automation[i].result[j].operation + ' ' + val;
 								}
-								else if(automations[i].result[j].url)
+								else if(automation[i].result[j].url)
 								{
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automations[i].result[j].url + '"';
+									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen: "' + automation[i].result[j].url + '"';
 								}
 
 								row.style.padding = '13px 12px 12px 12px';
@@ -513,15 +513,15 @@
 
 				function setupSettingsPage()
 				{
-					for(var i = 0; i < automations.length; i++)
+					for(var i = 0; i < automation.length; i++)
 					{
-						if(automations[i].id == id)
+						if(automation[i].id == id)
 						{
-							document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automations[i].name + ' )';
-							document.getElementById('settings').getElementsByTagName('input')[0].value = automations[i].id;
-							document.getElementById('settings').getElementsByTagName('input')[1].value = automations[i].name;
-							document.getElementById('settings').getElementsByTagName('input')[2].value = automations[i].active ? 'An' : 'Aus';
-							document.getElementById('settings').getElementsByTagName('input')[2].className = automations[i].active ? 'white' : 'outline';
+							document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automation[i].name + ' )';
+							document.getElementById('settings').getElementsByTagName('input')[0].value = automation[i].id;
+							document.getElementById('settings').getElementsByTagName('input')[1].value = automation[i].name;
+							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].active ? 'An' : 'Aus';
+							document.getElementById('settings').getElementsByTagName('input')[2].className = automation[i].active ? 'white' : 'outline';
 						}
 					}
 				}
@@ -606,7 +606,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
-							html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -655,7 +655,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
 						{
-							html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -702,7 +702,7 @@
 					{
 						if(services[i].type != 'lcd')
 						{
-							html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -732,6 +732,11 @@
 				{
 					for(var i = 0; i < accessories.length; i++)
 					{
+						if(accessories[i].plugin == 'SynTex')
+						{
+							accessories[i].plugin = 'SynTexWebHooks'
+						}
+
 						if(Array.isArray(accessories[i].services))
 						{
 							var counter = { type : '', count : 0 };
@@ -747,7 +752,7 @@
 
 									counter.type = accessories[i].services[j].type;
 									
-									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count });
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin });
 								}
 								else
 								{
@@ -758,7 +763,7 @@
 
 									counter.type = accessories[i].services[j];
 
-									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count });
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin });
 								}
 
 								counter.count++;
@@ -766,11 +771,11 @@
 						}
 						else if(accessories[i].services instanceof Object)
 						{
-							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0' });
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin });
 						}
 						else
 						{
-							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0' });
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin });
 						}
 					}
 
@@ -815,7 +820,7 @@
 
 								await Essentials.newTimeout(3000);
 
-								Essentials.leavePage('/automations');
+								Essentials.leavePage('/automation');
 							}
 							else
 							{
@@ -869,6 +874,7 @@
 								trigger.id = device.getAttribute('id');
 								trigger.name = device.getAttribute('name');
 								trigger.letters = device.getAttribute('letters');
+								trigger.plugin = device.getAttribute('plugin');
 								trigger.operation = operation.value;
 								trigger.value = value.value;
 							}
@@ -900,6 +906,7 @@
 									condition.id = device.getAttribute('id');
 									condition.name = device.getAttribute('name');
 									condition.letters = device.getAttribute('letters');
+									condition.plugin = device.getAttribute('plugin');
 									condition.operation = operation.value;
 									condition.value = value.value;
 								}
@@ -930,6 +937,7 @@
 								result.id = device.getAttribute('id');
 								result.name = device.getAttribute('name');
 								result.letters = device.getAttribute('letters');
+								result.plugin = device.getAttribute('plugin');
 								result.operation = operation.value;
 								result.value = value.value;
 							}
@@ -961,9 +969,9 @@
 							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
 						}
 
-						var a = await Query.complexFetch('/serverside/automations', 5000, 2, {}, false);
+						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
 
-						automations = JSON.parse(a);
+						automation = JSON.parse(a);
 
 						setupViewPage();
 
