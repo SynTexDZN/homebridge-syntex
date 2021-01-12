@@ -36,7 +36,7 @@
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automation')">
+							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automations')">
 							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
 						</div>
 					</div>
@@ -734,7 +734,12 @@
 					{
 						if(accessories[i].plugin == 'SynTex')
 						{
-							accessories[i].plugin = 'SynTexWebHooks'
+							accessories[i].plugin = 'SynTexWebHooks';
+						}
+
+						if(accessories[i].services == 'rgbw' || accessories[i].services == 'rgbww' || accessories[i].services == 'rgbcw')
+						{
+							accessories[i].services = 'rgb';
 						}
 
 						if(Array.isArray(accessories[i].services))
@@ -820,7 +825,7 @@
 
 								await Essentials.newTimeout(3000);
 
-								Essentials.leavePage('/automation');
+								Essentials.leavePage('/automations');
 							}
 							else
 							{
@@ -848,12 +853,12 @@
 			
 				async function modifyAutomation(form)
 				{
-					var automation = {};
+					var automationOBJ = {};
 
-					automation.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
-					automation.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
-					automation.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
-					automation.trigger = [];
+					automationOBJ.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
+					automationOBJ.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
+					automationOBJ.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
+					automationOBJ.trigger = [];
 
 					for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
 					{
@@ -880,12 +885,12 @@
 							}
 						}
 						
-						automation.trigger.push(trigger);
+						automationOBJ.trigger.push(trigger);
 					}
 
 					if(document.getElementById('edit-condition').childElementCount > 1)
 					{
-						automation.condition = [];
+						automationOBJ.condition = [];
 
 						for(var i = 0; i < document.getElementById('edit-condition').children.length - 1; i++)
 						{
@@ -912,11 +917,11 @@
 								}
 							}
 
-							automation.condition.push(condition);
+							automationOBJ.condition.push(condition);
 						}
 					}
 
-					automation.result = [];
+					automationOBJ.result = [];
 
 					for(var i = 0; i < document.getElementById('edit-result').children.length - 1; i++)
 					{
@@ -943,10 +948,10 @@
 							}
 						}
 
-						automation.result.push(result);
+						automationOBJ.result.push(result);
 					}
 
-					console.log(automation);
+					console.log(automationOBJ);
 
 					var overlays = {
 						root : document.getElementById('save-btn'),
@@ -956,7 +961,7 @@
 						connectionError : { value : 'Keine Verbindung zur Bridge!' }
 					};
 
-					var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automation));
+					var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automationOBJ));
 
 					if(created == 'Success')
 					{

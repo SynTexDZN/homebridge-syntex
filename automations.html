@@ -13,7 +13,7 @@
 					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
 				</div>
 				<div class="main" style="margin-top: 10px; display: flex">
-					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automation')" style="margin-right: 20px" disabled>
+					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px" disabled>
 					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
 				</div>
 			</div>
@@ -296,11 +296,11 @@
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automation?create&desktopApp=true');
+						window.history.pushState(null, null, '/automations?create&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation?create');
+						window.history.pushState(null, null, '/automations?create');
 					}
 				}
 
@@ -314,7 +314,7 @@
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation');
+						window.history.pushState(null, null, '/automations');
 					}
 				}
 
@@ -358,6 +358,8 @@
 
 						column.appendChild(category);
 
+						var container = document.createElement('div')
+
 						for(var j = 0; j < automation[i].trigger.length; j++)
 						{
 							var row = document.createElement('div');
@@ -382,7 +384,9 @@
 
 							row.style.padding = '13px 12px 12px 12px';
 
-							column.appendChild(row);
+							container.appendChild(row);
+
+							column.appendChild(container);
 						}
 
 						panel.className = 'table';
@@ -400,6 +404,8 @@
 							category.className = 'primary';
 
 							column.appendChild(category);
+
+							var container = document.createElement('div')
 
 							for(var j = 0; j < automation[i].condition.length; j++)
 							{
@@ -425,7 +431,9 @@
 
 								row.style.padding = '13px 12px 12px 12px';
 
-								column.appendChild(row);
+								container.appendChild(row);
+
+								column.appendChild(container);
 							}
 
 							panel.className = 'table';
@@ -442,6 +450,8 @@
 						category.className = 'primary';
 
 						column.appendChild(category);
+
+						var container = document.createElement('div')
 
 						for(var j = 0; j < automation[i].result.length; j++)
 						{
@@ -467,7 +477,9 @@
 
 							row.style.padding = '13px 12px 12px 12px';
 
-							column.appendChild(row);
+							container.appendChild(row);
+
+							column.appendChild(container);
 						}
 
 						panel.className = 'table';
@@ -623,12 +635,12 @@
 
 				async function createAutomation()
 				{
-					var automation = {};
+					var automationOBJ = {};
 
-					automation.id = parseInt(document.getElementById('create').getElementsByTagName('input')[0].value);
-					automation.name = document.getElementById('create').getElementsByTagName('input')[1].value;
-					automation.active = true;
-					automation.trigger = [];
+					automationOBJ.id = parseInt(document.getElementById('create').getElementsByTagName('input')[0].value);
+					automationOBJ.name = document.getElementById('create').getElementsByTagName('input')[1].value;
+					automationOBJ.active = true;
+					automationOBJ.trigger = [];
 
 					for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
 					{
@@ -655,12 +667,12 @@
 							}
 						}
 						
-						automation.trigger.push(trigger);
+						automationOBJ.trigger.push(trigger);
 					}
 
 					if(document.getElementById('condition').childElementCount > 1)
 					{
-						automation.condition = [];
+						automationOBJ.condition = [];
 
 						for(var i = 0; i < document.getElementById('condition').children.length - 1; i++)
 						{
@@ -687,11 +699,11 @@
 								}
 							}
 
-							automation.condition.push(condition);
+							automationOBJ.condition.push(condition);
 						}
 					}
 
-					automation.result = [];
+					automationOBJ.result = [];
 
 					for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
 					{
@@ -718,10 +730,10 @@
 							}
 						}
 
-						automation.result.push(result);
+						automationOBJ.result.push(result);
 					}
 
-					console.log(automation);
+					console.log(automationOBJ);
 
 					var overlays = {
 						root : document.getElementById('save-btn'),
@@ -731,7 +743,7 @@
 						connectionError : { value : 'Keine Verbindung zur Bridge!' }
 					};
 
-					var created = await Query.complexFetch('/serverside/create-automation', 5000, 2, overlays, false, JSON.stringify(automation));
+					var created = await Query.complexFetch('/serverside/create-automation', 5000, 2, overlays, false, JSON.stringify(automationOBJ));
 
 					if(created == 'Success')
 					{
@@ -770,7 +782,12 @@
 					{
 						if(accessories[i].plugin == 'SynTex')
 						{
-							accessories[i].plugin = 'SynTexWebHooks'
+							accessories[i].plugin = 'SynTexWebHooks';
+						}
+
+						if(accessories[i].services == 'rgbw' || accessories[i].services == 'rgbww' || accessories[i].services == 'rgbcw')
+						{
+							accessories[i].services = 'rgb';
 						}
 
 						if(Array.isArray(accessories[i].services))
