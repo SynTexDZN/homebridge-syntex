@@ -375,11 +375,11 @@
 									src = 'climate';
 								}
 
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name/* + ' ' + automation[i].trigger[j].operation + ' ' + val*/;
+								row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name/* + ' ' + automation[i].trigger[j].operation + ' ' + val*/;
 							}
 							else if(automation[i].trigger[j].url)
 							{
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
+								row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 							}
 
 							row.style.padding = '13px 12px 12px 12px';
@@ -422,11 +422,11 @@
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name/* + ' ' + automation[i].condition[j].operation + ' ' + val*/;
+									row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name/* + ' ' + automation[i].condition[j].operation + ' ' + val*/;
 								}
 								else if(automation[i].condition[j].url)
 								{
-									row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
+									row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 								}
 
 								row.style.padding = '13px 12px 12px 12px';
@@ -468,14 +468,21 @@
 									src = 'climate';
 								}
 
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name/* + ' ' + automation[i].result[j].operation + ' ' + val*/;
+								row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name/* + ' ' + automation[i].result[j].operation + ' ' + val*/;
 							}
 							else if(automation[i].result[j].url)
 							{
-								row.innerHTML = '<img class="icon" style="height: 24px; margin-right: 12px; position: relative; top: -17px; margin-bottom: -24px" src="/img/link.png">Link Aufrufen';
+								row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 							}
 
-							row.style.padding = '13px 12px 12px 12px';
+							if(j != automation[i].result.length - 1)
+							{
+								row.style.padding = '13px 12px 12px 12px';
+							}
+							else
+							{
+								row.style.padding = '13px 12px 12px 12px';
+							}
 
 							container.appendChild(row);
 
