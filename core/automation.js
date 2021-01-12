@@ -1,7 +1,7 @@
 const store = require('json-fs-store');
 var logger, storage;
 
-function loadAutomations()
+function loadAutomation()
 {
 	return new Promise(resolve => {
 
@@ -218,7 +218,7 @@ function SETUP(log, storagePath)
 
 module.exports = {
 	SETUP,
-	loadAutomations,
+	loadAutomation,
 	createAutomation,
 	removeAutomation,
 	modifyAutomation

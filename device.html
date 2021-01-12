@@ -64,7 +64,7 @@
 				window.counter = Array.isArray(device.services) ? device.services.length : 1;
 				window.padding = 50;
 				window.width = document.getElementById('activity').offsetWidth - padding * 2 - 4;
-				window.automations = []
+				window.automation = []
 				window.busy = [];
 				window.restarting = false
 				window.resetting = false
@@ -441,9 +441,9 @@
 
 				Preloader.finish();
 
-				Query.complexFetch('/serverside/automations', 5000, 2, {}, false).then(function(a) {
+				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
-					automations = JSON.parse(a);
+					automation = JSON.parse(a);
 
 					loadActivity();
 				});
@@ -881,19 +881,19 @@
 
 					var w = [];
 
-					for(var i = 0; i < automations.length; i++)
+					for(var i = 0; i < automation.length; i++)
 					{
-						for(var j = 0; j < automations[i].trigger.length; j++)
+						for(var j = 0; j < automation[i].trigger.length; j++)
 						{
-							if(automations[i].trigger[j].id == device.id && automations[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automations[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automations[i].trigger[j].value - min) / (max - min) * 100 > 0)
+							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automation[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automation[i].trigger[j].value - min) / (max - min) * 100 > 0)
 							{
-								w.push((automations[i].trigger[j].value - min) / (max - min) * 100);
+								w.push((automation[i].trigger[j].value - min) / (max - min) * 100);
 							}
 						}
 					}
 
 					//drawGrid(canvas, [], 10);
-					drawAutomations(canvas, w);
+					drawAutomation(canvas, w);
 
 					if(type == 'temperature')
 					{
@@ -1130,7 +1130,7 @@
 					*/
 				}
 
-				function drawAutomations(canvas, data)
+				function drawAutomation(canvas, data)
 				{
 					var ctx = canvas.getContext('2d');
 					var height = canvas.offsetHeight - padding * 2 - 2;

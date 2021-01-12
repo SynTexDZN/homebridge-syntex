@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), Automations = require('./core/automations'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
+let DeviceManager = require('./core/device-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
 const fs = require('fs'), store = require('json-fs-store'), request = require('request');
 
@@ -30,7 +30,7 @@ class SynTexPlatform
 			if(config != null)
 			{
 				DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config);
-				Automations.SETUP(this.logger, config.cacheDirectory);
+				Automation.SETUP(this.logger, config.automationDirectory);
 			}
 
 			DeviceManager.getDevices().then((devices) => {
@@ -360,9 +360,9 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/automations', async (response) => {
+		this.WebServer.addPage('/serverside/automation', async (response) => {
 
-			response.write(JSON.stringify(await Automations.loadAutomations())); 
+			response.write(JSON.stringify(await Automation.loadAutomation())); 
 			response.end();
 		});
 
@@ -370,7 +370,7 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.write(await Automations.createAutomation(postJSON) ? 'Success' : 'Error');
+				response.write(await Automation.createAutomation(postJSON) ? 'Success' : 'Error');
 				response.end();
 			}
 		});
@@ -379,7 +379,7 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.write(await Automations.modifyAutomation(postJSON) ? 'Success' : 'Error');
+				response.write(await Automation.modifyAutomation(postJSON) ? 'Success' : 'Error');
 				response.end();
 			}
 		});
@@ -388,7 +388,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				response.write(urlParams.id ? await Automations.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
+				response.write(urlParams.id ? await Automation.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
 				response.end();
 			}
 		});
