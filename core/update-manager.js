@@ -4,17 +4,17 @@ module.exports = class UpdateManager
 {
     constructor(interval)
     {
-        this.fetchUpdates();
+        this.fetchUpdates(interval * 1000);
 
-        this.updateInterval = setInterval(() => this.fetchUpdates(), interval * 1000);
+        this.updateInterval = setInterval(() => this.fetchUpdates(interval * 500), interval * 1000);
     }
 
-    fetchUpdates()
+    fetchUpdates(timeout)
     {
         var theRequest = {
             method : 'GET',
             url : 'http://syntex.sytes.net/smarthome/check-version.php',
-            timeout : interval * 500
+            timeout : timeout
         };
 
         request(theRequest, (error, response, body) => {
