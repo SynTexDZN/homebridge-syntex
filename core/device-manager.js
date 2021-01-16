@@ -88,53 +88,72 @@ module.exports = class DeviceManager
 			{
 				if(configOBJ != null)
 				{
-					while(!checkID(id))
+					try
 					{
-						this.removeFromConfig(id);
+						services = JSON.parse(services);
+						events = JSON.parse(events);
+					}
+					catch(e)
+					{
+						logger.log('error', 'bridge', 'Bridge', 'Services %json_parse_error%! ( ' + services + ') ' + error);
 					}
 
-					addToConfig(id, ip, name, JSON.parse(services), JSON.parse(events).length);
-
-					this.saveAccessories().then(async (success) => {
-
-						if(success)
+					if(services.length > 0)
+					{
+						while(!checkID(id))
 						{
-							var device = {
-								id: id,
-								ip: ip,
-								name: name,
-								active: 1,
-								interval: 10000,
-								led: 1
-							};
-
-							storage.add(device, (err) => {
-
-								if(err)
-								{
-									logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
-
-									resolve(['Error', '']);
-								}
-								else
-								{
-									logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
-
-									this.reloadAccessories();
-
-									resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
-								}
-							});
+							this.removeFromConfig(id);
 						}
-						else
-						{
-							resolve(['Error', '']);
-						}
-					});
+
+						addToConfig(id, ip, name, services, events.length);
+
+						this.saveAccessories().then((success) => {
+
+							if(success)
+							{
+								var device = {
+									id: id,
+									ip: ip,
+									name: name,
+									active: 1,
+									interval: 10000,
+									led: 1
+								};
+
+								storage.add(device, (err) => {
+
+									if(err)
+									{
+										logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
+
+										resolve(['Error', '']);
+									}
+									else
+									{
+										logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+
+										this.reloadAccessories();
+
+										resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
+									}
+								});
+							}
+							else
+							{
+								resolve(['Error', '']);
+							}
+						});
+					}
+					else
+					{
+						logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Services festgelegt!'); // No services configured
+
+						resolve(['Error', '']);
+					}
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 					resolve(['Error', '']);
 				}
@@ -198,7 +217,7 @@ module.exports = class DeviceManager
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 					resolve(['Error', 'Fehler beim Erstellen!']);
 				}
@@ -572,7 +591,7 @@ function reloadConfig()
 
 			if(!obj || err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
 
 				resolve(false);
 			}
