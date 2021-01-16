@@ -536,7 +536,7 @@ module.exports = class DeviceManager
 					}
 				});
 
-				resolve(err ? false : true);
+				resolve(err && err.code != 'ENOENT' ? false : true);
 			});
 		});
 	}
