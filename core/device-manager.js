@@ -92,63 +92,63 @@ module.exports = class DeviceManager
 					{
 						services = JSON.parse(services);
 						events = JSON.parse(events);
+
+						if(services.length > 0)
+						{
+							while(!checkID(id))
+							{
+								this.removeFromConfig(id);
+							}
+
+							addToConfig(id, ip, name, services, events.length);
+
+							this.saveAccessories().then((success) => {
+
+								if(success)
+								{
+									var device = {
+										id: id,
+										ip: ip,
+										name: name,
+										active: 1,
+										interval: 10000,
+										led: 1
+									};
+
+									storage.add(device, (err) => {
+
+										if(err)
+										{
+											logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
+
+											resolve(['Error', '']);
+										}
+										else
+										{
+											logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+
+											this.reloadAccessories();
+
+											resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
+										}
+									});
+								}
+								else
+								{
+									resolve(['Error', '']);
+								}
+							});
+						}
+						else
+						{
+							logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Services festgelegt!'); // No services configured
+
+							resolve(['Error', '']);
+						}
 					}
 					catch(e)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Services %json_parse_error%! ( ' + services + ') ' + error);
-					}
-
-					if(services.length > 0)
-					{
-						while(!checkID(id))
-						{
-							this.removeFromConfig(id);
-						}
-
-						addToConfig(id, ip, name, services, events.length);
-
-						this.saveAccessories().then((success) => {
-
-							if(success)
-							{
-								var device = {
-									id: id,
-									ip: ip,
-									name: name,
-									active: 1,
-									interval: 10000,
-									led: 1
-								};
-
-								storage.add(device, (err) => {
-
-									if(err)
-									{
-										logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
-
-										resolve(['Error', '']);
-									}
-									else
-									{
-										logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
-
-										this.reloadAccessories();
-
-										resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
-									}
-								});
-							}
-							else
-							{
-								resolve(['Error', '']);
-							}
-						});
-					}
-					else
-					{
-						logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Services festgelegt!'); // No services configured
-
-						resolve(['Error', '']);
+						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ') ' + error);
 					}
 				}
 				else
