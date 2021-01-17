@@ -532,8 +532,6 @@ module.exports = class DeviceManager
 				}
 			}
 		}
-
-		this.reloadAccessories();
 	}
 
 	removeFromSettingsStorage(id)
