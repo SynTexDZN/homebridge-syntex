@@ -133,7 +133,7 @@ module.exports = class DeviceManager
 						}
 						else
 						{
-							logger.log('error', 'bridge', 'Bridge', 'Es wurden keine Services festgelegt!'); // No services configured
+							logger.log('error', 'bridge', 'Bridge', '%no_services%!');
 
 							resolve(['Error', '']);
 						}
