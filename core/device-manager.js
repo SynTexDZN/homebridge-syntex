@@ -31,7 +31,6 @@ module.exports = class DeviceManager
 
 		return new Promise(async (resolve) => {
 			
-			var eventButton = checkEventButton(id);
 			var device = await self.getDevice(id);
 
 			name = name.replace(new RegExp('%', 'g'), ' ');
@@ -58,7 +57,7 @@ module.exports = class DeviceManager
 									configOBJ.platforms[i].accessories[j].version = version;
 
 									needToSave = true;
-								}
+								}	
 							}
 						}
 					}
@@ -75,14 +74,7 @@ module.exports = class DeviceManager
 					resolve(['Error', '']);
 				}
 
-				var status = 'Success';
-
-				if(!eventButton && device['events'] != null && (device['events'] || []).length > 0 && await this.createEventButton(id, device['name'], (device['events'] || []).length))
-				{
-					status = 'Init';
-				}
-
-				resolve([status, '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '"}']);
+				resolve(['Success', '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '"}']);
 			}
 			else if(self.checkName(name))
 			{
@@ -455,7 +447,7 @@ module.exports = class DeviceManager
 
 						if(accessories[j].plugin == 'SynTexMagicHome')
 						{
-							if(accessories[j].type == "light")
+							if(accessories[j].type == 'light')
 							{
 								accessories[j].spectrum = 'HSL'; 
 							}
@@ -490,30 +482,6 @@ module.exports = class DeviceManager
 
 				resolve(err ? false : true);
 			});
-		});
-	}
-
-	createEventButton(id, name, buttons)
-	{
-		return new Promise(resolve => {
-
-			for(const i in configOBJ.platforms)
-			{
-				if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
-				{
-					configOBJ.platforms[i].accessories[configOBJ.platforms[i].accessories.length] = { id : id, name : name + ' Events', services : 'statelessswitch', buttons : buttons };
-				}
-			}
-
-			this.saveAccessories().then((success) => {
-
-				if(success)
-				{
-					logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
-				}
-
-				resolve(success ? true : false);
-			});    
 		});
 	}
 
@@ -616,19 +584,6 @@ function checkID(id)
 	return true;
 }
 
-function checkEventButton(id)
-{
-	for(const j in accessories)
-	{
-		if(accessories[j].id === id && accessories[j].services.toString().includes('statelessswitch'))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 function addToConfig(id, ip, name, services, buttons)
 {
 	for(const i in configOBJ.platforms)
@@ -640,7 +595,7 @@ function addToConfig(id, ip, name, services, buttons)
 
 			accessories[index] = { id : id, name : name, services : services };
 
-			if(services.includes('relais') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
+			if(services.includes('relais') || services.includes('statelessswitch') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
 			{
 				for(var j = 0; j < services.length; j++)
 				{
@@ -661,12 +616,12 @@ function addToConfig(id, ip, name, services, buttons)
 					{
 						accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
 					}
-				}
-			}
 
-			if(services.includes('statelessswitch'))
-			{
-				accessories[index]['buttons'] = buttons;
+					if(type == 'statelessswitch')
+					{
+						accessories[index]['services'][j]['buttons'] = buttons;
+					}
+				}
 			}
 		}
 	}
