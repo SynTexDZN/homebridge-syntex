@@ -4,12 +4,51 @@ module.exports = class UpdateManager
 {
     constructor(interval)
     {
-        this.fetchUpdates(interval * 1000);
+        this.newestDeviceVersions = {};
+        this.newestPluginVersions = {};
 
-        this.updateInterval = setInterval(() => this.fetchUpdates(interval * 500), interval * 1000);
+        this.fetchDeviceUpdates(interval * 1000);
+
+        var plugins = ['homebridge-syntex', 'homebridge-syntex-webhooks', 'homebridge-syntex-tuya', 'homebridge-syntex-magichome'];
+
+        for(const i in plugins)
+        {
+            this.fetchPluginUpdates(plugins[i], interval * 1000);
+        }
+
+        this.updateDeviceInterval = setInterval(() => this.fetchDeviceUpdates(interval * 500), interval * 1000);
+        this.updatePluginInterval = setInterval(() => {
+
+            for(const i in plugins)
+            {
+                this.fetchPluginUpdates(plugins[i], interval * 500);
+            }
+
+        }, interval * 1000);
     }
 
-    fetchUpdates(timeout)
+    fetchPluginUpdates(pluginID, timeout)
+    {
+        var theRequest = {
+            method : 'GET',
+            url : 'http://registry.npmjs.org/-/package/' + pluginID + '/dist-tags',
+            timeout : timeout
+        };
+
+        request(theRequest, (error, response, body) => {
+
+            try
+            {
+                this.newestPluginVersions[pluginID] = JSON.parse(body);
+            }
+            catch(e)
+            {
+                console.log(e);
+            }
+        });
+    }
+
+    fetchDeviceUpdates(timeout)
     {
         var theRequest = {
             method : 'GET',
@@ -22,17 +61,14 @@ module.exports = class UpdateManager
             try
             {
                 var updates = JSON.parse(body);
-                var updateOBJ = {
-                    plugins : {},
-                    devices : {}
-                };
 
                 for(const update in updates)
                 {
-                    updateOBJ[updates[update].type.startsWith('SynTex') ? 'plugins' : 'devices'][updates[update].type] = updates[update].version;
+                    if(!updates[update].type.startsWith('SynTex'))
+                    {
+                        this.newestDeviceVersions[updates[update].type] = updates[update].version;
+                    }
                 }
-
-                this.newestVersions = updateOBJ;
             }
             catch(e)
             {
@@ -43,6 +79,6 @@ module.exports = class UpdateManager
 
     getLatestVersions()
     {
-        return this.newestVersions || [];
+        return { plugins : this.newestPluginVersions, devices : this.newestDeviceVersions } || { plugins : {}, devices : {} };
     }
 }
