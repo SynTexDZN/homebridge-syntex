@@ -542,7 +542,7 @@
 
 				function getDataType(type)
 				{
-					if(type == 'temperature' || type == 'humidity' || type == 'light')
+					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'statelessswitch')
 					{
 						return 'numeric';
 					}
@@ -630,7 +630,22 @@
 
 					updateOperation(select);
 
-					trigger.innerHTML += '<input value="' + (t ? t.url ? t.url : t.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';        
+					if(t.url == null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean')
+					{
+						var value = document.createElement('div');
+
+						value.className = 'custom-select';
+						value.style.width = '100%';
+						value.style.marginRight = '20px';
+						value.innerHTML = '<select name="value"><option ' + (t && t.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(t.letters[0])].inactive.text + '</option><option ' + (t && t.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(t.letters[0])].active.text + '</select>';
+					
+						trigger.appendChild(Replacer.createSelectMenu(value));
+					}
+					else
+					{
+						trigger.innerHTML += '<input value="' + (t ? t.url ? t.url : t.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+					}
+
 					trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
 
@@ -677,7 +692,22 @@
 
 					updateOperation(select);
 
-					condition.innerHTML += '<input value="' + (c ? c.url ? c.url : c.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+					if(c.url == null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean')
+					{
+						var value = document.createElement('div');
+
+						value.className = 'custom-select';
+						value.style.width = '100%';
+						value.style.marginRight = '20px';
+						value.innerHTML = '<select name="value"><option ' + (c && c.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(c.letters[0])].inactive.text + '</option><option ' + (c && c.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(c.letters[0])].active.text + '</select>';
+							
+						condition.appendChild(Replacer.createSelectMenu(value));
+					}
+					else
+					{
+						condition.innerHTML += '<input value="' + (c ? c.url ? c.url : c.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+					}
+					
 					condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
 
@@ -723,8 +753,23 @@
 					result.appendChild(Replacer.createSelectMenu(operations));
 
 					updateOperation(select);
+
+					if(r.url == null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean')
+					{
+						var value = document.createElement('div');
+
+						value.className = 'custom-select';
+						value.style.width = '100%';
+						value.style.marginRight = '20px';
+						value.innerHTML = '<select name="value"><option ' + (r && r.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(r.letters[0])].inactive.text + '</option><option ' + (r && r.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(r.letters[0])].active.text + '</select>';
 					
-					result.innerHTML += '<input value="' + (r ? r.url ? r.url : r.value : '') + '" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';  
+						result.appendChild(Replacer.createSelectMenu(value));
+					}
+					else
+					{
+						result.innerHTML += '<input value="' + (r ? r.url ? r.url : r.value : '') + '" pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+					}
+
 					result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
 
