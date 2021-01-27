@@ -430,6 +430,27 @@ class SynTexPlatform
 			});
 		});
 
+		this.WebServer.addPage('/serverside/update-config', async (response, urlParams, content, postJSON) => {
+
+			if(postJSON != null)
+			{
+				this.config.add(postJSON, (err) => {
+
+					if(err)
+					{
+						logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+					}
+					else
+					{
+						DeviceManager.reloadAccessories();
+					}
+	
+					response.write(err ? 'Error' : 'Success');
+					response.end();
+				});
+			}
+		});
+
 		this.WebServer.addPage('/device', async (response, urlParams, content) => {
 
 			if(urlParams.id != null)
