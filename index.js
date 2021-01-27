@@ -526,7 +526,6 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/bridge', async (response, urlParams, content) => {
 
-			const pJSON = require('./package.json');
 			const ifaces = require('os').networkInterfaces();
 			var address;
 
@@ -543,7 +542,7 @@ class SynTexPlatform
 			var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
 			var obj = {
 				ip: address,
-				version: pJSON.version,
+				updates: JSON.stringify(UpdateManager.getLatestVersions()),
 				wPort: 1710
 			};
 
@@ -601,7 +600,8 @@ class SynTexPlatform
 				if(json && !err)
 				{
 					var obj = {
-						configJSON: JSON.stringify(json)
+						configJSON: JSON.stringify(json),
+						updates: JSON.stringify(UpdateManager.getLatestVersions())
 					};
 
 					response.write(HTMLQuery.sendValues(content, obj));
