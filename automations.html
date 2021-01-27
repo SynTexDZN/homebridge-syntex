@@ -499,6 +499,44 @@
 					Preloader.finish();
 				}
 
+				function updateValueInput(select)
+				{
+					updateOperation(select);
+
+					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
+					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
+
+					if(option.getAttribute('type') == 'boolean')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[3].removeAttribute('hidden');
+
+						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+
+						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
+
+						console.log(select.parentElement.children[3], select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex, options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex]);
+
+						for(var i = 0; i < options.length; i++)
+						{
+							options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex].click();
+						}
+					}
+					else if(option.getAttribute('type') == 'numeric')
+					{
+						select.parentElement.children[3].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('placeholder', 'Zahl');
+					}
+					else if(option.getAttribute('type') == 'url')
+					{
+						select.parentElement.children[3].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('placeholder', 'URL');
+					}
+				}
+
 				function addTrigger()
 				{
 					var trigger = document.createElement('div');
@@ -514,7 +552,7 @@
 
 					trigger.className = 'automation-device-entry';
 
-					var html = '<select name="service" onchange="updateOperation(this)">';
+					var html = '<select name="service" onchange="updateValueInput(this)">';
 
 					for(var i = 0; i < services.length; i++)
 					{
@@ -542,21 +580,29 @@
 
 					updateOperation(select);
 
-					if(t.url == null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean')
-					{
-						var value = document.createElement('div');
+					var value = document.createElement('div');
 
-						value.className = 'custom-select';
-						value.style.width = '100%';
-						value.style.marginRight = '20px';
-						value.innerHTML = '<select name="value"><option ' + (t && t.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(t.letters[0])].inactive.text + '</option><option ' + (t && t.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(t.letters[0])].active.text + '</select>';
-					
-						trigger.appendChild(Replacer.createSelectMenu(value));
+					value.className = 'custom-select';
+					value.style.width = '100%';
+					value.style.marginRight = '20px';
+					value.innerHTML = '<select name="value"><option selected value="false"></option><option value="true"></select>';
+
+					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[0];
+
+					if(option.getAttribute('type') == 'boolean')
+					{
+						value.innerHTML = '<select name="value"><option selected value="false">' + data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text + '</option><option value="true">' + data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text + '</select>';
+
+						trigger.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
 					}
 					else
 					{
-						trigger.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+						value.setAttribute('hidden', '');
+
+						trigger.innerHTML += '<input value="0" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
 					}
+
+					trigger.appendChild(Replacer.createSelectMenu(value));
 
 					trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
@@ -576,7 +622,7 @@
 
 					condition.className = 'automation-device-entry';
 
-					var html = '<select name="service" onchange="updateOperation(this)">';
+					var html = '<select name="service" onchange="updateValueInput(this)">';
 
 					for(var i = 0; i < services.length; i++)
 					{
@@ -604,21 +650,29 @@
 
 					updateOperation(select);
 
-					if(c.url == null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean')
-					{
-						var value = document.createElement('div');
+					var value = document.createElement('div');
 
-						value.className = 'custom-select';
-						value.style.width = '100%';
-						value.style.marginRight = '20px';
-						value.innerHTML = '<select name="value"><option ' + (c && c.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(c.letters[0])].inactive.text + '</option><option ' + (c && c.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(c.letters[0])].active.text + '</select>';
-							
-						condition.appendChild(Replacer.createSelectMenu(value));
+					value.className = 'custom-select';
+					value.style.width = '100%';
+					value.style.marginRight = '20px';
+					value.innerHTML = '<select name="value"><option selected value="false"></option><option value="true"></select>';
+
+					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[0];
+				
+					if(option.getAttribute('type') == 'boolean')
+					{
+						value.innerHTML = '<select name="value"><option selected value="false">' + data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text + '</option><option value="true">' + data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text + '</select>';
+
+						condition.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
 					}
 					else
 					{
-						condition.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+						value.setAttribute('hidden', '');
+
+						condition.innerHTML += '<input value="0" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
 					}
+
+					condition.appendChild(Replacer.createSelectMenu(value));
 
 					condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
@@ -638,7 +692,7 @@
 
 					result.className = 'automation-device-entry';
 
-					var html = '<select name="service"><option img="/img/link.png" type="url">Link Öffnen</option>';
+					var html = '<select name="service" onchange="updateValueInput(this)"><option img="/img/link.png" type="url">Link Öffnen</option>';
 
 					for(var i = 0; i < services.length; i++)
 					{
@@ -666,21 +720,18 @@
 
 					//updateOperation(select);
 					
-					if(r.url == null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean')
-					{
-						var value = document.createElement('div');
+					var value = document.createElement('div');
 
-						value.className = 'custom-select';
-						value.style.width = '100%';
-						value.style.marginRight = '20px';
-						value.innerHTML = '<select name="value"><option ' + (r && r.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(r.letters[0])].inactive.text + '</option><option ' + (r && r.operation == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(r.letters[0])].active.text + '</select>';
-					
-						result.appendChild(Replacer.createSelectMenu(value));
-					}
-					else
-					{
-						result.innerHTML += '<input pattern="[a-zA-Z0-9-]+" placeholder="Wert" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
+					value.className = 'custom-select';
+					value.style.width = '100%';
+					value.style.marginRight = '20px';
+					value.innerHTML = '<select name="value"><option selected value="false"></option><option value="true"></select>';
+				
+					value.setAttribute('hidden', '');
+
+					result.innerHTML += '<input value="" pattern="[0-9-]+" placeholder="URL" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
+
+					result.appendChild(Replacer.createSelectMenu(value));
 
 					result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
