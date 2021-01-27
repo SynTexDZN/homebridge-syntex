@@ -79,6 +79,11 @@
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('backup', 'backup', false)" style="margin-right: 20px" disabled>
 					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('backup', 'beta', false)">
 				</div>
+				<div class="navigation-panel">
+					<div class="sticky-inset">
+						<input type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
+					</div>
+				</div>
 			</div>
 			<div id="beta" class="main" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<p style="margin-bottom: 100px; margin-top: 20px">Beta Programm</p>
@@ -149,7 +154,7 @@
 					{
 						plugins = [];
 
-						console.log(e);
+						console.error(e);
 					}
 
 					try
@@ -160,10 +165,8 @@
 					{
 						updates = {};
 
-						console.log(e);
+						console.error(e);
 					}
-
-					console.log(plugins, updates);
 
 					for(var i = 0; i < plugins.length; i++)
 					{
@@ -199,10 +202,6 @@
 
 								document.getElementById('beta-plugins').children[this.counter].innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
 							
-								console.log(Essentials.versionCount(betaVersions[this.plugin.id]) > Essentials.versionCount(version), betaVersions[this.plugin.id], version, Essentials.versionCount(betaVersions[this.plugin.id]), Essentials.versionCount(version));
-
-								//console.log(betaVersions[this.plugin.id] != version, betaVersions[this.plugin.id], version);
-
 								if(Essentials.versionCount(betaVersions[this.plugin.id]) != Essentials.versionCount(version))
 								{
 									var updateButton = document.createElement('input');
@@ -213,9 +212,7 @@
 									updateButton.setAttribute('id', 'update-btn-' + this.plugin.id.toLowerCase());
 									updateButton.setAttribute('style', 'margin-bottom: 20px'); 
 									
-									console.log('CREATE BUTTON', document.getElementsByClassName('navigation-panel')[0].children[0], document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-
-									document.getElementsByClassName('navigation-panel')[2].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[2].children[0].children[0]);
+									document.getElementsByClassName('navigation-panel')[3].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[3].children[0].children[0]);
 								}
 							}
 							else
@@ -351,8 +348,6 @@
 
 				function validateJSON(textarea)
 				{
-					console.log('validate JSON');
-
 					try
 					{
 						if(textarea.value != '')
