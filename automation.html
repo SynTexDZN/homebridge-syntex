@@ -981,7 +981,7 @@
 							{
 								trigger.url = value.value;
 							}
-							else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+							else if(device.getAttribute('type') == 'numeric')
 							{
 								trigger.id = device.getAttribute('id');
 								trigger.name = device.getAttribute('name');
@@ -989,6 +989,15 @@
 								trigger.plugin = device.getAttribute('plugin');
 								trigger.operation = operation.value;
 								trigger.value = value.value;
+							}
+							else if(device.getAttribute('type') == 'boolean')
+							{
+								trigger.id = device.getAttribute('id');
+								trigger.name = device.getAttribute('name');
+								trigger.letters = device.getAttribute('letters');
+								trigger.plugin = device.getAttribute('plugin');
+								trigger.operation = operation.value;
+								trigger.value = t.children[3].getElementsByTagName('select')[0].children[t.children[3].getElementsByTagName('select')[0].selectedIndex].value;
 							}
 						}
 						
@@ -1013,7 +1022,7 @@
 								{
 									condition.url = value.value;
 								}
-								else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+								else if(device.getAttribute('type') == 'numeric')
 								{
 									condition.id = device.getAttribute('id');
 									condition.name = device.getAttribute('name');
@@ -1021,6 +1030,15 @@
 									condition.plugin = device.getAttribute('plugin');
 									condition.operation = operation.value;
 									condition.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									condition.id = device.getAttribute('id');
+									condition.name = device.getAttribute('name');
+									condition.letters = device.getAttribute('letters');
+									condition.plugin = device.getAttribute('plugin');
+									condition.operation = operation.value;
+									condition.value = c.children[3].getElementsByTagName('select')[0].children[c.children[3].getElementsByTagName('select')[0].selectedIndex].value;
 								}
 							}
 
@@ -1044,7 +1062,7 @@
 							{
 								result.url = value.value;
 							}
-							else if(device.getAttribute('type') == 'boolean' || device.getAttribute('type') == 'numeric')
+							else if(device.getAttribute('type') == 'numeric')
 							{
 								result.id = device.getAttribute('id');
 								result.name = device.getAttribute('name');
@@ -1052,6 +1070,15 @@
 								result.plugin = device.getAttribute('plugin');
 								result.operation = operation.value;
 								result.value = value.value;
+							}
+							else if(device.getAttribute('type') == 'boolean')
+							{
+								result.id = device.getAttribute('id');
+								result.name = device.getAttribute('name');
+								result.letters = device.getAttribute('letters');
+								result.plugin = device.getAttribute('plugin');
+								result.operation = operation.value;
+								result.value = r.children[3].getElementsByTagName('select')[0].children[r.children[3].getElementsByTagName('select')[0].selectedIndex].value;
 							}
 						}
 
