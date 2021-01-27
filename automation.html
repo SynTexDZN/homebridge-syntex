@@ -556,9 +556,6 @@
 				{
 					var o = select.getElementsByTagName('select')[0].selectedIndex;
 					var option = select.getElementsByTagName('select')[0].children[o];
-
-					console.log(option.getAttribute('type'), select.parentElement.children[1].getElementsByClassName('select-items')[0]);
-
 					var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
 
 					if(option.getAttribute('type') == 'boolean')
@@ -601,8 +598,6 @@
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
 
 						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
-
-						console.log(select.parentElement.children[3], select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex, options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex]);
 
 						for(var i = 0; i < options.length; i++)
 						{
@@ -649,8 +644,6 @@
 					}
 
 					html += '</select>';
-
-					console.log(html);
 
 					select.innerHTML = html;
 			   
@@ -893,7 +886,7 @@
 
 					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
 
-					console.log('Services', services);
+					console.log('SERVICES', services);
 				}
 
 				function removeAutomation(btn)
@@ -1085,7 +1078,7 @@
 						automationOBJ.result.push(result);
 					}
 
-					console.log(automationOBJ);
+					console.log('SAVE AUTOMATION', automationOBJ);
 
 					var overlays = {
 						root : document.getElementById('save-btn'),

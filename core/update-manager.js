@@ -43,7 +43,7 @@ module.exports = class UpdateManager
             }
             catch(e)
             {
-                console.log(e);
+                console.error(e);
             }
         });
     }
@@ -72,7 +72,7 @@ module.exports = class UpdateManager
             }
             catch(e)
             {
-                console.log(e);
+                console.error(e);
             }
         });
     }

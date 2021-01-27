@@ -516,8 +516,6 @@
 
 						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
 
-						console.log(select.parentElement.children[3], select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex, options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex]);
-
 						for(var i = 0; i < options.length; i++)
 						{
 							options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex].click();
@@ -861,7 +859,7 @@
 						automationOBJ.result.push(result);
 					}
 
-					console.log(automationOBJ);
+					console.log('SAVE AUTOMATION', automationOBJ);
 
 					var overlays = {
 						root : document.getElementById('save-btn'),
@@ -962,7 +960,7 @@
 
 					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
 
-					console.log('Services', services);
+					console.log('SERVICES', services);
 				}
 
 				function getDataType(type)

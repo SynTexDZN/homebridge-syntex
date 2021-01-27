@@ -30,7 +30,7 @@ function checkRestart(url)
 
 		var restart = await Query.fetchURL(url, 3000); //TODO: Auf Modul Umstellen
 
-		console.log(restart);
+		console.log('RESTART', restart);
 
 		if(restart != null && restart == 'false')
 		{
@@ -178,8 +178,6 @@ function getType(services)
 		if(s.includes('temperature') && s.includes('humidity'))
 		{
 			finalType = 'climate';
-
-			console.log('FINAL TYPE', finalType);
 		}
 		
 		if(s.includes('light') && s.includes('rain'))

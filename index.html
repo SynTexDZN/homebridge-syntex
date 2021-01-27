@@ -112,7 +112,7 @@
 							title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
 							title.innerHTML = Essentials.getType(devices[i].services);
 
-							console.log(Essentials.getType(devices[i].services));
+							console.log('SERVICES', Essentials.getType(devices[i].services));
 
 							var titleContainer = document.createElement('div');
 
@@ -774,8 +774,6 @@
 
 								setTimeout(function() {
 
-									console.log(this.device, device);
-
 									if(this.device.className.includes('update'))
 									{
 										this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
@@ -794,8 +792,6 @@
 
 								}.bind({ device : device }), 4000);
 							}
-
-							console.log(response, updateCount);
 
 							updating.splice(updating.indexOf(device.getAttribute('id')), 1);
 						}
