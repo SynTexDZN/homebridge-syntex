@@ -9,11 +9,11 @@ module.exports = class UpdateManager
 
         this.fetchDeviceUpdates(interval * 1000);
 
-        var plugins = ['homebridge-syntex', 'homebridge-syntex-webhooks', 'homebridge-syntex-tuya', 'homebridge-syntex-magichome'];
+        var plugins = { 'homebridge-syntex' : 'SynTex', 'homebridge-syntex-webhooks' : 'SynTexWebHooks', 'homebridge-syntex-tuya' : 'SynTexTuya', 'homebridge-syntex-magichome' : 'SynTexMagicHome' };
 
         for(const i in plugins)
         {
-            this.fetchPluginUpdates(plugins[i], interval * 1000);
+            this.fetchPluginUpdates({  id : i, name : plugins[i] }, interval * 1000);
         }
 
         this.updateDeviceInterval = setInterval(() => this.fetchDeviceUpdates(interval * 500), interval * 1000);
@@ -21,17 +21,17 @@ module.exports = class UpdateManager
 
             for(const i in plugins)
             {
-                this.fetchPluginUpdates(plugins[i], interval * 500);
+                this.fetchPluginUpdates({  id : i, name : plugins[i] }, interval * 500);
             }
 
         }, interval * 1000);
     }
 
-    fetchPluginUpdates(pluginID, timeout)
+    fetchPluginUpdates(plugin, timeout)
     {
         var theRequest = {
             method : 'GET',
-            url : 'http://registry.npmjs.org/-/package/' + pluginID + '/dist-tags',
+            url : 'http://registry.npmjs.org/-/package/' + plugin.id + '/dist-tags',
             timeout : timeout
         };
 
@@ -39,7 +39,7 @@ module.exports = class UpdateManager
 
             try
             {
-                this.newestPluginVersions[pluginID] = JSON.parse(body);
+                this.newestPluginVersions[plugin.name] = JSON.parse(body);
             }
             catch(e)
             {
