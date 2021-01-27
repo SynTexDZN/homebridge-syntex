@@ -60,7 +60,7 @@
 					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('config', 'beta', false)">
 				</div>
 				<p style="margin: 100px 0">In der Config Datei<br>sind alle wichtigen Daten<br>über die Bridge gespeichert.<br><br>Mach am besten<br>regelmäßig ein Backup,<br>damit du niemals<br>deine Daten verlierst!</p>
-				<textarea style="white-space: break-spaces; max-height: 600px; height: 600px; margin-bottom: 20px" id="config-container">Laden ..</textarea>
+				<textarea style="white-space: break-spaces; max-height: 600px; height: 600px; margin-bottom: 20px" id="config-container" onchange="validateJSON(this)">Laden ..</textarea>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
@@ -72,7 +72,7 @@
 						<div style="display: flex">
 							<input type="button" value="Zurück zum Dashboard" style="margin-right: 20px" onclick="Essentials.leavePage('/')">
 							<div style="width: 100%">
-								<input id="config-save" value="Speichern" type="button" class="gradient-blue" onclick="saveConfig(this)">
+								<input id="config-save" value="Speichern" style="background-color: hsl(200, 85%, 55%)" type="button" onclick="saveConfig(this)">
 							</div>
 						</div>
 					</div>
@@ -149,26 +149,29 @@
 
 				async function saveConfig(btn)
 				{
-					var overlays = {
-						root : btn,
-						id : 'saving',
-						pending : { value : 'Hochladen ..' },
-						success : { value : 'Aktualisiert!' },
-						executeError : { value : 'Hochladen Fehlgeschlagen!' },
-						connectionError : { value : 'Keine Verbindung zur Bridge' }
-					};
-
-					if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
+					if(validateJSON(document.getElementById('config-container')))
 					{
-						Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', 'Config Aktualisiert!', 'green'));
+						var overlays = {
+							root : btn,
+							id : 'saving',
+							pending : { value : 'Hochladen ..' },
+							success : { value : 'Aktualisiert!' },
+							executeError : { value : 'Hochladen Fehlgeschlagen!' },
+							connectionError : { value : 'Keine Verbindung zur Bridge' }
+						};
 
-						await Essentials.newTimeout(1500);
+						if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
+						{
+							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', 'Config Aktualisiert!', 'green'));
 
-						document.getElementById('config-restart').style.backgroundColor = 'hsl(350, 75%, 55%)';
+							await Essentials.newTimeout(1500);
 
-						await Essentials.newTimeout(1500);
+							document.getElementById('config-restart').style.backgroundColor = 'hsl(350, 75%, 55%)';
 
-						Essentials.removeOverlays(btn, true);
+							await Essentials.newTimeout(1500);
+
+							Essentials.removeOverlays(btn, true);
+						}
 					}
 				}
 
@@ -202,6 +205,35 @@
 						await Essentials.newTimeout(4000);
 
 						Essentials.removeOverlays(btn, true);
+					}
+				}
+
+				function validateJSON(textarea)
+				{
+					console.log('validate JSON');
+
+					try
+					{
+						if(textarea.value != '')
+						{
+							JSON.parse(textarea.value);
+
+							document.getElementById('config-save').style.backgroundColor = 'hsl(200, 85%, 55%)';
+
+							return true;
+						}
+						else
+						{
+							return false;
+						}
+					}
+					catch(e)
+					{
+						document.getElementById('config-save').style.backgroundColor = 'hsl(350, 75%, 55%)';
+
+						console.error(e);
+
+						return false;
 					}
 				}
 			
