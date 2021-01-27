@@ -718,8 +718,6 @@
 					result.appendChild(Replacer.createSelectMenu(select));
 					result.appendChild(Replacer.createSelectMenu(operations));
 
-					//updateOperation(select);
-					
 					var value = document.createElement('div');
 
 					value.className = 'custom-select';
@@ -842,7 +840,7 @@
 						root : document.getElementById('save-btn'),
 						id : 'save',
 						pending : { value : 'Erstellen ..' },
-						executeError : { value : 'Erstellung Fehlgeschlagen!' },
+						executeError : { value : 'Erstellen Fehlgeschlagen!' },
 						connectionError : { value : 'Keine Verbindung zur Bridge!' }
 					};
 
@@ -856,9 +854,9 @@
 						}
 						else
 						{
-							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Erstellung Fehlgeschlagen!', 'red'));
+							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Erstellen Fehlgeschlagen!', 'red'));
 						}
-						
+
 						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
 
 						automation = JSON.parse(a);
