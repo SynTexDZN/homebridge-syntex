@@ -23,7 +23,7 @@
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('style', 'backup', false)" style="margin-right: 20px">
-					<input class="white" type="button" value="SYSLOG" onclick="Essentials.switchPage('style', 'syslog', false)">
+					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('style', 'beta', false)">
 				</div>
 				<div style="margin: 100px 0">
 					<input type="button" value="Button 1">
@@ -57,15 +57,23 @@
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('config', 'backup', false)" style="margin-right: 20px">
-					<input class="white" type="button" value="SYSLOG" onclick="Essentials.switchPage('config', 'syslog', false)">
+					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('config', 'beta', false)">
 				</div>
 				<p style="margin: 100px 0">In der Config Datei<br>sind alle wichtigen Daten<br>über die Bridge gespeichert.<br><br>Mach am besten<br>regelmäßig ein Backup,<br>damit du niemals<br>deine Daten verlierst!</p>
-				<textarea style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" readonly>Laden ..</textarea>
+				<textarea style="white-space: break-spaces; max-height: 600px; height: 600px; margin-bottom: 20px" id="config-container">Laden ..</textarea>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
-							<input type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
-							<input value="Alles Kopieren" type="button" class="gradient-blue-green" style="margin-left: 20px" onclick="copyConfig()">
+							<input value="Alles Kopieren" type="button" style="margin-right: 20px" onclick="copyConfig()">
+							<div style="width: 100%">
+								<input id="config-restart" value="Neustart" type="button" onclick="restartBridge(this)">
+							</div>
+						</div>
+						<div style="display: flex">
+							<input type="button" value="Zurück zum Dashboard" style="margin-right: 20px" onclick="Essentials.leavePage('/')">
+							<div style="width: 100%">
+								<input id="config-save" value="Speichern" type="button" class="gradient-blue" onclick="saveConfig(this)">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -78,18 +86,18 @@
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('backup', 'backup', false)" style="margin-right: 20px" disabled>
-					<input class="white" type="button" value="SYSLOG" onclick="Essentials.switchPage('backup', 'syslog', false)">
+					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('backup', 'beta', false)">
 				</div>
 			</div>
-			<div id="syslog" class="main" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<p style="margin-bottom: 100px; margin-top: 20px">System Log</p>
+			<div id="beta" class="main" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<p style="margin-bottom: 100px; margin-top: 20px">Beta Programm</p>
 				<div class="main" style="margin-top: 10px; display: flex">
-					<input class="white" type="button" value="STYLE" onclick="Essentials.switchPage('syslog', 'style', false)" style="margin-right: 20px">
-					<input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('syslog', 'config', false)">
+					<input class="white" type="button" value="STYLE" onclick="Essentials.switchPage('beta', 'style', false)" style="margin-right: 20px">
+					<input class="white" type="button" value="CONFIG" onclick="Essentials.switchPage('beta', 'config', false)">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('syslog', 'backup', false)" style="margin-right: 20px">
-					<input class="white" type="button" value="SYSLOG" onclick="Essentials.switchPage('syslog', 'syslog', false)" disabled>
+					<input class="white" type="button" value="BACKUP" onclick="Essentials.switchPage('beta', 'backup', false)" style="margin-right: 20px">
+					<input class="white" type="button" value="BETA" onclick="Essentials.switchPage('beta', 'beta', false)" disabled>
 				</div>
 			</div>
 			<script type="module">
@@ -111,6 +119,19 @@
 
 				document.getElementById('config-container').value = JSON.stringify(JSON.parse(configJSON), null, '\t');
 
+				if((new URL(window.location.href)).searchParams.get('config') == '')
+				{
+					Essentials.switchPage('style', 'config', true);
+				}
+				else if((new URL(window.location.href)).searchParams.get('backup') == '')
+				{
+					Essentials.switchPage('style', 'backup', true);
+				}
+				else if((new URL(window.location.href)).searchParams.get('beta') == '')
+				{
+					Essentials.switchPage('style', 'beta', true);
+				}
+
 				Preloader.finish();
 			
 			</script>
@@ -124,6 +145,64 @@
 					document.execCommand('copy');
 
 					alert('Die Config wurde in deine Zwischenablage kopiert!');
+				}
+
+				async function saveConfig(btn)
+				{
+					var overlays = {
+						root : btn,
+						id : 'saving',
+						pending : { value : 'Hochladen ..' },
+						success : { value : 'Aktualisiert!' },
+						executeError : { value : 'Hochladen Fehlgeschlagen!' },
+						connectionError : { value : 'Keine Verbindung zur Bridge' }
+					};
+
+					if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
+					{
+						Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', 'Config Aktualisiert!', 'green'));
+
+						await Essentials.newTimeout(1500);
+
+						document.getElementById('config-restart').style.backgroundColor = 'hsl(350, 75%, 55%)';
+
+						await Essentials.newTimeout(1500);
+
+						Essentials.removeOverlays(btn, true);
+					}
+				}
+
+				async function restartBridge(btn)
+				{
+					var overlays = {
+						root : btn,
+						id : 'restarting',
+						pending : { value : 'Neustarten ..' },
+						executeError : { value : 'Neustart Fehlgeschlagen!' },
+						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+					};
+
+					restarting = true;
+
+					if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
+					{
+						await Essentials.newTimeout(3000);
+
+						document.getElementById('config-restart').style.backgroundColor = '';
+
+						if(await Essentials.checkRestart('/serverside/check-restart'))
+						{
+							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+						}
+						else
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+						}
+
+						await Essentials.newTimeout(4000);
+
+						Essentials.removeOverlays(btn, true);
+					}
 				}
 			
 			</script>
