@@ -16,6 +16,11 @@ function versionCount(version)
 		}
 	}
 
+	if(version.includes('-'))
+	{
+		intVersion += parseFloat(version.split('-b')[1]) / 1000.0;
+	}
+
 	return intVersion;
 }
 
