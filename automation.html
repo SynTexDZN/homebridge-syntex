@@ -593,6 +593,8 @@
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
 						select.parentElement.children[3].removeAttribute('hidden');
+						select.parentElement.children[3].setAttribute('required', '');
+						select.parentElement.children[2].removeAttribute('required');
 
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
@@ -604,17 +606,23 @@
 							options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex].click();
 						}
 					}
-					else if(option.getAttribute('type') == 'numeric')
+					else if(option.getAttribute('type') == 'numeric' || option.getAttribute('type') == 'url')
 					{
 						select.parentElement.children[3].setAttribute('hidden', '');
 						select.parentElement.children[2].removeAttribute('hidden');
-						select.parentElement.children[2].setAttribute('placeholder', 'Zahl');
-					}
-					else if(option.getAttribute('type') == 'url')
-					{
-						select.parentElement.children[3].setAttribute('hidden', '');
-						select.parentElement.children[2].removeAttribute('hidden');
-						select.parentElement.children[2].setAttribute('placeholder', 'URL');
+						select.parentElement.children[3].removeAttribute('required');
+						select.parentElement.children[2].setAttribute('required', '');
+
+						if(option.getAttribute('type') == 'numeric')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', 'Zahl');
+							select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+						}
+						else if(option.getAttribute('type') == 'url')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', 'URL');
+							select.parentElement.children[2].removeAttribute('pattern');
+						}
 					}
 				}
 
@@ -661,29 +669,20 @@
 
 					updateOperation(select);
 
+					var letters = t != null ? t.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
+
+					trigger.innerHTML += '<input hidden value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '"' + (t && t.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+
 					var value = document.createElement('div');
 
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (t && t.value == 'false' ? 'selected' : '') + ' value="false"></option><option ' + (t && t.value == 'true' ? 'selected' : '') + ' value="true"></select>';
+					value.innerHTML = '<select name="value"><option ' + (!t || t.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (t && t.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
 				
-					var letters = t != null ? t.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
-
-					if((t != null && t.url == null && getDataType(Essentials.letterToType(letters[0])) == 'boolean') || (t == null && select.getElementsByTagName('select')[0].children[0].getAttribute('type') == 'boolean'))
-					{
-						value.innerHTML = '<select name="value"><option ' + (t && t.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(letters[0])].inactive.text + '</option><option ' + (t && t.value == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(letters[0])].active.text + '</select>';
-
-						trigger.innerHTML += '<input hidden value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-					else
-					{
-						value.setAttribute('hidden', '');
-
-						trigger.innerHTML += '<input value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-
 					trigger.appendChild(Replacer.createSelectMenu(value));
+
+					updateValueInput(value);
 
 					trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
@@ -731,29 +730,20 @@
 
 					updateOperation(select);
 
+					var letters = c != null ? c.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
+
+					condition.innerHTML += '<input hidden value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '"' + (c && c.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+
 					var value = document.createElement('div');
 
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (c && c.value == 'false' ? 'selected' : '') + ' value="false"></option><option ' + (c && c.value == 'true' ? 'selected' : '') + ' value="true"></select>';
+					value.innerHTML = '<select name="value"><option ' + (!c || c.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (c && c.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
 				
-					var letters = c != null ? c.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
-
-					if((c != null && c.url == null && getDataType(Essentials.letterToType(letters[0])) == 'boolean') || (c == null && select.getElementsByTagName('select')[0].children[0].getAttribute('type') == 'boolean'))
-					{
-						value.innerHTML = '<select name="value"><option ' + (c && c.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(letters[0])].inactive.text + '</option><option ' + (c && c.value == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(letters[0])].active.text + '</select>';
-
-						condition.innerHTML += '<input hidden value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-					else
-					{
-						value.setAttribute('hidden', '');
-
-						condition.innerHTML += '<input value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '" pattern="[0-9-]+" placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-
 					condition.appendChild(Replacer.createSelectMenu(value));
+
+					updateValueInput(value);
 
 					condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
@@ -801,29 +791,20 @@
 
 					updateOperation(select);
 
+					var letters = r != null ? r.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
+
+					result.innerHTML += '<input hidden value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '"' + (r && r.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="' + (!r || r.url ? 'URL' : 'Zahl') + '" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+
 					var value = document.createElement('div');
 
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (r && r.value == 'false' ? 'selected' : '') + ' value="false"></option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true"></select>';
+					value.innerHTML = '<select name="value"><option ' + (!r || r.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
 				
-					var letters = r != null ? r.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
-
-					if((r != null && r.url == null && getDataType(Essentials.letterToType(letters[0])) == 'boolean') || (r == null && select.getElementsByTagName('select')[0].children[0].getAttribute('type') == 'boolean'))
-					{
-						value.innerHTML = '<select name="value"><option ' + (r && r.value == 'false' ? 'selected' : '') + ' value="false">' + data[Essentials.letterToType(letters[0])].inactive.text + '</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">' + data[Essentials.letterToType(letters[0])].active.text + '</select>';
-
-						result.innerHTML += '<input hidden value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '" pattern="[0-9-]+" placeholder="' + (r.url ? 'URL' : 'Zahl') + '" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-					else
-					{
-						value.setAttribute('hidden', '');
-
-						result.innerHTML += '<input value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '" pattern="[0-9-]+" placeholder="' + ((!r || r.url) ? 'URL' : 'Zahl') + '" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" required name="value" type="text" style="width: 100%!important">';
-					}
-
 					result.appendChild(Replacer.createSelectMenu(value));
+
+					updateValueInput(value);
 
 					result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
