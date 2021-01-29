@@ -446,9 +446,17 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/reload-updates', async (response, urlParams, content) => {
 
-			await UpdateManager.fetchPluginUpdates(10000);
+			if(urlParams.devices)
+			{
+				await UpdateManager.fetchDeviceUpdates(10000);
+			}
 
-			response.write('Success');
+			if(urlParams.plugins)
+			{
+				await UpdateManager.fetchPluginUpdates(10000);
+			}
+
+			response.write(JSON.stringify(UpdateManager.getLatestVersions()));
 			response.end();
 		});
 

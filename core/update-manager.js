@@ -38,13 +38,15 @@ module.exports = class UpdateManager
                     try
                     {
                         this.newestPluginVersions[plugins[i]] = JSON.parse(body);
+
+                        resolve(true);
                     }
                     catch(e)
                     {
                         console.error(e);
-                    }
 
-                    resolve();
+                        resolve(false);
+                    }
                 })); 
                     
                 promiseArray.push(newPromise);
@@ -56,30 +58,37 @@ module.exports = class UpdateManager
 
     fetchDeviceUpdates(timeout)
     {
-        var theRequest = {
-            method : 'GET',
-            url : 'http://syntex.sytes.net/smarthome/check-version.php',
-            timeout : timeout
-        };
+        return new Promise((resolve) => {
 
-        request(theRequest, (error, response, body) => {
+            var theRequest = {
+                method : 'GET',
+                url : 'http://syntex.sytes.net/smarthome/check-version.php',
+                timeout : timeout
+            };
 
-            try
-            {
-                var updates = JSON.parse(body);
+            request(theRequest, (error, response, body) => {
 
-                for(const update in updates)
+                try
                 {
-                    if(!updates[update].type.startsWith('SynTex'))
+                    var updates = JSON.parse(body);
+
+                    for(const update in updates)
                     {
-                        this.newestDeviceVersions[updates[update].type] = updates[update].version;
+                        if(!updates[update].type.startsWith('SynTex'))
+                        {
+                            this.newestDeviceVersions[updates[update].type] = updates[update].version;
+                        }
                     }
+
+                    resolve(true);
                 }
-            }
-            catch(e)
-            {
-                console.error(e);
-            }
+                catch(e)
+                {
+                    console.error(e);
+
+                    resolve(false);
+                }
+            });
         });
     }
 
