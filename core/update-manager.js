@@ -23,8 +23,6 @@ module.exports = class UpdateManager
 
             for(const i in plugins)
             {
-                console.log(0, i, plugins[i]);
-                
                 var theRequest = {
                     method : 'GET',
                     url : 'http://registry.npmjs.org/-/package/' + i + '/dist-tags',
@@ -32,8 +30,6 @@ module.exports = class UpdateManager
                 };
 
                 const newPromise = new Promise((resolve) => request(theRequest, (error, response, body) => {
-
-                    console.log(1, i, plugins[i]);
 
                     try
                     {
