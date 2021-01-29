@@ -1693,9 +1693,13 @@
 								};
 								
 								await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, true);
-							
-								await Essentials.newTimeout(2000);
 							}
+							else
+							{
+								Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('refresh-result', 'Gespeichert!'));
+							}
+
+							await Essentials.newTimeout(2000);
 								
 							redirect();
 						}
