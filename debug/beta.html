@@ -47,6 +47,7 @@
 				window.versions = {};
 				window.betaVersions = {};
 				window.updating = [];
+				window.plugins = [];
 
 				if((new URL(window.location.href)).searchParams.get('backup') == '')
 				{
@@ -59,16 +60,14 @@
 
 				Preloader.finish();
 			
-				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((plugins) => {
+				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((Plugins) => {
 
 					try
 					{
-						plugins = JSON.parse(plugins);
+						plugins = JSON.parse(Plugins);
 					}
 					catch(e)
 					{
-						plugins = [];
-
 						console.error(e);
 					}
 
@@ -203,6 +202,8 @@
 						{
 							response = JSON.parse(response);
 
+							console.log(response);
+
 							for(var i = 2; i < document.getElementById('beta-plugins').children.length; i += 3)
 							{
 								for(const j in response.plugins)
@@ -213,17 +214,23 @@
 
 										console.log(betaVersions[j] != null, Essentials.versionCount(betaVersions[j]), Essentials.versionCount(versions[j]));
 
-										if(betaVersions[j] != null && Essentials.versionCount(betaVersions[j]) > Essentials.versionCount(versions[j]))
+										if(document.getElementById('update-btn-' + j.toLocaleLowerCase()) == null && betaVersions[j] != null && Essentials.versionCount(betaVersions[j]) > Essentials.versionCount(versions[j]))
 										{
-											var updateButton = document.createElement('input');
+											for(const k in plugins)
+											{
+												if(j == plugins[k].id)
+												{
+													var updateButton = document.createElement('input');
 
-											updateButton.setAttribute('type', 'button');
-											updateButton.setAttribute('value', (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.plugin.id] + ' )');
-											updateButton.setAttribute('onclick', 'updatePlugin("' + this.plugin.id + '", ' + this.plugin.port + ', ' + this.counter + ', this)'); // TODO
-											updateButton.setAttribute('id', 'update-btn-' + this.plugin.id.toLowerCase());
-											updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-											
-											document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+													updateButton.setAttribute('type', 'button');
+													updateButton.setAttribute('value', (j != 'SynTex' ? j.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[j] + ' )');
+													updateButton.setAttribute('onclick', 'updatePlugin("' + j + '", ' + plugins[k].port + ', ' + (i - 1) + ', this)'); // TODO
+													updateButton.setAttribute('id', 'update-btn-' + j.toLowerCase());
+													updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+													
+													document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+												}
+											}
 										}
 									}
 								}
