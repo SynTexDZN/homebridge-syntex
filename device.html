@@ -339,7 +339,7 @@
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-							var frame = document.createElement('div'), canvas = document.createElement('canvas');
+							var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
 
 							frame.setAttribute('style', 'border-radius: 32px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
 
@@ -354,7 +354,7 @@
 
 							canvas.setAttribute('class', 'canvas');
 							canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-							canvas.setAttribute('style', 'border-radius: 32px');
+							canvas.setAttribute('style', 'border-radius: 32px; position: relative; z-index: 1; opacity: 0');
 
 							canvas.width = document.getElementById('infos').offsetWidth - 4;
 							canvas.height = height;
@@ -362,25 +362,37 @@
 
 							frame.appendChild(canvas);
 
-							//drawGrid(canvas, [], 10);
+							grid.setAttribute('class', 'canvas');
+							grid.setAttribute('id', 'canvas-' + type + '-' + j);
+							grid.setAttribute('style', 'border-radius: 32px; position: relative; top: -100%');
+
+							grid.width = document.getElementById('infos').offsetWidth - 4;
+							grid.height = height;
+							grid.style.background = 'rgb(20, 20, 30)';
+
+							frame.appendChild(grid);
+
+							drawGrid(grid, [], 10);
 
 							var infoMin = document.createElement('div');
 
-							infoMin.setAttribute('style', 'position: relative; bottom: 17px; left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+							infoMin.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
 							infoMin.setAttribute('class', 'min');
+							infoMin.innerHTML = 'Min';
 
 							frame.appendChild(infoMin);
 
 							var infoMax = document.createElement('div');
 
-							infoMax.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+							infoMax.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
 							infoMax.setAttribute('class', 'max');
+							infoMax.innerHTML = 'Max';
 
 							frame.appendChild(infoMax);
 
 							var infoType = document.createElement('div');
 
-							infoType.setAttribute('style', 'position: relative; bottom: ' + (height - 34.5) + 'px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300');
+							infoType.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300');
 
 							if(type == 'rgb' || type == 'rgbw')
 							{
@@ -426,8 +438,9 @@
 
 							var infoUpdate = document.createElement('div');
 
-							infoUpdate.setAttribute('style', 'position: relative; bottom: 17px; left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+							infoUpdate.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
 							infoUpdate.setAttribute('class', 'update');
+							infoUpdate.innerHTML = 'Letzte Aktivität';
 
 							frame.appendChild(infoUpdate);
 						}
@@ -873,7 +886,7 @@
 						var label = document.createElement('h2');
 
 						label.innerHTML = '↻ Neu Laden';
-						label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+						label.setAttribute('style', 'margin-top: -480px; position: relative; z-index: 1; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
 						label.setAttribute('onclick', 'loadActivity()');
 
 						canvas.parentElement.appendChild(label);
