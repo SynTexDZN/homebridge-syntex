@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+	</head>
+	<body>
+		<div id="content">
+			<title>Debug: Style</title>
+			<h1 style="margin-bottom: 0; margin-top: 32px">Debug</h1>
+			<div id="style" class="main">
+				<p style="margin-bottom: 100px; margin-top: 20px">Style</p>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="STYLE" onclick="Essentials.leavePage('/debug/style')" style="margin-right: 20px" disabled>
+					<input class="white" type="button" value="CONFIG" onclick="Essentials.leavePage('/debug/config')">
+				</div>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
+					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
+				</div>
+				<div style="margin: 100px 0">
+					<input type="button" value="Button 1">
+					<input type="button"  value="Button 2" style="margin-top: 20px" class="gradient-blue-green">
+					<input type="text" style="margin-top: 20px">
+					<div id="select"></div>
+				</div>
+				<div class="navigation-panel">
+					<div class="sticky-inset">
+						<input type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
+					</div>
+				</div>
+            </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+				import { Replacer } from '/js/replace-select.js';
+				import { Preloader } from '/js/loading.js';
+	
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+			
+				window.Query = Query;
+				window.Essentials = Essentials;
+				window.Replacer = Replacer;
+                window.Preloader = Preloader;
+                
+                var select = document.createElement('div');
+
+                select.className = 'custom-select';
+                select.style.marginTop = '20px';
+                select.innerHTML = '<select><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option><option value="4">5</option><option value="5">6</option><option value="6">7</option><option value="7">8</option><option value="8">9</option></select>';
+                
+                document.getElementById('select').appendChild(Replacer.createSelectMenu(select));
+            
+                Preloader.finish();
+
+            </script>
+		</div>
+	</body>
+</html>

@@ -586,15 +586,24 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/debug', async (response, urlParams, content) => {
+		this.WebServer.addPage('/debug/beta', async (response, urlParams, content) => {
+
+			var obj = {
+				updates: JSON.stringify(UpdateManager.getLatestVersions())
+			};
+
+			response.write(HTMLQuery.sendValues(content, obj));
+			response.end();
+		});
+
+		this.WebServer.addPage('/debug/config', async (response, urlParams, content) => {
 
 			this.config.load('config', (err, json) => {    
 
 				if(json && !err)
 				{
 					var obj = {
-						configJSON: JSON.stringify(json),
-						updates: JSON.stringify(UpdateManager.getLatestVersions())
+						configJSON: JSON.stringify(json)
 					};
 
 					response.write(HTMLQuery.sendValues(content, obj));
