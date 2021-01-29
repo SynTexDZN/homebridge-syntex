@@ -206,9 +206,12 @@
 							{
 								betaVersions[id] = response.plugins[id].beta;
 
-								document.getElementById('beta-version-' + id.toLowerCase()).innerHTML = '<b>Beta Version: </b>' + response.plugins[id].beta;
+								if(document.getElementById('beta-version-' + id.toLowerCase()) != null)
+								{
+									document.getElementById('beta-version-' + id.toLowerCase()).innerHTML = '<b>Beta Version: </b>' + response.plugins[id].beta;
+								}
 
-								if(betaVersions[id] != null && Essentials.versionCount(betaVersions[id]) > Essentials.versionCount(versions[id]))
+								if(betaVersions[id] != null && versions[id] != null && Essentials.versionCount(betaVersions[id]) > Essentials.versionCount(versions[id]))
 								{
 									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
 									{

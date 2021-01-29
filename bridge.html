@@ -240,9 +240,12 @@
 							{
 								latestVersions[id] = response.plugins[id].latest;
 
-								document.getElementById('latest-version-' + id.toLowerCase()).innerHTML = '<b>Neuste Version: </b>' + response.plugins[id].latest;
+								if(document.getElementById('latest-version-' + id.toLowerCase()) != null)
+								{
+									document.getElementById('latest-version-' + id.toLowerCase()).innerHTML = '<b>Neuste Version: </b>' + response.plugins[id].latest;
+								}
 
-								if(latestVersions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(versions[id]))
+								if(latestVersions[id] != null && versions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(versions[id]))
 								{
 									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
 									{
