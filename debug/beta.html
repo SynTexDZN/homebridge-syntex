@@ -20,7 +20,7 @@
 					<div class="sticky-inset">
 						<div style="display: flex">
 							<input id="back-btn" type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
-							<div style="width: 100%; margin-left: 20px">
+							<div style="width: calc(100% + 12px); margin-left: 20px">
 								<button onclick="reloadVersions(this)">↻ Neu Laden</button>
 							</div>
 						</div>
@@ -244,7 +244,7 @@
 							Essentials.showOverlay(btn, Essentials.createErrorOverlay('reload', 'Neu Laden Fehlgeschlagen!'));
 						}
 
-						await Essentials.newTimeout(4000);
+						await Essentials.newTimeout(2000);
 
 						Essentials.removeOverlays(btn, true);
 					});
