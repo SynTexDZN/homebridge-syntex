@@ -25,24 +25,29 @@ class SynTexPlatform
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 
 		HTMLQuery = new HTMLQuery(this.logger);
-		DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, this.port);
+		
 		Automation.SETUP(this.logger, this.automationDirectory);
 
-		DeviceManager.getDevices().then((devices) => {
+		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-			if(devices != null)
-			{
-				OfflineManager = new OfflineManager(this.logger, devices);
-			}
+			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config.port);
 
-			this.initWebServer();
+			DeviceManager.getDevices().then((devices) => {
+
+				if(devices != null)
+				{
+					OfflineManager = new OfflineManager(this.logger, devices);
+				}
+
+				UpdateManager = new UpdateManager(600);
+
+				this.initWebServer();
+
+				restart = false;
+
+				DeviceManager.setBridgeStorage('restart', new Date());
+			});
 		});
-
-		UpdateManager = new UpdateManager(600);
-
-		restart = false;
-
-		DeviceManager.setBridgeStorage('restart', new Date());
 
 		const { exec } = require('child_process');
 
