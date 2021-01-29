@@ -93,7 +93,7 @@
 							document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
 						}
 						
-						document.getElementById('beta-plugins').innerHTML += '<p class="loading-loop"><b>Version: </b>Laden ..</p>';
+						document.getElementById('beta-plugins').innerHTML += '<p id="version-' + plugins[i].id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
 
 						if(updates.plugins != null && updates.plugins[plugins[i].id] != null && updates.plugins[plugins[i].id].beta != null)
 						{
@@ -101,11 +101,11 @@
 
 							betaVersions[plugins[i].id] = newestVersion;
 
-							document.getElementById('beta-plugins').innerHTML += '<p style="margin-bottom: 0"><b>Beta Version: </b>' + newestVersion + '</p>';
+							document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + plugins[i].id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>' + newestVersion + '</p>';
 						}
 						else
 						{
-							document.getElementById('beta-plugins').innerHTML += '<p style="margin-bottom: 0"><b>Beta Version: </b>Fehler beim Laden</p>';
+							document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + plugins[i].id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>Fehler beim Laden</p>';
 						}
 
 						Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
@@ -114,7 +114,7 @@
 							{
 								versions[this.plugin.id] = version;
 
-								document.getElementById('beta-plugins').children[this.counter].innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
+								document.getElementById('version-' + this.plugin.id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
 							
 								if(betaVersions[this.plugin.id] != null && Essentials.versionCount(betaVersions[this.plugin.id]) > Essentials.versionCount(version))
 								{
@@ -122,7 +122,7 @@
 
 									updateButton.setAttribute('type', 'button');
 									updateButton.setAttribute('value', (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.plugin.id] + ' )');
-									updateButton.setAttribute('onclick', 'updatePlugin("' + this.plugin.id + '", ' + this.plugin.port + ', ' + this.counter + ', this)'); // TODO
+									updateButton.setAttribute('onclick', 'updatePlugin("' + this.plugin.id + '", ' + this.plugin.port + ', this)'); // TODO
 									updateButton.setAttribute('id', 'update-btn-' + this.plugin.id.toLowerCase());
 									updateButton.setAttribute('style', 'margin-bottom: 20px'); 
 									
@@ -131,10 +131,10 @@
 							}
 							else
 							{
-								document.getElementById('beta-plugins').children[this.counter].innerHTML = '<b>Version: </b>Fehler beim Laden';
+								document.getElementById('version-' + this.plugin.id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
 							}
 
-						}.bind({ plugin : plugins[i], counter : i * 3 + 1 }));
+						}.bind({ plugin : plugins[i] }));
 					}
 
 					Preloader.finish();
@@ -143,7 +143,7 @@
             </script>
             <script>
 
-				async function updatePlugin(id, port, counter, btn)
+				async function updatePlugin(id, port, btn)
 				{
 					if(updating.length == 0)
 					{
@@ -163,13 +163,13 @@
 
 							if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
 							{
-								document.getElementById('beta-plugins').children[counter].innerHTML = '<b>Version: </b>Laden ..';
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
 
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
 								versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
 
-								document.getElementById('beta-plugins').children[counter].innerHTML = '<b>Version: </b>' + versions[id];
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
 							}
 							else
 							{
@@ -202,41 +202,35 @@
 						{
 							response = JSON.parse(response);
 
-							for(var i = 2; i < document.getElementById('beta-plugins').children.length; i += 3)
+							for(const id in response.plugins)
 							{
-								for(const j in response.plugins)
+								betaVersions[id] = response.plugins[id].beta;
+
+								document.getElementById('beta-version-' + id.toLowerCase()).innerHTML = '<b>Beta Version: </b>' + response.plugins[id].beta;
+
+								if(betaVersions[id] != null && Essentials.versionCount(betaVersions[id]) > Essentials.versionCount(versions[id]))
 								{
-									betaVersions[j] = response.plugins[j].beta;
-
-									if(document.getElementById('beta-plugins').children[i - 2].innerHTML.slice(2).slice(0, -2).replace(/\s/g, '') == j)
+									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
 									{
-										document.getElementById('beta-plugins').children[i].innerHTML = '<b>Beta Version: </b>' + response.plugins[j].beta;
-
-										if(betaVersions[j] != null && Essentials.versionCount(betaVersions[j]) > Essentials.versionCount(versions[j]))
+										for(const i in plugins)
 										{
-											if(document.getElementById('update-btn-' + j.toLocaleLowerCase()) == null)
+											if(id == plugins[i].id)
 											{
-												for(const k in plugins)
-												{
-													if(j == plugins[k].id)
-													{
-														var updateButton = document.createElement('input');
+												var updateButton = document.createElement('input');
 
-														updateButton.setAttribute('type', 'button');
-														updateButton.setAttribute('value', (j != 'SynTex' ? j.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[j] + ' )');
-														updateButton.setAttribute('onclick', 'updatePlugin("' + j + '", ' + plugins[k].port + ', ' + (i - 1) + ', this)'); // TODO
-														updateButton.setAttribute('id', 'update-btn-' + j.toLowerCase());
-														updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-														
-														document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-													}
-												}
-											}
-											else
-											{
-												document.getElementById('update-btn-' + j.toLocaleLowerCase()).value = (j != 'SynTex' ? j.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[j] + ' )';
+												updateButton.setAttribute('type', 'button');
+												updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[id] + ' )');
+												updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[i].port + ', this)');
+												updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
+												updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+												
+												document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
 											}
 										}
+									}
+									else
+									{
+										document.getElementById('update-btn-' + id.toLocaleLowerCase()).value = (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[id] + ' )';
 									}
 								}
 							}
