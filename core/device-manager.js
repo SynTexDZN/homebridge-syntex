@@ -1,16 +1,16 @@
 const store = require('json-fs-store');
-var config, storage, dataStorage, logger, webhookPort, accessories, deviceManager;
+
+var config, storage, logger, webhookPort, accessories, deviceManager;
 var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(configPath, slog, storagePath, wConf)
+	constructor(configPath, slog, storagePath, port)
 	{
 		config = store(configPath);
 		storage = store(storagePath);
-		dataStorage = store(wConf.cacheDirectory);
 		logger = slog;
-		webhookPort = wConf.port;
+		webhookPort = port;
 
 		this.reloading = false;
 
@@ -522,28 +522,6 @@ module.exports = class DeviceManager
 				});
 
 				resolve(err && err.code != 'ENOENT' ? false : true);
-			});
-		});
-	}
-
-	removeFromDataStorage(id)
-	{
-		return new Promise(function(resolve) {
-
-			dataStorage.list((err, objs) => {  
-
-				if(objs && !err)
-				{
-					for(var i = 0; i < objs.length; i++)
-					{
-						if(objs[i].id.startsWith(id))
-						{
-							dataStorage.remove(objs[i].id, (err) => {});
-						}
-					}
-				}
-
-				resolve();
 			});
 		});
 	}

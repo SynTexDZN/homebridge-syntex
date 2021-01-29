@@ -12,6 +12,7 @@ class SynTexPlatform
 	{
 		this.cacheDirectory = config['cacheDirectory'] || './SynTex/data';
 		this.logDirectory = config['logDirectory'];
+		this.automationDirectory = config['automationDirectory'];
 		this.port = config['port'] || 1711;
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
@@ -24,63 +25,55 @@ class SynTexPlatform
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 
 		HTMLQuery = new HTMLQuery(this.logger);
+		DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, this.port);
+		Automation.SETUP(this.logger, this.automationDirectory);
 
-		this.getPluginConfig('SynTexWebHooks').then((config) => {
+		DeviceManager.getDevices().then((devices) => {
 
-			if(config != null)
+			if(devices != null)
 			{
-				DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config);
-				Automation.SETUP(this.logger, config.automationDirectory);
+				OfflineManager = new OfflineManager(this.logger, devices);
 			}
 
-			DeviceManager.getDevices().then((devices) => {
+			this.initWebServer();
+		});
 
-				if(devices != null)
+		UpdateManager = new UpdateManager(600);
+
+		restart = false;
+
+		DeviceManager.setBridgeStorage('restart', new Date());
+
+		const { exec } = require('child_process');
+
+		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+			exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+				if(error || stderr.includes('ERR!'))
 				{
-					OfflineManager = new OfflineManager(this.logger, devices);
+					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!');
 				}
-
-				this.initWebServer();
-			});
-
-			UpdateManager = new UpdateManager(600);
-
-			restart = false;
-
-			DeviceManager.setBridgeStorage('restart', new Date());
-
-			const { exec } = require('child_process');
-
-			exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-				exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-					if(error || stderr.includes('ERR!'))
-					{
-						this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!');
-					}
-					else
-					{
-						this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
-					}
-				});
-			});
-
-			exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
-
-				if(stdout)
+				else
 				{
-					var theRequest = {
-						method : 'GET',
-						url : 'http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version,
-						timeout : 10000
-					};
-
-					request(theRequest, () => {});
+					this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
 				}
 			});
-			
-		}).catch((e) => this.logger.err(e));
+		});
+
+		exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
+
+			if(stdout)
+			{
+				var theRequest = {
+					method : 'GET',
+					url : 'http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version,
+					timeout : 10000
+				};
+
+				request(theRequest, () => {});
+			}
+		});
 	}
 
 	initWebServer()

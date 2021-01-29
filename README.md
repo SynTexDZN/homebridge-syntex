@@ -49,9 +49,9 @@ It offers an UI to manage all your SynTex Plugins.
 - `platform` is always `SynTexMagicHome`
 - `logDirectory` The path where your logs are stored.
 - `cacheDirectory` The path where your data is stored.
+- `port` To access the bridge website.
 
 ### Optional Parameters
-- `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
 
@@ -73,4 +73,4 @@ It offers an UI to manage all your SynTex Plugins.
 - Switch
 - Stateless Switch
 - LED Controller
-- Special Devices
+- Special Devices *( Doorbell, Multi-Device )*
