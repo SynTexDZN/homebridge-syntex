@@ -8,43 +8,49 @@ module.exports = class UpdateManager
         this.newestPluginVersions = {};
 
         this.fetchDeviceUpdates(interval * 1000);
-
-        var plugins = { 'homebridge-syntex' : 'SynTex', 'homebridge-syntex-webhooks' : 'SynTexWebHooks', 'homebridge-syntex-tuya' : 'SynTexTuya', 'homebridge-syntex-magichome' : 'SynTexMagicHome' };
-
-        for(const i in plugins)
-        {
-            this.fetchPluginUpdates({  id : i, name : plugins[i] }, interval * 1000);
-        }
+        this.fetchPluginUpdates(interval * 1000);
 
         this.updateDeviceInterval = setInterval(() => this.fetchDeviceUpdates(interval * 500), interval * 1000);
-        this.updatePluginInterval = setInterval(() => {
+        this.updatePluginInterval = setInterval(() => this.fetchPluginUpdates(interval * 500), interval * 1000);
+    }
+
+    fetchPluginUpdates(timeout)
+    {
+        return new Promise((callback) => {
+
+            var plugins = { 'homebridge-syntex' : 'SynTex', 'homebridge-syntex-webhooks' : 'SynTexWebHooks', 'homebridge-syntex-tuya' : 'SynTexTuya', 'homebridge-syntex-magichome' : 'SynTexMagicHome' };
+            var promiseArray = [];
 
             for(const i in plugins)
             {
-                this.fetchPluginUpdates({  id : i, name : plugins[i] }, interval * 500);
+                console.log(0, i, plugins[i]);
+                
+                var theRequest = {
+                    method : 'GET',
+                    url : 'http://registry.npmjs.org/-/package/' + i + '/dist-tags',
+                    timeout : timeout
+                };
+
+                const newPromise = new Promise((resolve) => request(theRequest, (error, response, body) => {
+
+                    console.log(1, i, plugins[i]);
+
+                    try
+                    {
+                        this.newestPluginVersions[plugins[i]] = JSON.parse(body);
+                    }
+                    catch(e)
+                    {
+                        console.error(e);
+                    }
+
+                    resolve();
+                })); 
+                    
+                promiseArray.push(newPromise);
             }
 
-        }, interval * 1000);
-    }
-
-    fetchPluginUpdates(plugin, timeout)
-    {
-        var theRequest = {
-            method : 'GET',
-            url : 'http://registry.npmjs.org/-/package/' + plugin.id + '/dist-tags',
-            timeout : timeout
-        };
-
-        request(theRequest, (error, response, body) => {
-
-            try
-            {
-                this.newestPluginVersions[plugin.name] = JSON.parse(body);
-            }
-            catch(e)
-            {
-                console.error(e);
-            }
+            Promise.all(promiseArray).then(() => callback());
         });
     }
 

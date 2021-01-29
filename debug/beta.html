@@ -112,7 +112,7 @@
 
 								document.getElementById('beta-plugins').children[this.counter].innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
 							
-								if(Essentials.versionCount(betaVersions[this.plugin.id]) != Essentials.versionCount(version))
+								if(betaVersions[this.plugin.id] != null && Essentials.versionCount(betaVersions[this.plugin.id]) != Essentials.versionCount(version))
 								{
 									var updateButton = document.createElement('input');
 

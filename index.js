@@ -444,6 +444,14 @@ class SynTexPlatform
 			}
 		});
 
+		this.WebServer.addPage('/serverside/reload-updates', async (response, urlParams, content) => {
+
+			await UpdateManager.fetchPluginUpdates(10000);
+
+			response.write('Success');
+			response.end();
+		});
+
 		this.WebServer.addPage('/device', async (response, urlParams, content) => {
 
 			if(urlParams.id != null)
