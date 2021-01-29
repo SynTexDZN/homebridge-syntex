@@ -569,7 +569,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/automation', '/automations'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/automation/', '/automation/modify'], async (response, urlParams, content) => {
 
 			var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
 			var obj = {

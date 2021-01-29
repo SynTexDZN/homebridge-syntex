@@ -13,7 +13,7 @@
 					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
 				</div>
 				<div class="main" style="margin-top: 10px; display: flex">
-					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automations')" style="margin-right: 20px" disabled>
+					<input class="white" type="button" value="AUTOMATION" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px" disabled>
 					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
 				</div>
 			</div>
@@ -171,6 +171,9 @@
 				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
 					automation = JSON.parse(a);
+
+					console.log(automation);
+
 					/*
 					automation = [
 						{
@@ -296,11 +299,11 @@
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automations?create&desktopApp=true');
+						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automations?create');
+						window.history.pushState(null, null, '/automation/?create');
 					}
 				}
 
@@ -314,7 +317,7 @@
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automations');
+						window.history.pushState(null, null, '/automation/');
 					}
 				}
 
@@ -339,7 +342,7 @@
 
 						typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
 						typeContainer.setAttribute('class', 'type-container');
-						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation?id=" + automation[i].id + "')");
+						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation/modify?id=" + automation[i].id + "')");
 						typeContainer.appendChild(titleContainer);
 
 						if(i == 0)
