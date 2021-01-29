@@ -202,8 +202,6 @@
 						{
 							response = JSON.parse(response);
 
-							console.log(response);
-
 							for(var i = 2; i < document.getElementById('beta-plugins').children.length; i += 3)
 							{
 								for(const j in response.plugins)
@@ -213,8 +211,6 @@
 									if(document.getElementById('beta-plugins').children[i - 2].innerHTML.slice(2).slice(0, -2).replace(/\s/g, '') == j)
 									{
 										document.getElementById('beta-plugins').children[i].innerHTML = '<b>Beta Version: </b>' + response.plugins[j].beta;
-
-										console.log(betaVersions[j] != null, Essentials.versionCount(betaVersions[j]), Essentials.versionCount(versions[j]));
 
 										if(betaVersions[j] != null && Essentials.versionCount(betaVersions[j]) > Essentials.versionCount(versions[j]))
 										{
