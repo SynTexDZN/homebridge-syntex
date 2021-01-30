@@ -21,11 +21,11 @@ function checkConnection(ip)
 	var theRequest = {
 		method : 'GET',
 		url : 'http://' + ip + '/',
-		timeout : 30000
+		timeout : 25000
 	};
 
-	request(theRequest, (function(err, response, body)
-	{
+	request(theRequest, (err, response, body) => {
+		
 		var statusCode = response && response.statusCode ? response.statusCode : -1;
 
 		if(err || statusCode != 200)
@@ -51,7 +51,7 @@ function checkConnection(ip)
 				offline.splice(offline.indexOf(ip), 1);
 			}
 		}
-	}));
+	});
 }
 
 function pingDevices(devices)

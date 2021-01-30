@@ -1,4 +1,5 @@
 const store = require('json-fs-store');
+
 var logger, storage;
 
 function loadAutomation()
