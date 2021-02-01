@@ -86,59 +86,62 @@
 
 					for(const id in plugins)
 					{
-						if(counter == 0)
+						if(plugins[id] != null)
 						{
-							document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
-						}
-						else
-						{
-							document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
-						}
-						
-						document.getElementById('beta-plugins').innerHTML += '<p id="version-' + id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
-
-						if(updates.plugins != null && updates.plugins[id] != null && updates.plugins[id].beta != null)
-						{
-							var newestVersion = updates.plugins[id].beta;
-
-							betaVersions[id] = newestVersion;
-
-							document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>' + newestVersion + '</p>';
-						}
-						else
-						{
-							document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>Fehler beim Laden</p>';
-						}
-
-						counter++;
-
-						Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
-
-							if(version != null)
+							if(counter == 0)
 							{
-								versions[this.plugin.id] = version;
-
-								document.getElementById('version-' + this.plugin.id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[this.plugin.id];
-							
-								if(betaVersions[this.plugin.id] != null && Essentials.versionCount(betaVersions[this.plugin.id]) > Essentials.versionCount(version))
-								{
-									var updateButton = document.createElement('input');
-
-									updateButton.setAttribute('type', 'button');
-									updateButton.setAttribute('value', (this.plugin.id != 'SynTex' ? this.plugin.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.plugin.id] + ' )');
-									updateButton.setAttribute('onclick', 'updatePlugin("' + this.plugin.id + '", ' + this.plugin.port + ', this)'); // TODO
-									updateButton.setAttribute('id', 'update-btn-' + this.plugin.id.toLowerCase());
-									updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-									
-									document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-								}
+								document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
 							}
 							else
 							{
-								document.getElementById('version-' + this.plugin.id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
+								document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+							}
+							
+							document.getElementById('beta-plugins').innerHTML += '<p id="version-' + id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
+
+							if(updates.plugins != null && updates.plugins[id] != null && updates.plugins[id].beta != null)
+							{
+								var newestVersion = updates.plugins[id].beta;
+
+								betaVersions[id] = newestVersion;
+
+								document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>' + newestVersion + '</p>';
+							}
+							else
+							{
+								document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>Fehler beim Laden</p>';
 							}
 
-						}.bind({ plugin : plugins[id] }));
+							counter++;
+
+							Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
+
+								if(version != null)
+								{
+									versions[this.id] = version;
+
+									document.getElementById('version-' + this.id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[this.id];
+								
+									if(betaVersions[this.id] != null && Essentials.versionCount(betaVersions[this.id]) > Essentials.versionCount(version))
+									{
+										var updateButton = document.createElement('input');
+
+										updateButton.setAttribute('type', 'button');
+										updateButton.setAttribute('value', (this.id != 'SynTex' ? this.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.id] + ' )');
+										updateButton.setAttribute('onclick', 'updatePlugin("' + this.id + '", ' + plugins[this.id].port + ', this)'); // TODO
+										updateButton.setAttribute('id', 'update-btn-' + this.id.toLowerCase());
+										updateButton.setAttribute('style', 'margin-bottom: 20px');
+										
+										document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+									}
+								}
+								else
+								{
+									document.getElementById('version-' + this.id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
+								}
+
+							}.bind({ id : id }));
+						}
 					}
 
 					Preloader.finish();
