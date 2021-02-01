@@ -77,7 +77,7 @@
 					}
 					catch(e)
 					{
-						updates = {};
+						updates = { plugins : {} };
 
 						console.error(e);
 					}
@@ -86,7 +86,7 @@
 
 					for(const id in plugins)
 					{
-						if(plugins[id] != null)
+						if(updates.plugins[id] != null)
 						{
 							if(counter == 0)
 							{
@@ -128,7 +128,7 @@
 
 										updateButton.setAttribute('type', 'button');
 										updateButton.setAttribute('value', (this.id != 'SynTex' ? this.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.id] + ' )');
-										updateButton.setAttribute('onclick', 'updatePlugin("' + this.id + '", ' + plugins[this.id].port + ', this)'); // TODO
+										updateButton.setAttribute('onclick', 'updatePlugin("' + this.id + '", ' + plugins[this.id].port + ', this)');
 										updateButton.setAttribute('id', 'update-btn-' + this.id.toLowerCase());
 										updateButton.setAttribute('style', 'margin-bottom: 20px');
 										
