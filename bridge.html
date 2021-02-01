@@ -80,33 +80,37 @@
 						console.error(e);
 					}
 
-					for(var i = 0; i < plugins.length; i++)
+					var counter = 0;
+
+					for(const id in plugins)
 					{
-						if(i == 0)
+						if(counter == 0)
 						{
-							document.getElementById('infos').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+							document.getElementById('infos').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
 						}
 						else
 						{
-							document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
+							document.getElementById('infos').innerHTML += '<h2 style="width: fit-content">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
 						}
 						
-						document.getElementById('infos').innerHTML += '<p id="version-' + plugins[i].id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
+						document.getElementById('infos').innerHTML += '<p id="version-' + id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
 
-						if(updates.plugins != null && updates.plugins[plugins[i].id] != null && updates.plugins[plugins[i].id].latest != null)
+						if(updates.plugins != null && updates.plugins[id] != null && updates.plugins[id].latest != null)
 						{
-							var newestVersion = updates.plugins[plugins[i].id].latest;
+							var newestVersion = updates.plugins[id].latest;
 
-							latestVersions[plugins[i].id] = newestVersion;
+							latestVersions[id] = newestVersion;
 
-							document.getElementById('infos').innerHTML += '<p id="latest-version-' + plugins[i].id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</p>';
+							document.getElementById('infos').innerHTML += '<p id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</p>';
 						}
 						else
 						{
-							document.getElementById('infos').innerHTML += '<p id="latest-version-' + plugins[i].id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>Fehler beim Laden</p>';
+							document.getElementById('infos').innerHTML += '<p id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>Fehler beim Laden</p>';
 						}
 
-						Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
+						counter++;
+
+						Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
 
 							if(version != null)
 							{
@@ -132,7 +136,7 @@
 								document.getElementById('version-' + this.plugin.id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
 							}
 
-						}.bind({ plugin : plugins[i] }));
+						}.bind({ plugin : plugins[id] }));
 					}
 
 					Preloader.finish();
@@ -249,15 +253,15 @@
 								{
 									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
 									{
-										for(const i in plugins)
+										for(const pid in plugins)
 										{
-											if(id == plugins[i].id)
+											if(id == pid)
 											{
 												var updateButton = document.createElement('input');
 
 												updateButton.setAttribute('type', 'button');
 												updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )');
-												updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[i].port + ', this)');
+												updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[pid].port + ', this)');
 												updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
 												updateButton.setAttribute('style', 'margin-bottom: 20px'); 
 												

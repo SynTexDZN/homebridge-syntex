@@ -91,43 +91,47 @@
 					
 					//plugins = [{id:'SynTex', port:'1710'}, {id:'SynTexWebHooks', port:'1710'}, {id:'SynTexTuya', port:'1710'}, {id:'SynTexMagicHome', port:'1710'}];
 
-					for(var i = 0; i < plugins.length; i++)
+					var counter = 0;
+
+					for(const id in plugins)
 					{
 						var logTitle = document.createElement('h2');
 						var logWindow = document.createElement('textarea');
 
 						logTitle.setAttribute('style', 'width: fit-content');
-						logTitle.innerHTML = '• ' + (plugins[i].id != 'SynTex' ? plugins[i].id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
+						logTitle.innerHTML = '• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
 
-						if(plugins[i].id == 'SynTex')
+						if(id == 'SynTex')
 						{
 							logTitle.innerHTML = '• Bridge Log •';
 						}
-						else if(plugins[i].id == 'SynTexWebHooks')
+						else if(id == 'SynTexWebHooks')
 						{
 							logTitle.innerHTML = '• WebHooks Log •';
 						}
-						else if(plugins[i].id == 'SynTexTuya')
+						else if(id == 'SynTexTuya')
 						{
 							logTitle.innerHTML = '• Tuya Log •';
 						}
-						else if(plugins[i].id == 'SynTexMagicHome')
+						else if(id == 'SynTexMagicHome')
 						{
 							logTitle.innerHTML = '• MagicHome Log •';
 						}
 
 						logWindow.setAttribute('readonly', '');
-						logWindow.setAttribute('id', plugins[i].id);
+						logWindow.setAttribute('id', id);
 						logWindow.style.height = '700px'; 
 						logWindow.style.maxHeight = '700px'; 
 
-						if(i < plugins.length - 1)
+						if(counter < plugins.length - 1)
 						{
 							logWindow.style.marginBottom = '40px';    
 						}
 
 						document.getElementById('log-container').appendChild(logTitle);
 						document.getElementById('log-container').appendChild(logWindow);
+					
+						counter++;
 					}
 
 					fetchLogs();
@@ -153,21 +157,21 @@
 						
 						//logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
 
-						for(var i = 0; i < plugins.length; i++)
+						for(const id in plugins)
 						{
-							if(logJSON[plugins[i].id] == null || logJSON[plugins[i].id].length == 0)
+							if(logJSON[id] == null || logJSON[id].length == 0)
 							{
 								var label = document.createElement('h2');
 
 								label.innerHTML = '↻ Neu Laden';
 								label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
-								label.setAttribute('onclick', 'fetchLogs("' + plugins[i].id + '")');
+								label.setAttribute('onclick', 'fetchLogs("' + id + '")');
 
-								document.getElementById(plugins[i].id).appendChild(label);
+								document.getElementById(id).appendChild(label);
 							}
 							else
 							{
-								createLog(document.getElementById(plugins[i].id), logJSON[plugins[i].id], null);
+								createLog(document.getElementById(id), logJSON[id], null);
 							}
 						}
 

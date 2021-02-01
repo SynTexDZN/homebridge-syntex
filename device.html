@@ -1604,11 +1604,11 @@
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
 
-						for(var i = 0; i < plugins.length; i++)
+						for(const id in plugins)
 						{
-							if(plugins[i].id == device.plugin)
+							if(id == device.plugin)
 							{
-								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[i].port;
+								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port;
 							}
 						}
 

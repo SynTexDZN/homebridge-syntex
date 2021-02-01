@@ -410,7 +410,7 @@ class SynTexPlatform
 
 			this.config.load('config', (err, obj) => {    
 
-				var plugins = [];
+				var plugins = {};
 
 				if(obj && !err)
 				{       
@@ -418,7 +418,7 @@ class SynTexPlatform
 					{
 						if(obj.platforms[i].platform != null && obj.platforms[i].platform != 'config' && obj.platforms[i].port != null)
 						{
-							plugins.push({ id : obj.platforms[i].platform, port : obj.platforms[i].port });
+							plugins[obj.platforms[i].platform] = { port : obj.platforms[i].port };
 						}
 					}
 				}
