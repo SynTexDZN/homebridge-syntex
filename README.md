@@ -1,6 +1,6 @@
 # Homebridge SynTex
 A plugin to control SynTex accessory.<br>
-It offers an UI to manage all your SynTex Plugins.
+It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )*
 
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
@@ -46,7 +46,7 @@ It offers an UI to manage all your SynTex Plugins.
 ]
 ```
 ### Required Parameters
-- `platform` is always `SynTexMagicHome`
+- `platform` is always `SynTex`
 - `logDirectory` The path where your logs are stored.
 - `cacheDirectory` The path where your data is stored.
 - `port` To access the bridge website.

@@ -553,17 +553,10 @@ class SynTexPlatform
 				if(iface.length > 0) address = iface[0].address;
 			}
 
-			var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
 			var obj = {
 				ip: address,
-				updates: JSON.stringify(UpdateManager.getLatestVersions()),
-				wPort: 1710
+				updates: JSON.stringify(UpdateManager.getLatestVersions())
 			};
-
-			if(webhookConfig != null)
-			{
-				obj.wPort = webhookConfig.port;
-			}
 
 			response.write(HTMLQuery.sendValues(content, obj));
 			response.end();
