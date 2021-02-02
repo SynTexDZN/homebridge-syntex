@@ -1293,17 +1293,20 @@
 											color = 'rgb(60, 60, 80)';
 										}
 									}
-									else if(state.state == true)
+									else if(typeof state.state == 'boolean')
 									{
-										value = data[type].active.text.toUpperCase();
-										color = data[type].active.color;
+										if(state.state)
+										{
+											value = data[type].active.text.toUpperCase();
+											color = data[type].active.color;
+										}
+										else
+										{
+											value = data[type].inactive.text.toUpperCase();
+											color = data[type].inactive.color;
+										}
 									}
-									else if(state.state == false)
-									{
-										value = data[type].inactive.text.toUpperCase();
-										color = data[type].inactive.color;
-									}
-									else
+									else if(typeof state.state == 'number')
 									{
 										var color = 'rgb(60, 60, 80)', value = state.state;
 
