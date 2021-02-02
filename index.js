@@ -555,11 +555,31 @@ class SynTexPlatform
 
 			var obj = {
 				ip: address,
-				updates: JSON.stringify(UpdateManager.getLatestVersions())
+				updates: JSON.stringify(UpdateManager.getLatestVersions()),
+				wlanMac: null,
+				ethernetMac: null
 			};
 
-			response.write(HTMLQuery.sendValues(content, obj));
-			response.end();
+			const { exec } = require('child_process');
+
+			exec('cat /sys/class/net/wlan0/address', (error, wMac, stderr) => {
+
+				if(wMac)
+				{
+					obj.wlanMac = wMac.replace(/\s/g, '');
+				}
+				
+				exec('cat /sys/class/net/eth0/address', (error, eMac, stderr) => {
+
+					if(eMac)
+					{
+						obj.ethernetMac = eMac.replace(/\s/g, '');
+					}
+					
+					response.write(HTMLQuery.sendValues(content, obj));
+					response.end();
+				});
+			});
 		});
 
 		this.WebServer.addPage('/crossover', (response, urlParams, content) => {

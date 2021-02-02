@@ -20,8 +20,18 @@
 				<div style="margin: 100px 0">
 					<div id="infos"></div>
 				</div>
-				<div class="widget" style="margin-left: 0">
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
 					<button class="widget-left" disabled>IP Adresse</button>
+					<button class="widget-right gradient-blue" disabled>-</button>
+				</div>
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
+					<button class="widget-left" disabled>Mac WLAN<br>Mac LAN</button>
+					<button class="widget-right gradient-blue" disabled>-<br>-</button>
+				</div>
+				<div class="widget widget-table" style="margin-left: 0; margin-bottom: 20px; display: none">
+					<button class="widget-left" disabled>WLAN Mac Adresse</button>
+					<button class="widget-left" disabled>LAN Mac Adresse</button>
+					<button class="widget-right gradient-blue" disabled>-</button>
 					<button class="widget-right gradient-blue" disabled>-</button>
 				</div>
 				<div class="navigation-panel">
@@ -48,6 +58,8 @@
 
 				window.bridgeIP = '<%ip%>';
 				window.updates = '<%updates%>';
+				window.wlanMac = '<%wlanMac%>';
+				window.ethernetMac = '<%ethernetMac%>';
 
 				window.versions = {};
 				window.latestVersions = {};
@@ -57,7 +69,20 @@
 				window.restarting = false;
 
 				document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
-				
+
+				if(wlanMac != 'null' && ethernetMac != 'null')
+				{
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac + '<br>' + ethernetMac;
+				}
+				else if(wlanMac != 'null')
+				{
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac;
+				}
+				else if(ethernetMac != 'null')
+				{
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = ethernetMac;
+				}
+
 				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((Plugins) => {
 
 					try
