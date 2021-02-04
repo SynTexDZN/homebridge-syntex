@@ -316,7 +316,7 @@
 							statusField.setAttribute('type', 'button');
 							statusField.setAttribute('value', 'LADEN ..');
 
-							if(type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer')
 							{
 								statusField.setAttribute('onclick', 'controlSwitch(this)');
 								statusField.style.cursor = 'pointer';
@@ -531,7 +531,7 @@
 						var type = button.getAttribute('id').split('-')[1];
 						var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
 
-						if(type == 'switch' || type == 'relais')
+						if(type == 'switch' || type == 'relais' || type == 'outlet')
 						{
 							if(value == 'true')
 							{
@@ -572,6 +572,10 @@
 						else if(device.plugin == 'SynTexMagicHome')
 						{
 							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
+						}
+						else if(device.plugin == 'SynTexTuya')
+						{
+							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%tPort%>/devices?id=' + device.id + '&value=' + value, 20000, 1, {}, false);
 						}
 
 						const index = busy.indexOf(button.getAttribute('id'));
@@ -1235,10 +1239,7 @@
 						window.history.pushState(null, null, '?id=' + device.id);
 					}
 
-					if(device.plugin != 'SynTexMagicHome')
-					{
-						repaintGraphs();
-					}
+					repaintGraphs();
 				}
 
 				async function fetchState()
@@ -1257,6 +1258,10 @@
 								{
 									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000);
 								}
+								else if(device.plugin && device.plugin == 'SynTexTuya')
+								{
+									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%tPort%>/devices?id=' + device.id, 10000);
+								}
 								else
 								{
 									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000);
@@ -1267,25 +1272,41 @@
 									state = JSON.parse(state);
 								}
 
-								if(temp[type + j] && state.state != temp[type + j] && device.plugin != 'SynTexMagicHome')
+								if(temp[type + j] && state.state != temp[type + j])
 								{
 									orginal[type + j].push({ time : Math.round(new Date().getTime() / 1000), value : state.state.toString() });
 
 									calcValues(orginal, type, j);
 								}
 
-								temp[type + j] = state.state;
+								if(state[Essentials.typeToLetter(type) + j] != null)
+								{
+									state = state[Essentials.typeToLetter(type) + j];
+								}
 
 								if(state != null && state != 'Error' && state.state != null)
 								{
+									temp[type + j] = state.state;
+
 									if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 									{
-										console.log('STATE', state);
-
 										if(state.state == true)
 										{
 											value = 'AN';
 											color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+										}
+										else if(state.state == false)
+										{
+											value = 'AUS';
+											color = 'rgb(60, 60, 80)';
+										}
+									}
+									else if(type == 'dimmer')
+									{
+										if(state.state == true)
+										{
+											value = 'AN';
+											color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
 										}
 										else if(state.state == false)
 										{
@@ -1368,8 +1389,6 @@
 										{
 											value = state.state + ' ' + data[type].active.text.toUpperCase();
 										}
-
-										console.log('TYPE', type);
 									}
 
 									if(typeCounter[type] > 1)
@@ -1414,6 +1433,8 @@
 								{
 									document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
 								}
+
+								console.log('STATE', type, state);
 							}
 						}
 					}
