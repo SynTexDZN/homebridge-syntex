@@ -257,24 +257,36 @@ class SynTexPlatform
 
 				if(activity != null)
 				{
+					activity = activity.concat(await this.logger.load('SynTexTuya', urlParams.id));
+				}
+				else
+				{
+					activity = await this.logger.load('SynTexTuya', urlParams.id);
+				}
+
+				if(activity != null)
+				{
 					var a = {};
 
-					for(const i in activity[0])
+					for(const plugin in activity)
 					{
-						a[i] = { update : [], success : [] };
-
-						for(const j in activity[0][i])
+						for(const i in activity[plugin])
 						{
-							if(activity[0][i][j].l == 'Update' || activity[0][i][j].l == 'Success')
-							{
-								var value = activity[0][i][j].m.split('[')[2].split(']')[0];
+							a[i] = { update : [], success : [] };
 
-								a[i][activity[0][i][j].l.toLowerCase()].push({ t : activity[0][i][j].t, v : value, s : activity[0][i][j].s });
+							for(const j in activity[plugin][i])
+							{
+								if(activity[plugin][i][j].l == 'Update' || activity[plugin][i][j].l == 'Success')
+								{
+									var value = activity[plugin][i][j].m.split('[')[2].split(']')[0];
+
+									a[i][activity[plugin][i][j].l.toLowerCase()].push({ t : activity[plugin][i][j].t, v : value, s : activity[plugin][i][j].s });
+								}
 							}
 						}
-					}
 
-					result = a;
+						result = a;
+					}
 				}
 			}
 
@@ -469,12 +481,16 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
+				await DeviceManager.reloadAccessories();
+
 				var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
 				var magicHomeConfig = await this.getPluginConfig('SynTexMagicHome');
+				var tuyaConfig = await this.getPluginConfig('SynTexTuya');
 				var obj = {
 					device: JSON.stringify(DeviceManager.getAccessory(urlParams.id)),
 					wPort: 1710,
-					mPort: 1712
+					mPort: 1712,
+					tPort: 1713
 				};
 
 				if(webhookConfig != null)
@@ -487,6 +503,11 @@ class SynTexPlatform
 					obj.mPort = magicHomeConfig.port;
 				}
 
+				if(tuyaConfig != null)
+				{
+					obj.tPort = tuyaConfig.port;
+				}
+
 				response.write(HTMLQuery.sendValues(content, obj));
 				response.end();
 			}
@@ -495,6 +516,8 @@ class SynTexPlatform
 		this.WebServer.addPage(['/', '/index'], async (response, urlParams, content) => {
 
 			var bridgeData = await DeviceManager.getBridgeStorage();
+
+			await DeviceManager.reloadAccessories();
 
 			var obj = {
 				devices: JSON.stringify(DeviceManager.getAccessories()),
