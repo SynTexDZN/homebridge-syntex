@@ -1,4 +1,4 @@
-const store = require('json-fs-store');
+const store = require('json-fs-store'), request = require('request');
 
 var config, storage, logger, webhookPort, accessories, deviceManager;
 var configOBJ = null;
@@ -405,22 +405,52 @@ module.exports = class DeviceManager
 		});
 	}
 
-	async reloadAccessories()
+	reloadAccessories()
 	{
-		if(!this.reloading)
-		{
-			this.reloading = true;
+		return new Promise(async (resolve) => {
 
-			var plugins = ['SynTexWebHooks', 'SynTexMagicHome'];
-			var devices = await deviceManager.getDevices();
-
-			accessories = [];
-
-			for(const i in configOBJ.platforms)
+			if(!this.reloading)
 			{
-				if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].accessories != null)
+				this.reloading = true;
+
+				var plugins = ['SynTexWebHooks', 'SynTexMagicHome', 'SynTexTuya'];
+				var devices = await deviceManager.getDevices();
+
+				accessories = [];
+
+				var promiseArray = [];
+
+				for(const i in configOBJ.platforms)
 				{
-					accessories.push.apply(accessories, JSON.parse(JSON.stringify(configOBJ.platforms[i].accessories)));
+					if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].port != null)
+					{
+						var theRequest = {
+							method : 'GET',
+							url : 'http://localhost:' + configOBJ.platforms[i].port + '/accessories',
+							timeout : 10000
+						};
+		
+						const newPromise = new Promise((callback) => request(theRequest, (err, response, body) => {
+
+							console.log(body.length);
+
+							try
+							{
+								accessories.push.apply(accessories, JSON.parse(body));
+							}
+							catch(e)
+							{
+
+							}
+
+							callback();
+						}));
+
+						promiseArray.push(newPromise);
+					}
+				}
+
+				Promise.all(promiseArray).then(() => {
 
 					for(var j = 0; j < accessories.length; j++)
 					{
@@ -451,18 +481,20 @@ module.exports = class DeviceManager
 							{
 								accessories[j].spectrum = 'HSL'; 
 							}
+						}
 
-							if(accessories[j].version == null)
-							{
-								accessories[j].version = '99.99.99';
-							}
+						if(accessories[j].plugin == 'SynTexMagicHome' || accessories[j].plugin == 'SynTexTuya' || accessories[j].plugin == 'SynTexWebHooks')
+						{
+							accessories[j].version = '99.99.99';
 						}
 					}
-				}
-			}
 
-			this.reloading = false;
-		}
+					this.reloading = false;
+
+					resolve();
+				});
+			}
+		});
 	}
 
 	saveAccessories()
