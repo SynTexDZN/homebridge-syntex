@@ -39,7 +39,7 @@ class SynTexPlatform
 					OfflineManager = new OfflineManager(this.logger, devices);
 				}
 
-				UpdateManager = new UpdateManager(600);
+				UpdateManager = new UpdateManager(600, this.config);
 
 				this.initWebServer();
 
@@ -418,7 +418,12 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/plugins', (response) => {
+		this.WebServer.addPage('/serverside/plugins', async (response, urlParams) => {
+
+			if(urlParams.reload != null)
+			{
+				await UpdateManager.fetchPluginUpdates(10000);
+			}
 
 			this.config.load('config', (err, obj) => {    
 
@@ -426,11 +431,18 @@ class SynTexPlatform
 
 				if(obj && !err)
 				{       
+					var updates = UpdateManager.getLatestVersions().plugins;
+
 					for(const i in obj.platforms)
 					{
 						if(obj.platforms[i].platform != null && obj.platforms[i].platform != 'config' && obj.platforms[i].port != null)
 						{
 							plugins[obj.platforms[i].platform] = { port : obj.platforms[i].port };
+
+							if(updates[obj.platforms[i].platform] != null)
+							{
+								plugins[obj.platforms[i].platform].versions = updates[obj.platforms[i].platform];
+							}
 						}
 					}
 				}
@@ -459,22 +471,6 @@ class SynTexPlatform
 					response.end();
 				});
 			}
-		});
-
-		this.WebServer.addPage('/serverside/reload-updates', async (response, urlParams, content) => {
-
-			if(urlParams.devices != null)
-			{
-				await UpdateManager.fetchDeviceUpdates(10000);
-			}
-
-			if(urlParams.plugins != null)
-			{
-				await UpdateManager.fetchPluginUpdates(10000);
-			}
-
-			response.write(JSON.stringify(UpdateManager.getLatestVersions()));
-			response.end();
 		});
 
 		this.WebServer.addPage('/device', async (response, urlParams, content) => {
@@ -563,8 +559,13 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/bridge', async (response, urlParams, content) => {
 
+			var obj = {
+				ip: null,
+				wlanMac: null,
+				ethernetMac: null
+			};
+
 			const ifaces = require('os').networkInterfaces();
-			var address;
 
 			for(var dev in ifaces)
 			{
@@ -573,15 +574,8 @@ class SynTexPlatform
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
-				if(iface.length > 0) address = iface[0].address;
+				if(iface.length > 0) obj.ip = iface[0].address;
 			}
-
-			var obj = {
-				ip: address,
-				updates: JSON.stringify(UpdateManager.getLatestVersions()),
-				wlanMac: null,
-				ethernetMac: null
-			};
 
 			const { exec } = require('child_process');
 
