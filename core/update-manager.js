@@ -2,8 +2,10 @@ const request = require('request');
 
 module.exports = class UpdateManager
 {
-    constructor(interval)
+    constructor(interval, config)
     {
+        this.config = config;
+
         this.newestDeviceVersions = {};
         this.newestPluginVersions = {};
 
@@ -18,37 +20,53 @@ module.exports = class UpdateManager
     {
         return new Promise((callback) => {
 
-            var plugins = { 'homebridge-syntex' : 'SynTex', 'homebridge-syntex-webhooks' : 'SynTexWebHooks', 'homebridge-syntex-tuya' : 'SynTexTuya', 'homebridge-syntex-magichome' : 'SynTexMagicHome' };
+            var plugins = {};
             var promiseArray = [];
 
-            for(const i in plugins)
-            {
-                var theRequest = {
-                    method : 'GET',
-                    url : 'http://registry.npmjs.org/-/package/' + i + '/dist-tags',
-                    timeout : timeout
-                };
+            this.config.load('config', (err, obj) => {    
 
-                const newPromise = new Promise((resolve) => request(theRequest, (error, response, body) => {
-
-                    try
+                var pl = { 'SynTex' : 'homebridge-syntex', 'SynTexWebHooks' : 'homebridge-syntex-webhooks', 'SynTexTuya' : 'homebridge-syntex-tuya', 'SynTexMagicHome' : 'homebridge-syntex-magichome' };
+    
+                if(obj && !err)
+                {       
+                    for(const p in obj.platforms)
                     {
-                        this.newestPluginVersions[plugins[i]] = JSON.parse(body);
-
-                        resolve(true);
+                        if(obj.platforms[p].platform != null && obj.platforms[p].platform != 'config' && pl[obj.platforms[p].platform] != null)
+                        {
+                            plugins[obj.platforms[p].platform] = pl[obj.platforms[p].platform];
+                        }
                     }
-                    catch(e)
-                    {
-                        console.error(e);
+                }
 
-                        resolve(false);
-                    }
-                })); 
-                    
-                promiseArray.push(newPromise);
-            }
+                for(const i in plugins)
+                {
+                    var theRequest = {
+                        method : 'GET',
+                        url : 'http://registry.npmjs.org/-/package/' + plugins[i] + '/dist-tags',
+                        timeout : timeout
+                    };
 
-            Promise.all(promiseArray).then(() => callback());
+                    const newPromise = new Promise((resolve) => request(theRequest, (error, response, body) => {
+
+                        try
+                        {
+                            this.newestPluginVersions[i] = JSON.parse(body);
+
+                            resolve(true);
+                        }
+                        catch(e)
+                        {
+                            console.error(e);
+
+                            resolve(false);
+                        }
+                    }));
+
+                    promiseArray.push(newPromise);
+                }
+
+                Promise.all(promiseArray).then(() => callback());
+            });
         });
     }
 
