@@ -155,15 +155,22 @@
 
 								if(latestVersions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(version))
 								{
-									var updateButton = document.createElement('input');
+									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
+									{
+										var updateButton = document.createElement('input');
 
-									updateButton.setAttribute('type', 'button');
-									updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )');
-									updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[id].port + ', this)');
-									updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
-									updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-									
-									document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+										updateButton.setAttribute('type', 'button');
+										updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )');
+										updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[id].port + ', this)');
+										updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
+										updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+										
+										document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+									}
+									else
+									{
+										document.getElementById('update-btn-' + id.toLocaleLowerCase()).value = (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )';
+									}
 								}
 							}
 							else
@@ -278,7 +285,7 @@
 						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 120000, 2, overlays, false) == 'Success')
 						{
 							await Essentials.newTimeout(3000);
-							/*
+							
 							if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
 							{
 								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
@@ -299,7 +306,6 @@
 							Essentials.removeOverlays(btn, false);
 
 							await Essentials.newTimeout(300);
-							*/
 						}
 
 						updating.splice(updating.indexOf(id), 1);
