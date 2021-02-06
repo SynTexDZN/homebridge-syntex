@@ -432,8 +432,6 @@ module.exports = class DeviceManager
 		
 						const newPromise = new Promise((callback) => request(theRequest, (err, response, body) => {
 
-							console.log(body.length);
-
 							try
 							{
 								accessories.push.apply(accessories, JSON.parse(body));
