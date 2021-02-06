@@ -24,7 +24,7 @@ It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichom
 - `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
 - `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
 
-```
+```json
 "platforms": [
     {
         "platform": "SynTex",
