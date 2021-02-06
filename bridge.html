@@ -119,7 +119,7 @@
 
 						if(plugins[id].versions != null && plugins[id].versions[tag] != null)
 						{
-							newestVersion = plugins[id].versions[tag];
+							newestVersion = Essentials.versionCount(plugins[id].versions[tag]) > Essentials.versionCount(plugins[id].versions['latest']) ? plugins[id].versions[tag] : plugins[id].versions['latest'];
 
 							latestVersions[id] = newestVersion;
 						}
