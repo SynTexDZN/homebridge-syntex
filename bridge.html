@@ -82,6 +82,7 @@
 
 				// Load Plugin Versions
 
+				window.tag = '<%tag%>';
 				window.plugins = {};
 				window.versions = {};
 				window.latestVersions = {};
@@ -116,9 +117,9 @@
 					{
 						var newestVersion = 'Fehler beim Laden';
 
-						if(plugins[id].versions != null && plugins[id].versions.latest != null)
+						if(plugins[id].versions != null && plugins[id].versions[tag] != null)
 						{
-							newestVersion = plugins[id].versions.latest;
+							newestVersion = plugins[id].versions[tag];
 
 							latestVersions[id] = newestVersion;
 						}

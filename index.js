@@ -560,10 +560,18 @@ class SynTexPlatform
 		this.WebServer.addPage('/bridge', async (response, urlParams, content) => {
 
 			var obj = {
+				tag: 'latest',
 				ip: null,
 				wlanMac: null,
 				ethernetMac: null
 			};
+
+			var bridgeData = await DeviceManager.getBridgeStorage();
+
+			if(bridgeData != null && bridgeData.tag != null)
+			{
+				obj.tag = bridgeData.tag;
+			}
 
 			const ifaces = require('os').networkInterfaces();
 
@@ -640,8 +648,16 @@ class SynTexPlatform
 		this.WebServer.addPage('/debug/beta', async (response, urlParams, content) => {
 
 			var obj = {
-				updates: JSON.stringify(UpdateManager.getLatestVersions())
+				updates: JSON.stringify(UpdateManager.getLatestVersions()),
+				tag: 'latest'
 			};
+
+			var bridgeData = await DeviceManager.getBridgeStorage();
+
+			if(bridgeData != null && bridgeData.tag != null)
+			{
+				obj.tag = bridgeData.tag;
+			}
 
 			response.write(HTMLQuery.sendValues(content, obj));
 			response.end();
@@ -661,6 +677,17 @@ class SynTexPlatform
 					response.end();
 				}
 			});
+		});
+
+		this.WebServer.addPage('/serverside/beta', async (response, urlParams, content) => {
+
+			if(urlParams.enable != null)
+			{
+				DeviceManager.setBridgeStorage('tag', urlParams.enable == 'true' ? 'beta' : 'latest');
+
+				response.write('Success');
+				response.end();
+			}
 		});
 	}
 

@@ -13,18 +13,13 @@
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
 					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')" disabled>
 				</div>
-				<div style="margin: 100px 0">
-					<div id="beta-plugins"></div>
+				<div class="bottom" style="margin: 100px auto; width: 100%; max-width: 400px">
+					<p style="margin-bottom: 20px"><b>Beta Zugang: <input value="Laden .." id="beta-active" type="button" class="outline loading-loop" onclick="switchBeta(this)" style="border-width: 3px; margin-top: 20px"></b></p>
 				</div>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
-							<div style="width: 100%">
-								<input id="back-btn" type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
-							</div>
-							<div style="width: 100%; margin-left: 20px">
-								<button onclick="reloadVersions(this)">↻ Neu Laden</button>
-							</div>
+							<input id="back-btn" type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
 						</div>
 					</div>
 				</div>
@@ -33,233 +28,59 @@
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
-				import { Replacer } from '/js/replace-select.js';
-				import { Preloader } from '/js/loading.js';
 	
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
 			
 				window.Query = Query;
 				window.Essentials = Essentials;
-				window.Replacer = Replacer;
-				window.Preloader = Preloader;
 
-				window.updates = '<%updates%>';
+				window.tag = '<%tag%>';
 
-				window.versions = {};
-				window.betaVersions = {};
-				window.updating = [];
-				window.plugins = [];
-
-				if((new URL(window.location.href)).searchParams.get('backup') == '')
+				if(tag != 'null' && tag != 'undefined')
 				{
-					Essentials.switchPage('style', 'backup', true);
-				}
-				else if((new URL(window.location.href)).searchParams.get('beta') == '')
-				{
-					Essentials.switchPage('style', 'beta', true);
+					if(tag == 'beta')
+					{
+						document.getElementById('beta-active').className = 'white';
+						document.getElementById('beta-active').value = 'An';
+					}
+					else
+					{
+						document.getElementById('beta-active').value = 'Aus';
+					}
 				}
 
 				Preloader.finish();
 			
-				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((Plugins) => {
-
-					try
-					{
-						plugins = JSON.parse(Plugins);
-					}
-					catch(e)
-					{
-						console.error(e);
-					}
-
-					try
-					{
-						updates = JSON.parse(updates);
-					}
-					catch(e)
-					{
-						updates = { plugins : {} };
-
-						console.error(e);
-					}
-
-					var counter = 0;
-
-					for(const id in plugins)
-					{
-						if(updates.plugins[id] != null)
-						{
-							if(counter == 0)
-							{
-								document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content; margin-top: 0">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
-							}
-							else
-							{
-								document.getElementById('beta-plugins').innerHTML += '<h2 style="width: fit-content">• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' •</h2>';
-							}
-							
-							document.getElementById('beta-plugins').innerHTML += '<p id="version-' + id.toLowerCase() + '" class="loading-loop"><b>Version: </b>Laden ..</p>';
-
-							if(updates.plugins != null && updates.plugins[id] != null && updates.plugins[id].beta != null)
-							{
-								var newestVersion = updates.plugins[id].beta;
-
-								betaVersions[id] = newestVersion;
-
-								document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>' + newestVersion + '</p>';
-							}
-							else
-							{
-								document.getElementById('beta-plugins').innerHTML += '<p id="beta-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Beta Version: </b>Fehler beim Laden</p>';
-							}
-
-							counter++;
-
-							Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port + '/serverside/version', 10000, 2, {}, false).then(async function (version) {
-
-								if(version != null)
-								{
-									versions[this.id] = version;
-
-									document.getElementById('version-' + this.id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[this.id];
-								
-									if(betaVersions[this.id] != null && Essentials.versionCount(betaVersions[this.id]) > Essentials.versionCount(version))
-									{
-										var updateButton = document.createElement('input');
-
-										updateButton.setAttribute('type', 'button');
-										updateButton.setAttribute('value', (this.id != 'SynTex' ? this.id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[this.id] + ' )');
-										updateButton.setAttribute('onclick', 'updatePlugin("' + this.id + '", ' + plugins[this.id].port + ', this)');
-										updateButton.setAttribute('id', 'update-btn-' + this.id.toLowerCase());
-										updateButton.setAttribute('style', 'margin-bottom: 20px');
-										
-										document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-									}
-								}
-								else
-								{
-									document.getElementById('version-' + this.id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
-								}
-
-							}.bind({ id : id }));
-						}
-					}
-
-					Preloader.finish();
-				});
-
             </script>
             <script>
 
-				async function updatePlugin(id, port, btn)
+				function switchBeta(btn)
 				{
-					if(updating.length == 0)
+					var enable = false;
+
+					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
 					{
-						var overlays = {
-							root : btn,
-							id : 'update',
-							pending : { value : 'Update wird Installiert ..', color : 'purple' },
-							executeError : { value : 'Update Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge!' }
-						};
-
-						updating.push(id);
-
-						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + betaVersions[id], 120000, 2, overlays, false) == 'Success')
-						{
-							await Essentials.newTimeout(3000);
-
-							if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
-							{
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
-
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
-								versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
-
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
-							}
-							else
-							{
-								Essentials.showOverlay(btn, Essentials.createErrorSuccessOverlay('update-result', 'Homebridge Startet Nicht!'));
-							}
-
-							await Essentials.newTimeout(4000);
-
-							Essentials.removeOverlays(btn, false);
-
-							await Essentials.newTimeout(300);
-							
-							updating.splice(updating.indexOf(id), 1);
-						}
+						btn.setAttribute('class', 'outline');
+						btn.setAttribute('value', 'Aus');
 					}
-				}
+					else
+					{
+						btn.setAttribute('class', 'white');
+						btn.setAttribute('value', 'An');
 
-				function reloadVersions(btn)
-				{
+						enable = true;
+					}
+
 					var overlays = {
 						root : btn,
-						id : 'reload',
-						pending : { value : 'Neu Laden ..' },
+						id : 'restart',
+						pending : { value : 'Neustarten ..' },
+						executeError : { value : 'Neustart Fehlgeschlagen!' },
 						connectionError : { value : 'Keine Verbindung zur Bridge!' }
 					};
 
-					Query.complexFetch('/serverside/reload-updates?plugins', 5000, 2, overlays, false).then(async (response) => {
-						
-						try
-						{
-							response = JSON.parse(response);
-
-							for(const id in response.plugins)
-							{
-								betaVersions[id] = response.plugins[id].beta;
-
-								if(document.getElementById('beta-version-' + id.toLowerCase()) != null)
-								{
-									document.getElementById('beta-version-' + id.toLowerCase()).innerHTML = '<b>Beta Version: </b>' + response.plugins[id].beta;
-								}
-
-								if(betaVersions[id] != null && versions[id] != null && Essentials.versionCount(betaVersions[id]) > Essentials.versionCount(versions[id]))
-								{
-									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
-									{
-										for(const pid in plugins)
-										{
-											if(id == pid)
-											{
-												var updateButton = document.createElement('input');
-
-												updateButton.setAttribute('type', 'button');
-												updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[id] + ' )');
-												updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[pid].port + ', this)');
-												updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
-												updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-												
-												document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-											}
-										}
-									}
-									else
-									{
-										document.getElementById('update-btn-' + id.toLocaleLowerCase()).value = (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + betaVersions[id] + ' )';
-									}
-								}
-							}
-
-							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('reload', 'Aktualisiert!'));
-						}
-						catch(e)
-						{
-							console.error(e);
-
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('reload', 'Neu Laden Fehlgeschlagen!'));
-						}
-
-						await Essentials.newTimeout(2000);
-
-						Essentials.removeOverlays(btn, true);
-					});
+					Query.complexFetch('/serverside/beta?enable=' + enable, 5000, 2, {}, true);
 				}
 			
 			</script>
