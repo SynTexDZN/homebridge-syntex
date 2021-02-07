@@ -645,6 +645,19 @@ class SynTexPlatform
 			response.end();
 		});
 
+		this.WebServer.addPage('/debug/', (response, urlParams, content) => {
+
+			fs.readdir(__dirname + '/debug/workaround/', async (err, files) => {
+
+				var obj = {
+					workaround: JSON.stringify(files)
+				};
+	
+				response.write(HTMLQuery.sendValues(content, obj));
+				response.end();
+			});
+		});
+
 		this.WebServer.addPage('/debug/beta', async (response, urlParams, content) => {
 
 			var obj = {
