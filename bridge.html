@@ -56,7 +56,7 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				
-				// Mac and IP Widgets
+				// NOTE: Mac and IP Widgets
 
 				window.bridgeIP = '<%ip%>';
 				window.wlanMac = '<%wlanMac%>';
@@ -80,7 +80,7 @@
 					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = ethernetMac.toUpperCase();
 				}
 
-				// Load Plugin Versions
+				// NOTE: Load Plugin Versions
 
 				window.tag = '<%tag%>';
 				window.plugins = {};
@@ -108,6 +108,8 @@
 
 				window.restarting = false;
 				window.updating = [];
+
+				// NOTE: Create Version GUI
 
 				function renderGUI()
 				{
@@ -183,7 +185,7 @@
 					Preloader.finish();
 				}
 
-				// Restart Bridge
+				// NOTE: Restart Bridge
 
 				async function restartBridge(btn)
 				{
@@ -221,7 +223,7 @@
 					}
 				}
 
-				// Reload Button
+				// NOTE: Reload Button
 
 				function reloadVersions(btn)
 				{
@@ -266,7 +268,7 @@
 					});
 				}
 
-				// Plugin Update
+				// NOTE: Plugin Update
 				
 				async function updatePlugin(id, port, btn)
 				{

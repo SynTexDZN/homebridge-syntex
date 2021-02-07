@@ -28,7 +28,7 @@ function checkRestart(url)
 {
 	return new Promise(async (resolve) => {
 
-		var restart = await Query.fetchURL(url, 3000); //TODO: Auf Modul Umstellen
+		var restart = await Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
 
 		console.log('RESTART', restart);
 
@@ -342,7 +342,7 @@ async function leavePage(url)
 		}
 		else
 		{
-			// TODO : Seite nicht erreichbar
+			// TODO: Add 404 Page When Page Path Not Found
 		}
 
 		pageLoading = false;

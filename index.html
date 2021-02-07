@@ -162,7 +162,7 @@
 
 						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
 
-						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // TODO: Remove
+						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
 
 						if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
 						{
@@ -593,7 +593,7 @@
 				{
 					if(!device.className.includes('update'))
 					{
-						if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
+						if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 						{
 							device.children[1].children[0].innerHTML = 'AKTIV';
 							device.children[1].children[0].style.color = 'hsl(170, 90%, 50%)';
@@ -779,12 +779,12 @@
 										this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
 										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
 									}
-									else if(device.getAttribute('active') == 'true') // TODO: Replace with devices[i].active
+									else if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = '';
 										this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
 									}
-									else if(device.getAttribute('active') == 'false') // TODO: Replace with devices[i].active
+									else if(device.getAttribute('active') == 'false') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
 										this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
