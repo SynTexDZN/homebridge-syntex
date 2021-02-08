@@ -168,9 +168,10 @@
 								var label = document.createElement('label');
 								var input = document.createElement('input');
 
-								label.setAttribute('for', json.available[i].ssid);
-								label.setAttribute('style', 'margin-bottom: 20px');
+								label.setAttribute('for', 'wifi-' + i);
+								label.setAttribute('style', 'margin-bottom: 20px; text-align: left; cursor: pointer');
 
+								input.setAttribute('id', 'wifi-' + i);
 								input.setAttribute('type', 'radio');
 								input.setAttribute('name', 'wifissid');
 								input.setAttribute('value', json.available[i].ssid);
