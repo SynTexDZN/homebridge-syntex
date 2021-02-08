@@ -141,44 +141,65 @@
 
 			</script>
 			<script>
+
+				var searching = false;
 					
 				async function scanWifi(btn)
-				{           
-					btn.value = 'Bitte Warten ..'; 
-					document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
-
-					var res = await Query.complexFetch(ip + 'wifi', 10000, 3, {}, false);
-
-					if(res != null && res != '' && res != '[]')
-					{  
-						document.getElementById('networks').innerHTML = '';
-					
-						var json = JSON.parse(res);
-
-						for(var i = 0; i < json.length; i++)
-						{
-							var label = document.createElement('label');
-							var input = document.createElement('input');
-
-							label.setAttribute('for', json[i]);
-							label.setAttribute('style', 'margin-bottom: 20px');
-
-							input.setAttribute('type', 'radio');
-							input.setAttribute('name', 'wifissid');
-							input.setAttribute('value', json[i]);        
-
-							label.appendChild(input);
-							label.innerHTML += json[i];
-
-							document.getElementById('networks').appendChild(label);
-						}
-					}
-					else
+				{
+					if(!searching)
 					{
-						document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
-					}
+						searching = true;
 
-					btn.value = 'Suchen';
+						btn.value = 'Bitte Warten ..'; 
+						document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
+
+						var res = await Query.complexFetch(ip + 'wifi', 10000, 3, {}, false);
+
+						if(res != null && res != '')
+						{
+							document.getElementById('networks').innerHTML = '';
+
+							var json = JSON.parse(res), found = false;
+
+							json.available.sort((a, b) => (a.rssi < b.rssi) ? 1 : (a.rssi > b.rssi) ? -1 : 0);
+
+							for(const i in json.available)
+							{
+								var label = document.createElement('label');
+								var input = document.createElement('input');
+
+								label.setAttribute('for', json.available[i].ssid);
+								label.setAttribute('style', 'margin-bottom: 20px');
+
+								input.setAttribute('type', 'radio');
+								input.setAttribute('name', 'wifissid');
+								input.setAttribute('value', json.available[i].ssid);
+
+								if(json.connected != null && !found)
+								{
+									if(json.available[i].ssid == json.connected.ssid)
+									{
+										input.setAttribute('checked', '');
+
+										found = true;
+									}
+								}
+
+								label.appendChild(input);
+								label.innerHTML += json.available[i].ssid + ' ( ' + json.available[i].rssi + ' )';
+
+								document.getElementById('networks').appendChild(label);
+							}
+						}
+						else
+						{
+							document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
+						}
+
+						btn.value = 'Suchen';
+
+						searching = false;
+					}
 				}
 				
 				async function setTimer(time)
