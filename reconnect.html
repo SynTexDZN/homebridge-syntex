@@ -70,17 +70,17 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				window.urlID = (new URL(window.location.href)).searchParams.get('id');
+				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
+				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
 				window.ping = false;
 				window.ip = 'http://192.168.4.1/';
-				window.ipp = (new URL(window.location.href)).searchParams.get('ip');
 				window.bridgeIP = 'http://<%bridge-ip%>';
 				window.timeRemaining = 0;
 
-				if(urlID)
+				if(deviceID != null)
 				{
-					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + urlID + "&settings')");
-					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + urlID + "&settings')");
+					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
+					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
 					document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
 				}
 
@@ -100,6 +100,8 @@
 						Essentials.leavePage(url);
 					}
 				}
+
+				// NOTE: Search for Device
 				
 				async function pingESP()
 				{
@@ -111,30 +113,24 @@
 
 							Essentials.switchPage('welcome', 'wifi', false);
 
-							setTimeout(function()
-							{
-								scanWifi(document.getElementById('scan-btn'));
-							}, 2000);
+							setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 						}
 						else
 						{  
-							setTimeout(function()
+							setTimeout(() => pingESP(), 2000);
+						}
+
+						if(deviceIP != null)
+						{
+							if(await Query.fetchURL('http://' + deviceIP + '/', 2000) != null)
 							{
-								pingESP();
-							}, 2000);
-						} 
+								ping = true;
+								ip = 'http://' + deviceIP + '/';
 
-						if(await Query.fetchURL('http://' + ipp + '/', 2000) != null)
-						{  
-							ping = true;
-							ip = 'http://' + ipp + '/';
+								Essentials.switchPage('welcome', 'wifi', false);
 
-							Essentials.switchPage('welcome', 'wifi', false);
-
-							setTimeout(function()
-							{
-								scanWifi(document.getElementById('scan-btn'));
-							}, 2000);
+								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
+							}
 						}
 					}        
 				} 
@@ -236,6 +232,7 @@
 							{
 								ping = true;
 							}
+
 						}, 20000);
 
 						setTimeout(function()
@@ -244,6 +241,7 @@
 							{
 								document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
 							}
+
 						}, 30000);
 
 						setTimeout(function()
@@ -258,8 +256,10 @@
 									{
 										Essentials.leavePage('/setup');
 									}
+
 								}, 10000); 
 							}
+							
 						}, 60000);
 
 						console.log('MAC', mac);
