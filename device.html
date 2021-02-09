@@ -250,7 +250,7 @@
 				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
 				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
-				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/reconnect?ip=" + device.ip + '&id=' + device.id + "')");
+				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
 				document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
 
