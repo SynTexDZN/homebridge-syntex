@@ -108,7 +108,7 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				// Note: Redirect When Reconnecting
+				// NOTE: Redirect When Reconnecting
 
 				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
 				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
@@ -129,7 +129,7 @@
 			</script>
 			<script>
 
-				// Note: Check Name
+				// NOTE: Check Name
 
 				async function checkName(form)
 				{
@@ -209,7 +209,7 @@
 					}
 				}
 
-				// Note: Scan WiFi Networks
+				// NOTE: Scan WiFi Networks
 
 				var searching = false;
 					
@@ -286,7 +286,7 @@
 					}
 				}
 
-				// Note: Send WiFi Configuration to Device
+				// NOTE: Send WiFi Configuration to Device
 
 				window.bridgeIP = '<%bridge-ip%>';
 				window.success = false;
@@ -318,8 +318,6 @@
 							if(deviceID != null && deviceIP != null)
 							{
 								Essentials.switchPage('wifi', 'check-connection', false);
-
-								console.log('MAC', mac);
 
 								redirectCountdown('/device?id=' + mac);    
 							}
@@ -360,17 +358,17 @@
 
 								}, 60000);
 
-								console.log('MAC', mac);
-
 								checkDB(mac);   
 							}
+
+							console.log('MAC', mac);
 						}
 					}
 
 					return false;
 				}
 
-				// Note: Connecting Progress Bar
+				// NOTE: Connecting Progress Bar
 
 				window.timeRemaining = 0;
 
@@ -385,7 +383,7 @@
 					setTimer(timeRemaining);
 				}
 
-				// Note: Device Setup Check
+				// NOTE: Device Setup Check
 
 				async function checkDB(id)
 				{
@@ -403,7 +401,7 @@
 					}
 				}
 
-				// Note: Redirect Delayed
+				// NOTE: Redirect Delayed
 
 				async function redirectCountdown(url)
 				{
