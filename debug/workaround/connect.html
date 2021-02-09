@@ -108,6 +108,8 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
+				// Note: Redirect When Reconnecting
+
 				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
 				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
 
@@ -284,7 +286,10 @@
 					}
 				}
 
+				// Note: Send WiFi Configuration to Device
+
 				window.bridgeIP = '<%bridge-ip%>';
+				window.success = false;
 
 				async function sendWiFiSettings(form)
 				{
@@ -293,6 +298,11 @@
 						var formData = new FormData(form);
 
 						formData.append('bridge-ip', 'http://' + bridgeIP);
+
+						if(deviceName != null)
+						{
+							formData.append('device-name', deviceName);
+						}
 
 						var overlays = {
 							root : document.getElementById('connect-btn'),
@@ -360,6 +370,8 @@
 					return false;
 				}
 
+				// Note: Connecting Progress Bar
+
 				window.timeRemaining = 0;
 
 				async function setTimer(time)
@@ -372,6 +384,8 @@
 					
 					setTimer(timeRemaining);
 				}
+
+				// Note: Device Setup Check
 
 				async function checkDB(id)
 				{
@@ -388,6 +402,8 @@
 						setTimeout(() => checkDB(id), 2000);
 					}
 				}
+
+				// Note: Redirect Delayed
 
 				async function redirectCountdown(url)
 				{
