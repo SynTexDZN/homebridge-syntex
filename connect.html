@@ -131,6 +131,8 @@
 
 				// NOTE: Check Name
 
+				window.deviceName = null;
+
 				async function checkName(form)
 				{
 					var overlays = {
@@ -146,7 +148,7 @@
 
 					if(created == 'Success')
 					{
-						window.deviceName = document.getElementById('device-name').value;
+						deviceName = document.getElementById('device-name').value;
 
 						Essentials.switchPage('check-name', 'connect', false);
 
