@@ -2,11 +2,31 @@
 	<body>
 		<div id="content">
 			<title>Gerät Verbinden</title>
-			<div id="welcome" style="transition: .2s ease-in-out">
+			<div id="check-name" style="transition: .2s ease-in-out">
+				<h1>Name Aussuchen</h1>
+				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); checkName(this);">
+					<p><b>Name: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+					<div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
+						<button class="widget-left gradient-red">Wichtig</button>
+						<button class="widget-right">Der Name muss eindeutig sein<br>Dieser kann frei gewählt werden</button>
+					</div>
+					<div class="navigation-panel">
+						<div class="sticky-inset">
+							<div style="display: flex">
+								<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
+								<div style="display: block; width: 100%; margin-left: 20px">
+									<input id="check-name-btn" type="submit" value="Weiter">
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="connect" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<h1>Gerät Verbinden</h1>
 				<p>Mit einem anderen WLAN Netz verbinden</p>
 				<div class="main" style="margin-top: 100px; margin-bottom: 132px">
-					<img src="img/wifi.png" class="setup-png">
+					<img src="/img/wifi.png" class="setup-png">
 					<input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Nach Geräten suchen ..">
 					<p>Bitte Verbinde dich<br>mit dem WLAN<br>deines Smart Home Geräts<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
 				</div>
@@ -22,13 +42,13 @@
 			<div id="wifi" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<h1>Gerät Übertragen</h1>
 				<div class="main" style="margin-top: 100px">
-					<form onsubmit="event.preventDefault(); sendWifiSettings(this);">
+					<form onsubmit="event.preventDefault(); sendWiFiSettings(this);">
 						<div id="networks" style="margin-bottom: 100px">
 							<p class="loading-loop">Laden ..</p>
 						</div>
 						<input type="password" name="wifipass" placeholder="Netzwerk Passwort" style="margin-bottom: 20px" required>
 						<br>
-						<input type="submit" value="Verbinden">
+						<input id="connect-btn" type="submit" value="Verbinden">
 					</form>
 				</div>
 				<div class="main navigation-panel">
@@ -43,20 +63,38 @@
 			<div id="connecting" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<h1>Verbinden</h1>
 				<div class="main" style="margin-top: 100px">
-					<img src="img/connecting.png" class="setup-png">
+					<img src="/img/connecting.png" class="setup-png">
 					<div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
 						<div class="progress" style="background: hsl(210, 85%, 65%); width: 0%; height: 10px; border-radius: 5px"></div>
 					</div>
-					<p>Das Gerät versucht<br>sich im WLAN anzumelden</p>
+					<p>Das Gerät versucht,<br>sich im WLAN anzumelden.</p>
 				</div>
 			</div>
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<h1>Erfolgreich Verbunden</h1>
+				<div class="main" style="margin-top: 100px">
+					<img src="/img/success.png" class="setup-png">
+					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
+					<p>Das Gerät ist jetzt Einsatzbereit!</p>
+					<p>Du wirst jeden Moment automatisch weitergeleitet.</p>
+				</div>
+			</div>
+			<div id="error" style="display: none; opacity: 0; transition: .2s ease-in-out">
+				<h1>Fehler beim Verbinden</h1>
+				<div class="main" style="margin-top: 100px">
+					<img src="/img/error.png" class="setup-png">
+					<input class="gradient-red loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
+					<p>Bitte versuche es erneut!</p>
+					<p>Dein WLAN-Passwort war nicht korrekt,<br>oder etwas anderes ist schief gegangen.</p>
+				</div>
+			</div>
+			<div id="check-connection" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<h1>Daten Übertragen</h1>
 				<div class="main" style="margin-top: 100px">
-					<img src="img/success.png" class="setup-png">
-					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
-					<p>Das Gerät<br>verbindet sich jetzt<br>mit dem WLAN</p>
-					<p>Sollte es nach<br>60 Sekunden<br>immernoch offline sein<br>verbinde es erneut<br>mit deinem Netzwerk</p>
+					<img src="/img/success.png" class="setup-png">
+					<input class="gradient-yellow loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
+					<p>Das Gerät verbindet sich jetzt mit dem WLAN!</p>
+					<p>Sollte es nach 60 Sekunden immernoch offline sein,<br>verbinde es erneut mit deinem Netzwerk.</p>
 				</div>
 			</div>
 			<script type="module" defer>
@@ -72,71 +110,104 @@
 
 				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
 				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
-				window.ping = false;
-				window.ip = 'http://192.168.4.1/';
-				window.bridgeIP = 'http://<%bridge-ip%>';
-				window.timeRemaining = 0;
 
-				if(deviceID != null)
+				if(deviceID != null && deviceIP != null)
 				{
 					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
 					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
 					document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
+
+					Essentials.switchPage('check-name', 'wifi', true);
+
+					pingESP();
 				}
 
 				Preloader.finish();
-				
-				pingESP();
 
 			</script>
-			<script defer>
+			<script>
 
-				async function redirectCountdown(url)
+				// Note: Check Name
+
+				async function checkName(form)
 				{
-					await Essentials.newTimeout(3000);
-					
-					if(await Essentials.checkRestart('/serverside/check-restart'))
+					var overlays = {
+						root : document.getElementById('check-name-btn'),
+						id : 'name',
+						pending : { value : 'Bitte Warten ..' },
+						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+					};
+
+					var created = await Query.complexFetch('/serverside/check-name?name=' + document.getElementById('device-name').value, 5000, 2, overlays, true);
+
+					await Essentials.newTimeout(1000);
+
+					if(created == 'Success')
 					{
-						Essentials.leavePage(url);
+						window.deviceName = document.getElementById('device-name').value;
+
+						Essentials.switchPage('check-name', 'connect', false);
+
+						pingESP();
+					}
+					else
+					{
+						Essentials.showOverlay(document.getElementById('check-name-btn'), Essentials.createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
+
+						await Essentials.newTimeout(4000);
+
+						Essentials.removeOverlays(document.getElementById('check-name-btn'), true);
 					}
 				}
 
 				// NOTE: Search for Device
+
+				window.pingActive = false;
+				window.deviceURL = 'http://192.168.4.1/';
 				
 				async function pingESP()
 				{
-					if(ping == false)
+					if(!pingActive)
 					{
-						if(await Query.fetchURL('http://192.168.4.1/', 2000) != null)
-						{  
-							ping = true;
-
-							Essentials.switchPage('welcome', 'wifi', false);
-
-							setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
-						}
-						else
-						{  
-							setTimeout(() => pingESP(), 2000);
-						}
-
 						if(deviceIP != null)
 						{
-							if(await Query.fetchURL('http://' + deviceIP + '/', 2000) != null)
-							{
-								ping = true;
-								ip = 'http://' + deviceIP + '/';
+							Query.fetchURL('http://' + deviceIP + '/', 2000).then((echo) => {
 
-								Essentials.switchPage('welcome', 'wifi', false);
+								if(echo != null)
+								{
+									pingActive = true;
+									deviceURL = 'http://' + deviceIP + '/';
+
+									console.log('PING SUCCESS', deviceURL);
+
+									Essentials.switchPage('connect', 'wifi', false);
+
+									scanWifi(document.getElementById('scan-btn'));
+								}
+							});
+						}
+
+						Query.fetchURL('http://192.168.4.1/', 2000).then((echo) => {
+
+							if(echo != null)
+							{
+								pingActive = true;
+
+								console.log('PING SUCCESS', deviceURL);
+
+								Essentials.switchPage('connect', 'wifi', false);
 
 								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 							}
-						}
-					}        
-				} 
+							else
+							{
+								setTimeout(() => pingESP(), 2000);
+							}
+						});
+					}
+				}
 
-			</script>
-			<script>
+				// Note: Scan WiFi Networks
 
 				var searching = false;
 					
@@ -149,48 +220,62 @@
 						btn.value = 'Bitte Warten ..'; 
 						document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
-						var res = await Query.complexFetch(ip + 'wifi', 10000, 3, {}, false);
+						var network = await Query.complexFetch(deviceURL + 'wifi', 10000, 3, {}, false);
+						
+						try
+						{
+							network = JSON.parse(network);
+						}
+						catch(e)
+						{
+							network = null;
 
-						if(res != null && res != '')
+							console.error(e);
+						}
+
+						if(network != null && network.available.length > 0)
 						{
 							document.getElementById('networks').innerHTML = '';
 
-							var json = JSON.parse(res), found = false;
+							var found = false;
 
-							json.available.sort((a, b) => (a.rssi < b.rssi) ? 1 : (a.rssi > b.rssi) ? -1 : 0);
+							network.available.sort((a, b) => (a.rssi < b.rssi) ? 1 : (a.rssi > b.rssi) ? -1 : 0);
 
-							for(const i in json.available)
+							for(const i in network.available)
 							{
 								var label = document.createElement('label');
-								var input = document.createElement('input');
 
 								label.setAttribute('for', 'wifi-' + i);
 								label.setAttribute('style', 'margin-bottom: 20px; text-align: left; cursor: pointer');
 
+								var input = document.createElement('input');
+
 								input.setAttribute('id', 'wifi-' + i);
 								input.setAttribute('type', 'radio');
 								input.setAttribute('name', 'wifissid');
-								input.setAttribute('value', json.available[i].ssid);
+								input.setAttribute('value', network.available[i].ssid);
 
-								if(json.connected != null && !found)
+								if(!found && network.connected != null && network.available[i].ssid == network.connected.ssid)
 								{
-									if(json.available[i].ssid == json.connected.ssid)
-									{
-										input.setAttribute('checked', '');
+									input.setAttribute('checked', '');
 
-										found = true;
-									}
+									found = true;
 								}
 
 								label.appendChild(input);
-								label.innerHTML += json.available[i].ssid + ' ( ' + json.available[i].rssi + ' )';
+
+								label.innerHTML += network.available[i].ssid + ' ( ' + ((network.available[i].rssi + 100) * (network.available[i].rssi + 100) / 100) + '% )';
 
 								document.getElementById('networks').appendChild(label);
 							}
 						}
+						else if(network == null)
+						{
+							document.getElementById('networks').innerHTML = "<p>Keine Verbindung zum Gerät</p>";
+						}
 						else
 						{
-							document.getElementById('networks').innerHTML = "<p>Bitte drücke auf 'Suchen'</p>";
+							document.getElementById('networks').innerHTML = "<p>Keine Netzwerke Gefunden<br>Bitte drücke auf 'Suchen'</p>";
 						}
 
 						btn.value = 'Suchen';
@@ -198,7 +283,85 @@
 						searching = false;
 					}
 				}
-				
+
+				window.bridgeIP = '<%bridge-ip%>';
+
+				async function sendWiFiSettings(form)
+				{
+					if(bridgeIP != 'null')
+					{
+						var formData = new FormData(form);
+
+						formData.append('bridge-ip', 'http://' + bridgeIP);
+
+						var overlays = {
+							root : document.getElementById('connect-btn'),
+							id : 'connecting',
+							pending : { value : 'Bitte Warten ..' },
+							connectionError : { value : 'Keine Verbindung zum Gerät!' }
+						};
+
+						var mac = await Query.complexFetch(deviceURL + 'settings', 20000, 1, overlays, false, formData);
+
+						if(mac != null)
+						{
+							if(deviceID != null && deviceIP != null)
+							{
+								Essentials.switchPage('wifi', 'check-connection', false);
+
+								console.log('MAC', mac);
+
+								redirectCountdown('/device?id=' + mac);    
+							}
+							else
+							{
+								Essentials.switchPage('wifi', 'connecting', false);
+
+								setTimer(60000);
+
+								var ping = false;
+
+								setTimeout(async function()
+								{
+									if(await Query.fetchURL('/serverside/version', 10000) != null)
+									{
+										ping = true;
+									}
+
+								}, 20000);
+
+								setTimeout(function()
+								{
+									if(ping == false)
+									{
+										document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
+									}
+
+								}, 30000);
+
+								setTimeout(function()
+								{
+									if(success == false)
+									{
+										Essentials.switchPage('connecting', 'error', false);
+
+										redirectCountdown('/setup');
+									}
+
+								}, 60000);
+
+								console.log('MAC', mac);
+
+								checkDB(mac);   
+							}
+						}
+					}
+
+					return false;
+				}
+
+				window.timeRemaining = 0;
+
 				async function setTimer(time)
 				{
 					timeRemaining = time - 100;
@@ -209,67 +372,31 @@
 					
 					setTimer(timeRemaining);
 				}
-				
-				async function sendWifiSettings(form)
+
+				async function checkDB(id)
 				{
-					var formData = new FormData(form);
-
-					formData.append('bridge-ip', bridgeIP);
-
-					var mac = await Query.complexFetch(ip + 'settings', 20000, 1, {}, false, formData);
-
-					if(mac != null)
-					{
-						Essentials.switchPage('wifi', 'connecting', false);
-
-						setTimer(60000);
-
-						var ping = false;
-
-						setTimeout(async function()
-						{
-							if(await Query.fetchURL('/serverside/version', 10000) != null)
-							{
-								ping = true;
-							}
-
-						}, 20000);
-
-						setTimeout(function()
-						{
-							if(ping == false)
-							{
-								document.getElementById('connecting').getElementsByTagName('p')[0].innerHTML = 'Bitte Verbinde dich<br>mit dem normalen WLAN';
-							}
-
-						}, 30000);
-
-						setTimeout(function()
-						{
-							if(success == false)
-							{
-								Essentials.switchPage('connecting', 'error', false);
-
-								setTimeout(async function()
-								{
-									if(await Essentials.checkRestart('/serverside/check-restart'))
-									{
-										Essentials.leavePage('/setup');
-									}
-
-								}, 10000); 
-							}
-							
-						}, 60000);
-
-						console.log('MAC', mac);
+					if(await Query.fetchURL('/serverside/check-device?id=' + id, 5000) == 'Success')
+					{  
+						success = true;
 
 						Essentials.switchPage('connecting', 'success', false);
 
-						redirectCountdown('/device?id=' + mac);     
+						redirectCountdown('/device?id=' + id);
 					}
+					else
+					{
+						setTimeout(() => checkDB(id), 2000);
+					}
+				}
+
+				async function redirectCountdown(url)
+				{
+					await Essentials.newTimeout(4000);
 					
-					return false;
+					if(await Essentials.checkRestart('/serverside/check-restart'))
+					{
+						Essentials.leavePage(url);
+					}
 				}
 
 			</script>

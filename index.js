@@ -538,14 +538,15 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/setup', '/reconnect'], (response, urlParams, content) => {
+		this.WebServer.addPage(['/setup', '/reconnect', '/debug/workaround/connect'], (response, urlParams, content) => {
 
 			const ifaces = require('os').networkInterfaces();
-			var address;
+
+			var address = null;
 
 			for(var dev in ifaces)
 			{
-				var iface = ifaces[dev].filter((details) =>	{
+				var iface = ifaces[dev].filter((details) => {
 
 					return details.family === 'IPv4' && details.internal === false;
 				});
