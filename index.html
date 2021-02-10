@@ -86,8 +86,12 @@
 				console.log('DEVICES', devices);
 
 				// IDEA: Update Restart Widget With Interval
+
+				window.timeInterval = setInterval(() => {
+
+					document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(new Date() - new Date('<%restart%>'));
 				
-				document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = '<%restart%>';
+				}, 1000);
 
 				devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
 				
@@ -901,6 +905,42 @@
 						Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
+					}
+				}
+
+				function formatTimestamp(timestamp)
+				{
+					timestamp /= 1000;
+
+					console.log(timestamp);
+
+					if(timestamp < 60)
+					{
+						return Math.round(timestamp) + ' s';
+					}
+					else if(timestamp < 60 * 60)
+					{
+						return Math.round(timestamp / 60) + ' m';
+					}
+					else if(timestamp < 60 * 60 * 24)
+					{
+						return Math.round(timestamp / 60 / 60) + ' h';
+					}
+					else if(timestamp < 60 * 60 * 24 * 7)
+					{
+						return Math.round(timestamp / 60 / 60 / 24) + ' T';
+					}
+					else if(timestamp < 60 * 60 * 24 * 30.5)
+					{
+						return Math.round(timestamp / 60 / 60 / 24 / 7) + 'W';
+					}
+					else if(timestamp < 60 * 60 * 24 * 365)
+					{
+						return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'M';
+					}
+					else
+					{
+						return '> 1 J';
 					}
 				}
 

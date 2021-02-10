@@ -523,7 +523,7 @@ class SynTexPlatform
 			
 			if(bridgeData != null && bridgeData.restart != null)
 			{
-				obj.restart = this.formatTimestamp(new Date().getTime() / 1000 - new Date(bridgeData.restart).getTime() / 1000);
+				obj.restart = bridgeData.restart;
 			}
 			
 			response.write(HTMLQuery.sendValues(content, obj));
@@ -732,37 +732,5 @@ class SynTexPlatform
 				}
 			});
 		});
-	}
-
-	formatTimestamp(timestamp)
-	{
-		if(timestamp < 60)
-		{
-			return Math.round(timestamp) + ' s';
-		}
-		else if(timestamp < 60 * 60)
-		{
-			return Math.round(timestamp / 60) + ' m';
-		}
-		else if(timestamp < 60 * 60 * 24)
-		{
-			return Math.round(timestamp / 60 / 60) + ' h';
-		}
-		else if(timestamp < 60 * 60 * 24 * 7)
-		{
-			return Math.round(timestamp / 60 / 60 / 24) + ' T';
-		}
-		else if(timestamp < 60 * 60 * 24 * 30.5)
-		{
-			return Math.round(timestamp / 60 / 60 / 24 / 7) + 'W';
-		}
-		else if(timestamp < 60 * 60 * 24 * 365)
-		{
-			return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'M';
-		}
-		else
-		{
-			return '> 1 J';
-		}
 	}
 }
