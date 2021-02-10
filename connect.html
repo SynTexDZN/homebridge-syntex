@@ -268,7 +268,7 @@
 
 								label.appendChild(input);
 
-								label.innerHTML += Math.round(100 - (network.available[i].rssi * network.available[i].rssi) / 100) + '% - ' + network.available[i].ssid;
+								label.innerHTML += network.available[i].ssid + ' • ' + Math.round(100 - (network.available[i].rssi * network.available[i].rssi) / 100) + '%';
 
 								document.getElementById('networks').appendChild(label);
 							}
