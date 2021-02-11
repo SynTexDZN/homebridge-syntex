@@ -43,6 +43,25 @@ function checkRestart(url)
 	});
 }
 
+function checkUpdating(url)
+{
+	return new Promise(async (resolve) => {
+
+		var restart = await Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
+
+		console.log('RESTART', restart);
+
+		if(restart != null && restart == 'false')
+		{
+			resolve(true);
+		}
+		else
+		{
+			setTimeout(() => resolve(checkRestart(url)), 500);
+		}
+	});
+}
+
 var overlays = [];
 
 function createOverlay(level, id, value, color)
@@ -367,4 +386,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };

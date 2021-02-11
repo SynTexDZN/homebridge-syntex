@@ -200,23 +200,25 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/update', (response, urlParams) => {
 
-			var version = 'latest';
-
-			if(urlParams.version != null)
+			if(urlParams.status != null)
 			{
-				version = urlParams.version;
+				response.write(updating.toString());
+				response.end();
 			}
+			else
+			{
+				var version = urlParams.version != null ? urlParams.version : 'latest';
 
-			const { exec } = require('child_process');
-			
-			exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
+				updating = true;
 
-				try
-				{
-					response.write(error || stderr.includes('ERR!') ? 'Error' : 'Success');
+				const { exec } = require('child_process');
+				
+				exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
+
+					response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
 					response.end();
 
-					if(error || stderr.includes('ERR!'))
+					if(error || (stderr && stderr.includes('ERR!')))
 					{
 						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%! ' + (error || stderr));
 					}
@@ -230,12 +232,8 @@ class SynTexPlatform
 						
 						exec('sudo systemctl restart homebridge');
 					}
-				}
-				catch(e)
-				{
-					this.logger.err(e);
-				}
-			});
+				});
+			}
 		});
 
 		this.WebServer.addPage('/serverside/activity', async (response, urlParams) => {

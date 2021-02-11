@@ -288,7 +288,8 @@
 						{
 							await Essentials.newTimeout(3000);
 							
-							if(await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
+							if(await Essentials.checkUpdating(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?status')
+							&& await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
 							{
 								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
 
