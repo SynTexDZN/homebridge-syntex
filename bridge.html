@@ -293,15 +293,22 @@
 						{
 							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
 
-							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
-
 							versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
 
 							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
+
+							if(latestVersions[id] == versions[id])
+							{
+								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+							}
+							else
+							{
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler bei der Installation!'));
+							}
 						}
 						else
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorSuccessOverlay('update-result', 'Homebridge Startet Nicht!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler beim Neustart!'));
 						}
 
 						await Essentials.newTimeout(4000);
