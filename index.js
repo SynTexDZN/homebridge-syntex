@@ -215,9 +215,6 @@ class SynTexPlatform
 				
 				exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
 
-					//response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
-					//response.end();
-
 					if(error || (stderr && stderr.includes('ERR!')))
 					{
 						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%! ' + (error || stderr));
@@ -232,6 +229,8 @@ class SynTexPlatform
 						
 						exec('sudo systemctl restart homebridge');
 					}
+
+					updating = false;
 				});
 
 				response.write('Success');

@@ -49,7 +49,7 @@ function checkUpdating(url)
 
 		var restart = await Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
 
-		console.log('RESTART', restart);
+		console.log('UPDATING', restart);
 
 		if(restart != null && restart == 'false')
 		{

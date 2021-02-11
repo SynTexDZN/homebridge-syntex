@@ -284,35 +284,34 @@
 						
 						updating.push(id);
 
-						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 5000, 2, overlays, false) == 'Success')
-						{
-							await Essentials.newTimeout(3000);
+						await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 5000, 2, overlays, false);
 							
-							if(await Essentials.checkUpdating(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?status')
-							&& await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
-							{
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
+						await Essentials.newTimeout(3000);
+							
+						if(await Essentials.checkUpdating(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?status')
+						&& await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
+						{
+							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
 
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
 
-								versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
+							versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
 
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
-							}
-							else
-							{
-								Essentials.showOverlay(btn, Essentials.createErrorSuccessOverlay('update-result', 'Homebridge Startet Nicht!'));
-							}
-
-							await Essentials.newTimeout(4000);
-
-							Essentials.removeOverlays(btn, false);
-
-							await Essentials.newTimeout(300);
+							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
+						}
+						else
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorSuccessOverlay('update-result', 'Homebridge Startet Nicht!'));
 						}
 
-						updating.splice(updating.indexOf(id), 1);
+						await Essentials.newTimeout(4000);
+
+						Essentials.removeOverlays(btn, false);
+
+						await Essentials.newTimeout(300);
 					}
+
+					updating.splice(updating.indexOf(id), 1);
 				}
 				
 			</script>
