@@ -57,7 +57,7 @@ function checkUpdating(url)
 		}
 		else
 		{
-			setTimeout(() => resolve(checkRestart(url)), 500);
+			setTimeout(() => resolve(checkUpdating(url)), 500);
 		}
 	});
 }
