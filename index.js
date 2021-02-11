@@ -2,7 +2,7 @@ let DeviceManager = require('./core/device-manager'), Automation = require('./co
 
 const fs = require('fs'), store = require('json-fs-store'), request = require('request');
 
-var restart = true;
+var restart = true, updating = false;
 
 module.exports = (homebridge) => homebridge.registerPlatform('homebridge-syntex', 'SynTex', SynTexPlatform);
 
@@ -215,8 +215,8 @@ class SynTexPlatform
 				
 				exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
 
-					response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
-					response.end();
+					//response.write(error || (stderr && stderr.includes('ERR!')) ? 'Error' : 'Success');
+					//response.end();
 
 					if(error || (stderr && stderr.includes('ERR!')))
 					{
@@ -233,6 +233,9 @@ class SynTexPlatform
 						exec('sudo systemctl restart homebridge');
 					}
 				});
+
+				response.write('Success');
+				response.end();
 			}
 		});
 

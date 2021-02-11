@@ -284,7 +284,7 @@
 						
 						updating.push(id);
 
-						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 120000, 2, overlays, false) == 'Success')
+						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 5000, 2, overlays, false) == 'Success')
 						{
 							await Essentials.newTimeout(3000);
 							
