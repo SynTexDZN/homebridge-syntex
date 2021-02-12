@@ -30,7 +30,7 @@
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<h1>Erfolgreich Erstellt</h1>
 				<div class="main" style="margin-top: 100px">
-					<img src="img/success.png" class="setup-png">
+					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
 					<p>Das Gerät ist<br>jetzt Einsatzbereit</p>
 				</div>
@@ -54,12 +54,11 @@
 				select.setAttribute('style', 'width: 325px; margin-right: auto');
 
 				var services = {'climate' : 'Klima', 'contact' : 'Kontakt', 'dimmer' : 'Dimmer', 'humidity' : 'Feuchtigkeit', 'led' : 'LED', 'light' : 'Lichtstärke', 'motion' : 'Bewegung', 'outlet' : 'Steckdose', 'rain' : 'Regen', 'relais' : 'Steckdose', 'rgb' : 'RGB', 'statelessswitch' : 'Szenen Knopf', 'switch' : 'Schalter', 'temperature' : 'Temperatur', 'weather' : 'Wetter'};
-
-				var html = '<select id="form-services" name="service" onchange="updateValueInput(this)">';
+				var html = '<select id="form-services" name="service">';
 
 				for(const i in services)
 				{
-					html += '<option letters="" id="" img="/img/accessory/' + i + '.png" type="' + i + '">' + services[i] + '</option>'
+					html += '<option img="/img/accessory/' + i + '.png" type="' + i + '">' + services[i] + '</option>'
 				}
 
 				html += '</select>'
@@ -69,8 +68,6 @@
 				document.getElementsByTagName('form')[0].children[2].appendChild(Replacer.createSelectMenu(select));
 
 				Preloader.finish();
-
-				// IDEA: Add Device Type Select
 
 			</script>
 			<script>
@@ -90,7 +87,7 @@
 						services : document.getElementById('form-services').children[document.getElementById('form-services').selectedIndex].getAttribute('type')
 					};
 
-					var created = await Query.complexFetch('/serverside/init-accessory', 5000, 2, overlays, false, post);
+					var created = await Query.complexFetch('/serverside/init-accessory', 5000, 2, overlays, false, JSON.stringify(post));
 
 					await Essentials.newTimeout(1000);
 
