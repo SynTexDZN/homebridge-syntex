@@ -157,62 +157,39 @@ module.exports = class DeviceManager
 		});
 	}
 
-	initSwitch(id, name)
+	initAccessory(id, name, services)
 	{
-		const self = this;
-
 		return new Promise((resolve) => {
 			
 			if(!checkID(id))
 			{
 				resolve(['Error', 'ID ist bereits Vergeben!']);          
 			}
-			else if(!self.checkName(name))
+			else if(configOBJ != null)
 			{
-				resolve(['Error', 'Name ist bereits Vergeben!']);
+				addToConfig(id, null, name, services, 0);
+
+				this.saveAccessories().then((success) => {
+
+					if(success)
+					{
+						logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+
+						this.reloadAccessories();
+
+						resolve(['Success', 'Success']);
+					}
+					else
+					{
+						resolve(['Error', 'Fehler beim Erstellen!']);
+					}
+				});
 			}
 			else
 			{
-				if(configOBJ != null)
-				{
-					addToConfig(id, null, name, 'switch', 0);
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
-					this.saveAccessories().then((success) => {
-
-						if(success)
-						{
-							var device = { id: id, name: name, active: 1 };
-
-							storage.add(device, (err) => {
-
-								if(err)
-								{
-									logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
-
-									resolve(['Error', 'Fehler beim Erstellen!']);
-								}
-								else
-								{
-									logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
-
-									this.reloadAccessories();
-
-									resolve(['Success', 'Success']);
-								}
-							});
-						}
-						else
-						{
-							resolve(['Error', 'Fehler beim Erstellen!']);
-						}
-					});
-				}
-				else
-				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
-
-					resolve(['Error', 'Fehler beim Erstellen!']);
-				}
+				resolve(['Error', 'Fehler beim Erstellen!']);
 			}
 		});
 	}

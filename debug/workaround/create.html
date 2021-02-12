@@ -5,7 +5,7 @@
 			<div id="create" style="transition: .2s ease-in-out">
 				<h1>Gerät Erstellen</h1>
 				<p>( Ein virtuelles Gerät )</p>
-				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createAccessory(this);">
 					<p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
@@ -55,7 +55,7 @@
 
 				var services = {'climate' : 'Klima', 'contact' : 'Kontakt', 'dimmer' : 'Dimmer', 'humidity' : 'Feuchtigkeit', 'led' : 'LED', 'light' : 'Lichtstärke', 'motion' : 'Bewegung', 'outlet' : 'Steckdose', 'rain' : 'Regen', 'relais' : 'Steckdose', 'rgb' : 'RGB', 'statelessswitch' : 'Szenen Knopf', 'switch' : 'Schalter', 'temperature' : 'Temperatur', 'weather' : 'Wetter'};
 
-				var html = '<select name="service" onchange="updateValueInput(this)">';
+				var html = '<select id="form-services" name="service" onchange="updateValueInput(this)">';
 
 				for(const i in services)
 				{
@@ -75,7 +75,7 @@
 			</script>
 			<script>
 
-				async function createSwitch(form)
+				async function createAccessory(form)
 				{
 					var overlays = {
 						root : document.getElementById('create-btn'),
@@ -84,7 +84,13 @@
 						connectionError : { value : 'Keine Verbindung zur Bridge!' }
 					};
 
-					var created = await Query.complexFetch('/serverside/init-switch?id=' + document.getElementById('form-id').value + '&name=' + document.getElementById('form-name').value, 5000, 2, overlays, false);
+					var post = {
+						id : document.getElementById('form-id').value,
+						name : document.getElementById('form-name').value,
+						services : document.getElementById('form-services').children[document.getElementById('form-services').selectedIndex].getAttribute('type')
+					};
+
+					var created = await Query.complexFetch('/serverside/init-accessory', 5000, 2, overlays, false, post);
 
 					await Essentials.newTimeout(1000);
 

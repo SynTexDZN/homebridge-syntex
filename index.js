@@ -130,11 +130,11 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/init-switch', (response, urlParams) => {
+		this.WebServer.addPage('/serverside/init-accessory', (response, urlParams, content, postJSON) => {
 
-			if(urlParams.id != null && urlParams.name != null)
+			if(postJSON != null && postJSON.id != null && postJSON.name != null && postJSON.services != null)
 			{
-				DeviceManager.initSwitch(urlParams.id, urlParams.name).then((res) => {
+				DeviceManager.initAccessory(postJSON.id, postJSON.name, postJSON.services).then((res) => {
 
 					response.write(res[1]);
 					response.end();
