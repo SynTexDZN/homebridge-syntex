@@ -144,7 +144,7 @@
 
 					var created = await Query.complexFetch('/serverside/check-name?name=' + document.getElementById('device-name').value, 5000, 2, overlays, true);
 
-					await Essentials.newTimeout(1000);
+					await Essentials.newTimeout(500);
 
 					if(created == 'Success')
 					{

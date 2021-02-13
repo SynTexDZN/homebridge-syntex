@@ -53,7 +53,7 @@
 				select.className = 'custom-select';
 				select.setAttribute('style', 'width: 325px; margin-right: auto');
 
-				var services = {'climate' : 'Klima', 'contact' : 'Kontakt', 'dimmer' : 'Dimmer', 'humidity' : 'Feuchtigkeit', 'led' : 'LED', 'light' : 'Lichtstärke', 'motion' : 'Bewegung', 'outlet' : 'Steckdose', 'rain' : 'Regen', 'relais' : 'Steckdose', 'rgb' : 'RGB', 'statelessswitch' : 'Szenen Knopf', 'switch' : 'Schalter', 'temperature' : 'Temperatur', 'weather' : 'Wetter'};
+				var services = {'contact' : 'Kontakt', 'dimmer' : 'Dimmer', 'humidity' : 'Feuchtigkeit', 'led' : 'LED', 'light' : 'Lichtstärke', 'motion' : 'Bewegung', 'outlet' : 'Steckdose', 'rain' : 'Regen', 'relais' : 'Relais', 'rgb' : 'RGB', 'statelessswitch' : 'Szenen Knopf', 'switch' : 'Schalter', 'temperature' : 'Temperatur'};
 				var html = '<select id="form-services" name="service">';
 
 				for(const i in services)
@@ -89,7 +89,7 @@
 
 					var created = await Query.complexFetch('/serverside/init-accessory', 5000, 2, overlays, false, JSON.stringify(post));
 
-					await Essentials.newTimeout(1000);
+					await Essentials.newTimeout(500);
 
 					if(created == 'Success')
 					{
