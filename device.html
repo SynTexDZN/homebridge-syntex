@@ -174,26 +174,35 @@
 
 				if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
 				{
-					settings.push({
-						index: 'active',
-						name: 'Aktiviert'
-					});
+					if(device.active != null)
+					{
+						settings.push({
+							index: 'active',
+							name: 'Aktiviert'
+						});
+					}
 				}
 
 				if(services.includes('contact') || services.includes('motion') || services.includes('relais') || services.includes('statelessswitch') || services.includes('lcd'))
 				{
-					settings.push({
-						index: 'led',
-						name: 'LED'
-					});
+					if(device.led != null)
+					{
+						settings.push({
+							index: 'led',
+							name: 'LED'
+						});
+					}
 				}
 
 				if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
 				{
-					settings.push({
-						index: 'interval',
-						name: services.includes('motion') ? 'Delay' : 'Interval'
-					});
+					if(device.interval != null)
+					{
+						settings.push({
+							index: 'interval',
+							name: services.includes('motion') ? 'Delay' : 'Interval'
+						});
+					}
 				}
 
 				document.getElementsByTagName('title')[0].innerHTML = device.name;
