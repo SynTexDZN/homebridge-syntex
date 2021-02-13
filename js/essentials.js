@@ -248,12 +248,22 @@ var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', 
 
 function letterToType(letter)
 {
-	return types[letters.indexOf(letter.toUpperCase())];
+	if(typeof letter == 'string')
+	{
+		return types[letters.indexOf(letter.toUpperCase())];
+	}
+	
+	return null;
 }
 
 function typeToLetter(type)
 {
-	return letters[types.indexOf(type.toLowerCase())];
+	if(typeof type == 'string')
+	{
+		return letters[types.indexOf(type.toLowerCase())];
+	}
+	
+	return null;
 }
 
 async function switchPage(previous, next, init)
@@ -329,32 +339,37 @@ async function leavePage(url)
 				await Essentials.newTimeout(1);
 			}
 
+			clearTimers();
+
 			document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1].split('</body>')[0];
 
 			for(var i = 0; i < document.getElementsByTagName('script').length; i++)
 			{
-				var script = document.createElement('script');
-
-				script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
-
-				if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+				if(document.getElementsByTagName('script')[i].id != 'static')
 				{
-					script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+					var script = document.createElement('script');
+
+					script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
+
+					if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+					{
+						script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+					}
+
+					if(document.getElementsByTagName('script')[i].hasAttribute('async'))
+					{
+						script.setAttribute('async', '');
+					}
+
+					if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
+					{
+						script.setAttribute('defer', '');
+					}
+
+					var parent = document.getElementsByTagName('script')[i].parentElement;
+
+					parent.replaceChild(script, document.getElementsByTagName('script')[i]);
 				}
-
-				if(document.getElementsByTagName('script')[i].hasAttribute('async'))
-				{
-					script.setAttribute('async', '');
-				}
-
-				if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
-				{
-					script.setAttribute('defer', '');
-				}
-
-				var parent = document.getElementsByTagName('script')[i].parentElement;
-
-				parent.replaceChild(script, document.getElementsByTagName('script')[i]);
 			}
 
 			Preloader.load();

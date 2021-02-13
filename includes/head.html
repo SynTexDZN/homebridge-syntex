@@ -187,26 +187,6 @@
 	
 	</script>
 	<script defer src="/js/mobile.js"></script>
-	<script disabled>
-
-		function HeadLoader()
-		{
-			this.load = function(link, callback)
-			{
-				var element = document.createElement('script');
-	
-				element.onerror = () => { console.error('Das Script konnte nicht geladen werden', link) };
-				element.onload = callback;
-	
-				document.head.appendChild(element);
-	
-				element.src = link;
-			}
-		}
-	
-		var head = new HeadLoader();
-	
-	</script>
 	<link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
 	<script src="/js/menu.js" defer></script>
 </head>
@@ -249,7 +229,70 @@
 		</div>
 	</div>
 </nav>
-<script>
+<script id="static">
+
+	window.originalSetTimeout = window.setTimeout;
+	window.originalSetInterval = window.setInterval;
+	window.originalClearTimeout = window.clearTimeout;
+	window.originalClearInterval = window.clearInterval;
+	window.activeTimeouts = [];
+	window.activeIntervals = [];
+	
+	window.setTimeout = (func, delay) => {
+
+		var timerID = originalSetTimeout(() => {
+
+			func();
+			clearTimeout(timerID);
+
+		}, delay);
+
+		activeTimeouts.push(timerID);
+
+		return timerID;
+	};
+	
+	window.setInterval = (func, interval) => {
+
+		var timerID = originalSetInterval(func, interval);
+
+		activeIntervals.push(timerID);
+
+		return timerID;
+	};
+	
+	window.clearTimeout = (timerID) => {
+
+		originalClearTimeout(timerID);
+
+		if(activeTimeouts.includes(timerID))
+		{
+			activeTimeouts.splice(activeTimeouts.indexOf(timerID), 1);
+		}
+	};
+	
+	window.clearInterval = (timerID) => {
+
+		originalClearInterval(timerID);
+
+		if(activeIntervals.includes(timerID))
+		{
+			activeIntervals.splice(activeIntervals.indexOf(timerID), 1);
+		}
+	};
+
+	window.clearTimers = () => {
+
+		for(var i = activeTimeouts.length - 1; i >= 0; i--)
+		{
+			clearTimeout(activeTimeouts[i]);
+		}
+
+		for(var i = activeIntervals.length - 1; i >= 0; i--)
+		{
+			clearInterval(activeIntervals[i]);
+		}
+	}
 
 	if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 	{
