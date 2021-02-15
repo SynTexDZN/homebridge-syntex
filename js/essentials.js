@@ -372,6 +372,8 @@ async function leavePage(url)
 				}
 			}
 
+			searchLoop();
+
 			Preloader.load();
 		}
 		else
