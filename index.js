@@ -574,16 +574,12 @@ class SynTexPlatform
 
 			const ifaces = require('os').networkInterfaces();
 
-			this.logger.debug(JSON.stringify(ifaces));
-
 			for(var dev in ifaces)
 			{
 				var iface = ifaces[dev].filter((details) => {
 
 					return details.family === 'IPv4' && details.internal === false;
 				});
-
-				this.logger.debug(JSON.stringify(iface));
 
 				if(iface.length > 0) obj.ip = iface[0].address;
 			}
