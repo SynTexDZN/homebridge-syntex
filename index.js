@@ -574,6 +574,8 @@ class SynTexPlatform
 
 			const ifaces = require('os').networkInterfaces();
 
+			logger.debug(JSON.stringify(ifaces));
+
 			for(var dev in ifaces)
 			{
 				var iface = ifaces[dev].filter((details) => {
