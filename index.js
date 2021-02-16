@@ -458,7 +458,7 @@ class SynTexPlatform
 
 					if(err)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+						this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
 					}
 					else
 					{
@@ -574,7 +574,7 @@ class SynTexPlatform
 
 			const ifaces = require('os').networkInterfaces();
 
-			logger.debug(JSON.stringify(ifaces));
+			this.logger.debug(JSON.stringify(ifaces));
 
 			for(var dev in ifaces)
 			{
@@ -583,7 +583,7 @@ class SynTexPlatform
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
-				logger.debug(JSON.stringify(iface));
+				this.logger.debug(JSON.stringify(iface));
 
 				if(iface.length > 0) obj.ip = iface[0].address;
 			}
