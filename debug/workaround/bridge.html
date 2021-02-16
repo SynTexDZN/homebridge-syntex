@@ -13,7 +13,7 @@
 					<input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px">
 					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
 				</div>
-				<div class="widget" style="margin-left: 0; margin-bottom: 20px">
+				<div class="widget" style="margin-left: 0; margin-bottom: 50px">
 					<button class="widget-left gradient-red">Wichtig</button>
 					<button class="widget-right">Bitte schließe während eines Updates oder Neustarts nicht diese Seite</button>
 				</div>
@@ -81,7 +81,7 @@
 					padding: 1px;
 					box-sizing: border-box;
 					padding-left: 3px;
-					background: rgb(245, 245, 255);
+					/* background: rgb(245, 245, 255); */
 				}
 
 				@media only screen and (max-width: 1176px)
@@ -89,6 +89,21 @@
 					.plugin-container
 					{
 						padding: 14px 19px;
+					}
+
+					.plugin-container > div:first-of-type
+					{
+						top: -1px;
+						position: relative;
+					}
+
+					.update-status
+					{
+						border-radius: 32px;
+						right: -5px;
+						height: 32px;
+						/* font-weight: 200; */
+						font-size: 16px;
 					}
 				}
 
