@@ -46,13 +46,6 @@
 					</div>
 				</div>
 			</div>
-			<script type="module">
-			
-				import { Expandable } from '/js/expandable-button.js';
-
-				window.Expandable = Expandable;
-
-			</script>
 			<style>
 				
 				.plugin-container
@@ -78,7 +71,6 @@
 					box-sizing: border-box;
 					padding-left: 3px;
 					transition: .2s ease-out;
-					/* background: rgb(245, 245, 255); */
 				}
 
 				@media only screen and (max-width: 1176px)
@@ -99,7 +91,6 @@
 						border-radius: 32px;
 						right: -5px;
 						height: 32px;
-						/* font-weight: 200; */
 						font-size: 16px;
 					}
 				}
@@ -109,12 +100,14 @@
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
+				import { Expandable } from '/js/expandable-button.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
 
 				window.Query = Query;
 				window.Essentials = Essentials;
+				window.Expandable = Expandable;
 				
 				// NOTE: Mac and IP Widgets
 
