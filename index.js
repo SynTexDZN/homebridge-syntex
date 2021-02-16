@@ -556,7 +556,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/bridge', async (response, urlParams, content) => {
+		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (response, urlParams, content) => {
 
 			var obj = {
 				tag: 'latest',
