@@ -581,6 +581,8 @@ class SynTexPlatform
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
+				logger.debug(JSON.stringify(iface));
+
 				if(iface.length > 0) obj.ip = iface[0].address;
 			}
 
