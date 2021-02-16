@@ -1,0 +1,43 @@
+<html>
+	<body>
+		<div id="content">
+			<title>Debug: Command</title>
+			<h1 style="margin-bottom: 0; margin-top: 32px">Debug</h1>
+			<div id="style" class="main">
+				<p style="margin-bottom: 100px; margin-top: 20px">Command</p>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
+					<input class="white" type="button" value="STYLE" onclick="Essentials.leavePage('/debug/style')">
+				</div>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="COMMAND" onclick="Essentials.leavePage('/debug/terminal')" style="margin-right: 20px" disabled>
+					<input class="white" type="button" value="CONFIG" onclick="Essentials.leavePage('/debug/config')">
+				</div>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
+					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
+				</div>
+				<div style="margin: 100px 0"></div>
+				<div class="navigation-panel">
+					<div class="sticky-inset">
+						<input type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
+					</div>
+				</div>
+            </div>
+            <script type="module">
+
+                import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+	
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+			
+				window.Query = Query;
+				window.Essentials = Essentials;
+            
+                Preloader.finish();
+
+            </script>
+		</div>
+	</body>
+</html>
