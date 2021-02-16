@@ -81,6 +81,7 @@
 					padding: 1px;
 					box-sizing: border-box;
 					padding-left: 3px;
+					transition: .2s ease-out;
 					/* background: rgb(245, 245, 255); */
 				}
 
@@ -393,6 +394,9 @@
 							if(latestVersions[id] == versions[id])
 							{
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+								document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UP TO DATE';
+								document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(165, 85%, 50%)';
 							}
 							else
 							{
