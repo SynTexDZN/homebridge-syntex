@@ -117,20 +117,20 @@
 
 				if(wlanMac != 'null' && ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
+					document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
 				}
 
 				if(wlanMac != 'null' && ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
 				}
 				else if(wlanMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
 				}
 				else if(ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
 				}
 
 				// NOTE: Load Plugin Versions
