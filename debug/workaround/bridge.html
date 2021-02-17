@@ -95,6 +95,15 @@
 					}
 				}
 
+				
+				@media(prefers-color-scheme: light)
+				{
+					.update-status
+					{
+						color: var(--light-layer-one);
+					}
+				}
+
 			</style>
 			<script type="module">
 
@@ -190,7 +199,7 @@
 							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '"><div style="width: calc(100% - 150px)">' + title;
 							innerHTML += '<div class="loading-loop" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</div>';
 							innerHTML += '<div class="loading-loop" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</div>';
-							innerHTML += '</div><div id="update-status-' + id.toLowerCase() + '" class="update-status loading-loop">LADEN ..</div>';
+							innerHTML += '</div><div id="update-status-' + id.toLowerCase() + '" class="update-status loading-loop"></div>';
 							innerHTML += '</button>';
 
 							container.innerHTML = innerHTML;
@@ -234,7 +243,7 @@
 									}
 
 									document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UPDATE';
-									document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(270, 85%, 55%)';
+									document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(280, 95%, 60%)';
 								}
 								else
 								{
