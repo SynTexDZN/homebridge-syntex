@@ -1,21 +1,31 @@
 var buttons = [];
+var lastWidth = document.getElementsByTagName('body')[0].offsetWidth;
 
 document.getElementsByTagName('body')[0].onresize = function()
 {
-    for(const i in buttons)
+    var width = document.getElementsByTagName('body')[0].offsetWidth;
+
+    console.log(document.getElementsByTagName('body')[0].offsetWidth, document.getElementsByTagName('body')[0].clientWidth, document.getElementsByTagName('body')[0].scrollWidth);
+
+    if(lastWidth < 1151 && width > 1151 || lastWidth > 1151 && width < 1151)
     {
-        buttons[i].style.transition = 'none';
+        lastWidth = width;
 
-        if(buttons[i].offsetHeight > 60)
+        for(const i in buttons)
         {
-            buttons[i].style.removeProperty('height');
+            buttons[i].style.transition = 'none';
+
+            if(buttons[i].offsetHeight > 60)
+            {
+                buttons[i].style.removeProperty('height');
+            }
+
+            setTimeout(() => {
+
+                buttons[i].style.transition = '.3s ease-in-out height';
+
+            }, 100);
         }
-
-        setTimeout(() => {
-
-            buttons[i].style.transition = '.3s ease-in-out height';
-
-        }, 100);
     }
 }
 
