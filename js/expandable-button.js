@@ -37,18 +37,18 @@ function createExpandableButton(btn)
 		{
 			btn.style.height = height;
 
-			for(var i = 0; i < btn.children[0].children.length; i++)
+			for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 			{
-				btn.children[0].children[i].style.opacity = 1;
+				btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
 			}
 		}
 		else
 		{
 			btn.style.removeProperty('height');
 
-			for(var i = 0; i < btn.children[0].children.length; i++)
+			for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 			{
-				btn.children[0].children[i].style.opacity = 0;
+				btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
 			}
 		}
 		/*
