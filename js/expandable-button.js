@@ -36,10 +36,20 @@ function createExpandableButton(btn)
 		if(height != btn.offsetHeight)
 		{
 			btn.style.height = height;
+
+			for(var i = 0; i < btn.children[0].children.length; i++)
+			{
+				btn.children[0].children[i].style.opacity = 1;
+			}
 		}
 		else
 		{
 			btn.style.removeProperty('height');
+
+			for(var i = 0; i < btn.children[0].children.length; i++)
+			{
+				btn.children[0].children[i].style.opacity = 0;
+			}
 		}
 		/*
 		for(const i in buttons)

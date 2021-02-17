@@ -73,6 +73,12 @@
 					transition: .2s ease-out;
 				}
 
+				.expandable-hidden
+				{
+					opacity: 0;
+					transition: .3s opacity;
+				}
+
 				@media only screen and (max-width: 1176px)
 				{
 					.plugin-container
@@ -197,8 +203,8 @@
 							var title = id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex', innerHTML = '';
 
 							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '"><div style="width: calc(100% - 150px)">' + title;
-							innerHTML += '<div class="loading-loop" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</div>';
-							innerHTML += '<div class="loading-loop" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</div>';
 							innerHTML += '</div><div id="update-status-' + id.toLowerCase() + '" class="update-status loading-loop"></div>';
 							innerHTML += '</button>';
 
