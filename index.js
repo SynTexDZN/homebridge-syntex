@@ -701,6 +701,28 @@ class SynTexPlatform
 				response.end();
 			}
 		});
+
+		this.WebServer.addPage('/serverside/command', async (response, urlParams, content, postJSON) => {
+
+			if(postJSON != null)
+			{
+				const { exec } = require('child_process');
+				
+				exec(postJSON, (error, stdout, stderr) => {
+
+					if(error || stderr)
+					{
+						response.write(stderr || error);
+					}
+					else
+					{
+						response.write(stdout);
+					}
+
+					response.end();
+				});
+			}
+		});
 	}
 
 	getPluginConfig(pluginName)

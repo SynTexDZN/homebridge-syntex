@@ -17,7 +17,16 @@
 					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
 					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
 				</div>
-				<p style="margin: 100px 0">Noch in Bearbeitung! :D</p>
+				<div style="margin: 100px 0">
+					<textarea id="command-response"></textarea>
+					<form onsubmit="event.preventDefault(); sendCommand(this); return false;" style="display: flex; margin-top: 20px">
+						<input id="command" type="text" placeholder="Befehl" style="margin-right: 20px">
+						<div style="max-width: 300px; width: 100%">
+							<input id="send-btn" type="submit" value="Senden">
+						</div>
+					</form>
+				</div>
+				<p style="margin: 100px 0">Im Terminal kannst du<br>direkte Befehle abschicken.<br><br>Bitte pass genau auf,<br>was du hier tust!</p>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<input type="button" value="Zurück zum Dashboard" onclick="Essentials.leavePage('/')">
@@ -38,6 +47,39 @@
                 Preloader.finish();
 
             </script>
+			<script>
+
+				var sending = false;
+
+				async function sendCommand(form)
+				{
+					if(!sending)
+					{
+						var overlays = {
+							root : document.getElementById('send-btn'),
+							id : 'command',
+							pending : { value : 'Senden ..' },
+							connectionError : { value : 'Senden Fehlgeschlagen!' }
+						};
+
+						sending = true;
+
+						var response = await Query.complexFetch('/serverside/command', 10000, 1, overlays, true, JSON.stringify(document.getElementById('command').value));
+
+						if(response != null)
+						{
+							document.getElementById('command-response').innerHTML = response;
+
+							await Essentials.newTimeout(100);
+
+							Essentials.removeOverlays(document.getElementById('send-btn'), true);
+						}
+
+						sending = false;
+					}
+				}
+
+			</script>
 		</div>
 	</body>
 </html>
