@@ -13,11 +13,6 @@
 					<input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px">
 					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
 				</div>
-				<div class="widget" style="margin-left: 0">
-					<button class="widget-left gradient-red">Wichtig</button>
-					<button class="widget-right">Bitte schließe während eines Updates oder Neustarts nicht diese Seite</button>
-				</div>
-				<div id="versions" style="margin: 100px 0"></div>
 				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
 					<button class="widget-left">IP Adresse</button>
 					<button class="widget-right gradient-blue">-</button>
@@ -26,11 +21,11 @@
 					<button class="widget-left">Mac WLAN<br>Mac LAN</button>
 					<button class="widget-right gradient-blue">-<br>-</button>
 				</div>
-				<div class="widget widget-table" style="margin-left: 0; margin-bottom: 20px; display: none">
-					<button class="widget-left">WLAN Mac Adresse</button>
-					<button class="widget-left">LAN Mac Adresse</button>
-					<button class="widget-right gradient-blue">-</button>
-					<button class="widget-right gradient-blue">-</button>
+				<div class="type-container" style="margin: 100px auto">
+					<div class="title-container">
+						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Plugins</h2>
+					</div>
+					<div id="plugins"></div>
 				</div>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
@@ -49,12 +44,14 @@
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
+				import { Expandable } from '/js/expandable-button.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
 
 				window.Query = Query;
 				window.Essentials = Essentials;
+				window.Expandable = Expandable;
 				
 				// NOTE: Mac and IP Widgets
 
@@ -64,20 +61,20 @@
 
 				if(wlanMac != 'null' && ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
+					document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
 				}
 
 				if(wlanMac != 'null' && ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
 				}
 				else if(wlanMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
 				}
 				else if(ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
 				}
 
 				// NOTE: Load Plugin Versions
@@ -132,13 +129,19 @@
 
 							container.setAttribute('id', id.toLowerCase());
 
-							var title = id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex';
+							var title = id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex', innerHTML = '';
 
-							container.innerHTML += '<h2 style="width: fit-content' + (counter == 0 ? '; margin-top: 0' : '') + '">• ' + title + ' •</h2>';
-							container.innerHTML += '<p class="loading-loop" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</p>';
-							container.innerHTML += '<p class="loading-loop" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</p>';
-							
-							document.getElementById('versions').appendChild(container);
+							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '"><div style="width: calc(100% - 150px)">' + title;
+							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</div>';
+							innerHTML += '</div><div id="update-status-' + id.toLowerCase() + '" class="update-status loading-loop"></div>';
+							innerHTML += '</button>';
+
+							container.innerHTML = innerHTML;
+
+							document.getElementById('plugins').appendChild(container);
+
+							Expandable.createExpandableButton(container.children[0]);
 
 							counter++;
 						}
@@ -173,15 +176,35 @@
 									{
 										document.getElementById('update-btn-' + id.toLocaleLowerCase()).value = (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )';
 									}
+
+									document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UPDATE';
+									document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(280, 95%, 60%)';
 								}
-								else if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) != null)
+								else
 								{
-									document.getElementById('update-btn-' + id.toLocaleLowerCase()).parentElement.removeChild(document.getElementById('update-btn-' + id.toLocaleLowerCase()));
+									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) != null)
+									{
+										document.getElementById('update-btn-' + id.toLocaleLowerCase()).parentElement.removeChild(document.getElementById('update-btn-' + id.toLocaleLowerCase()));
+									}
+
+									if(latestVersions[id] == null)
+									{
+										document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'FEHLER';
+										document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(350, 95%, 60%)';
+									}
+									else
+									{
+										document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UP TO DATE';
+										document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(165, 85%, 50%)';
+									}
 								}
 							}
 							else
 							{
 								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
+
+								document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'FEHLER';
+								document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(350, 95%, 60%)';
 							}
 						});
 					}
@@ -304,6 +327,9 @@
 							if(latestVersions[id] == versions[id])
 							{
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+								document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UP TO DATE';
+								document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(165, 85%, 50%)';
 							}
 							else
 							{

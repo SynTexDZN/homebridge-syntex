@@ -18,11 +18,7 @@ document.getElementsByTagName('body')[0].onresize = function()
 				buttons[i].style.removeProperty('height');
 			}
 
-			setTimeout(() => {
-
-				buttons[i].style.setProperty('transition', '.3s ease-in-out height', 'important');
-
-			}, 100);
+			setTimeout(() => buttons[i].style.setProperty('transition', '.3s ease-in-out height', 'important'), 100);
 		}
 	}
 }

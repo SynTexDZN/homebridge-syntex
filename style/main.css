@@ -919,6 +919,42 @@ button img
 	transition: max-height 1s ease-in-out, opacity 0.5s ease-in-out 0.5s;
 }
 
+.plugin-container
+{
+	transition: .3s ease-in-out height!important;
+	letter-spacing: 3px!important;
+
+	line-height: 2;
+	overflow: hidden;
+	padding: 9px 19px;
+	text-align: left; 
+}
+
+.plugin-container b
+{
+	font-weight: 200;
+}
+
+.update-status
+{
+	width: 160px;
+	text-align: center;
+	height: 32px;
+	position: relative;
+	right: -10px;
+	border-radius: 12px;
+	padding: 1px;
+	box-sizing: border-box;
+	padding-left: 3px;
+	transition: .2s ease-out;
+}
+
+.expandable-hidden
+{
+	opacity: 0;
+	transition: .3s linear opacity;
+}
+
 @media(prefers-color-scheme: light)
 {
 	:root
@@ -1138,6 +1174,11 @@ button img
 	.table .primary
 	{
 		background: rgb(200, 200, 220);
+	}
+
+	.update-status
+	{
+		color: var(--light-layer-one);
 	}
 }
 
@@ -1445,5 +1486,29 @@ button img
 	.table .icon
 	{
 		top: -18px;
+	}
+
+	.plugin-container
+	{
+		padding: 14px 19px;
+	}
+
+	.plugin-container b
+	{
+		font-weight: 300;
+	}
+
+	.plugin-container > div:first-of-type
+	{
+		top: -1px;
+		position: relative;
+	}
+
+	.update-status
+	{
+		border-radius: 32px;
+		right: -5px;
+		height: 32px;
+		font-size: 16px;
 	}
 }

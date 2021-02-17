@@ -25,13 +25,7 @@
 					<div class="title-container">
 						<h2 style="width: fit-content; margin-top: 0; border: none; padding-left: 16px">Plugins</h2>
 					</div>
-					<div id="versions"></div>
-				</div>
-				<div class="widget widget-table" style="margin-left: 0; margin-bottom: 20px; display: none">
-					<button class="widget-left">WLAN Mac Adresse</button>
-					<button class="widget-left">LAN Mac Adresse</button>
-					<button class="widget-right gradient-blue">-</button>
-					<button class="widget-right gradient-blue">-</button>
+					<div id="plugins"></div>
 				</div>
 				<div class="navigation-panel">
 					<div class="sticky-inset">
@@ -46,81 +40,6 @@
 					</div>
 				</div>
 			</div>
-			<style>
-				
-				.plugin-container
-				{
-					transition: .3s ease-in-out height!important;
-					letter-spacing: 3px!important;
-
-					line-height: 2;
-					overflow: hidden;
-					padding: 9px 19px;
-					text-align: left; 
-				}
-
-				.plugin-container b
-				{
-					font-weight: 200;
-				}
-
-				.update-status
-				{
-					width: 160px;
-					text-align: center;
-					height: 32px;
-					position: relative;
-					right: -10px;
-					border-radius: 12px;
-					padding: 1px;
-					box-sizing: border-box;
-					padding-left: 3px;
-					transition: .2s ease-out;
-				}
-
-				.expandable-hidden
-				{
-					opacity: 0;
-					transition: .3s linear opacity;
-				}
-
-				@media only screen and (max-width: 1176px)
-				{
-					.plugin-container
-					{
-						padding: 14px 19px;
-					}
-
-					.plugin-container b
-					{
-						font-weight: 300;
-					}
-
-					.plugin-container > div:first-of-type
-					{
-						top: -1px;
-						position: relative;
-					}
-
-					.update-status
-					{
-						border-radius: 32px;
-						right: -5px;
-						height: 32px;
-						font-size: 16px;
-					}
-				}
-
-				
-				@media(prefers-color-scheme: light)
-				{
-					.update-status
-					{
-						color: var(--light-layer-one);
-					}
-				}
-
-			</style>
 			<script type="module">
 
 				import { Query } from '/js/query.js';
@@ -220,7 +139,7 @@
 
 							container.innerHTML = innerHTML;
 
-							document.getElementById('versions').appendChild(container);
+							document.getElementById('plugins').appendChild(container);
 
 							Expandable.createExpandableButton(container.children[0]);
 
