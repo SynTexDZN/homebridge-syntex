@@ -56,8 +56,8 @@
 
 				Preloader.finish();
 			
-            </script>
-            <script>
+			</script>
+			<script>
 
 				function copyConfig()
 				{
@@ -99,40 +99,40 @@
 
 				async function restartBridge(btn)
 				{
-                    if(!restarting)
-                    {
-                        var overlays = {
-                            root : btn,
-                            id : 'restarting',
-                            pending : { value : 'Neustarten ..' },
-                            executeError : { value : 'Neustart Fehlgeschlagen!' },
-                            connectionError : { value : 'Keine Verbindung zur Bridge!' }
-                        };
+					if(!restarting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'restarting',
+							pending : { value : 'Neustarten ..' },
+							executeError : { value : 'Neustart Fehlgeschlagen!' },
+							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+						};
 
-                        restarting = true;
+						restarting = true;
 
-                        if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
-                        {
-                            await Essentials.newTimeout(3000);
+						if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
+						{
+							await Essentials.newTimeout(3000);
 
-                            document.getElementById('config-restart').style.backgroundColor = '';
+							document.getElementById('config-restart').style.backgroundColor = '';
 
-                            if(await Essentials.checkRestart('/serverside/check-restart'))
-                            {
-                                Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
-                            }
-                            else
-                            {
-                                Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
-                            }
+							if(await Essentials.checkRestart('/serverside/check-restart'))
+							{
+								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+							}
+							else
+							{
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+							}
 
-                            await Essentials.newTimeout(4000);
+							await Essentials.newTimeout(4000);
 
-                            Essentials.removeOverlays(btn, true);
+							Essentials.removeOverlays(btn, true);
 
-                            restarting = false;
-                        }
-                    }
+							restarting = false;
+						}
+					}
 				}
 
 				function validateJSON(textarea)
