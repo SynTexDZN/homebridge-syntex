@@ -54,15 +54,11 @@ function createExpandableButton(btn)
 		/*
 		for(const i in buttons)
 		{
-			console.log(buttons[i].parentElement.id, this.parentElement.id);
-
 			if(buttons[i] != this)
 			{
 				buttons[i].style.removeProperty('height');
 			}
 		}
-
-		console.log(btn.offsetHeight, btn.clientHeight, btn.scrollHeight);
 		*/
 	};
 
