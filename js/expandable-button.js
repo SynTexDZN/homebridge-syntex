@@ -11,7 +11,7 @@ document.getElementsByTagName('body')[0].onresize = function()
 
 		for(const i in buttons)
 		{
-			buttons[i].style.transition = 'none';
+			buttons[i].style.setProperty('transition', 'none', 'important');
 
 			if(buttons[i].offsetHeight > 60)
 			{
@@ -20,7 +20,7 @@ document.getElementsByTagName('body')[0].onresize = function()
 
 			setTimeout(() => {
 
-				buttons[i].style.transition = '.3s ease-in-out height';
+				buttons[i].style.setProperty('transition', '.3s ease-in-out height', 'important');
 
 			}, 100);
 		}
