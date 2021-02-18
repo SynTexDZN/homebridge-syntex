@@ -116,19 +116,21 @@
 
 						if(temp != Essentials.getType(devices[i].services))
 						{
+							var typeContainer = document.createElement('div');
+
+							typeContainer.setAttribute('style', '');
+							typeContainer.setAttribute('class', 'type-container');
+
 							var title = document.createElement('h2');
 
-							title.setAttribute('style', 'width: fit-content; margin-top: 0; border: none; padding-left: 16px');
+							title.setAttribute('class', 'title-container');
+
 							title.innerHTML = Essentials.getType(devices[i].services);
 
 							console.log('SERVICES', Essentials.getType(devices[i].services));
 
-							var titleContainer = document.createElement('div');
+							typeContainer.appendChild(title);
 
-							titleContainer.setAttribute('class', 'title-container');
-
-							titleContainer.appendChild(title);
-							
 							var typeDevices = document.createElement('div');
 
 							typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
@@ -140,18 +142,8 @@
 								typeDevices.style.gridTemplateColumns = '100%';
 							}
 							*/
-							var typeContainer = document.createElement('div');
-
-							typeContainer.setAttribute('style', '');
-							typeContainer.setAttribute('class', 'type-container');
-							/*
-							if(numOfType == 1)
-							{
-								typeDevices.style.gridTemplateColumns = '100%';
-							}
-							*/
-							typeContainer.appendChild(titleContainer);
 							typeContainer.appendChild(typeDevices);
+
 							document.getElementById('devices').appendChild(typeContainer);
 						}
 
