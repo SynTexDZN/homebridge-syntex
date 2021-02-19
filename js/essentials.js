@@ -2,23 +2,26 @@ var Query, Preloader;
 
 function versionCount(version)
 {
-	var intVersion = version.includes('-') ? -1 : 0;
-
-	for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
+	if(version != null)
 	{
+		var intVersion = version.includes('-') ? -1 : 0;
+
+		for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
+		{
+			if(version.includes('-'))
+			{
+				intVersion += version.split('-')[0].split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
+			}
+			else
+			{
+				intVersion += version.split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
+			}
+		}
+
 		if(version.includes('-'))
 		{
-			intVersion += version.split('-')[0].split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
+			intVersion += parseFloat(version.split('-b')[1]) / 1000.0;
 		}
-		else
-		{
-			intVersion += version.split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
-		}
-	}
-
-	if(version.includes('-'))
-	{
-		intVersion += parseFloat(version.split('-b')[1]) / 1000.0;
 	}
 
 	return intVersion;
