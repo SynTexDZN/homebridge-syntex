@@ -1,10 +1,13 @@
-let DeviceManager = require('./core/device-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
 const fs = require('fs'), store = require('json-fs-store'), request = require('request');
 
 var restart = true, updating = false;
 
-module.exports = (homebridge) => homebridge.registerPlatform('homebridge-syntex', 'SynTex', SynTexPlatform);
+const pluginID = 'homebridge-syntex';
+const pluginName = 'SynTex';
+
+module.exports = (homebridge) => homebridge.registerPlatform(pluginID, pluginName, SynTexPlatform);
 
 class SynTexPlatform
 {
@@ -19,7 +22,7 @@ class SynTexPlatform
 
 		this.config = store(api.user.storagePath());
 
-		this.logger = new logger('SynTex', this.logDirectory, this.debug, this.language);
+		this.logger = new logger(pluginName, this.logDirectory, this.debug, this.language);
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, true);
 
 		this.WebServer.setHead(__dirname + '/includes/head.html');
@@ -27,6 +30,8 @@ class SynTexPlatform
 		HTMLQuery = new HTMLQuery(this.logger);
 		
 		Automation.SETUP(this.logger, this.automationDirectory);
+
+		PluginManager = new PluginManager(600);
 
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
@@ -205,13 +210,14 @@ class SynTexPlatform
 			}
 			else
 			{
+				var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
 				var version = urlParams.version != null ? urlParams.version : 'latest';
 
 				updating = true;
 
 				const { exec } = require('child_process');
 				
-				exec('sudo npm install homebridge-syntex@' + version + ' -g', (error, stdout, stderr) => {
+				exec('sudo npm install ' + updateID + '@' + version + ' -g', (error, stdout, stderr) => {
 
 					if(error || (stderr && stderr.includes('ERR!')))
 					{
@@ -420,34 +426,11 @@ class SynTexPlatform
 
 			if(urlParams.reload != null)
 			{
-				await UpdateManager.fetchPluginUpdates(10000);
+				await PluginManager.reloadUpdates();
 			}
 
-			this.config.load('config', (err, obj) => {    
-
-				var plugins = {};
-
-				if(obj && !err)
-				{       
-					var updates = UpdateManager.getLatestVersions().plugins;
-
-					for(const i in obj.platforms)
-					{
-						if(obj.platforms[i].platform != null && obj.platforms[i].platform != 'config' && obj.platforms[i].port != null)
-						{
-							plugins[obj.platforms[i].platform] = { port : obj.platforms[i].port };
-
-							if(updates[obj.platforms[i].platform] != null)
-							{
-								plugins[obj.platforms[i].platform].versions = updates[obj.platforms[i].platform];
-							}
-						}
-					}
-				}
-
-				response.write(JSON.stringify(plugins));
-				response.end();
-			});
+			response.write(JSON.stringify(PluginManager.getPlugins()));
+			response.end();
 		});
 
 		this.WebServer.addPage('/serverside/update-config', async (response, urlParams, content, postJSON) => {

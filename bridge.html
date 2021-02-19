@@ -85,27 +85,39 @@
 				window.versions = {};
 				window.latestVersions = {};
 
-				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
-
-					try
-					{
-						plugins = JSON.parse(p);
-
-						renderGUI();
-					}
-					catch(e)
-					{
-						console.error(e);
-					}
-
-					console.log('PLUGINS', plugins);
-				});
+				loadPluginData().then(() => renderGUI());
 
 			</script>
 			<script>
 
 				window.restarting = false;
 				window.updating = [];
+
+				// NOTE: Reload Plugin Data
+
+				function loadPluginData()
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								plugins = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+
+							console.log('PLUGINS', plugins);
+						});
+					});
+				}				
 
 				// NOTE: Create Version GUI
 
@@ -115,27 +127,34 @@
 
 					for(const id in plugins)
 					{
+						var title = plugins[id].name != 'SynTex' ? plugins[id].name.replace('SynTex', 'SynTex ') : 'SynTex';
 						var newestVersion = 'Fehler beim Laden';
 
-						if(plugins[id].versions != null && plugins[id].versions[tag] != null)
+						if(plugins[id].versions[tag] != null || plugins[id].versions['latest'] != null)
 						{
 							newestVersion = Essentials.versionCount(plugins[id].versions[tag]) > Essentials.versionCount(plugins[id].versions['latest']) ? plugins[id].versions[tag] : plugins[id].versions['latest'];
 
 							latestVersions[id] = newestVersion;
 						}
+
+						if(plugins[id].versions['current'] != null)
+						{
+							versions[id] = plugins[id].versions['current'];
+						}
 						
-						if(document.getElementById(id.toLowerCase()) == null)
+						if(document.getElementById(id) == null)
 						{
 							var container = document.createElement('div');
 
-							container.setAttribute('id', id.toLowerCase());
+							container.setAttribute('id', id);
 
-							var title = id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex', innerHTML = '';
+							var innerHTML = '';
 
-							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '"><div style="width: calc(100% - 150px)">' + title;
-							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id.toLowerCase() + '"><b>Version: </b>Laden ..</div>';
-							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id.toLowerCase() + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + newestVersion + '</div>';
-							innerHTML += '</div><div id="update-status-' + id.toLowerCase() + '" class="update-status loading-loop"></div>';
+							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '">'
+							innerHTML += '<div style="width: calc(100% - 150px)">' + title;
+							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>Version: </b>' + versions[id] + '</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + latestVersions[id] + '</div>';
+							innerHTML += '</div><div id="update-status-' + id + '" class="update-status loading-loop"></div>';
 							innerHTML += '</button>';
 
 							container.innerHTML = innerHTML;
@@ -148,66 +167,50 @@
 						}
 						else
 						{
-							document.getElementById('latest-version-' + id.toLowerCase()).innerHTML = '<b>Neuste Version: </b>' + newestVersion;
+							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>' + versions[id];
+							document.getElementById('latest-version-' + id).innerHTML = '<b>Neuste Version: </b>' + latestVersions[id];
 						}
 
-						Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].port + '/serverside/version', 10000, 2, {}, false).then((version) => {
-
-							if(version != null)
+						if(versions[id] != null && latestVersions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(versions[id]))
+						{
+							if(document.getElementById('update-btn-' + id) == null)
 							{
-								versions[id] = version;
+								var updateButton = document.createElement('input');
 
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + version;
-
-								if(latestVersions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(version))
-								{
-									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) == null)
-									{
-										var updateButton = document.createElement('input');
-
-										updateButton.setAttribute('type', 'button');
-										updateButton.setAttribute('value', (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )');
-										updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", ' + plugins[id].port + ', this)');
-										updateButton.setAttribute('id', 'update-btn-' + id.toLowerCase());
-										updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-										
-										document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
-									}
-									else
-									{
-										document.getElementById('update-btn-' + id.toLocaleLowerCase()).value = (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Aktualisieren ( v' + latestVersions[id] + ' )';
-									}
-
-									document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UPDATE';
-									document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(280, 95%, 60%)';
-								}
-								else
-								{
-									if(document.getElementById('update-btn-' + id.toLocaleLowerCase()) != null)
-									{
-										document.getElementById('update-btn-' + id.toLocaleLowerCase()).parentElement.removeChild(document.getElementById('update-btn-' + id.toLocaleLowerCase()));
-									}
-
-									if(latestVersions[id] == null)
-									{
-										document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'FEHLER';
-										document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(350, 95%, 60%)';
-									}
-									else
-									{
-										document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UP TO DATE';
-										document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(165, 85%, 50%)';
-									}
-								}
+								updateButton.setAttribute('type', 'button');
+								updateButton.setAttribute('value', title + ' Aktualisieren ( v' + latestVersions[id] + ' )');
+								updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", this)');
+								updateButton.setAttribute('id', 'update-btn-' + id);
+								updateButton.setAttribute('style', 'margin-bottom: 20px'); 
+								
+								document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
 							}
 							else
 							{
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
-
-								document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'FEHLER';
-								document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(350, 95%, 60%)';
+								document.getElementById('update-btn-' + id).value = title + ' Aktualisieren ( v' + latestVersions[id] + ' )';
 							}
-						});
+
+							document.getElementById('update-status-' + id).innerHTML = 'UPDATE';
+							document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
+						}
+						else
+						{
+							if(document.getElementById('update-btn-' + id) != null)
+							{
+								document.getElementById('update-btn-' + id).parentElement.removeChild(document.getElementById('update-btn-' + id));
+							}
+
+							if(versions[id] == null || latestVersions[id] == null)
+							{
+								document.getElementById('update-status-' + id).innerHTML = 'FEHLER';
+								document.getElementById('update-status-' + id).style.background = 'hsl(350, 95%, 60%)';
+							}
+							else
+							{
+								document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
+								document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+							}
+						}
 					}
 
 					Preloader.finish();
@@ -264,10 +267,10 @@
 
 					for(const id in plugins)
 					{
-						if(document.getElementById(id.toLowerCase()) != null)
+						if(document.getElementById(id) != null)
 						{
-							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
-							document.getElementById('latest-version-' + id.toLowerCase()).innerHTML = '<b>Neuste Version: </b>Laden ..';
+							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>Laden ..';
+							document.getElementById('latest-version-' + id).innerHTML = '<b>Neuste Version: </b>Laden ..';
 						}
 					}
 
@@ -298,7 +301,7 @@
 
 				// NOTE: Plugin Update
 				
-				async function updatePlugin(id, port, btn)
+				async function updatePlugin(id, btn)
 				{
 					if(!restarting && updating.length == 0)
 					{
@@ -312,28 +315,38 @@
 						
 						updating.push(id);
 
-						await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?version=' + latestVersions[id], 5000, 2, overlays, false);
+						await Query.complexFetch('/serverside/update?plugin=' + id + '&version=' + latestVersions[id], 5000, 2, overlays, false);
 							
 						await Essentials.newTimeout(3000);
 							
-						if(await Essentials.checkUpdating(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/update?status')
-						&& await Essentials.checkRestart(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/check-restart'))
+						if(await Essentials.checkUpdating('/serverside/update?status')
+						&& await Essentials.checkRestart('/serverside/check-restart'))
 						{
-							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Laden ..';
+							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>Laden ..';
 
-							versions[id] = await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + port + '/serverside/version', 10000, 10, {}, false);
+							await loadPluginData();
 
-							document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
-
-							if(latestVersions[id] == versions[id])
+							if(this.plugins[id].versions['current'] != null)
 							{
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+								versions[id] = this.plugins[id].versions['current'];
 
-								document.getElementById('update-status-' + id.toLowerCase()).innerHTML = 'UP TO DATE';
-								document.getElementById('update-status-' + id.toLowerCase()).style.background = 'hsl(165, 85%, 50%)';
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
+							
+								if(latestVersions[id] == versions[id])
+								{
+									Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+
+									document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
+									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+								}
+								else
+								{
+									Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler bei der Installation!'));
+								}
 							}
 							else
 							{
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
 								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler bei der Installation!'));
 							}
 						}
