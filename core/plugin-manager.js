@@ -1,17 +1,25 @@
+let AliasManager = require('./alias-manager');
+
 const fs = require('fs'), request = require('request'), path = require('path');
 
 module.exports = class PluginManager
 {
-	constructor(updateInterval)
+	constructor(config, updateInterval)
 	{
         this.plugins = {};
 
+        this.config = config;
+
         this.nodePath = path.resolve(__dirname, '../..',);
+
+        AliasManager = new AliasManager(this.config);
 
         fs.readdir(this.nodePath, async (err, plugins) => {
 
             if(!err && plugins)
             {
+                await AliasManager.loadAlias();
+
                 for(const plugin in plugins)
                 {
                     if(plugins[plugin].startsWith('homebridge') && plugins[plugin] != 'homebridge')
@@ -19,6 +27,7 @@ module.exports = class PluginManager
                         this.plugins[plugins[plugin]] = { versions : {} };
 
                         this.getName(plugins[plugin]);
+                        this.getAlias(plugins[plugin]).then((pluginName) => this.getConfig(plugins[plugin], pluginName));
                         this.getPackageData(plugins[plugin]);
                         this.fetchUpdate(plugins[plugin], updateInterval * 1000);
 
@@ -96,6 +105,44 @@ module.exports = class PluginManager
         }
 
         this.plugins[pluginID].name = displayName;
+    }
+
+    getConfig(pluginID, pluginName)
+    {
+        this.config.load('config', (err, config) => {    
+
+            if(!err && config)
+            {
+                for(const i in config.platforms)
+                {
+                    if(config.platforms[i].platform == pluginName)
+                    {
+                        this.plugins[pluginID].config = config.platforms[i];
+                    }
+                }
+
+                for(const i in config.accessories)
+                {
+                    if(config.accessories[i].accessory == pluginName)
+                    {
+                        this.plugins[pluginID].config = config.accessories[i];
+                    }
+                }
+            }
+        });
+    }
+
+    getAlias(pluginID)
+    {
+        return new Promise((resolve) => {
+
+            AliasManager.getAlias(pluginID, (pluginName) => {
+
+                this.plugins[pluginID].alias = pluginName;
+
+                resolve(pluginName);
+            });
+        });
     }
 
     fetchUpdate(pluginID, timeout)
