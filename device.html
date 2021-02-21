@@ -1663,9 +1663,12 @@
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
 
-						if(plugins[device.plugin] != null)
+						for(const plugin in plugins)
 						{
-							url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[device.plugin].port;
+							if(plugins[plugin].alias == device.plugin)
+							{
+								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[plugin].config.port;
+							}
 						}
 
 						var url = Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services), url : url });
