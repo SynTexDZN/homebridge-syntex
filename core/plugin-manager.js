@@ -4,15 +4,16 @@ const fs = require('fs'), request = require('request'), path = require('path');
 
 module.exports = class PluginManager
 {
-	constructor(config, updateInterval)
+	constructor(config, logger, updateInterval)
 	{
         this.plugins = {};
 
         this.config = config;
+        this.logger = logger;
 
         this.nodePath = path.resolve(__dirname, '../..',);
 
-        AliasManager = new AliasManager(this.config);
+        AliasManager = new AliasManager(this.config, this.logger);
 
         fs.readdir(this.nodePath, async (err, plugins) => {
 
@@ -34,6 +35,10 @@ module.exports = class PluginManager
                         this.updateInterval = setInterval(() => this.fetchUpdate(plugins[plugin], updateInterval * 500), updateInterval * 1000);
                     }
                 }
+            }
+            else
+            {
+                this.logger.log('error', 'bridge', 'Bridge', 'Node Path %read_error%! ' + err);
             }
         });
     }
@@ -62,8 +67,12 @@ module.exports = class PluginManager
                     }
                     catch(e)
                     {
-                        console.error(e);
+                        this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %json_parse_error%! ' + e);
                     }
+                }
+                else
+                {
+                    this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %read_error%! ' + err);
                 }
 
                 resolve();
@@ -129,6 +138,10 @@ module.exports = class PluginManager
                     }
                 }
             }
+            else
+            {
+                this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+            }
         });
     }
 
@@ -171,7 +184,7 @@ module.exports = class PluginManager
                 }
                 catch(e)
                 {
-                    console.error(e);
+                    this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %json_parse_error%! ( ' + body + ') ' + e);
                 }
 
                 resolve();

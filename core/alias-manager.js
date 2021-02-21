@@ -109,15 +109,13 @@ const HomebridgeApiMock = {
 	}
 };
 
-//setTimeout(() => process.exit(1), 2500);
-
 module.exports = class AliasExtractor
 {
-	constructor(Storage)
+	constructor(Storage, logger)
 	{
+		this.logger = logger;
+
 		storage = Storage;
-		
-		//setTimeout(() => process.exit(1), 2500);
 	}
 
 	loadAlias()
@@ -165,20 +163,17 @@ module.exports = class AliasExtractor
 
 				pluginInitializer(HomebridgeApiMock);
 
-				//process.exit();
 				setTimeout(() => process.exit(1), 2500);
 			}
 			catch(e)
 			{
-				console.error(e);
+				this.logger.err(e);
 
 				process.exit(1);
 			}
 		}
 		else
 		{
-			console.log('ALIAS BEREITS IM CACHE', pluginID);
-
 			callback(alias[pluginID]);
 		}
 	}
@@ -192,11 +187,7 @@ function setAlias()
 
 		if(err)
 		{
-			console.error(err);
-		}
-		else
-		{
-			console.log('ALIAS IM CACHE GESPEICHERT', alias);
+			this.logger.log('error', 'bridge', 'Bridge', 'Alias %cache_update_error%! ' + err);
 		}
 	});
 }

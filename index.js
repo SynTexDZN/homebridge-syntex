@@ -31,7 +31,7 @@ class SynTexPlatform
 		
 		Automation.SETUP(this.logger, this.automationDirectory);
 
-		PluginManager = new PluginManager(this.config, 600);
+		PluginManager = new PluginManager(this.config, this.logger, 600);
 
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
