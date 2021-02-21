@@ -1663,11 +1663,11 @@
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
 
-						for(const plugin in plugins)
+						for(const id in plugins)
 						{
-							if(plugins[plugin].alias == device.plugin)
+							if(plugins[id].alias == device.plugin)
 							{
-								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[plugin].config.port;
+								url = window.location.protocol + '//' + window.location.hostname + ':' + plugins[id].config.port;
 							}
 						}
 

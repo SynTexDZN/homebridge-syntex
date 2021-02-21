@@ -21,18 +21,18 @@ module.exports = class PluginManager
             {
                 await AliasManager.loadAlias();
 
-                for(const plugin in plugins)
+                for(const id in plugins)
                 {
-                    if(plugins[plugin].startsWith('homebridge') && plugins[plugin] != 'homebridge')
+                    if(plugins[id].startsWith('homebridge') && plugins[id] != 'homebridge')
                     {
-                        this.plugins[plugins[plugin]] = { versions : {} };
+                        this.plugins[plugins[id]] = { versions : {} };
 
-                        this.getName(plugins[plugin]);
-                        this.getAlias(plugins[plugin]).then((pluginName) => this.getConfig(plugins[plugin], pluginName));
-                        this.getPackageData(plugins[plugin]);
-                        this.fetchUpdate(plugins[plugin], updateInterval * 1000);
+                        this.getName(plugins[id]);
+                        this.getAlias(plugins[id]).then((pluginName) => this.getConfig(plugins[id], pluginName));
+                        this.getPackageData(plugins[id]);
+                        this.fetchUpdate(plugins[id], updateInterval * 1000);
 
-                        this.updateInterval = setInterval(() => this.fetchUpdate(plugins[plugin], updateInterval * 500), updateInterval * 1000);
+                        this.updateInterval = setInterval(() => this.fetchUpdate(plugins[id], updateInterval * 500), updateInterval * 1000);
                     }
                 }
             }
