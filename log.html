@@ -93,43 +93,46 @@
 
 					for(const id in plugins)
 					{
-						var logTitle = document.createElement('h2');
-						var logWindow = document.createElement('textarea');
-
-						logTitle.setAttribute('style', 'width: fit-content');
-						logTitle.innerHTML = '• ' + (id != 'SynTex' ? id.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
-
-						if(id == 'SynTex')
+						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
 						{
-							logTitle.innerHTML = '• Bridge Log •';
-						}
-						else if(id == 'SynTexWebHooks')
-						{
-							logTitle.innerHTML = '• WebHooks Log •';
-						}
-						else if(id == 'SynTexTuya')
-						{
-							logTitle.innerHTML = '• Tuya Log •';
-						}
-						else if(id == 'SynTexMagicHome')
-						{
-							logTitle.innerHTML = '• MagicHome Log •';
-						}
+							var logTitle = document.createElement('h2');
+							var logWindow = document.createElement('textarea');
 
-						logWindow.setAttribute('readonly', '');
-						logWindow.setAttribute('id', id);
-						logWindow.style.height = '700px'; 
-						logWindow.style.maxHeight = '700px'; 
+							logTitle.setAttribute('style', 'width: fit-content');
+							logTitle.innerHTML = '• ' + (plugins[id].alias != 'SynTex' ? plugins[id].alias.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
 
-						if(counter < plugins.length - 1)
-						{
-							logWindow.style.marginBottom = '40px';    
+							if(plugins[id].alias == 'SynTex')
+							{
+								logTitle.innerHTML = '• Bridge Log •';
+							}
+							else if(plugins[id].alias == 'SynTexWebHooks')
+							{
+								logTitle.innerHTML = '• WebHooks Log •';
+							}
+							else if(plugins[id].alias == 'SynTexTuya')
+							{
+								logTitle.innerHTML = '• Tuya Log •';
+							}
+							else if(plugins[id].alias == 'SynTexMagicHome')
+							{
+								logTitle.innerHTML = '• MagicHome Log •';
+							}
+
+							logWindow.setAttribute('readonly', '');
+							logWindow.setAttribute('id', plugins[id].alias);
+							logWindow.style.height = '700px'; 
+							logWindow.style.maxHeight = '700px'; 
+
+							if(counter < plugins.length - 1)
+							{
+								logWindow.style.marginBottom = '40px';    
+							}
+
+							document.getElementById('log-container').appendChild(logTitle);
+							document.getElementById('log-container').appendChild(logWindow);
+						
+							counter++;
 						}
-
-						document.getElementById('log-container').appendChild(logTitle);
-						document.getElementById('log-container').appendChild(logWindow);
-					
-						counter++;
 					}
 
 					fetchLogs();
@@ -153,23 +156,24 @@
 							console.error(e);
 						}
 						
-						//logJSON = {SynTex:[{t:'123', m:'HI', l:'error'}]};
-
 						for(const id in plugins)
 						{
-							if(logJSON[id] == null || logJSON[id].length == 0)
+							if(plugins[id].config != null && plugins[id].config.logDirectory != null)
 							{
-								var label = document.createElement('h2');
+								if(logJSON[plugins[id].alias] == null || logJSON[plugins[id].alias].length == 0)
+								{
+									var label = document.createElement('h2');
 
-								label.innerHTML = '↻ Neu Laden';
-								label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
-								label.setAttribute('onclick', 'fetchLogs("' + id + '")');
+									label.innerHTML = '↻ Neu Laden';
+									label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
+									label.setAttribute('onclick', 'fetchLogs("' + plugins[id].alias + '")');
 
-								document.getElementById(id).appendChild(label);
-							}
-							else
-							{
-								createLog(document.getElementById(id), logJSON[id], null);
+									document.getElementById(plugins[id].alias).appendChild(label);
+								}
+								else
+								{
+									createLog(document.getElementById(plugins[id].alias), logJSON[plugins[id].alias], null);
+								}
 							}
 						}
 
