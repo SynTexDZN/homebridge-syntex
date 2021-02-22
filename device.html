@@ -346,7 +346,7 @@
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-							if(type != 'deleted')
+							if(type != 'removed')
 							{
 								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
 
@@ -675,7 +675,7 @@
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd' && type != 'deleted' && (type != 'statelessswitch' || services.length == 1))
+						if(type != 'lcd' && type != 'removed' && (type != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
@@ -793,7 +793,7 @@
 				{
 					for(const i in typeCounter)
 					{
-						if(i != 'lcd' && i != 'deleted' && (i != 'statelessswitch' || services.length == 1))
+						if(i != 'lcd' && i != 'removed' && (i != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
 							{
