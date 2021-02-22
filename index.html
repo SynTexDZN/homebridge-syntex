@@ -97,6 +97,7 @@
 
 				devices.sort((a, b) => (Essentials.getType(a.name) > Essentials.getType(b.name)) ? 1 : ((Essentials.getType(b.name) > Essentials.getType(a.name)) ? -1 : 0));
 				devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
+				devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
 				
 				if(devices.length == 0)
 				{
