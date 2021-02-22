@@ -542,7 +542,7 @@
 					});
 				}
 
-				getPort(pluginName)
+				function getPort(pluginName)
 				{
 					for(const id in plugins)
 					{
@@ -1353,7 +1353,7 @@
 									calcValues(orginal, type, j);
 								}
 
-								if(state[Essentials.typeToLetter(type) + j] != null)
+								if(state != null && state[Essentials.typeToLetter(type) + j] != null)
 								{
 									state = state[Essentials.typeToLetter(type) + j];
 								}
@@ -1508,7 +1508,7 @@
 									document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
 									document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
 								}
-								else if(state == 'Error')
+								else
 								{
 									document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
 								}
