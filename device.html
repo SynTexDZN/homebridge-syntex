@@ -544,15 +544,22 @@
 
 				function getPort(pluginName)
 				{
+					var port = null;
+
+					if(pluginName == 'SynTex')
+					{
+						pluginName = 'SynTexWebHooks';
+					}
+
 					for(const id in plugins)
 					{
 						if(plugins[id].alias == pluginName && plugins[id].config != null && plugins[id].config.port != null)
 						{
-							return plugins[id].config.port;
+							port = plugins[id].config.port;
 						}
 					}
 
-					return null;
+					return port;
 				}
 
 			</script>
@@ -624,13 +631,13 @@
 
 						button.style.backgroundColor = color;
 						
-						if(button.value.toUpperCase() == 'AN' || button.value.toUpperCase() == 'AUS')
-						{
-							button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
-						}
-						else if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+						if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
 						{
 							button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
+						}
+						else
+						{
+							button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
 						}
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
@@ -1339,7 +1346,7 @@
 									url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 								}
 
-								await Query.fetchURL(url, 10000);
+								state = await Query.fetchURL(url, 10000);
 
 								if(state != null && state != 'Error')
 								{
@@ -1508,9 +1515,10 @@
 									document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
 									document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
 								}
-								else
+								else/* if(document.getElementById('status-' + type + '-' + j).value != 'AN' && document.getElementById('status-' + type + '-' + j).value != 'AUS')*/
 								{
 									document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
+									document.getElementById('status-' + type + '-' + j).style.backgroundColor = '';
 								}
 
 								console.log('STATE', type, state);
