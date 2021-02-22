@@ -641,7 +641,7 @@
 						}
 						else if(device.plugin == 'SynTexMagicHome')
 						{
-							url += '&type=' + device.type;
+							url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 						}
 
 						await Query.complexFetch(url, 10000, 1, {}, false);
@@ -1336,7 +1336,7 @@
 								}
 								else if(device.plugin == 'SynTexMagicHome')
 								{
-									url += '&type=' + device.type;
+									url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 								}
 
 								await Query.fetchURL(url, 10000);
