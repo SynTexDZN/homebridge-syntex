@@ -318,6 +318,8 @@
 						await Query.complexFetch('/serverside/update?plugin=' + id + '&version=' + latestVersions[id], 5000, 2, overlays, false);
 							
 						await Essentials.newTimeout(3000);
+
+						var success = false;
 							
 						if(await Essentials.checkUpdating('/serverside/update?status')
 						&& await Essentials.checkRestart('/serverside/check-restart'))
@@ -338,6 +340,8 @@
 
 									document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
 									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+
+									success = true;
 								}
 								else
 								{
@@ -357,7 +361,7 @@
 
 						await Essentials.newTimeout(4000);
 
-						Essentials.removeOverlays(btn, false);
+						Essentials.removeOverlays(btn, !success);
 
 						await Essentials.newTimeout(300);
 					}
