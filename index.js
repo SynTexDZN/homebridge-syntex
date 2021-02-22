@@ -460,32 +460,7 @@ class SynTexPlatform
 			{
 				await DeviceManager.reloadAccessories();
 
-				var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
-				var magicHomeConfig = await this.getPluginConfig('SynTexMagicHome');
-				var tuyaConfig = await this.getPluginConfig('SynTexTuya');
-				var obj = {
-					device: JSON.stringify(DeviceManager.getAccessory(urlParams.id)),
-					wPort: 1710,
-					mPort: 1712,
-					tPort: 1713
-				};
-
-				if(webhookConfig != null)
-				{
-					obj.wPort = webhookConfig.port;
-				}
-
-				if(magicHomeConfig != null)
-				{
-					obj.mPort = magicHomeConfig.port;
-				}
-
-				if(tuyaConfig != null)
-				{
-					obj.tPort = tuyaConfig.port;
-				}
-
-				response.write(HTMLQuery.sendValues(content, obj));
+				response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
 				response.end();
 			}
 		});
@@ -612,18 +587,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/automation/', '/automation/modify'], async (response, urlParams, content) => {
 
-			var webhookConfig = await this.getPluginConfig('SynTexWebHooks');
-			var obj = {
-				accessories: JSON.stringify(DeviceManager.getAccessories()),
-				wPort: 1710
-			};
-
-			if(webhookConfig != null)
-			{
-				obj.wPort = webhookConfig.port;
-			}
-
-			response.write(HTMLQuery.sendValues(content, obj));
+			response.write(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
 			response.end();
 		});
 

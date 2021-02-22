@@ -489,25 +489,70 @@
 					checkUpdates();
 				}
 
-				if(Presets.getPreset(device.plugin).getPingURL(device) != null)
-				{
-					pingESP();
-				}
-				else
-				{
-					setInterval(() => {
+				loadPluginData().then(() => {
 
-						if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
-						{
-							fetchState();
-						}
+					if(Presets.getPreset(device.plugin).getPingURL(device) != null)
+					{
+						pingESP();
+					}
+					else
+					{
+						setInterval(() => {
 
-					}, 300);
-				}
+							if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+							{
+								fetchState();
+							}
+
+						}, 300);
+					}
+				});
 
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
 					Essentials.switchPage('infos', 'settings', true);
+				}
+
+			</script>
+			<script>
+
+				// NOTE: Reload Plugin Data
+
+				window.plugins = {};
+
+				function loadPluginData()
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								plugins = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
+
+				getPort(pluginName)
+				{
+					for(const id in plugins)
+					{
+						if(plugins[id].alias == pluginName && plugins[id].config != null && plugins[id].config.port != null)
+						{
+							return plugins[id].config.port;
+						}
+					}
+
+					return null;
 				}
 
 			</script>
@@ -588,18 +633,18 @@
 							button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
 						}
 
+						var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
+
 						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 						{
-							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + counter + '&value=' + value, 10000, 2, {}, false);
+							url += '&type=' + type + '&counter=' + counter;
 						}
 						else if(device.plugin == 'SynTexMagicHome')
 						{
-							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=' + device.type + '&value=' + value, 20000, 1, {}, false);
+							url += '&type=' + device.type;
 						}
-						else if(device.plugin == 'SynTexTuya')
-						{
-							await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':<%tPort%>/devices?id=' + device.id + '&value=' + value, 20000, 1, {}, false);
-						}
+
+						await Query.complexFetch(url, 10000, 1, {}, false);
 
 						const index = busy.indexOf(button.getAttribute('id'));
 
@@ -1283,19 +1328,18 @@
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
 								var state = null;
+								var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
 
-								if(device.plugin && device.plugin == 'SynTexMagicHome')
+								if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 								{
-									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%mPort%>/devices?id=' + device.id + '&type=light', 10000);
+									url += '&type=' + type + '&counter=' + j;
 								}
-								else if(device.plugin && device.plugin == 'SynTexTuya')
+								else if(device.plugin == 'SynTexMagicHome')
 								{
-									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%tPort%>/devices?id=' + device.id, 10000);
+									url += '&type=' + device.type;
 								}
-								else
-								{
-									state = await Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':<%wPort%>/devices?id=' + device.id + '&type=' + type + '&counter=' + j, 10000);
-								}
+
+								await Query.fetchURL(url, 10000);
 
 								if(state != null && state != 'Error')
 								{

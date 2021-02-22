@@ -295,6 +295,37 @@
 					Essentials.switchPage('infos', 'settings', true);
 				}
 
+				loadPluginData();
+
+			</script>
+			<script>
+
+				// NOTE: Reload Plugin Data
+
+				window.plugins = {};
+
+				function loadPluginData()
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								plugins = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
+
 			</script>
 			<script>
 
@@ -884,26 +915,24 @@
 						{
 							await Essentials.newTimeout(3000);
 
-							if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
+							for(const id in plugins)
 							{
-								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
-
-								await Essentials.newTimeout(3000);
-
-								Essentials.leavePage('/automation/');
+								if(plugins[id].config != null && plugins[id].config.port != null)
+								{
+									await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + plugins[id].config.port + '/reload-automation', 5000, 2, {}, true);
+								}
 							}
-							else
-							{
-								Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
 
-								await Essentials.newTimeout(3000);
+							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
 
-								Essentials.removeOverlays(document.getElementById('reset-btn'), true);
-							}
+							await Essentials.newTimeout(3000);
+
+							Essentials.leavePage('/automation/');
 						}
 						else
 						{
 							await Essentials.newTimeout(4010);
+
 							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
 						}
 
@@ -1057,14 +1086,15 @@
 
 					if(created == 'Success')
 					{
-						if(await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':<%wPort%>/reload-automation', 10000, 2, {}, true))
+						for(const id in plugins)
 						{
-							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
+							if(plugins[id].config != null && plugins[id].config.port != null)
+							{
+								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + plugins[id].config.port + '/reload-automation', 5000, 2, {}, true);
+							}
 						}
-						else
-						{
-							Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Aktualisieren Fehlgeschlagen!', 'red'));
-						}
+						
+						Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
 
 						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
 
