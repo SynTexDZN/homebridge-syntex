@@ -346,120 +346,123 @@
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
-							var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
-
-							frame.setAttribute('style', 'border-radius: 32px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
-
-							document.getElementById('activity').appendChild(frame);
-
-							if(i != counter - 1) // UGLY: Handle Statusfield Margin
+							if(type != 'deleted')
 							{
-								frame.style.marginBottom = '20px';
-							}
+								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
 
-							var height = frame.offsetHeight - 4;
+								frame.setAttribute('style', 'border-radius: 32px; height: 300px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
 
-							canvas.setAttribute('class', 'canvas');
-							canvas.setAttribute('id', 'canvas-' + type + '-' + j);
-							canvas.setAttribute('style', 'border-radius: 32px; position: relative; z-index: 1; opacity: 0');
+								document.getElementById('activity').appendChild(frame);
 
-							canvas.width = document.getElementById('infos').offsetWidth - 4;
-							canvas.height = height;
-							canvas.style.background = 'rgb(20, 20, 30)';
-
-							frame.appendChild(canvas);
-
-							grid.setAttribute('class', 'canvas');
-							grid.setAttribute('id', 'canvas-' + type + '-' + j);
-							grid.setAttribute('style', 'border-radius: 32px; position: relative; top: -100%');
-
-							grid.width = document.getElementById('infos').offsetWidth - 4;
-							grid.height = height;
-							grid.style.background = 'rgb(20, 20, 30)';
-
-							frame.appendChild(grid);
-
-							drawGrid(grid, [], 10);
-
-							var infoMin = document.createElement('div');
-
-							infoMin.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
-							infoMin.setAttribute('class', 'min');
-							infoMin.innerHTML = 'Min';
-
-							frame.appendChild(infoMin);
-
-							var infoMax = document.createElement('div');
-
-							infoMax.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
-							infoMax.setAttribute('class', 'max');
-							infoMax.innerHTML = 'Max';
-
-							frame.appendChild(infoMax);
-
-							var infoType = document.createElement('div');
-
-							infoType.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: center; font-weight: 300');
-
-							if(type == 'rgb' || type == 'rgbw')
-							{
-								type = type.toUpperCase();
-							}
-							else if(type == 'statelessswitch')
-							{
-								type = 'Stateless Switch';
-							}
-
-							var name = type[0].toUpperCase() + type.substring(1), n = [];
-
-							if(typeCounter[type] > 1)
-							{
-								name = device.name + ' ' + type[0].toUpperCase() + type.substring(1) + ' ' + j;
-							}
-							else if(counter > 1)
-							{
-								//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
-							}
-
-							for(var k = 0; k < device.services.length; k++)
-							{
-								if(device.services[k] instanceof Object && device.services[k].type == type && device.services[k].name != null)
+								if(i != counter - 1) // UGLY: Handle Statusfield Margin
 								{
-									n.push(device.services[k].name);
+									frame.style.marginBottom = '20px';
 								}
+
+								var height = frame.offsetHeight - 4;
+
+								canvas.setAttribute('class', 'canvas');
+								canvas.setAttribute('id', 'canvas-' + type + '-' + j);
+								canvas.setAttribute('style', 'border-radius: 32px; position: relative; z-index: 1; opacity: 0');
+
+								canvas.width = document.getElementById('infos').offsetWidth - 4;
+								canvas.height = height;
+								canvas.style.background = 'rgb(20, 20, 30)';
+
+								frame.appendChild(canvas);
+
+								grid.setAttribute('class', 'canvas');
+								grid.setAttribute('id', 'canvas-' + type + '-' + j);
+								grid.setAttribute('style', 'border-radius: 32px; position: relative; top: -100%');
+
+								grid.width = document.getElementById('infos').offsetWidth - 4;
+								grid.height = height;
+								grid.style.background = 'rgb(20, 20, 30)';
+
+								frame.appendChild(grid);
+
+								drawGrid(grid, [], 10);
+
+								var infoMin = document.createElement('div');
+
+								infoMin.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+								infoMin.setAttribute('class', 'min');
+								infoMin.innerHTML = 'Min';
+
+								frame.appendChild(infoMin);
+
+								var infoMax = document.createElement('div');
+
+								infoMax.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+								infoMax.setAttribute('class', 'max');
+								infoMax.innerHTML = 'Max';
+
+								frame.appendChild(infoMax);
+
+								var infoType = document.createElement('div');
+
+								infoType.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: center; font-weight: 300');
+
+								if(type == 'rgb' || type == 'rgbw')
+								{
+									type = type.toUpperCase();
+								}
+								else if(type == 'statelessswitch')
+								{
+									type = 'Stateless Switch';
+								}
+
+								var name = type[0].toUpperCase() + type.substring(1), n = [];
+
+								if(typeCounter[type] > 1)
+								{
+									name = device.name + ' ' + type[0].toUpperCase() + type.substring(1) + ' ' + j;
+								}
+								else if(counter > 1)
+								{
+									//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
+								}
+
+								for(var k = 0; k < device.services.length; k++)
+								{
+									if(device.services[k] instanceof Object && device.services[k].type == type && device.services[k].name != null)
+									{
+										n.push(device.services[k].name);
+									}
+								}
+
+								if(n.length > 0)
+								{
+									name = n[j];
+								}
+
+								if(name.includes(device.name))
+								{
+									name = name.replace(device.name, '');
+								}
+
+								name = name.toUpperCase();
+
+								infoType.innerHTML = name;
+
+								frame.appendChild(infoType);
+								
+								var infoUpdates = document.createElement('div');
+
+								infoUpdates.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+								infoUpdates.setAttribute('class', 'updates');
+								infoUpdates.innerHTML = 'Daten';
+
+								frame.appendChild(infoUpdates);
+
+								var infoUpdate = document.createElement('div');
+
+								infoUpdate.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+								infoUpdate.setAttribute('class', 'update');
+								infoUpdate.innerHTML = 'Aktivität';
+
+								frame.appendChild(infoUpdate);
 							}
-
-							if(n.length > 0)
-							{
-								name = n[j];
-							}
-
-							if(name.includes(device.name))
-							{
-								name = name.replace(device.name, '');
-							}
-
-							name = name.toUpperCase();
-
-							infoType.innerHTML = name;
-
-							frame.appendChild(infoType);
-							
-							var infoUpdates = document.createElement('div');
-
-							infoUpdates.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
-							infoUpdates.setAttribute('class', 'updates');
-							infoUpdates.innerHTML = 'Daten';
-
-							frame.appendChild(infoUpdates);
-
-							var infoUpdate = document.createElement('div');
-
-							infoUpdate.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
-							infoUpdate.setAttribute('class', 'update');
-							infoUpdate.innerHTML = 'Aktivität';
-
-							frame.appendChild(infoUpdate);
 						}
 					}
 					else
@@ -672,7 +675,7 @@
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
+						if(type != 'lcd' && type != 'deleted' && (type != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
@@ -790,7 +793,7 @@
 				{
 					for(const i in typeCounter)
 					{
-						if(i != 'lcd' && (i != 'statelessswitch' || services.length == 1))
+						if(i != 'lcd' && i != 'deleted' && (i != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
 							{
@@ -962,17 +965,18 @@
 					}
 					else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
 					{
-						var label = document.createElement('h2');
+						var reloadButton = document.createElement('h2');
 
-						label.innerHTML = '↻ Neu Laden';
-						label.setAttribute('style', 'margin-top: -480px; position: relative; z-index: 1; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer; opacity: 0; transition: 1s');
-						label.setAttribute('onclick', 'loadActivity()');
+						reloadButton.innerHTML = '↻ Neu Laden';
+						reloadButton.className = 'reload-button';
+						reloadButton.setAttribute('style', 'margin-top: -480px');
+						reloadButton.setAttribute('onclick', 'loadActivity()');
 
-						canvas.parentElement.appendChild(label);
+						canvas.parentElement.appendChild(reloadButton);
 
 						setTimeout(() => {
 
-							label.style.opacity = 1;
+							reloadButton.style.opacity = 1;
 
 						}, 0);
 					}
