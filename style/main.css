@@ -130,7 +130,7 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 }
 
 
-.select-items div:not(.same-as-selected):hover, .white:hover
+.select-items div:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 {
 	transition: .2s ease-out;
 	filter: brightness(80%)!important;
@@ -182,7 +182,7 @@ input[type='submit']
 	background-image: linear-gradient(to right, hsl(150, 85%, 50%) 0%, hsl(170, 85%, 50%) 100%)!important;
 }
 
-input[type='button'].white, button.white
+input[type='button'].white, button.white, .white
 {
 	background: var(--light-layer-two);
 }
@@ -1052,7 +1052,7 @@ button img
 		filter: brightness(150%);
 	}
 
-	.white:hover
+	input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 	{
 		filter: brightness(150%)!important;
 	}
