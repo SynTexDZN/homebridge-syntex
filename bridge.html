@@ -359,14 +359,14 @@
 							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler beim Neustart!'));
 						}
 
+						updating.splice(updating.indexOf(id), 1);
+
 						await Essentials.newTimeout(4000);
 
 						Essentials.removeOverlays(btn, !success);
 
 						await Essentials.newTimeout(300);
 					}
-
-					updating.splice(updating.indexOf(id), 1);
 				}
 				
 			</script>
