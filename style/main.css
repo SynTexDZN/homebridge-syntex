@@ -22,7 +22,7 @@
 	-webkit-user-select: none;
 }
 
-b, p, h1, h2, textarea, input[type='text'], input[type='password'], input[type='textarea']
+textarea, input[type='text'], input[type='password'], input[type='textarea']
 {
 	-webkit-user-select: text;
 }
@@ -789,6 +789,9 @@ canvas
 	/*-webkit-mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, .75) 3%, rgba(0, 0, 0, 1) 5%, rgba(0, 0, 0, 1) 95%, rgba(0, 0, 0, .75) 97%, transparent);*/
 	background: var(--light-layer-two);
 	border-radius: 16px;
+	height: 50px;
+	box-sizing: border-box;
+	border: 2px solid var(--light-layer-two);
 }
 
 #rooms input
@@ -796,27 +799,32 @@ canvas
 	box-shadow: none;
 	opacity: 1!important;
 	-webkit-appearance: none;
-	min-width: 150px;
+	min-width: 170px;
 	margin: 0!important;
-	border-left: 1px solid var(--dark-layer-one);
+	border-left: 1px solid rgb(160, 160, 180);
+	border-right: 1px solid rgb(160, 160, 180);
 	border-radius: 0;
-	padding: 5px 15px;
+	padding: 5px 10px 5px 13px;
 	letter-spacing: 3px!important;
+	height: auto;
 }
 
 #rooms input:last-child
 {
-	border-radius: 0 16px 16px 0;
+	border-radius: 0 14px 14px 0;
+	border-right-width: 0;
 }
 
 #rooms input:first-child
 {
-	border-radius: 16px 0 0 16px;
+	border-radius: 14px 0 0 14px;
+	border-left-width: 0;
 }
 
 .room-active
 {
 	background: rgb(160, 160, 180)!important;
+	border-style: solid;
 	/*background: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px)!important;*/
 }
 
@@ -987,7 +995,7 @@ button img
 
 .plugin-container
 {
-	transition: .3s ease-in-out height!important;
+	transition: .3s .2s .2s ease-in-out height, opacity, filter!important;
 	letter-spacing: 3px!important;
 
 	line-height: 2;
@@ -1094,33 +1102,40 @@ button img
 		filter: saturate(0%);
 	}
 
-	input[type='button']:not(:disabled):not(.control-panel):hover, button:not(:disabled):not(.control-panel):hover
+	input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):hover, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):hover
 	{
-		filter: brightness(150%);
+		background: rgb(60, 60, 80);
+		filter: none;
 	}
 
 	input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 	{
-		filter: brightness(150%)!important;
+		filter: none!important;
+		background: rgb(75, 75, 95);
 	}
 
-	.gradient-blue:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-blue-green:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-blue-purple:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-cyan:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-green:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-orange:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-purple:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-red:not(:disabled):not(.control-panel):not(.overlay):hover,
-	.gradient-yellow:not(:disabled):not(.control-panel):not(.overlay):hover,
-	input[type='submit']:not(:disabled):not(.control-panel):hover
+	#rooms input:not(.room-active):hover
+	{
+		background: rgb(75, 75, 95)!important;
+	}
+
+	.gradient-blue:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-blue-green:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-blue-purple:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-cyan:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-green:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-orange:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-purple:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-red:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.gradient-yellow:not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):hover
 	{
 		filter: brightness(90%)!important;
 	}
 
 	.select-items div:not(.same-as-selected):hover, .type-container:hover
 	{
-		filter: brightness(100%)!important;
+		filter: none!important;
 	}
 
 	::-webkit-scrollbar-track, ::-webkit-scrollbar
@@ -1165,17 +1180,22 @@ button img
 	.navigation-panel .sticky-inset
 	{
 		background: rgba(245, 245, 255, .8);
+	}
+
+	.striped, .navigation-panel .sticky-inset
+	{
 		background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .05) 0, rgba(0, 0, 0, .05) 10px);
 	}
 
 	#rooms
 	{
 		background: var(--light-layer-one);
+		border-color: var(--light-layer-one);
 	}
 
 	#rooms input
 	{
-		border-color: var(--dark-layer-one);
+		border-color: rgb(110, 110, 130);
 	}
 
 	.room-active
@@ -1245,6 +1265,11 @@ button img
 	.update-status
 	{
 		color: var(--light-layer-one);
+	}
+
+	input[type='text']::placeholder, input[type='password']::placeholder
+	{
+		color: rgb(110, 110, 130);
 	}
 }
 
@@ -1576,5 +1601,10 @@ button img
 		right: -5px;
 		height: 32px;
 		font-size: 16px;
+	}
+
+	#rooms
+	{
+		height: 60px;
 	}
 }
