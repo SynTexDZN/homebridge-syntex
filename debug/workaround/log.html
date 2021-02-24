@@ -53,7 +53,19 @@
 					<input id="search-btn" class="gradient-blue loading-loop" type="button" value="Suchen" onclick="searchLog()" style="max-width: 200px">
 				</div>
 				<div style="display: flex">
-					<input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px">
+					<div class="custom-select" style="margin-right: 20px; width: 100%">
+						<select onchange="searchLog()">
+							<option value="all">Alle Level</option>
+							<option value="debug">Debug</option>
+							<option value="success">Erfolg</option>
+							<option value="update">Update</option>
+							<option value="read">Lesen</option>
+							<option value="info">Info</option>
+							<option value="warn">Warnung</option>
+							<option value="error">Fehler</option>
+						</select>
+					</div>
+					<input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px" hidden>
 					<input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
 				</div>
 			</form>
@@ -65,12 +77,14 @@
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
+				import { Replacer } from '/js/replace-select.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
 
 				window.Query = Query;
 				window.Essentials = Essentials;
+				window.Replacer = Replacer;
 
 				loadPluginData().then(() => {
 					
