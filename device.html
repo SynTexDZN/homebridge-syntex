@@ -778,6 +778,8 @@
 
 				async function controlSwitch(button)
 				{
+					console.log(1, 'CONTROL SWITCH');
+
 					if(!busy.includes(button.getAttribute('id')))
 					{
 						busy.push(button.getAttribute('id'));
@@ -789,8 +791,10 @@
 
 						if(temp[type + counter] != null)
 						{
-							value = temp[type + counter].value == 'true' ? 'false' : 'true';
+							value = temp[type + counter].state == true ? 'false' : 'true';
 						}
+
+						console.log(2, 'CONTROL SWITCH', value, temp[type + counter]);
 
 						var v = value == 'false' ? 'AUS' : 'AN';
 
@@ -863,9 +867,7 @@
 
 						if(index > -1)
 						{
-							await Essentials.newTimeout(310);
-
-							busy.splice(index, 1);
+							setTimeout(() => busy.splice(index, 1), 300);
 						}
 					}
 				}
