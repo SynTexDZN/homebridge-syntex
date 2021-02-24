@@ -344,98 +344,107 @@
 								statusField.style.setProperty('margin-bottom', '0', 'important');
 							}
 
-							const mouseDownHandler = function(e)
+							if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 							{
-								busy.push(statusField.getAttribute('id'));
-
-								setStatusPanel(statusField, type, Math.round(e.offsetX / statusField.offsetWidth * 100), true);
-
-								document.addEventListener('mousemove', mouseMoveHandler);
-								document.addEventListener('mouseup', mouseUpHandler);
-							};
-
-							const mouseMoveHandler = function(e)
-							{
-								statusField.style.pointerEvents = 'none';
-								statusField.parentElement.style.cursor = 'w-resize';
-								statusField.style.transition = '0s ease-in-out';
-
-								var percent = Math.min(Math.max(e.offsetX / statusField.offsetWidth * 100, 0), 100);
-								var roomBarRect = statusField.getBoundingClientRect();
-
-								if(e.clientX < roomBarRect.left)
+								const mouseDownHandler = function(e)
 								{
-									percent = 0;
-								}
-								else if(e.clientX > roomBarRect.right)
+									busy.push(this.field.getAttribute('id'));
+
+									setStatusPanel(this.field, this.type, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
+
+									document.addEventListener('mousemove', mouseMoveHandler);
+									document.addEventListener('mouseup', mouseUpHandler);
+
+								}.bind({ field : statusField, type : type });
+
+								const mouseMoveHandler = function(e)
 								{
-									percent = 100;
-								}
-								
-								setStatusPanel(statusField, type, percent, true);
-							};
+									this.field.style.pointerEvents = 'none';
+									this.field.parentElement.style.cursor = 'w-resize';
+									this.field.style.transition = '0s ease-in-out';
 
-							const mouseUpHandler = function(e)
-							{
-								statusField.style.pointerEvents = 'all';
-								statusField.parentElement.style.cursor = 'pointer';
-								statusField.style.transition = '.3s ease-in-out';
+									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
+									var roomBarRect = this.field.getBoundingClientRect();
 
-								var percent = Math.min(Math.max(e.offsetX / statusField.offsetWidth * 100, 0), 100);
-								var roomBarRect = statusField.getBoundingClientRect();
-								
-								if(e.clientX < roomBarRect.left)
+									if(e.clientX < roomBarRect.left)
+									{
+										percent = 0;
+									}
+									else if(e.clientX > roomBarRect.right)
+									{
+										percent = 100;
+									}
+									
+									setStatusPanel(this.field, this.type, percent, true);
+
+								}.bind({ field : statusField, type : type });
+
+								const mouseUpHandler = function(e)
 								{
-									percent = 0;
-								}
-								else if(e.clientX > roomBarRect.right)
+									this.field.style.pointerEvents = 'all';
+									this.field.parentElement.style.cursor = 'pointer';
+									this.field.style.transition = '.3s ease-in-out';
+
+									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
+									var roomBarRect = this.field.getBoundingClientRect();
+									
+									if(e.clientX < roomBarRect.left)
+									{
+										percent = 0;
+									}
+									else if(e.clientX > roomBarRect.right)
+									{
+										percent = 100;
+									}
+
+									setStatusPanel(this.field, this.type, percent);
+
+									Promise.all(promiseArraySlide).then(() => {
+
+										setTimeout(() => {
+
+											busy.splice(busy.indexOf(this.field.getAttribute('id')), 1);
+
+										}, 3000);
+									});
+
+									document.removeEventListener('mousemove', mouseMoveHandler);
+									document.removeEventListener('mouseup', mouseUpHandler);
+
+								}.bind({ field : statusField, type : type });
+
+								statusField.addEventListener('mousedown', mouseDownHandler);
+
+								statusField.addEventListener('touchstart', function(e)
 								{
-									percent = 100;
-								}
+									busy.push(this.field.getAttribute('id'));
 
-								setStatusPanel(statusField, type, percent);
+									getTouchPosition(this.field, this.type, e, true);
 
-								Promise.all(promiseArraySlide).then(() => {
+								}.bind({ field : statusField, type : type }));
+
+								statusField.addEventListener('touchmove', function(e)
+								{
+									this.field.style.transition = '0s ease-in-out';
+
+									getTouchPosition(this.field, this.type, e, true);
+
+								}.bind({ field : statusField, type : type }));
+
+								statusField.addEventListener('touchend', function(e)
+								{
+									getTouchPosition(this.field, this.type, e);
+
+									this.field.style.transition = '.3s ease-in-out';
 
 									setTimeout(() => {
-
-										busy.splice(busy.indexOf(statusField.getAttribute('id')), 1);
-
-									}, 3000);
-								});
-
-								document.removeEventListener('mousemove', mouseMoveHandler);
-								document.removeEventListener('mouseup', mouseUpHandler);
-							};
-
-							statusField.addEventListener('mousedown', mouseDownHandler);
-
-							statusField.addEventListener('touchstart', (e) => {
-								
-								busy.push(statusField.getAttribute('id'));
-
-								getTouchPosition(statusField, type, e, true);
-							});
-
-							statusField.addEventListener('touchmove', (e) => {
-								
-								statusField.style.transition = '0s ease-in-out';
-
-								getTouchPosition(statusField, type, e, true);
-							});
-
-							statusField.addEventListener('touchend', (e) => {
-								
-								getTouchPosition(statusField, type, e);
-
-								statusField.style.transition = '.3s ease-in-out';
-
-								setTimeout(() => {
+										
+										busy.splice(busy.indexOf(this.field.getAttribute('id')), 1);
 									
-									busy.splice(busy.indexOf(statusField.getAttribute('id')), 1);
-								
-								}, 3000);
-							});
+									}, 3000);
+
+								}.bind({ field : statusField, type : type }));
+							}
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
@@ -640,7 +649,6 @@
 					var color = 'rgb(60, 60, 80)';
 
 					percent = Math.round(percent);
-					type = type.toLowerCase();
 
 					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
