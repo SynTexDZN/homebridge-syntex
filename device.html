@@ -350,12 +350,12 @@
 								{
 									busy.push(this.field.getAttribute('id'));
 
-									setStatusPanel(this.field, this.type, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
+									setStatusPanel(this.field, this.type, this.counter, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
 
 									document.addEventListener('mousemove', mouseMoveHandler);
 									document.addEventListener('mouseup', mouseUpHandler);
 
-								}.bind({ field : statusField, type : type });
+								}.bind({ field : statusField, type : type, counter : j });
 
 								const mouseMoveHandler = function(e)
 								{
@@ -375,9 +375,9 @@
 										percent = 100;
 									}
 									
-									setStatusPanel(this.field, this.type, percent, true);
+									setStatusPanel(this.field, this.type, this.counter, percent, true);
 
-								}.bind({ field : statusField, type : type });
+								}.bind({ field : statusField, type : type, counter : j });
 
 								const mouseUpHandler = function(e)
 								{
@@ -397,7 +397,7 @@
 										percent = 100;
 									}
 
-									setStatusPanel(this.field, this.type, percent);
+									setStatusPanel(this.field, this.type, this.counter, percent);
 
 									Promise.all(promiseArraySlide).then(() => {
 
@@ -411,7 +411,7 @@
 									document.removeEventListener('mousemove', mouseMoveHandler);
 									document.removeEventListener('mouseup', mouseUpHandler);
 
-								}.bind({ field : statusField, type : type });
+								}.bind({ field : statusField, type : type, counter : j });
 
 								statusField.addEventListener('mousedown', mouseDownHandler);
 
@@ -419,21 +419,21 @@
 								{
 									busy.push(this.field.getAttribute('id'));
 
-									getTouchPosition(this.field, this.type, e, true);
+									getTouchPosition(this.field, this.type, this.counter, e, true);
 
-								}.bind({ field : statusField, type : type }));
+								}.bind({ field : statusField, type : type, counter : j }));
 
 								statusField.addEventListener('touchmove', function(e)
 								{
 									this.field.style.transition = '0s ease-in-out';
 
-									getTouchPosition(this.field, this.type, e, true);
+									getTouchPosition(this.field, this.type, this.counter, e, true);
 
-								}.bind({ field : statusField, type : type }));
+								}.bind({ field : statusField, type : type, counter : j }));
 
 								statusField.addEventListener('touchend', function(e)
 								{
-									getTouchPosition(this.field, this.type, e);
+									getTouchPosition(this.field, this.type, this.counter, e);
 
 									this.field.style.transition = '.3s ease-in-out';
 
@@ -443,7 +443,7 @@
 									
 									}, 3000);
 
-								}.bind({ field : statusField, type : type }));
+								}.bind({ field : statusField, type : type, counter : j }));
 							}
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
@@ -621,7 +621,7 @@
 			</script>
 			<script>
 
-				function getTouchPosition(statusField, type, e, send)
+				function getTouchPosition(statusField, type, counter, e, send)
 				{
 					let touchobj = e.changedTouches[0];
 
@@ -637,14 +637,14 @@
 						percent = 100;
 					}
 						
-					setStatusPanel(statusField, type, percent, send);
+					setStatusPanel(statusField, type, counter, percent, send);
 
 					e.preventDefault();
 				}
 
 				window.promiseArraySlide = [];
 
-				async function setStatusPanel(statusField, type, percent, send)
+				async function setStatusPanel(statusField, type, counter, percent, send)
 				{
 					var color = 'rgb(60, 60, 80)';
 
@@ -652,7 +652,7 @@
 
 					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
-						color = 'hsl(' + values[type + '0'][0].hue + ', ' + (values[type + '0'][0].saturation * percent / 100) + '%, ' + parseInt(25 + percent / 2.5) + '%)';
+						color = 'hsl(' + temp[type + '0'].hue + ', ' + (temp[type + '0'].saturation * percent / 100) + '%, ' + parseInt(25 + percent / 2.5) + '%)';
 					}
 					else if(type == 'dimmer')
 					{
@@ -787,9 +787,9 @@
 						var type = button.getAttribute('id').split('-')[1];
 						var value = 'true';
 
-						if(values[type + counter] != null && values[type + counter][0] != null)
+						if(temp[type + counter] != null)
 						{
-							value = values[type + counter][0].value == 'true' ? 'false' : 'true';
+							value = temp[type + counter].value == 'true' ? 'false' : 'true';
 						}
 
 						var v = value == 'false' ? 'AUS' : 'AN';
@@ -814,12 +814,12 @@
 						{
 							if(value == 'true')
 							{
-								if(Math.round(values[type + counter][0].brightness) < 100)
+								if(Math.round(temp[type + counter].brightness) < 100)
 								{
-									v = Math.round(values[type + counter][0].brightness) + '%';
+									v = Math.round(temp[type + counter].brightness) + '%';
 								}
 
-								color = 'hsl(' + parseInt(values[type + counter][0].hue) + ', ' + parseInt(values[type + counter][0].saturation) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) / 2.5) + '%)';
+								color = 'hsl(' + parseInt(temp[type + counter].hue) + ', ' + parseInt(temp[type + counter].saturation) + '%, ' + (25 + parseInt(temp[type + counter].brightness) / 2.5) + '%)';
 							}
 							else if(value == 'false')
 							{
@@ -830,11 +830,11 @@
 						{
 							if(value == 'true')
 							{
-								color = 'hsl(40, ' + parseInt(values[type + counter][0].brightness * 0.85) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) * 0.5) + '%)';
+								color = 'hsl(40, ' + parseInt(temp[type + counter].brightness * 0.85) + '%, ' + (25 + parseInt(temp[type + counter].brightness) * 0.5) + '%)';
 								
-								if(Math.round(values[type + counter][0].brightness) < 100)
+								if(Math.round(temp[type + counter].brightness) < 100)
 								{
-									v = Math.round(values[type + counter][0].brightness) + '%';
+									v = Math.round(temp[type + counter].brightness) + '%';
 								}
 							}
 							else if(value == 'false')
