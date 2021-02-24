@@ -349,6 +349,27 @@ class SynTexPlatform
 			});
 		});
 
+		this.WebServer.addPage('/serverside/syslog', (response, urlParams) => {
+
+			fs.readFile('/var/log/syslog', (err, data) => {
+
+				if(data && !err)
+				{
+					data = data.toString();
+
+					response.write(data);
+				}
+				else
+				{
+					response.write('Error');
+
+					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%! ' + err);
+				}
+
+				response.end();
+			});
+		});
+
 		this.WebServer.addPage('/serverside/time', (response) => {
 
 			response.write('' + (new Date().getTime() / 1000 + 3601));
