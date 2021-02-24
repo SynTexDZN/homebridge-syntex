@@ -344,6 +344,99 @@
 								statusField.style.setProperty('margin-bottom', '0', 'important');
 							}
 
+							const mouseDownHandler = function(e)
+							{
+								busy.push(statusField.getAttribute('id'));
+
+								setStatusPanel(statusField, type, Math.round(e.offsetX / statusField.offsetWidth * 100), true);
+
+								document.addEventListener('mousemove', mouseMoveHandler);
+								document.addEventListener('mouseup', mouseUpHandler);
+							};
+
+							const mouseMoveHandler = function(e)
+							{
+								statusField.style.pointerEvents = 'none';
+								statusField.parentElement.style.cursor = 'w-resize';
+								statusField.style.transition = '0s ease-in-out';
+
+								var percent = Math.min(Math.max(e.offsetX / statusField.offsetWidth * 100, 0), 100);
+								var roomBarRect = statusField.getBoundingClientRect();
+
+								if(e.clientX < roomBarRect.left)
+								{
+									percent = 0;
+								}
+								else if(e.clientX > roomBarRect.right)
+								{
+									percent = 100;
+								}
+								
+								setStatusPanel(statusField, type, percent, true);
+							};
+
+							const mouseUpHandler = function(e)
+							{
+								statusField.style.pointerEvents = 'all';
+								statusField.parentElement.style.cursor = 'pointer';
+								statusField.style.transition = '.3s ease-in-out';
+
+								var percent = Math.min(Math.max(e.offsetX / statusField.offsetWidth * 100, 0), 100);
+								var roomBarRect = statusField.getBoundingClientRect();
+								
+								if(e.clientX < roomBarRect.left)
+								{
+									percent = 0;
+								}
+								else if(e.clientX > roomBarRect.right)
+								{
+									percent = 100;
+								}
+
+								setStatusPanel(statusField, type, percent);
+
+								Promise.all(promiseArraySlide).then(() => {
+
+									setTimeout(() => {
+
+										busy.splice(busy.indexOf(statusField.getAttribute('id')), 1);
+
+									}, 3000);
+								});
+
+								document.removeEventListener('mousemove', mouseMoveHandler);
+								document.removeEventListener('mouseup', mouseUpHandler);
+							};
+
+							statusField.addEventListener('mousedown', mouseDownHandler);
+
+							statusField.addEventListener('touchstart', (e) => {
+								
+								busy.push(statusField.getAttribute('id'));
+
+								getTouchPosition(statusField, type, e, true);
+							});
+
+							statusField.addEventListener('touchmove', (e) => {
+								
+								statusField.style.transition = '0s ease-in-out';
+
+								getTouchPosition(statusField, type, e, true);
+							});
+
+							statusField.addEventListener('touchend', (e) => {
+								
+								getTouchPosition(statusField, type, e);
+
+								statusField.style.transition = '.3s ease-in-out';
+
+								setTimeout(() => {
+									
+									busy.splice(busy.indexOf(statusField.getAttribute('id')), 1);
+								
+								}, 3000);
+							});
+
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
 
 							if(type != 'removed')
@@ -519,6 +612,83 @@
 			</script>
 			<script>
 
+				function getTouchPosition(statusField, type, e, send)
+				{
+					let touchobj = e.changedTouches[0];
+
+					var roomBarRect = statusField.getBoundingClientRect();
+					var percent = (touchobj.clientX - roomBarRect.left - 20) / (statusField.offsetWidth - 40) * 100;
+
+					if(touchobj.clientX < roomBarRect.left || percent < 0)
+					{
+						percent = 0;
+					}
+					else if(touchobj.clientX > roomBarRect.right || percent > 100)
+					{
+						percent = 100;
+					}
+						
+					setStatusPanel(statusField, type, percent, send);
+
+					e.preventDefault();
+				}
+
+				window.promiseArraySlide = [];
+
+				async function setStatusPanel(statusField, type, percent, send)
+				{
+					var color = 'rgb(60, 60, 80)';
+
+					percent = Math.round(percent);
+					type = type.toLowerCase();
+
+					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+					{
+						color = 'hsl(' + values[type + '0'][0].hue + ', ' + (values[type + '0'][0].saturation * percent / 100) + '%, ' + parseInt(25 + percent / 2.5) + '%)';
+					}
+					else if(type == 'dimmer')
+					{
+						color = 'hsl(40, ' + parseInt(percent * 0.85) + '%, ' + parseInt(25 + percent * 0.5) + '%)';
+					}
+
+					console.log(type, color);
+					
+					var value = percent + '%';
+
+					if(percent == 0)
+					{
+						value = 'AUS';
+
+						color = 'rgb(60, 60, 80)';
+					}
+					else if(percent == 100)
+					{
+						value = 'AN';
+					}
+
+					statusField.style.background = color;
+					statusField.value = value;
+
+					var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+
+					if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+					{
+						url += '&type=' + type + '&counter=' + counter;
+					}
+					else if(device.plugin == 'SynTexMagicHome')
+					{
+						url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
+					}
+
+					if(!send)
+					{
+						promiseArraySlide.push(await Query.complexFetch(url, 10000, 1, {}, false));
+					}
+				}
+
+			</script>
+			<script>
+
 				// NOTE: Reload Plugin Data
 
 				window.plugins = {};
@@ -607,7 +777,19 @@
 						var color = 'rgb(60, 60, 80)';
 						var counter = button.getAttribute('id').split('-')[2];
 						var type = button.getAttribute('id').split('-')[1];
-						var value = button.value.toUpperCase() == 'AN' || button.value.toUpperCase().includes('[AN]') ? 'false' : 'true';
+						var value = 'true';
+
+						if(values[type + counter] != null && values[type + counter][0] != null)
+						{
+							value = values[type + counter][0].value == 'true' ? 'false' : 'true';
+						}
+
+						var v = value == 'false' ? 'AUS' : 'AN';
+
+						if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+						{
+							v = value == 'false' ? button.value.replace('[AN]', '[AUS]') : button.value.replace('[AUS]', '[AN]');
+						}
 
 						if(type == 'switch' || type == 'relais' || type == 'outlet')
 						{
@@ -624,6 +806,11 @@
 						{
 							if(value == 'true')
 							{
+								if(Math.round(values[type + counter][0].brightness) < 100)
+								{
+									v = Math.round(values[type + counter][0].brightness) + '%';
+								}
+
 								color = 'hsl(' + parseInt(values[type + counter][0].hue) + ', ' + parseInt(values[type + counter][0].saturation) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) / 2.5) + '%)';
 							}
 							else if(value == 'false')
@@ -636,6 +823,11 @@
 							if(value == 'true')
 							{
 								color = 'hsl(40, ' + parseInt(values[type + counter][0].brightness * 0.85) + '%, ' + (25 + parseInt(values[type + counter][0].brightness) * 0.5) + '%)';
+								
+								if(Math.round(values[type + counter][0].brightness) < 100)
+								{
+									v = Math.round(values[type + counter][0].brightness) + '%';
+								}
 							}
 							else if(value == 'false')
 							{
@@ -644,15 +836,7 @@
 						}
 
 						button.style.backgroundColor = color;
-
-						if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
-						{
-							button.value = button.value.includes('[AN]') ? button.value.replace('AN', 'AUS') : button.value.replace('AUS', 'AN');
-						}
-						else
-						{
-							button.value = button.value.toUpperCase() == 'AN' ? 'AUS' : 'AN';
-						}
+						button.value = v;
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
 
@@ -1349,211 +1533,228 @@
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
-								var state = null;
-								var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
-
-								if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+								if(!busy.includes('status-' + type + '-' + j))
 								{
-									url += '&type=' + type + '&counter=' + j;
-								}
-								else if(device.plugin == 'SynTexMagicHome')
-								{
-									url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
-								}
+									var state = null;
+									var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
 
-								state = await Query.fetchURL(url, 10000);
-
-								if(state != null && state != 'Error')
-								{
-									state = JSON.parse(state);
-								}
-
-								if(temp[type + j] && state.state != temp[type + j])
-								{
-									var obj = { time : Math.round(new Date().getTime() / 1000), value : state.state.toString() };
-
-									if(state.hue != null)
+									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 									{
-										obj.hue = state.hue;
+										url += '&type=' + type + '&counter=' + j;
+									}
+									else if(device.plugin == 'SynTexMagicHome')
+									{
+										url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 									}
 
-									if(state.saturation != null)
+									state = await Query.fetchURL(url, 10000);
+
+									if(state != null && state != 'Error')
 									{
-										obj.saturation = state.saturation;
+										state = JSON.parse(state);
 									}
 
-									if(state.brightness != null)
+									if(state != null && state[Essentials.typeToLetter(type) + j] != null)
 									{
-										obj.brightness = state.brightness;
+										state = state[Essentials.typeToLetter(type) + j];
 									}
 
-									orginal[type + j].push(obj);
+									console.log(state.state, temp[type + j]);
 
-									calcValues(orginal, type, j);
-								}
-
-								if(state != null && state[Essentials.typeToLetter(type) + j] != null)
-								{
-									state = state[Essentials.typeToLetter(type) + j];
-								}
-
-								if(state != null && state != 'Error' && state.state != null)
-								{
-									temp[type + j] = state.state;
-
-									if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+									if(temp[type + j] != null && (state.state != temp[type + j].state || state.hue != temp[type + j].hue || state.saturation != temp[type + j].saturation || state.brightness != temp[type + j].brightness))
 									{
-										if(state.state == true)
+										var obj = { time : Math.round(new Date().getTime() / 1000), value : state.state.toString() };
+
+										if(state.hue != null)
 										{
-											value = 'AN';
-											color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+											obj.hue = state.hue.toString();
 										}
-										else if(state.state == false)
+
+										if(state.saturation != null)
 										{
-											value = 'AUS';
-											color = 'rgb(60, 60, 80)';
+											obj.saturation = state.saturation.toString();
 										}
+
+										if(state.brightness != null)
+										{
+											obj.brightness = state.brightness.toString();
+										}
+
+										orginal[type + j].push(obj);
+
+										calcValues(orginal, type, j);
 									}
-									else if(type == 'dimmer')
-									{
-										if(state.state == true)
-										{
-											value = 'AN';
-											color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
-										}
-										else if(state.state == false)
-										{
-											value = 'AUS';
-											color = 'rgb(60, 60, 80)';
-										}
-									}
-									else if(typeof state.state == 'boolean')
-									{
-										if(state.state)
-										{
-											value = data[type].active.text.toUpperCase();
-											color = data[type].active.color;
-										}
-										else
-										{
-											value = data[type].inactive.text.toUpperCase();
-											color = data[type].inactive.color;
-										}
-									}
-									else if(typeof state.state == 'number')
-									{
-										var color = 'rgb(60, 60, 80)', value = state.state;
 
-										if(type == 'temperature')
+									if(state != null && state != 'Error' && state.state != null)
+									{
+										temp[type + j] = state;
+
+										if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 										{
-											var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-											value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-
-											if(state.state < 18)
+											if(state.state == true)
 											{
-												color = 'hsl(220, 75%, 55%)';
+												value = Math.round(state.brightness) + '%';
+
+												if(Math.round(state.brightness) == 100)
+												{
+													value = 'AN';
+												}
+												
+												color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
 											}
-											else if(state.state > 26)
+											else if(state.state == false)
 											{
-												color = 'hsl(0, 75%, 55%)';
+												value = 'AUS';
+												color = 'rgb(60, 60, 80)';
+											}
+										}
+										else if(type == 'dimmer')
+										{
+											if(state.state == false || state.brightness == 0)
+											{
+												value = 'AUS';
+												color = 'rgb(60, 60, 80)';
+											}
+											else if(state.state == true)
+											{
+												value = Math.round(state.brightness) + '%';
+
+												if(Math.round(state.brightness) == 100)
+												{
+													value = 'AN';
+												}
+												
+												color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
+											}
+										}
+										else if(typeof state.state == 'boolean')
+										{
+											if(state.state)
+											{
+												value = data[type].active.text.toUpperCase();
+												color = data[type].active.color;
 											}
 											else
 											{
-												color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+												value = data[type].inactive.text.toUpperCase();
+												color = data[type].inactive.color;
 											}
 										}
-										else if(type == 'humidity')
+										else if(typeof state.state == 'number')
 										{
-											var cRange = data[type].colorRange, vRange = data[type].valueRange;
+											var color = 'rgb(60, 60, 80)', value = state.state;
 
-											value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-											if(state.state > 50)
-											{	
-												cRange = [280, 0];
-											}	
-
-											if(state.state < 45 || state.state > 55)	
-											{	
-												color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-											}	
-											else	
-											{	
-												color = data[type].color;	
-											}
-										}
-										else if(type == 'light')
-										{
-											var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-											value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-											if(state.state > 1000)
+											if(type == 'temperature')
 											{
-												color = data[type].color;
+												var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+												value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+												if(state.state < 18)
+												{
+													color = 'hsl(220, 75%, 55%)';
+												}
+												else if(state.state > 26)
+												{
+													color = 'hsl(0, 75%, 55%)';
+												}
+												else
+												{
+													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+												}
+											}
+											else if(type == 'humidity')
+											{
+												var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
+
+												if(state.state > 50)
+												{	
+													cRange = [280, 0];
+												}	
+
+												if(state.state < 45 || state.state > 55)	
+												{	
+													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+												}	
+												else	
+												{	
+													color = data[type].color;	
+												}
+											}
+											else if(type == 'light')
+											{
+												var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
+
+												if(state.state > 1000)
+												{
+													color = data[type].color;
+												}
+												else
+												{
+													color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+												}
 											}
 											else
 											{
-												color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+												value = state.state + ' ' + data[type].active.text.toUpperCase();
 											}
 										}
-										else
-										{
-											value = state.state + ' ' + data[type].active.text.toUpperCase();
-										}
-									}
 
-									if(typeCounter[type] > 1)
-									{
-										var name = device.name + ' ' + type + ' ' + j;
-										var n = [];
-
-										for(var k = 0; k < device.services.length; k++)
+										if(typeCounter[type] > 1)
 										{
-											if(device.services[k] instanceof Object && device.services[k].type == type)
+											var name = device.name + ' ' + type + ' ' + j;
+											var n = [];
+
+											for(var k = 0; k < device.services.length; k++)
 											{
-												n.push(device.services[k].name);
+												if(device.services[k] instanceof Object && device.services[k].type == type)
+												{
+													n.push(device.services[k].name);
+												}
+											}
+
+											if(n.length > 0)
+											{
+												name = n[j];
+											}
+
+											if(name.includes(device.name))
+											{
+												name = name.replace(device.name, '');
+											}
+
+											if(!busy.includes('status-' + type + '-' + j))
+											{
+												document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
 											}
 										}
-
-										if(n.length > 0)
+										else if(!busy.includes('status-' + type + '-' + j))
 										{
-											name = n[j];
-										}
-
-										if(name.includes(device.name))
-										{
-											name = name.replace(device.name, '');
+											document.getElementById('status-' + type + '-' + j).value = value;
 										}
 
 										if(!busy.includes('status-' + type + '-' + j))
 										{
-											document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+											document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
 										}
 									}
-									else if(!busy.includes('status-' + type + '-' + j))
+									else if(type == 'statelessswitch')	
+									{	
+										document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
+										document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
+									}
+									else/* if(document.getElementById('status-' + type + '-' + j).value != 'AN' && document.getElementById('status-' + type + '-' + j).value != 'AUS')*/
 									{
-										document.getElementById('status-' + type + '-' + j).value = value;
+										document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
+										document.getElementById('status-' + type + '-' + j).style.backgroundColor = '';
 									}
 
-									if(!busy.includes('status-' + type + '-' + j))
-									{
-										document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
-									}
+									//console.log('STATE', type, state);
 								}
-								else if(type == 'statelessswitch')	
-								{	
-									document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
-									document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
-								}
-								else/* if(document.getElementById('status-' + type + '-' + j).value != 'AN' && document.getElementById('status-' + type + '-' + j).value != 'AUS')*/
-								{
-									document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
-									document.getElementById('status-' + type + '-' + j).style.backgroundColor = '';
-								}
-
-								console.log('STATE', type, state);
 							}
 						}
 					}
