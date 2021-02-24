@@ -1029,6 +1029,57 @@ button img
 	transition: .3s linear opacity;
 }
 
+.shine
+{
+	position: relative;
+	overflow: hidden;
+	-webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+.shine:before, .shine:after
+{
+	animation: shine 2s ease-in-out infinite;
+	animation-fill-mode: forwards;  
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -210%;
+	width: 200%;
+	height: 100%;
+	opacity: 0;
+	/*transform: rotate(30deg);*/
+	background-image: linear-gradient(
+		to right, 
+		rgba(255, 255, 255, 0.0) 0%,
+		rgba(255, 255, 255, 0.05) 77%,
+		rgba(255, 255, 255, 0.15) 92%,
+		rgba(255, 255, 255, 0.0) 100%
+	);
+}
+
+.shine:before
+{
+	animation: shine 2s ease-in-out infinite .8s;
+}
+
+@keyframes shine
+{
+	5% {
+		opacity: 0.5;
+	}
+	25% {
+		opacity: 1;
+		transition-property: left, opacity;
+		transition-duration: 0.7s, 0.15s;
+		transition-timing-function: ease;
+	}
+	100% {
+		opacity: 0;
+		left: 20%;
+		transition-property: left, opacity;
+	}
+}
+
 @media(prefers-color-scheme: light)
 {
 	:root

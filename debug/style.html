@@ -21,7 +21,10 @@
 					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
 				</div>
 				<div style="margin: 100px 0">
-					<button class="plugin-container" style="display: flex; margin-bottom: 20px">
+					<input type="button" value="Button 1">
+					<input type="button" value="Button 2" style="margin-top: 20px" class="gradient-blue-green">
+					<button class="gradient-purple shine" style="margin-top: 20px">Shine</button>
+					<button class="plugin-container" style="display: flex; margin-top: 20px">
 						Expandable
 						<div style="width: calc(100% - 150px)">
 							<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>Version: </b>' + versions[id] + '</div>
@@ -29,9 +32,6 @@
 						</div>
 						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">UPDATE</div>
 					</button>
-					<button class="gradient-purple shine" style="margin-bottom: 20px">Shine</button>
-					<input type="button" value="Button 1">
-					<input type="button" value="Button 2" style="margin-top: 20px" class="gradient-blue-green">
 					<input type="text" style="margin-top: 20px">
 					<div id="select"></div>
 				</div>
@@ -41,61 +41,6 @@
 					</div>
 				</div>
 			</div>
-			<style>
-
-				.shine {
-					position: relative;
-					overflow: hidden;
-					border-radius: 32px;
-				}
-
-				.shine:after {
-				
-					animation: shine 2s ease-in-out infinite;
-					animation-fill-mode: forwards;  
-					content: "";
-					position: absolute;
-					top: -50%;
-					left: -210%;
-					width: 200%;
-					height: 200%;
-					opacity: 0;
-					/*transform: rotate(30deg);*/
-					background: transparent;
-					border-radius: 32px;
-					overflow: hidden;
-					background-image: linear-gradient(
-						to right, 
-						rgba(255, 255, 255, 0.0) 0%,
-						rgba(255, 255, 255, 0.05) 77%,
-						rgba(255, 255, 255, 0.1) 92%,
-						rgba(255, 255, 255, 0.0) 100%
-					);
-				}
-
-				.shine:active:after {
-					opacity: 0;
-				}
-
-				@keyframes shine{
-					5% {
-						opacity: 0.5;
-					}
-					25% {
-						opacity: 1;
-						transition-property: left, top, opacity;
-						transition-duration: 0.7s, 0.7s, 0.15s;
-						transition-timing-function: ease;
-					}
-					100% {
-						opacity: 0;
-						top: -50%;
-						left: 20%;
-						transition-property: left, top, opacity;
-					}
-				}
-
-			</style>
 			<script type="module">
 
 				import { Query } from '/js/query.js';
