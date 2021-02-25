@@ -192,6 +192,7 @@
 
 							document.getElementById('update-status-' + id).innerHTML = 'UPDATE';
 							document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
+							document.getElementById('update-status-' + id).classList.add('shine');
 						}
 						else
 						{
@@ -210,6 +211,8 @@
 								document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
 								document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
 							}
+
+							document.getElementById('update-status-' + id).classList.remove('shine');
 						}
 					}
 
@@ -340,6 +343,7 @@
 
 									document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
 									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+									document.getElementById('update-status-' + id).classList.remove('shine');
 
 									success = true;
 								}
