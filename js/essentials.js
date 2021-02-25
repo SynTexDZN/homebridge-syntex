@@ -138,7 +138,11 @@ function removeOverlays(btn, show)
 		if(overlays[i].reference == btn)
 		{
 			overlays[i].overlay.style.opacity = 0;
-			overlays[i].overlay.style.setProperty('cursor', 'pointer', 'important');
+
+			if(show)
+			{
+				overlays[i].overlay.style.setProperty('cursor', 'pointer', 'important');
+			}
 		}
 	}
 
