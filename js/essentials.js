@@ -128,6 +128,11 @@ function showOverlayDelay(btn, overlay, delay)
 
 function removeOverlays(btn, show)
 {
+	if(show)
+	{
+		btn.style.opacity = 1;
+	}
+	
 	for(var i = 0; i < overlays.length; i++)
 	{
 		if(overlays[i].reference == btn)
@@ -135,11 +140,6 @@ function removeOverlays(btn, show)
 			overlays[i].overlay.style.opacity = 0;
 			overlays[i].overlay.style.setProperty('cursor', 'pointer', 'important');
 		}
-	}
-
-	if(show)
-	{
-		btn.style.opacity = 1;
 	}
 
 	if(!show)
