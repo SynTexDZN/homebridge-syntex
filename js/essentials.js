@@ -197,6 +197,13 @@ function getType(services)
 		{
 			finalType = s[0];
 		}
+
+		var onlyService = onlySwitches(s);
+
+		if(onlyService != null)
+		{
+			finalType = onlyService;
+		}
 		
 		if(s.includes('temperature') && s.includes('humidity'))
 		{
@@ -245,6 +252,28 @@ function getType(services)
 	}
 
 	return finalType;
+}
+
+function onlySwitches(services)
+{
+	var tmp = null;
+
+	for(const i in services)
+	{
+		if(services[i] != 'switch')
+		{
+			if(tmp == null)
+			{
+				tmp = services[i];
+			}
+			else if(tmp != services[i])
+			{
+				return null;
+			}
+		}
+	}
+
+	return tmp;
 }
 
 var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
