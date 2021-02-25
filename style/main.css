@@ -20,11 +20,13 @@
 	/*-webkit-tap-highlight-color: transparent!important;*/
 	-webkit-text-size-adjust: none;
 	-webkit-user-select: none;
+	user-select: none;
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea']
 {
 	-webkit-user-select: text;
+	user-select: text
 }
 
 h1
@@ -38,12 +40,12 @@ body
 	padding: 50px 25px;
 	background: var(--dark-layer-one);
 }
-
+/*
 img
 {
-	/* image-rendering: -webkit-optimize-contrast; */
+	mage-rendering: -webkit-optimize-contrast;
 }
-
+*/
 .main
 {
 	min-width: 70%;
@@ -1039,6 +1041,7 @@ button img
 	position: relative;
 	overflow: hidden;
 	-webkit-mask-image: -webkit-radial-gradient(white, black);
+	mask-image: radial-gradient(white, black);
 }
 
 .shine:before, .shine:after
