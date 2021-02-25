@@ -174,7 +174,7 @@ function removeOverlays(btn, show)
 			btn.parentElement.removeChild(btn);
 		}
 
-	}, show ? 600 : 300);
+	}, show ? 300 : 600);
 }
 
 function getType(services)
