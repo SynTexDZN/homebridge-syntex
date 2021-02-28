@@ -47,10 +47,9 @@
 				</div>
 			</div>
 			<form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
-				<input type="submit" value="Absenden" style="display: none">
 				<div style="margin-bottom: 20px; display: flex">
 					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
-					<input id="search-btn" class="gradient-blue loading-loop" type="button" value="Suchen" onclick="searchLog()" style="max-width: 200px">
+					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="searchLog()" style="max-width: 200px">
 				</div>
 				<div style="display: flex">
 					<div class="custom-select" style="margin-right: 20px; width: 100%">
@@ -65,7 +64,6 @@
 							<option value="error">Fehler</option>
 						</select>
 					</div>
-					<input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px" hidden>
 					<input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
 				</div>
 			</form>
