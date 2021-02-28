@@ -41,8 +41,8 @@
 				</div>
 				<div id="toolbar" class="main" style="display: flex; margin-top: 100px">
 					<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-					<div id="rooms" style="display: flex; width: 100%; margin-right: 20px"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
-					<button class="image-button" onclick="Essentials.leavePage('/setup')"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+					<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
+					<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/setup')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 				</div>
 				<div style="margin-top: 100px">
 					<p id="no-devices" style="display: none">Du besitzt derzeit<br>noch keine Geräte<br><br>Du kannst ein Gerät registrieren<br>indem du auf das [+] drückst</p>
@@ -51,9 +51,9 @@
 			</div>
 			<div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
 				<input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-				<input style="margin-bottom: 20px" type="button" value="Gerät Erstellen" onclick="Essentials.leavePage('/create')">
+				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="Gerät Erstellen" onclick="Essentials.leavePage('/create')">
 				<input style="margin-bottom: 20px; display: none" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
-				<input class="gradient-blue-green" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
+				<input class="gradient-blue-green webhooks-needed" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/setup')">
 			</div>
 			<script type="module" defer>
 
@@ -105,6 +105,20 @@
 					document.getElementById('view-button').style.display = 'none';
 					document.getElementById('no-devices').style.display = '';
 				}
+
+				loadPluginData().then(() => {
+
+					if(plugins['homebridge-syntex-webhooks'] == null)
+					{
+						for(var i = 0; i < document.getElementsByClassName('webhooks-needed').length; i++)
+						{
+							document.getElementsByClassName('webhooks-needed')[i].style.display = 'none';
+						}
+
+						document.getElementsByClassName('main')[0].style.marginBottom = '0';
+						document.getElementById('content').style.paddingBottom = '0';
+					}
+				});
 
 				for(const i in devices)
 				{
@@ -298,6 +312,35 @@
 				}
 
 				setupToolbar();
+
+			</script>
+			<script>
+
+				// NOTE: Load Plugin Data
+
+				window.plugins = {};
+
+				function loadPluginData()
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								plugins = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
 
 			</script>
 			<script>
