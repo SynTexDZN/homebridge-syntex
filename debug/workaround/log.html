@@ -161,6 +161,16 @@
 				// NOTE: Load Logs
 
 				window.logs = {};
+				window.logCounter = 0;
+				window.levelCounter = {
+					success : 0,
+					update : 0,
+					read : 0,
+					info : 0,
+					warn : 0,
+					error : 0,
+					debug : 0
+				};
 
 				function loadLogs(pluginID)
 				{
@@ -171,39 +181,67 @@
 							try
 							{
 								logs = JSON.parse(l);
+
+								for(const id in plugins)
+								{
+									if(plugins[id].config != null && plugins[id].config.logDirectory != null && (pluginID == null || pluginID == plugins[id].alias))
+									{
+										if(logs[plugins[id].alias] != null)
+										{
+											logs[plugins[id].alias] = JSON.parse(logs[plugins[id].alias]);
+
+											logCounter += logs[plugins[id].alias].length;
+
+											for(const i in logs[plugins[id].alias])
+											{
+												if(logs[plugins[id].alias][i].l != null)
+												{
+													levelCounter[logs[plugins[id].alias][i].l.toLowerCase()]++;
+												}
+											}
+
+											console.log('RENDER LOGS', plugins[id].alias);
+
+											//renderLogs(document.getElementById(plugins[id].alias), logs[plugins[id].alias], null);
+										}
+										else if(document.getElementById(id).getElementsByClassName('reload-button')[0] == null)
+										{
+											var reloadButton = document.createElement('h2');
+
+											reloadButton.innerHTML = '↻ Neu Laden';
+											reloadButton.className = 'reload-button';
+											reloadButton.setAttribute('style', 'margin-top: -58px; bottom: 321px; height: 58px; font-size: 28px');
+											reloadButton.setAttribute('onclick', 'loadLogs("' + plugins[id].alias + '")');
+
+											document.getElementById(id).appendChild(reloadButton);
+
+											setTimeout(() => {
+
+												document.getElementById(id).getElementsByClassName('reload-button')[0].style.opacity = 1;
+
+											}, 0);
+										}
+									}
+								}
+
+								document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+
+								document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['error'];
+								document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['warn'];
+								document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['info'];
+								document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['read'];
+								document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['update'];
+								document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter['success'];
+
+								if(levelCounter['debug'] > 0)
+								{
+									document.getElementById('debug-widget').style.display = '';
+									document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter['debug'];
+								}
 							}
 							catch(e)
 							{
 								console.error(e);
-							}
-
-							for(const id in plugins)
-							{
-								if(plugins[id].config != null && plugins[id].config.logDirectory != null && (pluginID == null || pluginID == plugins[id].alias))
-								{
-									if(logs[plugins[id].alias] == null && logs[plugins[id].alias].length > 0)
-									{
-										console.log('CREATE LOG', plugins[id].alias);
-										//createLog(document.getElementById(plugins[id].alias), logs[plugins[id].alias], null);
-									}
-									else if(document.getElementById(id).getElementsByClassName('reload-button')[0] == null)
-									{
-										var reloadButton = document.createElement('h2');
-
-										reloadButton.innerHTML = '↻ Neu Laden';
-										reloadButton.className = 'reload-button';
-										reloadButton.setAttribute('style', 'margin-top: -58px; bottom: 321px; height: 58px; font-size: 28px');
-										reloadButton.setAttribute('onclick', 'loadLogs("' + plugins[id].alias + '")');
-
-										document.getElementById(id).appendChild(reloadButton);
-
-										setTimeout(() => {
-
-											document.getElementById(id).getElementsByClassName('reload-button')[0].style.opacity = 1;
-
-										}, 0);
-									}
-								}
 							}
 
 							resolve();
@@ -212,42 +250,8 @@
 				}
 
 			</script>
-			<script type="module" defer>
-				/*
-				
-				window.counter = 0;
-				window.levelCounter = [0, 0, 0, 0, 0, 0, 0];
-				window.countLogs = true;
-				*/
-
-			</script>
 			<script>
 				/*
-				function loadLogs(id)
-				{
-						for(const id in plugins)
-						{
-						}
-
-						countLogs = false;
-
-						document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
-						document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
-						document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
-						document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
-						document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
-						document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
-
-						if(levelCounter[6] > 0)
-						{
-							document.getElementById('debug-widget').style.display = '';
-							document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
-						}
-
-						Preloader.finish();
-					});
-				}
-
 				async function clearSearch()
 				{
 					document.getElementById('search-btn').value = 'Suchen ..';
