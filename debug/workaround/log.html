@@ -1,5 +1,5 @@
 <html>
-	<body id="body">
+	<body ontouchstart="">
 		<div id="content" style="padding-bottom: 50px">
 			<title>Dashboard: Log</title>
 			<h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
@@ -136,7 +136,12 @@
 
 							var logTitle = document.createElement('h2');
 
-							logTitle.innerHTML = '• ' + plugins[id].name + ' Log •';
+							logTitle.innerHTML = '• ' + plugins[id].name.replace('SynTex', '') + ' Log •';
+
+							if(plugins[id].name == 'SynTex')
+							{
+								logTitle.innerHTML = '• Bridge Log •';
+							}
 
 							var logWindow = document.createElement('div');
 
@@ -251,15 +256,13 @@
 
 				.inline-button
 				{
-					width: 100%;
-					max-width: 130px;
 					text-align: center;
 					padding: 5px;
-					font-size: 14px;
 					position: relative;
 					margin-top: -5px;
 					margin-bottom: -5px;
 					box-sizing: border-box;
+					width: auto;
 				}
 
 				.log-message
@@ -301,6 +304,26 @@
 					margin: auto 0;
 				}
 
+				@media only screen and (max-width: 1176px)
+				{
+					.log
+					{
+						border-radius: 15px;
+					}
+
+					.log-title
+					{
+						border-radius: 15px 15px 0 0;
+						font-size: 16px;
+						padding: 15px;
+					}
+
+					.log-message
+					{
+						padding: 10px 15px;
+					}
+				}
+
 			</style>
 			<script>
 
@@ -314,7 +337,7 @@
 					{
 						var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
 						var level = logs[plugins[pluginID].alias][i].l;
-						var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'");
+						var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
 
 						var log = document.createElement('div');
 
@@ -325,23 +348,20 @@
 
 						logTitle.className = 'log-title';
 
+						if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+						{
+							logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+						}
+
 						var logTime = document.createElement('div');
 
 						logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
 					
 						logTitle.appendChild(logTime);
 
-						var logLevel = document.createElement('div');
-
-						logLevel.className = 'inline-button';
-
-						logLevel.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
-
-						logLevel.innerHTML = level.toUpperCase();
-
-						logTitle.appendChild(logLevel);
-
 						var logSender = document.createElement('div');
+
+						logSender.className = 'inline-button';
 
 						if(message.includes(' ( ') && message.includes(' )'))
 						{
@@ -353,6 +373,12 @@
 						}
 
 						logTitle.appendChild(logSender);
+
+						var logLevel = document.createElement('div');
+
+						logLevel.innerHTML = level.toUpperCase();
+
+						logTitle.appendChild(logLevel);
 						log.appendChild(logTitle);
 
 						var logMessage = document.createElement('div');
