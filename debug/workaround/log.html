@@ -41,9 +41,9 @@
 						<button class="widget-right gradient-green" id="success-widget">-</button>
 					</div>
 				</div>
-				<div class="widget" id="debug-widget" style="display: none">
+				<div class="widget" style="display: none">
 					<button class="widget-left">Debug</button>
-					<button class="widget-right gradient-purple">-</button>
+					<button class="widget-right gradient-purple" id="debug-widget">-</button>
 				</div>
 			</div>
 			<form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
@@ -138,10 +138,9 @@
 
 							logTitle.innerHTML = '• ' + plugins[id].name + ' Log •';
 
-							var logWindow = document.createElement('textarea');
+							var logWindow = document.createElement('div');
 
-							logWindow.setAttribute('readonly', '');
-
+							logWindow.className = 'scrollarea';
 							logWindow.style.height = '700px';
 							logWindow.style.maxHeight = '700px';
 
@@ -198,7 +197,7 @@
 												}
 											}
 
-											console.log('RENDER LOGS', plugins[id].alias);
+											renderLogs(id, plugins[id].alias);
 
 											//renderLogs(document.getElementById(plugins[id].alias), logs[plugins[id].alias], null);
 										}
@@ -233,8 +232,8 @@
 
 								if(levelCounter['debug'] > 0)
 								{
-									document.getElementById('debug-widget').style.display = '';
-									document.getElementById('debug-widget').children[1].innerHTML = levelCounter['debug'];
+									document.getElementById('debug-widget').parentElement.style.display = '';
+									document.getElementById('debug-widget').innerHTML = levelCounter['debug'];
 								}
 							}
 							catch(e)
@@ -245,6 +244,131 @@
 							resolve();
 						});
 					});
+				}
+
+			</script>
+			<style>
+
+				.inline-button
+				{
+					width: 100%;
+					max-width: 130px;
+					text-align: center;
+					padding: 5px;
+					font-size: 14px;
+					position: relative;
+					margin-top: -5px;
+					margin-bottom: -5px;
+					box-sizing: border-box;
+				}
+
+				.log-message
+				{
+					line-height: 30px;
+					padding: 5px 10px;
+				}
+
+				.log
+				{
+					background: rgb(60, 60, 80);
+					border-radius: 8px;
+				}
+
+				.log-title
+				{
+					display: flex;
+					background:rgb(40, 40, 60);
+					border-radius: 8px 8px 0 0;
+					padding: 10px;
+					font-size: 14px;
+				}
+
+				.log-title div:first-of-type
+				{
+					margin-right: auto;
+				}
+
+				.log-title div:last-of-type
+				{
+					margin-left: auto;
+					text-align: right;
+				}
+
+				.log-title div:first-of-type, .log-title div:last-of-type
+				{
+					width: 50%;
+					height: min-content;
+					margin: auto 0;
+				}
+
+			</style>
+			<script>
+
+				// NOTE: Create Log Messages
+
+				function renderLogs(pluginID)
+				{
+					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+
+					for(var i = 0; i < Math.min(logs[plugins[pluginID].alias].length, 100); i++)
+					{
+						var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
+						var level = logs[plugins[pluginID].alias][i].l;
+						var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'");
+
+						var log = document.createElement('div');
+
+						log.className = 'log';
+						log.style.marginBottom = '20px';
+
+						var logTitle = document.createElement('div');
+
+						logTitle.className = 'log-title';
+
+						var logTime = document.createElement('div');
+
+						logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+					
+						logTitle.appendChild(logTime);
+
+						var logLevel = document.createElement('div');
+
+						logLevel.className = 'inline-button';
+
+						logLevel.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+
+						logLevel.innerHTML = level.toUpperCase();
+
+						logTitle.appendChild(logLevel);
+
+						var logSender = document.createElement('div');
+
+						if(message.includes(' ( ') && message.includes(' )'))
+						{
+							logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+						}
+						else
+						{
+							logSender.innerHTML = 'Bridge';
+						}
+
+						logTitle.appendChild(logSender);
+						log.appendChild(logTitle);
+
+						var logMessage = document.createElement('div');
+
+						logMessage.className = 'log-message'
+						logMessage.innerHTML = message;
+
+						if(logSender.innerHTML != 'Bridge')
+						{
+							logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+						}
+
+						log.appendChild(logMessage);
+							
+						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+					}
 				}
 
 			</script>
@@ -378,17 +502,7 @@
 								}
 							//}
 							
-							if(i != log.length - 1)
-							{
-								filterLog += '\n\n';
-							}
-
 							counter++;
-						}
-
-						if(countLogs)
-						{
-							levelCounter[levels.indexOf(level.toLowerCase())]++;
 						}
 					}
 
