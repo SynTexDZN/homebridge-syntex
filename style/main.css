@@ -23,7 +23,7 @@
 	user-select: none;
 }
 
-textarea, input[type='text'], input[type='password'], input[type='textarea']
+textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea
 {
 	-webkit-user-select: text;
 	user-select: text
@@ -60,7 +60,7 @@ b
 	font-weight: 300;
 }
 
-input, textarea, button, select, .select-selected, .select-items
+input, textarea, button, select, .select-selected, .select-items, .scrollarea
 {
 	height: 50px;
 	width: 100%!important;
@@ -148,7 +148,7 @@ input[type='text'], input[type='password']
 	padding-left: 20px;
 }
 
-textarea
+textarea, .scrollarea
 {
 	padding: 20px;
 	height: auto;
@@ -490,18 +490,18 @@ h2
 	min-height: 26px;
 }
 
-textarea::-webkit-scrollbar-thumb
+textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb
 {
 	border-top-width: 1px;
 	border-bottom-width: 0;
 }
 
-textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar
+textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 {
 	border-radius: 0 13px 13px 0!important;
 }
 
-textarea
+textarea, .scrollarea
 {
 	border-right-width: 0;
 }
@@ -1119,7 +1119,7 @@ button img
 		color: var(--dark-layer-one);
 	}
 
-	h2, p, label, input, textarea, .select-selected
+	h2, p, label, input, textarea, .select-selected, .scrollarea
 	{
 		color: var(--light-layer-one);
 	}
@@ -1129,7 +1129,7 @@ button img
 		color: var(--light-layer-one)!important;
 	}
 
-	h2, input[type='button']:disabled, .outline, input, textarea, .select-selected
+	h2, input[type='button']:disabled, .outline, input, textarea, .select-selected, .scrollarea
 	{
 		border-color: var(--light-layer-one);
 	}
@@ -1213,7 +1213,7 @@ button img
 		scrollbar-color: var(--dark-layer-two) var(--light-layer-one);
 	}
 
-	input, textarea, button, .widget
+	input, textarea, button, .widget, .scrollarea
 	{
 		box-shadow: 0 1px 1px -1px rgba(0, 0, 0, 0.2),
 					0 2px 2px -1px rgba(0, 0, 0, 0.15),
@@ -1378,14 +1378,14 @@ button img
 		max-width: none;
 	}
 
-	input, textarea, button, select, .select-selected, .select-items
+	input, textarea, button, select, .select-selected, .select-items, .scrollarea
 	{
 		font-size: 18px;
 		font-weight: 300!important;
 		border-radius: 30px;
 	}
 
-	textarea
+	textarea, .scrollarea
 	{
 		border-right-width: 3;
 	}
@@ -1446,12 +1446,12 @@ button img
 		box-shadow: none;
 	}
 
-	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar
+	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 	{
 		border-radius: 0 26px 26px 0!important;
 	}
 
-	textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .select-items::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-corner
+	textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .select-items::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-corner, .scrollarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-corner
 	{
 		border-radius: 0 26px 26px 0!important;
 		border-left-width: 5px;
