@@ -103,6 +103,7 @@ module.exports = class PluginManager
                 }
             }
 
+            displayName = displayName.replace('Syntex', 'SynTex');
             displayName = displayName.replace('Magichome', 'MagicHome');
             displayName = displayName.replace('Webhooks', 'WebHooks');
             displayName = displayName.replace('Homeconnect', 'HomeConnect');
