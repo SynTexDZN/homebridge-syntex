@@ -2,10 +2,12 @@
 	<body ontouchstart="">
 		<div id="content" style="padding-bottom: 50px">
 			<title>Dashboard: Log</title>
-			<h1 style="margin-bottom: 0; margin-top: 32px">Dashboard</h1>
-			<div class="main" style="margin-top: 10px; margin-bottom: 100px">
-				<p style="margin-bottom: 100px; margin-top: 20px">Log</p>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+			<div id="head-container">
+				<h1 style="margin-bottom: 0; margin-top: 0">Dashboard</h1>
+				<p style="margin-bottom: 0; margin-top: 20px">Log</p>
+			</div>
+			<div class="main" style="margin-bottom: 100px">
+				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
 					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
 				</div>
@@ -295,11 +297,11 @@
 				{
 					margin-left: auto;
 					text-align: right;
+					width: calc(100% - 120px);
 				}
 
 				.log-title div:first-of-type, .log-title div:last-of-type
 				{
-					width: 50%;
 					height: min-content;
 					margin: auto 0;
 				}
@@ -356,12 +358,17 @@
 						var logTime = document.createElement('div');
 
 						logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
-					
+						logTitle.style.width = '120px';
+
 						logTitle.appendChild(logTime);
+						/*
+						var logLevel = document.createElement('div');
 
+						logLevel.innerHTML = level.toUpperCase();
+
+						logTitle.appendChild(logLevel);
+						*/
 						var logSender = document.createElement('div');
-
-						logSender.className = 'inline-button';
 
 						if(message.includes(' ( ') && message.includes(' )'))
 						{
@@ -374,11 +381,6 @@
 
 						logTitle.appendChild(logSender);
 
-						var logLevel = document.createElement('div');
-
-						logLevel.innerHTML = level.toUpperCase();
-
-						logTitle.appendChild(logLevel);
 						log.appendChild(logTitle);
 
 						var logMessage = document.createElement('div');
