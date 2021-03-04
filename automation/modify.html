@@ -1,12 +1,12 @@
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
-	</head>
 	<body ontouchstart="">
 		<div id="content">
 			<title>Automation: Laden ..</title>
-			<div id="infos" class="main" style="transition: .2s ease-in-out; margin-top: 10px">
-				<h1 style="margin-bottom: 100px" class="loading-loop">Laden ..</h1>
+			<div id="infos" class="main" style="transition: .2s ease-in-out">
+				<div id="head-container">
+					<h1 style="margin-bottom: 0; margin-top: 0">Automation</h1>
+					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
+				</div>
 				<div class="type-container">
 					<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
 					<p><b>ID: </b></p>
@@ -35,8 +35,10 @@
 				</div>
 			</div>
 			<div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<h1 class="loading-loop">Einstellungen</h1>
-				<p class="loading-loop" style="margin-bottom: 100px; margin-top: 20px">Laden ..</p>
+				<div id="head-container">
+					<h1 style="margin-bottom: 0; margin-top: 0">Einstellungen</h1>
+					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
+				</div>
 				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -364,10 +366,10 @@
 						if(automation[i].id == id)
 						{
 							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automation[i].id;
-							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
+							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>ID: </b>' + automation[i].id;
+							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Name: </b>' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[3].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
 
 							var panel = document.createElement('button');
 

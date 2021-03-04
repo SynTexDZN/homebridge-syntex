@@ -8,6 +8,7 @@
 			</script>
 			<title class="loading-loop">Laden ..</title>
 			<div class="main" id="infos" style="transition: .2s ease-in-out">
+				<div id="head"></div>
 				<div class="control-container"></div>
 				<h1 class="loading-loop">Laden ..</h1>
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
@@ -23,8 +24,10 @@
 				</div>
 			</div>
 			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<h1>Einstellungen</h1>
-				<p class="loading-loop">( Laden .. )</p>
+				<div id="head-container">
+					<h1 style="margin-bottom: 0; margin-top: 0">Einstellungen</h1>
+					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">( Laden .. )</p>
+				</div>
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>

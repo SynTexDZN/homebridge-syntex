@@ -3,9 +3,11 @@
 		<div id="content">
 			<title>Gerät Erstellen</title>
 			<div id="create" style="transition: .2s ease-in-out">
-				<h1>Gerät Erstellen</h1>
-				<p>( Ein virtuelles Gerät )</p>
-				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createAccessory(this);">
+				<div id="head-container">
+					<h1 style="margin-bottom: 0; margin-top: 0">Erstellen</h1>
+					<p style="margin-bottom: 0; margin-top: 20px">Ein virtuelles Gerät</p>
+				</div>
+				<form class="main" onsubmit="event.preventDefault(); createAccessory(this);">
 					<p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
@@ -28,8 +30,11 @@
 				</form>
 			</div>
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<h1>Erfolgreich Erstellt</h1>
-				<div class="main" style="margin-top: 100px">
+				<div id="head-container">
+					<h1 style="margin-bottom: 0; margin-top: 0">Geschafft</h1>
+					<p style="margin-bottom: 0; margin-top: 20px">Erfolgreich Erstellt</p>
+				</div>
+				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
 					<p>Das Gerät ist<br>jetzt Einsatzbereit</p>
