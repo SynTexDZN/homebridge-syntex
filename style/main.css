@@ -128,6 +128,12 @@ input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 	transition: .2s ease-out;
 }
 
+input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):active, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):active
+{
+	filter: brightness(120%);
+	transition: .2s ease-out;
+}
+
 .gradient-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 .gradient-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 .gradient-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
@@ -142,6 +148,26 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 	filter: brightness(75%)!important;
 }
 
+.gradient-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):active
+{
+	filter: brightness(75%)!important;
+}
+
+
+.select-items div:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
+{
+	transition: .2s ease-out;
+	background: rgb(200, 200, 220);
+}
 
 .select-items div:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 {
@@ -149,9 +175,9 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 	background: rgb(200, 200, 220);
 }
 
-input[type='button']:active:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):active, button:not(:disabled):active
+input[type='button']:not(:disabled):not(.control-panel):active, input[type='submit']:not(:disabled):active, button:not(:disabled):active
 {
-	letter-spacing: 1px;
+	letter-spacing: 2px;
 }
 
 input[type='text'], input[type='password']
@@ -694,7 +720,7 @@ textarea, .scrollarea
 	font-size: calc(2.5vw - 0.5px);
 	font-size: 14px;
 	text-align: right;
-	transition: .3s all;
+	transition: .3s color;
 }
 
 #devices.grid-view .connection
@@ -710,6 +736,11 @@ textarea, .scrollarea
 #devices button
 {
 	color: var(--light-layer-one);
+}
+
+.device, #rooms input
+{
+	letter-spacing: 3px!important;
 }
 
 .device-name
@@ -823,7 +854,6 @@ canvas
 	border-right: 1px solid rgb(160, 160, 180);
 	border-radius: 0;
 	padding: 5px 10px 5px 13px;
-	letter-spacing: 3px!important;
 	height: auto;
 }
 
@@ -1581,6 +1611,23 @@ button img
 		background: rgb(75, 75, 95)!important;
 	}
 
+	input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):active, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):active
+	{
+		background: rgb(60, 60, 80);
+		filter: none;
+	}
+
+	input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
+	{
+		filter: none!important;
+		background: rgb(75, 75, 95);
+	}
+
+	#rooms input:not(.room-active):active
+	{
+		background: rgb(75, 75, 95)!important;
+	}
+
 	.gradient-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 	.gradient-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 	.gradient-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
@@ -1595,7 +1642,26 @@ button img
 		filter: brightness(90%)!important;
 	}
 
+	.gradient-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):active
+	{
+		filter: brightness(90%)!important;
+	}
+
 	.select-items div:not(.same-as-selected):hover, .type-container:hover
+	{
+		filter: none!important;
+	}
+	
+	.select-items div:not(.same-as-selected):active, .type-container:active
 	{
 		filter: none!important;
 	}
@@ -1693,6 +1759,12 @@ button img
 	}
 
 	.custom-select > .select-items div:hover
+	{
+		background: var(--light-layer-two);
+		color: var(--dark-layer-one);
+	}
+
+	.custom-select > .select-items div:active
 	{
 		background: var(--light-layer-two);
 		color: var(--dark-layer-one);
