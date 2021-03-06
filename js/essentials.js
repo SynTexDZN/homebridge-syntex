@@ -432,6 +432,24 @@ function newTimeout(ms)
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function changeHeader(title, subtitle)
+{
+	var head = document.getElementById('head-container');
+
+	if(head != null)
+	{
+		if(title != null && head.children[0] != null)
+		{
+			head.children[0].innerHTML = title;
+		}
+
+		if(subtitle != null && head.children[1] != null)
+		{
+			head.children[1].innerHTML = subtitle;
+		}
+	}
+}
+
 function SETUP(Q, P)
 {
 	Query = Q;
@@ -440,4 +458,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage, changeHeader };

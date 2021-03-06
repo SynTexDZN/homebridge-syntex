@@ -2,11 +2,11 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Automation: Laden ..</title>
+			<div id="head-container">
+				<h1 style="margin-bottom: 0; margin-top: 0">Automation</h1>
+				<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
+			</div>
 			<div id="infos" class="main" style="transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Automation</h1>
-					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
-				</div>
 				<div class="type-container">
 					<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
 					<p><b>ID: </b></p>
@@ -28,17 +28,13 @@
 				<div class="navigation-panel">
 					<div class="sticky-inset">
 						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automation/')">
+							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automation')">
 							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Einstellungen</h1>
-					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
-				</div>
 				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -291,9 +287,13 @@
 				{
 					Preloader.finish();
 				}
+
+				Essentials.changeHeader('Automation');
 				
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
+					Essentials.changeHeader('Einstellungen');
+
 					Essentials.switchPage('infos', 'settings', true);
 				}
 
@@ -335,13 +335,15 @@
 				{
 					await Essentials.switchPage(previous, 'settings', false);
 
+					Essentials.changeHeader('Einstellungen');
+
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automation?id=' + id + '&settings&desktopApp=true');
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation?id=' + id + '&settings');
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings');
 					}
 				}
 
@@ -349,13 +351,15 @@
 				{
 					await Essentials.switchPage(previous, 'infos', false);
 
+					Essentials.changeHeader('Automation');
+
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
-						window.history.pushState(null, null, '/automation?id=' + id + '&desktopApp=true');
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation?id=' + id);
+						window.history.pushState(null, null, '/automation/modify?id=' + id);
 					}
 				}
 
@@ -366,10 +370,11 @@
 						if(automation[i].id == id)
 						{
 							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>ID: </b>' + automation[i].id;
-							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Name: </b>' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[3].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
+							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automation[i].id;
+							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
+
+							Essentials.changeHeader(null, automation[i].name);
 
 							var panel = document.createElement('button');
 
@@ -534,7 +539,6 @@
 					{
 						if(automation[i].id == id)
 						{
-							document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + automation[i].name + ' )';
 							document.getElementById('settings').getElementsByTagName('input')[0].value = automation[i].id;
 							document.getElementById('settings').getElementsByTagName('input')[1].value = automation[i].name;
 							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].active ? 'An' : 'Aus';
@@ -929,7 +933,7 @@
 
 							await Essentials.newTimeout(3000);
 
-							Essentials.leavePage('/automation/');
+							Essentials.leavePage('/automation');
 						}
 						else
 						{
