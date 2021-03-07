@@ -14,7 +14,7 @@
 				if((new URL(window.location.href)).searchParams.get('create') == '')
 				{
 					PageManager.setHeader('Automation', 'Erstellen');
-					
+
 					Essentials.switchPage('view', 'create', true);
 				}
 				else
@@ -325,9 +325,9 @@
 
 				async function openAddPage(previous)
 				{
-					await Essentials.switchPage(previous, 'create', false);
-
 					PageManager.setHeader('Automation', 'Erstellen');
+
+					await Essentials.switchPage(previous, 'create', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -341,9 +341,9 @@
 
 				async function openViewPage(previous)
 				{
-					await Essentials.switchPage(previous, 'view', false);
-
 					PageManager.setHeader('Dashboard', 'Automation');
+					
+					await Essentials.switchPage(previous, 'view', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

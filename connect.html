@@ -158,9 +158,9 @@
 					{
 						deviceName = document.getElementById('device-name').value;
 
-						Essentials.switchPage('check-name', 'connect', false);
-
 						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
+
+						Essentials.switchPage('check-name', 'connect', false);
 
 						pingESP();
 					}
@@ -194,9 +194,9 @@
 
 									console.log('PING SUCCESS', deviceURL);
 
-									Essentials.switchPage('connect', 'wifi', false);
-
 									PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
+									Essentials.switchPage('connect', 'wifi', false);
 
 									scanWifi(document.getElementById('scan-btn'));
 								}
@@ -211,9 +211,9 @@
 
 								console.log('PING SUCCESS', deviceURL);
 
-								Essentials.switchPage('connect', 'wifi', false);
-
 								PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
+								Essentials.switchPage('connect', 'wifi', false);
 
 								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 							}
@@ -333,17 +333,17 @@
 						{
 							if(deviceID != null && deviceIP != null)
 							{
-								Essentials.switchPage('wifi', 'check-connection', false);
-
 								PageManager.setHeader('Gesendet', 'Verbindung wird getestet');
+
+								Essentials.switchPage('wifi', 'check-connection', false);
 
 								redirectCountdown('/device?id=' + mac);    
 							}
 							else
 							{
-								Essentials.switchPage('wifi', 'connecting', false);
-
 								PageManager.setHeader('Bitte Warten', 'Verbindung wird getestet');
+								
+								Essentials.switchPage('wifi', 'connecting', false);
 
 								setTimer(60000);
 
@@ -371,9 +371,9 @@
 								{
 									if(success == false)
 									{
-										Essentials.switchPage('connecting', 'error', false);
-
 										PageManager.setHeader('Fehler', 'Keine Verbindung');
+
+										Essentials.switchPage('connecting', 'error', false);
 
 										redirectCountdown('/setup');
 									}
@@ -413,9 +413,9 @@
 					{  
 						success = true;
 
-						Essentials.switchPage('connecting', 'success', false);
-
 						PageManager.setHeader('Geschafft', 'Erfolgreich Verbunden');
+
+						Essentials.switchPage('connecting', 'success', false);
 
 						redirectCountdown('/device?id=' + id);
 					}

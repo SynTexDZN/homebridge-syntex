@@ -10,9 +10,9 @@
 
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
-					Essentials.switchPage('infos', 'settings', true);
-
 					PageManager.setHeader('Einstellungen');
+
+					Essentials.switchPage('infos', 'settings', true);
 				}
 				else
 				{
@@ -338,9 +338,9 @@
 
 				async function openSettings(previous)
 				{
-					await Essentials.switchPage(previous, 'settings', false);
-
 					PageManager.setHeader('Einstellungen');
+
+					await Essentials.switchPage(previous, 'settings', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -354,9 +354,9 @@
 
 				async function closeSettings(previous)
 				{
-					await Essentials.switchPage(previous, 'infos', false);
-
 					PageManager.setHeader('Automation');
+					
+					await Essentials.switchPage(previous, 'infos', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
