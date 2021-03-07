@@ -3,10 +3,6 @@
 		<div id="content">
 			<title>Gerät Verbinden</title>
 			<div id="check-name" style="transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Benennen</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Wähle einen Namen aus</p>
-				</div>
 				<form class="main" onsubmit="event.preventDefault(); checkName(this);">
 					<p><b>Name: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
@@ -26,10 +22,6 @@
 				</form>
 			</div>
 			<div id="connect" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Verbinden</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Mit dem Smart Home Gerät</p>
-				</div>
 				<div class="main" style="margin-bottom: 132px">
 					<img src="/img/wifi.png" class="setup-png">
 					<input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Nach Geräten suchen ..">
@@ -45,10 +37,6 @@
 				</div>
 			</div>
 			<div id="wifi" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Netzwerk</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Wähle dein WLAN Netz aus</p>
-				</div>
 				<div class="main">
 					<form onsubmit="event.preventDefault(); sendWiFiSettings(this);">
 						<div id="networks" style="margin-bottom: 100px">
@@ -69,10 +57,6 @@
 				</div>
 			</div>
 			<div id="connecting" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Bitte warten</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Verbindung wird getestet</p>
-				</div>
 				<div class="main">
 					<img src="/img/connecting.png" class="setup-png">
 					<div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
@@ -82,10 +66,6 @@
 				</div>
 			</div>
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Geschafft</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Erfolgreich Verbunden</p>
-				</div>
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -94,10 +74,6 @@
 				</div>
 			</div>
 			<div id="error" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Fehler</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Keine Verbindung</p>
-				</div>
 				<div class="main">
 					<img src="/img/error.png" class="setup-png">
 					<input class="gradient-red loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -106,10 +82,6 @@
 				</div>
 			</div>
 			<div id="check-connection" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Gesendet</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Verbindung wird getestet</p>
-				</div>
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-yellow loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -128,6 +100,8 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
+				Essentials.changeHeader('Benennen', 'Wähle einen Namen aus');
+
 				// NOTE: Redirect When Reconnecting
 
 				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
@@ -140,6 +114,8 @@
 					document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
 
 					Essentials.switchPage('check-name', 'wifi', true);
+
+					Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 					pingESP();
 				}
@@ -171,6 +147,8 @@
 						deviceName = document.getElementById('device-name').value;
 
 						Essentials.switchPage('check-name', 'connect', false);
+
+						Essentials.changeHeader('Verbinden', 'Mit dem Smart Home Gerät');
 
 						pingESP();
 					}
@@ -206,6 +184,8 @@
 
 									Essentials.switchPage('connect', 'wifi', false);
 
+									Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
 									scanWifi(document.getElementById('scan-btn'));
 								}
 							});
@@ -220,6 +200,8 @@
 								console.log('PING SUCCESS', deviceURL);
 
 								Essentials.switchPage('connect', 'wifi', false);
+
+								Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 							}
@@ -341,11 +323,15 @@
 							{
 								Essentials.switchPage('wifi', 'check-connection', false);
 
+								Essentials.changeHeader('Gesendet', 'Verbindung wird getestet');
+
 								redirectCountdown('/device?id=' + mac);    
 							}
 							else
 							{
 								Essentials.switchPage('wifi', 'connecting', false);
+
+								Essentials.changeHeader('Bitte Warten', 'Verbindung wird getestet');
 
 								setTimer(60000);
 
@@ -374,6 +360,8 @@
 									if(success == false)
 									{
 										Essentials.switchPage('connecting', 'error', false);
+
+										Essentials.changeHeader('Fehler', 'Keine Verbindung');
 
 										redirectCountdown('/setup');
 									}
@@ -414,6 +402,8 @@
 						success = true;
 
 						Essentials.switchPage('connecting', 'success', false);
+
+						Essentials.changeHeader('Geschafft', 'Erfolgreich Verbunden');
 
 						redirectCountdown('/device?id=' + id);
 					}

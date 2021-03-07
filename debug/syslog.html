@@ -2,10 +2,6 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Debug: Systemlog</title>
-			<div id="head-container">
-				<h1 style="margin-bottom: 0; margin-top: 0">Debug</h1>
-				<p style="margin-bottom: 0; margin-top: 20px">Systemlog</p>
-			</div>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
@@ -37,6 +33,8 @@
 			
 				window.Query = Query;
 				window.Essentials = Essentials;
+
+				Essentials.changeHeader('Debug', 'Systemlog');
 
                 loadSysLog();
 

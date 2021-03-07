@@ -26,7 +26,7 @@
 
 #head-container
 {
-	margin-bottom: 100px;
+	margin-top: 50px;
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea
@@ -50,6 +50,7 @@ body
 {
 	background: var(--dark-layer-one);
 	padding: 50px 25px;
+	padding-top: 0;
 }
 /*
 img
@@ -1134,13 +1135,16 @@ button img
 	}
 }
 
+@media only screen and (min-width: 1177px)
+{
+	#content
+	{
+		margin-top: 100px!important;
+	}
+}
+
 @media only screen and (max-width: 1176px)
 {
-	:root
-	{
-		--pwr-top-inset: calc(env(safe-area-inset-top) * 1.0);
-	}
-
 	#head
 	{
 		background-color: var(--dark-layer-one);
@@ -1160,20 +1164,19 @@ button img
 
 	#head-container
 	{
-		position: sticky;
+		position: fixed;
 		top: 0;
-		width: calc(100% + 50px);
-    	margin-left: -25px;
+		width: 100%;
 		padding-top: calc(64px + env(safe-area-inset-top));
 		padding-bottom: 20px;
-    	margin-top: calc(-50px - var(--pwr-top-inset) * 1.5);
-		z-index: 2000;
+		z-index: 20000;
 		box-shadow: 0px -20px 20px 20px rgba(0, 0, 10, .4);
 		border-bottom: 1px solid rgba(220, 220, 230, 0.1);
 		/* background-color: var(--dark-layer-two); */
 		background-color: rgb(40, 40, 55);
 		margin-bottom: 100px;
 		/* opacity: .95; */
+		margin-top: 0;
 	}
 
 	h2
@@ -1193,7 +1196,7 @@ button img
 
 	#content
 	{
-		padding: calc(50px + var(--pwr-top-inset) * 1.5) 25px;
+		padding: calc(50px + env(safe-area-inset-top)) 25px;
 		padding-bottom: 0;
 	}
 

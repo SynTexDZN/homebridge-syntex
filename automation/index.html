@@ -5,10 +5,6 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Dashboard: Automation</title>
-			<div id="head-container">
-				<h1 style="margin-bottom: 0; margin-top: 0">Dashboard</h1>
-				<p style="margin-bottom: 0; margin-top: 20px">Automation</p>
-			</div>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
@@ -77,6 +73,8 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
+
+				Essentials.changeHeader('Dashboard', 'Automation');
 
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
@@ -277,6 +275,8 @@
 					if((new URL(window.location.href)).searchParams.get('create') == '')
 					{
 						Essentials.switchPage('view', 'create', true);
+
+						Essentials.changeHeader('Automation', 'Erstellen');
 					}
 				}
 
@@ -318,6 +318,8 @@
 				{
 					await Essentials.switchPage(previous, 'create', false);
 
+					Essentials.changeHeader('Automation', 'Erstellen');
+
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
 						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
@@ -331,6 +333,8 @@
 				async function openViewPage(previous)
 				{
 					await Essentials.switchPage(previous, 'view', false);
+
+					Essentials.changeHeader('Dashboard', 'Automation');
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

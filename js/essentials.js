@@ -438,6 +438,8 @@ function changeHeader(title, subtitle)
 
 	if(head != null)
 	{
+		head.style.display = '';
+
 		if(title != null && head.children[0] != null)
 		{
 			head.children[0].innerHTML = title;
@@ -447,6 +449,32 @@ function changeHeader(title, subtitle)
 		{
 			head.children[1].innerHTML = subtitle;
 		}
+	}
+
+	var content = document.getElementById('content');
+
+	if(content != null)
+	{
+		var style = window.getComputedStyle(document.getElementById('head-container'), null);
+
+		content.style.marginTop = (Math.round(style.getPropertyValue('height').slice(0, -2)) + 84) + 'px';
+	}
+}
+
+function hideHeader()
+{
+	var head = document.getElementById('head-container');
+
+	if(head != null)
+	{
+		head.style.display = 'none';
+	}
+
+	var content = document.getElementById('content');
+
+	if(content != null)
+	{
+		content.style.marginTop = '0px';
 	}
 }
 
@@ -458,4 +486,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage, changeHeader };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage, changeHeader, hideHeader };

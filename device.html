@@ -24,10 +24,6 @@
 				</div>
 			</div>
 			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Einstellungen</h1>
-					<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">( Laden .. )</p>
-				</div>
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main" style="margin-top: 100px">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -209,7 +205,7 @@
 				}
 
 				document.getElementsByTagName('title')[0].innerHTML = device.name;
-				document.getElementsByTagName('h1')[0].innerHTML = device.name;
+				document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = device.name;
 
 				var infos = document.getElementById('info');
 
@@ -264,7 +260,7 @@
 
 				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
-				document.getElementById('settings').getElementsByTagName('p')[0].innerHTML = '( ' + device.name + ' )';
+				document.getElementById('head-container').children[1].innerHTML = '( ' + device.name + ' )';
 
 				var settingsForm = document.getElementById('settings-form');
 
@@ -616,9 +612,13 @@
 					}
 				});
 
+				Essentials.hideHeader();
+
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
 					Essentials.switchPage('infos', 'settings', true);
+
+					Essentials.changeHeader('Einstellungen');
 				}
 
 			</script>
@@ -1506,6 +1506,8 @@
 				{
 					await Essentials.switchPage(previous, 'settings', false);
 
+					Essentials.changeHeader('Einstellungen');
+
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
@@ -1521,6 +1523,8 @@
 				async function closeSettings(previous)
 				{
 					await Essentials.switchPage(previous, 'infos', false);
+
+					Essentials.hideHeader();
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name;
 

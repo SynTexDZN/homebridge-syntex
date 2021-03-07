@@ -3,10 +3,6 @@
 		<div id="content">
 			<title>Gerät Erstellen</title>
 			<div id="create" style="transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Erstellen</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Ein virtuelles Gerät</p>
-				</div>
 				<form class="main" onsubmit="event.preventDefault(); createAccessory(this);">
 					<p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -30,10 +26,6 @@
 				</form>
 			</div>
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<div id="head-container">
-					<h1 style="margin-bottom: 0; margin-top: 0">Geschafft</h1>
-					<p style="margin-bottom: 0; margin-top: 20px">Erfolgreich Erstellt</p>
-				</div>
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
@@ -52,6 +44,8 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
+
+				Essentials.changeHeader('Erstellen', 'Ein virtuelles Gerät');
 
 				var select = document.createElement('div');
 
@@ -99,6 +93,8 @@
 					if(created == 'Success')
 					{
 						Essentials.switchPage('create', 'success', false);
+
+						Essentials.changeHeader('Geschafft', 'Erfolgreich Erstellt');
 
 						redirectCountdown('/device?id=' + document.getElementById('form-id').value);
 					}

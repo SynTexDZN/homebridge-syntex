@@ -2,10 +2,6 @@
 	<body ontouchstart="">
 		<div id="content" style="padding-bottom: 50px">
 			<title>Dashboard: Log</title>
-			<div id="head-container">
-				<h1 style="margin-bottom: 0; margin-top: 0">Dashboard</h1>
-				<p style="margin-bottom: 0; margin-top: 20px">Log</p>
-			</div>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
@@ -71,6 +67,8 @@
 
 				window.Query = Query;
 				window.Essentials = Essentials;
+
+				Essentials.changeHeader('Dashboard', 'Log');
 
 				window.logJSON = {};
 				window.counter = 0;

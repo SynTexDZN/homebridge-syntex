@@ -2,10 +2,6 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Automation: Laden ..</title>
-			<div id="head-container">
-				<h1 style="margin-bottom: 0; margin-top: 0">Automation</h1>
-				<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px">Laden ..</p>
-			</div>
 			<div id="infos" class="main" style="transition: .2s ease-in-out">
 				<div class="type-container">
 					<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -79,6 +75,8 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
+
+				Essentials.changeHeader('Automation', 'Laden ..');
 
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
@@ -292,9 +290,9 @@
 				
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
-					Essentials.changeHeader('Einstellungen');
-
 					Essentials.switchPage('infos', 'settings', true);
+
+					Essentials.changeHeader('Einstellungen');
 				}
 
 				loadPluginData();
