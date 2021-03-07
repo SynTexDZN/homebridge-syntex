@@ -40,7 +40,8 @@ class PageManagerModule
 						head.children[1].style.opacity = 1;
 					}
 
-					head.style.opacity = 1;
+					head.classList.remove('hidden');
+
 					head.style.maxHeight = head.scrollHeight + 'px';
 	
 					this.setContentMargin();
@@ -49,7 +50,8 @@ class PageManagerModule
 			}
 			else
 			{
-				head.style.opacity = 1;
+				head.classList.remove('hidden');
+
 				head.style.maxHeight = head.scrollHeight + 'px';
 
 				this.setContentMargin();
@@ -77,7 +79,7 @@ class PageManagerModule
 
 		if(head != null)
 		{
-			head.style.opacity = 0;
+			head.classList.add('hidden');
 		}
 
 		var content = document.getElementById('content');
