@@ -7,6 +7,24 @@
 				
 			</script>
 			<title class="loading-loop">Laden ..</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					PageManager.setHeader('Einstellungen');
+
+					Essentials.switchPage('infos', 'settings', true);
+				}
+				else
+				{
+					PageManager.hideHeader();
+				}
+
+			</script>
 			<div class="main" id="infos" style="transition: .2s ease-in-out">
 				<div id="head"></div>
 				<div class="control-container"></div>
@@ -611,15 +629,6 @@
 						}, 300);
 					}
 				});
-
-				Essentials.hideHeader();
-
-				if((new URL(window.location.href)).searchParams.get('settings') == '')
-				{
-					Essentials.switchPage('infos', 'settings', true);
-
-					Essentials.changeHeader('Einstellungen');
-				}
 
 			</script>
 			<script>
@@ -1506,7 +1515,7 @@
 				{
 					await Essentials.switchPage(previous, 'settings', false);
 
-					Essentials.changeHeader('Einstellungen');
+					PageManager.setHeader('Einstellungen');
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
 
@@ -1524,7 +1533,7 @@
 				{
 					await Essentials.switchPage(previous, 'infos', false);
 
-					Essentials.hideHeader();
+					PageManager.hideHeader();
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name;
 

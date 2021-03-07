@@ -303,24 +303,29 @@ function typeToLetter(type)
 	return null;
 }
 
-async function switchPage(previous, next, init)
+function switchPage(previous, next, init)
 {
-	if(!init)
-	{
-		document.getElementById(previous).style.opacity = 0;
+	return new Promise(async (resolve) => {
 
-		await Essentials.newTimeout(200);
-	}
+		if(!init)
+		{
+			document.getElementById(previous).style.opacity = 0;
 
-	document.getElementById(previous).style.display = 'none';
-	document.getElementById(next).style.display = '';
+			await Essentials.newTimeout(200);
+		}
 
-	if(!init)
-	{
-		await Essentials.newTimeout(50);
-	}
+		document.getElementById(previous).style.display = 'none';
+		document.getElementById(next).style.display = '';
 
-	document.getElementById(next).style.opacity = 1;
+		if(!init)
+		{
+			await Essentials.newTimeout(50);
+		}
+
+		document.getElementById(next).style.opacity = 1;
+
+		resolve();
+	});
 }
 
 var pageLoading = false;
@@ -432,52 +437,6 @@ function newTimeout(ms)
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function changeHeader(title, subtitle)
-{
-	var head = document.getElementById('head-container');
-
-	if(head != null)
-	{
-		head.style.display = '';
-
-		if(title != null && head.children[0] != null)
-		{
-			head.children[0].innerHTML = title;
-		}
-
-		if(subtitle != null && head.children[1] != null)
-		{
-			head.children[1].innerHTML = subtitle;
-		}
-	}
-
-	var content = document.getElementById('content');
-
-	if(content != null)
-	{
-		var style = window.getComputedStyle(document.getElementById('head-container'), null);
-
-		content.style.marginTop = (Math.round(style.getPropertyValue('height').slice(0, -2)) + 84) + 'px';
-	}
-}
-
-function hideHeader()
-{
-	var head = document.getElementById('head-container');
-
-	if(head != null)
-	{
-		head.style.display = 'none';
-	}
-
-	var content = document.getElementById('content');
-
-	if(content != null)
-	{
-		content.style.marginTop = '0px';
-	}
-}
-
 function SETUP(Q, P)
 {
 	Query = Q;
@@ -486,4 +445,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage, changeHeader, hideHeader };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };

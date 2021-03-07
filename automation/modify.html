@@ -2,6 +2,24 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Automation: Laden ..</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					Essentials.switchPage('infos', 'settings', true);
+
+					PageManager.setHeader('Einstellungen');
+				}
+				else
+				{
+					PageManager.setHeader('Automation', 'Laden ..');
+				}
+			
+			</script>
 			<div id="infos" class="main" style="transition: .2s ease-in-out">
 				<div class="type-container">
 					<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -75,8 +93,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
-
-				Essentials.changeHeader('Automation', 'Laden ..');
 
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
@@ -286,15 +302,6 @@
 					Preloader.finish();
 				}
 
-				Essentials.changeHeader('Automation');
-				
-				if((new URL(window.location.href)).searchParams.get('settings') == '')
-				{
-					Essentials.switchPage('infos', 'settings', true);
-
-					Essentials.changeHeader('Einstellungen');
-				}
-
 				loadPluginData();
 
 			</script>
@@ -333,7 +340,7 @@
 				{
 					await Essentials.switchPage(previous, 'settings', false);
 
-					Essentials.changeHeader('Einstellungen');
+					PageManager.setHeader('Einstellungen');
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -349,7 +356,7 @@
 				{
 					await Essentials.switchPage(previous, 'infos', false);
 
-					Essentials.changeHeader('Automation');
+					PageManager.setHeader('Automation');
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -372,7 +379,7 @@
 							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automation[i].name;
 							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
 
-							Essentials.changeHeader(null, automation[i].name);
+							PageManager.setHeader(null, automation[i].name);
 
 							var panel = document.createElement('button');
 

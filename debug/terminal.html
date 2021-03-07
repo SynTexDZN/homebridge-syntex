@@ -2,6 +2,15 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Debug: Command</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Debug', 'Command');
+
+			</script>
 			<div id="style" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
@@ -42,8 +51,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				Essentials.changeHeader('Debug', 'Command');
-			
 				Preloader.finish();
 
 			</script>

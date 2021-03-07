@@ -2,6 +2,27 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Gerät Verbinden</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
+				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
+
+				if(deviceID != null && deviceIP != null)
+				{
+					PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
+					Essentials.switchPage('check-name', 'wifi', true);
+				}
+				else
+				{
+					PageManager.setHeader('Benennen', 'Wähle einen Namen aus');
+				}
+
+			</script>
 			<div id="check-name" style="transition: .2s ease-in-out">
 				<form class="main" onsubmit="event.preventDefault(); checkName(this);">
 					<p><b>Name: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -100,22 +121,13 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				Essentials.changeHeader('Benennen', 'Wähle einen Namen aus');
-
 				// NOTE: Redirect When Reconnecting
-
-				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
-				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
 
 				if(deviceID != null && deviceIP != null)
 				{
 					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
 					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
 					document.getElementById('setup-btn').parentElement.removeChild(document.getElementById('setup-btn'));  
-
-					Essentials.switchPage('check-name', 'wifi', true);
-
-					Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 					pingESP();
 				}
@@ -148,7 +160,7 @@
 
 						Essentials.switchPage('check-name', 'connect', false);
 
-						Essentials.changeHeader('Verbinden', 'Mit dem Smart Home Gerät');
+						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
 
 						pingESP();
 					}
@@ -184,7 +196,7 @@
 
 									Essentials.switchPage('connect', 'wifi', false);
 
-									Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+									PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 									scanWifi(document.getElementById('scan-btn'));
 								}
@@ -201,7 +213,7 @@
 
 								Essentials.switchPage('connect', 'wifi', false);
 
-								Essentials.changeHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+								PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 							}
@@ -323,7 +335,7 @@
 							{
 								Essentials.switchPage('wifi', 'check-connection', false);
 
-								Essentials.changeHeader('Gesendet', 'Verbindung wird getestet');
+								PageManager.setHeader('Gesendet', 'Verbindung wird getestet');
 
 								redirectCountdown('/device?id=' + mac);    
 							}
@@ -331,7 +343,7 @@
 							{
 								Essentials.switchPage('wifi', 'connecting', false);
 
-								Essentials.changeHeader('Bitte Warten', 'Verbindung wird getestet');
+								PageManager.setHeader('Bitte Warten', 'Verbindung wird getestet');
 
 								setTimer(60000);
 
@@ -361,7 +373,7 @@
 									{
 										Essentials.switchPage('connecting', 'error', false);
 
-										Essentials.changeHeader('Fehler', 'Keine Verbindung');
+										PageManager.setHeader('Fehler', 'Keine Verbindung');
 
 										redirectCountdown('/setup');
 									}
@@ -403,7 +415,7 @@
 
 						Essentials.switchPage('connecting', 'success', false);
 
-						Essentials.changeHeader('Geschafft', 'Erfolgreich Verbunden');
+						PageManager.setHeader('Geschafft', 'Erfolgreich Verbunden');
 
 						redirectCountdown('/device?id=' + id);
 					}

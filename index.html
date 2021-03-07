@@ -2,6 +2,15 @@
 	<body ontouchstart="">
 		<div id="content" style="padding-bottom: 50px">
 			<title>Dashboard: Geräte</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Dashboard', 'Geräte');
+
+			</script>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
@@ -65,8 +74,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Presets = Presets;
-
-				Essentials.changeHeader('Dashboard', 'Geräte');
 
 				window.devices = JSON.parse('<%devices%>');
 				window.latestVersions = JSON.parse('<%updates%>');

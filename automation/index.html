@@ -5,6 +5,24 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Dashboard: Automation</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				if((new URL(window.location.href)).searchParams.get('create') == '')
+				{
+					PageManager.setHeader('Automation', 'Erstellen');
+					
+					Essentials.switchPage('view', 'create', true);
+				}
+				else
+				{
+					PageManager.setHeader('Dashboard', 'Automation');
+				}
+
+			</script>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
@@ -73,8 +91,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
-
-				Essentials.changeHeader('Dashboard', 'Automation');
 
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
@@ -271,13 +287,6 @@
 					
 					addTrigger();
 					addResult();
-
-					if((new URL(window.location.href)).searchParams.get('create') == '')
-					{
-						Essentials.switchPage('view', 'create', true);
-
-						Essentials.changeHeader('Automation', 'Erstellen');
-					}
 				}
 
 				loadPluginData();
@@ -318,7 +327,7 @@
 				{
 					await Essentials.switchPage(previous, 'create', false);
 
-					Essentials.changeHeader('Automation', 'Erstellen');
+					PageManager.setHeader('Automation', 'Erstellen');
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -334,7 +343,7 @@
 				{
 					await Essentials.switchPage(previous, 'view', false);
 
-					Essentials.changeHeader('Dashboard', 'Automation');
+					PageManager.setHeader('Dashboard', 'Automation');
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

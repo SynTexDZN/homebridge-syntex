@@ -2,6 +2,15 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Gerät Erstellen</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Erstellen', 'Ein virtuelles Gerät');
+
+			</script>
 			<div id="create" style="transition: .2s ease-in-out">
 				<form class="main" onsubmit="event.preventDefault(); createAccessory(this);">
 					<p><b>ID: <input autofocus id="form-id" pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
@@ -44,8 +53,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Replacer = Replacer;
-
-				Essentials.changeHeader('Erstellen', 'Ein virtuelles Gerät');
 
 				var select = document.createElement('div');
 
@@ -94,7 +101,7 @@
 					{
 						Essentials.switchPage('create', 'success', false);
 
-						Essentials.changeHeader('Geschafft', 'Erfolgreich Erstellt');
+						PageManager.setHeader('Geschafft', 'Erfolgreich Erstellt');
 
 						redirectCountdown('/device?id=' + document.getElementById('form-id').value);
 					}
