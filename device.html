@@ -13,11 +13,13 @@
 
 				window.PageManager = PageManager;
 
+				window.device = JSON.parse('<%device%>');
+
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
-					PageManager.setHeader('Einstellungen');
+					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
 
-					Essentials.switchPage('infos', 'settings', true);
+					PageManager.switchPage('infos', 'settings', true);
 				}
 				else
 				{
@@ -74,7 +76,6 @@
 				window.Essentials = Essentials;
 				window.Presets = Presets;
 
-				window.device = JSON.parse('<%device%>')
 				window.values = {};
 				window.orginal = {};
 				window.typeCounter = {};
@@ -277,8 +278,6 @@
 				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
 
 				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
-
-				document.getElementById('head-container').children[1].innerHTML = '( ' + device.name + ' )';
 
 				var settingsForm = document.getElementById('settings-form');
 
@@ -1513,9 +1512,9 @@
 
 				async function openSettings(previous)
 				{
-					await Essentials.switchPage(previous, 'settings', false);
+					await PageManager.switchPage(previous, 'settings', false);
 
-					PageManager.setHeader('Einstellungen');
+					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
 
@@ -1531,7 +1530,7 @@
 				
 				async function closeSettings(previous)
 				{
-					await Essentials.switchPage(previous, 'infos', false);
+					await PageManager.switchPage(previous, 'infos', false);
 
 					PageManager.hideHeader();
 

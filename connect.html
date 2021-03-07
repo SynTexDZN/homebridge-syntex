@@ -15,7 +15,7 @@
 				{
 					PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
-					Essentials.switchPage('check-name', 'wifi', true);
+					PageManager.switchPage('check-name', 'wifi', true);
 				}
 				else
 				{
@@ -160,7 +160,7 @@
 
 						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
 
-						Essentials.switchPage('check-name', 'connect', false);
+						PageManager.switchPage('check-name', 'connect', false);
 
 						pingESP();
 					}
@@ -196,7 +196,7 @@
 
 									PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
-									Essentials.switchPage('connect', 'wifi', false);
+									PageManager.switchPage('connect', 'wifi', false);
 
 									scanWifi(document.getElementById('scan-btn'));
 								}
@@ -213,7 +213,7 @@
 
 								PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
-								Essentials.switchPage('connect', 'wifi', false);
+								PageManager.switchPage('connect', 'wifi', false);
 
 								setTimeout(() => scanWifi(document.getElementById('scan-btn')), 2000);
 							}
@@ -335,7 +335,7 @@
 							{
 								PageManager.setHeader('Gesendet', 'Verbindung wird getestet');
 
-								Essentials.switchPage('wifi', 'check-connection', false);
+								PageManager.switchPage('wifi', 'check-connection', false);
 
 								redirectCountdown('/device?id=' + mac);    
 							}
@@ -343,7 +343,7 @@
 							{
 								PageManager.setHeader('Bitte Warten', 'Verbindung wird getestet');
 								
-								Essentials.switchPage('wifi', 'connecting', false);
+								PageManager.switchPage('wifi', 'connecting', false);
 
 								setTimer(60000);
 
@@ -373,7 +373,7 @@
 									{
 										PageManager.setHeader('Fehler', 'Keine Verbindung');
 
-										Essentials.switchPage('connecting', 'error', false);
+										PageManager.switchPage('connecting', 'error', false);
 
 										redirectCountdown('/setup');
 									}
@@ -415,7 +415,7 @@
 
 						PageManager.setHeader('Geschafft', 'Erfolgreich Verbunden');
 
-						Essentials.switchPage('connecting', 'success', false);
+						PageManager.switchPage('connecting', 'success', false);
 
 						redirectCountdown('/device?id=' + id);
 					}

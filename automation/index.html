@@ -15,7 +15,7 @@
 				{
 					PageManager.setHeader('Automation', 'Erstellen');
 
-					Essentials.switchPage('view', 'create', true);
+					PageManager.switchPage('view', 'create', true);
 				}
 				else
 				{
@@ -327,7 +327,7 @@
 				{
 					PageManager.setHeader('Automation', 'Erstellen');
 
-					await Essentials.switchPage(previous, 'create', false);
+					await PageManager.switchPage(previous, 'create', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -343,7 +343,7 @@
 				{
 					PageManager.setHeader('Dashboard', 'Automation');
 					
-					await Essentials.switchPage(previous, 'view', false);
+					await PageManager.switchPage(previous, 'view', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

@@ -303,31 +303,6 @@ function typeToLetter(type)
 	return null;
 }
 
-function switchPage(previous, next, init)
-{
-	return new Promise(async (resolve) => {
-
-		if(!init)
-		{
-			document.getElementById(previous).style.opacity = 0;
-
-			await Essentials.newTimeout(200);
-		}
-
-		document.getElementById(previous).style.display = 'none';
-		document.getElementById(next).style.display = '';
-
-		if(!init)
-		{
-			await Essentials.newTimeout(50);
-		}
-
-		document.getElementById(next).style.opacity = 1;
-
-		resolve();
-	});
-}
-
 var pageLoading = false;
 
 async function leavePage(url)
@@ -445,4 +420,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, switchPage, leavePage };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, leavePage };

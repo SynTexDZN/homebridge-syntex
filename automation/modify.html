@@ -12,7 +12,7 @@
 				{
 					PageManager.setHeader('Einstellungen');
 
-					Essentials.switchPage('infos', 'settings', true);
+					PageManager.switchPage('infos', 'settings', true);
 				}
 				else
 				{
@@ -340,7 +340,7 @@
 				{
 					PageManager.setHeader('Einstellungen');
 
-					await Essentials.switchPage(previous, 'settings', false);
+					await PageManager.switchPage(previous, 'settings', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -356,7 +356,7 @@
 				{
 					PageManager.setHeader('Automation');
 					
-					await Essentials.switchPage(previous, 'infos', false);
+					await PageManager.switchPage(previous, 'infos', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

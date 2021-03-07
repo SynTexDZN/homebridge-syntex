@@ -124,7 +124,7 @@
 					{
 						deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
-						Essentials.switchPage('create', 'search', false);
+						PageManager.switchPage('create', 'search', false);
 
 						pingESP();
 					}
@@ -159,7 +159,7 @@
 						{  
 							ping = true;
 
-							Essentials.switchPage('search', 'wifi', false);
+							PageManager.switchPage('search', 'wifi', false);
 
 							setTimeout(function()
 							{
@@ -224,7 +224,7 @@
 					{  
 						success = true;
 
-						Essentials.switchPage('connecting', 'success', false);
+						PageManager.switchPage('connecting', 'success', false);
 
 						redirectCountdown('/device?id=' + id);
 					}
@@ -259,7 +259,7 @@
 
 					if(mac != null)
 					{
-						Essentials.switchPage('wifi', 'connecting', false);
+						PageManager.switchPage('wifi', 'connecting', false);
 
 						setTimer(60000);
 
@@ -285,7 +285,7 @@
 						{
 							if(success == false)
 							{
-								Essentials.switchPage('connecting', 'error', false);
+								PageManager.switchPage('connecting', 'error', false);
 
 								redirectCountdown('/setup');
 							}

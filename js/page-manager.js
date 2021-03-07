@@ -41,6 +41,7 @@ class PageManagerModule
 					}
 
 					head.style.opacity = 1;
+					head.style.maxHeight = head.scrollHeight + 'px';
 	
 					this.setContentMargin();
 	
@@ -49,7 +50,8 @@ class PageManagerModule
 			else
 			{
 				head.style.opacity = 1;
-	
+				head.style.maxHeight = head.scrollHeight + 'px';
+
 				this.setContentMargin();
 			}
 		}
@@ -85,6 +87,36 @@ class PageManagerModule
 			content.style.marginTop = '0px';
 		}
 	}
+
+	switchPage(previous, next, init)
+	{
+		return new Promise(async (resolve) => {
+
+			if(!init)
+			{
+				document.getElementById(previous).style.opacity = 0;
+
+				await newTimeout(200);
+			}
+
+			document.getElementById(previous).style.display = 'none';
+			document.getElementById(next).style.display = '';
+
+			if(!init)
+			{
+				await newTimeout(50);
+			}
+
+			document.getElementById(next).style.opacity = 1;
+
+			resolve();
+		});
+	}
+}
+
+function newTimeout(ms)
+{
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export let PageManager = new PageManagerModule();
