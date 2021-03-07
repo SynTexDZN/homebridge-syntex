@@ -358,7 +358,11 @@ async function leavePage(url)
 
 			clearTimers();
 
+			var marginTop = document.getElementById('content').style.marginTop;
+
 			document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1].split('</body>')[0];
+
+			document.getElementById('content').style.marginTop = marginTop;			
 
 			for(var i = 0; i < document.getElementsByTagName('script').length; i++)
 			{

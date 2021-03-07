@@ -30,16 +30,12 @@
 	position: relative;
 	z-index: 20000;
 	overflow: hidden;
+	transition: .3s opacity ease-in-out, .3s max-height ease-in-out, .3s min-height ease-in-out;
 }
 
 #head-container h1, #head-container p
 {
 	transition: .2s opacity ease-in-out;
-}
-
-#head-container
-{
-	transition: .3s opacity ease-in-out;
 }
 
 #head-container.hidden
@@ -69,6 +65,7 @@ body
 	background: var(--dark-layer-one);
 	padding: 50px 25px;
 	padding-top: 0;
+	transition: .3s margin-top ease-in-out;
 }
 /*
 img
@@ -1161,6 +1158,17 @@ button img
 	}
 
 	#head-container.hidden
+	{
+		display: none;
+	}
+
+	#head-container
+	{
+		min-height: none!important;
+		max-height: none!important;
+	}
+
+	#head-temp
 	{
 		display: none;
 	}

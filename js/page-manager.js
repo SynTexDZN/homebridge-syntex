@@ -11,50 +11,50 @@ class PageManagerModule
 
 		if(head != null)
 		{
-			if((title != null && head.children[0] != null && title != head.children[0].innerHTML)
-			|| (subtitle != null && head.children[1] != null && subtitle != head.children[1].innerHTML))
+			head.children[1].children[0].innerHTML = title;
+			head.children[1].children[1].innerHTML = subtitle;
+
+			head.style.maxHeight = head.children[1].offsetHeight + 'px';
+			head.style.minHeight = head.children[1].offsetHeight + 'px';
+
+			this.setContentMargin();
+
+			if((title != null && head.children[0].children[0] != null && title != head.children[0].children[0].innerHTML)
+			|| (subtitle != null && head.children[0].children[1] != null && subtitle != head.children[0].children[1].innerHTML))
 			{
-				if(title != null && head.children[0] != null && title != head.children[0].innerHTML)
+				if(title != null && head.children[0].children[0] != null && title != head.children[0].children[0].innerHTML)
 				{
-					head.children[0].style.opacity = 0;
+					head.children[0].children[0].style.opacity = 0;
 				}
 
-				if(subtitle != null && head.children[1] != null && subtitle != head.children[1].innerHTML)
+				if(subtitle != null && head.children[0].children[1] != null && subtitle != head.children[0].children[1].innerHTML)
 				{
-					head.children[1].style.opacity = 0;
+					head.children[0].children[1].style.opacity = 0;
 				}
 
 				setTimeout(() => {
 
-					if(title != null && head.children[0] != null && title != head.children[0].innerHTML)
+					if(title != null && head.children[0].children[0] != null && title != head.children[0].children[0].innerHTML)
 					{
-						head.children[0].innerHTML = title;
+						head.children[0].children[0].innerHTML = title;
 	
-						head.children[0].style.opacity = 1;
+						head.children[0].children[0].style.opacity = 1;
 					}
 	
-					if(subtitle != null && head.children[1] != null && subtitle != head.children[1].innerHTML)
+					if(subtitle != null && head.children[0].children[1] != null && subtitle != head.children[0].children[1].innerHTML)
 					{
-						head.children[1].innerHTML = subtitle;
+						head.children[0].children[1].innerHTML = subtitle;
 	
-						head.children[1].style.opacity = 1;
+						head.children[0].children[1].style.opacity = 1;
 					}
 
 					head.classList.remove('hidden');
-
-					head.style.maxHeight = head.scrollHeight + 'px';
-	
-					this.setContentMargin();
 	
 				}, head.classList.contains('hidden') ? 0 : 200);
 			}
 			else
 			{
 				head.classList.remove('hidden');
-
-				head.style.maxHeight = head.scrollHeight + 'px';
-
-				this.setContentMargin();
 			}
 		}
 	}
@@ -65,11 +65,7 @@ class PageManagerModule
 
 		if(content != null)
 		{
-			var style = window.getComputedStyle(document.getElementById('head-container'), null);
-
-			content.style.marginTop = (Math.round(style.getPropertyValue('height').slice(0, -2)) + 84) + 'px';
-		
-			console.log('SET CONTENT MARGIN', (Math.round(style.getPropertyValue('height').slice(0, -2)) + 84) + 'px');
+			content.style.marginTop = (Math.round(document.getElementById('head-container').children[1].offsetHeight) + 84) + 'px';
 		}
 	}
 
