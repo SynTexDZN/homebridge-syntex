@@ -46,7 +46,7 @@ class PageManagerModule
 	
 					this.setContentMargin();
 	
-				}, head.style.opacity == 1 ? 200 : 0);
+				}, head.classList.contains('hidden') ? 0 : 200);
 			}
 			else
 			{
