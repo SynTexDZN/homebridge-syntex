@@ -2,6 +2,15 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Setup</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Benennen', 'Wähle einen Namen aus');
+
+			</script>
 			<div id="create" style="transition: .2s ease-in-out">
 				<h1>Name Aussuchen</h1>
 				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); setName(this);">
@@ -124,6 +133,8 @@
 					{
 						deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
+						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
+
 						PageManager.switchPage('create', 'search', false);
 
 						pingESP();
@@ -158,6 +169,8 @@
 						if(await Query.fetchURL('http://192.168.4.1/', 2000) != null)
 						{  
 							ping = true;
+
+							PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
 							PageManager.switchPage('search', 'wifi', false);
 
@@ -224,16 +237,15 @@
 					{  
 						success = true;
 
+						PageManager.setHeader('Geschafft', 'Erfolgreich Verbunden');
+
 						PageManager.switchPage('connecting', 'success', false);
 
 						redirectCountdown('/device?id=' + id);
 					}
 					else
 					{
-						setTimeout(function()
-						{
-							checkDB(id);
-						}, 2000);
+						setTimeout(() => checkDB(id), 2000);
 					}
 				}
 				
@@ -259,6 +271,8 @@
 
 					if(mac != null)
 					{
+						PageManager.setHeader('Bitte Warten', 'Verbindung wird getestet');
+
 						PageManager.switchPage('wifi', 'connecting', false);
 
 						setTimer(60000);
@@ -285,6 +299,8 @@
 						{
 							if(success == false)
 							{
+								PageManager.setHeader('Fehler', 'Keine Verbindung');
+								
 								PageManager.switchPage('connecting', 'error', false);
 
 								redirectCountdown('/setup');
