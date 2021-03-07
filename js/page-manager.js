@@ -11,13 +11,20 @@ class PageManagerModule
 
 		if(head != null)
 		{
-			head.children[1].children[0].innerHTML = title;
-			head.children[1].children[1].innerHTML = subtitle;
+			if(title != null)
+			{
+				head.children[1].children[0].innerHTML = title;
+			}
 
+			if(subtitle != null)
+			{
+				head.children[1].children[1].innerHTML = subtitle;
+			}
+			
 			head.style.maxHeight = head.children[1].offsetHeight + 'px';
 			head.style.minHeight = head.children[1].offsetHeight + 'px';
 
-			this.setContentMargin();
+			this.setContentMargin(head.classList.contains('hidden'));
 
 			if((title != null && head.children[0].children[0] != null && title != head.children[0].children[0].innerHTML)
 			|| (subtitle != null && head.children[0].children[1] != null && subtitle != head.children[0].children[1].innerHTML))
@@ -59,13 +66,26 @@ class PageManagerModule
 		}
 	}
 
-	setContentMargin()
+	setContentMargin(hidden)
 	{
 		var content = document.getElementById('content');
 
 		if(content != null)
 		{
+			content.setAttribute('last-margin', (Math.round(document.getElementById('head-container').children[1].offsetHeight) + 84));
+
+			if(hidden)
+			{
+				content.style.transition = 'none';
+			}
+
 			content.style.marginTop = (Math.round(document.getElementById('head-container').children[1].offsetHeight) + 84) + 'px';
+		
+			setTimeout(() => {
+
+				content.style.transition = '.3s margin-top ease-in-out';
+
+			}, 0);
 		}
 	}
 
@@ -82,7 +102,14 @@ class PageManagerModule
 
 		if(content != null)
 		{
+			content.style.transition = 'none';
 			content.style.marginTop = '0px';
+
+			setTimeout(() => {
+
+				content.style.transition = '.3s margin-top ease-in-out';
+
+			}, 0);
 		}
 	}
 
