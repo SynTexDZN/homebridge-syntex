@@ -58,19 +58,7 @@
 					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
 					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="searchLog()" style="max-width: 200px">
 				</div>
-				<div style="display: flex">
-					<div class="custom-select" style="margin-right: 20px; width: 100%">
-						<select onchange="searchLog()">
-							<option value="all">Alle Level</option>
-							<option value="debug">Debug</option>
-							<option value="success">Erfolg</option>
-							<option value="update">Update</option>
-							<option value="read">Lesen</option>
-							<option value="info">Info</option>
-							<option value="warn">Warnung</option>
-							<option value="error">Fehler</option>
-						</select>
-					</div>
+				<div style="display: flex" id="filter">
 					<input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
 				</div>
 			</form>
@@ -94,7 +82,8 @@
 				loadPluginData().then(() => {
 					
 					renderGUI();
-					loadLogs().then(() => Preloader.finish());
+					Preloader.finish();
+					loadLogs();
 				});
 
 			</script>
@@ -133,6 +122,15 @@
 
 				function renderGUI()
 				{
+					var filter = document.createElement('div');
+
+					filter.className = 'custom-select';
+					filter.innerHTML = '<select onchange="searchLog()"><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
+					filter.style.width = '100%';
+					filter.style.marginRight = '20px';
+
+					document.getElementById('filter').insertBefore(Replacer.createSelectMenu(filter), document.getElementById('filter').children[0]);
+
 					for(const id in plugins)
 					{
 						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
@@ -152,7 +150,8 @@
 
 							var logWindow = document.createElement('div');
 
-							logWindow.className = 'scrollarea';
+							logWindow.innerHTML = 'Laden ..';
+							logWindow.className = 'scrollarea loading-loop';
 							logWindow.style.height = '700px';
 							logWindow.style.maxHeight = '700px';
 
@@ -339,6 +338,8 @@
 				function renderLogs(pluginID)
 				{
 					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+
+					document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
 
 					for(var i = 0; i < Math.min(logs[plugins[pluginID].alias].length, 100); i++)
 					{
