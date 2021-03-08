@@ -2,7 +2,32 @@ class PageManagerModule
 {
 	constructor()
 	{
+		var lastWidth = document.getElementsByTagName('body')[0].offsetWidth;
 
+		window.addEventListener('resize', () => {
+
+			var width = document.getElementsByTagName('body')[0].offsetWidth;
+
+			if(lastWidth < 1151 && width > 1151 || lastWidth > 1151 && width < 1151)
+			{
+				lastWidth = width;
+
+				document.getElementById('head-container').style.transition = 'none';
+				document.getElementById('content').style.transition = 'none';
+
+				document.getElementById('head-container').style.maxHeight = document.getElementById('head-container').children[1].offsetHeight + 'px';
+				document.getElementById('head-container').style.minHeight = document.getElementById('head-container').children[1].offsetHeight + 'px';
+
+				this.setContentMargin(document.getElementById('head-container').classList.contains('hidden'));
+
+				setTimeout(() => {
+
+					document.getElementById('head-container').style.transition = '.3s opacity ease-in-out, .3s max-height ease-in-out, .3s min-height ease-in-out';
+					document.getElementById('content').style.transition = '.3s margin-top ease-in-out';
+
+				}, 100);
+			}
+		});
 	}
 
 	async setHeader(title, subtitle)
@@ -20,12 +45,16 @@ class PageManagerModule
 			{
 				head.children[1].children[1].innerHTML = subtitle;
 			}
-			
-			head.style.maxHeight = head.children[1].offsetHeight + 'px';
-			head.style.minHeight = head.children[1].offsetHeight + 'px';
 
 			this.setContentMargin(head.classList.contains('hidden'));
 
+			setTimeout(() => {
+
+				head.style.maxHeight = head.children[1].offsetHeight + 'px';
+				head.style.minHeight = head.children[1].offsetHeight + 'px';
+
+			}, 100);
+			
 			if((title != null && head.children[0].children[0] != null && title != head.children[0].children[0].innerHTML)
 			|| (subtitle != null && head.children[0].children[1] != null && subtitle != head.children[0].children[1].innerHTML))
 			{
@@ -85,7 +114,7 @@ class PageManagerModule
 
 				content.style.transition = '.3s margin-top ease-in-out';
 
-			}, 0);
+			}, 100);
 		}
 	}
 
