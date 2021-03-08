@@ -101,14 +101,14 @@ class PageManagerModule
 
 		if(content != null)
 		{
-			content.setAttribute('last-margin', (Math.round(document.getElementById('head-container').children[1].offsetHeight) + 84));
+			content.setAttribute('last-margin', document.getElementById('head-container').children[1].offsetHeight + 84);
 
 			if(hidden)
 			{
 				content.style.transition = 'none';
 			}
 
-			content.style.marginTop = (Math.round(document.getElementById('head-container').children[1].offsetHeight) + 84) + 'px';
+			content.style.marginTop = (document.getElementById('head-container').children[1].offsetHeight + 84) + 'px';
 		
 			setTimeout(() => {
 
