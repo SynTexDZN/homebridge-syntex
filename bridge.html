@@ -28,7 +28,11 @@
 					<button class="widget-left">Mac WLAN<br>Mac LAN</button>
 					<button class="widget-right gradient-blue" style="user-select: all">-<br>-</button>
 				</div>
-				<div class="type-container" style="margin: 100px auto">
+				<div class="type-container" style="margin: 100px auto; margin-bottom: 50px">
+					<h2 class="title-container">Core</h2>
+					<div id="core-plugins"></div>
+				</div>
+				<div class="type-container" style="margin: 100px auto; margin-top: 50px">
 					<h2 class="title-container">Plugins</h2>
 					<div id="plugins"></div>
 				</div>
@@ -166,7 +170,7 @@
 
 							container.innerHTML = innerHTML;
 
-							document.getElementById('plugins').appendChild(container);
+							document.getElementById(id == 'npm' || id == 'homebridge' ? 'core-plugins' : 'plugins').appendChild(container);
 
 							Expandable.createExpandableButton(container.children[0]);
 

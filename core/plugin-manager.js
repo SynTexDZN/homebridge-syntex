@@ -23,12 +23,26 @@ module.exports = class PluginManager
 
                 for(const id in plugins)
                 {
-                    if(plugins[id].startsWith('homebridge') && plugins[id] != 'homebridge')
+                    if(plugins[id].startsWith('homebridge') || plugins[id] == 'npm')
                     {
                         this.plugins[plugins[id]] = { versions : {} };
 
-                        this.getName(plugins[id]);
-                        this.getAlias(plugins[id]).then((pluginName) => this.getConfig(plugins[id], pluginName));
+                        if(plugins[id] != 'homebridge' && plugins[id] != 'npm')
+                        {
+                            this.getName(plugins[id]);
+                            this.getAlias(plugins[id]).then((pluginName) => this.getConfig(plugins[id], pluginName));
+                        }
+                        else if(plugins[id] == 'npm')
+                        {
+                            this.plugins[plugins[id]].name = 'NPM';
+                            this.plugins[plugins[id]].alias = 'NPM';
+                        }
+                        else if(plugins[id] == 'homebridge')
+                        {
+                            this.plugins[plugins[id]].name = 'HomeBridge';
+                            this.plugins[plugins[id]].alias = 'HomeBridge';
+                        }
+
                         this.getPackageData(plugins[id]);
                         this.fetchUpdate(plugins[id], updateInterval * 1000);
 
@@ -58,6 +72,13 @@ module.exports = class PluginManager
                         if(data.displayName != null)
                         {
                             this.plugins[pluginID].name = data.displayName;
+
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Syntex', 'SynTex');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Homebridge', 'HomeBridge');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Magichome', 'MagicHome');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Webhooks', 'WebHooks');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Homeconnect', 'HomeConnect');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Videodoorbell', 'VideoDoorbell');
                         }
 
                         if(data.version != null)
@@ -102,17 +123,18 @@ module.exports = class PluginManager
                     displayName += parts[i][0].toUpperCase() + parts[i].substring(1);
                 }
             }
-
-            displayName = displayName.replace('Syntex', 'SynTex');
-            displayName = displayName.replace('Magichome', 'MagicHome');
-            displayName = displayName.replace('Webhooks', 'WebHooks');
-            displayName = displayName.replace('Homeconnect', 'HomeConnect');
-            displayName = displayName.replace('Videodoorbell', 'VideoDoorbell');
         }
         else
         {
             displayName = displayName[0].toUpperCase() + displayName.substring(1);
         }
+
+        displayName = displayName.replace('Syntex', 'SynTex');
+        displayName = displayName.replace('Homebridge', 'HomeBridge');
+        displayName = displayName.replace('Magichome', 'MagicHome');
+        displayName = displayName.replace('Webhooks', 'WebHooks');
+        displayName = displayName.replace('Homeconnect', 'HomeConnect');
+        displayName = displayName.replace('Videodoorbell', 'VideoDoorbell');
 
         this.plugins[pluginID].name = displayName;
     }
