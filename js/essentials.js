@@ -2,7 +2,7 @@ var Query, Preloader;
 
 function versionCount(version)
 {
-	if(version != null)
+	if(version != null && version != '0.0.0')
 	{
 		var intVersion = version.includes('-') ? -1 : 0;
 
@@ -197,11 +197,35 @@ function getType(services)
 			}
 		}
 
-		if(s.length == 1)
+		var unique = s.filter((value, index, self) => { return self.indexOf(value) == index });
+
+		if(unique.length == 1)
 		{
 			finalType = s[0];
 		}
+		else if(unique.length < 4)
+		{
+			if(s.includes('rgb'))
+			{
+				finalType = 'rgb';
 
+				if(s.includes('dimmer'))
+				{
+					finalType = 'rgbw';
+				}
+			}
+
+			if(s.includes('temperature') && s.includes('humidity'))
+			{
+				finalType = 'climate';
+			}
+			
+			if(s.includes('light') && s.includes('rain'))
+			{
+				finalType = 'weather';
+			}
+		}
+		
 		var onlyService = onlySwitches(s);
 
 		if(onlyService != null)
@@ -209,46 +233,27 @@ function getType(services)
 			finalType = onlyService;
 		}
 		
-		if(s.includes('temperature') && s.includes('humidity'))
+		var lastType = s[0], sameServices = true;
+
+		for(const i in s)
 		{
-			finalType = 'climate';
-		}
-		
-		if(s.includes('light') && s.includes('rain'))
-		{
-			finalType = 'weather';
+			if(lastType != s[i])
+			{
+				sameServices = false;
+			}
 		}
 
+		if(sameServices && lastType != null)
+		{
+			finalType = lastType;
+		}
+
+		/*
 		if(s.includes('lcd'))
 		{
 			finalType = 'special';
 		}
-		
-		if(s.length == 2 && s.includes('rgb') && s.includes('switch'))
-		{
-			finalType = 'rgbw';
-		}
-		else if(s.includes('rgb'))
-		{
-			finalType = 'rgb';
-		}
-		else
-		{
-			var lastType = s[0], sameServices = true;
-
-			for(const i in s)
-			{
-				if(lastType != s[i])
-				{
-					sameServices = false;
-				}
-			}
-
-			if(sameServices)
-			{
-				finalType = lastType;
-			}
-		}
+		*/
 	}
 	else
 	{
