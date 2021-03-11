@@ -382,6 +382,18 @@ module.exports = class DeviceManager
 		});
 	}
 
+	getBridgePort()
+	{
+		if(configOBJ != null && configOBJ.bridge != null && configOBJ.bridge.port != null)
+		{
+			return configOBJ.bridge.port;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	reloadAccessories()
 	{
 		return new Promise(async (resolve) => {
@@ -460,7 +472,7 @@ module.exports = class DeviceManager
 
 						if(accessories[j].plugin == 'SynTexMagicHome' || accessories[j].plugin == 'SynTexTuya' || accessories[j].plugin == 'SynTexWebHooks')
 						{
-							accessories[j].version = '99.99.99';
+							accessories[j].version = '0.0.0';
 						}
 					}
 

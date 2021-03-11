@@ -102,7 +102,7 @@
 				
 				}, timeDiff > 60000 ? 60000 : 1000);
 
-				devices.sort((a, b) => (Essentials.getType(a.name) > Essentials.getType(b.name)) ? 1 : ((Essentials.getType(b.name) > Essentials.getType(a.name)) ? -1 : 0));
+				devices.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 				devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
 				devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
 				
@@ -129,7 +129,7 @@
 
 				for(const i in devices)
 				{
-					if(devices[i].id != 'Bridge')
+					if(!Array.isArray(devices[i].services) || !devices[i].services.includes('bridge'))
 					{
 						if(devices[i].ip != undefined && devices[i].active != undefined)
 						{
@@ -176,8 +176,12 @@
 
 						var button = document.createElement('button'), buttonHTML = '';
 
+						if(devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
+						{
+							button.setAttribute('version', devices[i].version);
+						}
+
 						button.setAttribute('sensortype', Essentials.getType(devices[i].services));
-						button.setAttribute('version', devices[i].version);
 						button.setAttribute('id', devices[i].ip);
 						button.setAttribute('class', 'device');
 						button.setAttribute('device-id', i);
@@ -205,7 +209,7 @@
 
 						button.innerHTML = buttonHTML;
 
-						if(devices[i].id != undefined)
+						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
 						{
 							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
 						}
@@ -532,7 +536,7 @@
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
