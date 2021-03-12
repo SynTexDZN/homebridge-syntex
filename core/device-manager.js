@@ -37,41 +37,11 @@ module.exports = class DeviceManager
 
 			if(device != null)
 			{
-				if(ip != device['ip'])
+				var needToSave = this.setConfigValues(id, { version, ip });
+
+				if(needToSave)
 				{
-					self.setValue(id, 'ip', ip);
-				}
-
-				if(configOBJ != null)
-				{
-					var needToSave = false;
-
-					for(const i in configOBJ.platforms)
-					{
-						if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
-						{
-							for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
-							{
-								if(configOBJ.platforms[i].accessories[j].id == id && version != configOBJ.platforms[i].accessories[j].version)
-								{
-									configOBJ.platforms[i].accessories[j].version = version;
-
-									needToSave = true;
-								}	
-							}
-						}
-					}
-
-					if(needToSave)
-					{
-						this.saveAccessories();
-					}
-				}
-				else
-				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
-
-					resolve(['Error', '']);
+					this.saveAccessories();
 				}
 
 				resolve(['Success', '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '"}']);
@@ -292,7 +262,22 @@ module.exports = class DeviceManager
 
 	setValues(values)
 	{
-		return new Promise(resolve => {
+		return new Promise(async (resolve) => {
+
+			var needToSave = false;
+
+			for(const i in values)
+			{
+				if(i == 'name' && this.setConfigValue(values.id, 'name', values.name))
+				{
+					needToSave = true;
+				}
+			}
+
+			if(needToSave)
+			{
+				await this.saveAccessories();
+			}
 			
 			storage.load(values.id, (err, obj) => {  
 
@@ -302,7 +287,7 @@ module.exports = class DeviceManager
 					
 					for(const i in values)
 					{
-						if(i != 'id')
+						if(i != 'id' && i != 'name')
 						{
 							obj[i] = values[i];
 						}
@@ -312,7 +297,7 @@ module.exports = class DeviceManager
 				{
 					for(const i in values)
 					{
-						if(i != 'id')
+						if(i != 'id' && i != 'name')
 						{
 							obj[i] = values[i];
 						}
@@ -334,6 +319,51 @@ module.exports = class DeviceManager
 				});
 			});
 		});
+	}
+
+	setConfigValue(id, key, value)
+	{
+		var needToSave = false;
+
+		if(configOBJ != null && configOBJ.platforms != null)
+		{
+			for(const i in configOBJ.platforms)
+			{
+				if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+				{
+					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
+					{
+						if(configOBJ.platforms[i].accessories[j].id == id && value != configOBJ.platforms[i].accessories[j][key])
+						{
+							configOBJ.platforms[i].accessories[j][key] = value;
+
+							needToSave = true;
+						}	
+					}
+				}
+			}
+		}
+		else
+		{
+			logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+		}
+
+		return needToSave;
+	}
+
+	setConfigValues(id, values)
+	{
+		var needToSave = false;
+
+		for(const key in values)
+		{
+			if(this.setConfigValue(id, key, values[key]))
+			{
+				needToSave = true;
+			}
+		}
+
+		return needToSave;
 	}
 
 	getBridgeStorage()
@@ -402,84 +432,100 @@ module.exports = class DeviceManager
 			{
 				this.reloading = true;
 
-				var plugins = ['SynTexWebHooks', 'SynTexMagicHome', 'SynTexTuya'];
-				var devices = await deviceManager.getDevices();
-
 				accessories = [];
 
-				var promiseArray = [];
+				var bridgeAccessories = await this.getBridgeAccessories();
+				var storageAccessories = await this.getDevices();
 
-				for(const i in configOBJ.platforms)
+				if(bridgeAccessories != null)
 				{
-					if(plugins.includes(configOBJ.platforms[i].platform) && configOBJ.platforms[i].port != null)
-					{
-						var theRequest = {
-							method : 'GET',
-							url : 'http://localhost:' + configOBJ.platforms[i].port + '/accessories',
-							timeout : 10000
-						};
-		
-						const newPromise = new Promise((callback) => request(theRequest, (err, response, body) => {
-
-							try
-							{
-								accessories.push.apply(accessories, JSON.parse(body));
-							}
-							catch(e)
-							{
-
-							}
-
-							callback();
-						}));
-
-						promiseArray.push(newPromise);
-					}
+					accessories.push.apply(accessories, bridgeAccessories);
 				}
 
-				Promise.all(promiseArray).then(() => {
-
-					for(var j = 0; j < accessories.length; j++)
+				if(storageAccessories != null)
+				{
+					if(accessories.length == 0)
 					{
-						for(const k in devices)
+						accessories.push.apply(accessories, bridgeAccessories);
+					}
+					else
+					{
+						for(const i in accessories)
 						{
-							if(devices[k].id == accessories[j].id)
+							for(const j in storageAccessories)
 							{
-								for(var l = 0; l < Object.keys(devices[k]).length; l++)
+								if(storageAccessories[j].id == accessories[i].id)
 								{
-									accessories[j][Object.keys(devices[k])[l]] = devices[k][Object.keys(devices[k])[l]];
+									for(const x in storageAccessories[j])
+									{
+										if(x != 'id')
+										{
+											accessories[i][x] = storageAccessories[j][x];
+										}
+									}
 								}
 							}
 						}
+					}
+				}
 
-						if(accessories[j].plugin == null)
+				if(configOBJ != null && configOBJ.platforms != null)
+				{
+					for(const i in configOBJ.platforms)
+					{
+						if(configOBJ.platforms[i].platform != null && configOBJ.platforms[i].accessories != null && configOBJ.platforms[i].platform.startsWith('SynTex'))
 						{
-							accessories[j].plugin = configOBJ.platforms[i].platform;
-						}
-
-						if(accessories[j].plugin == 'SynTexWebHooks' && accessories[j].ip)
-						{
-							accessories[j].plugin = 'SynTex';
-						}
-
-						if(accessories[j].plugin == 'SynTexMagicHome')
-						{
-							if(accessories[j].type == 'light')
+							for(const j in configOBJ.platforms[i].accessories)
 							{
-								accessories[j].spectrum = 'HSL'; 
+								for(const k in accessories)
+								{
+									if(accessories[k].id == configOBJ.platforms[i].accessories[j].id)
+									{
+										for(const x in configOBJ.platforms[i].accessories[j])
+										{
+											if(x != 'id')
+											{
+												accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				for(const i in accessories)
+				{
+					if(accessories[i].plugin != null)
+					{
+						if(accessories[i].plugin == 'SynTexWebHooks' && accessories[i].ip != null)
+						{
+							accessories[i].plugin = 'SynTex';
+						}
+
+						if(accessories[i].plugin == 'SynTexMagicHome')
+						{
+							if(accessories[i].type == 'light')
+							{
+								accessories[i].spectrum = 'HSL'; 
 							}
 						}
 
-						if(accessories[j].plugin == 'SynTexMagicHome' || accessories[j].plugin == 'SynTexTuya' || accessories[j].plugin == 'SynTexWebHooks')
+						if(accessories[i].plugin == 'SynTexMagicHome' || accessories[i].plugin == 'SynTexTuya' || accessories[i].plugin == 'SynTexWebHooks')
 						{
-							accessories[j].version = '0.0.0';
+							accessories[i].version = '0.0.0';
 						}
 					}
+				}
 
-					this.reloading = false;
+				this.reloading = false;
 
-					resolve();
-				});
+				resolve();
+			}
+			else
+			{
+				resolve();
 			}
 		});
 	}
@@ -541,6 +587,130 @@ module.exports = class DeviceManager
 				});
 
 				resolve(err && err.code != 'ENOENT' ? false : true);
+			});
+		});
+	}
+
+	getBridgeAccessories()
+	{
+		return new Promise((resolve) => {
+
+			var characteristics = {
+				'A2' : 'bridge',
+				'43' : 'led',
+				'47' : 'outlet',
+				'49' : 'switch',
+				'80' : 'contact',
+				'82' : 'humidity',
+				'83' : 'rain',
+				'84' : 'light',
+				'85' : 'motion',
+				'86' : 'occupancy',
+				'89' : 'statelessswitch',
+				'8A' : 'temperature'/*,
+				'8D' : 'airquality',
+				'7E' : 'security',
+				'41' : 'garagedoor',
+				'45' : 'lock'*/
+			};
+
+			var theRequest = {
+				method : 'GET',
+				url : 'http://localhost:' + (this.getBridgePort() || '51826') + '/accessories',
+				timeout : 10000
+			};
+
+			request(theRequest, (err, response, body) => {
+
+				var statusCode = response && response.statusCode ? response.statusCode : -1;
+
+				if(!err && statusCode == 200)
+				{
+					try
+					{
+						var accessoryArray = [];
+						var accessoryJSON = JSON.parse(body).accessories;
+
+						for(const i in accessoryJSON)
+						{
+							accessoryArray[i] = { services : [] };
+
+							for(const j in accessoryJSON[i].services)
+							{
+								if(accessoryJSON[i].services[j].type == '3E')
+								{
+									for(const k in accessoryJSON[i].services[j].characteristics)
+									{
+										if(accessoryJSON[i].services[j].characteristics[k].type == '30')
+										{
+											accessoryArray[i].id = accessoryJSON[i].services[j].characteristics[k].value;
+										}
+
+										if(accessoryJSON[i].services[j].characteristics[k].type == '23')
+										{
+											accessoryArray[i].name = accessoryJSON[i].services[j].characteristics[k].value;
+										}
+
+										if(accessoryJSON[i].services[j].characteristics[k].type == '52')
+										{
+											accessoryArray[i].version = accessoryJSON[i].services[j].characteristics[k].value;
+										}
+
+										if(accessoryJSON[i].services[j].characteristics[k].type == '20')
+										{
+											accessoryArray[i].plugin = accessoryJSON[i].services[j].characteristics[k].value;
+										}
+									}
+								}
+								else
+								{
+									if(characteristics[accessoryJSON[i].services[j].type] != null)
+									{
+										if(characteristics[accessoryJSON[i].services[j].type] == 'led')
+										{
+											var type = 'led';
+
+											for(const k in accessoryJSON[i].services[j].characteristics)
+											{
+												if(accessoryJSON[i].services[j].characteristics[k].type == '13' || accessoryJSON[i].services[j].characteristics[k].type == '2F')
+												{
+													type = 'rgb';
+												}
+
+												if(accessoryJSON[i].services[j].characteristics[k].type == '8' && type != 'rgb')
+												{
+													type = 'dimmer';
+												}
+											}
+
+											accessoryArray[i].services.push(type);
+										}
+										else
+										{
+											accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
+										}
+									}
+									else
+									{
+										accessoryArray[i].services.push('unsupported');
+									}
+								}
+							}
+						}
+
+						resolve(accessoryArray); 
+					}
+					catch(e)
+					{
+						console.error(e);
+
+						resolve(null);
+					}
+				}
+				else
+				{
+					resolve(null);
+				}
 			});
 		});
 	}
