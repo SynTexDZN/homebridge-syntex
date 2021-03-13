@@ -486,7 +486,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage(['/', '/index'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (response, urlParams, content) => {
 
 			var bridgeData = await DeviceManager.getBridgeStorage();
 
