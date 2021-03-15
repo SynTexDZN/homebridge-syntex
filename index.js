@@ -182,17 +182,6 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/check-name', (response, urlParams) => {
-
-			if(urlParams.name != null)
-			{
-				var nameAvailable = DeviceManager.checkName(urlParams.name);
-
-				response.write(nameAvailable ? 'Success' : 'Error');
-				response.end();
-			}
-		});
-
 		this.WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
 
 			const pJSON = require('./package.json');
