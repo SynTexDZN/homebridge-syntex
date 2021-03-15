@@ -26,6 +26,7 @@ class SynTexPlatform
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, true);
 
 		this.WebServer.setHead(__dirname + '/includes/head.html');
+		this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
 		HTMLQuery = new HTMLQuery(this.logger);
 		
