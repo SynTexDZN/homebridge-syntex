@@ -12,12 +12,9 @@
 
 			</script>
 			<div id="create" style="transition: .2s ease-in-out">
-				<form class="main" onsubmit="event.preventDefault(); setName(this);">
+				<form class="main" onsubmit="event.preventDefault(); setName();">
 					<p><b>Name: <input autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-					<div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
-						<button class="widget-left gradient-red">Wichtig</button>
-						<button class="widget-right">Der Name muss eindeutig sein<br>Dieser kann frei gewählt werden</button>
-					</div>
+					<p style="margin: 100px 0">Den Namen für dein neues<br>Smart Home Gerät<br>kannst du frei wählen.</p>
 					<div class="navigation-panel">
 						<div class="sticky-inset">
 							<div style="display: flex">
@@ -107,37 +104,15 @@
 			</script>
 			<script defer>
 
-				async function setName(form)
+				function setName()
 				{
-					var overlays = {
-						root : document.getElementById('create-btn'),
-						id : 'name',
-						pending : { value : 'Bitte Warten ..' },
-						connectionError : { value : 'Keine Verbindung zur Bridge!' }
-					};
+					deviceName = form.children[0].getElementsByTagName('input')[0].value;
 
-					var created = await Query.complexFetch('/serverside/check-name?name=' + form.children[0].getElementsByTagName('input')[0].value, 5000, 2, overlays, true);
+					PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
 
-					await Essentials.newTimeout(1000);
+					PageManager.switchPage('create', 'search', false);
 
-					if(created == 'Success')
-					{
-						deviceName = form.children[0].getElementsByTagName('input')[0].value;
-
-						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
-
-						PageManager.switchPage('create', 'search', false);
-
-						pingESP();
-					}
-					else
-					{
-						Essentials.showOverlay(document.getElementById('create-btn'), Essentials.createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
-
-						await Essentials.newTimeout(4000);
-
-						Essentials.removeOverlays(document.getElementById('create-btn'), true);
-					}
+					pingESP();
 				}
 
 				async function redirectCountdown(url)
