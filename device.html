@@ -281,7 +281,16 @@
 
 				var settingsForm = document.getElementById('settings-form');
 
-				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+				if(device.plugin == 'SynTexTuya')
+				{
+					settingsForm.getElementsByTagName('input')[0].setAttribute('placeholder', 'In der Tuya App ändern');
+					settingsForm.getElementsByTagName('input')[0].setAttribute('disabled', '');
+				}
+				else
+				{
+					settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+				}
+
 				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.room || '');
 
 				for(const i in settings)
@@ -2041,7 +2050,7 @@
 								{
 									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
 								}
-								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text' && (form.children[i].getElementsByTagName('input')[0].value != '' || !form.children[i].getElementsByTagName('input')[0].hasAttribute('required')))
 								{
 									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
 								}
