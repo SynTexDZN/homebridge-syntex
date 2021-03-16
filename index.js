@@ -505,7 +505,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/setup', '/connect'], (response, urlParams, content) => {
+		this.WebServer.addPage(['/connect'], (response, urlParams, content) => {
 
 			const ifaces = require('os').networkInterfaces();
 
