@@ -668,13 +668,13 @@ class SynTexPlatform
 				
 				exec(postJSON, (error, stdout, stderr) => {
 
-					if(error || stderr)
+					if(stderr || error)
 					{
 						response.write(stderr || error);
 					}
 					else
 					{
-						response.write(stdout);
+						response.write(stdout != '' ? stdout : 'Success');
 					}
 
 					response.end();
