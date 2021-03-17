@@ -19,11 +19,27 @@
 				{
 					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
 
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('infos', 'settings', true);
 				}
 				else
 				{
 					PageManager.hideHeader();
+
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)"><div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 				}
 
 			</script>
@@ -33,15 +49,6 @@
 				<h1 class="loading-loop">Laden ..</h1>
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
 				<div id="activity"></div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-						</div>
-					</div>
-				</div>
 			</div>
 			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main">
@@ -51,16 +58,7 @@
 					</div>
 					<input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="closeSettings('settings')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="save-btn" type="submit" value="Speichern">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<script type="module" defer>
@@ -274,8 +272,8 @@
 					}
 				}
 
-				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
-				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
+				document.getElementById('footer-content').setAttribute('type', Essentials.getType(services));
+				document.getElementById('footer-content').setAttribute('version', device.version);
 
 				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
@@ -1522,9 +1520,18 @@
 
 				async function openSettings(previous)
 				{
-					await PageManager.switchPage(previous, 'settings', false);
-
 					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					await PageManager.switchPage(previous, 'settings', false);
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
 
@@ -1540,9 +1547,16 @@
 				
 				async function closeSettings(previous)
 				{
-					await PageManager.switchPage(previous, 'infos', false);
-
 					PageManager.hideHeader();
+
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)"><div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					await PageManager.switchPage(previous, 'infos', false);
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name;
 
@@ -1943,9 +1957,9 @@
 
 				async function checkUpdates()
 				{
-					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 2, {}, false);
+					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
 
-					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
+					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
 					{
 						var update = document.createElement('input');
 
@@ -1955,7 +1969,8 @@
 						update.setAttribute('onclick', 'updateDevice(this)');
 						update.setAttribute('id', 'update-btn');
 
-						document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(update, document.getElementById('restart-btn'));
+						PageManager.addFooter(update);
+						PageManager.showFooter();
 					}
 				}
 

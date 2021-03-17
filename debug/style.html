@@ -13,6 +13,15 @@
 
 				PageManager.setHeader('Debug', 'Style');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="style" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -41,11 +50,6 @@
 					</button>
 					<input type="text" style="margin-top: 20px">
 					<div id="select"></div>
-				</div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input type="button" value="Zurück zur Bridge" onclick="Essentials.leavePage('/bridge')">
-					</div>
 				</div>
 			</div>
 			<script type="module">

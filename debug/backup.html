@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Debug', 'Backup');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="backup" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -25,11 +34,6 @@
 					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
 				</div>
 				<p style="margin: 100px 0">Noch in Bearbeitung! :D</p>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input type="button" value="Zurück zur Bridge" onclick="Essentials.leavePage('/bridge')">
-					</div>
-				</div>
 			</div>
 			<script type="module">
 

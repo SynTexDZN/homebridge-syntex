@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Debug', 'Beta Programm');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="beta" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -27,13 +36,6 @@
 				<div class="type-container" style="margin: 100px auto; width: 500px">
 					<h2 class="title-container">Beta Zugang</h2>
 					<input value="Laden .." id="beta-active" type="button" class="outline loading-loop" onclick="switchBeta(this)" style="border-width: 3px">
-				</div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<div style="display: flex">
-							<input id="back-btn" type="button" value="Zurück zur Bridge" onclick="Essentials.leavePage('/bridge')">
-						</div>
-					</div>
 				</div>
 			</div>
 			<script type="module">

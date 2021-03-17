@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Debug', 'Systemlog');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -26,11 +35,6 @@
 				</div>
 				<p style="margin: 100px 0">Im Systemlog werden<br>alle Log Nachrichten<br>komplett gespeichert!</p>
 				<textarea class="loading-loop" style="white-space: break-spaces; max-height: 600px; height: 600px" id="syslog">Laden ..</textarea>
-				<div class="navigation-panel">
-					<div class="sticky-inset" style="display: grid; grid-gap: 20px">
-						<input type="button" value="Zurück zur Bridge" style="margin-right: 20px" onclick="Essentials.leavePage('/bridge')">
-					</div>
-				</div>
 			</div>
 			<script type="module">
 

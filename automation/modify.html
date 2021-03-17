@@ -12,11 +12,27 @@
 				{
 					PageManager.setHeader('Einstellungen');
 
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="Speichern"></div></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('infos', 'settings', true);
 				}
 				else
 				{
 					PageManager.setHeader('Automation', 'Laden ..');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/automation'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')">';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 				}
 			
 			</script>
@@ -39,17 +55,9 @@
 					<h2 class="title-container">Ausführen</h2>
 					<div id="result" style="text-align: center"></div>
 				</div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/automation')">
-							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-						</div>
-					</div>
-				</div>
 			</div>
 			<div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
-				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation(this);">
+				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
 					<div class="type-container" style="margin-top: 0">
 						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
 						<p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
@@ -68,17 +76,7 @@
 						<h2 class="title-container" style="margin-bottom: 40px">Ausführen</h2>
 						<div id="edit-result" style="text-align: center"></div>
 					</div>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)">
-							<div style="display: flex; margin-top: 20px">
-								<input type="button" value="Zurück" onclick="closeSettings('settings')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="save-btn" type="submit" value="Speichern">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<script type="module">
@@ -340,6 +338,13 @@
 				{
 					PageManager.setHeader('Einstellungen');
 
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="Speichern"></div></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					await PageManager.switchPage(previous, 'settings', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
@@ -355,6 +360,15 @@
 				async function closeSettings(previous)
 				{
 					PageManager.setHeader('Automation');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/automation'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')">';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 					
 					await PageManager.switchPage(previous, 'infos', false);
 
@@ -956,8 +970,9 @@
 					btn.parentElement.parentElement.removeChild(btn.parentElement);
 				}
 			
-				async function modifyAutomation(form)
+				async function modifyAutomation()
 				{
+					var form = document.getElementsByTagName('form')[0];
 					var automationOBJ = {};
 
 					automationOBJ.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);

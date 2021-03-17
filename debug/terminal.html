@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Debug', 'Command');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="style" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -26,7 +35,7 @@
 				</div>
 				<div style="margin: 100px 0">
 					<textarea id="command-response"></textarea>
-					<form onsubmit="event.preventDefault(); sendCommand(this); return false;" style="display: flex; margin-top: 20px">
+					<form onsubmit="event.preventDefault(); sendCommand();" style="display: flex; margin-top: 20px">
 						<input spellcheck="false" autocapitalize="false" autocomplete="false" id="command" type="text" placeholder="Befehl" style="margin-right: 20px">
 						<div style="max-width: 300px; width: 100%">
 							<input id="send-btn" type="submit" value="Senden">
@@ -34,11 +43,6 @@
 					</form>
 				</div>
 				<p style="margin: 100px 0">Im Terminal kannst du<br>direkte Befehle abschicken.<br><br>Bitte pass genau auf,<br>was du hier tust!</p>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input type="button" value="Zurück zur Bridge" onclick="Essentials.leavePage('/bridge')">
-					</div>
-				</div>
 			</div>
 			<script type="module">
 
@@ -58,7 +62,7 @@
 
 				var sending = false;
 
-				async function sendCommand(form)
+				async function sendCommand()
 				{
 					if(!sending)
 					{

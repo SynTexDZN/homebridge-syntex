@@ -15,11 +15,29 @@
 				{
 					PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/device?id=" + deviceID + "&settings'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('check-name', 'wifi', true);
 				}
 				else
 				{
 					PageManager.setHeader('Benennen', 'Wähle einen Namen aus');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="check-name-btn" type="button" class="gradient-green" onclick="setName()" value="Weiter"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 				}
 
 			</script>
@@ -27,16 +45,7 @@
 				<form class="main" onsubmit="event.preventDefault(); setName();">
 					<p><b>Name: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<p style="margin: 100px 0">Den Namen für dein neues<br>Smart Home Gerät<br>kannst du frei wählen.</p>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="check-name-btn" type="submit" value="Weiter">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<div id="connect" style="display: none; opacity: 0; transition: .2s ease-in-out">
@@ -45,15 +54,10 @@
 					<input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Nach Geräten suchen ..">
 					<p>Bitte Verbinde dich<br>mit dem WLAN<br>deines Smart Home Geräts<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
 				</div>
-				<div class="main navigation-panel">
-					<div class="sticky-inset">
-						<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-					</div>
-				</div>
 			</div>
 			<div id="wifi" style="display: none; opacity: 0; transition: .2s ease-in-out">
 				<div class="main">
-					<form onsubmit="event.preventDefault(); sendWiFiSettings(this);">
+					<form onsubmit="event.preventDefault(); sendWiFiSettings();">
 						<div id="networks" style="margin-bottom: 100px">
 							<p class="loading-loop">Laden ..</p>
 						</div>
@@ -61,14 +65,6 @@
 						<br>
 						<input id="connect-btn" type="submit" value="Verbinden">
 					</form>
-				</div>
-				<div class="main navigation-panel">
-					<div class="sticky-inset">
-						<div style="display: flex">
-							<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-							<input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">
-						</div>
-					</div>
 				</div>
 			</div>
 			<div id="connecting" style="display: none; opacity: 0; transition: .2s ease-in-out">
@@ -119,9 +115,6 @@
 
 				if(deviceID != null && deviceIP != null)
 				{
-					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
-					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
-
 					pingESP();
 				}
 
@@ -139,6 +132,20 @@
 					deviceName = document.getElementById('device-name').value;
 
 					PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
+
+					var main = document.createElement('div');
+
+					if(deviceID != null & deviceIP != null)
+					{
+						main.innerHTML = '<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/device?id=" + deviceID + "&settings'" + ')">';
+					}
+					else
+					{
+						main.innerHTML = '<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')">';
+					}
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 
 					PageManager.switchPage('check-name', 'connect', false);
 
@@ -167,6 +174,15 @@
 
 									PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
+									var main = document.createElement('div');
+
+									main.style.display = 'flex';
+
+									main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+									PageManager.setFooter(main);
+									PageManager.showFooter();
+
 									PageManager.switchPage('connect', 'wifi', false);
 
 									scanWifi(document.getElementById('scan-btn'));
@@ -183,6 +199,15 @@
 								console.log('PING SUCCESS', deviceURL);
 
 								PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
+								var main = document.createElement('div');
+
+								main.style.display = 'flex';
+
+								main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+								PageManager.setFooter(main);
+								PageManager.showFooter();
 
 								PageManager.switchPage('connect', 'wifi', false);
 
@@ -278,8 +303,10 @@
 				window.bridgeIP = '<%bridge-ip%>';
 				window.success = false;
 
-				async function sendWiFiSettings(form)
+				async function sendWiFiSettings()
 				{
+					var form = document.getElementsByTagName('form')[1];
+
 					if(bridgeIP != 'null')
 					{
 						var formData = new FormData(form);

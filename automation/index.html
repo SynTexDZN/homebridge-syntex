@@ -15,11 +15,21 @@
 				{
 					PageManager.setHeader('Automation', 'Erstellen');
 
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="createAutomation()" value="Erstellen"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('view', 'create', true);
 				}
 				else
 				{
 					PageManager.setHeader('Dashboard', 'Automation');
+					PageManager.hideFooter();
 				}
 
 			</script>
@@ -37,7 +47,7 @@
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar" class="main" style="display: flex; margin: 100px auto">
 						<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="" value="Alle Automationen" class="white room-active"></div>
-						<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage('view')" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+						<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage()" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 					</div>
 					<p id="no-automation" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Automationen<br><br>Du kannst eine Automation hinzufügen<br>indem du auf das [+] drückst</p>
 					<p id="no-devices" style="display: none; margin-top: 100px">Du besitzt derzeit<br>noch keine Geräte<br><br>Bitte registriere zunächst<br>ein Gerät im Dashboard</p>
@@ -45,7 +55,7 @@
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="Zu den Geräten >" style="display: none" onclick="Essentials.leavePage('/')">
-					<input id="add-button-big" class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage('view')">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage()">
 				</div>
 			</div>
 			<div id="create" style="display: none; opacity: 0; transition: .2s ease-in-out">
@@ -67,16 +77,7 @@
 						<h2 class="title-container" style="margin-bottom: 40px">Ausführen</h2>
 						<div id="result" style="text-align: center"></div>
 					</div>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="openViewPage('create')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="save-btn" type="submit" value="Erstellen">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<script type="module">
@@ -323,11 +324,20 @@
 			</script>
 			<script>
 
-				async function openAddPage(previous)
+				async function openAddPage()
 				{
 					PageManager.setHeader('Automation', 'Erstellen');
 
-					await PageManager.switchPage(previous, 'create', false);
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="createAutomation()" value="Erstellen"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					await PageManager.switchPage('view', 'create', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -339,11 +349,12 @@
 					}
 				}
 
-				async function openViewPage(previous)
+				async function openViewPage()
 				{
 					PageManager.setHeader('Dashboard', 'Automation');
+					PageManager.hideFooter();
 					
-					await PageManager.switchPage(previous, 'view', false);
+					await PageManager.switchPage('create', 'view', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{

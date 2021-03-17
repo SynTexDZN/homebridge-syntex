@@ -10,9 +10,18 @@
 
 				PageManager.setHeader('Erstellen', 'Ein virtuelles Gerät');
 
+				var main = document.createElement('div');
+
+				main.style.display = 'flex';
+
+				main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ');"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="button" class="gradient-green" onclick="createAccessory()" value="Erstellen"></div>';
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="create" style="transition: .2s ease-in-out">
-				<form class="main" onsubmit="event.preventDefault(); createAccessory(this);">
+				<form class="main" onsubmit="event.preventDefault(); createAccessory();">
 					<p><b>ID: <input autofocus spellcheck="false" autocapitalize="false" autocomplete="false" id="form-id" pattern="[a-z0-9-]+" title="Bitte benutze nur kleine Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
@@ -22,16 +31,7 @@
 						<button class="widget-left gradient-red">Wichtig</button>
 						<button class="widget-right">Die ID muss eindeutig sein<br>Diese kann frei gewählt werden</button>
 					</div>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="Essentials.leavePage('/');">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="create-btn" type="submit" value="Erstellen">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
@@ -78,8 +78,10 @@
 			</script>
 			<script>
 
-				async function createAccessory(form)
+				async function createAccessory()
 				{
+					var form = document.getElementsByTagName('form')[0];
+
 					var overlays = {
 						root : document.getElementById('create-btn'),
 						id : 'create',

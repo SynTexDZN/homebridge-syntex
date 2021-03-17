@@ -2,9 +2,25 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>Crossover Geräte</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Crossover Geräte', 'Von Drittanbietern');
+
+				var main = document.createElement('div');
+
+				main.style.display = 'flex';
+
+				main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="button" class="gradient-green" onclick="createSwitch()" value="Verbinden"></div>';
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
 			<div id="create" style="transition: .2s ease-in-out">
-				<h1>Crossover Geräte</h1>
-				<p>Von Drittanbietern</p>
 				<div class="main" style="min-width: 50%">
 					<div class="type-container">
 						<h2 class="title-container">Crossover Plugins</h2>
@@ -12,23 +28,14 @@
 					</div>
 				</div>
 				<h2>Crossover Gerät Verbinden</h2>
-				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch(this);">
+				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch();">
 					<p><b>IP: <input pattern="[a-zA-Z0-9-]+" title="Bitte benutze nur Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="ip" type="text" style="max-width: 325px"></b></p>
 					<p><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
 						<button class="widget-left gradient-red">Wichtig</button>
 						<button class="widget-right">IP Adresse und Name muss eindeutig sein<br>Diese können frei gewählt werden</button>
 					</div>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="create-btn" type="submit" value="Verbinden">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<script type="module">
