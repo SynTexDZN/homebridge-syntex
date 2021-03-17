@@ -36,7 +36,12 @@
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)"><div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
+					if(device.plugin == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -172,11 +177,6 @@
 						console.error(e);
 					}
 				});
-
-				if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
-				{
-					document.getElementById('restart-btn').style.display = 'none';
-				}
 
 				if(Presets.getPreset(device.plugin).getReconnectURL(device) == null)
 				{
@@ -1551,7 +1551,12 @@
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)"><div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
+					if(device.plugin == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
