@@ -76,12 +76,12 @@ class PageManagerModule
 			{
 				if(title != null && this.headContent.children[0] != null && title != this.headContent.children[0].innerHTML)
 				{
-					this.headContent.children[0].style.opacity = 0;
+					this.headContent.children[0].classList.add('hidden');
 				}
 
 				if(subtitle != null && this.headContent.children[1] != null && subtitle != this.headContent.children[1].innerHTML)
 				{
-					this.headContent.children[1].style.opacity = 0;
+					this.headContent.children[1].classList.add('hidden');
 				}
 
 				setTimeout(() => {
@@ -90,19 +90,19 @@ class PageManagerModule
 					{
 						this.headContent.children[0].innerHTML = title;
 	
-						this.headContent.children[0].style.opacity = 1;
+						this.headContent.children[0].classList.remove('hidden');
 					}
 	
 					if(subtitle != null && this.headContent.children[1] != null && subtitle != this.headContent.children[1].innerHTML)
 					{
 						this.headContent.children[1].innerHTML = subtitle;
 	
-						this.headContent.children[1].style.opacity = 1;
+						this.headContent.children[1].classList.remove('hidden');
 					}
 
 					this.headContent.classList.remove('hidden');
 	
-				}, this.headContent.classList.contains('hidden') ? 0 : 200);
+				}, this.headContent.classList.contains('hidden') || document.getElementsByTagName('body')[0].offsetWidth > 1151 ? 0 : 200); // TODO: Remove Timeout on Desktop
 			}
 			else
 			{
@@ -133,11 +133,19 @@ class PageManagerModule
 
 			this.setContentMargin(this.footerContent.classList.contains('hidden'));
 			
-			/*if(!this.footerContent.classList.contains('hidden'))
-			{*/
-				this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
-				this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
-			//}
+			if(this.footerContent.classList.contains('hidden'))
+			{
+				this.footerContent.style.transition = 'none';
+			}
+
+			this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
+			this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
+
+			setTimeout(() => {
+				
+				this.footerContent.style.transition = '.2s opacity ease-in-out, .2s max-height ease-in-out, .2s min-height ease-in-out';
+
+			}, 100);
 			
 			setTimeout(() => {
 
@@ -152,7 +160,7 @@ class PageManagerModule
 
 				this.footerContent.classList.remove('hidden');
 
-			}, this.footerContent.classList.contains('hidden') ? 200 : 200);
+			}, document.getElementsByTagName('body')[0].offsetWidth > 1151 ? 0 : 200); // TODO: Remove Timeout on Desktop
 		}
 	}
 
