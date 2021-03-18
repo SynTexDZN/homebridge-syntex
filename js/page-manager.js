@@ -160,21 +160,24 @@ class PageManagerModule
 	{
 		if(this.footerFade != null)
 		{
-			this.footerFade.style.opacity = 0;
+			if(this.footerFade.innerHTML != element.outerHTML)
+			{
+				this.footerFade.style.opacity = 0;
+
+				if(this.footerTemp != null)
+				{
+					this.footerTemp.innerHTML = '';
+					this.footerTemp.style.display = '';
+				}
+
+				this.addFooter(element);
+			}
 		}
 
 		if(this.footerContent != null)
 		{
 			this.footerContent.classList.add('fade');
 		}
-
-		if(this.footerTemp != null)
-		{
-			this.footerTemp.innerHTML = '';
-			this.footerTemp.style.display = '';
-		}
-
-		this.addFooter(element);
 	}
 
 	setContentMargin(hidden)
