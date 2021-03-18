@@ -145,6 +145,11 @@ class PageManagerModule
 
 				this.footerFade.style.opacity = 1;
 
+				if(this.footerContent != null)
+				{
+					this.footerContent.classList.remove('fade');
+				}
+
 				this.footerContent.classList.remove('hidden');
 
 			}, this.footerContent.classList.contains('hidden') ? 200 : 200);
@@ -156,6 +161,11 @@ class PageManagerModule
 		if(this.footerFade != null)
 		{
 			this.footerFade.style.opacity = 0;
+		}
+
+		if(this.footerContent != null)
+		{
+			this.footerContent.classList.add('fade');
 		}
 
 		if(this.footerTemp != null)
