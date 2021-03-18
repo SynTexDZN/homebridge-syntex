@@ -123,7 +123,27 @@ class PageManagerModule
 			{
 				element.innerHTML = element.innerHTML.replace(/id=/g, 'oid=');
 
+				if(element.hasAttribute('id'))
+				{
+					element.setAttribute('oid', element.id);
+					element.removeAttribute('id');
+				}
+
 				this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
+			}
+		}
+	}
+
+	removeFooter(id)
+	{
+		if(this.footerTemp != null)
+		{
+			for(var i = 0; i < this.footerTemp.children.length; i++)
+			{
+				if(this.footerTemp.children[i].getAttribute('oid') == id)
+				{
+					this.footerTemp.removeChild(this.footerTemp.children[i]);
+				}
 			}
 		}
 	}
