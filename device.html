@@ -1951,6 +1951,13 @@
 								await Essentials.newTimeout(4000);
 
 								Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{
+									await Essentials.newTimeout(300);
+
+									PageManager.removeFooter('update-btn');
+								}
 							}
 
 							updating = false;

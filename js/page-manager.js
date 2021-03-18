@@ -142,8 +142,33 @@ class PageManagerModule
 			{
 				if(this.footerTemp.children[i].getAttribute('oid') == id)
 				{
-					this.footerTemp.removeChild(this.footerTemp.children[i]);
+					this.footerTemp.children[i].style.setProperty('height', '0', 'important');
+					this.footerTemp.children[i].style.paddingTop = 0;
+					this.footerTemp.children[i].style.paddingBottom = 0;
+					this.footerTemp.children[i].style.marginTop = 0;
+					this.footerTemp.children[i].style.marginBottom = 0;
+					this.footerTemp.children[i].style.borderTopWidth = 0;
+					this.footerTemp.children[i].style.borderBottomWidth = 0;
+
+					setTimeout(function() {
+
+						this.footerTemp.removeChild(this.child);
+
+					}.bind({ child : this.footerTemp.children[i], footerTemp : this.footerTemp }), 300);
 				}
+			}
+
+			if(this.footerContent != null)
+			{
+				this.footerContent.style.maxHeight = 'none';
+				this.footerContent.style.minHeight = 'auto';
+
+				setTimeout(() => {
+
+					this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
+					this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
+					
+				}, 350);
 			}
 		}
 	}
