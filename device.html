@@ -55,7 +55,7 @@
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
 				<div id="activity"></div>
 			</div>
-			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="settings" style="display: none; transition: .2s ease-in-out">
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p style="margin-top: 0"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -1520,7 +1520,7 @@
 
 				async function openSettings(previous)
 				{
-					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
+					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )', true);
 
 					var main = document.createElement('div');
 
@@ -1529,7 +1529,7 @@
 					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter();
+					PageManager.showFooter(true);
 
 					await PageManager.switchPage(previous, 'settings', false);
 
@@ -1547,7 +1547,7 @@
 				
 				async function closeSettings(previous)
 				{
-					PageManager.hideHeader();
+					PageManager.hideHeader(true);
 
 					var main = document.createElement('div');
 
@@ -1559,7 +1559,7 @@
 					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')"></div>';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter();
+					PageManager.showFooter(true);
 
 					await PageManager.switchPage(previous, 'infos', false);
 

@@ -56,7 +56,7 @@
 					<div id="result" style="text-align: center"></div>
 				</div>
 			</div>
-			<div class="main"" id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div class="main"" id="settings" style="display: none; transition: .2s ease-in-out">
 				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
 					<div class="type-container" style="margin-top: 0">
 						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -336,14 +336,14 @@
 
 				async function openSettings(previous)
 				{
-					PageManager.setHeader('Einstellungen');
+					PageManager.setHeader('Einstellungen', null, true);
 
 					var main = document.createElement('div');
 
 					main.innerHTML = '<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="Speichern"></div></div>';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter();
+					PageManager.showFooter(true);
 
 					await PageManager.switchPage(previous, 'settings', false);
 
@@ -359,7 +359,7 @@
 
 				async function closeSettings(previous)
 				{
-					PageManager.setHeader('Automation');
+					PageManager.setHeader('Automation', null, true);
 
 					var main = document.createElement('div');
 
@@ -368,8 +368,8 @@
 					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/automation'" + ')"><input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings(' + "'infos'" + ')">';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter();
-					
+					PageManager.showFooter(true);
+
 					await PageManager.switchPage(previous, 'infos', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')

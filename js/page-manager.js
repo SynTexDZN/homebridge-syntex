@@ -43,7 +43,7 @@ class PageManagerModule
 		});
 	}
 
-	async setHeader(title, subtitle)
+	async setHeader(title, subtitle, onPage)
 	{
 		if(this.headContent != null && this.headTemp != null)
 		{
@@ -57,7 +57,7 @@ class PageManagerModule
 				this.headTemp.children[1].innerHTML = subtitle;
 			}
 
-			this.headTemp.style.display = '';
+			setTimeout(() => { this.headTemp.style.display = '' }, onPage ? 200 : 0);
 
 			this.setContentMargin(this.headContent.classList.contains('hidden'));
 			
@@ -102,11 +102,15 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 	
-				}, this.headContent.classList.contains('hidden') || document.getElementsByTagName('body')[0].offsetWidth > 1151 ? 0 : 200); // TODO: Remove Timeout on Desktop
+				}, !onPage && (this.headContent.classList.contains('hidden') || document.getElementsByTagName('body')[0].offsetWidth > 1151) ? 0 : 200);
 			}
 			else
 			{
-				this.headContent.classList.remove('hidden');
+				setTimeout(() => {
+
+					this.headContent.classList.remove('hidden');
+
+				}, (/*(!this.headContent.classList.contains('hidden') && onPage) || */(this.headContent.classList.contains('hidden') && !onPage)) ? 0 : 200);
 			}
 		}
 	}
@@ -120,17 +124,14 @@ class PageManagerModule
 				element.innerHTML = element.innerHTML.replace(/id=/g, 'oid=');
 
 				this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
-				//this.footerFade.appendChild(element.cloneNode(true));
 			}
 		}
 	}
 
-	showFooter()
+	showFooter(onPage)
 	{
 		if(this.footer != null)
 		{
-			//this.footerFade.style.opacity = 0;
-
 			this.setContentMargin(this.footerContent.classList.contains('hidden'));
 			
 			if(this.footerContent.classList.contains('hidden'))
@@ -156,11 +157,10 @@ class PageManagerModule
 				if(this.footerContent != null)
 				{
 					this.footerContent.classList.remove('fade');
+					this.footerContent.classList.remove('hidden');
 				}
 
-				this.footerContent.classList.remove('hidden');
-
-			}, document.getElementsByTagName('body')[0].offsetWidth > 1151 ? 0 : 200); // TODO: Remove Timeout on Desktop
+			}, document.getElementsByTagName('body')[0].offsetWidth > 1151 && !onPage ? 0 : 200);
 		}
 	}
 
@@ -192,8 +192,6 @@ class PageManagerModule
 	{
 		if(this.content != null)
 		{
-			this.content.setAttribute('last-margin', this.headTemp.offsetHeight + 84);
-
 			if(hidden)
 			{
 				this.content.style.transition = 'none';
@@ -210,24 +208,24 @@ class PageManagerModule
 		}
 	}
 
-	hideHeader()
+	hideHeader(onPage)
 	{
 		if(this.headContent != null)
 		{
-			this.headContent.classList.add('hidden');
+			setTimeout(() => this.headContent.classList.add('hidden'), onPage ? 200 : 0);
 		}
 
 		if(this.headTemp != null)
 		{
-			this.headTemp.style.display = 'none';
+			setTimeout(() => { this.headTemp.style.display = 'none' }, onPage ? 200 : 0);
 		}
 	}
 
-	hideFooter()
+	hideFooter(onPage)
 	{
 		if(this.footerContent != null)
 		{
-			this.footerContent.classList.add('hidden');
+			setTimeout(() => this.footerContent.classList.add('hidden'), document.getElementsByTagName('body')[0].offsetWidth > 1151 && onPage ? 200 : 0);
 		}
 
 		if(this.footerFade != null)
@@ -252,7 +250,7 @@ class PageManagerModule
 
 			if(!init)
 			{
-				document.getElementById(previous).style.opacity = 0;
+				document.getElementById('preloader').style.opacity = 1;
 
 				await newTimeout(200);
 			}
@@ -265,7 +263,7 @@ class PageManagerModule
 				await newTimeout(50);
 			}
 
-			document.getElementById(next).style.opacity = 1;
+			document.getElementById('preloader').style.opacity = 0;
 
 			resolve();
 		});

@@ -58,7 +58,7 @@
 					<input id="add-button-big" class="gradient-orange" type="button" value="+ Automation Hinzufügen" onclick="openAddPage()">
 				</div>
 			</div>
-			<div id="create" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="create" style="display: none; transition: .2s ease-in-out">
 				<form class="main" onsubmit="event.preventDefault(); createAutomation();">
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
@@ -326,7 +326,7 @@
 
 				async function openAddPage()
 				{
-					PageManager.setHeader('Automation', 'Erstellen');
+					PageManager.setHeader('Automation', 'Erstellen', true);
 
 					var main = document.createElement('div');
 
@@ -335,7 +335,7 @@
 					main.innerHTML = '<input type="button" value="Zurück" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="createAutomation()" value="Erstellen"></div>';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter();
+					PageManager.showFooter(true);
 
 					await PageManager.switchPage('view', 'create', false);
 
@@ -351,9 +351,9 @@
 
 				async function openViewPage()
 				{
-					PageManager.setHeader('Dashboard', 'Automation');
-					PageManager.hideFooter();
-					
+					PageManager.setHeader('Dashboard', 'Automation', true);
+					PageManager.hideFooter(true);
+
 					await PageManager.switchPage('create', 'view', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
