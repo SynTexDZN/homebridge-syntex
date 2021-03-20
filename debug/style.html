@@ -23,6 +23,51 @@
 				PageManager.showFooter();
 
 			</script>
+			<style>
+
+				.button-icon.colored
+				{
+					background-color: rgb(245, 245, 255);
+				}
+
+				.icon-button.clean .button-icon
+				{
+					background: transparent;
+				}
+
+				.icon-button.seperated
+				{
+					padding: 5px;
+				}
+
+				.icon-button.seperated .button-icon
+				{
+					border-right: 2px dashed rgb(40, 40, 55);
+					padding: 7px 15px;
+					padding-right: 18px;
+				}
+
+				/* REMOVE */
+
+				.icon-button.left
+				{
+					padding-right: 19px;
+				}
+
+				.icon-button.right
+				{
+					padding-left: 19px;
+				}
+
+				@media only screen and (max-width: 1176px)
+				{
+					.icon-button.seperated .button-icon
+					{
+						padding: 11px 21px;
+					}
+				}
+
+			</style>
 			<div id="style" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
@@ -37,8 +82,48 @@
 					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
 				</div>
 				<div style="margin: 100px 0">
+					<h2>• Basic •</h2>
 					<input type="button" value="Button 1">
-					<input type="button" value="Button 2" style="margin-top: 20px" class="gradient-blue-green">
+					<input type="text" style="margin-top: 20px">
+					<div id="select"></div>
+					<h2>• Icon Buttons •</h2>
+					<button class="icon-button right split arrow" style="margin-top: 20px">
+						<div class="button-text">Icon Button 1</div>
+						<div class="button-icon">
+							<img class="icon" src="../img/settings.png">
+						</div>
+					</button>
+					<button class="icon-button left split clean seperated" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 2</div>
+					</button>
+					<button class="icon-button left split clean" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 3</div>
+					</button>
+					<button class="icon-button left" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 4</div>
+					</button>
+					<button class="icon-button left" style="margin-top: 20px">
+						<div class="button-icon colored">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 5</div>
+					</button>
+					<button class="icon-button right" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon" src="../img/reload.png">
+						</div>
+						<div class="button-text">Icon Button Rechts</div>
+					</button>
+					<h2>• Special Buttons •</h2>
 					<button class="gradient-purple shine" style="margin-top: 20px">Shine</button>
 					<button class="plugin-container" style="display: flex; margin-top: 20px">
 						Expandable
@@ -46,10 +131,18 @@
 							<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>Version: </b>' + versions[id] + '</div>
 							<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + latestVersions[id] + '</div>
 						</div>
-						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">UPDATE</div>
+						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">Shine</div>
 					</button>
-					<input type="text" style="margin-top: 20px">
-					<div id="select"></div>
+					<h2>• Gradients •</h2>
+					<input type="button" value="Blau Lila" style="margin-top: 20px" class="gradient-blue-purple">
+					<input type="button" value="Blau Grün" style="margin-top: 20px" class="gradient-blue-green">
+					<input type="button" value="Grün" style="margin-top: 20px" class="gradient-green">
+					<input type="button" value="Gelb" style="margin-top: 20px" class="gradient-yellow">
+					<input type="button" value="Orange" style="margin-top: 20px" class="gradient-orange">
+					<input type="button" value="Rot" style="margin-top: 20px" class="gradient-red">
+					<input type="button" value="Lila" style="margin-top: 20px" class="gradient-purple">
+					<input type="button" value="Blau" style="margin-top: 20px" class="gradient-blue">
+					<input type="button" value="Cyan" style="margin-top: 20px" class="gradient-cyan">
 				</div>
 			</div>
 			<script type="module">
