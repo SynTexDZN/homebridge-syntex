@@ -1,16 +1,17 @@
 const store = require('json-fs-store'), request = require('request');
 
-var config, storage, logger, webhookPort, accessories, deviceManager;
+var config, logger, accessories;
 var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(configPath, slog, storagePath, port)
+	constructor(configPath, Logger, storagePath, webHooksPort)
 	{
 		config = store(configPath);
-		storage = store(storagePath);
-		logger = slog;
-		webhookPort = port;
+		logger = Logger;
+
+		this.storage = store(storagePath);
+		this.webHooksPort = webHooksPort;
 
 		this.reloading = false;
 
@@ -21,17 +22,13 @@ module.exports = class DeviceManager
 				this.reloadAccessories();
 			}
 		});
-
-		deviceManager = this;
 	}
 
 	initDevice(id, ip, name, version, events, services)
 	{
-		const self = this;
-
 		return new Promise(async (resolve) => {
 			
-			var device = await self.getDevice(id);
+			var device = await this.getDevice(id);
 
 			name = name.replace(new RegExp('%', 'g'), ' ');
 
@@ -44,9 +41,17 @@ module.exports = class DeviceManager
 					this.saveAccessories();
 				}
 
-				resolve(['Success', '{"name": "' + (device['name'] || name) + '", "active": "' + device['active'] + '", "interval": "' + (device['interval'] || 10000) + '", "led": "' + device['led'] + '", "port": "' + (webhookPort || 1710) + '"}']);
+				var obj = {
+					name : this.getConfigValue(id, 'name') || name,
+					active : device['active'] || 1,
+					interval : device['interval'] || 10000,
+					led : device['led'] || 0,
+					port : this.webHooksPort || 1710
+				};
+
+				resolve(['Success', JSON.stringify(obj)]);
 			}
-			else if(self.checkName(name))
+			else if(checkID(name))
 			{
 				if(configOBJ != null)
 				{
@@ -77,7 +82,7 @@ module.exports = class DeviceManager
 										led: 1
 									};
 
-									storage.add(device, (err) => {
+									this.storage.add(device, (err) => {
 
 										if(err)
 										{
@@ -91,7 +96,15 @@ module.exports = class DeviceManager
 
 											this.reloadAccessories();
 
-											resolve(['Init', '{"name": "' + name + '", "active": "1", "interval": "10000", "led": "1", "port": "' + webhookPort + '"}']);
+											var obj = {
+												name : name, 
+												active : 1,
+												interval : 10000,
+												led : 1,
+												port : this.webHooksPort
+											};
+
+											resolve(['Init', JSON.stringify(obj)]);
 										}
 									});
 								}
@@ -105,7 +118,7 @@ module.exports = class DeviceManager
 						{
 							logger.log('error', 'bridge', 'Bridge', '%no_services%!');
 
-							resolve(['Error', '']);
+							resolve(['Error', 'Keine Services!']);
 						}
 					}
 					catch(e)
@@ -117,7 +130,7 @@ module.exports = class DeviceManager
 				{
 					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
-					resolve(['Error', '']);
+					resolve(['Error', 'Fehler beim Lesen!']);
 				}
 			}
 			else
@@ -164,35 +177,11 @@ module.exports = class DeviceManager
 		});
 	}
 
-	checkName(name)
-	{
-		for(const i in accessories)
-		{
-			if(accessories[i].name == name)
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	getValue(id, param)
-	{
-		return new Promise(resolve => {
-			
-			storage.load(id, (err, obj) => {  
-
-				resolve(!obj || err ? null : obj[param]);
-			});
-		});
-	}
-
 	getDevice(id)
 	{
 		return new Promise(resolve => {
 			
-			storage.load(id, (err, obj) => {  
+			this.storage.load(id, (err, obj) => {  
 				
 				resolve(!obj || err ? null : obj);
 			});
@@ -203,7 +192,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			storage.list((err, objs) => {  
+			this.storage.list((err, objs) => {  
 
 				resolve(!objs || err ? null : objs);
 			});
@@ -232,7 +221,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			storage.load(id, (err, obj) => {  
+			this.storage.load(id, (err, obj) => {  
 
 				if(!obj || err)
 				{
@@ -242,7 +231,7 @@ module.exports = class DeviceManager
 				{
 					obj[param] = value;
 					
-					storage.add(obj, (err) => {
+					this.storage.add(obj, (err) => {
 
 						if(err)
 						{
@@ -278,7 +267,7 @@ module.exports = class DeviceManager
 					await this.saveAccessories();
 				}
 				
-				storage.load(values.id, (err, obj) => {  
+				this.storage.load(values.id, (err, obj) => {  
 
 					if(!obj || err)
 					{
@@ -303,7 +292,7 @@ module.exports = class DeviceManager
 						}                
 					}
 
-					storage.add(obj, (err) => {
+					this.storage.add(obj, (err) => {
 
 						if(err)
 						{
@@ -364,11 +353,37 @@ module.exports = class DeviceManager
 		return needToSave;
 	}
 
+	getConfigValue(id, key)
+	{
+		if(configOBJ != null && configOBJ.platforms != null)
+		{
+			for(const i in configOBJ.platforms)
+			{
+				if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+				{
+					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
+					{
+						if(configOBJ.platforms[i].accessories[j].id == id && configOBJ.platforms[i].accessories[j][key] != null)
+						{
+							return configOBJ.platforms[i].accessories[j][key];
+						}	
+					}
+				}
+			}
+		}
+		else
+		{
+			logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+		}
+
+		return null;
+	}
+
 	getBridgeStorage()
 	{
 		return new Promise(resolve => {
 			
-			storage.load('Bridge', (err, obj) => {  
+			this.storage.load('Bridge', (err, obj) => {  
 
 				if(!obj || err)
 				{
@@ -386,7 +401,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			storage.load('Bridge', (err, obj) => {  
+			this.storage.load('Bridge', (err, obj) => {  
 
 				if(!obj || err)
 				{
@@ -397,7 +412,7 @@ module.exports = class DeviceManager
 					obj.data[key] = value;              
 				}
 
-				storage.add(obj, (err) => {
+				this.storage.add(obj, (err) => {
 
 					if(err)
 					{
@@ -572,7 +587,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			storage.remove(id, (err) => {
+			this.storage.remove(id, (err) => {
 									
 				if(err)
 				{

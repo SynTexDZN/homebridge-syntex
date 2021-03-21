@@ -11,7 +11,7 @@
 			background: rgb(20, 20, 30);
 			/*transition: .2s opacity cubic-bezier(0, 0, 0.2, 1);*/
 			transition: .2s opacity ease-in-out;
-			z-index: 10000;
+			z-index: 30000;
 		}
 	
 		.loader-4
@@ -167,6 +167,7 @@
 			{
 				top: env(safe-area-inset-top);
 				height: calc(100vh + env(safe-area-inset-bottom));
+				z-index: 10000;
 			}
 		}
 	
@@ -308,10 +309,10 @@
 	}
 
 </script>
-<div id="head-container" class="hidden">
-	<div id="head-content">
-		<h1 style="margin-bottom: 0; margin-top: 0; opacity: 0"></h1>
-		<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px; opacity: 0"></p>
+<div id="head-container">
+	<div id="head-content" class="hidden">
+		<h1 class="hidden" style="margin-bottom: 0; margin-top: 0"></h1>
+		<p class="hidden loading-loop" style="margin-bottom: 0; margin-top: 20px"></p>
 	</div>
 	<div id="head-temp" style="opacity: 0">
 		<h1 style="margin-bottom: 0; margin-top: 0"></h1>

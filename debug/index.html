@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Debug', 'Für Experten');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -28,11 +37,6 @@
 					<h2 class="title-container">Workaround Seiten</h2>
 					<div id="workaround"></div>
 					<p style="margin: 40px 0 20px 0">Diese Seiten werden gerade überarbeitet!</p>
-				</div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input type="button" value="Zurück zur Bridge" onclick="Essentials.leavePage('/bridge')">
-					</div>
 				</div>
 			</div>
 			<script type="module">

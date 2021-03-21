@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Dashboard', 'Bridge');
 
+				var main = document.createElement('div');
+
+				main.style.display = 'flex';
+
+				main.innerHTML = '<div style="width: 100%"><input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s"></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split arrow"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">Neu Laden</div></button></div>';
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -38,18 +47,6 @@
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 100px; width: 100%; max-width: 400px">
 					<input class="gradient-red" type="button" value="» Experten Modus «" onclick="Essentials.leavePage('/debug')">
-				</div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<div style="display: flex">
-							<div style="width: 100%">
-								<input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s">
-							</div>
-							<div style="width: 100%; margin-left: 20px">
-								<button onclick="reloadVersions(this)">↻ Neu Laden</button>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 			<script type="module">
@@ -192,9 +189,10 @@
 								updateButton.setAttribute('value', title + ' Aktualisieren ( v' + latestVersions[id] + ' )');
 								updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", this)');
 								updateButton.setAttribute('id', 'update-btn-' + id);
-								updateButton.setAttribute('style', 'margin-bottom: 20px'); 
-								
-								document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(updateButton, document.getElementsByClassName('navigation-panel')[0].children[0].children[0]);
+								updateButton.setAttribute('style', 'margin-bottom: 20px');
+
+								PageManager.addFooter(updateButton);
+								PageManager.showFooter();
 							}
 							else
 							{
@@ -381,6 +379,8 @@
 						Essentials.removeOverlays(btn, !success);
 
 						await Essentials.newTimeout(300);
+
+						PageManager.removeFooter('update-btn-' + id);
 					}
 				}
 				

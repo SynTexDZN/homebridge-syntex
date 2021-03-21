@@ -26,6 +26,7 @@ class SynTexPlatform
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, true);
 
 		this.WebServer.setHead(__dirname + '/includes/head.html');
+		this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
 		HTMLQuery = new HTMLQuery(this.logger);
 		
@@ -180,17 +181,6 @@ class SynTexPlatform
 
 			response.write(restart.toString());
 			response.end();
-		});
-
-		this.WebServer.addPage('/serverside/check-name', (response, urlParams) => {
-
-			if(urlParams.name != null)
-			{
-				var nameAvailable = DeviceManager.checkName(urlParams.name);
-
-				response.write(nameAvailable ? 'Success' : 'Error');
-				response.end();
-			}
 		});
 
 		this.WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
@@ -486,7 +476,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage(['/', '/index'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (response, urlParams, content) => {
 
 			var bridgeData = await DeviceManager.getBridgeStorage();
 
@@ -515,7 +505,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/setup', '/connect'], (response, urlParams, content) => {
+		this.WebServer.addPage(['/connect'], (response, urlParams, content) => {
 
 			const ifaces = require('os').networkInterfaces();
 
@@ -678,13 +668,13 @@ class SynTexPlatform
 				
 				exec(postJSON, (error, stdout, stderr) => {
 
-					if(error || stderr)
+					if(stderr || error)
 					{
 						response.write(stderr || error);
 					}
 					else
 					{
-						response.write(stdout);
+						response.write(stdout != '' ? stdout : 'Success');
 					}
 
 					response.end();

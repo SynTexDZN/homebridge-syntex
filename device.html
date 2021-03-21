@@ -19,11 +19,32 @@
 				{
 					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
 
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('infos', 'settings', true);
 				}
 				else
 				{
 					PageManager.hideHeader();
+
+					var main = document.createElement('div');
+
+					if(device.plugin == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Einstellen</div></button></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 				}
 
 			</script>
@@ -33,17 +54,8 @@
 				<h1 class="loading-loop">Laden ..</h1>
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
 				<div id="activity"></div>
-				<div class="navigation-panel">
-					<div class="sticky-inset">
-						<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">
-						<div style="display: flex">
-							<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-							<input class="gradient-red" style="margin-left: 20px" type="button" value="Einstellungen" onclick="openSettings('infos')">
-						</div>
-					</div>
-				</div>
 			</div>
-			<div id="settings" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="settings" style="display: none; transition: .2s ease-in-out">
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p style="margin-top: 0"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -51,16 +63,7 @@
 					</div>
 					<input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="closeSettings('settings')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="save-btn" type="submit" value="Speichern">
-								</div>
-							</div>
-						</div>
-					</div>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
 			<script type="module" defer>
@@ -175,11 +178,6 @@
 					}
 				});
 
-				if(Presets.getPreset(device.plugin).getRestartURL(device) == null)
-				{
-					document.getElementById('restart-btn').style.display = 'none';
-				}
-
 				if(Presets.getPreset(device.plugin).getReconnectURL(device) == null)
 				{
 					document.getElementById('reconnect-btn').style.display = 'none';
@@ -274,14 +272,23 @@
 					}
 				}
 
-				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('type', Essentials.getType(services));
-				document.getElementsByClassName('navigation-panel')[0].children[0].setAttribute('version', device.version);
+				document.getElementById('footer-content').setAttribute('type', Essentials.getType(services));
+				document.getElementById('footer-content').setAttribute('version', device.version);
 
 				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
 				var settingsForm = document.getElementById('settings-form');
 
-				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+				if(device.plugin == 'SynTexTuya')
+				{
+					settingsForm.getElementsByTagName('input')[0].setAttribute('placeholder', 'In der Tuya App ändern');
+					settingsForm.getElementsByTagName('input')[0].setAttribute('disabled', '');
+				}
+				else
+				{
+					settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+				}
+
 				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.room || '');
 
 				for(const i in settings)
@@ -1513,9 +1520,18 @@
 
 				async function openSettings(previous)
 				{
-					await PageManager.switchPage(previous, 'settings', false);
+					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )', true);
 
-					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'settings', false);
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
 
@@ -1531,9 +1547,21 @@
 				
 				async function closeSettings(previous)
 				{
-					await PageManager.switchPage(previous, 'infos', false);
+					PageManager.hideHeader(true);
 
-					PageManager.hideHeader();
+					var main = document.createElement('div');
+
+					if(device.plugin == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Einstellen</div></button></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'infos', false);
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name;
 
@@ -1923,6 +1951,13 @@
 								await Essentials.newTimeout(4000);
 
 								Essentials.removeOverlays(btn, update == btn.getAttribute('value').split('( v')[1].split(' )')[0] ? false : true);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{
+									await Essentials.newTimeout(300);
+
+									PageManager.removeFooter('update-btn');
+								}
 							}
 
 							updating = false;
@@ -1934,9 +1969,9 @@
 
 				async function checkUpdates()
 				{
-					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('type'), 10000, 2, {}, false);
+					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
 
-					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementsByClassName('navigation-panel')[0].children[0].getAttribute('version')))
+					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
 					{
 						var update = document.createElement('input');
 
@@ -1946,7 +1981,8 @@
 						update.setAttribute('onclick', 'updateDevice(this)');
 						update.setAttribute('id', 'update-btn');
 
-						document.getElementsByClassName('navigation-panel')[0].children[0].insertBefore(update, document.getElementById('restart-btn'));
+						PageManager.addFooter(update);
+						PageManager.showFooter();
 					}
 				}
 
@@ -2041,7 +2077,7 @@
 								{
 									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
 								}
-								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text')
+								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text' && (form.children[i].getElementsByTagName('input')[0].value != '' || !form.children[i].getElementsByTagName('input')[0].hasAttribute('required')))
 								{
 									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
 								}

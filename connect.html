@@ -15,48 +15,49 @@
 				{
 					PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/device?id=" + deviceID + "&settings'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
 					PageManager.switchPage('check-name', 'wifi', true);
 				}
 				else
 				{
 					PageManager.setHeader('Benennen', 'Wähle einen Namen aus');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="check-name-btn" type="button" class="gradient-green" onclick="setName()" value="Weiter"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
 				}
 
 			</script>
 			<div id="check-name" style="transition: .2s ease-in-out">
-				<form class="main" onsubmit="event.preventDefault(); checkName(this);">
+				<form class="main" onsubmit="event.preventDefault(); setName();">
 					<p><b>Name: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-					<div class="widget" id="infobox" style="margin-left: 0; margin-bottom: 20px; margin-top: 100px">
-						<button class="widget-left gradient-red">Wichtig</button>
-						<button class="widget-right">Der Name muss eindeutig sein<br>Dieser kann frei gewählt werden</button>
-					</div>
-					<div class="navigation-panel">
-						<div class="sticky-inset">
-							<div style="display: flex">
-								<input type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-								<div style="display: block; width: 100%; margin-left: 20px">
-									<input id="check-name-btn" type="submit" value="Weiter">
-								</div>
-							</div>
-						</div>
-					</div>
+					<p style="margin: 100px 0">Den Namen für dein neues<br>Smart Home Gerät<br>kannst du frei wählen.</p>
+					<input type="submit" value="Absenden" style="display: none">
 				</form>
 			</div>
-			<div id="connect" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="connect" style="display: none; transition: .2s ease-in-out">
 				<div class="main" style="margin-bottom: 132px">
 					<img src="/img/wifi.png" class="setup-png">
 					<input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Nach Geräten suchen ..">
 					<p>Bitte Verbinde dich<br>mit dem WLAN<br>deines Smart Home Geräts<br><br>Dabei müssen sich beide<br>in der Nähe des Routers befinden</p>
 				</div>
-				<div class="main navigation-panel">
-					<div class="sticky-inset">
-						<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-					</div>
-				</div>
 			</div>
-			<div id="wifi" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="wifi" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
-					<form onsubmit="event.preventDefault(); sendWiFiSettings(this);">
+					<form onsubmit="event.preventDefault(); sendWiFiSettings();">
 						<div id="networks" style="margin-bottom: 100px">
 							<p class="loading-loop">Laden ..</p>
 						</div>
@@ -65,16 +66,8 @@
 						<input id="connect-btn" type="submit" value="Verbinden">
 					</form>
 				</div>
-				<div class="main navigation-panel">
-					<div class="sticky-inset">
-						<div style="display: flex">
-							<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage('/')">
-							<input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">
-						</div>
-					</div>
-				</div>
 			</div>
-			<div id="connecting" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="connecting" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<img src="/img/connecting.png" class="setup-png">
 					<div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
@@ -83,7 +76,7 @@
 					<p>Das Gerät versucht,<br>sich im WLAN anzumelden.</p>
 				</div>
 			</div>
-			<div id="success" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="success" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -91,7 +84,7 @@
 					<p>Du wirst jeden Moment automatisch weitergeleitet.</p>
 				</div>
 			</div>
-			<div id="error" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="error" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<img src="/img/error.png" class="setup-png">
 					<input class="gradient-red loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -99,7 +92,7 @@
 					<p>Dein WLAN-Passwort war nicht korrekt,<br>oder etwas anderes ist schief gegangen.</p>
 				</div>
 			</div>
-			<div id="check-connection" style="display: none; opacity: 0; transition: .2s ease-in-out">
+			<div id="check-connection" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-yellow loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="Auf Bridge Warten ..">
@@ -122,9 +115,6 @@
 
 				if(deviceID != null && deviceIP != null)
 				{
-					document.getElementById('back-btn').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
-					document.getElementById('back-btn-wifi').setAttribute('onclick', "Essentials.leavePage('/device?id=" + deviceID + "&settings')");
-
 					pingESP();
 				}
 
@@ -133,41 +123,33 @@
 			</script>
 			<script>
 
-				// NOTE: Check Name
+				// NOTE: Set Name
 
 				window.deviceName = null;
 
-				async function checkName(form)
+				function setName()
 				{
-					var overlays = {
-						root : document.getElementById('check-name-btn'),
-						id : 'name',
-						pending : { value : 'Bitte Warten ..' },
-						connectionError : { value : 'Keine Verbindung zur Bridge!' }
-					};
+					deviceName = document.getElementById('device-name').value;
 
-					var created = await Query.complexFetch('/serverside/check-name?name=' + document.getElementById('device-name').value, 5000, 2, overlays, true);
+					PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
 
-					await Essentials.newTimeout(500);
+					var main = document.createElement('div');
 
-					if(created == 'Success')
+					if(deviceID != null & deviceIP != null)
 					{
-						deviceName = document.getElementById('device-name').value;
-
-						PageManager.setHeader('Verbinden', 'Mit dem Smart Home Gerät');
-
-						PageManager.switchPage('check-name', 'connect', false);
-
-						pingESP();
+						main.innerHTML = '<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/device?id=" + deviceID + "&settings'" + ')">';
 					}
 					else
 					{
-						Essentials.showOverlay(document.getElementById('check-name-btn'), Essentials.createErrorOverlay('create-result', 'Name ist bereits Vergeben!'));
-
-						await Essentials.newTimeout(4000);
-
-						Essentials.removeOverlays(document.getElementById('check-name-btn'), true);
+						main.innerHTML = '<input id="back-btn" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')">';
 					}
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					PageManager.switchPage('check-name', 'connect', false);
+
+					pingESP();
 				}
 
 				// NOTE: Search for Device
@@ -192,6 +174,15 @@
 
 									PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
 
+									var main = document.createElement('div');
+
+									main.style.display = 'flex';
+
+									main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+									PageManager.setFooter(main);
+									PageManager.showFooter();
+
 									PageManager.switchPage('connect', 'wifi', false);
 
 									scanWifi(document.getElementById('scan-btn'));
@@ -208,6 +199,15 @@
 								console.log('PING SUCCESS', deviceURL);
 
 								PageManager.setHeader('Netzwerk', 'Wähle dein WLAN Netz aus');
+
+								var main = document.createElement('div');
+
+								main.style.display = 'flex';
+
+								main.innerHTML = '<input id="back-btn-wifi" type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="Bitte Warten .." onclick="scanWifi(this)">';
+
+								PageManager.setFooter(main);
+								PageManager.showFooter();
 
 								PageManager.switchPage('connect', 'wifi', false);
 
@@ -303,8 +303,10 @@
 				window.bridgeIP = '<%bridge-ip%>';
 				window.success = false;
 
-				async function sendWiFiSettings(form)
+				async function sendWiFiSettings()
 				{
+					var form = document.getElementsByTagName('form')[1];
+
 					if(bridgeIP != 'null')
 					{
 						var formData = new FormData(form);
@@ -371,7 +373,7 @@
 
 										PageManager.switchPage('connecting', 'error', false);
 
-										redirectCountdown('/setup');
+										redirectCountdown('/connect');
 									}
 
 								}, 60000);
