@@ -231,7 +231,11 @@
 					{
 						searching = true;
 
-						btn.value = 'Bitte Warten ..'; 
+						if(btn != null)
+						{
+							btn.value = 'Bitte Warten ..';
+						}
+
 						document.getElementById('networks').innerHTML = '<p class="loading-loop">Laden ..</p>';
 
 						var network = await Query.complexFetch(deviceURL + 'wifi', 10000, 3, {}, false);
@@ -332,6 +336,7 @@
 							if(deviceID != null && deviceIP != null)
 							{
 								PageManager.setHeader('Gesendet', 'Verbindung wird getestet');
+								PageManager.hideFooter();
 
 								PageManager.switchPage('wifi', 'check-connection', false);
 
@@ -340,6 +345,7 @@
 							else
 							{
 								PageManager.setHeader('Bitte Warten', 'Verbindung wird getestet');
+								PageManager.hideFooter();
 								
 								PageManager.switchPage('wifi', 'connecting', false);
 
@@ -370,6 +376,7 @@
 									if(success == false)
 									{
 										PageManager.setHeader('Fehler', 'Keine Verbindung');
+										PageManager.hideFooter();
 
 										PageManager.switchPage('connecting', 'error', false);
 
@@ -412,6 +419,7 @@
 						success = true;
 
 						PageManager.setHeader('Geschafft', 'Erfolgreich Verbunden');
+						PageManager.hideFooter();
 
 						PageManager.switchPage('connecting', 'success', false);
 
