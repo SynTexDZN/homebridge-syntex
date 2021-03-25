@@ -1,7 +1,7 @@
 @font-face { font-family: 'Rubik'; font-weight: 500; src: local('Rubik'), url('/style/Rubik-Black.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 400; src: local('Rubik'), url('/style/Rubik-Bold.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 100; src: local('Rubik'), url('/style/Rubik-Light.ttf'); }
-@font-face { font-family: 'Rubik'; font-weight: 300; src: local('Rubik'), url('/style/Rubik-Medium.ttf'); }
+@font-face { font-family: 'Rubik'; font-weight: 300; src: local('Rubik'), url('/style/Rubik-Medium-Edit.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 200; src: local('Rubik'), url('/style/Rubik-Regular.ttf'); }
 
 :root
@@ -146,6 +146,7 @@ input[type='radio']
 	background: transparent;
 	transition: .15s ease-in-out;
 	cursor: pointer;
+	padding: 0;
 }
 
 input[type='radio']:active, input[type='radio']:checked
@@ -955,7 +956,7 @@ button img
 
 .icon-inverted, .select-selected.select-active img, .select-items img
 {
-	filter: invert(13%) sepia(100%) hue-rotate(205deg);
+	filter: invert(6%) sepia(100%) hue-rotate(205deg);
 }
 
 .select-selected:after
@@ -1174,13 +1175,26 @@ button img
 	padding: 5px;
 }
 
-.button-icon
+.icon-button .button-icon
 {
 	padding: 8px;
 	box-sizing: border-box;
-	background: rgb(80, 80, 100);
-	border-radius: 12px;
 	height: 100%;
+}
+
+.icon-button .button-icon.white
+{
+	background: rgb(245, 245, 255)!important;
+}
+
+.icon-button.split.arrow .button-icon, .icon-button.round .button-icon
+{
+	background: rgb(80, 80, 100);
+}
+
+.icon-button.round .button-icon
+{
+	border-radius: 12px;
 }
 
 .button-icon img
@@ -1685,7 +1699,7 @@ button img
 		height: 60px;
 	}
 
-	.button-icon
+	.icon-button.round .button-icon
 	{
 		border-radius: 30px;
 		padding: 12px;

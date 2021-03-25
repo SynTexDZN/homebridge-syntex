@@ -30,11 +30,6 @@
 					background-color: rgb(245, 245, 255);
 				}
 
-				.icon-button.clean .button-icon
-				{
-					background: transparent;
-				}
-
 				.icon-button.seperated
 				{
 					padding: 5px;
@@ -45,6 +40,50 @@
 					border-right: 2px dashed rgb(40, 40, 55);
 					padding: 7px 15px;
 					padding-right: 18px;
+					background: transparent;
+				}
+
+				.icon-button.compact .button-icon
+				{
+					padding-right: 0;
+					padding: 9px;
+				}
+
+				.icon-button.compact .button-text
+				{
+					width: auto;
+				}
+
+				.icon-button.compact.left .button-icon
+				{
+					margin-right: 14px;
+					padding-right: 0!important;
+				}
+
+				.icon-button.compact.right .button-icon
+				{
+					margin-left: 11px;
+					padding-left: 0!important;
+				}
+
+				.icon-button.compact.left .button-text
+				{
+					margin-right: auto;
+				}
+
+				.icon-button.compact.right .button-text
+				{
+					margin-left: auto;
+				}
+
+				.icon-button.compact.center.left .button-icon
+				{
+					margin-left: auto;
+				}
+
+				.icon-button.compact.center.right .button-icon
+				{
+					margin-right: auto;
 				}
 
 				/* REMOVE */
@@ -64,6 +103,21 @@
 					.icon-button.seperated .button-icon
 					{
 						padding: 11px 21px;
+					}
+
+					.icon-button.compact .button-icon
+					{
+						padding: 11px;
+					}
+
+					.icon-button.compact.left .button-icon
+					{
+						margin-right: 16px;
+					}
+
+					.icon-button.compact.right .button-icon
+					{
+						margin-left: 13px;
 					}
 				}
 
@@ -87,37 +141,61 @@
 					<input type="text" style="margin-top: 20px">
 					<div id="select"></div>
 					<h2>• Icon Buttons •</h2>
-					<button class="icon-button right split arrow" style="margin-top: 20px">
-						<div class="button-text">Icon Button 1</div>
+					<button class="icon-button left split arrow" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon" src="../img/settings.png">
 						</div>
+						<div class="button-text">Icon Button 1</div>
 					</button>
-					<button class="icon-button left split clean seperated" style="margin-top: 20px">
+					<button class="icon-button left split seperated" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
 						<div class="button-text">Icon Button 2</div>
 					</button>
-					<button class="icon-button left split clean" style="margin-top: 20px">
+					<button class="icon-button left split" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
 						<div class="button-text">Icon Button 3</div>
 					</button>
-					<button class="icon-button left" style="margin-top: 20px">
+					<button class="icon-button left compact" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 3</div>
+					</button>
+					<button class="icon-button right compact" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 3</div>
+					</button>
+					<button class="icon-button left center compact" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 3</div>
+					</button>
+					<button class="icon-button right center compact" style="margin-top: 20px">
+						<div class="button-icon">
+							<img class="icon-inverted" src="../img/settings.png">
+						</div>
+						<div class="button-text">Icon Button 3</div>
+					</button>
+					<button class="icon-button left round" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon" src="../img/settings.png">
 						</div>
 						<div class="button-text">Icon Button 4</div>
 					</button>
-					<button class="icon-button left" style="margin-top: 20px">
-						<div class="button-icon colored">
+					<button class="icon-button left round" style="margin-top: 20px">
+						<div class="button-icon white">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
 						<div class="button-text">Icon Button 5</div>
 					</button>
-					<button class="icon-button right" style="margin-top: 20px">
+					<button class="icon-button right round" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon" src="../img/reload.png">
 						</div>
@@ -134,7 +212,7 @@
 						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">Shine</div>
 					</button>
 					<h2>• Gradients •</h2>
-					<input type="button" value="Blau Lila" style="margin-top: 20px" class="gradient-blue-purple">
+					<input type="button" value="Blau Lila" style="margin-top: 20px; height: auto; padding: 0" class="gradient-blue-purple">
 					<input type="button" value="Blau Grün" style="margin-top: 20px" class="gradient-blue-green">
 					<input type="button" value="Grün" style="margin-top: 20px" class="gradient-green">
 					<input type="button" value="Gelb" style="margin-top: 20px" class="gradient-yellow">
