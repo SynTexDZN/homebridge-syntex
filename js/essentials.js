@@ -308,7 +308,7 @@ function typeToLetter(type)
 	return null;
 }
 
-var pageLoading = false;
+var pageLoading = false, pageTimer = false;
 
 async function leavePage(url)
 {
@@ -321,90 +321,133 @@ async function leavePage(url)
 		document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
 		document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
 
-		var timer = false;
+		pageTimer = false;
 
 		setTimeout(() => {
 
-			timer = true;
+			pageTimer = true;
 			
 		}, 200);
 
-		var pageContent = await Query.complexFetch(url, 3000, 3, {}, false);
+		var success = false, notFound = false;
 
-		if(pageContent != null)
+		do
 		{
-			if(url.includes('syntex.local'))
+			var response = await loadPageData(url);
+			
+			if(response == 0)
 			{
-				if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-				{
-					window.history.pushState(null, null, url.split('syntex.local')[1] + (url.split('syntex.local')[1].includes('?') ? '&' : '?') + 'desktopApp=true');
-				}
-				else
-				{
-					window.history.pushState(null, null, url.split('syntex.local')[1]);
-				}
+				success = true;
 			}
-			else
+			else if(response == 1)
 			{
-				if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-				{
-					window.history.pushState(null, null, url + (url.includes('?') ? '&' : '?') + 'desktopApp=true');
-				}
-				else
-				{
-					window.history.pushState(null, null, url);
-				}
+				notFound = true;
 			}
-
-			while(!timer)
-			{
-				await Essentials.newTimeout(1);
-			}
-
-			clearTimers();
-
-			document.getElementById('content').outerHTML = '<div id="content"' + pageContent.split('<div id="content"')[1].split('</body>')[0];
-
-			for(var i = 0; i < document.getElementsByTagName('script').length; i++)
-			{
-				if(document.getElementsByTagName('script')[i].id != 'static')
-				{
-					var script = document.createElement('script');
-
-					script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
-
-					if(document.getElementsByTagName('script')[i].hasAttribute('type'))
-					{
-						script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
-					}
-
-					if(document.getElementsByTagName('script')[i].hasAttribute('async'))
-					{
-						script.setAttribute('async', '');
-					}
-
-					if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
-					{
-						script.setAttribute('defer', '');
-					}
-
-					var parent = document.getElementsByTagName('script')[i].parentElement;
-
-					parent.replaceChild(script, document.getElementsByTagName('script')[i]);
-				}
-			}
-
-			searchLoop();
-
-			Preloader.load();
 		}
-		else
-		{
-			// TODO: Add 404 Page When Page Path Not Found
-		}
+		while(!success && !notFound);
 
 		pageLoading = false;
 	}
+}
+
+function loadPageData(url)
+{
+	return new Promise((resolve) => {
+
+		var client = new XMLHttpRequest();
+
+		client.timeout = 3000;
+
+		client.open('GET', url);
+
+		client.onreadystatechange = async () => {
+			
+			if(client.readyState === 4)
+			{  
+				if(client.status === 200)
+				{
+					resolve(0);
+
+					if(url.includes('syntex.local'))
+					{
+						if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+						{
+							window.history.pushState(null, null, url.split('syntex.local')[1] + (url.split('syntex.local')[1].includes('?') ? '&' : '?') + 'desktopApp=true');
+						}
+						else
+						{
+							window.history.pushState(null, null, url.split('syntex.local')[1]);
+						}
+					}
+					else
+					{
+						if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+						{
+							window.history.pushState(null, null, url + (url.includes('?') ? '&' : '?') + 'desktopApp=true');
+						}
+						else
+						{
+							window.history.pushState(null, null, url);
+						}
+					}
+
+					while(!pageTimer)
+					{
+						await Essentials.newTimeout(1);
+					}
+
+					clearTimers();
+
+					document.getElementById('content').outerHTML = '<div id="content"' + client.responseText.split('<div id="content"')[1].split('</body>')[0];
+
+					for(var i = 0; i < document.getElementsByTagName('script').length; i++)
+					{
+						if(document.getElementsByTagName('script')[i].id != 'static')
+						{
+							var script = document.createElement('script');
+
+							script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
+
+							if(document.getElementsByTagName('script')[i].hasAttribute('type'))
+							{
+								script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
+							}
+
+							if(document.getElementsByTagName('script')[i].hasAttribute('async'))
+							{
+								script.setAttribute('async', '');
+							}
+
+							if(document.getElementsByTagName('script')[i].hasAttribute('defer'))
+							{
+								script.setAttribute('defer', '');
+							}
+
+							var parent = document.getElementsByTagName('script')[i].parentElement;
+
+							parent.replaceChild(script, document.getElementsByTagName('script')[i]);
+						}
+					}
+
+					searchLoop();
+
+					Preloader.load();
+				}
+				else if(client.status === 404)
+				{
+					resolve(1);
+
+					// TODO: Add 404 Page When Page Path Not Found
+				}
+				else
+				{
+					resolve(2);
+				}
+			}
+		}
+
+		client.send();
+	});
 }
 
 function removeOverlaysDelay(btn, delay, show)
