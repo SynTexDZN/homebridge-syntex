@@ -178,12 +178,12 @@
 					}
 				});
 
-				if(Presets.getPreset(device.plugin).getReconnectURL(device) == null)
+				if(Presets.getPreset(device.plugin) == null || Presets.getPreset(device.plugin).getReconnectURL(device) == null)
 				{
 					document.getElementById('reconnect-btn').style.display = 'none';
 				}
 
-				if(Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) }) == null)
+				if(Presets.getPreset(device.plugin) == null || Presets.getPreset(device.plugin).getResetURL(device, { type : Essentials.getType(services) }) == null)
 				{
 					document.getElementById('reset-btn').style.display = 'none';
 				}
@@ -613,14 +613,14 @@
 					loadActivity();
 				});
 
-				if(Presets.getPreset(device.plugin).getVersionURL(device) != null)
+				if(Presets.getPreset(device.plugin) != null && Presets.getPreset(device.plugin).getVersionURL(device) != null)
 				{
 					checkUpdates();
 				}
 
 				loadPluginData().then(() => {
 
-					if(Presets.getPreset(device.plugin).getPingURL(device) != null)
+					if(Presets.getPreset(device.plugin) != null && Presets.getPreset(device.plugin).getPingURL(device) != null)
 					{
 						pingESP();
 					}
@@ -899,7 +899,7 @@
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd' && type != 'removed' && (type != 'statelessswitch' || services.length == 1))
+						if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
@@ -1017,7 +1017,7 @@
 				{
 					for(const i in typeCounter)
 					{
-						if(i != 'lcd' && i != 'removed' && (i != 'statelessswitch' || services.length == 1))
+						if(i != 'lcd' && i != 'removed' && i != 'unsupported' && (i != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
 							{
@@ -1600,7 +1600,14 @@
 									{
 										url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 									}
+									/*
+									if(!device.plugin.startsWith('SynTex'))
+									{
+										url = 'http://localhost:51826/characteristics?id=' + device.aid + '.' + device.services[j].iid;
+									}
 
+									console.log(services, device.services, j, url);
+									*/
 									state = await Query.fetchURL(url, 10000);
 
 									if(state != null && state != 'Error')
