@@ -410,6 +410,8 @@
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
+							row.className = 'secondary';
+
 							if(!automation[i].trigger[j].url && automation[i].trigger[j].name && automation[i].trigger[j].letters)
 							{
 								var src = Essentials.letterToType(automation[i].trigger[j].letters[0]);
@@ -425,8 +427,6 @@
 							{
 								row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 							}
-
-							row.style.padding = '11px';
 
 							container.appendChild(row);
 
@@ -457,6 +457,8 @@
 
 								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
+								row.className = 'secondary';
+
 								if(!automation[i].condition[j].url && automation[i].condition[j].name && automation[i].condition[j].letters)
 								{
 									var src = Essentials.letterToType(automation[i].condition[j].letters[0]);
@@ -472,8 +474,6 @@
 								{
 									row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 								}
-
-								row.style.padding = '11px';
 
 								container.appendChild(row);
 
@@ -503,6 +503,8 @@
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
 
+							row.className = 'secondary';
+
 							if(!automation[i].result[j].url && automation[i].result[j].name && automation[i].result[j].letters)
 							{
 								var src = Essentials.letterToType(automation[i].result[j].letters[0]);
@@ -518,8 +520,6 @@
 							{
 								row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen';
 							}
-
-							row.style.padding = '11px';
 
 							container.appendChild(row);
 
