@@ -1,8 +1,8 @@
 @font-face { font-family: 'Rubik'; font-weight: 500; src: local('Rubik'), url('/style/Rubik-Black.ttf'); }
-@font-face { font-family: 'Rubik'; font-weight: 400; src: local('Rubik'), url('/style/Rubik-Bold.ttf'); }
+@font-face { font-family: 'Rubik'; font-weight: 400; src: local('Rubik'), url('/style/Rubik-Bold-Edit.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 100; src: local('Rubik'), url('/style/Rubik-Light.ttf'); }
 @font-face { font-family: 'Rubik'; font-weight: 300; src: local('Rubik'), url('/style/Rubik-Medium-Edit.ttf'); }
-@font-face { font-family: 'Rubik'; font-weight: 200; src: local('Rubik'), url('/style/Rubik-Regular.ttf'); }
+@font-face { font-family: 'Rubik'; font-weight: 200; src: local('Rubik'), url('/style/Rubik-Regular-Edit.ttf'); }
 
 :root
 {
@@ -247,7 +247,7 @@ input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:no
 	cursor: pointer;
 }
 
-input[type='button'], input[type='submit'], button
+input[type='button'], input[type='submit'], button, .log-message
 {
 	background: rgb(60, 60, 80);
 	border-width: 0;
@@ -367,12 +367,12 @@ h2, h1
 
 h1
 {
-	padding: 8px 30px 7.5px 40px;
+	padding: 8px 30px 8px 40px;
 }
 
 h2
 {
-	padding: 10.5px 20px 8.5px 20px;
+	padding: 9.5px 20px 9.5px 20px;
 	padding-right: 10px;
 	font-size: 28px;
 	font-weight: 200;
@@ -934,7 +934,7 @@ button img
 	box-sizing: border-box;
 	outline: none!important;
 	text-align: left;
-	padding: 13px 40px 13px 20px;
+	padding: 12.5px 40px 12.5px 20px;
 	cursor: pointer;
 }
 
@@ -1039,7 +1039,7 @@ button img
 .table
 {
 	text-align: left;
-	line-height: 20px;
+	line-height: 28px;
 	padding: 0;
 	pointer-events: none;
 	height: auto;
@@ -1060,7 +1060,7 @@ button img
 	min-width: 130px;
 	max-width: 130px;
 	background: rgb(70, 70, 90);
-	padding: 13px 18px 12px 18px;
+	padding: 11px 18px 11px 18px;
 	text-align: center;
 }
 
@@ -1088,7 +1088,7 @@ button img
 
 	line-height: 2;
 	overflow: hidden;
-	padding: 9px 19px;
+	padding: 9.5px 19px;
 	text-align: left; 
 }
 
@@ -1105,7 +1105,6 @@ button img
 	position: relative;
 	right: -10px;
 	border-radius: 12px;
-	padding: 1px;
 	box-sizing: border-box;
 	padding-left: 3px;
 	transition: .2s ease-out;
@@ -1794,12 +1793,12 @@ button img
 		background: rgba(245, 245, 255, .8);
 	}
 
-	.control-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+	.control-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		color: var(--dark-layer-one);
 	}
 
-	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus
+	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		background: var(--light-layer-one);
 	}
