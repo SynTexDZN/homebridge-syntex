@@ -239,7 +239,6 @@ textarea, .scrollarea
 	height: 300px;
 	resize: none;
 	white-space: pre-line;
-	border-right-width: 0;
 }
 
 input[type='button']:not(:disabled):not(.control-panel), input[type='submit']:not(:disabled):not(.control-panel), button:not(:disabled):not(.control-panel):not(.widget-right):not(.widget-left)
@@ -557,39 +556,38 @@ h2
 
 ::-webkit-scrollbar
 {
-	width: auto;
 	height: auto;
+	width: 26px;
+	overflow: hidden;
 }
 
 ::-webkit-scrollbar-track, ::-webkit-scrollbar
 {
 	background: var(--light-layer-two);
 	/*border-radius: 13px 0 0 13px!important;*/
-	border-radius: 0!important;
+	border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-corner
 {
 	background: var(--dark-layer-two);
 	border: 2px solid var(--light-layer-two);
-	border-radius: 26px!important;
+	border-radius: 26px;
 	min-height: 26px;
 }
 
-textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb
+textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-thumb
 {
-	border-top-width: 1px;
-	border-bottom-width: 0;
+	background: transparent;
+	border-radius: 0;
+	border-color: transparent;
+	border-width: 20px 9px 20px 12px;
+	box-shadow: inset 0 0 10px 10px var(--dark-layer-two);
 }
 
 textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 {
-	border-radius: 0 13px 13px 0!important;
-}
-
-textarea, .scrollarea
-{
-	border-right-width: 0;
+	border-radius: 0 13px 13px 0;
 }
 
 *
@@ -600,13 +598,7 @@ textarea, .scrollarea
 ::-webkit-scrollbar-track
 {
 	background: transparent;
-	border-radius: 26px!important;
-	overflow: hidden;
-}
-
-::-webkit-scrollbar
-{
-	width: 26px;
+	border-radius: 26px;
 	overflow: hidden;
 }
 
@@ -1465,11 +1457,6 @@ button img
 		border-radius: 30px;
 	}
 
-	textarea, .scrollarea
-	{
-		border-right-width: 3;
-	}
-
 	input, button, select, .select-selected
 	{
 		height: 60px;
@@ -1516,13 +1503,11 @@ button img
 
 	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 	{
-		border-radius: 0 26px 26px 0!important;
+		border-radius: 0 26px 26px 0;
 	}
 
 	textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .select-items::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-corner, .scrollarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-corner
 	{
-		border-radius: 0 26px 26px 0!important;
-		border-left-width: 5px;
 		min-height: 52px;
 	}
 
