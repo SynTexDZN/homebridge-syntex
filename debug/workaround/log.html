@@ -208,7 +208,7 @@
 												}
 											}
 
-											renderLogs(id, plugins[id].alias);
+											renderLogs(id, true);
 
 											//renderLogs(document.getElementById(plugins[id].alias), logs[plugins[id].alias], null);
 										}
@@ -275,12 +275,7 @@
 				{
 					line-height: 30px;
 					padding: 5px 10px;
-				}
-
-				.log
-				{
-					background: rgb(60, 60, 80);
-					border-radius: 8px;
+					border-radius: 0 0 8px 8px;
 				}
 
 				.log-title
@@ -312,11 +307,6 @@
 
 				@media only screen and (max-width: 1176px)
 				{
-					.log
-					{
-						border-radius: 15px;
-					}
-
 					.log-title
 					{
 						border-radius: 15px 15px 0 0;
@@ -326,6 +316,7 @@
 
 					.log-message
 					{
+						border-radius: 0 0 15px 15px;
 						padding: 10px 15px;
 					}
 				}
@@ -335,77 +326,123 @@
 
 				// NOTE: Create Log Messages
 
-				function renderLogs(pluginID)
+				window.renderedLogs = {};
+
+				function renderLogs(pluginID, clear)
 				{
 					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
-					document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
-
-					for(var i = 0; i < Math.min(logs[plugins[pluginID].alias].length, 100); i++)
+					if(renderedLogs[pluginID] == null)
 					{
-						var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
-						var level = logs[plugins[pluginID].alias][i].l;
-						var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
+						renderedLogs[pluginID] = 0;
+					}
 
-						var log = document.createElement('div');
+					if(clear)
+					{
+						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
+					}
 
-						log.className = 'log';
-						log.style.marginBottom = '20px';
-
-						var logTitle = document.createElement('div');
-
-						logTitle.className = 'log-title';
-
-						if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+					for(var i = 0; i < 20; i++)
+					{
+						if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null)
 						{
-							logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
-						}
+							var time = new Date(logs[plugins[pluginID].alias][renderedLogs[pluginID]].t * 1000);
+							var level = logs[plugins[pluginID].alias][renderedLogs[pluginID]].l;
+							var message = logs[plugins[pluginID].alias][renderedLogs[pluginID]].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
 
-						var logTime = document.createElement('div');
+							var log = document.createElement('div');
 
-						logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
-						logTime.style.width = '140px';
+							log.className = 'log';
 
-						logTitle.appendChild(logTime);
-						/*
-						var logLevel = document.createElement('div');
+							if(renderedLogs[pluginID] != logs[plugins[pluginID].alias].length - 1)
+							{
+								log.style.marginBottom = '20px';
+							}
 
-						logLevel.innerHTML = level.toUpperCase();
+							var logTitle = document.createElement('div');
 
-						logTitle.appendChild(logLevel);
-						*/
-						var logSender = document.createElement('div');
+							logTitle.className = 'log-title';
 
-						if(message.includes(' ( ') && message.includes(' )'))
-						{
-							logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
-						}
-						else
-						{
-							logSender.innerHTML = 'Bridge';
-						}
+							if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+							{
+								logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+							}
 
-						logTitle.appendChild(logSender);
+							var logTime = document.createElement('div');
 
-						log.appendChild(logTitle);
+							logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+							logTime.style.width = '140px';
 
-						var logMessage = document.createElement('div');
+							logTitle.appendChild(logTime);
+							/*
+							var logLevel = document.createElement('div');
 
-						logMessage.className = 'log-message'
-						logMessage.innerHTML = message;
+							logLevel.innerHTML = level.toUpperCase();
 
-						if(logSender.innerHTML != 'Bridge')
-						{
-							logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
-						}
+							logTitle.appendChild(logLevel);
+							*/
+							var logSender = document.createElement('div');
 
-						log.appendChild(logMessage);
+							if(message.includes(' ( ') && message.includes(' )'))
+							{
+								logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+							}
+							else
+							{
+								logSender.innerHTML = 'Bridge';
+							}
+
+							logTitle.appendChild(logSender);
+
+							log.appendChild(logTitle);
+
+							var logMessage = document.createElement('div');
+
+							logMessage.className = 'log-message'
+							logMessage.innerHTML = message;
+
+							if(logSender.innerHTML != 'Bridge')
+							{
+								logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+							}
+
+							log.appendChild(logMessage);
 							
-						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+							if(clear)
+							{
+								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+							}
+							else
+							{
+								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0]);
+							}
+
+							renderedLogs[pluginID]++;
+						}
+						else if(document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0] != null)
+						{
+							document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0].parentElement.removeChild(document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0]);
+						}
+					}
+
+					if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0] == null)
+					{
+						var loadMore = document.createElement('div');
+
+						loadMore.innerHTML = '<button class="white" style="margin: 0 auto; min-width: 30%; width: auto!important; padding: 5px 30px" onclick="renderLogs(' + "'" + pluginID + "'" + ')">Mehr Laden</button>';
+						loadMore.style.display = 'flex';
+						loadMore.className = 'load-more-btn';
+
+						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(loadMore);
 					}
 				}
 
 			</script>
+			<scirpt>
+
+
+
+			</scirpt>
 			<script>
 				/*
 				async function clearSearch()
