@@ -328,9 +328,10 @@
 
 				window.renderedLogs = {};
 
-				function renderLogs(pluginID, clear)
+				async function renderLogs(pluginID, clear)
 				{
 					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+					var loadMore = document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0];
 
 					if(renderedLogs[pluginID] == null)
 					{
@@ -340,6 +341,13 @@
 					if(clear)
 					{
 						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
+					}
+
+					if(loadMore != null)
+					{
+						loadMore.style.opacity = 0;
+
+						await Essentials.newTimeout(200);
 					}
 
 					for(var i = 0; i < 20; i++)
@@ -353,6 +361,8 @@
 							var log = document.createElement('div');
 
 							log.className = 'log';
+							log.style.transition = '.3s opacity ease-in-out';
+							log.style.opacity = 0;
 
 							if(renderedLogs[pluginID] != logs[plugins[pluginID].alias].length - 1)
 							{
@@ -414,23 +424,35 @@
 							}
 							else
 							{
-								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0]);
+								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
 							}
+
+							setTimeout(function() {
+								
+								this.log.style.opacity = 1;
+
+							}.bind({ log }), 20);
 
 							renderedLogs[pluginID]++;
 						}
-						else if(document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0] != null)
+						else if(loadMore != null)
 						{
-							document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0].parentElement.removeChild(document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0]);
+							loadMore.parentElement.removeChild(loadMore);
 						}
 					}
 
-					if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0] == null)
+					if(loadMore != null)
 					{
-						var loadMore = document.createElement('div');
+						loadMore.style.opacity = 1;
+					}
+
+					if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null)
+					{
+						loadMore = document.createElement('div');
 
 						loadMore.innerHTML = '<button class="white" style="margin: 0 auto; min-width: 30%; width: auto!important; padding: 5px 30px" onclick="renderLogs(' + "'" + pluginID + "'" + ')">Mehr Laden</button>';
 						loadMore.style.display = 'flex';
+						loadMore.style.transition = '.2s opacity ease-in-out';
 						loadMore.className = 'load-more-btn';
 
 						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(loadMore);
