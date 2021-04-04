@@ -1007,6 +1007,7 @@ button img
 	overflow-y: auto;
 	height: auto;
 	border-width: 0;
+	padding: 0;
 }
 
 .custom-select select, .select-hide
@@ -1291,6 +1292,51 @@ button img
 .icon-button.split.arrow .button-icon.red, .icon-button.split.arrow .button-icon.red:after
 {
 	background: hsl(345, 85%, 55%);
+}
+
+.inline-button
+{
+	text-align: center;
+	padding: 5px;
+	position: relative;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	box-sizing: border-box;
+	width: auto;
+}
+
+.log-message
+{
+	line-height: 30px;
+	padding: 5px 10px;
+	border-radius: 0 0 8px 8px;
+}
+
+.log-title
+{
+	display: flex;
+	background:rgb(40, 40, 60);
+	border-radius: 8px 8px 0 0;
+	padding: 10px;
+	font-size: 14px;
+}
+
+.log-title div:first-of-type
+{
+	margin-right: auto;
+}
+
+.log-title div:last-of-type
+{
+	margin-left: auto;
+	text-align: right;
+	width: calc(100% - 140px);
+}
+
+.log-title div:first-of-type, .log-title div:last-of-type
+{
+	height: min-content;
+	margin: auto 0;
 }
 
 @media only screen and (min-width: 1177px)
@@ -1749,6 +1795,19 @@ button img
 	.icon-button.split.arrow.right .button-icon:after
 	{
 		right: 69px;
+	}
+
+	.log-title
+	{
+		border-radius: 15px 15px 0 0;
+		font-size: 16px;
+		padding: 15px;
+	}
+
+	.log-message
+	{
+		border-radius: 0 0 15px 15px;
+		padding: 10px 15px;
 	}
 }
 

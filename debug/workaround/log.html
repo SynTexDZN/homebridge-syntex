@@ -209,8 +209,6 @@
 											}
 
 											renderLogs(id, true);
-
-											//renderLogs(document.getElementById(plugins[id].alias), logs[plugins[id].alias], null);
 										}
 										else if(document.getElementById(id).getElementsByClassName('reload-button')[0] == null)
 										{
@@ -223,11 +221,7 @@
 
 											document.getElementById(id).appendChild(reloadButton);
 
-											setTimeout(() => {
-
-												document.getElementById(id).getElementsByClassName('reload-button')[0].style.opacity = 1;
-
-											}, 0);
+											setTimeout(() => document.getElementById(id).getElementsByClassName('reload-button')[0].style.opacity = 1, 0);
 										}
 									}
 								}
@@ -258,70 +252,6 @@
 				}
 
 			</script>
-			<style>
-
-				.inline-button
-				{
-					text-align: center;
-					padding: 5px;
-					position: relative;
-					margin-top: -5px;
-					margin-bottom: -5px;
-					box-sizing: border-box;
-					width: auto;
-				}
-
-				.log-message
-				{
-					line-height: 30px;
-					padding: 5px 10px;
-					border-radius: 0 0 8px 8px;
-				}
-
-				.log-title
-				{
-					display: flex;
-					background:rgb(40, 40, 60);
-					border-radius: 8px 8px 0 0;
-					padding: 10px;
-					font-size: 14px;
-				}
-
-				.log-title div:first-of-type
-				{
-					margin-right: auto;
-				}
-
-				.log-title div:last-of-type
-				{
-					margin-left: auto;
-					text-align: right;
-					width: calc(100% - 140px);
-				}
-
-				.log-title div:first-of-type, .log-title div:last-of-type
-				{
-					height: min-content;
-					margin: auto 0;
-				}
-
-				@media only screen and (max-width: 1176px)
-				{
-					.log-title
-					{
-						border-radius: 15px 15px 0 0;
-						font-size: 16px;
-						padding: 15px;
-					}
-
-					.log-message
-					{
-						border-radius: 0 0 15px 15px;
-						padding: 10px 15px;
-					}
-				}
-
-			</style>
 			<script>
 
 				// NOTE: Create Log Messages
