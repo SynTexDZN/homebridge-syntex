@@ -53,7 +53,7 @@
 					<button class="widget-right gradient-purple" id="debug-widget">-</button>
 				</div>
 			</div>
-			<form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
+			<form onsubmit="event.preventDefault()" class="main" style="margin-bottom: 32px">
 				<div style="margin-bottom: 20px; display: flex">
 					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
 					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="searchLog()" style="max-width: 200px">
@@ -125,7 +125,7 @@
 					var filter = document.createElement('div');
 
 					filter.className = 'custom-select';
-					filter.innerHTML = '<select onchange="searchLog()"><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
+					filter.innerHTML = '<select onchange=""><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
 					filter.style.width = '100%';
 					filter.style.marginRight = '20px';
 
@@ -232,8 +232,6 @@
 									}
 								}
 
-								document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
-
 								document.getElementById('error-widget').innerHTML = levelCounter['error'];
 								document.getElementById('warn-widget').innerHTML = levelCounter['warn'];
 								document.getElementById('info-widget').innerHTML = levelCounter['info'];
@@ -326,21 +324,22 @@
 
 				// NOTE: Create Log Messages
 
-				window.renderedLogs = {};
+				window.renderedLogs = { found : {}, visible : {} };
 
-				async function renderLogs(pluginID, clear)
+				async function renderLogs(pluginID, clear, show)
 				{
 					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 					var loadMore = document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0];
 
-					if(renderedLogs[pluginID] == null)
-					{
-						renderedLogs[pluginID] = 0;
-					}
-
 					if(clear)
 					{
 						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
+					}
+
+					if(clear || show != null)
+					{
+						renderedLogs['found'][pluginID] = 0;
+						renderedLogs['visible'][pluginID] = 0;
 					}
 
 					if(loadMore != null)
@@ -350,92 +349,124 @@
 						await Essentials.newTimeout(200);
 					}
 
-					for(var i = 0; i < 20; i++)
+					var count = (show != null ? logs[plugins[pluginID].alias].length : 20);
+
+					for(var i = 0; i < count; i++)
 					{
-						if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null)
+						if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null)
 						{
-							var time = new Date(logs[plugins[pluginID].alias][renderedLogs[pluginID]].t * 1000);
-							var level = logs[plugins[pluginID].alias][renderedLogs[pluginID]].l;
-							var message = logs[plugins[pluginID].alias][renderedLogs[pluginID]].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
+							var time = new Date(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]].t * 1000);
+							var level = logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]].l;
+							var message = logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
 
-							var log = document.createElement('div');
+							var displayEntry = false;
 
-							log.className = 'log';
-							log.style.transition = '.3s opacity ease-in-out';
-							log.style.opacity = 0;
-
-							if(renderedLogs[pluginID] != logs[plugins[pluginID].alias].length - 1)
+							if(show != null)
 							{
-								log.style.marginBottom = '20px';
-							}
-
-							var logTitle = document.createElement('div');
-
-							logTitle.className = 'log-title';
-
-							if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
-							{
-								logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
-							}
-
-							var logTime = document.createElement('div');
-
-							logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
-							logTime.style.width = '140px';
-
-							logTitle.appendChild(logTime);
-							/*
-							var logLevel = document.createElement('div');
-
-							logLevel.innerHTML = level.toUpperCase();
-
-							logTitle.appendChild(logLevel);
-							*/
-							var logSender = document.createElement('div');
-
-							if(message.includes(' ( ') && message.includes(' )'))
-							{
-								logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+								if(show[0] != null && show[1] != null)
+								{
+									if(show[0].toUpperCase() == level && message.toUpperCase().includes(show[1].toUpperCase()))
+									{
+										displayEntry = true;
+									}
+								}
+								else if(show[0] != null && show[0].toUpperCase() == level)
+								{
+									displayEntry = true;
+								}
+								else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
+								{
+									displayEntry = true;
+								}
 							}
 							else
 							{
-								logSender.innerHTML = 'Bridge';
+								displayEntry = true;
 							}
 
-							logTitle.appendChild(logSender);
-
-							log.appendChild(logTitle);
-
-							var logMessage = document.createElement('div');
-
-							logMessage.className = 'log-message'
-							logMessage.innerHTML = message;
-
-							if(logSender.innerHTML != 'Bridge')
+							if(displayEntry)
 							{
-								logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+								var log = document.createElement('div');
+
+								log.className = 'log';
+								log.style.transition = '.3s opacity ease-in-out';
+								log.style.opacity = 0;
+
+								if(renderedLogs['visible'][pluginID] != logs[plugins[pluginID].alias].length - 1)
+								{
+									log.style.marginBottom = '20px';
+								}
+
+								var logTitle = document.createElement('div');
+
+								logTitle.className = 'log-title';
+
+								if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+								{
+									logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+								}
+
+								var logTime = document.createElement('div');
+
+								logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+								logTime.style.width = '140px';
+
+								logTitle.appendChild(logTime);
+								/*
+								var logLevel = document.createElement('div');
+
+								logLevel.innerHTML = level.toUpperCase();
+
+								logTitle.appendChild(logLevel);
+								*/
+								var logSender = document.createElement('div');
+
+								if(message.includes(' ( ') && message.includes(' )'))
+								{
+									logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+								}
+								else
+								{
+									logSender.innerHTML = 'Bridge';
+								}
+
+								logTitle.appendChild(logSender);
+
+								log.appendChild(logTitle);
+
+								var logMessage = document.createElement('div');
+
+								logMessage.className = 'log-message'
+								logMessage.innerHTML = message;
+
+								if(logSender.innerHTML != 'Bridge')
+								{
+									logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+								}
+
+								log.appendChild(logMessage);
+								
+								if(clear)
+								{
+									document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+								}
+								else
+								{
+									document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
+								}
+
+								setTimeout(function() {
+
+									this.log.style.opacity = 1;
+
+								}.bind({ log }), 20);
+
+								renderedLogs['found'][pluginID]++;
 							}
 
-							log.appendChild(logMessage);
-							
-							if(clear)
-							{
-								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
-							}
-							else
-							{
-								document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
-							}
-
-							setTimeout(function() {
-
-								this.log.style.opacity = 1;
-
-							}.bind({ log }), 20);
-
-							renderedLogs[pluginID]++;
+							renderedLogs['visible'][pluginID]++;
 						}
-						else if(loadMore != null)
+						else if(loadMore != null && show == null)
 						{
 							loadMore.parentElement.removeChild(loadMore);
 						}
@@ -446,7 +477,7 @@
 						loadMore.style.opacity = 1;
 					}
 
-					if(logs[plugins[pluginID].alias][renderedLogs[pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null)
+					if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null)
 					{
 						loadMore = document.createElement('div');
 
@@ -457,14 +488,65 @@
 
 						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(loadMore);
 					}
+
+					var counter = 0;
+
+					for(const id in renderedLogs['visible'])
+					{
+						counter += renderedLogs['visible'][id];
+					}
+
+					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
 				}
 
 			</script>
-			<scirpt>
+			<script>
 
+				async function searchLog()
+				{
+					var params = document.getElementById('search-params').value;
+					var level// = document.getElementById('search-level').value;
+					var search = null;
 
+					document.getElementById('search-btn').value = 'Suchen ..';
 
-			</scirpt>
+					await Essentials.newTimeout(500);
+
+					if(level != '' && params != '')
+					{
+						search = [level, params];
+					}
+					else if(params != '')
+					{
+						search = [null, params];
+					}
+					else if(level != '')
+					{
+						search = [level, null];
+					}
+
+					for(const id in plugins)
+					{
+						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
+						{
+							if(logs[plugins[id].alias] != null)
+							{
+								renderLogs(id, true, search);
+
+								var lastChars = (document.getElementById(id).innerHTML.slice(-2).match(/\n/g) || []).length;
+
+								if(lastChars > 0)
+								{
+									document.getElementById(id).innerHTML = document.getElementById(id).innerHTML.slice(0, -(document.getElementById(id).innerHTML.slice(-2).match(/\n/g) || []).length);
+								}
+							}
+						}
+					}
+
+					document.getElementById('search-btn').value = 'Suchen';
+				}
+
+			</script>
 			<script>
 				/*
 				async function clearSearch()
