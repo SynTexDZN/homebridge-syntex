@@ -125,7 +125,7 @@
 					var filter = document.createElement('div');
 
 					filter.className = 'custom-select';
-					filter.innerHTML = '<select onchange=""><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
+					filter.innerHTML = '<select onchange="searchLog()"><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
 					filter.style.width = '100%';
 					filter.style.marginRight = '20px';
 
@@ -357,7 +357,7 @@
 
 					for(var i = renderedLogs['visible'][pluginID]; i < logs[plugins[pluginID].alias].length; i++)
 					{
-						if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null)
+						if(logs[plugins[pluginID].alias][i] != null)
 						{
 							var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
 							var level = logs[plugins[pluginID].alias][i].l;
@@ -369,12 +369,12 @@
 							{
 								if(show[0] != null && show[1] != null)
 								{
-									if(show[0].toUpperCase() == level && message.toUpperCase().includes(show[1].toUpperCase()))
+									if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
 									{
 										displayEntry = true;
 									}
 								}
-								else if(show[0] != null && show[0].toUpperCase() == level)
+								else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
 								{
 									displayEntry = true;
 								}
@@ -403,7 +403,7 @@
 									log.style.transition = '.3s opacity ease-in-out';
 									log.style.opacity = 0;
 
-									if(renderedLogs['visible'][pluginID] != logs[plugins[pluginID].alias].length - 1)
+									if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID] + 1] != null) // FIXME: Is that correct?
 									{
 										log.style.marginBottom = '20px';
 									}
@@ -484,14 +484,12 @@
 						}
 					}
 
-					console.log('SET TO 0', renderedLogs['found'][pluginID], renderedLogs['visible'][pluginID]);
-
 					if(loadMore != null)
 					{
 						loadMore.style.opacity = 1;
 					}
 
-					if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null)
+					if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null) // FIXME: Is that correct?
 					{
 						loadMore = document.createElement('div');
 
@@ -507,15 +505,22 @@
 			</script>
 			<script>
 
+				// NOTE: Search Log Messages
+
 				async function searchLog()
 				{
 					var params = document.getElementById('search-params').value;
-					var level// = document.getElementById('search-level').value;
+					var level = document.getElementById('filter').getElementsByTagName('select')[0].children[document.getElementById('filter').getElementsByTagName('select')[0].selectedIndex].value;
 					var search = null;
 
 					document.getElementById('search-btn').value = 'Suchen ..';
 
 					await Essentials.newTimeout(500);
+
+					if(level == 'all')
+					{
+						level = '';
+					}
 
 					if(level != '' && params != '')
 					{
@@ -534,27 +539,13 @@
 
 					for(const id in plugins)
 					{
-						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
+						if(plugins[id].alias != null && logs[plugins[id].alias] != null)
 						{
-							if(logs[plugins[id].alias] != null)
+							promiseArray.push(renderLogs(id, true, search));
+
+							if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
 							{
-								promiseArray.push(renderLogs(id, true, search));
-
-								var lastChars = (document.getElementById(id).innerHTML.slice(-2).match(/\n/g) || []).length;
-
-								if(lastChars > 0)
-								{
-									document.getElementById(id).innerHTML = document.getElementById(id).innerHTML.slice(0, -(document.getElementById(id).innerHTML.slice(-2).match(/\n/g) || []).length);
-								}
-
-								console.log(id, document.getElementById(id));
-
-								if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
-								{
-									console.log(document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0]);
-
-									document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
-								}
+								document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
 							}
 						}
 					}
@@ -568,7 +559,14 @@
 							counter += renderedLogs['found'][id];
 						}
 
-						document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
+						if(counter == logCounter)
+						{
+							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+						}
+						else
+						{
+							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
+						}
 					});
 
 					document.getElementById('search-btn').value = 'Suchen';
@@ -576,143 +574,35 @@
 
 			</script>
 			<script>
-				/*
+
+				// NOTE: Reset Search Params
+
 				async function clearSearch()
 				{
 					document.getElementById('search-btn').value = 'Suchen ..';
 					document.getElementById('search-params').value = '';
-					document.getElementById('search-level').value = '';
+					document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
 
 					await Essentials.newTimeout(500);
 
-					for(var i = 0; i < Object.keys(logs).length; i++)
+					var promiseArray = [];
+
+					for(const id in plugins)
 					{
-						createLog(document.getElementById(Object.keys(logs)[i]), logs[Object.keys(logs)[i]], null);
+						if(plugins[id].alias != null && logs[plugins[id].alias] != null)
+						{
+							promiseArray.push(renderLogs(id, true));
+						}
 					}
 
-					document.getElementById('search-btn').value = 'Suchen';
+					Promise.all(promiseArray).then(() => {
+
+						document.getElementById('search-btn').value = 'Suchen';
+
+						document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+					});
 				}
 
-				async function searchLog()
-				{
-					var params = document.getElementById('search-params').value;
-					var level = document.getElementById('search-level').value;
-					var search = null;
-
-					counter = 0;
-					document.getElementById('search-btn').value = 'Suchen ..';
-
-					await Essentials.newTimeout(500);
-
-					if(level != '' && params != '')
-					{
-						search = [level, params];
-					}
-					else if(params != '')
-					{
-						search = [null, params];
-					}
-					else if(level != '')
-					{
-						search = [level, null];
-					}
-
-					for(var i = 0; i < Object.keys(logs).length; i++)
-					{
-						createLog(document.getElementById(Object.keys(logs)[i]), logs[Object.keys(logs)[i]], search);
-
-						var lastChars = (document.getElementById(Object.keys(logs)[i]).innerHTML.slice(-2).match(/\n/g) || []).length;
-
-						if(lastChars > 0)
-						{
-							document.getElementById(Object.keys(logs)[i]).innerHTML = document.getElementById(Object.keys(logs)[i]).innerHTML.slice(0, -(document.getElementById(Object.keys(logs)[i]).innerHTML.slice(-2).match(/\n/g) || []).length);
-						}
-					}
-
-					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
-					document.getElementById('search-btn').value = 'Suchen';
-				}
-
-				function createLog(element, log, show)
-				{
-					var filterLog = '';
-
-					try
-					{
-						log = JSON.parse(log);
-					}
-					catch(e)
-					{
-						log = [];
-
-						console.error(e);
-					}
-
-					for(var i = 0; i < log.length; i++)
-					{
-						var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
-						var level = log[i].l.toUpperCase();
-						var time = new Date(log[i].t * 1000);
-						var message = log[i].m;
-						var displayEntry = false;
-
-						if(show != null)
-						{
-							if(show[0] != null && show[1] != null)
-							{
-								if(show[0].toUpperCase() == level && message.toUpperCase().includes(show[1].toUpperCase()))
-								{
-									displayEntry = true;
-								}
-							}
-							else if(show[0] != null && show[0].toUpperCase() == level)
-							{
-								displayEntry = true;
-							}
-							else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
-							{
-								displayEntry = true;
-							}
-						}
-						else
-						{
-							displayEntry = true;
-						}
-
-						if(displayEntry)
-						{
-							var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-
-							filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2) + ' > [' + level + '] ';
-							/*
-							if(level == 'UPDATE')
-							{
-								filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
-							}
-							else if(level == 'READ')
-							{
-								filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
-							}
-							else
-							{*//*
-								if(message.includes('( ') && message.includes(' )'))
-								{
-									filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
-								}
-								else
-								{
-									filterLog += '\n' + message.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'");
-								}
-							//}
-							
-							counter++;
-						}
-					}
-
-					element.innerHTML = filterLog;
-					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
-				}
-				*/
 			</script>
 		</div>
 	</body>
