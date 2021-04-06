@@ -444,82 +444,91 @@
 
 				// NOTE: Search Log Messages
 
+				window.searching = false;
+
 				async function searchLog()
 				{
-					var params = document.getElementById('search-params').value;
-					var level = document.getElementById('filter').getElementsByTagName('select')[0].children[document.getElementById('filter').getElementsByTagName('select')[0].selectedIndex].value;
-					var search = null;
-
-					document.getElementById('search-btn').value = 'Suchen ..';
-
-					for(const id in plugins)
+					if(!searching)
 					{
-						if(document.getElementById(id) != null)
+						var params = document.getElementById('search-params').value;
+						var level = document.getElementById('filter').getElementsByTagName('select')[0].children[document.getElementById('filter').getElementsByTagName('select')[0].selectedIndex].value;
+						var search = null;
+
+						searching = true;
+
+						document.getElementById('search-btn').value = 'Suchen ..';
+
+						for(const id in plugins)
 						{
-							for(var i = 0; i < document.getElementById(id).children[1].children.length; i++)
+							if(document.getElementById(id) != null)
 							{
-								document.getElementById(id).children[1].children[i].style.opacity = 0;
+								for(var i = 0; i < document.getElementById(id).children[1].children.length; i++)
+								{
+									document.getElementById(id).children[1].children[i].style.opacity = 0;
+								}
 							}
 						}
-					}
 
-					await Essentials.newTimeout(500);
+						await Essentials.newTimeout(500);
 
-					if(level == 'all')
-					{
-						level = '';
-					}
-
-					if(level != '' && params != '')
-					{
-						search = [level, params];
-					}
-					else if(params != '')
-					{
-						search = [null, params];
-					}
-					else if(level != '')
-					{
-						search = [level, null];
-					}
-
-					var promiseArray = [];
-
-					for(const id in plugins)
-					{
-						if(plugins[id].alias != null && logs[plugins[id].alias] != null)
+						if(level == 'all')
 						{
-							promiseArray.push(renderLogs(id, true, search));
+							level = '';
+						}
 
-							if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
+						if(level != '' && params != '')
+						{
+							search = [level, params];
+						}
+						else if(params != '')
+						{
+							search = [null, params];
+						}
+						else if(level != '')
+						{
+							search = [level, null];
+						}
+
+						var promiseArray = [];
+
+						for(const id in plugins)
+						{
+							if(plugins[id].alias != null && logs[plugins[id].alias] != null)
 							{
-								document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
+								promiseArray.push(renderLogs(id, true, search));
+
+								if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
+								{
+									document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
+								}
 							}
 						}
+
+						Promise.all(promiseArray).then(() => {
+
+							var counter = 0;
+
+							for(const id in renderedLogs['found'])
+							{
+								counter += renderedLogs['found'][id];
+							}
+
+							if(counter == logCounter)
+							{
+								document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+							}
+							else
+							{
+								document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
+							
+								clear = false;
+							}
+
+							document.getElementById('search-btn').value = 'Suchen';
+
+							searching = false;
+						});
 					}
-
-					Promise.all(promiseArray).then(() => {
-
-						var counter = 0;
-
-						for(const id in renderedLogs['found'])
-						{
-							counter += renderedLogs['found'][id];
-						}
-
-						if(counter == logCounter)
-						{
-							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
-						}
-						else
-						{
-							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
-						
-							clear = false;
-						}
-					});
-
-					document.getElementById('search-btn').value = 'Suchen';
 				}
 
 			</script>
