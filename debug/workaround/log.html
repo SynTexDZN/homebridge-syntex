@@ -1,6 +1,6 @@
 <html>
 	<body ontouchstart="">
-		<div id="content" style="padding-bottom: 50px">
+		<div id="content">
 			<title>Dashboard: Log</title>
 			<script type="module">
 
@@ -9,6 +9,7 @@
 				window.PageManager = PageManager;
 
 				PageManager.setHeader('Dashboard', 'Log');
+				PageManager.hideFooter();
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
@@ -48,9 +49,11 @@
 						<button class="widget-right gradient-green" id="success-widget">-</button>
 					</div>
 				</div>
-				<div class="widget" style="display: none">
-					<button class="widget-left">Debug</button>
-					<button class="widget-right gradient-purple" id="debug-widget">-</button>
+				<div style="opacity: 0; max-height: 0; transition: .2s opacity ease-in-out, .2s max-height ease-in-out">
+					<div class="widget">
+						<button class="widget-left">Debug</button>
+						<button class="widget-right gradient-purple" id="debug-widget">-</button>
+					</div>
 				</div>
 			</div>
 			<form onsubmit="event.preventDefault()" class="main" style="margin-bottom: 32px">
@@ -237,8 +240,12 @@
 
 								if(levelCounter['debug'] > 0)
 								{
-									document.getElementById('debug-widget').parentElement.style.display = '';
 									document.getElementById('debug-widget').innerHTML = levelCounter['debug'];
+
+									document.getElementById('debug-widget').parentElement.parentElement.style.maxHeight = document.getElementById('debug-widget').parentElement.scrollHeight;
+									document.getElementById('debug-widget').parentElement.parentElement.style.opacity = 1;
+
+									setTimeout(() => document.getElementById('debug-widget').parentElement.parentElement.style.maxHeight = '', 200);
 								}
 							}
 							catch(e)
@@ -445,6 +452,17 @@
 
 					document.getElementById('search-btn').value = 'Suchen ..';
 
+					for(const id in plugins)
+					{
+						if(document.getElementById(id) != null)
+						{
+							for(var i = 0; i < document.getElementById(id).children[1].children.length; i++)
+							{
+								document.getElementById(id).children[1].children[i].style.opacity = 0;
+							}
+						}
+					}
+
 					await Essentials.newTimeout(500);
 
 					if(level == 'all')
@@ -515,22 +533,9 @@
 
 					await Essentials.newTimeout(500);
 
-					var promiseArray = [];
+					document.getElementById('search-btn').value = 'Suchen';
 
-					for(const id in plugins)
-					{
-						if(plugins[id].alias != null && logs[plugins[id].alias] != null)
-						{
-							promiseArray.push(renderLogs(id, true));
-						}
-					}
-
-					Promise.all(promiseArray).then(() => {
-
-						document.getElementById('search-btn').value = 'Suchen';
-
-						document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
-					});
+					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
 				}
 
 			</script>
