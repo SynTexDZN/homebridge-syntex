@@ -704,7 +704,7 @@ module.exports = class DeviceManager
 
 				resolve(accessoryArray);
 
-			}).catch((e) => logger.err(e), resolve(null));
+			}).catch((e) => { logger.err(e); resolve(null) });
 		});
 	}
 }

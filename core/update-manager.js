@@ -46,7 +46,7 @@ module.exports = class UpdateManager
 
 						resolve(true);
 
-					}).catch((e) => console.error(e), resolve(false)));
+					}).catch((e) => { console.error(e); resolve(false) }));
 
 					promiseArray.push(newPromise);
 				}
@@ -74,7 +74,7 @@ module.exports = class UpdateManager
 
 				resolve(true);
 
-			}).catch((e) => console.error(e), resolve(false));
+			}).catch((e) => { console.error(e); resolve(false) });
 		});
 	}
 
