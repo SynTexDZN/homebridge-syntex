@@ -1,6 +1,6 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
-const fs = require('fs'), store = require('json-fs-store'), request = require('request');
+const fs = require('fs'), store = require('json-fs-store'), axios = require('axios');
 
 var restart = true, updating = false;
 
@@ -76,13 +76,7 @@ class SynTexPlatform
 
 			if(stdout)
 			{
-				var theRequest = {
-					method : 'GET',
-					url : 'http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version,
-					timeout : 10000
-				};
-
-				request(theRequest, () => {});
+				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version);
 			}
 		});
 	}

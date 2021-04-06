@@ -1,4 +1,5 @@
-const request = require('request');
+const axios = require('axios');
+
 var temp = [], offline = [];
 
 module.exports = class OfflineManager
@@ -18,38 +19,27 @@ module.exports = class OfflineManager
 
 function checkConnection(ip)
 {
-	var theRequest = {
-		method : 'GET',
-		url : 'http://' + ip + '/',
-		timeout : 25000
-	};
+	axios.get('http://' + ip + '/', { timeout : 25000 }).then(() => {
 
-	request(theRequest, (err, response, body) => {
-		
-		var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-		if(err || statusCode != 200)
+		if(temp.includes(ip))
 		{
-			if(!temp.includes(ip))
-			{
-				temp.push(ip);
-			}
-			else if(!offline.includes(ip))
-			{
-				offline.push(ip);
-			}
+			temp.splice(temp.indexOf(ip), 1);
 		}
-		else
+		
+		if(offline.includes(ip))
 		{
-			if(temp.includes(ip))
-			{
-				temp.splice(temp.indexOf(ip), 1);
-			}
-			
-			if(offline.includes(ip))
-			{
-				offline.splice(offline.indexOf(ip), 1);
-			}
+			offline.splice(offline.indexOf(ip), 1);
+		}		
+
+	}).catch(() => {
+
+		if(!temp.includes(ip))
+		{
+			temp.push(ip);
+		}
+		else if(!offline.includes(ip))
+		{
+			offline.push(ip);
 		}
 	});
 }

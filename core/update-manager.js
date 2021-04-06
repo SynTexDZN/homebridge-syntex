@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 
 module.exports = class UpdateManager
 {
@@ -40,27 +40,13 @@ module.exports = class UpdateManager
 
 				for(const i in plugins)
 				{
-					var theRequest = {
-						method : 'GET',
-						url : 'http://registry.npmjs.org/-/package/' + plugins[i] + '/dist-tags',
-						timeout : timeout
-					};
+					const newPromise = new Promise((resolve) => axios.get('http://registry.npmjs.org/-/package/' + plugins[i] + '/dist-tags', { timeout }).then((response) => {
 
-					const newPromise = new Promise((resolve) => request(theRequest, (error, response, body) => {
+						this.newestPluginVersions[i] = response.data;
 
-						try
-						{
-							this.newestPluginVersions[i] = JSON.parse(body);
+						resolve(true);
 
-							resolve(true);
-						}
-						catch(e)
-						{
-							console.error(e);
-
-							resolve(false);
-						}
-					}));
+					}).catch((e) => console.error(e), resolve(false)));
 
 					promiseArray.push(newPromise);
 				}
@@ -74,35 +60,21 @@ module.exports = class UpdateManager
 	{
 		return new Promise((resolve) => {
 
-			var theRequest = {
-				method : 'GET',
-				url : 'http://syntex.sytes.net/smarthome/check-version.php',
-				timeout : timeout
-			};
+			axios.get('http://syntex.sytes.net/smarthome/check-version.php', { timeout }).then((response) => {
 
-			request(theRequest, (error, response, body) => {
+				var updates = response.data;
 
-				try
+				for(const update in updates)
 				{
-					var updates = JSON.parse(body);
-
-					for(const update in updates)
+					if(!updates[update].type.startsWith('SynTex'))
 					{
-						if(!updates[update].type.startsWith('SynTex'))
-						{
-							this.newestDeviceVersions[updates[update].type] = updates[update].version;
-						}
+						this.newestDeviceVersions[updates[update].type] = updates[update].version;
 					}
-
-					resolve(true);
 				}
-				catch(e)
-				{
-					console.error(e);
 
-					resolve(false);
-				}
-			});
+				resolve(true);
+
+			}).catch((e) => console.error(e), resolve(false));
 		});
 	}
 

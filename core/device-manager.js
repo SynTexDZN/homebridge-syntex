@@ -1,4 +1,4 @@
-const store = require('json-fs-store'), request = require('request');
+const store = require('json-fs-store'), axios = require('axios');
 
 var config, logger, accessories;
 var configOBJ = null;
@@ -630,104 +630,81 @@ module.exports = class DeviceManager
 				'45' : 'lock'*/
 			};
 
-			var theRequest = {
-				method : 'GET',
-				url : 'http://localhost:' + (this.getBridgePort() || '51826') + '/accessories',
-				timeout : 10000
-			};
+			axios.get('http://localhost:' + (this.getBridgePort() || '51826') + '/accessories').then((response) => {
 
-			request(theRequest, (err, response, body) => {
+				var accessoryArray = [];
+				var accessoryJSON = response.data.accessories;
 
-				var statusCode = response && response.statusCode ? response.statusCode : -1;
-
-				if(!err && statusCode == 200)
+				for(const i in accessoryJSON)
 				{
-					try
+					accessoryArray[i] = { services : [] };
+
+					for(const j in accessoryJSON[i].services)
 					{
-						var accessoryArray = [];
-						var accessoryJSON = JSON.parse(body).accessories;
-
-						for(const i in accessoryJSON)
+						if(accessoryJSON[i].services[j].type == '3E')
 						{
-							accessoryArray[i] = { services : [] };
-
-							for(const j in accessoryJSON[i].services)
+							for(const k in accessoryJSON[i].services[j].characteristics)
 							{
-								if(accessoryJSON[i].services[j].type == '3E')
+								if(accessoryJSON[i].services[j].characteristics[k].type == '30')
 								{
-									for(const k in accessoryJSON[i].services[j].characteristics)
-									{
-										if(accessoryJSON[i].services[j].characteristics[k].type == '30')
-										{
-											accessoryArray[i].id = accessoryJSON[i].services[j].characteristics[k].value;
-										}
-
-										if(accessoryJSON[i].services[j].characteristics[k].type == '23')
-										{
-											accessoryArray[i].name = accessoryJSON[i].services[j].characteristics[k].value;
-										}
-
-										if(accessoryJSON[i].services[j].characteristics[k].type == '52')
-										{
-											accessoryArray[i].version = accessoryJSON[i].services[j].characteristics[k].value;
-										}
-
-										if(accessoryJSON[i].services[j].characteristics[k].type == '20')
-										{
-											accessoryArray[i].plugin = accessoryJSON[i].services[j].characteristics[k].value;
-										}
-									}
+									accessoryArray[i].id = accessoryJSON[i].services[j].characteristics[k].value;
 								}
-								else
+
+								if(accessoryJSON[i].services[j].characteristics[k].type == '23')
 								{
-									if(characteristics[accessoryJSON[i].services[j].type] != null)
-									{
-										if(characteristics[accessoryJSON[i].services[j].type] == 'led')
-										{
-											var type = 'led';
+									accessoryArray[i].name = accessoryJSON[i].services[j].characteristics[k].value;
+								}
 
-											for(const k in accessoryJSON[i].services[j].characteristics)
-											{
-												if(accessoryJSON[i].services[j].characteristics[k].type == '13' || accessoryJSON[i].services[j].characteristics[k].type == '2F')
-												{
-													type = 'rgb';
-												}
+								if(accessoryJSON[i].services[j].characteristics[k].type == '52')
+								{
+									accessoryArray[i].version = accessoryJSON[i].services[j].characteristics[k].value;
+								}
 
-												if(accessoryJSON[i].services[j].characteristics[k].type == '8' && type != 'rgb')
-												{
-													type = 'dimmer';
-												}
-											}
-
-											accessoryArray[i].services.push(type);
-										}
-										else
-										{
-											accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
-										}
-									}
-									else
-									{
-										accessoryArray[i].services.push('unsupported');
-									}
+								if(accessoryJSON[i].services[j].characteristics[k].type == '20')
+								{
+									accessoryArray[i].plugin = accessoryJSON[i].services[j].characteristics[k].value;
 								}
 							}
 						}
+						else
+						{
+							if(characteristics[accessoryJSON[i].services[j].type] != null)
+							{
+								if(characteristics[accessoryJSON[i].services[j].type] == 'led')
+								{
+									var type = 'led';
 
-						resolve(accessoryArray); 
-					}
-					catch(e)
-					{
-						console.error(e);
+									for(const k in accessoryJSON[i].services[j].characteristics)
+									{
+										if(accessoryJSON[i].services[j].characteristics[k].type == '13' || accessoryJSON[i].services[j].characteristics[k].type == '2F')
+										{
+											type = 'rgb';
+										}
 
-						resolve(null);
+										if(accessoryJSON[i].services[j].characteristics[k].type == '8' && type != 'rgb')
+										{
+											type = 'dimmer';
+										}
+									}
+
+									accessoryArray[i].services.push(type);
+								}
+								else
+								{
+									accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
+								}
+							}
+							else
+							{
+								accessoryArray[i].services.push('unsupported');
+							}
+						}
 					}
 				}
-				else
-				{
-					resolve(null);
-				}
-			});
+
+				resolve(accessoryArray);
+
+			}).catch((e) => logger.err(e), resolve(null));
 		});
 	}
 }

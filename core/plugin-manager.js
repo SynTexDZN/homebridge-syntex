@@ -1,6 +1,6 @@
 let AliasManager = require('./alias-manager');
 
-const fs = require('fs'), request = require('request'), path = require('path');
+const fs = require('fs'), axios = require('axios'), path = require('path');
 
 module.exports = class PluginManager
 {
@@ -185,33 +185,19 @@ module.exports = class PluginManager
     {
         return new Promise((resolve) => {
 
-            var theRequest = {
-                method : 'GET',
-                url : 'http://registry.npmjs.org/-/package/' + pluginID + '/dist-tags',
-                timeout : timeout
-            };
+            axios.get('http://registry.npmjs.org/-/package/' + pluginID + '/dist-tags', { timeout }).then((response) => {
 
-            request(theRequest, (error, response, body) => {
-
-                try
+                if(response.data instanceof Object)
                 {
-                    body = JSON.parse(body);
-
-                    if(body instanceof Object)
+                    for(const tag in response.data)
                     {
-                        for(const tag in body)
-                        {
-                            this.plugins[pluginID].versions[tag] = body[tag];
-                        }
+                        this.plugins[pluginID].versions[tag] = response.data[tag];
                     }
-                }
-                catch(e)
-                {
-                    this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %json_parse_error%! ( ' + body + ') ' + e);
                 }
 
                 resolve();
-            });
+
+            }).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%! ' + e), resolve());
         });
     }
 
