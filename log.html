@@ -26,210 +26,449 @@
 				<div id="widgets" style="margin-bottom: 20px; display: grid; grid-template-columns: calc(33% - 13px) calc(34% - 14px) calc(33% - 13px); grid-gap: 20px">
 					<div class="widget">
 						<button class="widget-left">Fehler</button>
-						<button class="widget-right gradient-red">-</button>
+						<button class="widget-right gradient-red" id="error-widget">-</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">Warnung</button>
-						<button class="widget-right gradient-orange">-</button>
+						<button class="widget-right gradient-orange" id="warn-widget">-</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">Info</button>
-						<button class="widget-right gradient-yellow">-</button>
+						<button class="widget-right gradient-yellow" id="info-widget">-</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">Lesen</button>
-						<button class="widget-right gradient-blue">-</button>
+						<button class="widget-right gradient-blue" id="read-widget">-</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">Update</button>
-						<button class="widget-right gradient-cyan">-</button>
+						<button class="widget-right gradient-cyan" id="update-widget">-</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">Erfolg</button>
-						<button class="widget-right gradient-green">-</button>
+						<button class="widget-right gradient-green" id="success-widget">-</button>
 					</div>
 				</div>
-				<div class="widget" id="debug-widget" style="display: none">
-					<button class="widget-left">Debug</button>
-					<button class="widget-right gradient-purple">-</button>
+				<div style="opacity: 0; max-height: 0; transition: .2s opacity ease-in-out, .2s max-height ease-in-out">
+					<div class="widget">
+						<button class="widget-left">Debug</button>
+						<button class="widget-right gradient-purple" id="debug-widget">-</button>
+					</div>
 				</div>
 			</div>
-			<form onsubmit="event.preventDefault(); searchLog();" class="main" style="margin-bottom: 32px">
-				<input type="submit" value="Absenden" style="display: none">
+			<form onsubmit="event.preventDefault()" class="main" style="margin-bottom: 32px">
 				<div style="margin-bottom: 20px; display: flex">
-					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
-					<input id="search-btn" class="gradient-blue loading-loop" type="button" value="Suchen" onclick="searchLog()" style="max-width: 200px">
+					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px" required>
+					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="if(document.getElementById('search-params').value != '') searchLog()" style="max-width: 200px">
 				</div>
-				<div style="display: flex">
-					<input id="search-level" type="text" placeholder="Such-Level ( 'Info', 'Error', .. )" style="margin-right: 20px">
+				<div style="display: flex" id="filter">
 					<input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
 				</div>
 			</form>
 			<p id="log-counter" class="loading-loop" style="margin-bottom: 100px"><b>Gefundene Elemente: </b>Laden ..</p>
 			<div id="log-container" class="main"></div>
-			<script type="module" defer>
+			<script type="module">
+
+				// NOTE: Init
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
+				import { Replacer } from '/js/replace-select.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
 
 				window.Query = Query;
 				window.Essentials = Essentials;
+				window.Replacer = Replacer;
 
-				window.logJSON = {};
-				window.counter = 0;
-				window.levelCounter = [0, 0, 0, 0, 0, 0, 0];
-				window.countLogs = true;
-				window.plugins = [];
-
-				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then(function(P) {
-
-					try
-					{
-						plugins = JSON.parse(P);
-					}
-					catch(e)
-					{
-						plugins = [];
-
-						console.error(e);
-					}
+				loadPluginData().then(() => {
 					
-					var counter = 0;
-
-					for(const id in plugins)
-					{
-						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
-						{
-							var logTitle = document.createElement('h2');
-							var logWindow = document.createElement('textarea');
-
-							logTitle.setAttribute('style', 'width: fit-content');
-							logTitle.innerHTML = '• ' + (plugins[id].alias != 'SynTex' ? plugins[id].alias.replace('SynTex', 'SynTex ') : 'SynTex') + ' Log •';
-
-							if(plugins[id].alias == 'SynTex')
-							{
-								logTitle.innerHTML = '• Bridge Log •';
-							}
-							else if(plugins[id].alias == 'SynTexWebHooks')
-							{
-								logTitle.innerHTML = '• WebHooks Log •';
-							}
-							else if(plugins[id].alias == 'SynTexTuya')
-							{
-								logTitle.innerHTML = '• Tuya Log •';
-							}
-							else if(plugins[id].alias == 'SynTexMagicHome')
-							{
-								logTitle.innerHTML = '• MagicHome Log •';
-							}
-
-							logWindow.setAttribute('readonly', '');
-							logWindow.setAttribute('id', plugins[id].alias);
-							logWindow.style.height = '700px'; 
-							logWindow.style.maxHeight = '700px'; 
-
-							if(counter < plugins.length - 1)
-							{
-								logWindow.style.marginBottom = '40px';    
-							}
-
-							document.getElementById('log-container').appendChild(logTitle);
-							document.getElementById('log-container').appendChild(logWindow);
-						
-							counter++;
-						}
-					}
-
-					fetchLogs();
+					renderGUI();
+					Preloader.finish();
+					loadLogs();
 				});
 
 			</script>
 			<script>
 
-				function fetchLogs(id)
+				// NOTE: Load Plugin Data
+
+				window.plugins = {};
+
+				function loadPluginData()
 				{
-					Query.complexFetch('/serverside/log' + (id != null ? '?id=' + id : ''), 10000, 2, {}, false).then(function(l) {
+					return new Promise((resolve) => {
 
-						try
-						{
-							logJSON = JSON.parse(l);
-						}
-						catch(e)
-						{
-							logJSON = [];
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
 
-							console.error(e);
-						}
-						
-						for(const id in plugins)
-						{
-							if(plugins[id].config != null && plugins[id].config.logDirectory != null)
+							try
 							{
-								if(logJSON[plugins[id].alias] == null || logJSON[plugins[id].alias].length == 0)
-								{
-									var label = document.createElement('h2');
+								plugins = JSON.parse(p);
 
-									label.innerHTML = '↻ Neu Laden';
-									label.setAttribute('style', 'margin-top: -180px; position: relative; background: rgb(245, 245, 255); border-color: rgb(245, 245, 255); color: rgb(20, 20, 30); cursor: pointer');
-									label.setAttribute('onclick', 'fetchLogs("' + plugins[id].alias + '")');
-
-									document.getElementById(plugins[id].alias).appendChild(label);
-								}
-								else
-								{
-									createLog(document.getElementById(plugins[id].alias), logJSON[plugins[id].alias], null);
-								}
+								resolve(true);
 							}
-						}
+							catch(e)
+							{
+								console.error(e);
 
-						countLogs = false;
-
-						document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[5];
-						document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[4];
-						document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[3];
-						document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[2];
-						document.getElementById('widgets').children[4].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[1];
-						document.getElementById('widgets').children[5].getElementsByClassName('widget-right')[0].innerHTML = levelCounter[0];
-
-						if(levelCounter[6] > 0)
-						{
-							document.getElementById('debug-widget').style.display = '';
-							document.getElementById('debug-widget').getElementsByClassName('widget-right')[0].innerHTML = levelCounter[6];
-						}
-
-						Preloader.finish();
+								resolve(false);
+							}
+						});
 					});
 				}
 
-				async function clearSearch()
+			</script>
+			<script>
+
+				// NOTE: Render GUI Elements
+
+				function renderGUI()
 				{
-					document.getElementById('search-btn').value = 'Suchen ..';
-					document.getElementById('search-params').value = '';
-					document.getElementById('search-level').value = '';
+					var filter = document.createElement('div');
 
-					await Essentials.newTimeout(500);
+					filter.className = 'custom-select';
+					filter.innerHTML = '<select onchange="searchLog()"><option value="all">Alle Level</option><option value="debug">Debug</option><option value="success">Erfolg</option><option value="update">Update</option><option value="read">Lesen</option><option value="info">Info</option><option value="warn">Warnung</option><option value="error">Fehler</option></select>';
+					filter.style.width = '100%';
+					filter.style.marginRight = '20px';
 
-					for(var i = 0; i < Object.keys(logJSON).length; i++)
+					document.getElementById('filter').insertBefore(Replacer.createSelectMenu(filter), document.getElementById('filter').children[0]);
+
+					for(const id in plugins)
 					{
-						createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], null);
+						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
+						{
+							var logContainer = document.createElement('div');
+
+							logContainer.setAttribute('id', id);
+
+							var logTitle = document.createElement('h2');
+
+							logTitle.innerHTML = '• ' + plugins[id].name.replace('SynTex', '') + ' Log •';
+
+							if(plugins[id].name == 'SynTex')
+							{
+								logTitle.innerHTML = '• Bridge Log •';
+							}
+
+							var logWindow = document.createElement('div');
+
+							logWindow.innerHTML = 'Laden ..';
+							logWindow.className = 'scrollarea loading-loop';
+							logWindow.style.height = '700px';
+							logWindow.style.maxHeight = '700px';
+
+							logContainer.appendChild(logTitle);
+							logContainer.appendChild(logWindow);
+
+							document.getElementById('log-container').appendChild(logContainer);
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				// NOTE: Load Logs
+
+				window.logs = {};
+				window.logCounter = 0;
+				window.levelCounter = {
+					success : 0,
+					update : 0,
+					read : 0,
+					info : 0,
+					warn : 0,
+					error : 0,
+					debug : 0
+				};
+
+				function loadLogs(pluginID)
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/log', 10000, 2, {}, false).then(function(l) {
+
+							try
+							{
+								logs = JSON.parse(l);
+
+								for(const id in plugins)
+								{
+									if(plugins[id].config != null && plugins[id].config.logDirectory != null && (pluginID == null || pluginID == plugins[id].alias))
+									{
+										if(logs[plugins[id].alias] != null)
+										{
+											logs[plugins[id].alias] = JSON.parse(logs[plugins[id].alias]);
+
+											logCounter += logs[plugins[id].alias].length;
+
+											for(const i in logs[plugins[id].alias])
+											{
+												if(logs[plugins[id].alias][i].l != null)
+												{
+													levelCounter[logs[plugins[id].alias][i].l.toLowerCase()]++;
+												}
+											}
+
+											renderLogs(id, true);
+										}
+										else if(document.getElementById(id).getElementsByClassName('reload-button')[0] == null)
+										{
+											var reloadButton = document.createElement('h2');
+
+											reloadButton.innerHTML = '↻ Neu Laden';
+											reloadButton.className = 'reload-button';
+											reloadButton.setAttribute('style', 'margin-top: -58px; bottom: 321px; height: 58px; font-size: 28px');
+											reloadButton.setAttribute('onclick', 'loadLogs("' + plugins[id].alias + '")');
+
+											document.getElementById(id).appendChild(reloadButton);
+
+											setTimeout(() => document.getElementById(id).getElementsByClassName('reload-button')[0].style.opacity = 1, 0);
+										}
+									}
+								}
+
+								document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+
+								document.getElementById('error-widget').innerHTML = levelCounter['error'];
+								document.getElementById('warn-widget').innerHTML = levelCounter['warn'];
+								document.getElementById('info-widget').innerHTML = levelCounter['info'];
+								document.getElementById('read-widget').innerHTML = levelCounter['read'];
+								document.getElementById('update-widget').innerHTML = levelCounter['update'];
+								document.getElementById('success-widget').innerHTML = levelCounter['success'];
+
+								if(levelCounter['debug'] > 0)
+								{
+									document.getElementById('debug-widget').innerHTML = levelCounter['debug'];
+
+									document.getElementById('debug-widget').parentElement.parentElement.style.maxHeight = document.getElementById('debug-widget').parentElement.scrollHeight;
+									document.getElementById('debug-widget').parentElement.parentElement.style.opacity = 1;
+
+									setTimeout(() => document.getElementById('debug-widget').parentElement.parentElement.style.maxHeight = '', 200);
+								}
+							}
+							catch(e)
+							{
+								console.error(e);
+							}
+
+							resolve();
+						});
+					});
+				}
+
+			</script>
+			<script>
+
+				// NOTE: Create Log Messages
+
+				window.renderedLogs = { found : {}, visible : {} };
+
+				async function renderLogs(pluginID, clear, show)
+				{
+					var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+
+					if(clear)
+					{
+						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
 					}
 
-					document.getElementById('search-btn').value = 'Suchen';
+					var loadMore = document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0];
+
+					renderedLogs['found'][pluginID] = 0;
+
+					if(clear)
+					{
+						renderedLogs['visible'][pluginID] = 0;
+					}
+
+					if(loadMore != null)
+					{
+						loadMore.style.opacity = 0;
+
+						await Essentials.newTimeout(200);
+					}
+
+					var count = 0;
+
+					for(var i = renderedLogs['visible'][pluginID]; i < logs[plugins[pluginID].alias].length; i++)
+					{
+						if(logs[plugins[pluginID].alias][i] != null)
+						{
+							var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
+							var level = logs[plugins[pluginID].alias][i].l;
+							var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
+
+							var displayEntry = false;
+
+							if(show != null)
+							{
+								if(show[0] != null && show[1] != null)
+								{
+									if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+									{
+										displayEntry = true;
+									}
+								}
+								else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+								{
+									displayEntry = true;
+								}
+								else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
+								{
+									displayEntry = true;
+								}
+							}
+							else
+							{
+								displayEntry = true;
+							}
+
+							if(displayEntry)
+							{
+								renderedLogs['found'][pluginID]++;
+							}
+
+							if(count < 20)
+							{
+								if(displayEntry)
+								{
+									var log = document.createElement('div');
+
+									log.className = 'log';
+									log.style.transition = '.3s opacity ease-in-out';
+									log.style.opacity = 0;
+
+									if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID] + 1] != null) // FIXME: Is that correct?
+									{
+										log.style.marginBottom = '20px';
+									}
+
+									var logTitle = document.createElement('div');
+
+									logTitle.className = 'log-title';
+
+									if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+									{
+										logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+									}
+
+									var logTime = document.createElement('div');
+
+									logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+									logTime.style.width = '140px';
+
+									logTitle.appendChild(logTime);
+									/*
+									var logLevel = document.createElement('div');
+
+									logLevel.innerHTML = level.toUpperCase();
+
+									logTitle.appendChild(logLevel);
+									*/
+									var logSender = document.createElement('div');
+
+									if(message.includes(' ( ') && message.includes(' )'))
+									{
+										logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+									}
+									else
+									{
+										logSender.innerHTML = 'Bridge';
+									}
+
+									logTitle.appendChild(logSender);
+
+									log.appendChild(logTitle);
+
+									var logMessage = document.createElement('div');
+
+									logMessage.className = 'log-message'
+									logMessage.innerHTML = message;
+
+									if(logSender.innerHTML != 'Bridge')
+									{
+										logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+									}
+
+									log.appendChild(logMessage);
+									
+									if(clear)
+									{
+										document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+									}
+									else
+									{
+										document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
+									}
+
+									setTimeout(function() {
+
+										this.log.style.opacity = 1;
+
+									}.bind({ log }), 20);
+
+									count++;
+								}
+
+								renderedLogs['visible'][pluginID]++;
+							}
+						}
+						else if(loadMore != null && show == null)
+						{
+							loadMore.parentElement.removeChild(loadMore);
+						}
+					}
+
+					if(loadMore != null)
+					{
+						loadMore.style.opacity = 1;
+					}
+
+					if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null) // FIXME: Is that correct?
+					{
+						loadMore = document.createElement('div');
+
+						loadMore.innerHTML = '<button class="white" style="margin: 0 auto; min-width: 200px; width: 30%!important; padding: 5px 30px" onclick="renderLogs(' + "'" + pluginID + "'" + ')">Mehr Laden</button>';
+						loadMore.style.display = 'flex';
+						loadMore.style.transition = '.2s opacity ease-in-out';
+						loadMore.className = 'load-more-btn';
+
+						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(loadMore);
+					}
 				}
+
+			</script>
+			<script>
+
+				// NOTE: Search Log Messages
 
 				async function searchLog()
 				{
 					var params = document.getElementById('search-params').value;
-					var level = document.getElementById('search-level').value;
+					var level = document.getElementById('filter').getElementsByTagName('select')[0].children[document.getElementById('filter').getElementsByTagName('select')[0].selectedIndex].value;
 					var search = null;
 
-					counter = 0;
 					document.getElementById('search-btn').value = 'Suchen ..';
 
+					for(const id in plugins)
+					{
+						if(document.getElementById(id) != null)
+						{
+							for(var i = 0; i < document.getElementById(id).children[1].children.length; i++)
+							{
+								document.getElementById(id).children[1].children[i].style.opacity = 0;
+							}
+						}
+					}
+
 					await Essentials.newTimeout(500);
+
+					if(level == 'all')
+					{
+						level = '';
+					}
 
 					if(level != '' && params != '')
 					{
@@ -244,110 +483,68 @@
 						search = [level, null];
 					}
 
-					for(var i = 0; i < Object.keys(logJSON).length; i++)
+					var promiseArray = [];
+
+					for(const id in plugins)
 					{
-						createLog(document.getElementById(Object.keys(logJSON)[i]), logJSON[Object.keys(logJSON)[i]], search);
-
-						var lastChars = (document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length;
-
-						if(lastChars > 0)
+						if(plugins[id].alias != null && logs[plugins[id].alias] != null)
 						{
-							document.getElementById(Object.keys(logJSON)[i]).innerHTML = document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(0, -(document.getElementById(Object.keys(logJSON)[i]).innerHTML.slice(-2).match(/\n/g) || []).length);
+							promiseArray.push(renderLogs(id, true, search));
+
+							if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
+							{
+								document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
+							}
 						}
 					}
 
-					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
-					document.getElementById('search-btn').value = 'Suchen';
-				}
+					Promise.all(promiseArray).then(() => {
 
-				function createLog(element, log, show)
-				{
-					var filterLog = '';
+						var counter = 0;
 
-					try
-					{
-						log = JSON.parse(log);
-					}
-					catch(e)
-					{
-						log = [];
-
-						console.error(e);
-					}
-
-					for(var i = 0; i < log.length; i++)
-					{
-						var levels = ['success', 'update', 'read', 'info', 'warn', 'error', 'debug'];
-						var level = log[i].l.toUpperCase();
-						var time = new Date(log[i].t * 1000);
-						var message = log[i].m;
-						var displayEntry = false;
-
-						if(show != null)
+						for(const id in renderedLogs['found'])
 						{
-							if(show[0] != null && show[1] != null)
-							{
-								if(show[0].toUpperCase() == level && message.toUpperCase().includes(show[1].toUpperCase()))
-								{
-									displayEntry = true;
-								}
-							}
-							else if(show[0] != null && show[0].toUpperCase() == level)
-							{
-								displayEntry = true;
-							}
-							else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
-							{
-								displayEntry = true;
-							}
+							counter += renderedLogs['found'][id];
+						}
+
+						if(counter == logCounter)
+						{
+							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
 						}
 						else
 						{
-							displayEntry = true;
+							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
+						
+							clear = false;
 						}
+					});
 
-						if(displayEntry)
-						{
-							var weekDays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+					document.getElementById('search-btn').value = 'Suchen';
+				}
 
-							filterLog += weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2) + ' > [' + level + '] ';
-							/*
-							if(level == 'UPDATE')
-							{
-								filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' geändert zu '" + message.split('$')[2] + "'";
-							}
-							else if(level == 'READ')
-							{
-								filterLog += ' > ' + message.split('$')[0] + "\n'" + message.split('$')[1] + "' Status ist '" + message.split('$')[2] + "'";
-							}
-							else
-							{*/
-								if(message.includes('( ') && message.includes(' )'))
-								{
-									filterLog += ' > ' + message.split('( ')[1].split(' )')[0] + '\n' + message.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('(' + message.split('(')[1].split(')')[0] + ')', '');
-								}
-								else
-								{
-									filterLog += '\n' + message.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'");
-								}
-							//}
-							
-							if(i != log.length - 1)
-							{
-								filterLog += '\n\n';
-							}
+			</script>
+			<script>
 
-							counter++;
-						}
+				// NOTE: Reset Search Params
 
-						if(countLogs)
-						{
-							levelCounter[levels.indexOf(level.toLowerCase())]++;
-						}
+				window.clear = true;
+
+				async function clearSearch()
+				{
+					if(!clear)
+					{
+						document.getElementById('search-btn').value = 'Suchen ..';
+						document.getElementById('search-params').value = '';
+						document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
+
+						await Essentials.newTimeout(500);
+
+						document.getElementById('search-btn').value = 'Suchen';
+
+						document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+
+						clear = true;
 					}
-
-					element.innerHTML = filterLog;
-					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter;
 				}
 
 			</script>
