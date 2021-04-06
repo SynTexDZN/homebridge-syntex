@@ -362,7 +362,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/time', (response) => {
 
-			response.write('' + (new Date().getTime() / 1000 + 3601));
+			response.write('' + (new Date().getTime() / 1000 + 7201));
 			response.end();
 		});
 
