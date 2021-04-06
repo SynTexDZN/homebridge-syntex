@@ -58,8 +58,8 @@
 			</div>
 			<form onsubmit="event.preventDefault()" class="main" style="margin-bottom: 32px">
 				<div style="margin-bottom: 20px; display: flex">
-					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px">
-					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="searchLog()" style="max-width: 200px">
+					<input id="search-params" type="text" placeholder="Such-Parameter" style="margin-right: 20px" required>
+					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="Suchen" onclick="if(document.getElementById('search-params').value != '') searchLog()" style="max-width: 200px">
 				</div>
 				<div style="display: flex" id="filter">
 					<input type="button" value="Ohne Filter" onclick="clearSearch()" style="max-width: 200px">
@@ -514,6 +514,8 @@
 						else
 						{
 							document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + counter + ' / ' + logCounter;
+						
+							clear = false;
 						}
 					});
 
@@ -525,17 +527,24 @@
 
 				// NOTE: Reset Search Params
 
+				window.clear = true;
+
 				async function clearSearch()
 				{
-					document.getElementById('search-btn').value = 'Suchen ..';
-					document.getElementById('search-params').value = '';
-					document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
+					if(!clear)
+					{
+						document.getElementById('search-btn').value = 'Suchen ..';
+						document.getElementById('search-params').value = '';
+						document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
 
-					await Essentials.newTimeout(500);
+						await Essentials.newTimeout(500);
 
-					document.getElementById('search-btn').value = 'Suchen';
+						document.getElementById('search-btn').value = 'Suchen';
 
-					document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+						document.getElementById('log-counter').innerHTML = '<b>Gefundene Elemente: </b>' + logCounter;
+
+						clear = true;
+					}
 				}
 
 			</script>
