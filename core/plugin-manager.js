@@ -197,7 +197,7 @@ module.exports = class PluginManager
 
                 resolve();
 
-            }).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%! ' + e), resolve());
+            }).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%! ' + e); resolve() });
         });
     }
 
