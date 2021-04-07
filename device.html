@@ -1589,8 +1589,12 @@
 							{
 								if(!busy.includes('status-' + type + '-' + j))
 								{
-									var state = null;
-									var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
+									var state = null, url = null;
+
+									if(device.plugin.startsWith('SynTex'))
+									{
+										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
+									}
 
 									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 									{
@@ -1608,7 +1612,10 @@
 
 									console.log(services, device.services, j, url);
 									*/
-									state = await Query.fetchURL(url, 10000);
+									if(url != null)
+									{
+										state = await Query.fetchURL(url, 10000);
+									}
 
 									if(state != null && state != 'Error')
 									{
@@ -1619,8 +1626,6 @@
 									{
 										state = state[Essentials.typeToLetter(type) + j];
 									}
-
-									console.log(state.state, temp[type + j]);
 
 									if(temp[type + j] != null && (state.state != temp[type + j].state || state.hue != temp[type + j].hue || state.saturation != temp[type + j].saturation || state.brightness != temp[type + j].brightness))
 									{
