@@ -79,6 +79,23 @@ class SynTexPlatform
 				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version);
 			}
 		});
+		/*
+		const setCharacteristic = async (aid, iid, value) => {
+		
+			await axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }})
+				.then((response) => console.log(response))
+				.catch((error) => console.log(error));
+		};
+
+		const getCharacteristic = async (aid, iid) => {
+
+			await axios.get('http://localhost:51826/characteristics?id=' + aid + '.' + iid)
+				.then((response) => console.log(response.data))
+				.catch((error) => console.log(error));
+		};
+		
+		setTimeout(() => setCharacteristic(316, 10, true).then(() => getCharacteristic(316, 10)), 10000);
+		*/
 	}
 
 	initWebServer()
@@ -298,33 +315,7 @@ class SynTexPlatform
 
 					if(logs != null)
 					{
-						var logList = [];
-
-						for(const j in logs)
-						{
-							if(urlParams.id == null || urlParams.id == j)
-							{
-								for(const k in logs[j])
-								{
-									for(const l in logs[j][k])
-									{
-										logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
-									}
-								}
-							}
-						}
-
-						logList.sort((a, b) => {
-
-							var keyA = new Date(a.t), keyB = new Date(b.t);
-							
-							if (keyA < keyB) return 1;
-							if (keyA > keyB) return -1;
-							
-							return 0;
-						});
-
-						obj[file] = JSON.stringify(logList);
+						obj[file] = JSON.stringify(logs);
 					}
 				}
 
