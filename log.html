@@ -371,7 +371,7 @@
 
 									if(message.includes(' ( ') && message.includes(' )'))
 									{
-										logSender.innerHTML = message.split(' ( ')[1].split(' )')[0];
+										logSender.innerHTML = message.split(' ( ')[(message.match(/ \( /g) || []).length].split(' )')[0]; //
 									}
 									else
 									{
