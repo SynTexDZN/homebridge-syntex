@@ -317,29 +317,21 @@ class SynTexPlatform
 					{
 						var logList = [];
 
-						for(const j in logs)
+						for(const plugin in logs)
 						{
 							if(urlParams.id == null || urlParams.id == j)
 							{
-								for(const k in logs[j])
+								for(const k in logs[plugin])
 								{
-									for(const l in logs[j][k])
+									for(const l in logs[plugin][k])
 									{
-										logList[logList.length] = { t : logs[j][k][l].t, l : logs[j][k][l].l, m : logs[j][k][l].m.replace(/\s\'/g, ' [').replace(/\'\s/g, '] ').replace(/\'/g, '').replace(/\"/g, '') };
+										logList[logList.length] = { t : logs[plugin][k][l].t, l : logs[plugin][k][l].l, m : logs[plugin][k][l].m };
 									}
 								}
 							}
 						}
 
-						logList.sort((a, b) => {
-
-							var keyA = new Date(a.t), keyB = new Date(b.t);
-							
-							if (keyA < keyB) return 1;
-							if (keyA > keyB) return -1;
-							
-							return 0;
-						});
+						logList.sort((a, b) => { return a.t < b.t ? 1 : a.t > b.t ? -1 : 0 });
 
 						obj[file] = JSON.stringify(logList);
 					}
