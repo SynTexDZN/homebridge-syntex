@@ -273,7 +273,7 @@ class SynTexPlatform
 				{
 					for(const i in activity)
 					{
-						if(logs[plugins[pluginID].alias][i].split('[').length > 6)
+						if(activity[i].split('[').length > 6)
 						{
 							try
 							{
