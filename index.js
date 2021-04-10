@@ -271,26 +271,35 @@ class SynTexPlatform
 
 				if(activity != null)
 				{
-					var a = {};
-
-					for(const plugin in activity)
+					for(const i in activity)
 					{
-						for(const i in activity[plugin])
+						if(logs[plugins[pluginID].alias][i].split('[').length > 6)
 						{
-							a[i] = { update : [], success : [] };
-
-							for(const j in activity[plugin][i])
+							try
 							{
-								if(activity[plugin][i][j].l == 'Update' || activity[plugin][i][j].l == 'Success')
-								{
-									var value = activity[plugin][i][j].m.split('[')[2].split(']')[0];
+								var time = activity[i].split('[')[1].split(']')[0];
+								var letters = activity[i].split('[')[3].split(']')[0];
+								var level = activity[i].split('[')[4].split(']')[0];
+								var value = activity[i].split('[')[6].split(']')[0];
 
-									a[i][activity[plugin][i][j].l.toLowerCase()].push({ t : activity[plugin][i][j].t, v : value, s : activity[plugin][i][j].s });
+								if(time != null && letters != null && level != null && value != null)
+								{
+									if(result[letters] == null)
+									{
+										result[letters] = { update : [], success : [] };
+									}
+
+									if(level == 'Update' || level == 'Success')
+									{
+										result[letters][level.toLowerCase()].push({ t : time, v : value });
+									}
 								}
 							}
+							catch(e)
+							{
+								console.error(e);
+							}
 						}
-
-						result = a;
 					}
 				}
 			}
@@ -315,25 +324,7 @@ class SynTexPlatform
 
 					if(logs != null)
 					{
-						var logList = [];
-
-						for(const plugin in logs)
-						{
-							if(urlParams.id == null || urlParams.id == j)
-							{
-								for(const k in logs[plugin])
-								{
-									for(const l in logs[plugin][k])
-									{
-										logList[logList.length] = { t : logs[plugin][k][l].t, l : logs[plugin][k][l].l, m : logs[plugin][k][l].m };
-									}
-								}
-							}
-						}
-
-						logList.sort((a, b) => { return a.t < b.t ? 1 : a.t > b.t ? -1 : 0 });
-
-						obj[file] = JSON.stringify(logList);
+						obj[file] = JSON.stringify(logs);
 					}
 				}
 

@@ -205,9 +205,14 @@
 
 											for(const i in logs[plugins[id].alias])
 											{
-												if(logs[plugins[id].alias][i].l != null)
+												if(logs[plugins[id].alias][i].split('[').length > 4)
 												{
-													levelCounter[logs[plugins[id].alias][i].l.toLowerCase()]++;
+													var level = logs[plugins[id].alias][i].split('[')[4].split(']')[0];
+
+													if(level != null && levelCounter[level.toLowerCase()] != null)
+													{
+														levelCounter[level.toLowerCase()]++;
+													}
 												}
 											}
 
@@ -296,123 +301,136 @@
 					{
 						if(logs[plugins[pluginID].alias][i] != null)
 						{
-							var time = new Date(logs[plugins[pluginID].alias][i].t * 1000);
-							var level = logs[plugins[pluginID].alias][i].l;
-							var message = logs[plugins[pluginID].alias][i].m.replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
-
-							var displayEntry = false;
-
-							if(show != null)
+							if(logs[plugins[pluginID].alias][i].split('[').length > 4)
 							{
-								if(show[0] != null && show[1] != null)
+								try
 								{
-									if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+									var time = new Date(parseInt(logs[plugins[pluginID].alias][i].split('[')[1].split(']')[0]) * 1000);
+									var level = logs[plugins[pluginID].alias][i].split('[')[4].split(']')[0];
+									var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('HomeKit Status von', '');
+								
+									if(time != null && level != null && message != null)
 									{
-										displayEntry = true;
+										var displayEntry = false;
+
+										if(show != null)
+										{
+											if(show[0] != null && show[1] != null)
+											{
+												if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+												{
+													displayEntry = true;
+												}
+											}
+											else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+											{
+												displayEntry = true;
+											}
+											else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
+											{
+												displayEntry = true;
+											}
+										}
+										else
+										{
+											displayEntry = true;
+										}
+
+										if(displayEntry)
+										{
+											renderedLogs['found'][pluginID]++;
+										}
+
+										if(count < 20)
+										{
+											if(displayEntry)
+											{
+												var log = document.createElement('div');
+
+												log.className = 'log';
+												log.style.transition = '.3s opacity ease-in-out';
+												log.style.opacity = 0;
+
+												if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID] + 1] != null) // FIXME: Is that correct?
+												{
+													log.style.marginBottom = '20px';
+												}
+
+												var logTitle = document.createElement('div');
+
+												logTitle.className = 'log-title';
+
+												if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+												{
+													logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+												}
+
+												var logTime = document.createElement('div');
+
+												logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+												logTime.style.width = '140px';
+
+												logTitle.appendChild(logTime);
+												/*
+												var logLevel = document.createElement('div');
+
+												logLevel.innerHTML = level.toUpperCase();
+
+												logTitle.appendChild(logLevel);
+												*/
+												var logSender = document.createElement('div');
+
+												if(message.includes(' ( ') && message.includes(' )'))
+												{
+													logSender.innerHTML = message.split(' ( ')[(message.match(/ \( /g) || []).length].split(' )')[0]; //
+												}
+												else
+												{
+													logSender.innerHTML = 'Bridge';
+												}
+
+												logTitle.appendChild(logSender);
+
+												log.appendChild(logTitle);
+
+												var logMessage = document.createElement('div');
+
+												logMessage.className = 'log-message'
+												logMessage.innerHTML = message;
+
+												if(logSender.innerHTML != 'Bridge')
+												{
+													logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+												}
+
+												log.appendChild(logMessage);
+												
+												if(clear)
+												{
+													document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+												}
+												else
+												{
+													document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
+												}
+
+												setTimeout(function() {
+
+													this.log.style.opacity = 1;
+
+												}.bind({ log }), 20);
+
+												count++;
+											}
+
+											renderedLogs['visible'][pluginID]++;
+										}
 									}
 								}
-								else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+								catch(e)
 								{
-									displayEntry = true;
+									console.error(e);
 								}
-								else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
-								{
-									displayEntry = true;
-								}
-							}
-							else
-							{
-								displayEntry = true;
-							}
-
-							if(displayEntry)
-							{
-								renderedLogs['found'][pluginID]++;
-							}
-
-							if(count < 20)
-							{
-								if(displayEntry)
-								{
-									var log = document.createElement('div');
-
-									log.className = 'log';
-									log.style.transition = '.3s opacity ease-in-out';
-									log.style.opacity = 0;
-
-									if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID] + 1] != null) // FIXME: Is that correct?
-									{
-										log.style.marginBottom = '20px';
-									}
-
-									var logTitle = document.createElement('div');
-
-									logTitle.className = 'log-title';
-
-									if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
-									{
-										logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
-									}
-
-									var logTime = document.createElement('div');
-
-									logTime.innerHTML = weekDays[time.getDay()] + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
-									logTime.style.width = '140px';
-
-									logTitle.appendChild(logTime);
-									/*
-									var logLevel = document.createElement('div');
-
-									logLevel.innerHTML = level.toUpperCase();
-
-									logTitle.appendChild(logLevel);
-									*/
-									var logSender = document.createElement('div');
-
-									if(message.includes(' ( ') && message.includes(' )'))
-									{
-										logSender.innerHTML = message.split(' ( ')[(message.match(/ \( /g) || []).length].split(' )')[0]; //
-									}
-									else
-									{
-										logSender.innerHTML = 'Bridge';
-									}
-
-									logTitle.appendChild(logSender);
-
-									log.appendChild(logTitle);
-
-									var logMessage = document.createElement('div');
-
-									logMessage.className = 'log-message'
-									logMessage.innerHTML = message;
-
-									if(logSender.innerHTML != 'Bridge')
-									{
-										logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
-									}
-
-									log.appendChild(logMessage);
-									
-									if(clear)
-									{
-										document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
-									}
-									else
-									{
-										document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
-									}
-
-									setTimeout(function() {
-
-										this.log.style.opacity = 1;
-
-									}.bind({ log }), 20);
-
-									count++;
-								}
-
-								renderedLogs['visible'][pluginID]++;
 							}
 						}
 						else if(loadMore != null && show == null)
