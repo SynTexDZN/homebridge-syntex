@@ -210,7 +210,7 @@
 
 						button.innerHTML = buttonHTML;
 
-						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
+						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex')) // OPTIMIZE: Remove when device page is finished
 						{
 							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
 						}
