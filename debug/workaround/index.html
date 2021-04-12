@@ -57,7 +57,7 @@
 					<div id="devices" style="transition: .2s ease-in-out"></div>
 				</div>
 			</div>
-			<div class="bottom" style="margin: 0 auto; width: 100%; max-width: 400px">
+			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 				<input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
 				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="Gerät Erstellen" onclick="Essentials.leavePage('/create')">
 				<input style="margin-bottom: 20px; display: none" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
@@ -210,7 +210,7 @@
 
 						button.innerHTML = buttonHTML;
 
-						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
+						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex')) // OPTIMIZE: Remove when device page is finished
 						{
 							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
 						}
