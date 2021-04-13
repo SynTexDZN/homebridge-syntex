@@ -128,9 +128,21 @@
 					}
 				});
 
+				const isBridge = (services) => {
+
+					if(Array.isArray(services) && services[0] != null && services[0] instanceof Object && services[0].type == 'bridge')
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				};
+
 				for(const i in devices)
 				{
-					if(Array.isArray(devices[i].services) && devices[i].services[0] != null && devices[i].services[0].type != 'bridge')
+					if(!isBridge(devices[i].services))
 					{
 						if(devices[i].ip != undefined && devices[i].active != undefined)
 						{
@@ -210,7 +222,7 @@
 
 						button.innerHTML = buttonHTML;
 
-						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex')) // OPTIMIZE: Remove when device page is finished
+						if(devices[i].id != null)
 						{
 							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
 						}
