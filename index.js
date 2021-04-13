@@ -79,23 +79,6 @@ class SynTexPlatform
 				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version);
 			}
 		});
-		/*
-		const setCharacteristic = async (aid, iid, value) => {
-		
-			await axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }})
-				.then((response) => console.log(response))
-				.catch((error) => console.log(error));
-		};
-
-		const getCharacteristic = async (aid, iid) => {
-
-			await axios.get('http://localhost:51826/characteristics?id=' + aid + '.' + iid)
-				.then((response) => console.log(response.data))
-				.catch((error) => console.log(error));
-		};
-		
-		setTimeout(() => setCharacteristic(316, 10, true).then(() => getCharacteristic(316, 10)), 10000);
-		*/
 	}
 
 	initWebServer()
@@ -673,6 +656,71 @@ class SynTexPlatform
 
 					response.end();
 				});
+			}
+		});
+
+		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
+
+			const setCharacteristic = async (aid, iid, value) => {
+			
+				return new Promise((resolve) => {
+
+					axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }})
+						.then((res) => resolve(res.data))
+						.catch((error) => resolve(null, error));
+				});
+			};
+
+			const getCharacteristic = async (aid, iid) => {
+
+				return new Promise((resolve) => {
+
+					axios.get('http://localhost:51826/characteristics?id=' + aid + '.' + iid)
+						.then((res) => resolve(res.data))
+						.catch((error) => resolve(null, error));
+				});
+			};
+			
+			if(urlParams.aid != null && urlParams.iid != null)
+			{
+				if(urlParams.value != null)
+				{
+					try
+					{
+						var value = JSON.parse(urlParams.value);
+
+						setCharacteristic(parseInt(urlParams.aid), parseInt(urlParams.iid), value).then((res, err) => {
+
+							if(err)
+							{
+								console.error(err);
+							}
+	
+							response.write(res != '' ? 'Error' : 'Success');
+							response.end();
+						});
+					}
+					catch(e)
+					{
+						console.error(e);
+
+						response.write('Error');
+						response.end();
+					}
+				}
+				else
+				{
+					getCharacteristic(urlParams.aid, urlParams.iid).then((res, err) => {
+
+						if(err)
+						{
+							console.error(err);
+						}
+
+						response.write(res.characteristics != null && res.characteristics[0] != null && res.characteristics[0].value != null ? JSON.stringify(res.characteristics[0].value) : 'Error');
+						response.end();
+					});
+				}
 			}
 		});
 	}
