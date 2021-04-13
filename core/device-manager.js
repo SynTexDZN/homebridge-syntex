@@ -687,19 +687,19 @@ module.exports = class DeviceManager
 										}
 									}
 
-									accessoryArray[i].services.push(type);
-									//accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type });
+									//accessoryArray[i].services.push(type);
+									accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type });
 								}
 								else
 								{
-									accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
-									//accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : characteristics[accessoryJSON[i].services[j].type] });
+									//accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
+									accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : characteristics[accessoryJSON[i].services[j].type] });
 								}
 							}
 							else
 							{
-								accessoryArray[i].services.push('unsupported');
-								//accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : 'unsupported' });
+								//accessoryArray[i].services.push('unsupported');
+								accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : 'unsupported' });
 							}
 						}
 					}
