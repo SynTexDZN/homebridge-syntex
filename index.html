@@ -130,7 +130,7 @@
 
 				for(const i in devices)
 				{
-					if(!Array.isArray(devices[i].services) || !devices[i].services.includes('bridge'))
+					if(Array.isArray(devices[i].services) && devices[i].services[0] != null && devices[i].services[0].type != 'bridge')
 					{
 						if(devices[i].ip != undefined && devices[i].active != undefined)
 						{
