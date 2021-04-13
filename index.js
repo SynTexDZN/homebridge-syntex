@@ -661,42 +661,24 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
 
-			const setCharacteristic = async (aid, iid, value) => {
-			
-				return new Promise((resolve) => {
-
-					axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }})
-						.then((res) => resolve(res.data))
-						.catch((error) => resolve(null, error));
-				});
-			};
-
-			const getCharacteristic = async (aid, iid) => {
-
-				return new Promise((resolve) => {
-
-					axios.get('http://localhost:51826/characteristics?id=' + aid + '.' + iid)
-						.then((res) => resolve(res.data))
-						.catch((error) => resolve(null, error));
-				});
-			};
-			
 			if(urlParams.aid != null && urlParams.iid != null)
 			{
 				if(urlParams.value != null)
 				{
 					try
 					{
-						var value = JSON.parse(urlParams.value);
+						var aid = parseInt(urlParams.aid), iid = parseInt(urlParams.iid), value = JSON.parse(urlParams.value);
 
-						setCharacteristic(parseInt(urlParams.aid), parseInt(urlParams.iid), value).then((res, err) => {
+						axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
 
-							if(err)
-							{
-								console.error(err);
-							}
-	
-							response.write(res != '' ? 'Error' : 'Success');
+							response.write(res.data != '' ? 'Error' : 'Success');
+							response.end();
+
+						}).catch((e) => {
+
+							console.error(e);
+
+							response.write('Error');
 							response.end();
 						});
 					}
@@ -710,17 +692,24 @@ class SynTexPlatform
 				}
 				else
 				{
-					getCharacteristic(urlParams.aid, urlParams.iid).then((res, err) => {
+					axios.get('http://localhost:51826/characteristics?id=' + urlParams.aid + '.' + urlParams.iid).then((res) => {
 
-						if(err)
-						{
-							console.error(err);
-						}
+						response.write(res.data != null && res.data.characteristics != null && res.data.characteristics[0] != null && res.data.characteristics[0].value != null ? JSON.stringify(res.data.characteristics[0].value) : 'Error');
+						response.end();
 
-						response.write(res.characteristics != null && res.characteristics[0] != null && res.characteristics[0].value != null ? JSON.stringify(res.characteristics[0].value) : 'Error');
+					}).catch((e) => {
+
+						console.error(e);
+
+						response.write('Error');
 						response.end();
 					});
 				}
+			}
+			else
+			{
+				response.write('Error');
+				response.end();
 			}
 		});
 	}
