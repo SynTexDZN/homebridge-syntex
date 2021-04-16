@@ -34,7 +34,7 @@
 		background: rgba(245, 245, 255, .8);
 	}
 
-	.control-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
+	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		color: var(--dark-layer-one);
 	}
@@ -85,6 +85,7 @@
 	.control-panel
 	{
 		background-image: linear-gradient(to top, var(--light-layer-one) 0%, rgb(25, 25, 35) 100%);
+		color: var(--light-layer-one)!important;
 	}
 
 	.setup-png
@@ -292,5 +293,12 @@
 	input[type='text']::placeholder, input[type='password']::placeholder
 	{
 		color: rgb(110, 110, 130);
+	}
+
+	.reload-button
+	{
+		background: var(--dark-layer-two);
+		color: var(--light-layer-one);
+		border-color: rgb(20, 20, 30)!important;
 	}
 }
