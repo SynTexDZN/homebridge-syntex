@@ -588,6 +588,23 @@
 								infoUpdate.innerHTML = 'Aktivität';
 
 								frame.appendChild(infoUpdate);
+
+								if(!device.plugin.startsWith('SynTex'))
+								{
+									var notSupportedButton = document.createElement('h2');
+
+									notSupportedButton.innerHTML = 'Keine Daten';
+									notSupportedButton.className = 'reload-button';
+									notSupportedButton.setAttribute('style', 'margin-top: -480px');
+
+									canvas.parentElement.appendChild(notSupportedButton);
+
+									setTimeout(function()
+									{
+										this.notSupportedButton.style.opacity = 1;
+
+									}.bind({ notSupportedButton }), 0);
+								}
 							}
 						}
 					}
@@ -596,8 +613,6 @@
 						c--;
 					}
 				}
-
-				console.log(c);
 
 				if(c > 3)
 				{
@@ -626,6 +641,8 @@
 					}
 					else
 					{
+						fetchState();
+						
 						setInterval(() => {
 
 							if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
@@ -633,7 +650,7 @@
 								fetchState();
 							}
 
-						}, 300);
+						}, device.plugin.startsWith('SynTex') ? 300 : 3000);
 					}
 				});
 
@@ -1015,14 +1032,28 @@
 
 				function repaintGraphs()
 				{
-					for(const i in typeCounter)
+					if(device.plugin.startsWith('SynTex'))
 					{
-						if(i != 'lcd' && i != 'removed' && i != 'unsupported' && (i != 'statelessswitch' || services.length == 1))
+						for(const i in typeCounter)
 						{
-							for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
+							if(i != 'lcd' && i != 'removed' && i != 'unsupported' && (i != 'statelessswitch' || services.length == 1))
 							{
-								calcValues(values, i instanceof Object ? i.type : i, j);
+								for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
+								{
+									calcValues(values, i instanceof Object ? i.type : i, j);
+								}
 							}
+						}
+					}
+					else
+					{
+						for(var i = 0; i < document.getElementsByClassName('canvas').length; i++)
+						{
+							document.getElementsByClassName('canvas')[i].width = document.getElementById('infos').offsetWidth - 4;
+
+							drawGrid(document.getElementsByClassName('canvas')[i], [], 10);
+
+							console.log(document.getElementsByClassName('canvas')[i]);
 						}
 					}
 				}
@@ -1577,6 +1608,28 @@
 					repaintGraphs();
 				}
 
+				function getService(type, counter)
+				{
+					var c = 0;
+
+					for(const i in device['services'])
+					{
+						if(device['services'][i].type == type)
+						{
+							if(c == counter)
+							{
+								return device['services'][i];
+							}
+							else
+							{
+								c++;
+							}
+						}
+					}
+
+					return null;
+				}
+
 				async function fetchState()
 				{
 					for(var i = 0; i < Object.keys(typeCounter).length; i++)
@@ -1595,6 +1648,10 @@
 									{
 										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
 									}
+									else if(getService(type, j) != null && getService(type, j).iid != null && getService(type, j).format != null)
+									{
+										url = '/serverside/characteristics?aid=' + device['aid'] + '&iid=' + getService(type, j).iid + '&format=' + getService(type, j).format;
+									}
 
 									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 									{
@@ -1604,14 +1661,7 @@
 									{
 										url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 									}
-									/*
-									if(!device.plugin.startsWith('SynTex'))
-									{
-										url = 'http://localhost:51826/characteristics?id=' + device.aid + '.' + device.services[j].iid;
-									}
 
-									console.log(services, device.services, j, url);
-									*/
 									if(url != null)
 									{
 										state = await Query.fetchURL(url, 10000);
@@ -1648,7 +1698,10 @@
 
 										orginal[type + j].push(obj);
 
-										calcValues(orginal, type, j);
+										if(device.plugin.startsWith('SynTex'))
+										{
+											calcValues(orginal, type, j);
+										}
 									}
 
 									if(state != null && state != 'Error' && state.state != null)
@@ -1783,7 +1836,7 @@
 												}
 											}
 
-											if(n.length > 0)
+											if(n.length > 0 && n[j] != null)
 											{
 												name = n[j];
 											}
@@ -1815,11 +1868,11 @@
 									}
 									else/* if(document.getElementById('status-' + type + '-' + j).value != 'AN' && document.getElementById('status-' + type + '-' + j).value != 'AUS')*/
 									{
-										document.getElementById('status-' + type + '-' + j).value = 'KEINE DATEN!';
+										document.getElementById('status-' + type + '-' + j).value = '---';
 										document.getElementById('status-' + type + '-' + j).style.backgroundColor = '';
 									}
 
-									//console.log('STATE', type, state);
+									console.log('STATE', type, state);
 								}
 							}
 						}
