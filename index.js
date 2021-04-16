@@ -694,7 +694,37 @@ class SynTexPlatform
 				{
 					axios.get('http://localhost:51826/characteristics?id=' + urlParams.aid + '.' + urlParams.iid).then((res) => {
 
-						response.write(res.data != null && res.data.characteristics != null && res.data.characteristics[0] != null && res.data.characteristics[0].value != null ? JSON.stringify(res.data.characteristics[0].value) : 'Error');
+						if(res.data != null
+						&& res.data.characteristics != null
+						&& res.data.characteristics[0] != null
+						&& res.data.characteristics[0].value != null
+						&& urlParams.format != null)
+						{
+							var states = {};
+							
+							if(urlParams.format == 'bool' || urlParams.format == 'boolean')
+							{
+								if(res.data.characteristics[0].value == 1)
+								{
+									states.state = true;
+								}
+								else if(res.data.characteristics[0].value == 0)
+								{
+									states.state = false;
+								}
+							}
+							else
+							{
+								states.state = res.data.characteristics[0].value;
+							}
+
+							response.write(JSON.stringify(states));
+						}
+						else
+						{
+							response.write('Error');
+						}
+
 						response.end();
 
 					}).catch((e) => {
