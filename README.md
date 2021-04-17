@@ -68,9 +68,8 @@ It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichom
 - Rain Sensor
 - Motion Sensor
 - Contact Sensor
-- Occupancy Sensor
 - Relais
 - Switch
 - Stateless Switch
 - LED Controller
-- Special Devices *( Doorbell, Multi-Device )*
+- Special Devices *( Doorbell, Multi-Device, .. )*
