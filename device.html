@@ -161,7 +161,7 @@
 					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
 					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
 					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : 'Luftqualität', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
+					airquality: { text : 'Luftqualität', color : 'hsl(0, 85%, 60%)', colorRange : [200, -40], valueRange : [0, 5] }
 				};
 
 				loadServices();
@@ -1648,9 +1648,9 @@
 									{
 										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
 									}
-									else if(getService(type, j) != null && getService(type, j).iid != null && getService(type, j).format != null)
+									else if(getService(type, j) != null && getService(type, j).iid != null && getService(type, j).format[0] != null)
 									{
-										url = '/serverside/characteristics?aid=' + device['aid'] + '&iid=' + getService(type, j).iid + '&format=' + getService(type, j).format;
+										url = '/serverside/characteristics?aid=' + device['aid'] + '&iid=' + JSON.stringify(getService(type, j).iid) + '&format=' + JSON.stringify(getService(type, j).format);
 									}
 
 									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
@@ -1815,6 +1815,21 @@
 												else
 												{
 													color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+												}
+											}
+											else if(type == 'airquality')
+											{
+												var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
+
+												if(state.state > 4)
+												{
+													color = data[type].color;
+												}
+												else
+												{
+													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
 												}
 											}
 											else

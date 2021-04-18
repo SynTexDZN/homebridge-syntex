@@ -667,7 +667,7 @@ class SynTexPlatform
 				{
 					try
 					{
-						var aid = parseInt(urlParams.aid), iid = parseInt(urlParams.iid), value = JSON.parse(urlParams.value);
+						var aid = parseInt(urlParams.aid), iid = JSON.parse(urlParams.iid)[0], value = JSON.parse(urlParams.value);
 
 						axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
 
@@ -692,7 +692,7 @@ class SynTexPlatform
 				}
 				else
 				{
-					axios.get('http://localhost:51826/characteristics?id=' + urlParams.aid + '.' + urlParams.iid).then((res) => {
+					axios.get('http://localhost:51826/characteristics?id=' + urlParams.aid + '.' + JSON.parse(urlParams.iid)[0]).then((res) => {
 
 						if(res.data != null
 						&& res.data.characteristics != null
@@ -702,7 +702,7 @@ class SynTexPlatform
 						{
 							var states = {};
 							
-							if(urlParams.format == 'bool' || urlParams.format == 'boolean')
+							if(JSON.parse(urlParams.format)[0] == 'bool' || JSON.parse(urlParams.format)[0] == 'boolean')
 							{
 								if(res.data.characteristics[0].value == 1)
 								{
