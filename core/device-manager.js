@@ -612,22 +612,30 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			var characteristics = {
-				'A2' : 'bridge',
-				'43' : 'led',
-				'47' : 'outlet',
-				'49' : 'switch',
-				'80' : 'contact',
-				'82' : 'humidity',
-				'83' : 'rain',
-				'84' : 'light',
-				'85' : 'motion',
-				'86' : 'occupancy',
-				'89' : 'statelessswitch',
-				'8A' : 'temperature'/*,
-				'8D' : 'airquality',
-				'7E' : 'security',
-				'41' : 'garagedoor',
-				'45' : 'lock'*/
+				'A2' : { name : 'bridge', type : [] },
+				'43' : { name : 'led', type : ['25', '13', '2F', '8'] },
+				'47' : { name : 'outlet', type : ['25'] },
+				'49' : { name : 'switch', type : ['25'] },
+				'80' : { name : 'contact', type : ['6A'] },
+				'82' : { name : 'humidity', type : ['10'] },
+				'83' : { name : 'rain', type : ['70'] },
+				'84' : { name : 'light', type : ['6B'] },
+				'85' : { name : 'motion', type : ['22'] },
+				'86' : { name : 'occupancy', type : ['71'] },
+				'89' : { name : 'statelessswitch', type : ['73'] },
+				'8A' : { name : 'temperature', type : ['11'] },
+				'8D' : { name : 'airquality', type: ['95'] },
+				'87' : { name : 'smoke', type: ['76'] }/*,
+				'7E' : { name : 'security', type: [''] },
+				'41' : { name : 'garagedoor', type: [''] },
+				'45' : { name : 'lock', type: [''] }*/
+			};
+
+			var accessoryCharacteristics = {
+				'30' : 'id',
+				'23' : 'name',
+				'52' : 'version',
+				'20' : 'plugin'
 			};
 
 			axios.get('http://localhost:' + (this.getBridgePort() || '51826') + '/accessories').then((response) => {
@@ -641,65 +649,65 @@ module.exports = class DeviceManager
 
 					for(const j in accessoryJSON[i].services)
 					{
-						if(accessoryJSON[i].services[j].type == '3E')
+						var type, service = { iid : [], format : [] };
+
+						if(characteristics[accessoryJSON[i].services[j].type] != null)
 						{
-							for(const k in accessoryJSON[i].services[j].characteristics)
-							{
-								if(accessoryJSON[i].services[j].characteristics[k].type == '30')
-								{
-									accessoryArray[i].id = accessoryJSON[i].services[j].characteristics[k].value;
-								}
-
-								if(accessoryJSON[i].services[j].characteristics[k].type == '23')
-								{
-									accessoryArray[i].name = accessoryJSON[i].services[j].characteristics[k].value;
-								}
-
-								if(accessoryJSON[i].services[j].characteristics[k].type == '52')
-								{
-									accessoryArray[i].version = accessoryJSON[i].services[j].characteristics[k].value;
-								}
-
-								if(accessoryJSON[i].services[j].characteristics[k].type == '20')
-								{
-									accessoryArray[i].plugin = accessoryJSON[i].services[j].characteristics[k].value;
-								}
-							}
+							type = characteristics[accessoryJSON[i].services[j].type].name;
 						}
-						else
+
+						for(const k in accessoryJSON[i].services[j].characteristics)
 						{
-							if(characteristics[accessoryJSON[i].services[j].type] != null)
+							var characteristic = accessoryJSON[i].services[j].characteristics[k];
+							var letters = characteristic.type;
+
+							if(accessoryJSON[i].services[j].type == '3E' && accessoryCharacteristics[letters] != null)
 							{
-								if(characteristics[accessoryJSON[i].services[j].type] == 'led')
+								accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
+							}
+							else if(characteristics[accessoryJSON[i].services[j].type] != null)
+							{
+								if(characteristics[accessoryJSON[i].services[j].type].name == 'led')
 								{
-									var type = 'led';
-
-									for(const k in accessoryJSON[i].services[j].characteristics)
+									if(letters == '13' || letters == '2F')
 									{
-										if(accessoryJSON[i].services[j].characteristics[k].type == '13' || accessoryJSON[i].services[j].characteristics[k].type == '2F')
-										{
-											type = 'rgb';
-										}
-
-										if(accessoryJSON[i].services[j].characteristics[k].type == '8' && type != 'rgb')
-										{
-											type = 'dimmer';
-										}
+										type = 'rgb';
 									}
-
-									//accessoryArray[i].services.push(type);
-									accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type });
+									else if(letters == '8' && type != 'rgb')
+									{
+										type = 'dimmer';
+									}
 								}
-								else
+								
+								if(characteristics[accessoryJSON[i].services[j].type].type.includes(letters))
 								{
-									//accessoryArray[i].services.push(characteristics[accessoryJSON[i].services[j].type]);
-									accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : characteristics[accessoryJSON[i].services[j].type] });
+									service.iid.push(characteristic.iid);
+									service.format.push(characteristic.format);
+
+									if(characteristic.minValue == 0 && characteristic.maxValue == 1)
+									{
+										service.format[service.format.length - 1] = 'bool';
+									}
 								}
 							}
 							else
 							{
-								//accessoryArray[i].services.push('unsupported');
-								accessoryArray[i].services.push({ iid : accessoryJSON[i].services[j].iid, type : 'unsupported' });
+								type = 'unsupported';
+							}
+
+							if(letters == '23')
+							{
+								service.name = characteristic.value;
+							}
+						}
+
+						if(accessoryJSON[i].services[j].type != '3E')
+						{
+							service.type = type;
+
+							if(service.type != null)
+							{
+								accessoryArray[i].services.push(service);
 							}
 						}
 					}
