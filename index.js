@@ -444,13 +444,10 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/device', async (response, urlParams, content) => {
 
-			if(urlParams.id != null)
-			{
-				await DeviceManager.reloadAccessories();
+			await DeviceManager.reloadAccessories();
 
-				response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
-				response.end();
-			}
+			response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
+			response.end();
 		});
 
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (response, urlParams, content) => {
@@ -661,103 +658,78 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
 
-			if(urlParams.id != null && urlParams.iid != null)
+			var accessory = DeviceManager.getAccessory(urlParams.id);
+			var service = DeviceManager.getService(urlParams.id, urlParams.iid);
+
+			if(accessory != null && service != null && accessory.aid != null && service.iid != null && service.format != null)
 			{
-				var accessory = DeviceManager.getAccessory(urlParams.id);
-
-				if(accessory != null && accessory.services != null && Array.isArray(accessory.services))
+				if(urlParams.value != null)
 				{
-					var service = null;
-						
-					for(const i in accessory.services)
+					try
 					{
-						if(accessory.services[i].iid != null && accessory.services[i].iid['state'] == urlParams.iid)
-						{
-							service = accessory.services[i];
-						}
+						var aid = accessory.aid, iid = service.iid['state'], value = JSON.parse(urlParams.value);
+
+						axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
+
+							response.write(res.data == '' ? 'Success' : 'Error');
+							response.end();
+
+						}).catch((e) => { console.error(e); response.write('Error'); response.end() });
 					}
-
-					if(service != null && service.iid != null && service.format != null)
+					catch(e)
 					{
-						if(urlParams.value != null)
-						{
-							try
-							{
-								var aid = accessory.aid, iid = service.iid['state'], value = JSON.parse(urlParams.value);
+						console.error(e);
 
-								axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
-
-									response.write(res.data == '' ? 'Success' : 'Error');
-									response.end();
-
-								}).catch((e) => { console.error(e); response.write('Error'); response.end() });
-							}
-							catch(e)
-							{
-								console.error(e);
-
-								response.write('Error');
-								response.end();
-							}
-						}
-						else
-						{
-							var promiseArray = [], states = {};
-
-							for(const i in service.iid)
-							{
-								const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + service.iid[i]).then((res) => {
-
-									if(res.data != null
-									&& res.data.characteristics != null
-									&& res.data.characteristics[0] != null
-									&& res.data.characteristics[0].value != null)
-									{
-										if(service.format[i] == 'bool' || service.format[i] == 'boolean')
-										{
-											if(res.data.characteristics[0].value == 1)
-											{
-												states[i] = true;
-											}
-											else if(res.data.characteristics[0].value == 0)
-											{
-												states[i] = false;
-											}
-										}
-										else
-										{
-											states[i] = res.data.characteristics[0].value;
-										}
-
-										resolve(true);
-									}
-									else
-									{
-										resolve(false);
-									}
-
-								}).catch((e) => { console.error(e); resolve(false) }));
-
-								promiseArray.push(newPromise);
-							}
-
-							Promise.all(promiseArray).then((result) => {
-
-								response.write(result ? JSON.stringify(states) : 'Error');
-								response.end();
-							});
-						}
-					}
-					else
-					{
 						response.write('Error');
 						response.end();
 					}
 				}
 				else
 				{
-					response.write('Error');
-					response.end();
+					var promiseArray = [], states = {};
+
+					for(const i in service.iid)
+					{
+						const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + service.iid[i]).then((res) => {
+
+							if(res.data != null
+							&& res.data.characteristics != null
+							&& res.data.characteristics[0] != null
+							&& res.data.characteristics[0].value != null)
+							{
+								if(service.format[i] == 'bool' || service.format[i] == 'boolean')
+								{
+									if(res.data.characteristics[0].value == 1)
+									{
+										states[i] = true;
+									}
+									else if(res.data.characteristics[0].value == 0)
+									{
+										states[i] = false;
+									}
+								}
+								else
+								{
+									states[i] = res.data.characteristics[0].value;
+								}
+
+								resolve(true);
+							}
+							else
+							{
+								resolve(false);
+							}
+
+						}).catch((e) => { console.error(e); resolve(false) }));
+
+						promiseArray.push(newPromise);
+					}
+
+					Promise.all(promiseArray).then((result) => {
+
+						response.write(result ? JSON.stringify(states) : 'Error');
+						response.end();
+					});
 				}
 			}
 			else

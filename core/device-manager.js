@@ -201,11 +201,35 @@ module.exports = class DeviceManager
 
 	getAccessory(id)
 	{
-		for(var i = 0; i < accessories.length; i++)
+		if(id != null)
 		{
-			if(accessories[i].id == id)
+			for(var i = 0; i < accessories.length; i++)
 			{
-				return accessories[i];
+				if(accessories[i].id == id)
+				{
+					return accessories[i];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	getService(id, iid)
+	{
+		if(id != null && iid != null)
+		{
+			var accessory = this.getAccessory(id);
+
+			if(accessory != null && accessory.services != null && Array.isArray(accessory.services))
+			{
+				for(const i in accessory.services)
+				{
+					if(accessory.services[i].iid != null && accessory.services[i].iid instanceof Object && accessory.services[i].iid['state'] == iid)
+					{
+						return accessory.services[i];
+					}
+				}
 			}
 		}
 
