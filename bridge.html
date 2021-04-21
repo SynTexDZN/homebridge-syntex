@@ -99,7 +99,7 @@
 			<script>
 
 				window.restarting = false;
-				window.updating = [];
+				window.updating = false;
 
 				// NOTE: Reload Plugin Data
 
@@ -232,7 +232,7 @@
 
 				async function restartBridge(btn)
 				{
-					if(!restarting && updating.length == 0)
+					if(!restarting && !updating)
 					{
 						var overlays = {
 							root : btn,
@@ -315,7 +315,7 @@
 				
 				async function updatePlugin(id, btn)
 				{
-					if(!restarting && updating.length == 0)
+					if(!restarting && !updating)
 					{
 						var overlays = {
 							root : btn,
@@ -325,7 +325,7 @@
 							connectionError : { value : 'Keine Verbindung zur Bridge!' }
 						};
 						
-						updating.push(id);
+						updating = true;
 
 						await Query.complexFetch('/serverside/update?plugin=' + id + '&version=' + latestVersions[id], 5000, 2, overlays, false);
 							
@@ -372,15 +372,18 @@
 							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler beim Neustart!'));
 						}
 
-						updating.splice(updating.indexOf(id), 1);
-
 						await Essentials.newTimeout(4000);
 
 						Essentials.removeOverlays(btn, !success);
 
+						updating = false;
+
 						await Essentials.newTimeout(300);
 
-						PageManager.removeFooter('update-btn-' + id);
+						if(success)
+						{
+							PageManager.removeFooter('update-btn-' + id);
+						}
 					}
 				}
 				
