@@ -661,79 +661,103 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
 
-			if(urlParams.aid != null && urlParams.iid != null)
+			if(urlParams.id != null && urlParams.iid != null)
 			{
-				if(urlParams.value != null)
+				var accessory = DeviceManager.getAccessory(urlParams.id);
+
+				if(accessory != null && accessory.services != null && Array.isArray(accessory.services))
 				{
-					try
+					var service = null;
+						
+					for(const i in accessory.services)
 					{
-						var aid = parseInt(urlParams.aid), iid = JSON.parse(urlParams.iid)[0], value = JSON.parse(urlParams.value);
-
-						axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
-
-							response.write(res.data != '' ? 'Error' : 'Success');
-							response.end();
-
-						}).catch((e) => {
-
-							console.error(e);
-
-							response.write('Error');
-							response.end();
-						});
+						if(accessory.services[i].iid != null && accessory.services[i].iid['state'] == urlParams.iid)
+						{
+							service = accessory.services[i];
+						}
 					}
-					catch(e)
-					{
-						console.error(e);
 
+					if(service != null && service.iid != null && service.format != null)
+					{
+						if(urlParams.value != null)
+						{
+							try
+							{
+								var aid = accessory.aid, iid = service.iid['state'], value = JSON.parse(urlParams.value);
+
+								axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
+
+									response.write(res.data == '' ? 'Success' : 'Error');
+									response.end();
+
+								}).catch((e) => { console.error(e); response.write('Error'); response.end() });
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								response.write('Error');
+								response.end();
+							}
+						}
+						else
+						{
+							var promiseArray = [], states = {};
+
+							for(const i in service.iid)
+							{
+								const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + service.iid[i]).then((res) => {
+
+									if(res.data != null
+									&& res.data.characteristics != null
+									&& res.data.characteristics[0] != null
+									&& res.data.characteristics[0].value != null)
+									{
+										if(service.format[i] == 'bool' || service.format[i] == 'boolean')
+										{
+											if(res.data.characteristics[0].value == 1)
+											{
+												states[i] = true;
+											}
+											else if(res.data.characteristics[0].value == 0)
+											{
+												states[i] = false;
+											}
+										}
+										else
+										{
+											states[i] = res.data.characteristics[0].value;
+										}
+
+										resolve(true);
+									}
+									else
+									{
+										resolve(false);
+									}
+
+								}).catch((e) => { console.error(e); resolve(false) }));
+
+								promiseArray.push(newPromise);
+							}
+
+							Promise.all(promiseArray).then((result) => {
+
+								response.write(result ? JSON.stringify(states) : 'Error');
+								response.end();
+							});
+						}
+					}
+					else
+					{
 						response.write('Error');
 						response.end();
 					}
 				}
 				else
 				{
-					axios.get('http://localhost:51826/characteristics?id=' + urlParams.aid + '.' + JSON.parse(urlParams.iid)[0]).then((res) => {
-
-						if(res.data != null
-						&& res.data.characteristics != null
-						&& res.data.characteristics[0] != null
-						&& res.data.characteristics[0].value != null
-						&& urlParams.format != null)
-						{
-							var states = {};
-							
-							if(JSON.parse(urlParams.format)[0] == 'bool' || JSON.parse(urlParams.format)[0] == 'boolean')
-							{
-								if(res.data.characteristics[0].value == 1)
-								{
-									states.state = true;
-								}
-								else if(res.data.characteristics[0].value == 0)
-								{
-									states.state = false;
-								}
-							}
-							else
-							{
-								states.state = res.data.characteristics[0].value;
-							}
-
-							response.write(JSON.stringify(states));
-						}
-						else
-						{
-							response.write('Error');
-						}
-
-						response.end();
-
-					}).catch((e) => {
-
-						console.error(e);
-
-						response.write('Error');
-						response.end();
-					});
+					response.write('Error');
+					response.end();
 				}
 			}
 			else

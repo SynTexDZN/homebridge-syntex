@@ -612,23 +612,23 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			var characteristics = {
-				'A2' : { name : 'bridge', type : [] },
-				'43' : { name : 'led', type : ['25', '13', '2F', '8'] },
-				'47' : { name : 'outlet', type : ['25'] },
-				'49' : { name : 'switch', type : ['25'] },
-				'80' : { name : 'contact', type : ['6A'] },
-				'82' : { name : 'humidity', type : ['10'] },
-				'83' : { name : 'rain', type : ['70'] },
-				'84' : { name : 'light', type : ['6B'] },
-				'85' : { name : 'motion', type : ['22'] },
-				'86' : { name : 'occupancy', type : ['71'] },
-				'89' : { name : 'statelessswitch', type : ['73'] },
-				'8A' : { name : 'temperature', type : ['11'] },
-				'8D' : { name : 'airquality', type: ['95'] },
-				'87' : { name : 'smoke', type: ['76'] }/*,
-				'7E' : { name : 'security', type: [''] },
-				'41' : { name : 'garagedoor', type: [''] },
-				'45' : { name : 'lock', type: [''] }*/
+				'A2' : { name : 'bridge', type : {} },
+				'43' : { name : 'led', type : { state : '25', hue : '13', saturation : '2F', brightness : '8' } },
+				'47' : { name : 'outlet', type : { state : '25' } },
+				'49' : { name : 'switch', type : { state : '25' } },
+				'80' : { name : 'contact', type : { state : '6A' } },
+				'82' : { name : 'humidity', type : { state : '10' } },
+				'83' : { name : 'rain', type : { state : '70' } },
+				'84' : { name : 'light', type : { state : '6B' } },
+				'85' : { name : 'motion', type : { state : '22' } },
+				'86' : { name : 'occupancy', type : { state : '71' } },
+				'89' : { name : 'statelessswitch', type : { state : '73' } },
+				'8A' : { name : 'temperature', type : { state : '11' } },
+				'8D' : { name : 'airquality', type: { state : '95' } },
+				'87' : { name : 'smoke', type: { state : '76' } }/*,
+				'7E' : { name : 'security', type: { state : '' } },
+				'41' : { name : 'garagedoor', type: { state : '' } },
+				'45' : { name : 'lock', type: { state : '' } }*/
 			};
 
 			var accessoryCharacteristics = {
@@ -649,7 +649,7 @@ module.exports = class DeviceManager
 
 					for(const j in accessoryJSON[i].services)
 					{
-						var type, service = { iid : [], format : [] };
+						var type, service = { iid : {}, format : {} };
 
 						if(characteristics[accessoryJSON[i].services[j].type] != null)
 						{
@@ -678,15 +678,18 @@ module.exports = class DeviceManager
 										type = 'dimmer';
 									}
 								}
-								
-								if(characteristics[accessoryJSON[i].services[j].type].type.includes(letters))
-								{
-									service.iid.push(characteristic.iid);
-									service.format.push(characteristic.format);
 
-									if(characteristic.minValue == 0 && characteristic.maxValue == 1)
+								for(const l in characteristics[accessoryJSON[i].services[j].type].type)
+								{
+									if(characteristics[accessoryJSON[i].services[j].type].type[l] == letters)
 									{
-										service.format[service.format.length - 1] = 'bool';
+										service.iid[l] = characteristic.iid;
+										service.format[l] = characteristic.format;
+
+										if(characteristic.minValue == 0 && characteristic.maxValue == 1)
+										{
+											service.format[l] = 'bool';
+										}
 									}
 								}
 							}

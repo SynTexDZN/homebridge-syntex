@@ -161,7 +161,7 @@
 					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
 					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
 					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : 'Luftqualität', color : 'hsl(0, 85%, 60%)', colorRange : [200, -40], valueRange : [0, 5] }
+					airquality: { text : 'Qualität', color : 'hsl(0, 85%, 60%)', colorRange : [200, -40], valueRange : [0, 5] }
 				};
 
 				loadServices();
@@ -1648,9 +1648,9 @@
 									{
 										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
 									}
-									else if(getService(type, j) != null && getService(type, j).iid != null && getService(type, j).format[0] != null)
+									else if(getService(type, j) != null && getService(type, j).iid != null)
 									{
-										url = '/serverside/characteristics?aid=' + device['aid'] + '&iid=' + JSON.stringify(getService(type, j).iid) + '&format=' + JSON.stringify(getService(type, j).format);
+										url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, j).iid['state'];
 									}
 
 									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
