@@ -713,7 +713,16 @@
 					statusField.style.background = color;
 					statusField.value = value;
 
-					var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+					var url;
+
+					if(device.plugin.startsWith('SynTex'))
+					{
+						url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+					}
+					else if(getService(type, counter) != null && getService(type, counter).iid != null)
+					{
+						url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
+					}
 
 					if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 					{
@@ -724,7 +733,7 @@
 						url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 					}
 
-					if(!send)
+					if(url != null && !send)
 					{
 						promiseArraySlide.push(await Query.complexFetch(url, 10000, 1, {}, false));
 					}
@@ -886,7 +895,16 @@
 						button.style.backgroundColor = color;
 						button.value = v;
 
-						var url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
+						var url;
+
+						if(device.plugin.startsWith('SynTex'))
+						{
+							url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
+						}
+						else if(getService(type, counter) != null && getService(type, counter).iid != null)
+						{
+							url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
+						}
 
 						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
 						{
@@ -897,7 +915,10 @@
 							url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 						}
 
-						await Query.complexFetch(url, 10000, 1, {}, false);
+						if(url != null)
+						{
+							await Query.complexFetch(url, 10000, 1, {}, false);
+						}
 
 						const index = busy.indexOf(button.getAttribute('id'));
 
