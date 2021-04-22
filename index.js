@@ -663,31 +663,48 @@ class SynTexPlatform
 
 			if(accessory != null && service != null && accessory.aid != null && service.iid != null && service.format != null)
 			{
+				var promiseArray = [], states = {};
+				
 				if(urlParams.value != null)
 				{
-					try
+					var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+
+					for(const i in characteristics)
 					{
-						var aid = accessory.aid, iid = service.iid['state'], value = JSON.parse(urlParams.value);
-
-						axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
-
-							response.write(res.data == '' ? 'Success' : 'Error');
-							response.end();
-
-						}).catch((e) => { console.error(e); response.write('Error'); response.end() });
+						if(urlParams[characteristics[i]] != null)
+						{
+							try
+							{
+								states[characteristics[i] == 'value' ? 'state' : characteristics[i]] = JSON.parse(urlParams[characteristics[i]]);
+							}
+							catch(e)
+							{
+								console.error(e);
+							}
+						}
 					}
-					catch(e)
-					{
-						console.error(e);
 
-						response.write('Error');
+					for(const i in states)
+					{
+						var aid = accessory.aid, iid = service.iid[i], value = states[i];
+
+						const newPromise = new Promise((resolve) => axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
+
+							resolve(res.data == '');
+
+						}).catch((e) => { console.error(e); resolve(false) }));
+
+						promiseArray.push(newPromise);
+					}
+
+					Promise.all(promiseArray).then((result) => {
+
+						response.write(result.includes(false) ? 'Error' : 'Success');
 						response.end();
-					}
+					});
 				}
 				else
 				{
-					var promiseArray = [], states = {};
-
 					for(const i in service.iid)
 					{
 						const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + service.iid[i]).then((res) => {
@@ -727,7 +744,7 @@ class SynTexPlatform
 
 					Promise.all(promiseArray).then((result) => {
 
-						response.write(result ? JSON.stringify(states) : 'Error');
+						response.write(result.includes(true) ? JSON.stringify(states) : 'Error');
 						response.end();
 					});
 				}
