@@ -718,19 +718,19 @@
 					if(device.plugin.startsWith('SynTex'))
 					{
 						url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+					
+						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+						{
+							url += '&type=' + type + '&counter=' + counter;
+						}
+						else if(device.plugin == 'SynTexMagicHome')
+						{
+							url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
+						}
 					}
 					else if(getService(type, counter) != null && getService(type, counter).iid != null)
 					{
 						url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
-					}
-
-					if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
-					{
-						url += '&type=' + type + '&counter=' + counter;
-					}
-					else if(device.plugin == 'SynTexMagicHome')
-					{
-						url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 					}
 
 					if(url != null && !send)
@@ -900,24 +900,24 @@
 						if(device.plugin.startsWith('SynTex'))
 						{
 							url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
+						
+							if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+							{
+								url += '&type=' + type + '&counter=' + counter;
+							}
+							else if(device.plugin == 'SynTexMagicHome')
+							{
+								url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
+							}
 						}
 						else if(getService(type, counter) != null && getService(type, counter).iid != null)
 						{
 							url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
 						}
 
-						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+						if(url != null && await Query.complexFetch(url, 10000, 1, {}, false) == 'Success')
 						{
-							url += '&type=' + type + '&counter=' + counter;
-						}
-						else if(device.plugin == 'SynTexMagicHome')
-						{
-							url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
-						}
-
-						if(url != null)
-						{
-							await Query.complexFetch(url, 10000, 1, {}, false);
+							temp[type + counter].state = (value == 'true');
 						}
 
 						const index = busy.indexOf(button.getAttribute('id'));
@@ -1668,19 +1668,19 @@
 									if(device.plugin.startsWith('SynTex'))
 									{
 										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
+									
+										if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+										{
+											url += '&type=' + type + '&counter=' + j;
+										}
+										else if(device.plugin == 'SynTexMagicHome')
+										{
+											url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
+										}
 									}
 									else if(getService(type, j) != null && getService(type, j).iid != null)
 									{
 										url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, j).iid['state'];
-									}
-
-									if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
-									{
-										url += '&type=' + type + '&counter=' + j;
-									}
-									else if(device.plugin == 'SynTexMagicHome')
-									{
-										url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
 									}
 
 									if(url != null)
@@ -1700,8 +1700,13 @@
 
 									if(temp[type + j] != null && (state.state != temp[type + j].state || state.hue != temp[type + j].hue || state.saturation != temp[type + j].saturation || state.brightness != temp[type + j].brightness))
 									{
-										var obj = { time : Math.round(new Date().getTime() / 1000), value : state.state.toString() };
+										var obj = { time : Math.round(new Date().getTime() / 1000) };
 
+										if(state.value != null)
+										{
+											obj.value = state.state.toString();
+										}
+										
 										if(state.hue != null)
 										{
 											obj.hue = state.hue.toString();
