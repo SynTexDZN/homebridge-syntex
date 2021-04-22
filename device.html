@@ -721,7 +721,7 @@
 					}
 					else if(getService(type, counter) != null && getService(type, counter).iid != null)
 					{
-						url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
+						url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
 					}
 
 					if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
