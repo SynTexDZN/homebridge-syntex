@@ -1,6 +1,6 @@
-# Homebridge SynTex
+# Homebridge SynTex UI
 A plugin to control SynTex accessory.<br>
-It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )*
+It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )* and any accessory on your homebridge.
 
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
