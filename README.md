@@ -1,7 +1,4 @@
 # Homebridge SynTex UI
-A simple UI to control and manage all of your homebridge accessory.<br>
-Also it provides special features for SynTex plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )*
-
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
 [![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex/commits)
@@ -9,11 +6,14 @@ Also it provides special features for SynTex plugins *( `homebridge-syntex-magic
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex?color=0af)](https://github.com/SynTexDZN/homebridge-syntex)
 [![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
 
+A simple UI to control and manage all of your homebridge accessory.<br>
+Also it provides special features for SynTex plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )*
+
 ## Core Fearures
-- Device Overfiew ( *view and control their characteristics* )
-- Plugin Manager ( *for information, updates and more* )
-- Colorful Log ( *with filters and log levels* )
-- Automation System ( *faster and more stable than HomeKit automation* )
+- **Device Overfiew** ( *view and control their characteristics* )
+- **Plugin Manager** ( *for information, updates and more* )
+- **Colorful Log** ( *with filter tools and log level* )
+- **Automation System** ( *faster and more stable than HomeKit automation* )
 
 
 ---
