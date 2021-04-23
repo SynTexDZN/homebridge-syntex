@@ -9,7 +9,7 @@ Also it provides special features for SynTex plugins *( `homebridge-syntex-magic
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex?color=0af)](https://github.com/SynTexDZN/homebridge-syntex)
 [![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
 
-<br>
+---
 
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
@@ -61,7 +61,7 @@ Please visit GitHub for the config and other informations:<br>
 https://github.com/SynTexDZN/homebridge-syntex-webhooks
 
 
-<br>
+---
 
 
 ## Currently Supported
