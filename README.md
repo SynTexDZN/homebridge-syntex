@@ -1,6 +1,7 @@
 # Homebridge SynTex UI
 A plugin to control SynTex accessory.<br>
-It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )* and any accessory on your homebridge.
+It offers an UI to manage all your homebridge accessory.<br>
+Also it provides special features for SynTex plugins *( `homebridge-syntex-magichome`, `homebridge-syntex-tuya`, `homebridge-syntex-webhooks` )*
 
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
@@ -14,30 +15,30 @@ It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichom
 ## Installation
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
-3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks`
+3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks` ( *to enable all features of the UI* )
 4. Update your configuration file. See snippet below.
 5. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`
 
 
 ## Example Config
-**Info:** If the `logDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge ./SynTex/` ( *permissions only for homebridge* )
-- `sudo chmod 777 -R homebridge ./SynTex/` ( *permissions for many processes* )
+**Info:** If the `logDirectory` and `cacheDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
+- `sudo chown -R homebridge /var/homebridge/SynTex/` ( *permissions only for homebridge* )
+- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` ( *permissions for many processes* )
 
 ```json
 "platforms": [
     {
         "platform": "SynTex",
-        "cacheDirectory": "./SynTex/settings",
-        "logDirectory": "./SynTex/log",
+        "cacheDirectory": "/var/homebridge/SynTex/settings",
+        "logDirectory": "/var/homebridge/SynTex/log",
         "port": 1711,
         "language": "us",
         "debug": false
     },
     {
         "platform": "SynTexWebHooks",
-        "logDirectory": "./SynTex/log",
-        "automationDirectory": "./SynTex/automation",
+        "logDirectory": "/var/homebridge/SynTex/log",
+        "automationDirectory": "/var/homebridge/SynTex/automation",
         "port": 1710,
         "language": "us",
         "debug": false,
@@ -55,11 +56,17 @@ It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichom
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
 
+### SynTex WebHooks Config
+Please visit GitHub for the config and other informations:<br>
+https://github.com/SynTexDZN/homebridge-syntex-webhooks
+
 
 ---
 
 
 ## Currently Supported
+
+### SynTex Devices
 - Climate Sensor
 - Temperature Sensor
 - Humidity Sensor
@@ -73,3 +80,17 @@ It offers an UI to manage all your SynTex Plugins *( `homebridge-syntex-magichom
 - Stateless Switch
 - LED Controller
 - Special Devices *( Doorbell, Multi-Device, .. )*
+
+### Other Accessories
+- Temperature Sensor
+- Humidity Sensor
+- Light Sensor
+- Leak Sensor
+- Motion Sensor
+- Contact Sensor
+- Smoke Sensor
+- Occupancy Sensor
+- Airquality Sensor
+- Stateless Switch
+- Switch / Relais / Outlet
+- LED Lights / Dimmable Lights / RGB Lights
