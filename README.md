@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
 
 A simple UI to control and manage all of your homebridge accessory.<br>
-Also it provides special features for your SynTex plugins such as ..
+Also it provides special features for your SynTex plugins:
 - `homebridge-syntex-magichome`
 - `homebridge-syntex-tuya`
 - `homebridge-syntex-webhooks`
@@ -65,7 +65,7 @@ Also it provides special features for your SynTex plugins such as ..
 - `port` To access the bridge website.
 
 ### Optional Parameters
-- `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- `language` You can use your country initials if you want to change it ( *Currently supported: `us`, `en`, `de`* )
 - `debug` For further information because of troubleshooting and bug reports.
 
 ### SynTex WebHooks Config
@@ -91,7 +91,7 @@ https://github.com/SynTexDZN/homebridge-syntex-webhooks
 - Switch
 - Stateless Switch
 - LED Controller
-- Special Devices *( Doorbell, Multi-Device, .. )*
+- Special Devices ( *Doorbell, Multi-Device, ..* )
 
 ### Other Accessories
 - Temperature Sensor
