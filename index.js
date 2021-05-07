@@ -23,7 +23,7 @@ class SynTexPlatform
 		this.config = store(api.user.storagePath());
 
 		this.logger = new logger(pluginName, this.logDirectory, this.debug, this.language);
-		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, true);
+		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, this.language, true);
 
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 		this.WebServer.setFooter(__dirname + '/includes/footer.html');

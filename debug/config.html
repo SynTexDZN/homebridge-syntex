@@ -1,20 +1,20 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Debug: Config</title>
+			<title>%menu.debug%: %menu.config%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Debug', 'Config');
+				PageManager.setHeader('%menu.debug%', '%menu.config%');
 
 				var main = document.createElement('div');
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<input type="button" value="Zurück zur Bridge" style="margin-right: 20px" onclick="Essentials.leavePage(' + "'/bridge'" + ')"><div style="width: 100%"><input id="config-save" value="Speichern" style="background-color: hsl(200, 85%, 55%)" type="button" onclick="saveConfig(this)"></div>';
+				main.innerHTML = '<input type="button" value="%menu.back_to_bridge%" style="margin-right: 20px" onclick="Essentials.leavePage(' + "'/bridge'" + ')"><div style="width: 100%"><input id="config-save" value="%general.save%" style="background-color: hsl(200, 85%, 55%)" type="button" onclick="saveConfig(this)"></div>';
 
 				PageManager.setFooter(main);
 
@@ -23,7 +23,7 @@
 				second.style.display = 'flex';
 				second.style.marginBottom = '20px';
 
-				second.innerHTML = '<input value="Alles Kopieren" type="button" style="margin-right: 20px" onclick="copyConfig()"><div style="width: 100%"><input id="config-restart" value="Neustart" type="button" onclick="restartBridge(this)"></div>';
+				second.innerHTML = '<input value="%debug.config.copy_all%" type="button" style="margin-right: 20px" onclick="copyConfig()"><div style="width: 100%"><input id="config-restart" value="%debug.config.restart%" type="button" onclick="restartBridge(this)"></div>';
 
 				PageManager.addFooter(second);
 				PageManager.showFooter();
@@ -31,19 +31,19 @@
 			</script>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
-					<input class="white" type="button" value="STYLE" onclick="Essentials.leavePage('/debug/style')">
+					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="COMMAND" onclick="Essentials.leavePage('/debug/terminal')" style="margin-right: 20px">
-					<input class="white" type="button" value="CONFIG" onclick="Essentials.leavePage('/debug/config')" disabled>
+					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase" disabled>
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
-					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
+					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.beta%" onclick="Essentials.leavePage('/debug/beta')" style="text-transform: uppercase">
 				</div>
-				<p style="margin: 100px 0">In der Config Datei<br>sind alle wichtigen Daten<br>über die Bridge gespeichert.<br><br>Mach am besten<br>regelmäßig ein Backup,<br>damit du niemals<br>deine Daten verlierst!</p>
-				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" onchange="validateJSON(this)">Laden ..</textarea>
+				<p style="margin: 100px 0">%debug.config.description%</p>
+				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" onchange="validateJSON(this)">%general.loading% ..</textarea>
 			</div>
 			<script type="module">
 
@@ -75,7 +75,7 @@
 					textarea.select();
 					document.execCommand('copy');
 
-					alert('Die Config wurde in deine Zwischenablage kopiert!');
+					alert('%debug.config.copy_success%!');
 				}
 
 				async function saveConfig(btn)
@@ -85,15 +85,15 @@
 						var overlays = {
 							root : btn,
 							id : 'saving',
-							pending : { value : 'Hochladen ..' },
-							success : { value : 'Aktualisiert!' },
-							executeError : { value : 'Hochladen Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge' }
+							pending : { value : '%debug.config.saving% ..' },
+							success : { value : '%debug.config.save_success%!' },
+							executeError : { value : '%debug.config.save_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%' }
 						};
 
 						if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
 						{
-							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', 'Config Aktualisiert!', 'green'));
+							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', '%debug.config.save_success%!', 'green'));
 
 							await Essentials.newTimeout(1500);
 
@@ -113,9 +113,9 @@
 						var overlays = {
 							root : btn,
 							id : 'restarting',
-							pending : { value : 'Neustarten ..' },
-							executeError : { value : 'Neustart Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+							pending : { value : '%debug.config.restarting% ..' },
+							executeError : { value : '%debug.config.restart_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
 						};
 
 						restarting = true;
@@ -128,11 +128,11 @@
 
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%debug.config.restart_success%!'));
 							}
 							else
 							{
-								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%debug.config.restart_failed%!'));
 							}
 
 							await Essentials.newTimeout(4000);

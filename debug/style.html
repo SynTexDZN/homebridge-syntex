@@ -4,19 +4,19 @@
 	</head>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Debug: Style</title>
+			<title>%menu.debug%: %menu.style%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Debug', 'Style');
+				PageManager.setHeader('%menu.debug%', '%menu.style%');
 
 				var main = document.createElement('input');
 
 				main.setAttribute('type', 'button');
-				main.setAttribute('value', 'Zurück zur Bridge');
+				main.setAttribute('value', '%menu.back_to_bridge%');
 				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
 
 				PageManager.setFooter(main);
@@ -124,103 +124,103 @@
 			</style>
 			<div id="style" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="WORKAROUND" onclick="Essentials.leavePage('/debug')" style="margin-right: 20px">
-					<input class="white" type="button" value="STYLE" onclick="Essentials.leavePage('/debug/style')" disabled>
+					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase" disabled>
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="COMMAND" onclick="Essentials.leavePage('/debug/terminal')" style="margin-right: 20px">
-					<input class="white" type="button" value="CONFIG" onclick="Essentials.leavePage('/debug/config')">
+					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="BACKUP" onclick="Essentials.leavePage('/debug/backup')" style="margin-right: 20px">
-					<input class="white" type="button" value="BETA" onclick="Essentials.leavePage('/debug/beta')">
+					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.beta%" onclick="Essentials.leavePage('/debug/beta')" style="text-transform: uppercase">
 				</div>
 				<div style="margin: 100px 0">
-					<h2>• Basic •</h2>
-					<input type="button" value="Button 1">
+					<h2>• %debug.style.basic% •</h2>
+					<input type="button" value="%debug.style.button% 1">
 					<input type="text" style="margin-top: 20px">
 					<div id="select"></div>
-					<h2>• Icon Buttons •</h2>
+					<h2>• %debug.style.icon_buttons% •</h2>
 					<button class="icon-button left split arrow">
 						<div class="button-icon">
 							<img class="icon" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 1</div>
+						<div class="button-text">%debug.style.icon_button% 1</div>
 					</button>
 					<button class="icon-button left split seperated" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 2</div>
+						<div class="button-text">%debug.style.icon_button% 2</div>
 					</button>
 					<button class="icon-button left split" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 3</div>
+						<div class="button-text">%debug.style.icon_button% 3</div>
 					</button>
 					<button class="icon-button left compact" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 3</div>
+						<div class="button-text">%debug.style.icon_button% 3</div>
 					</button>
 					<button class="icon-button right compact" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 3</div>
+						<div class="button-text">%debug.style.icon_button% 3</div>
 					</button>
 					<button class="icon-button left center compact" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 3</div>
+						<div class="button-text">%debug.style.icon_button% 3</div>
 					</button>
 					<button class="icon-button right center compact" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 3</div>
+						<div class="button-text">%debug.style.icon_button% 3</div>
 					</button>
 					<button class="icon-button left round" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 4</div>
+						<div class="button-text">%debug.style.icon_button% 4</div>
 					</button>
 					<button class="icon-button left round" style="margin-top: 20px">
 						<div class="button-icon white">
 							<img class="icon-inverted" src="../img/settings.png">
 						</div>
-						<div class="button-text">Icon Button 5</div>
+						<div class="button-text">%debug.style.icon_button% 5</div>
 					</button>
 					<button class="icon-button right round" style="margin-top: 20px">
 						<div class="button-icon">
 							<img class="icon" src="../img/reload.png">
 						</div>
-						<div class="button-text">Icon Button Rechts</div>
+						<div class="button-text">%debug.style.icon_button% %debug.style.right%</div>
 					</button>
-					<h2>• Special Buttons •</h2>
-					<button class="gradient-purple shine">Shine</button>
+					<h2>• %debug.style.special_buttons% •</h2>
+					<button class="gradient-purple shine">%debug.style.shine%</button>
 					<button class="plugin-container" style="display: flex; margin-top: 20px">
-						Expandable
+						%debug.style.expandable%
 						<div style="width: calc(100% - 150px)">
-							<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>Version: </b>' + versions[id] + '</div>
-							<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + latestVersions[id] + '</div>
+							<div class="loading-loop expandable-hidden" id="version-' + id + '"></div>
+							<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"></div>
 						</div>
-						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">Shine</div>
+						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">%debug.style.shine%</div>
 					</button>
-					<h2>• Gradients •</h2>
-					<input type="button" value="Blau Lila" class="gradient-blue-purple">
-					<input type="button" value="Blau Grün" style="margin-top: 20px" class="gradient-blue-green">
-					<input type="button" value="Grün" style="margin-top: 20px" class="gradient-green">
-					<input type="button" value="Gelb" style="margin-top: 20px" class="gradient-yellow">
-					<input type="button" value="Orange" style="margin-top: 20px" class="gradient-orange">
-					<input type="button" value="Rot" style="margin-top: 20px" class="gradient-red">
-					<input type="button" value="Lila" style="margin-top: 20px" class="gradient-purple">
-					<input type="button" value="Blau" style="margin-top: 20px" class="gradient-blue">
-					<input type="button" value="Cyan" style="margin-top: 20px" class="gradient-cyan">
+					<h2>• %debug.style.gradients% •</h2>
+					<input type="button" value="%debug.style.blue% %debug.style.purple%" class="gradient-blue-purple">
+					<input type="button" value="%debug.style.blue% %debug.style.green%" style="margin-top: 20px" class="gradient-blue-green">
+					<input type="button" value="%debug.style.green%" style="margin-top: 20px" class="gradient-green">
+					<input type="button" value="%debug.style.yellow%" style="margin-top: 20px" class="gradient-yellow">
+					<input type="button" value="%debug.style.orange%" style="margin-top: 20px" class="gradient-orange">
+					<input type="button" value="%debug.style.red%" style="margin-top: 20px" class="gradient-red">
+					<input type="button" value="%debug.style.purple%" style="margin-top: 20px" class="gradient-purple">
+					<input type="button" value="%debug.style.blue%" style="margin-top: 20px" class="gradient-blue">
+					<input type="button" value="%debug.style.cyan%" style="margin-top: 20px" class="gradient-cyan">
 				</div>
 			</div>
 			<script type="module">

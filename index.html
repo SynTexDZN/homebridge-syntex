@@ -1,67 +1,67 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Dashboard: Geräte</title>
+			<title>%general.dashboard%: %menu.devices%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Dashboard', 'Geräte');
+				PageManager.setHeader('%general.dashboard%', '%menu.devices%');
 				PageManager.hideFooter();
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
-					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
+					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px" disabled>
+					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-					<input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px">
-					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
+					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
 				</div>
 				<div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
 					<div class="widget">
-						<button class="widget-left">Geräte</button>
+						<button class="widget-left">%devices.devices%</button>
 						<button class="widget-right gradient-blue">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Updates</button>
+						<button class="widget-left">%devices.updates%</button>
 						<button class="widget-right gradient-purple">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Offline</button>
+						<button class="widget-left">%general.offline%</button>
 						<button class="widget-right gradient-red">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Online</button>
+						<button class="widget-left">%devices.online%</button>
 						<button class="widget-right gradient-green">-</button>
 					</div>
 				</div>
 				<div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
 					<div>
-						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
+						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%device.active%: %general.loading% ..</button>
 					</div>
 					<div>
-						<button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
+						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
 					</div>
 				</div>
 				<div id="toolbar" class="main" style="display: flex; margin-top: 100px">
 					<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-					<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
+					<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="switchRoom('all', false)" room="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
 					<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 				</div>
 				<div style="margin-top: 100px">
-					<p id="no-devices" style="display: none">Du besitzt derzeit<br>noch keine Geräte<br><br>Du kannst ein Gerät registrieren<br>indem du auf das [+] drückst</p>
+					<p id="no-devices" style="display: none">%devices.no_devices%</p>
 					<div id="devices" style="transition: .2s ease-in-out"></div>
 				</div>
 			</div>
 			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
-				<input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="Gerät Erstellen" onclick="Essentials.leavePage('/create')">
-				<input style="margin-bottom: 20px; display: none" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
-				<input class="gradient-blue-green webhooks-needed" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/connect')">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.multi_edit%" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="%devices.create_device%" onclick="Essentials.leavePage('/create')">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.third_party_devices%" onclick="Essentials.leavePage('/crossover')">
+				<input class="gradient-blue-green webhooks-needed" type="button" value="+ %devices.connect_device%" onclick="Essentials.leavePage('/connect')">
 			</div>
 			<script type="module" defer>
 
@@ -416,19 +416,19 @@
 					{
 						document.getElementById('activate-all').setAttribute('switch', 1);
 						document.getElementById('activate-all').setAttribute('class', 'gradient-green');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.all_active%';
 					}
 					else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
 					{
 						document.getElementById('activate-all').setAttribute('switch', 0);
 						document.getElementById('activate-all').setAttribute('class', 'gradient-red');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.all_inactive%';
 					}
 					else
 					{
 						document.getElementById('activate-all').setAttribute('switch', 0);
 						document.getElementById('activate-all').setAttribute('class', '');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.mixed_active%';
 					}
 				}
 
@@ -545,7 +545,7 @@
 
 						restarting = [];
 					
-						Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
+						Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', '%general.restarting% ..'));
 
 						for(var i = 0; i < devices.length; i++)
 						{
@@ -563,17 +563,17 @@
 										{
 											await Essentials.newTimeout(1000);
 
-											var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' Geräten Neugestartet!';
+											var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' %devices.devices_restarted%!';
 											var color = 'yellow';
 
 											if(restartCounter['success'] >= (realDeviceCount - restartCounter['idle']))
 											{
-												responseText = 'Alle Geräte Neugestartet!';
+												responseText = '%devices.all_devices_restarted%!';
 												color = 'green';
 											}
 											else if(restartCounter['success'] == 0)
 											{
-												responseText = 'Keine Geräte Neugestartet!';
+												responseText = '%devices.no_devices_restarted%!';
 												color = 'red';
 											}
 
@@ -592,7 +592,7 @@
 
 						if(restarting.length == 0)
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', 'Keine Geräte zum Neustarten!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', '%devices.no_devices_restart%!'));
 											
 							Essentials.removeOverlaysDelay(btn, 4000, true);
 						}
@@ -705,7 +705,7 @@
 
 							updateButton.setAttribute('type', 'button');
 							updateButton.setAttribute('id', 'update-all');
-							updateButton.setAttribute('value', 'Updates Installieren');
+							updateButton.setAttribute('value', '%devices.update_all%');
 							updateButton.setAttribute('onclick', 'installAllUpdates(this)');
 
 							document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
@@ -722,7 +722,7 @@
 					var updateDevices = document.getElementsByClassName('update');
 					var updateCounter = { success : 0, error : 0 };
 
-					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
+					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', '%devices.updating_all% ..', 'purple'));
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
@@ -734,17 +734,17 @@
 
 								if(updateCounter['success'] + updateCounter['error'] >= updateCount)
 								{
-									var responseText = updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!';
+									var responseText = updateCounter['success'] + ' / ' + updateCount + ' %devices.devices_updated%!';
 									var color = 'yellow';
 
 									if(updateCounter['success'] >= updateCount)
 									{
-										responseText = 'Alle Geräte Aktualisiert!';
+										responseText = '%devices.all_devices_updated%!';
 										color = 'green';
 									}
 									else if(updateCounter['success'] == 0)
 									{
-										responseText = 'Keine Geräte Aktualisiert!';
+										responseText = '%devices.no_devices_updated%!';
 										color = 'red';
 									}
 									
@@ -775,7 +775,7 @@
 
 					if(updating.length == 0)
 					{
-						Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
+						Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', '%devices.no_devices_update%!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
 					}
@@ -853,12 +853,12 @@
 									else if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = '';
-										this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+										this.device.getElementsByClassName('connection')[0].innerHTML = '%devices.active%';
 									}
 									else if(device.getAttribute('active') == 'false') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-										this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+										this.device.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
 									}
 
 								}.bind({ device : device }), 4000);
@@ -875,7 +875,7 @@
 				{
 					var switchCounter = { success : 0, error : 0, idle : 0 }, switchableDevices = false;
 
-					Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
+					Essentials.showOverlay(btn, Essentials.createPendingOverlay('', '%general.uploading% ..'));
 
 					for(var i = 0; i < devices.length; i++)
 					{
@@ -917,18 +917,18 @@
 
 										if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 										{
-											var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+											var responseText = btn.getAttribute('switch') == 1 ? '%devices.all_inactive%' : '%devices.all_active%';
 											var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
 
 											if(switchCounter['error'] > 0)
 											{
-												responseText = 'Unterschiedlich';
+												responseText = '%devices.mixed_active%';
 												color = 'gray';
 											}
 
 											btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
 											btn.setAttribute('class', 'gradient-' + color);
-											btn.innerHTML = 'Aktiv: ' + responseText;
+											btn.innerHTML = '%devices.active%: ' + responseText;
 
 											Essentials.removeOverlays(btn, true);
 										}
@@ -947,18 +947,18 @@
 
 							if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 							{
-								var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+								var responseText = btn.getAttribute('switch') == 1 ? '%devices.all_inactive%' : '%devices.all_active%';
 								var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
 
 								if(switchCounter['error'] > 0)
 								{
-									responseText = 'Unterschiedlich';
+									responseText = '%devices.mixed_active%';
 									color = 'gray';
 								}
 
 								btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
 								btn.setAttribute('class', 'gradient-' + color);
-								btn.innerHTML = 'Aktiv: ' + responseText;
+								btn.innerHTML = '%devices.active%: ' + responseText;
 
 								Essentials.removeOverlays(btn, true);
 							}
@@ -967,7 +967,7 @@
 
 					if(!switchableDevices)
 					{
-						Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
+						Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', '%devices.no_devices_activation%!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
 					}
@@ -979,31 +979,31 @@
 
 					if(timestamp < 60)
 					{
-						return Math.round(timestamp) + ' s';
+						return Math.round(timestamp) + ' ' + '%devices.time.seconds%'[0];
 					}
 					else if(timestamp < 60 * 60)
 					{
-						return Math.round(timestamp / 60) + ' m';
+						return Math.round(timestamp / 60) + ' ' + '%devices.time.minutes%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24)
 					{
-						return Math.round(timestamp / 60 / 60) + ' h';
+						return Math.round(timestamp / 60 / 60) + ' ' + '%devices.time.hours%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 7)
 					{
-						return Math.round(timestamp / 60 / 60 / 24) + ' T';
+						return Math.round(timestamp / 60 / 60 / 24) + ' ' + '%devices.time.days%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 30.5)
 					{
-						return Math.round(timestamp / 60 / 60 / 24 / 7) + 'W';
+						return Math.round(timestamp / 60 / 60 / 24 / 7) + ' ' + '%devices.time.weeks%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 365)
 					{
-						return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'M';
+						return Math.round(timestamp / 60 / 60 / 24 / 30.5) + ' ' + '%devices.time.months%'[0];
 					}
 					else
 					{
-						return '> 1 J';
+						return '> 1 ' + '%devices.time.years%'[0];
 					}
 				}
 

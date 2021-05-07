@@ -1,20 +1,20 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Dashboard: Bridge</title>
+			<title>%general.dashboard%: %menu.bridge%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Dashboard', 'Bridge');
+				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
 
 				var main = document.createElement('div');
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<div style="width: 100%"><input id="restart-btn" type="button" value="Bridge Neustarten" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s"></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split arrow"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">Neu Laden</div></button></div>';
+				main.innerHTML = '<div style="width: 100%"><input id="restart-btn" type="button" value="%bridge.restart%" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s"></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split arrow"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -22,31 +22,31 @@
 			</script>
 			<div class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px">
-					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')" disabled>
+					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase" disabled>
 				</div>
 				<div class="main" style="margin-top: 10px; display: flex; margin-bottom: 100px">
-					<input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px">
-					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
+					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
 				</div>
 				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
-					<button class="widget-left">IP Adresse</button>
+					<button class="widget-left">%bridge.ip_address%</button>
 					<button class="widget-right gradient-blue" style="user-select: text">-</button>
 				</div>
 				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
-					<button class="widget-left">Mac WLAN<br>Mac LAN</button>
+					<button class="widget-left">%bridge.mac_wifi%<br>%bridge.mac_ethernet%</button>
 					<button class="widget-right gradient-blue" style="user-select: text">-<br>-</button>
 				</div>
 				<div class="type-container" style="margin: 100px auto; margin-bottom: 50px">
-					<h2 class="title-container">Core</h2>
+					<h2 class="title-container">%bridge.core_plugins%</h2>
 					<div id="core-plugins"></div>
 				</div>
 				<div class="type-container" style="margin: 100px auto; margin-top: 50px">
-					<h2 class="title-container">Plugins</h2>
+					<h2 class="title-container">%bridge.plugins%</h2>
 					<div id="plugins"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 100px; width: 100%; max-width: 400px">
-					<input class="gradient-red" type="button" value="» Experten Modus «" onclick="Essentials.leavePage('/debug')">
+					<input class="gradient-red" type="button" value="» %bridge.expert_mode% «" onclick="Essentials.leavePage('/debug')">
 				</div>
 			</div>
 			<script type="module">
@@ -136,7 +136,7 @@
 					for(const id in plugins)
 					{
 						var title = plugins[id].name != 'SynTex' ? plugins[id].name.replace('SynTex', 'SynTex ') : 'SynTex';
-						var newestVersion = 'Fehler beim Laden';
+						var newestVersion = '%general.connection_error%';
 
 						if(plugins[id].versions[tag] != null || plugins[id].versions['latest'] != null)
 						{
@@ -160,8 +160,8 @@
 
 							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '">'
 							innerHTML += '<div style="width: calc(100% - 150px)">' + title;
-							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>Version: </b>' + versions[id] + '</div>';
-							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>Neuste Version: </b>' + latestVersions[id] + '</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>%bridge.version%: </b>' + versions[id] + '</div>';
+							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>%bridge.latest_version%: </b>' + latestVersions[id] + '</div>';
 							innerHTML += '</div><div id="update-status-' + id + '" class="update-status loading-loop"></div>';
 							innerHTML += '</button>';
 
@@ -175,8 +175,8 @@
 						}
 						else
 						{
-							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>' + versions[id];
-							document.getElementById('latest-version-' + id).innerHTML = '<b>Neuste Version: </b>' + latestVersions[id];
+							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + versions[id];
+							document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + latestVersions[id];
 						}
 
 						if(versions[id] != null && latestVersions[id] != null && Essentials.versionCount(latestVersions[id]) > Essentials.versionCount(versions[id]))
@@ -186,7 +186,7 @@
 								var updateButton = document.createElement('input');
 
 								updateButton.setAttribute('type', 'button');
-								updateButton.setAttribute('value', title + ' Aktualisieren ( v' + latestVersions[id] + ' )');
+								updateButton.setAttribute('value', title + ' %bridge.update% ( v' + latestVersions[id] + ' )');
 								updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", this)');
 								updateButton.setAttribute('id', 'update-btn-' + id);
 								updateButton.setAttribute('style', 'margin-bottom: 20px');
@@ -196,10 +196,10 @@
 							}
 							else
 							{
-								document.getElementById('update-btn-' + id).value = title + ' Aktualisieren ( v' + latestVersions[id] + ' )';
+								document.getElementById('update-btn-' + id).value = title + ' %bridge.update% ( v' + latestVersions[id] + ' )';
 							}
 
-							document.getElementById('update-status-' + id).innerHTML = 'UPDATE';
+							document.getElementById('update-status-' + id).innerHTML = '%bridge.update_available%';
 							document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
 							document.getElementById('update-status-' + id).classList.add('shine');
 						}
@@ -212,12 +212,12 @@
 
 							if(versions[id] == null || latestVersions[id] == null)
 							{
-								document.getElementById('update-status-' + id).innerHTML = 'FEHLER';
+								document.getElementById('update-status-' + id).innerHTML = '%bridge.update_error%';
 								document.getElementById('update-status-' + id).style.background = 'hsl(350, 95%, 60%)';
 							}
 							else
 							{
-								document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
+								document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
 								document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
 							}
 
@@ -237,9 +237,9 @@
 						var overlays = {
 							root : btn,
 							id : 'restart',
-							pending : { value : 'Neustarten ..' },
-							executeError : { value : 'Neustart Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+							pending : { value : '%general.restarting% ..' },
+							executeError : { value : '%general.restart_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
 						};
 
 						restarting = true;
@@ -250,11 +250,11 @@
 
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
 							}
 							else
 							{
-								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Neustart Fehlgeschlagen!'));
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
 							}
 
 							await Essentials.newTimeout(4000);
@@ -273,16 +273,16 @@
 					var overlays = {
 						root : btn,
 						id : 'reload',
-						pending : { value : 'Neu Laden ..' },
-						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+						pending : { value : '%general.reloading% ..' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
 					};
 
 					for(const id in plugins)
 					{
 						if(document.getElementById(id) != null)
 						{
-							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>Laden ..';
-							document.getElementById('latest-version-' + id).innerHTML = '<b>Neuste Version: </b>Laden ..';
+							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
+							document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>%general.loading% ..';
 						}
 					}
 
@@ -292,13 +292,13 @@
 						{
 							plugins = JSON.parse(p);
 
-							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('reload', 'Aktualisiert!'));
+							Essentials.showOverlay(btn, Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
 
 							renderGUI();
 						}
 						catch(e)
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('reload', 'Laden Fehlgeschlagen!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('reload', '%general.reload_failed%!'));
 
 							console.error(e);
 						}
@@ -320,9 +320,9 @@
 						var overlays = {
 							root : btn,
 							id : 'update',
-							pending : { value : 'Update wird Installiert ..', color : 'purple' },
-							executeError : { value : 'Update Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+							pending : { value : '%general.updating% ..', color : 'purple' },
+							executeError : { value : '%general.update_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
 						};
 						
 						updating = true;
@@ -336,7 +336,7 @@
 						if(await Essentials.checkUpdating('/serverside/update?status')
 						&& await Essentials.checkRestart('/serverside/check-restart'))
 						{
-							document.getElementById('version-' + id).innerHTML = '<b>Version: </b>Laden ..';
+							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
 
 							await loadPluginData();
 
@@ -344,13 +344,13 @@
 							{
 								versions[id] = this.plugins[id].versions['current'];
 
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>' + versions[id];
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%bridge.version%: </b>' + versions[id];
 							
 								if(latestVersions[id] == versions[id])
 								{
-									Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', 'Update Erfolgreich!'));
+									Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', '%general.update_success%!'));
 
-									document.getElementById('update-status-' + id).innerHTML = 'UP TO DATE';
+									document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
 									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
 									document.getElementById('update-status-' + id).classList.remove('shine');
 
@@ -358,18 +358,18 @@
 								}
 								else
 								{
-									Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler bei der Installation! 1'));
+									Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
 								}
 							}
 							else
 							{
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>Version: </b>Fehler beim Laden';
-								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler bei der Installation! 2'));
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%general.version%: </b>%general.connection_error%';
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
 							}
 						}
 						else
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', 'Fehler beim Neustart!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.restart_failed%!'));
 						}
 
 						await Essentials.newTimeout(4000);

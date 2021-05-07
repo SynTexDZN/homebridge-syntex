@@ -1,20 +1,20 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Gerät Erstellen</title>
+			<title>%menu.create%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Erstellen', 'Ein virtuelles Gerät');
+				PageManager.setHeader('%create.create%', '%create.virtual_device%');
 
 				var main = document.createElement('div');
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ');"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="button" class="gradient-green" onclick="createAccessory()" value="Erstellen"></div>';
+				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ');"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="button" class="gradient-green" onclick="createAccessory()" value="%create.create%"></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -22,23 +22,23 @@
 			</script>
 			<div id="create" style="transition: .2s ease-in-out">
 				<form class="main" onsubmit="event.preventDefault(); createAccessory();">
-					<p><b>ID: <input autofocus spellcheck="false" autocapitalize="false" autocomplete="false" id="form-id" pattern="[a-z0-9-]+" title="Bitte benutze nur kleine Buchstaben, Zahlen und dieses Sonderzeichen: -" required name="id" type="text" style="max-width: 325px"></b></p>
-					<p><b>Name: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+					<p><b>%general.id%: <input autofocus spellcheck="false" autocapitalize="false" autocomplete="false" id="form-id" pattern="[a-z0-9-]+" title="%pattern.small_letters_numbers_special%: -" required name="id" type="text" style="max-width: 325px"></b></p>
+					<p><b>%general.name%: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
-						<p style="margin-left: auto; margin-right: 14px"><b>Art: </b></p>
+						<p style="margin-left: auto; margin-right: 14px"><b>%create.art%: </b></p>
 					</div>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
-						<button class="widget-left gradient-red">Wichtig</button>
-						<button class="widget-right">Die ID muss eindeutig sein<br>Diese kann frei gewählt werden</button>
+						<button class="widget-left gradient-red">%general.important%</button>
+						<button class="widget-right">%create.unique_id%</button>
 					</div>
-					<input type="submit" value="Absenden" style="display: none">
+					<input type="submit" value="%create.send%" style="display: none">
 				</form>
 			</div>
 			<div id="success" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
-					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="Auf Bridge Warten ..">
-					<p>Das Gerät ist<br>jetzt Einsatzbereit</p>
+					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="%general.waiting_for_bridge% ..">
+					<p>%create.device_ready%</p>
 				</div>
 			</div>
 			<script type="module">
@@ -59,7 +59,7 @@
 				select.className = 'custom-select';
 				select.setAttribute('style', 'width: 325px; margin-right: auto');
 
-				var services = { 'airquality' : 'Luftqualität', 'contact' : 'Kontakt', 'dimmer' : 'Dimmer', 'humidity' : 'Feuchtigkeit', 'led' : 'LED', 'light' : 'Lichtstärke', 'motion' : 'Bewegung', 'occupancy' : 'Anwesenheit', 'outlet' : 'Steckdose', 'rain' : 'Regen', 'relais' : 'Relais', 'rgb' : 'RGB', 'smoke' : 'Rauch', 'statelessswitch' : 'Szenen Knopf', 'switch' : 'Schalter', 'temperature' : 'Temperatur' };
+				var services = { 'airquality' : '%accessories.airquality%', 'contact' : '%accessories.contact%', 'dimmer' : '%accessories.dimmer%', 'humidity' : '%accessories.humidity%', 'led' : '%accessories.led%', 'light' : '%accessories.light%', 'motion' : '%accessories.motion%', 'occupancy' : '%accessories.occupancy%', 'outlet' : '%accessories.outlet%', 'rain' : '%accessories.rain%', 'relais' : '%accessories.relais%', 'rgb' : '%accessories.rgb%', 'smoke' : '%accessories.smoke%', 'statelessswitch' : '%accessories.statelessswitch%', 'switch' : '%accessories.switch%', 'temperature' : '%accessories.temperature%' };
 				var html = '<select id="form-services" name="service">';
 
 				for(const i in services)
@@ -85,8 +85,8 @@
 					var overlays = {
 						root : document.getElementById('create-btn'),
 						id : 'create',
-						pending : { value : 'Erstellen ..' },
-						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+						pending : { value : '%create.creating% ..' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
 					};
 
 					var post = {
@@ -101,7 +101,7 @@
 
 					if(created == 'Success')
 					{
-						PageManager.setHeader('Geschafft', 'Erfolgreich Erstellt');
+						PageManager.setHeader('%create.success%', '%create.create_success%');
 						
 						PageManager.switchPage('create', 'success', false);
 

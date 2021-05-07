@@ -1,7 +1,7 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Automation: Laden ..</title>
+			<title>%menu.automation%: %general.loading% ..</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
@@ -10,11 +10,11 @@
 
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
-					PageManager.setHeader('Einstellungen');
+					PageManager.setHeader('%general.settings%');
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="Speichern"></div></div>';
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="%general.save%"></div></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -23,13 +23,13 @@
 				}
 				else
 				{
-					PageManager.setHeader('Automation', 'Laden ..');
+					PageManager.setHeader('%menu.automation%', '%general.loading% ..');
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Ändern</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -38,45 +38,45 @@
 			</script>
 			<div id="infos" class="main" style="transition: .2s ease-in-out">
 				<div class="type-container" style="margin-top: 0">
-					<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
-					<p><b>ID: </b></p>
-					<p><b>Name: </b></p>
-					<p style="margin-bottom: 20px"><b>Aktiv: </b></p>
+					<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
+					<p><b>%general.id%: </b></p>
+					<p><b>%general.name%: </b></p>
+					<p style="margin-bottom: 20px"><b>%automation.active%: </b></p>
 				</div>
 				<div style="margin-top: 20px" class="type-container">
-					<h2 class="title-container">Auslöser</h2>
+					<h2 class="title-container">%automation.trigger%</h2>
 					<div id="trigger" style="text-align: center"></div>
 				</div>
 				<div style="margin-top: 20px" class="type-container">
-					<h2 class="title-container">Bedingung</h2>
+					<h2 class="title-container">%automation.condition%</h2>
 					<div id="condition" style="text-align: center"></div>
 				</div>
 				<div style="margin-top: 20px" class="type-container">
-					<h2 class="title-container">Ausführen</h2>
+					<h2 class="title-container">%automation.result%</h2>
 					<div id="result" style="text-align: center"></div>
 				</div>
 			</div>
 			<div class="main"" id="settings" style="display: none; transition: .2s ease-in-out">
 				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
 					<div class="type-container" style="margin-top: 0">
-						<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>
-						<p><b>ID: <input type="button" style="max-width: 150px" disabled></b></p>
-						<p autofocus><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p style="margin-bottom: 20px"><b>Aktiv: <input value="Laden .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
+						<p><b>%general.id%: <input type="button" style="max-width: 150px" disabled></b></p>
+						<p autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+						<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
 					</div>
 					<div style="margin-top: 20px" class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">Auslöser</h2>
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.trigger%</h2>
 						<div id="edit-trigger" style="text-align: center"></div>
 					</div>
 					<div style="margin-top: 20px" class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">Bedingung</h2>
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.condition%</h2>
 						<div id="edit-condition" style="text-align: center"></div>
 					</div>
 					<div style="margin-top: 20px" class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">Ausführen</h2>
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
 						<div id="edit-result" style="text-align: center"></div>
 					</div>
-					<input type="submit" value="Absenden" style="display: none">
+					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<script type="module">
@@ -95,84 +95,74 @@
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
 				window.services = [];
-				/*
-				window.accessories = [
-					{
-						id: 'test1',
-						name: 'Test',
-						letters: 'F2',
-						services: ['switch']
-					}
-				];
-				*/
 				window.id = (new URL(window.location.href)).searchParams.get('id');
 				window.resetting = false;
 
 				window.data = {
 					motion: {
-						active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					occupancy: {
-						active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					smoke: {
-						active : { text : 'Rauch', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					contact: {
-						active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-						inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.contact.active%', color : 'hsl(350, 75%, 55%)' },
+						inactive : { text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					outlet: {
-						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					relais: {
-						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					switch: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					rain: {
-						active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-						inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)' },
+						inactive : { text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					statelessswitch: {
-						active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					led: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					dimmer: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgb: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbw: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbww: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbcw: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
 					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : 'Luftqualität', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
+					light: { text : '%characteristics.light%', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
+					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
 				if(id != null)
@@ -180,70 +170,7 @@
 					Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
 						automation = JSON.parse(a);
-						/*
-						automation = [
-							{
-								id: 1,
-								name: 'Debug',
-								active: true,
-								trigger: [
-									{
-										id: 'test1',
-										name: 'Test 1',
-										letters: 'F0',
-										operation: '=',
-										value: '100'
-									},
-									{
-										id: 'test1',
-										name: 'Test 1',
-										letters: 'F0',
-										operation: '=',
-										value: '2000'
-									}
-								],
-								condition: [
-									{
-										id: 'test2',
-										name: 'Bedingung 1',
-										letters: 'D0',
-										operation: '>',
-										value: '50'
-									},
-									{
-										id: 'test2',
-										name: 'Bedingung 2',
-										letters: 'D0',
-										operation: '>',
-										value: '50'
-									},
-									{
-										id: 'test2',
-										name: 'Bedingung 3',
-										letters: 'D0',
-										operation: '>',
-										value: '50'
-									}
-								],
-								result: [
-									{
-										id: 'test3',
-										name: 'Test X',
-										letters: 'B0',
-										operation: '=',
-										value: '1000'
-									},
-									{
-										id: 'test2',
-										name: 'Test Y',
-										letters: 'D0',
-										operation: '>',
-										value: '50'
-									}
-								]
-							}
-						];
-						*/
+						
 						setupViewPage();
 						setupSettingsPage();
 
@@ -336,11 +263,11 @@
 
 				async function openSettings(previous)
 				{
-					PageManager.setHeader('Einstellungen', null, true);
+					PageManager.setHeader('%general.settings%', null, true);
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="reset-btn" type="button" value="Automation Löschen" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="Speichern"></div></div>';
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="%general.save%"></div></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
@@ -359,13 +286,13 @@
 
 				async function closeSettings(previous)
 				{
-					PageManager.setHeader('Automation', null, true);
+					PageManager.setHeader('%menu.automation%', null, true);
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Ändern</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
@@ -388,10 +315,10 @@
 					{
 						if(automation[i].id == id)
 						{
-							document.getElementsByTagName('title')[0].innerHTML = 'Automation: ' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>ID: </b>' + automation[i].id;
-							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>Name: </b>' + automation[i].name;
-							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>Aktiv: </b>' + (automation[i].active ? 'An' : 'Aus');
+							document.getElementsByTagName('title')[0].innerHTML = '%menu.automation%: ' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[0].innerHTML = '<b>%general.id%: </b>' + automation[i].id;
+							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>%general.name%: </b>' + automation[i].name;
+							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>%automation.active%: </b>' + (automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%');
 
 							PageManager.setHeader(null, automation[i].name);
 
@@ -414,7 +341,7 @@
 									column.style.marginTop = '3px';
 								}
 
-								category.innerHTML = j == 0 ? 'WENN' : 'ODER';
+								category.innerHTML = j == 0 ? '%automation.if%' : '%automation.or%';
 								category.className = 'primary';
 
 								column.appendChild(category);
@@ -433,7 +360,7 @@
 								}
 								else if(automation[i].trigger[j].url)
 								{
-									row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen: "' + automation[i].trigger[j].url + '"';
+									row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].trigger[j].url + '"';
 								}
 							
 								column.appendChild(row);
@@ -468,7 +395,7 @@
 										column.style.marginTop = '3px';
 									}
 
-									category.innerHTML = j == 0 ? 'WENN' : automation[i].combination == 'ALL' ? 'UND' : 'ODER';
+									category.innerHTML = j == 0 ? '%automation.if%' : automation[i].combination == 'ALL' ? '%automation.and%' : '%automation.or%';
 									category.className = 'primary';
 
 									column.appendChild(category);
@@ -487,7 +414,7 @@
 									}
 									else if(automation[i].condition[j].url)
 									{
-										row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen: "' + automation[i].condition[j].url + '"';
+										row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].condition[j].url + '"';
 									}
 
 									column.appendChild(row);
@@ -518,7 +445,7 @@
 									column.style.marginTop = '3px';
 								}
 
-								category.innerHTML = j == 0 ? 'DANN' : 'UND';
+								category.innerHTML = j == 0 ? '%automation.then%' : '%automation.and%';
 								category.className = 'primary';
 
 								column.appendChild(category);
@@ -537,7 +464,7 @@
 								}
 								else if(automation[i].result[j].url)
 								{
-									row.innerHTML = '<img class="icon" src="/img/link.png">Link Aufrufen: "' + automation[i].result[j].url + '"';
+									row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].result[j].url + '"';
 								}
 
 								column.appendChild(row);
@@ -560,7 +487,7 @@
 						{
 							document.getElementById('settings').getElementsByTagName('input')[0].value = automation[i].id;
 							document.getElementById('settings').getElementsByTagName('input')[1].value = automation[i].name;
-							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].active ? 'An' : 'Aus';
+							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%';
 							document.getElementById('settings').getElementsByTagName('input')[2].className = automation[i].active ? 'white' : 'outline';
 						}
 					}
@@ -571,12 +498,12 @@
 					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
 					{
 						btn.setAttribute('class', 'outline');
-						btn.setAttribute('value', 'Aus');
+						btn.setAttribute('value', '%characteristics.boolean.inactive%');
 					}
 					else
 					{
 						btn.setAttribute('class', 'white');
-						btn.setAttribute('value', 'An');
+						btn.setAttribute('value', '%characteristics.boolean.active%');
 					}
 				}
 
@@ -655,12 +582,12 @@
 
 						if(option.getAttribute('type') == 'numeric')
 						{
-							select.parentElement.children[2].setAttribute('placeholder', 'Zahl');
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.number%');
 							select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
 						}
 						else if(option.getAttribute('type') == 'url')
 						{
-							select.parentElement.children[2].setAttribute('placeholder', 'URL');
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.link%');
 							select.parentElement.children[2].removeAttribute('pattern');
 						}
 					}
@@ -673,7 +600,7 @@
 					var b = document.createElement('b');
 					var select = document.createElement('div');
 
-					b.innerHTML = 'Gerät: ';
+					b.innerHTML = '%automation.device%: ';
 
 					select.className = 'custom-select';
 					select.style.marginRight = '20px';
@@ -711,7 +638,7 @@
 
 					var letters = t != null ? t.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
-					trigger.innerHTML += '<input hidden value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '"' + (t && t.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+					trigger.innerHTML += '<input hidden value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '"' + (t && t.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
 
@@ -734,7 +661,7 @@
 					var b = document.createElement('b');
 					var select = document.createElement('div');
 
-					b.innerHTML = 'Gerät: ';
+					b.innerHTML = '%automation.device%: ';
 
 					select.className = 'custom-select';
 					select.style.marginRight = '20px';
@@ -772,7 +699,7 @@
 
 					var letters = c != null ? c.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
-					condition.innerHTML += '<input hidden value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '"' + (c && c.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="Zahl" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+					condition.innerHTML += '<input hidden value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '"' + (c && c.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
 
@@ -795,7 +722,7 @@
 					var b = document.createElement('b');
 					var select = document.createElement('div');
 
-					b.innerHTML = 'Gerät: ';
+					b.innerHTML = '%automation.device%: ';
 
 					select.className = 'custom-select';
 					select.style.marginRight = '20px';
@@ -803,7 +730,7 @@
 
 					result.className = 'automation-device-entry';
 
-					var html = '<select name="service" onchange="updateValueInput(this)"><option ' + (r && r.url ? 'selected' : '') + ' img="/img/link.png" type="url">Link Öffnen</option>';
+					var html = '<select name="service" onchange="updateValueInput(this)"><option ' + (r && r.url ? 'selected' : '') + ' img="/img/link.png" type="url">%automation.open_link%</option>';
 
 					for(var i = 0; i < services.length; i++)
 					{
@@ -833,7 +760,7 @@
 
 					var letters = r != null ? r.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
-					result.innerHTML += '<input hidden value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '"' + (r && r.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="' + (!r || r.url ? 'URL' : 'Zahl') + '" title="Bitte benutze nur Zahlen und dieses Sonderzeichen: -" name="value" type="text" style="width: 100%!important">';
+					result.innerHTML += '<input hidden value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '"' + (r && r.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="' + (!r || r.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
 
@@ -912,7 +839,7 @@
 
 				function removeAutomation(btn)
 				{
-					var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+					var overlay = Essentials.createOverlay(1, 'reset-confirm', '%automation.remove_confirm%?', 'red');
 
 					overlay.setAttribute('onclick', 'removeConfirm(this)');
 					overlay.style.setProperty('cursor', 'pointer', 'important');
@@ -927,9 +854,9 @@
 						var overlays = {
 							root : btn,
 							id : 'update',
-							pending : { value : 'Löschen ..', z : 2 },
-							executeError : { value : 'Entfernen Fehlgeschlagen!', z : 3 },
-							connectionError : { value : 'Keine Verbindung zur Bridge', z : 3 }
+							pending : { value : '%automation.removing% ..', z : 2 },
+							executeError : { value : '%automation.remove_failed%!', z : 3 },
+							connectionError : { value : '%general.bridge_connection_error%', z : 3 }
 						};
 
 						var url = '/serverside/remove-automation?id=' + id;
@@ -948,7 +875,7 @@
 								}
 							}
 
-							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Entfernen Erfolgreich!', 'green'));
+							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', '%automation.remove_success%!', 'green'));
 
 							await Essentials.newTimeout(3000);
 
@@ -977,7 +904,7 @@
 
 					automationOBJ.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
 					automationOBJ.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
-					automationOBJ.active = document.getElementById('settings').getElementsByTagName('input')[2].value == 'An';
+					automationOBJ.active = document.getElementById('settings').getElementsByTagName('input')[2].value == '%characteristics.boolean.active%';
 					automationOBJ.trigger = [];
 
 					for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
@@ -1103,9 +1030,9 @@
 					var overlays = {
 						root : document.getElementById('save-btn'),
 						id : 'save',
-						pending : { value : 'Aktualisieren ..' },
-						executeError : { value : 'Aktualisierung Fehlgeschlagen!' },
-						connectionError : { value : 'Keine Verbindung zur Bridge!' }
+						pending : { value : '%automation.reloading% ..' },
+						executeError : { value : '%automation.reload_failed%!' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
 					};
 
 					var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automationOBJ));
@@ -1120,7 +1047,7 @@
 							}
 						}
 						
-						Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', 'Automation Aktualisiert!', 'green'));
+						Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', '%automation.reload_success%!', 'green'));
 
 						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
 

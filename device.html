@@ -6,7 +6,7 @@
 				window.addEventListener('resize', () => repaintGraphs());
 				
 			</script>
-			<title class="loading-loop">Laden ..</title>
+			<title class="loading-loop">%general.loading% ..</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
@@ -17,13 +17,13 @@
 
 				if((new URL(window.location.href)).searchParams.get('settings') == '')
 				{
-					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )');
+					PageManager.setHeader('%general.settings%', '( ' + device.name + ' )');
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="%general.save%"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -38,10 +38,10 @@
 
 					if(device.plugin == 'SynTex')
 					{
-						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="%device.restart%" onclick="restartDevice(this)">';
 					}
 
-					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Einstellen</div></button></div>';
+					main.innerHTML += '<div style="display: flex"><input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%device.modify%</div></button></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -51,19 +51,19 @@
 			<div class="main" id="infos" style="transition: .2s ease-in-out">
 				<div id="head"></div>
 				<div class="control-container"></div>
-				<h1 class="loading-loop">Laden ..</h1>
+				<h1 class="loading-loop">%general.loading% ..</h1>
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
 				<div id="activity"></div>
 			</div>
 			<div id="settings" style="display: none; transition: .2s ease-in-out">
 				<form onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
-						<p style="margin-top: 0"><b>Name: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>Raum: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="Bitte benutze nur Buchstaben, Zahlen, Leerzeichen und diese Sonderzeichen: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
+						<p style="margin-top: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+						<p><b>%device.room%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
 					</div>
-					<input id="reset-btn" type="button" value="Gerät Zurücksetzen" onclick="resetDevice(this)">
-					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="Gerät Neu Verbinden">
-					<input type="submit" value="Absenden" style="display: none">
+					<input id="reset-btn" type="button" value="%device.reset%" onclick="resetDevice(this)">
+					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
+					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<script type="module" defer>
@@ -99,69 +99,69 @@
 
 				window.data = {
 					motion: {
-						active : { text : 'Bewegung', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					occupancy: {
-						active : { text : 'Anwesenheit', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					smoke: {
-						active : { text : 'Rauch', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)' },
+						inactive : { text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					contact: {
-						active : { text : 'Geöffnet', color : 'hsl(350, 75%, 55%)' },
-						inactive : { text : 'Zu', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.contact.active%', color : 'hsl(350, 75%, 55%)' },
+						inactive : { text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					outlet: {
-						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					relais: {
-						active : { text : 'An', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					switch: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'rgb(60, 60, 80)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
 					},
 					rain: {
-						active : { text : 'Regen', color : 'hsl(220, 75%, 55%)' },
-						inactive : { text : 'Trocken', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)' },
+						inactive : { text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					statelessswitch: {
-						active : { text : 'Aktiv', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : 'Bereit', color : 'hsl(150, 75%, 55%)' }
+						active : { text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)' },
+						inactive : { text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)' }
 					},
 					led: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					dimmer: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgb: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbw: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbww: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					rgbcw: {
-						active : { text : 'An', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : 'Aus', color : 'hsl(205, 75%, 55%)' }
+						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
+						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
 					},
 					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
 					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-					light: { text : 'Lux', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : 'Qualität', color : 'hsl(0, 85%, 60%)', colorRange : [200, -40], valueRange : [0, 5] }
+					light: { text : '%characteristics.light%', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
+					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
 				loadServices();
@@ -194,7 +194,7 @@
 					{
 						settings.push({
 							index: 'active',
-							name: 'Aktiviert'
+							name: '%device.active%'
 						});
 					}
 				}
@@ -205,7 +205,7 @@
 					{
 						settings.push({
 							index: 'led',
-							name: 'LED'
+							name: '%device.led%'
 						});
 					}
 				}
@@ -216,7 +216,7 @@
 					{
 						settings.push({
 							index: 'interval',
-							name: services.includes('motion') ? 'Delay' : 'Interval'
+							name: services.includes('motion') ? '%device.delay%' : '%device.interval%'
 						});
 					}
 				}
@@ -226,23 +226,23 @@
 
 				var infos = document.getElementById('info');
 
-				infos.innerHTML += '<p style="user-select: text"><b>ID: </b>' + device.id + '</p>';
+				infos.innerHTML += '<p style="user-select: text"><b>%general.id%: </b>' + device.id + '</p>';
 
 				if(device.ip != null)
 				{
-					infos.innerHTML += '<p style="user-select: text"><b>IP: </b>' + device.ip + '</p>';
+					infos.innerHTML += '<p style="user-select: text"><b>%general.ip%: </b>' + device.ip + '</p>';
 				}
 				
-				infos.innerHTML += '<p><b>Typ: </b>' + Essentials.getType(services) + '</p>';
+				infos.innerHTML += '<p><b>%device.type%: </b>' + Essentials.getType(services) + '</p>';
 
 				if(device.version != null && device.version != '0.0.0')
 				{
-					infos.innerHTML += '<p><b>Version: </b>' + device.version + '</p>';
+					infos.innerHTML += '<p><b>%device.version%: </b>' + device.version + '</p>';
 				}
 
 				if(device.room != null && device.room != '')
 				{
-					infos.innerHTML += '<p><b>Raum: </b>' + device.room + '</p>';
+					infos.innerHTML += '<p><b>%device.room%: </b>' + device.room + '</p>';
 				}
 
 				for(const i in settings)
@@ -259,11 +259,11 @@
 					{
 						if(device[settings[i].index] == 1)
 						{
-							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>An</p>';
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>%characteristics.boolean.active%</p>';
 						}
 						else
 						{
-							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>Aus</p>';
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>%characteristics.boolean.inactive%</p>';
 						}
 					}
 					else
@@ -281,7 +281,7 @@
 
 				if(device.plugin == 'SynTexTuya')
 				{
-					settingsForm.getElementsByTagName('input')[0].setAttribute('placeholder', 'In der Tuya App ändern');
+					settingsForm.getElementsByTagName('input')[0].setAttribute('placeholder', '%device.change_in_tuya%');
 					settingsForm.getElementsByTagName('input')[0].setAttribute('disabled', '');
 				}
 				else
@@ -295,15 +295,15 @@
 				{
 					if(settings[i].index == 'interval' && !services.includes('motion'))
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="%pattern.numbers%" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
 					}
 					else if(settings[i].index == 'interval' && services.includes('motion'))
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="Bitte benutze nur Zahlen" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="%pattern.numbers%" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
 					}
 					else if(settings[i].index == 'led' || settings[i].index == 'active')
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? 'An' : 'Aus') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
 					}
 					else
 					{
@@ -344,7 +344,7 @@
 							statusField.setAttribute('id', 'status-' + type + '-' + j);
 							statusField.setAttribute('class', 'control-panel loading-loop');
 							statusField.setAttribute('type', 'button');
-							statusField.setAttribute('value', 'LADEN ..');
+							statusField.setAttribute('value', '%general.loading% ..');
 
 							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer')
 							{
@@ -513,7 +513,7 @@
 
 								infoMin.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: 25px; margin-top: -19.2px; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
 								infoMin.setAttribute('class', 'min');
-								infoMin.innerHTML = 'Min';
+								infoMin.innerHTML = '%device.min%';
 
 								frame.appendChild(infoMin);
 
@@ -521,7 +521,7 @@
 
 								infoMax.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
 								infoMax.setAttribute('class', 'max');
-								infoMax.innerHTML = 'Max';
+								infoMax.innerHTML = '%device.max%';
 
 								frame.appendChild(infoMax);
 
@@ -577,7 +577,7 @@
 
 								infoUpdates.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
 								infoUpdates.setAttribute('class', 'updates');
-								infoUpdates.innerHTML = 'Daten';
+								infoUpdates.innerHTML = '%device.data%';
 
 								frame.appendChild(infoUpdates);
 
@@ -585,7 +585,7 @@
 
 								infoUpdate.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: -25px; margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
 								infoUpdate.setAttribute('class', 'update');
-								infoUpdate.innerHTML = 'Aktivität';
+								infoUpdate.innerHTML = '%device.activity%';
 
 								frame.appendChild(infoUpdate);
 
@@ -593,7 +593,7 @@
 								{
 									var notSupportedButton = document.createElement('h2');
 
-									notSupportedButton.innerHTML = 'Keine Daten';
+									notSupportedButton.innerHTML = '%device.no_data%';
 									notSupportedButton.className = 'reload-button';
 									notSupportedButton.setAttribute('style', 'margin-top: -480px');
 
@@ -701,13 +701,13 @@
 
 					if(percent == 0)
 					{
-						value = 'AUS';
+						value = '%characteristics.boolean.inactive%';
 
 						color = 'rgb(60, 60, 80)';
 					}
 					else if(percent == 100)
 					{
-						value = 'AN';
+						value = '%characteristics.boolean.active%';
 					}
 
 					statusField.style.background = color;
@@ -841,11 +841,11 @@
 
 						console.log(2, 'CONTROL SWITCH', value, temp[type + counter]);
 
-						var v = value == 'false' ? 'AUS' : 'AN';
+						var v = value == 'false' ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%';
 
-						if(button.value.toUpperCase().includes('[AN]') || button.value.toUpperCase().includes('[AUS]'))
+						if(button.value.toUpperCase().includes('[%characteristics.boolean.active%]') || button.value.toUpperCase().includes('[%characteristics.boolean.inactive%]'))
 						{
-							v = value == 'false' ? button.value.replace('[AN]', '[AUS]') : button.value.replace('[AUS]', '[AN]');
+							v = value == 'false' ? button.value.replace('[%characteristics.boolean.active%]', '[%characteristics.boolean.inactive%]') : button.value.replace('[%characteristics.boolean.inactive%]', '[%characteristics.boolean.active%]');
 						}
 
 						if(type == 'switch' || type == 'relais' || type == 'outlet')
@@ -1222,12 +1222,12 @@
 						}
 						else if(data[type].text != null)
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = 'Min • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = 'Max • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
 						}
 
-						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • Aktivität';
-						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[type + c].length + ' • Daten';
+						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
+						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[type + c].length + ' • %device.data%';
 					
 						if(canvas.parentElement.getElementsByTagName('h2').length > 0)
 						{
@@ -1243,7 +1243,7 @@
 					{
 						var reloadButton = document.createElement('h2');
 
-						reloadButton.innerHTML = '↻ Neu Laden';
+						reloadButton.innerHTML = '↻ %general.reload%';
 						reloadButton.className = 'reload-button';
 						reloadButton.setAttribute('style', 'margin-top: -480px');
 						reloadButton.setAttribute('onclick', 'loadActivity()');
@@ -1561,31 +1561,31 @@
 					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
 					{
 						btn.setAttribute('class', 'outline');
-						btn.setAttribute('value', 'Aus');
+						btn.setAttribute('value', '%characteristics.boolean.inactive%');
 					}
 					else
 					{
 						btn.setAttribute('class', 'white');
-						btn.setAttribute('value', 'An');
+						btn.setAttribute('value', '%characteristics.boolean.active%');
 					}
 				}
 
 				async function openSettings(previous)
 				{
-					PageManager.setHeader('Einstellungen', '( ' + device.name + ' )', true);
+					PageManager.setHeader('%general.settings%', '( ' + device.name + ' )', true);
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="Zurück" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="Speichern"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="saveConfig()" value="%device.save%"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
 
 					await PageManager.switchPage(previous, 'settings', false);
 
-					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (Einstellungen)';
+					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (%general.settings%)';
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -1605,10 +1605,10 @@
 
 					if(device.plugin == 'SynTex')
 					{
-						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="Gerät Neustarten" onclick="restartDevice(this)">';
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="%device.restart%" onclick="restartDevice(this)">';
 					}
 
-					main.innerHTML += '<div style="display: flex"><input type="button" value="Zurück" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">Einstellen</div></button></div>';
+					main.innerHTML += '<div style="display: flex"><input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split arrow" style="margin-left: 20px"><div class="button-icon red"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%device.modify%</div></button></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
@@ -1742,14 +1742,14 @@
 
 												if(Math.round(state.brightness) == 100)
 												{
-													value = 'AN';
+													value = '%characteristics.boolean.active%';
 												}
 												
 												color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
 											}
 											else if(state.state == false)
 											{
-												value = 'AUS';
+												value = '%characteristics.boolean.inactive%';
 												color = 'rgb(60, 60, 80)';
 											}
 										}
@@ -1757,7 +1757,7 @@
 										{
 											if(state.state == false || state.brightness == 0)
 											{
-												value = 'AUS';
+												value = '%characteristics.boolean.inactive%';
 												color = 'rgb(60, 60, 80)';
 											}
 											else if(state.state == true)
@@ -1766,7 +1766,7 @@
 
 												if(Math.round(state.brightness) == 100)
 												{
-													value = 'AN';
+													value = '%characteristics.boolean.active%';
 												}
 												
 												color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
@@ -1927,15 +1927,15 @@
 						var overlays = {
 							root : btn,
 							id : 'restart',
-							pending : { value : 'Neustart ..' },
-							connectionError : { value : 'Keine Verbindung zum Gerät!' }
+							pending : { value : '%general.restarting% ..' },
+							connectionError : { value : '%device.device_connection_error%!' }
 						};
 
 						restarting = true;
 
 						if(await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, false) == null)
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', 'Keine Verbindung zum Gerät!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%device.device_connection_error%!'));
 
 							await Essentials.newTimeout(4000);
 
@@ -1956,7 +1956,7 @@
 
 							if(restarting == true)
 							{
-								Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', 'Neustart Erfolgreich!'));
+								Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
 								
 								await Essentials.newTimeout(4000);
 								
@@ -1989,7 +1989,7 @@
 						else
 						{
 							document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
-							document.getElementsByClassName('control-panel')[0].value = 'OFFLINE';
+							document.getElementsByClassName('control-panel')[0].value = '%general.offline%';
 
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
@@ -2021,10 +2021,10 @@
 							var overlays = {
 								root : btn,
 								id : 'update',
-								pending : { value : 'Bitte Warten ..' },
-								success : { value : 'Update wird Installiert ..', color : 'purple', remove : false },
-								executeError : { value : 'Update Fehlgeschlagen!' },
-								connectionError : { value : 'Keine Verbindung zum Gerät!' }
+								pending : { value : '%general.please_wait% ..' },
+								success : { value : '%general.updating% ..', color : 'purple', remove : false },
+								executeError : { value : '%general.update_failed%!' },
+								connectionError : { value : '%device.device_connection_error%!' }
 							};
 
 							updating = true;
@@ -2036,23 +2036,23 @@
 								var overlays = {
 									root : btn,
 									id : 'update-installation',
-									connectionError : { value : 'Keine Verbindung zum Gerät!' }
+									connectionError : { value : '%device.device_connection_error%!' }
 								};
 
 								var update = await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 20, overlays, false);
 
 								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
 								{  
-									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Erfolgreich!', 'green'));
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', '%general.update_success%!', 'green'));
 
 									response = true;
 								}
 								else
 								{
-									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', 'Update Fehlgeschlagen!', 'red'));
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', '%general.update_failed%!', 'red'));
 								}
 
-								document.getElementById('info').children[3].innerHTML = '<b>Version: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 3, {}, false);
+								document.getElementById('info').children[3].innerHTML = '<b>%device.version%: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin).getVersionURL(device), 3000, 3, {}, false);
 
 								await Essentials.newTimeout(4000);
 
@@ -2082,7 +2082,7 @@
 						var update = document.createElement('input');
 
 						update.setAttribute('type', 'button');
-						update.setAttribute('value', 'Update Installieren ( v' + newestVersion + ' )');
+						update.setAttribute('value', '%device.install_update% ( v' + newestVersion + ' )');
 						update.setAttribute('style', 'margin-bottom: 20px;');
 						update.setAttribute('onclick', 'updateDevice(this)');
 						update.setAttribute('id', 'update-btn');
@@ -2094,7 +2094,7 @@
 
 				function resetDevice(btn)
 				{
-					var overlay = Essentials.createOverlay(1, 'reset-confirm', 'Löschen Bestätigen?', 'red');
+					var overlay = Essentials.createOverlay(1, 'reset-confirm', '%device.reset_confirm%?', 'red');
 
 					overlay.setAttribute('onclick', 'resetConfirm(this)');
 					overlay.style.setProperty('cursor', 'pointer', 'important');
@@ -2109,9 +2109,9 @@
 						var overlays = {
 							root : btn,
 							id : 'update',
-							pending : { value : 'Zurücksetzen ..', z : 2 },
-							executeError : { value : 'Reset Fehlgeschlagen!', z : 3 },
-							connectionError : { value : 'Keine Verbindung ' + (device.ip == null ? 'zur Bridge!' : 'zum Gerät!'), z : 3 }
+							pending : { value : '%device.resetting% ..', z : 2 },
+							executeError : { value : '%device.reset_error%!', z : 3 },
+							connectionError : { value : (device.ip == null ? '%general.bridge_connection_error%!' : '%device.device_connection_error%!'), z : 3 }
 						};
 
 						var url = window.location.protocol + '//' + window.location.hostname + ':1710';
@@ -2132,7 +2132,7 @@
 						{
 							await Essentials.newTimeout(3000);
 
-							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', 'Reset Erfolgreich!', 'green'));
+							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', '%device.reset_success%!', 'green'));
 
 							await Query.complexFetch('/serverside/remove-device?id=' + device.id, 20000, 1, {}, false);
 
@@ -2181,7 +2181,7 @@
 								}
 								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 								{
-									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == 'An' ? 1 : 0);
+									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == '%characteristics.boolean.active%' ? 1 : 0);
 								}
 								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text' && (form.children[i].getElementsByTagName('input')[0].value != '' || !form.children[i].getElementsByTagName('input')[0].hasAttribute('required')))
 								{
@@ -2195,9 +2195,9 @@
 						var overlays = {
 							root : document.getElementById('save-btn'),
 							id : 'saving',
-							pending : { value : 'Hochladen ..', remove : false },
-							executeError : { value : 'Update Fehlgeschlagen!' },
-							connectionError : { value : 'Keine Verbindung zur Bridge!' }
+							pending : { value : '%general.uploading% ..', remove : false },
+							executeError : { value : '%device.save_error%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
 						};
 
 						saving = true;
@@ -2209,16 +2209,16 @@
 								var overlays = {
 									root : document.getElementById('save-btn'),
 									id : 'refresh',
-									success : { value : 'Hochgeladen!' },
-									executeError : { value : 'Fehler beim Upload!' },
-									connectionError : { value : 'Gespeichert!', color : 'yellow' }
+									success : { value : '%device.save_success%!' },
+									executeError : { value : '%device.save_error%!' },
+									connectionError : { value : '%device.saved%!', color : 'yellow' }
 								};
 								
 								await Query.complexFetch(Presets.getPreset(device.plugin).getRestartURL(device), 20000, 1, overlays, true);
 							}
 							else
 							{
-								Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('refresh-result', 'Gespeichert!'));
+								Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('refresh-result', '%device.saved%!'));
 							}
 
 							await Essentials.newTimeout(2000);
