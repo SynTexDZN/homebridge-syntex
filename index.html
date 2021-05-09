@@ -41,7 +41,7 @@
 				</div>
 				<div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
 					<div>
-						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%device.active%: %general.loading% ..</button>
+						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%devices.active%: %general.loading% ..</button>
 					</div>
 					<div>
 						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
@@ -211,11 +211,11 @@
 
 						if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
 						{
-							buttonHTML += '<div class="connection">AKTIV</div>';
+							buttonHTML += '<div class="connection">%devices.active%</div>';
 						}
 						else
 						{
-							buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
+							buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">%devices.inactive%</div>';
 						}
 
 						buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
@@ -648,7 +648,7 @@
 				{
 					if(!device.className.includes('update'))
 					{
-						device.children[1].children[0].innerHTML = 'OFFLINE';
+						device.children[1].children[0].innerHTML = '%general.offline%';
 						device.children[1].children[0].style.color = 'hsl(350, 95%, 60%)';
 					}
 
@@ -666,12 +666,12 @@
 					{
 						if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 						{
-							device.children[1].children[0].innerHTML = 'AKTIV';
+							device.children[1].children[0].innerHTML = '%devices.active%';
 							device.children[1].children[0].style.color = 'hsl(170, 90%, 50%)';
 						}
 						else
 						{
-							device.children[1].children[0].innerHTML = 'INAKTIV';
+							device.children[1].children[0].innerHTML = '%devices.active%';
 							device.children[1].children[0].style.color = 'rgb(130, 130, 150)';
 						}
 					}
@@ -792,14 +792,14 @@
 							updating.push(device.getAttribute('id'));
 
 							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
-							device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
+							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
 
 							var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 20000, 1, {}, false);
 
 							if(update == null)
 							{
 								device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+								device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
 
 								setTimeout(function() {
 
@@ -813,7 +813,7 @@
 								setOnline(device);
 
 								device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
+								device.getElementsByClassName('connection')[0].innerHTML = '%devices.updating%';
 
 								await Essentials.newTimeout(3000);
 								
@@ -822,7 +822,7 @@
 								if(update == device.getAttribute('newest-version'))
 								{
 									device.getElementsByClassName('connection')[0].style.color = '';
-									device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
+									device.getElementsByClassName('connection')[0].innerHTML = '%devices.success%';
 
 									device.className = 'device';
 
@@ -835,12 +835,12 @@
 								else if(update != null)
 								{
 									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+									device.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
 								}
 								else
 								{
 									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+									device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
 								}
 
 								setTimeout(function() {
@@ -906,12 +906,12 @@
 											if(btn.getAttribute('switch') == 0)
 											{
 												d.getElementsByClassName('connection')[0].style.color = '';
-												d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+												d.getElementsByClassName('connection')[0].innerHTML = '%devices.active%';
 											}
 											else
 											{
 												d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-												d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+												d.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
 											}
 										}
 
