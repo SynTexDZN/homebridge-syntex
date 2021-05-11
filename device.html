@@ -164,6 +164,29 @@
 					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					dimmer : '%accessories.dimmer%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
 				loadServices();
 
 				Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((plugins) => {
@@ -233,7 +256,7 @@
 					infos.innerHTML += '<p style="user-select: text"><b>%general.ip%: </b>' + device.ip + '</p>';
 				}
 				
-				infos.innerHTML += '<p><b>%device.type%: </b>' + Essentials.getType(services) + '</p>';
+				infos.innerHTML += '<p><b>%device.type%: </b>' + (serviceNames[Essentials.getType(services)] || Essentials.getType(services)) + '</p>';
 
 				if(device.version != null && device.version != '0.0.0')
 				{

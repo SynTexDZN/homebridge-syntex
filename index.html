@@ -91,6 +91,29 @@
 				window.deviceCount = 0;
 				window.realDeviceCount = 0;
 
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					dimmer : '%accessories.dimmer%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
 				console.log('DEVICES', devices);
 
 				var timeDiff = new Date() - new Date('<%restart%>');
@@ -165,7 +188,7 @@
 
 							title.setAttribute('class', 'title-container');
 
-							title.innerHTML = Essentials.getType(devices[i].services);
+							title.innerHTML = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
 
 							console.log('SERVICES', Essentials.getType(devices[i].services));
 
