@@ -127,7 +127,31 @@
 				}, timeDiff > 60000 ? 60000 : 1000);
 
 				devices.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-				devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
+
+				devices.sort((a, b) => {
+
+					var typeA = Essentials.getType(a.services), typeB = Essentials.getType(b.services);
+
+					if(serviceNames[Essentials.getType(a.services)] != null)
+					{
+						typeA = serviceNames[Essentials.getType(a.services)];
+					}
+
+					if(serviceNames[Essentials.getType(b.services)] != null)
+					{
+						typeB = serviceNames[Essentials.getType(b.services)];
+					}
+
+					typeA = typeA.toLowerCase();
+					typeB = typeB.toLowerCase();
+
+					console.log(typeA, typeB, (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0);
+
+					return (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0;
+				});
+
+				devices.sort((a, b) => (Essentials.getType(a.services) == 'unsupported') ? -1 : 1);
+				devices.sort((a, b) => (Essentials.getType(a.services) == 'special') ? -1 : 1);
 				devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
 				
 				if(devices.length == 0)
