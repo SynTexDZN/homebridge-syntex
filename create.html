@@ -25,7 +25,7 @@
 					<p><b>%general.id%: <input autofocus spellcheck="false" autocapitalize="false" autocomplete="false" id="form-id" pattern="[a-z0-9-]+" title="%pattern.small_letters_numbers_special%: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>%general.name%: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
-						<p style="margin-left: auto; margin-right: 14px"><b>%create.art%: </b></p>
+						<p style="margin-left: auto; margin-right: 14px"><b>%create.type%: </b></p>
 					</div>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
 						<button class="widget-left gradient-red">%general.important%</button>
@@ -59,12 +59,12 @@
 				select.className = 'custom-select';
 				select.setAttribute('style', 'width: 325px; margin-right: auto');
 
-				var services = { 'airquality' : '%accessories.airquality%', 'contact' : '%accessories.contact%', 'dimmer' : '%accessories.dimmer%', 'humidity' : '%accessories.humidity%', 'led' : '%accessories.led%', 'light' : '%accessories.light%', 'motion' : '%accessories.motion%', 'occupancy' : '%accessories.occupancy%', 'outlet' : '%accessories.outlet%', 'rain' : '%accessories.rain%', 'relais' : '%accessories.relais%', 'rgb' : '%accessories.rgb%', 'smoke' : '%accessories.smoke%', 'statelessswitch' : '%accessories.statelessswitch%', 'switch' : '%accessories.switch%', 'temperature' : '%accessories.temperature%' };
+				var serviceNames = { 'airquality' : '%accessories.airquality%', 'contact' : '%accessories.contact%', 'dimmer' : '%accessories.dimmer%', 'humidity' : '%accessories.humidity%', 'led' : '%accessories.led%', 'light' : '%accessories.light%', 'motion' : '%accessories.motion%', 'occupancy' : '%accessories.occupancy%', 'outlet' : '%accessories.outlet%', 'rain' : '%accessories.rain%', 'relais' : '%accessories.relais%', 'rgb' : '%accessories.rgb%', 'smoke' : '%accessories.smoke%', 'statelessswitch' : '%accessories.statelessswitch%', 'switch' : '%accessories.switch%', 'temperature' : '%accessories.temperature%' };
 				var html = '<select id="form-services" name="service">';
 
-				for(const i in services)
+				for(const i in serviceNames)
 				{
-					html += '<option img="/img/accessory/' + i + '.png" type="' + i + '">' + services[i] + '</option>'
+					html += '<option img="/img/accessory/' + i + '.png" type="' + i + '">' + serviceNames[i] + '</option>'
 				}
 
 				html += '</select>'
