@@ -34,7 +34,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="check-name-btn" type="button" class="gradient-green" onclick="setName()" value="%menu.forward%"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="check-name-btn" type="submit" form="name-form" value="%menu.forward%"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -42,10 +42,9 @@
 
 			</script>
 			<div id="check-name" style="transition: .2s ease-in-out">
-				<form class="main" onsubmit="event.preventDefault(); setName();">
+				<form id="name-form" class="main" onsubmit="event.preventDefault(); setName();">
 					<p><b>%general.name%: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<p style="margin: 100px 0">%connect.name_choise%</p>
-					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<div id="connect" style="display: none; transition: .2s ease-in-out">

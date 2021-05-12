@@ -14,7 +14,7 @@
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="button" class="gradient-green" onclick="createSwitch()" value="%crossover.connect%"></div>';
+				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="create-btn" type="submit" form="connect-form" value="%crossover.connect%"></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -28,14 +28,13 @@
 					</div>
 				</div>
 				<h2>%crossover.connect_device%</h2>
-				<form class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch();">
+				<form id="connect-form" class="main" style="margin-top: 100px" onsubmit="event.preventDefault(); createSwitch();">
 					<p><b>%general.ip%: <input pattern="[a-zA-Z0-9-]+" title="%pattern.letters_numbers_special%: -" required name="ip" type="text" style="max-width: 325px"></b></p>
 					<p><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
 						<button class="widget-left gradient-red">%general.important%</button>
 						<button class="widget-right">%crossover.unique_id_name%</button>
 					</div>
-					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<script type="module">

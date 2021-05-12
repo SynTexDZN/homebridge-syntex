@@ -19,7 +19,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="createAutomation()" value="%automation.create%"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="create-form" value="%automation.create%"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -59,7 +59,7 @@
 				</div>
 			</div>
 			<div id="create" style="display: none; transition: .2s ease-in-out">
-				<form class="main" onsubmit="event.preventDefault(); createAutomation();">
+				<form id="create-form" class="main" onsubmit="event.preventDefault(); createAutomation();">
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
 						<p><b>%general.id%: <input type="button" style="max-width: 150px" value="0" disabled></b></p>
@@ -77,7 +77,6 @@
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
 						<div id="result" style="text-align: center"></div>
 					</div>
-					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<script type="module">
@@ -258,7 +257,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="createAutomation()" value="%automation.create%"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="create-form" value="%automation.create%"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);

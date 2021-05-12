@@ -14,7 +14,7 @@
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="%general.save%"></div></div>';
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form" value="%general.save%"></div></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -57,7 +57,7 @@
 				</div>
 			</div>
 			<div class="main"" id="settings" style="display: none; transition: .2s ease-in-out">
-				<form style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
+				<form id="settings-form" style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
 					<div class="type-container" style="margin-top: 0">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
 						<p><b>%general.id%: <input type="button" style="max-width: 150px" disabled></b></p>
@@ -76,7 +76,6 @@
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
 						<div id="edit-result" style="text-align: center"></div>
 					</div>
-					<input type="submit" value="%general.send%" style="display: none">
 				</form>
 			</div>
 			<script type="module">
@@ -267,7 +266,7 @@
 
 					var main = document.createElement('div');
 
-					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="button" class="gradient-green" onclick="modifyAutomation()" value="%general.save%"></div></div>';
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form" value="%general.save%"></div></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
