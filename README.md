@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
 
 A simple UI to control and manage all of your homebridge accessory.<br>
-Also it provides special features for your SynTex plugins:
+Also it provides special features for SynTex plugins:
 - `homebridge-syntex-magichome`
 - `homebridge-syntex-tuya`
 - `homebridge-syntex-webhooks`
