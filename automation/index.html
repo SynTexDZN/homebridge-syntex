@@ -1,7 +1,4 @@
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
-	</head>
 	<body ontouchstart="">
 		<div id="content">
 			<title>%general.dashboard%: %menu.automation%</title>
@@ -524,7 +521,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
+						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -583,7 +580,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')
+						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -642,7 +639,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd')
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
