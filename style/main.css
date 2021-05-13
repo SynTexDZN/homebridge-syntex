@@ -330,7 +330,7 @@ h1, h2, p, a, label
 	white-space: normal;
 }
 
-#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #rooms input, .log-message
+#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #rooms input, .log-message, .log-title
 {
 	word-break: break-all;
 	word-break: break-word;
@@ -574,7 +574,7 @@ h2
 	background: var(--dark-layer-two);
 	border: 2px solid var(--light-layer-two);
 	border-radius: 26px;
-	min-height: 26px;
+	min-height: 66px;
 }
 
 textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-thumb
@@ -582,8 +582,17 @@ textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb, .select
 	background: transparent;
 	border-radius: 0;
 	border-color: transparent;
-	border-width: 20px 9px 20px 12px;
 	box-shadow: inset 0 0 10px 10px var(--dark-layer-two);
+}
+
+textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb
+{
+	border-width: 20px 9px 20px 12px;
+}
+
+.select-items::-webkit-scrollbar-thumb
+{
+	border-width: 20px 10.5px 20px 10.5px;
 }
 
 textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
