@@ -25,6 +25,8 @@
 					PageManager.showFooter();
 
 					PageManager.switchPage('check-name', 'wifi', true);
+
+					pingESP();
 				}
 				else
 				{
@@ -43,7 +45,7 @@
 			</script>
 			<div id="check-name" style="transition: .2s ease-in-out">
 				<form id="name-form" class="main" onsubmit="event.preventDefault(); setName();">
-					<p><b>%general.name%: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+					<p style="margin-top: 0"><b>%general.name%: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<p style="margin: 100px 0">%connect.name_choise%</p>
 				</form>
 			</div>
@@ -57,7 +59,7 @@
 			<div id="wifi" style="display: none; transition: .2s ease-in-out">
 				<div class="main">
 					<form onsubmit="event.preventDefault(); sendWiFiSettings();">
-						<div id="networks" style="margin-bottom: 100px">
+						<div id="networks">
 							<p class="loading-loop">%general.loading% ..</p>
 						</div>
 						<input type="password" name="wifipass" placeholder="%connect.wifi_password%" style="margin-bottom: 20px" required>
@@ -110,13 +112,6 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				// NOTE: Redirect When Reconnecting
-
-				if(deviceID != null && deviceIP != null)
-				{
-					pingESP();
-				}
-
 				Preloader.finish();
 
 			</script>
@@ -168,22 +163,7 @@
 								{
 									pingActive = true;
 									deviceURL = 'http://' + deviceIP + '/';
-
-									console.log('PING SUCCESS', deviceURL);
-
-									PageManager.setHeader('%connect.network%', '%connect.choose_network%');
-
-									var main = document.createElement('div');
-
-									main.style.display = 'flex';
-
-									main.innerHTML = '<input id="back-btn-wifi" type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="%general.please_wait% .." onclick="scanWifi(this)">';
-
-									PageManager.setFooter(main);
-									PageManager.showFooter();
-
-									PageManager.switchPage('connect', 'wifi', false);
-
+									
 									scanWifi(document.getElementById('scan-btn'));
 								}
 							});
@@ -203,7 +183,14 @@
 
 								main.style.display = 'flex';
 
-								main.innerHTML = '<input id="back-btn-wifi" type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="%general.please_wait% .." onclick="scanWifi(this)">';
+								if(deviceID != null & deviceIP != null)
+								{
+									main.innerHTML = '<input id="back-btn-wifi" type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/device?id=" + deviceID + "&settings'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="%general.please_wait% .." onclick="scanWifi(this)">';
+								}
+								else
+								{
+									main.innerHTML = '<input id="back-btn-wifi" type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><input id="scan-btn" class="gradient-blue loading-loop" style="margin-left: 20px;" type="button" value="%general.please_wait% .." onclick="scanWifi(this)">';
+								}
 
 								PageManager.setFooter(main);
 								PageManager.showFooter();
@@ -230,9 +217,9 @@
 					{
 						searching = true;
 
-						if(btn != null)
+						if(document.getElementById('scan-btn') != null)
 						{
-							btn.value = '%general.please_wait% ..';
+							document.getElementById('scan-btn').value = '%general.search%';
 						}
 
 						document.getElementById('networks').innerHTML = '<p class="loading-loop">%general.loading% ..</p>';
@@ -295,7 +282,10 @@
 							document.getElementById('networks').innerHTML = "<p>%connect.no_networks%<br>%connect.press_search_button%</p>";
 						}
 
-						btn.value = '%general.search%';
+						if(document.getElementById('scan-btn') != null)
+						{
+							document.getElementById('scan-btn').value = '%general.search%';
+						}
 
 						searching = false;
 					}
