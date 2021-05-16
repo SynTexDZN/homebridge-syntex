@@ -132,6 +132,10 @@ function removeOverlays(btn, show)
 	{
 		btn.style.opacity = 1;
 	}
+	else
+	{
+		btn.style.opacity = 0;
+	}
 	
 	for(var i = 0; i < overlays.length; i++)
 	{
