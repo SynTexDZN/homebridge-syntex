@@ -221,8 +221,7 @@
 							var typeDevices = document.createElement('div');
 
 							typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
-							typeDevices.setAttribute('style', 'display: grid; grid-gap: 20px');
-							typeDevices.setAttribute('class', 'container');
+							typeDevices.setAttribute('class', 'container device-container');
 							/*
 							if(numOfType == 1)
 							{
@@ -718,7 +717,7 @@
 						}
 						else
 						{
-							device.children[1].children[0].innerHTML = '%devices.active%';
+							device.children[1].children[0].innerHTML = '%devices.inactive%';
 							device.children[1].children[0].style.color = 'rgb(130, 130, 150)';
 						}
 					}
