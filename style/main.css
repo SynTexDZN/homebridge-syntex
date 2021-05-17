@@ -1379,6 +1379,53 @@ button img
 	margin-bottom: 100px;
 }
 
+.dialogue
+{
+	background: rgba(0, 0, 10, .6);
+	display: flex;
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+	top: 0;
+	opacity: 0;
+	transition: .2s ease-in-out opacity;
+	z-index: 20000;
+}
+
+.dialogue .panel
+{
+	width: max(600px, 50%);
+	max-width: calc(100% - 40px);
+	box-sizing: border-box;
+	background-color: rgb(40, 40, 55);
+	margin: auto;
+	border-radius: 32px;
+	padding: 20px;
+
+	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
+		0 1px 2px rgba(0, 0, 0, 0.06), 
+		0 2px 4px rgba(0, 0, 0, 0.08), 
+		0 4px 8px rgba(0, 0, 0, 0.10);
+
+	border: 3px solid rgb(60, 60, 80);
+}
+
+.dialogue p
+{
+	margin: 50px auto;
+}
+
+.dialogue h2
+{
+	border: 3px solid rgb(60, 60, 80);
+}
+
+.dialogue .button-area
+{
+	display: flex;
+	grid-gap: 20px;
+}
+
 @media only screen and (min-width: 1177px)
 {
 	#content

@@ -1,0 +1,85 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>Basic: Demo</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Basic', 'Demo');
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<h1>Overlay</h1>
+                <button onclick="openExample()">Open</button>
+			</div>
+			<script type="module" defer>
+
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+                import { Preloader } from '/js/loading.js';
+
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+
+				window.Query = Query;
+				window.Essentials = Essentials;
+                window.Preloader = Preloader;
+
+				Preloader.finish();
+
+			</script>
+			<script>
+
+                function openExample()
+                {
+                    var dialogue = {
+                        title : 'Demo',
+                        subtitle : 'Ein Beispiel für ein Dialogfenster',
+                        buttons : [
+                            {
+                                text : 'Abbrechen',
+                                close : true,
+                                action : () => console.log('Abbrechen')
+                            },
+                            {
+                                text : 'OK',
+                                color : 'green',
+                                close : true,
+                                action : () => console.log('OK')
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+                }
+
+                function openExample()
+                {
+                    var dialogue = {
+                        title : 'Achtung',
+                        subtitle : 'Willst du dein Gerät wirklich entfernen?',
+                        buttons : [
+                            {
+                                text : 'Abbrechen',
+                                close : true,
+                                action : () => console.log('Abbrechen')
+                            },
+                            {
+                                text : 'Löschen',
+                                color : 'red',
+                                close : true,
+                                action : () => console.log('OK')
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+                }
+
+			</script>
+		</div>
+	</body>
+</html>

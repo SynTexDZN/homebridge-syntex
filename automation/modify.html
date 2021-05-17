@@ -838,12 +838,24 @@
 
 				function removeAutomation(btn)
 				{
-					var overlay = Essentials.createOverlay(1, 'reset-confirm', '%automation.remove_confirm%?', 'red');
+					var dialogue = {
+                        title : 'Achtung',
+                        subtitle : 'Willst du deine Automation wirklich entfernen?',
+                        buttons : [
+                            {
+                                text : 'Abbrechen',
+                                close : true
+                            },
+                            {
+                                text : 'Löschen',
+                                color : 'red',
+                                close : true,
+                                action : () => removeConfirm(btn)
+                            }
+                        ]
+                    };
 
-					overlay.setAttribute('onclick', 'removeConfirm(this)');
-					overlay.style.setProperty('cursor', 'pointer', 'important');
-
-					Essentials.showOverlay(btn, overlay);
+                    Essentials.openDialogue(dialogue);
 				}
 				
 				async function removeConfirm(btn)

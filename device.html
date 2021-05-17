@@ -2116,12 +2116,24 @@
 
 				function resetDevice(btn)
 				{
-					var overlay = Essentials.createOverlay(1, 'reset-confirm', '%device.reset_confirm%?', 'red');
+					var dialogue = {
+                        title : 'Achtung',
+                        subtitle : 'Willst du dein Gerät wirklich entfernen?',
+                        buttons : [
+                            {
+                                text : 'Abbrechen',
+                                close : true
+                            },
+                            {
+                                text : 'Zurücksetzen',
+                                color : 'red',
+                                close : true,
+                                action : () => resetConfirm(btn)
+                            }
+                        ]
+                    };
 
-					overlay.setAttribute('onclick', 'resetConfirm(this)');
-					overlay.style.setProperty('cursor', 'pointer', 'important');
-
-					Essentials.showOverlay(btn, overlay);
+                    Essentials.openDialogue(dialogue);
 				}
 				
 				async function resetConfirm(btn)

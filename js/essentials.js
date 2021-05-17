@@ -454,6 +454,81 @@ function loadPageData(url)
 	});
 }
 
+function openDialogue(data)
+{
+	var dialogue = document.createElement('div');
+	var panel = document.createElement('div');
+	var title = document.createElement('h2');
+	var subtitle = document.createElement('p');
+	var buttonArea = document.createElement('div');
+
+	dialogue.className = 'dialogue';
+	dialogue.onclick = (e) => {
+
+		if(e.target.classList.contains('dialogue'))
+		{
+			closeDialogue(e.target);
+		}
+	};
+
+	panel.className = 'panel striped';
+	title.className = 'title-container';
+	title.innerHTML = data.title;
+	subtitle.innerHTML = data.subtitle;
+	buttonArea.className = 'button-area';
+
+	if(data.buttons != null)
+	{
+		for(const i in data.buttons)
+		{
+			var button = document.createElement('button');
+
+			button.innerHTML = data.buttons[i].text;
+
+			if(data.buttons[i].color != null)
+			{
+				button.className = 'gradient-' + data.buttons[i].color;
+			}
+
+			if(data.buttons[i].action != null)
+			{
+				button.onclick = data.buttons[i].action;
+			}
+
+			if(data.buttons[i].close)
+			{
+				if(data.buttons[i].action != null)
+				{
+					button.onclick = () => { data.buttons[i].action(); closeDialogue(dialogue) };
+				}
+				else
+				{
+					button.onclick = () => closeDialogue(dialogue);
+				}
+			}
+
+			buttonArea.appendChild(button);
+		}
+	}
+
+	panel.appendChild(title);
+	panel.appendChild(subtitle);
+	panel.appendChild(buttonArea);
+
+	dialogue.appendChild(panel);
+
+	document.body.appendChild(dialogue);
+
+	setTimeout(() => { dialogue.style.opacity = 1 }, 50);
+}
+
+function closeDialogue(dialogue)
+{
+	dialogue.style.opacity = 0;
+
+	setTimeout(() => dialogue.parentElement.removeChild(dialogue), 300);
+}
+
 function removeOverlaysDelay(btn, delay, show)
 {
 	setTimeout(() => removeOverlays(btn, show), delay);
@@ -472,4 +547,4 @@ function SETUP(Q, P)
 	window.onpopstate = (event) => location.reload();
 }
 
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, leavePage };
+export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, leavePage, openDialogue, closeDialogue };
