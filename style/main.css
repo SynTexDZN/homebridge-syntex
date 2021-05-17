@@ -1388,7 +1388,7 @@ button img
 	width: 100vw;
 	top: 0;
 	opacity: 0;
-	transition: .2s ease-in-out opacity;
+	transition: .3s ease-in-out opacity;
 	z-index: 20000;
 }
 
@@ -1401,6 +1401,7 @@ button img
 	margin: auto;
 	border-radius: 32px;
 	padding: 20px;
+	opacity: 0;
 
 	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
 		0 1px 2px rgba(0, 0, 0, 0.06), 
@@ -1408,6 +1409,10 @@ button img
 		0 4px 8px rgba(0, 0, 0, 0.10);
 
 	border: 3px solid rgb(60, 60, 80);
+
+	transform: scale(.8);
+	transform-style: preserve-3d;
+	transition: .3s cubic-bezier(0.68, -0.55, 0.27, 1.55) transform, .3s ease-in-out opacity;
 }
 
 .dialogue p

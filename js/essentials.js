@@ -519,12 +519,13 @@ function openDialogue(data)
 
 	document.body.appendChild(dialogue);
 
-	setTimeout(() => { dialogue.style.opacity = 1 }, 50);
+	setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 50);
 }
 
 function closeDialogue(dialogue)
 {
 	dialogue.style.opacity = 0;
+	dialogue.getElementsByClassName('panel')[0].style.opacity = 0;
 
 	setTimeout(() => dialogue.parentElement.removeChild(dialogue), 300);
 }
