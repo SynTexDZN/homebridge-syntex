@@ -4,16 +4,12 @@ class PageManagerModule
 	{
 		var lastWidth = document.getElementsByTagName('body')[0].offsetWidth;
 
-		this.footer = document.getElementById('footer-container');
 		this.footerTemp = document.getElementById('footer-temp');
 		this.footerContent = document.getElementById('footer-content');
 		this.footerFade = document.getElementById('footer-fade');
 
-		this.head = document.getElementById('head-container');
 		this.headTemp = document.getElementById('head-temp');
 		this.headContent = document.getElementById('head-content');
-
-		this.content = document.getElementById('content');
 
 		window.addEventListener('resize', () => {
 
@@ -24,19 +20,13 @@ class PageManagerModule
 				lastWidth = width;
 
 				this.headContent.style.transition = 'none';
-				this.footerContent.style.transition = 'none';
 
 				this.headContent.style.maxHeight = this.headTemp.offsetHeight + 'px';
 				this.headContent.style.minHeight = this.headTemp.offsetHeight + 'px';
-				this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
-				this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
-
-				this.setContentMargin(true);
 
 				setTimeout(() => {
 
 					this.headContent.style.transition = '.2s opacity ease-in-out, .2s max-height ease-in-out, .2s min-height ease-in-out';
-					this.footerContent.style.transition = '.2s opacity ease-in-out, .2s max-height ease-in-out, .2s min-height ease-in-out';
 
 				}, 100);
 			}
@@ -59,8 +49,6 @@ class PageManagerModule
 
 			setTimeout(() => { this.headTemp.style.display = '' }, onPage ? 200 : 0);
 
-			this.setContentMargin(this.headContent.classList.contains('hidden'));
-			
 			if(!this.headContent.classList.contains('hidden'))
 			{
 				setTimeout(() => {
@@ -142,57 +130,87 @@ class PageManagerModule
 			{
 				if(this.footerTemp.children[i].getAttribute('oid') == id)
 				{
-					this.footerTemp.children[i].style.setProperty('height', '0', 'important');
-					this.footerTemp.children[i].style.paddingTop = 0;
-					this.footerTemp.children[i].style.paddingBottom = 0;
-					this.footerTemp.children[i].style.marginTop = 0;
-					this.footerTemp.children[i].style.marginBottom = 0;
-					this.footerTemp.children[i].style.borderTopWidth = 0;
-					this.footerTemp.children[i].style.borderBottomWidth = 0;
+					setTimeout(function() {
+
+						this.child.style.setProperty('height', '0', 'important');
+						this.child.style.paddingTop = 0;
+						this.child.style.paddingBottom = 0;
+						this.child.style.marginTop = 0;
+						this.child.style.marginBottom = 0;
+						this.child.style.borderTopWidth = 0;
+						this.child.style.borderBottomWidth = 0;
+
+					}.bind({ child : this.footerTemp.children[i] }), 300);
 
 					setTimeout(function() {
 
 						this.footerTemp.removeChild(this.child);
 
-					}.bind({ child : this.footerTemp.children[i], footerTemp : this.footerTemp }), 300);
+					}.bind({ child : this.footerTemp.children[i], footerTemp : this.footerTemp }), 600);
 				}
 			}
 
-			if(this.footerContent != null)
+			if(this.footerFade != null)
 			{
-				this.footerContent.style.maxHeight = 'none';
-				this.footerContent.style.minHeight = 'auto';
+				for(var i = 0; i < this.footerFade.children.length; i++)
+				{
+					if(this.footerFade.children[i].getAttribute('id') == id)
+					{
+						this.footerFade.children[i].style.opacity = 0;
+						
+						setTimeout(function() {
 
-				setTimeout(() => {
+							this.child.style.setProperty('height', '0', 'important');
+							this.child.style.paddingTop = 0;
+							this.child.style.paddingBottom = 0;
+							this.child.style.marginTop = 0;
+							this.child.style.marginBottom = 0;
+							this.child.style.borderTopWidth = 0;
+							this.child.style.borderBottomWidth = 0;
 
-					this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
-					this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
-					
-				}, 350);
+						}.bind({ child : this.footerFade.children[i] }), 300);
+
+						setTimeout(function() {
+
+							this.footerFade.removeChild(this.child);
+
+						}.bind({ child : this.footerFade.children[i], footerFade : this.footerFade }), 600);
+					}
+				}
 			}
 		}
 	}
 
 	showFooter(onPage)
 	{
-		if(this.footer != null)
+		if(this.footerContent != null && this.footerTemp != null && this.footerFade != null)
 		{
-			this.setContentMargin(this.footerContent.classList.contains('hidden'));
-			
-			if(this.footerContent.classList.contains('hidden'))
+			if(!this.footerContent.classList.contains('hidden'))
 			{
-				this.footerContent.style.transition = 'none';
+				this.footerContent.style.maxHeight = this.footerContent.offsetHeight + 'px';
+				this.footerContent.style.minHeight = this.footerContent.offsetHeight + 'px';
 			}
 
-			this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
-			this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
+			setTimeout(() => {
+				
+				this.footerContent.style.maxHeight = this.footerTemp.offsetHeight + 'px';
+				this.footerContent.style.minHeight = this.footerTemp.offsetHeight + 'px';
+
+			}, 0);
 
 			setTimeout(() => {
 				
 				this.footerContent.style.transition = '.2s opacity ease-in-out, .2s max-height ease-in-out, .2s min-height ease-in-out';
 
 			}, 100);
-			
+
+			setTimeout(() => {
+				
+				this.footerContent.style.maxHeight = 'none';
+				this.footerContent.style.minHeight = 'auto';
+
+			}, 200);
+
 			setTimeout(() => {
 
 				this.footerFade.innerHTML = this.footerTemp.innerHTML.replace(/oid=/g, 'id=');
@@ -205,13 +223,17 @@ class PageManagerModule
 					this.footerContent.classList.remove('hidden');
 				}
 
+				this.footerSetup = false;
+
 			}, document.getElementsByTagName('body')[0].offsetWidth > 1151 && !onPage ? 0 : 200);
 		}
 	}
 
 	setFooter(element)
 	{
-		if(this.footerFade != null)
+		this.footerSetup = true;
+
+		if(this.footerFade != null && this.footerTemp != null)
 		{
 			if(this.footerFade.innerHTML != element.outerHTML)
 			{
@@ -230,26 +252,6 @@ class PageManagerModule
 		if(this.footerContent != null)
 		{
 			this.footerContent.classList.add('fade');
-		}
-	}
-
-	setContentMargin(hidden)
-	{
-		if(this.content != null)
-		{
-			if(hidden)
-			{
-				this.content.style.transition = 'none';
-			}
-
-			//this.content.style.marginTop = (this.headTemp.offsetHeight + 84) + 'px';
-			//content.style.marginBottom = (this.footerTemp.offsetHeight + 60) + 'px';
-		
-			setTimeout(() => {
-
-				this.content.style.transition = '.2s margin-top ease-in-out';
-
-			}, 100);
 		}
 	}
 
