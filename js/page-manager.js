@@ -117,7 +117,10 @@ class PageManagerModule
 					element.removeAttribute('id');
 				}
 
-				element.style.opacity = 0;
+				if(!this.footerSetup)
+				{
+					element.style.opacity = 0;
+				}
 
 				this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
 			}
@@ -231,7 +234,7 @@ class PageManagerModule
 
 				this.footerSetup = false;
 
-			}, document.getElementsByTagName('body')[0].offsetWidth > 1151 && !onPage ? 0 : 200);
+			}, (document.getElementsByTagName('body')[0].offsetWidth > 1151 && !onPage) || this.footerContent.classList.contains('hidden') ? 0 : 200);
 		}
 	}
 
