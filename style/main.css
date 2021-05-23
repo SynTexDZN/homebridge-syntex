@@ -79,9 +79,19 @@
 	pointer-events: none;
 }
 
-#footer-temp *
+#footer-temp *, #footer-fade *
 {
-	transition: none, .2s height ease-in-out, .2s margin ease-in-out!important;
+	transition: .2s height ease-in-out,
+				.2s margin-top ease-in-out,
+				.2s margin-bottom ease-in-out,
+				.2s padding-top linear,
+				.2s padding-bottom linear,
+				.2s border-top-width linear,
+				.2s border-bottom-width linear,
+				.2s opacity ease-in-out,
+				.2s background-color ease-out,
+				.2s letter-spacing ease-out,
+				.2s filter ease-out!important;
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea

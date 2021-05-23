@@ -194,21 +194,21 @@ class PageManagerModule
 			{
 				this.footerContent.style.maxHeight = this.footerContent.offsetHeight + 'px';
 				this.footerContent.style.minHeight = this.footerContent.offsetHeight + 'px';
+
+				setTimeout(() => {
+				
+					this.footerContent.style.maxHeight = (this.footerTemp.offsetHeight + 1) + 'px';
+					this.footerContent.style.minHeight = (this.footerTemp.offsetHeight + 1) + 'px';
+
+				}, 0);
+
+				setTimeout(() => {
+				
+					this.footerContent.style.maxHeight = 'none';
+					this.footerContent.style.minHeight = 'auto';
+
+				}, 200);
 			}
-
-			setTimeout(() => {
-				
-				this.footerContent.style.maxHeight = (this.footerTemp.offsetHeight + 1) + 'px';
-				this.footerContent.style.minHeight = (this.footerTemp.offsetHeight + 1) + 'px';
-
-			}, 0);
-
-			setTimeout(() => {
-				
-				this.footerContent.style.maxHeight = 'none';
-				this.footerContent.style.minHeight = 'auto';
-
-			}, 200);
 
 			setTimeout(() => {
 
@@ -216,15 +216,18 @@ class PageManagerModule
 
 				this.footerFade.style.opacity = 1;
 
-				setTimeout(() => {
+				if(!this.footerSetup)
+				{
+					setTimeout(() => {
 
-					for(var i = 0; i < this.footerFade.children.length; i++)
-					{
-						this.footerFade.children[i].style.opacity = 1;
-						this.footerTemp.children[i].style.opacity = 1;
-					}
+						for(var i = 0; i < this.footerFade.children.length; i++)
+						{
+							this.footerFade.children[i].style.opacity = 1;
+							this.footerTemp.children[i].style.opacity = 1;
+						}
 
-				}, 100);
+					}, 100);
+				}
 
 				if(this.footerContent != null)
 				{
