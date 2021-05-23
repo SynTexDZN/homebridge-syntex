@@ -8,7 +8,35 @@
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Basic', 'Demo');
+				PageManager.setHeader('Overlay', 'Examples');
+
+                var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+
+                var remove = document.createElement('input');
+
+				remove.setAttribute('type', 'button');
+				remove.setAttribute('value', '-');
+				remove.setAttribute('onclick', 'PageManager.removeFooter("test2")');
+                remove.setAttribute('style', 'margin-bottom: 20px');
+
+				PageManager.addFooter(remove);
+
+				var add = document.createElement('input');
+
+				add.setAttribute('type', 'button');
+				add.setAttribute('value', '+');
+				add.setAttribute('onclick', 'addExample()');
+				add.setAttribute('style', 'margin-bottom: 20px');
+
+				PageManager.addFooter(add);
+
+				PageManager.showFooter();
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
@@ -78,6 +106,19 @@
 
                     Essentials.openDialogue(dialogue);
                 }
+
+                function addExample()
+				{
+					var main2 = document.createElement('input');
+
+					main2.setAttribute('type', 'button');
+					main2.setAttribute('value', 'Example');
+					main2.setAttribute('id', 'test2');
+					main2.setAttribute('style', 'margin-bottom: 20px');
+
+					PageManager.addFooter(main2);
+					PageManager.showFooter();
+				}
 
 			</script>
 		</div>

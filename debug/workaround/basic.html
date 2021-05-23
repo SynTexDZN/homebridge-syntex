@@ -10,6 +10,15 @@
 
 				PageManager.setHeader('Basic', 'Demo');
 
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
 			</script>
 			<div class="main" style="margin-bottom: 100px">
 				
