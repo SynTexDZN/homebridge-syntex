@@ -128,11 +128,11 @@ function showOverlayDelay(btn, overlay, delay)
 
 function removeOverlays(btn, show)
 {
-	if(show)
+	if(show == true)
 	{
 		btn.style.opacity = 1;
 	}
-	else
+	else if(show == false)
 	{
 		btn.style.opacity = 0;
 	}
@@ -150,7 +150,7 @@ function removeOverlays(btn, show)
 		}
 	}
 
-	if(!show)
+	if(show == false)
 	{
 		setTimeout(() => {
 
@@ -177,12 +177,12 @@ function removeOverlays(btn, show)
 			}
 		}
 
-		if(!show)
+		if(show == false)
 		{
 			btn.parentElement.removeChild(btn);
 		}
 
-	}, show ? 300 : 600);
+	}, show == null || show == true ? 300 : 600);
 }
 
 function getType(services)
