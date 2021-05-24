@@ -105,24 +105,20 @@ class PageManagerModule
 
 	hideHeader(onPage)
 	{
-		if(this.headContent != null)
+		if(this.headContent != null && this.headTemp != null)
 		{
 			setTimeout(() => this.headContent.classList.add('hidden'), onPage ? 200 : 0);
-		}
-
-		if(this.headTemp != null)
-		{
 			setTimeout(() => { this.headTemp.style.display = 'none' }, onPage ? 200 : 0);
 		}
 	}
 
 	setFooter(element)
 	{
-		this.footerSetup = true;
-		this.footerAddition = [];
-
-		if(this.footerFade != null && this.footerTemp != null)
+		if(this.footerFade != null && this.footerTemp != null && this.footerContent != null && element != null)
 		{
+			this.footerSetup = true;
+			this.footerAddition = [];
+
 			element.style.opacity = 1;
 			
 			if(this.footerFade.innerHTML != element.outerHTML)
@@ -134,34 +130,33 @@ class PageManagerModule
 
 				this.addFooter(element);
 			}
-		}
 
-		if(this.footerContent != null)
-		{
 			this.footerContent.classList.add('fade');
 		}
 	}
 
 	addFooter(element)
 	{
-		if(this.footerTemp != null && element != null)
+		if(this.footerTemp != null && this.footerAddition != null && element != null)
 		{
 			if(!this.footerSetup)
 			{
 				element.style.opacity = 0;
 
-				this.footerAddition.push(element.cloneNode(true));
+				this.footerAddition.push(element);
 			}
 
-			element.innerHTML = element.innerHTML.replace(/id=/g, 'oid=');
+			var clone = element.cloneNode(true);
 
-			if(element.hasAttribute('id'))
+			clone.innerHTML = clone.innerHTML.replace(/id=/g, 'oid=');
+
+			if(clone.hasAttribute('id'))
 			{
-				element.setAttribute('oid', element.getAttribute('id'));
-				element.removeAttribute('id');
+				clone.setAttribute('oid', clone.getAttribute('id'));
+				clone.removeAttribute('id');
 			}
 
-			this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
+			this.footerTemp.insertBefore(clone, this.footerTemp.children[0]);
 		}
 	}
 
@@ -195,7 +190,7 @@ class PageManagerModule
 				{
 					this.footerFade.innerHTML = this.footerTemp.innerHTML.replace(/oid=/g, 'id=');
 				}
-				else
+				else if(this.footerAddition != null)
 				{
 					for(const i in this.footerAddition)
 					{
@@ -234,7 +229,7 @@ class PageManagerModule
 
 	removeFooter(id)
 	{
-		if(this.footerTemp != null)
+		if(this.footerTemp != null && this.footerFade != null)
 		{
 			for(var i = 0; i < this.footerTemp.children.length; i++)
 			{
@@ -260,32 +255,29 @@ class PageManagerModule
 				}
 			}
 
-			if(this.footerFade != null)
+			for(var i = 0; i < this.footerFade.children.length; i++)
 			{
-				for(var i = 0; i < this.footerFade.children.length; i++)
+				if(this.footerFade.children[i].getAttribute('id') == id)
 				{
-					if(this.footerFade.children[i].getAttribute('id') == id)
-					{
-						this.footerFade.children[i].style.opacity = 0;
-						
-						setTimeout(function() {
+					this.footerFade.children[i].style.opacity = 0;
+					
+					setTimeout(function() {
 
-							this.child.style.setProperty('height', '0', 'important');
-							this.child.style.paddingTop = 0;
-							this.child.style.paddingBottom = 0;
-							this.child.style.marginTop = 0;
-							this.child.style.marginBottom = 0;
-							this.child.style.borderTopWidth = 0;
-							this.child.style.borderBottomWidth = 0;
+						this.child.style.setProperty('height', '0', 'important');
+						this.child.style.paddingTop = 0;
+						this.child.style.paddingBottom = 0;
+						this.child.style.marginTop = 0;
+						this.child.style.marginBottom = 0;
+						this.child.style.borderTopWidth = 0;
+						this.child.style.borderBottomWidth = 0;
 
-						}.bind({ child : this.footerFade.children[i] }), 300);
+					}.bind({ child : this.footerFade.children[i] }), 300);
 
-						setTimeout(function() {
+					setTimeout(function() {
 
-							this.footerFade.removeChild(this.child);
+						this.footerFade.removeChild(this.child);
 
-						}.bind({ child : this.footerFade.children[i], footerFade : this.footerFade }), 600);
-					}
+					}.bind({ child : this.footerFade.children[i], footerFade : this.footerFade }), 600);
 				}
 			}
 		}
@@ -293,24 +285,18 @@ class PageManagerModule
 
 	hideFooter(onPage)
 	{
-		if(this.footerContent != null)
+		if(this.footerContent != null && this.footerFade != null && this.footerTemp != null)
 		{
+			this.footerTemp.style.display = 'none';
+			this.footerTemp.innerHTML = '';
+			
 			setTimeout(() => this.footerContent.classList.add('hidden'), document.getElementsByTagName('body')[0].offsetWidth > 1151 && onPage ? 200 : 0);
-		}
-
-		if(this.footerFade != null)
-		{
+			
 			setTimeout(() => {
 				
 				this.footerFade.innerHTML = '';
 
 			}, 300);
-		}
-
-		if(this.footerTemp != null)
-		{
-			this.footerTemp.style.display = 'none';
-			this.footerTemp.innerHTML = '';
 		}
 	}
 
