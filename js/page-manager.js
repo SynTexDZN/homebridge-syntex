@@ -105,25 +105,24 @@ class PageManagerModule
 
 	addFooter(element)
 	{
-		if(this.footerTemp != null)
+		if(this.footerTemp != null && element != null)
 		{
-			if(element != null)
+			if(!this.footerSetup)
 			{
-				element.innerHTML = element.innerHTML.replace(/id=/g, 'oid=');
+				element.style.opacity = 0;
 
-				if(element.hasAttribute('id'))
-				{
-					element.setAttribute('oid', element.id);
-					element.removeAttribute('id');
-				}
-
-				if(!this.footerSetup)
-				{
-					element.style.opacity = 0;
-				}
-
-				this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
+				this.footerAddition.push(element.cloneNode(true));
 			}
+
+			element.innerHTML = element.innerHTML.replace(/id=/g, 'oid=');
+
+			if(element.hasAttribute('id'))
+			{
+				element.setAttribute('oid', element.getAttribute('id'));
+				element.removeAttribute('id');
+			}
+
+			this.footerTemp.insertBefore(element, this.footerTemp.children[0]);
 		}
 	}
 
@@ -212,7 +211,19 @@ class PageManagerModule
 
 			setTimeout(() => {
 
-				this.footerFade.innerHTML = this.footerTemp.innerHTML.replace(/oid=/g, 'id=');
+				if(this.footerSetup)
+				{
+					this.footerFade.innerHTML = this.footerTemp.innerHTML.replace(/oid=/g, 'id=');
+				}
+				else
+				{
+					for(const i in this.footerAddition)
+					{
+						this.footerFade.insertBefore(this.footerAddition[i], this.footerFade.children[0]);
+					}
+
+					this.footerAddition = [];
+				}
 
 				this.footerFade.style.opacity = 1;
 
@@ -244,6 +255,7 @@ class PageManagerModule
 	setFooter(element)
 	{
 		this.footerSetup = true;
+		this.footerAddition = [];
 
 		if(this.footerFade != null && this.footerTemp != null)
 		{
