@@ -131,7 +131,7 @@
 
 				function renderGUI()
 				{
-					var counter = 0;
+					var counter = 0, removedUpdate = false;
 
 					for(const id in plugins)
 					{
@@ -206,9 +206,9 @@
 						{
 							if(document.getElementById('update-btn-' + id) != null)
 							{
-								Essentials.removeOverlays(document.getElementById('update-btn-' + id));
+								PageManager.removeFooter('update-btn-' + id);
 
-								PageManager.removeFooter('update-btn-' + id)
+								removedUpdate = true;
 							}
 
 							if(versions[id] == null || latestVersions[id] == null)
@@ -226,7 +226,15 @@
 						}
 					}
 
-					PageManager.showFooter();
+					if(removedUpdate)
+					{
+						setTimeout(() => PageManager.showFooter(), 300);
+					}
+					else
+					{
+						PageManager.showFooter();
+					}
+
 					Preloader.finish();
 				}
 

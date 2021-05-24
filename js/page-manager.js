@@ -208,11 +208,8 @@ class PageManagerModule
 
 						for(var i = 0; i < this.footerFade.children.length; i++)
 						{
-							if(!this.footerFade.children.classList.contains('overlay'))
-							{
-								this.footerFade.children[i].style.opacity = 1;
-								this.footerTemp.children[i].style.opacity = 1;
-							}
+							this.footerFade.children[i].style.opacity = 1;
+							this.footerTemp.children[i].style.opacity = 1;
 						}
 
 					}, 100);
