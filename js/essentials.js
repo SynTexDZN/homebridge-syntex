@@ -137,7 +137,7 @@ function removeOverlays(btn, show)
 		btn.style.opacity = 0;
 	}
 
-	console.log(show);
+	console.log(show, btn);
 	
 	for(var i = 0; i < overlays.length; i++)
 	{
