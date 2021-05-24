@@ -374,15 +374,15 @@
 
 						await Essentials.newTimeout(4000);
 
-						Essentials.removeOverlays(btn, !success);
-
 						updating = false;
-
-						await Essentials.newTimeout(300);
 
 						if(success)
 						{
 							PageManager.removeFooter('update-btn-' + id);
+						}
+						else
+						{
+							Essentials.removeOverlays(btn, true);
 						}
 					}
 				}
