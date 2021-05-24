@@ -206,7 +206,9 @@
 						{
 							if(document.getElementById('update-btn-' + id) != null)
 							{
-								PageManager.removeFooter('update-btn-' + id)
+								Essentials.removeOverlays(document.getElementById('update-btn-' + id), true);
+								
+								PageManager.removeFooter('update-btn-' + id);
 							}
 
 							if(versions[id] == null || latestVersions[id] == null)
