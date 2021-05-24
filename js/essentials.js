@@ -136,6 +136,8 @@ function removeOverlays(btn, show)
 	{
 		btn.style.opacity = 0;
 	}
+
+	console.log(show);
 	
 	for(var i = 0; i < overlays.length; i++)
 	{
@@ -162,6 +164,8 @@ function removeOverlays(btn, show)
 			btn.style.borderTopWidth = 0;
 			btn.style.borderBottomWidth = 0;
 
+			console.log('MAIN BTN 2 SHRINK');
+
 		}, 300);
 	}
 
@@ -177,12 +181,16 @@ function removeOverlays(btn, show)
 			}
 		}
 
+		console.log('REMOVE OVERLAYS');
+
 		if(show == false)
 		{
 			btn.parentElement.removeChild(btn);
+
+			console.log('MAIN BTN 2 REMOVE');
 		}
 
-	}, show == null || show == true ? 300 : 600);
+	}, (show == null || show == true) ? 300 : 600);
 }
 
 function getType(services)

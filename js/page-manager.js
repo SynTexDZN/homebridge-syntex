@@ -260,6 +260,8 @@ class PageManagerModule
 				if(this.footerFade.children[i].getAttribute('id') == id)
 				{
 					this.footerFade.children[i].style.opacity = 0;
+
+					console.log('MAIN BTN OPACITY 0');
 					
 					setTimeout(function() {
 
@@ -270,6 +272,8 @@ class PageManagerModule
 						this.child.style.marginBottom = 0;
 						this.child.style.borderTopWidth = 0;
 						this.child.style.borderBottomWidth = 0;
+
+						console.log('MAIN BTN SHRINK');
 
 					}.bind({ child : this.footerFade.children[i] }), 300);
 
@@ -289,7 +293,7 @@ class PageManagerModule
 		{
 			this.footerTemp.style.display = 'none';
 			this.footerTemp.innerHTML = '';
-			
+
 			setTimeout(() => this.footerContent.classList.add('hidden'), document.getElementsByTagName('body')[0].offsetWidth > 1151 && onPage ? 200 : 0);
 			
 			setTimeout(() => {
