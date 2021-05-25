@@ -470,6 +470,8 @@ function openDialogue(data)
 	var subtitle = document.createElement('p');
 	var buttonArea = document.createElement('div');
 
+	disableScroll();
+
 	dialogue.className = 'dialogue';
 	dialogue.onclick = (e) => {
 
@@ -532,6 +534,8 @@ function openDialogue(data)
 
 function closeDialogue(dialogue)
 {
+	enableScroll();
+
 	dialogue.style.opacity = 0;
 	dialogue.getElementsByClassName('panel')[0].style.opacity = 0;
 
@@ -546,6 +550,51 @@ function removeOverlaysDelay(btn, delay, show)
 function newTimeout(ms)
 {
 	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+var keys = [37, 38, 39, 40];
+
+function preventDefault(e)
+{
+	e.preventDefault();
+}
+
+function preventDefaultForScrollKeys(e)
+{
+	if(keys.includes(e.keyCode))
+	{
+		preventDefault(e);
+		return false;
+	}
+}
+
+var supportsPassive = false;
+
+try
+{
+	window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+		get : () => { supportsPassive = true } 
+	}));
+}
+catch(e) {}
+
+var wheelOpt = supportsPassive ? { passive: false } : false;
+var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+function disableScroll()
+{
+	window.addEventListener('DOMMouseScroll', preventDefault, false);
+	window.addEventListener(wheelEvent, preventDefault, wheelOpt);
+	window.addEventListener('touchmove', preventDefault, wheelOpt);
+	window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+
+function enableScroll()
+{
+	window.removeEventListener('DOMMouseScroll', preventDefault, false);
+	window.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
+	window.removeEventListener('touchmove', preventDefault, wheelOpt);
+	window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
 }
 
 function SETUP(Q, P)
