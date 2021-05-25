@@ -59,7 +59,7 @@
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p style="margin-top: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>%device.room%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="room" type="text" style="max-width: 325px"></b></p>
+						<p><b>%device.group%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 					</div>
 					<input id="reset-btn" type="button" value="%device.reset%" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
@@ -262,9 +262,9 @@
 					infos.innerHTML += '<p><b>%device.version%: </b>' + device.version + '</p>';
 				}
 
-				if(device.room != null && device.room != '')
+				if(device.group != null && device.group != '')
 				{
-					infos.innerHTML += '<p><b>%device.room%: </b>' + device.room + '</p>';
+					infos.innerHTML += '<p><b>%device.group%: </b>' + device.group + '</p>';
 				}
 
 				for(const i in settings)
@@ -311,7 +311,7 @@
 					settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 				}
 
-				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.room || '');
+				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.group || '');
 
 				for(const i in settings)
 				{
@@ -409,13 +409,13 @@
 									this.field.style.transition = '0s ease-in-out';
 
 									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
-									var roomBarRect = this.field.getBoundingClientRect();
+									var groupBar = this.field.getBoundingClientRect();
 
-									if(e.clientX < roomBarRect.left)
+									if(e.clientX < groupBar.left)
 									{
 										percent = 0;
 									}
-									else if(e.clientX > roomBarRect.right)
+									else if(e.clientX > groupBar.right)
 									{
 										percent = 100;
 									}
@@ -431,13 +431,13 @@
 									this.field.style.transition = '.3s ease-in-out';
 
 									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
-									var roomBarRect = this.field.getBoundingClientRect();
+									var groupBar = this.field.getBoundingClientRect();
 									
-									if(e.clientX < roomBarRect.left)
+									if(e.clientX < groupBar.left)
 									{
 										percent = 0;
 									}
-									else if(e.clientX > roomBarRect.right)
+									else if(e.clientX > groupBar.right)
 									{
 										percent = 100;
 									}
@@ -683,14 +683,14 @@
 				{
 					let touchobj = e.changedTouches[0];
 
-					var roomBarRect = statusField.getBoundingClientRect();
-					var percent = (touchobj.clientX - roomBarRect.left - 20) / (statusField.offsetWidth - 40) * 100;
+					var groupBar = statusField.getBoundingClientRect();
+					var percent = (touchobj.clientX - groupBar.left - 20) / (statusField.offsetWidth - 40) * 100;
 
-					if(touchobj.clientX < roomBarRect.left || percent < 0)
+					if(touchobj.clientX < groupBar.left || percent < 0)
 					{
 						percent = 0;
 					}
-					else if(touchobj.clientX > roomBarRect.right || percent > 100)
+					else if(touchobj.clientX > groupBar.right || percent > 100)
 					{
 						percent = 100;
 					}

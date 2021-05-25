@@ -49,7 +49,7 @@
 				</div>
 				<div id="toolbar" class="main" style="display: flex; margin-top: 100px">
 					<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-					<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="switchRoom('all', false)" room="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
+					<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
 					<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 				</div>
 				<div style="margin-top: 100px">
@@ -246,9 +246,9 @@
 						button.setAttribute('device-id', i);
 						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
-						if(devices[i].room)
+						if(devices[i].group)
 						{
-							button.setAttribute('room', devices[i].room.toLowerCase());
+							button.setAttribute('group', devices[i].group.toLowerCase());
 						}
 
 						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
@@ -293,45 +293,45 @@
 					document.getElementById('devices').className = 'grid-view';
 				}
 
-				var tmpRoom = [], rooms = [];
+				var tmpGroup = [], groups = [];
 
 				for(const i in devices)
 				{
-					if(devices[i].room && !tmpRoom.includes(devices[i].room.toLowerCase()))
+					if(devices[i].group && !tmpGroup.includes(devices[i].group.toLowerCase()))
 					{
-						rooms.push(devices[i].room);
-						tmpRoom.push(devices[i].room.toLowerCase());
+						groups.push(devices[i].group);
+						tmpGroup.push(devices[i].group.toLowerCase());
 					}
 				}
 
-				rooms.sort();
+				groups.sort();
 
-				for(const i in rooms)
+				for(const i in groups)
 				{
-					var room = document.createElement('input');
+					var group = document.createElement('input');
 
-					room.setAttribute('type', 'button');
-					room.setAttribute('onclick', 'switchRoom("' + rooms[i].toLowerCase() + '", false)');
-					room.setAttribute('room', rooms[i].toLowerCase());
-					room.setAttribute('value', rooms[i]);
-					room.setAttribute('class', 'white');
-					room.setAttribute('style', 'margin-left: 20px; cursor: grab');
+					group.setAttribute('type', 'button');
+					group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
+					group.setAttribute('group', groups[i].toLowerCase());
+					group.setAttribute('value', groups[i]);
+					group.setAttribute('class', 'white');
+					group.setAttribute('style', 'margin-left: 20px; cursor: grab');
 					
-					document.getElementById('rooms').appendChild(room);
+					document.getElementById('groups').appendChild(group);
 				}
 
-				const roomBar = document.getElementById('rooms');
+				const groupBar = document.getElementById('groups');
 
 				let pos = { top: 0, left: 0, x: 0, y: 0 };
 
 				const mouseDownHandler = function(e)
 				{
-					roomBar.style.cursor = 'grabbing';
-					roomBar.style.userSelect = 'none';
+					groupBar.style.cursor = 'grabbing';
+					groupBar.style.userSelect = 'none';
 
 					pos = {
-						left: roomBar.scrollLeft,
-						top: roomBar.scrollTop,
+						left: groupBar.scrollLeft,
+						top: groupBar.scrollTop,
 						x: e.clientX,
 						y: e.clientY,
 					};
@@ -345,32 +345,32 @@
 					const dx = e.clientX - pos.x;
 					const dy = e.clientY - pos.y;
 
-					roomBar.scrollTop = pos.top - dy;
-					roomBar.scrollLeft = pos.left - dx;
+					groupBar.scrollTop = pos.top - dy;
+					groupBar.scrollLeft = pos.left - dx;
 					
-					for(var i = 0; i < roomBar.children.length; i++)
+					for(var i = 0; i < groupBar.children.length; i++)
 					{
-						roomBar.children[i].style.pointerEvents = 'none';
+						groupBar.children[i].style.pointerEvents = 'none';
 					}
 				};
 
 				const mouseUpHandler = function()
 				{
-					roomBar.style.cursor = 'grab';
-					roomBar.style.removeProperty('user-select');
+					groupBar.style.cursor = 'grab';
+					groupBar.style.removeProperty('user-select');
 
-					for(var i = 0; i < roomBar.children.length; i++)
+					for(var i = 0; i < groupBar.children.length; i++)
 					{
-						roomBar.children[i].style.pointerEvents = 'all';
+						groupBar.children[i].style.pointerEvents = 'all';
 					}
 
 					document.removeEventListener('mousemove', mouseMoveHandler);
 					document.removeEventListener('mouseup', mouseUpHandler);
 				};
 
-				roomBar.addEventListener('mousedown', mouseDownHandler);
+				groupBar.addEventListener('mousedown', mouseDownHandler);
 
-				switchRoom(localStorage.getItem('room') || 'all', true);
+				switchGroup(localStorage.getItem('group') || 'all', true);
 
 				Preloader.finish();
 
@@ -417,7 +417,7 @@
 
 				function setupToolbar()
 				{
-					var room = localStorage.getItem('room');
+					var group = localStorage.getItem('group');
 
 					activationCounter = { active : 0, disabled : 0 };
 					deviceCount = 0;
@@ -427,7 +427,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].services != 'statelessswitch' && (room == 'all' || (devices[i].room != null && room == devices[i].room.toLowerCase())))
+						if(devices[i].services != 'statelessswitch' && (group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase())))
 						{
 							deviceCount++;
 
@@ -478,11 +478,11 @@
 					}
 				}
 
-				async function switchRoom(room, init)
+				async function switchGroup(group, init)
 				{
-					if(init || localStorage.getItem('room') != room)
+					if(init || localStorage.getItem('group') != group)
 					{
-						localStorage.setItem('room', room);
+						localStorage.setItem('group', group);
 
 						if(!init)
 						{
@@ -503,7 +503,7 @@
 							{
 								var r = document.getElementById('devices').children[i].children[1].children[j];
 
-								if(r.getAttribute('room') != room && room != 'all')
+								if(r.getAttribute('group') != group && group != 'all')
 								{
 									r.style.display = 'none';
 								}
@@ -515,13 +515,13 @@
 							}
 						}
 
-						for(var i = 0; i < document.getElementById('rooms').children.length; i++)
+						for(var i = 0; i < document.getElementById('groups').children.length; i++)
 						{
-							var r = document.getElementById('rooms').children[i];
+							var r = document.getElementById('groups').children[i];
 
-							if(r.getAttribute('room') == room)
+							if(r.getAttribute('group') == group)
 							{
-								r.className = 'white room-active';
+								r.className = 'white group-active';
 								//r.style.filter = 'brightness(60%)';
 							}
 							else
@@ -574,7 +574,7 @@
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (localStorage.getItem('room') == 'all' || (devices[i].room != null && localStorage.getItem('room') == devices[i].room.toLowerCase())))
+							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (localStorage.getItem('group') == 'all' || (devices[i].group != null && localStorage.getItem('group') == devices[i].group.toLowerCase())))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
@@ -647,12 +647,12 @@
 							}
 						}
 
-						var room = localStorage.getItem('room');
+						var group = localStorage.getItem('group');
 						var offlineCounter = 0;
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(room == 'all' || (devices[i].room != null && room == devices[i].room.toLowerCase()))
+							if(group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase()))
 							{
 								if(offline.includes(devices[i].ip))
 								{
@@ -751,7 +751,7 @@
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (localStorage.getItem('room') == 'all' || (updateDevices[i].getAttribute('room') != 'undefined' && localStorage.getItem('room') == updateDevices[i].getAttribute('room'))))
+						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (localStorage.getItem('group') == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && localStorage.getItem('group') == updateDevices[i].getAttribute('group'))))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -904,7 +904,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].ip != null && real.includes(devices[i].ip) && (localStorage.getItem('room') == 'all' || (devices[i].room != null && localStorage.getItem('room') == devices[i].room.toLowerCase())))
+						if(devices[i].ip != null && real.includes(devices[i].ip) && (localStorage.getItem('group') == 'all' || (devices[i].group != null && localStorage.getItem('group') == devices[i].group.toLowerCase())))
 						{
 							var settings = {
 								id: devices[i].id,
