@@ -191,7 +191,7 @@
 				{
 					if(!isBridge(devices[i].services))
 					{
-						if(devices[i].ip != undefined && devices[i].active != undefined)
+						if(devices[i].ip != null && devices[i].active != null)
 						{
 							activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
 						}
@@ -253,9 +253,9 @@
 
 						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
 
-						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
+						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
 
-						if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
+						if(devices[i].active == 1 || devices[i].ip == null || devices[i].active == null)
 						{
 							buttonHTML += '<div class="connection">%devices.active%</div>';
 						}
@@ -370,7 +370,7 @@
 
 				roomBar.addEventListener('mousedown', mouseDownHandler);
 
-				switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
+				switchRoom(localStorage.getItem('room') || 'all', true);
 
 				Preloader.finish();
 
@@ -417,7 +417,7 @@
 
 				function setupToolbar()
 				{
-					var room = (new URL(window.location.href)).searchParams.get('room');
+					var room = localStorage.getItem('room');
 
 					activationCounter = { active : 0, disabled : 0 };
 					deviceCount = 0;
@@ -427,7 +427,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].services != 'statelessswitch' && room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+						if(devices[i].services != 'statelessswitch' && (room == 'all' || (devices[i].room != null && room == devices[i].room.toLowerCase())))
 						{
 							deviceCount++;
 
@@ -441,9 +441,9 @@
 								updateCount++;
 							}
 
-							if(devices[i].ip != undefined)
+							if(devices[i].ip != null)
 							{
-								if(devices[i].active != undefined)
+								if(devices[i].active != null)
 								{
 									realDeviceCount++;
 									real.push(devices[i].ip);
@@ -480,33 +480,12 @@
 
 				async function switchRoom(room, init)
 				{
-					if(init || (((new URL(window.location.href)).searchParams.get('room') || room != 'all') && (new URL(window.location.href)).searchParams.get('room') != room))
+					if(init || localStorage.getItem('room') != room)
 					{
+						localStorage.setItem('room', room);
+
 						if(!init)
 						{
-							if(room == 'all')
-							{
-								if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-								{
-									window.history.pushState(null, null, '/?desktopApp=true');
-								}
-								else
-								{
-									window.history.pushState(null, null, '/');
-								}
-							}
-							else
-							{
-								if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-								{
-									window.history.pushState(null, null, '?room=' + room + '&desktopApp=true');
-								}
-								else
-								{
-									window.history.pushState(null, null, '?room=' + room);
-								}
-							}
-
 							document.getElementById('devices').style.opacity = 0;
 
 							//Essentials.removeOverlays(document.getElementById('restart-all'), true);
@@ -595,7 +574,7 @@
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (localStorage.getItem('room') == 'all' || (devices[i].room != null && localStorage.getItem('room') == devices[i].room.toLowerCase())))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
@@ -668,12 +647,12 @@
 							}
 						}
 
-						var room = (new URL(window.location.href)).searchParams.get('room');
+						var room = localStorage.getItem('room');
 						var offlineCounter = 0;
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+							if(room == 'all' || (devices[i].room != null && room == devices[i].room.toLowerCase()))
 							{
 								if(offline.includes(devices[i].ip))
 								{
@@ -772,7 +751,7 @@
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevices[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevices[i].getAttribute('room')))
+						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (localStorage.getItem('room') == 'all' || (updateDevices[i].getAttribute('room') != 'undefined' && localStorage.getItem('room') == updateDevices[i].getAttribute('room'))))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -925,7 +904,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()) && real.includes(devices[i].ip))
+						if(devices[i].ip != null && real.includes(devices[i].ip) && (localStorage.getItem('room') == 'all' || (devices[i].room != null && localStorage.getItem('room') == devices[i].room.toLowerCase())))
 						{
 							var settings = {
 								id: devices[i].id,
