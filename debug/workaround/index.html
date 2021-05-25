@@ -1,67 +1,67 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>Dashboard: Geräte</title>
+			<title>%general.dashboard%: %menu.devices%</title>
 			<script type="module">
 
 				import { PageManager } from '/js/page-manager.js';
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('Dashboard', 'Geräte');
+				PageManager.setHeader('%general.dashboard%', '%menu.devices%');
 				PageManager.hideFooter();
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
 				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="GERÄTE" onclick="Essentials.leavePage('/')" style="margin-right: 20px" disabled>
-					<input class="white" type="button" value="BRIDGE" onclick="Essentials.leavePage('/bridge')">
+					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px" disabled>
+					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-					<input class="white" type="button" value="AUTOMATION" id="a" onclick="Essentials.leavePage('/automation/')" style="margin-right: 20px">
-					<input class="white" type="button" value="LOG" onclick="Essentials.leavePage('/log')">
+					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
 				</div>
 				<div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
 					<div class="widget">
-						<button class="widget-left">Geräte</button>
+						<button class="widget-left">%devices.devices%</button>
 						<button class="widget-right gradient-blue">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Updates</button>
+						<button class="widget-left">%devices.updates%</button>
 						<button class="widget-right gradient-purple">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Offline</button>
+						<button class="widget-left">%general.offline%</button>
 						<button class="widget-right gradient-red">0</button>
 					</div>
 					<div class="widget">
-						<button class="widget-left">Online</button>
+						<button class="widget-left">%devices.online%</button>
 						<button class="widget-right gradient-green">-</button>
 					</div>
 				</div>
 				<div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
 					<div>
-						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">Aktiv: Laden ..</button>
+						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%devices.active%: %general.loading% ..</button>
 					</div>
 					<div>
-						<button id="restart-all" onclick="restartAll(this)">Alle Neustarten</button>
+						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
 					</div>
 				</div>
 				<div id="toolbar" class="main" style="display: flex; margin-top: 100px">
 					<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
-					<div id="rooms" style="display: flex; width: 100%"><input type="button" onclick="switchRoom('all', false)" room="all" value="Alle Geräte" class="white" style="border-left: none; cursor: grab"></div>
+					<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
 					<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 				</div>
 				<div style="margin-top: 100px">
-					<p id="no-devices" style="display: none">Du besitzt derzeit<br>noch keine Geräte<br><br>Du kannst ein Gerät registrieren<br>indem du auf das [+] drückst</p>
+					<p id="no-devices" style="display: none">%devices.no_devices%</p>
 					<div id="devices" style="transition: .2s ease-in-out"></div>
 				</div>
 			</div>
 			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
-				<input style="margin-bottom: 20px; display: none" type="button" value="Schnelles Bearbeiten" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="Gerät Erstellen" onclick="Essentials.leavePage('/create')">
-				<input style="margin-bottom: 20px; display: none" type="button" value="Drittanbieter Geräte" onclick="Essentials.leavePage('/crossover')">
-				<input class="gradient-blue-green webhooks-needed" type="button" value="+ Gerät Hinzufügen" onclick="Essentials.leavePage('/connect')">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.multi_edit%" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="%devices.create_device%" onclick="Essentials.leavePage('/create')">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.third_party_devices%" onclick="Essentials.leavePage('/crossover')">
+				<input class="gradient-blue-green webhooks-needed" type="button" value="+ %devices.connect_device%" onclick="Essentials.leavePage('/connect')">
 			</div>
 			<script type="module" defer>
 
@@ -91,6 +91,29 @@
 				window.deviceCount = 0;
 				window.realDeviceCount = 0;
 
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					dimmer : '%accessories.dimmer%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
 				console.log('DEVICES', devices);
 
 				var timeDiff = new Date() - new Date('<%restart%>');
@@ -104,7 +127,31 @@
 				}, timeDiff > 60000 ? 60000 : 1000);
 
 				devices.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-				devices.sort((a, b) => (Essentials.getType(a.services) > Essentials.getType(b.services)) ? 1 : ((Essentials.getType(b.services) > Essentials.getType(a.services)) ? -1 : 0));
+
+				devices.sort((a, b) => {
+
+					var typeA = Essentials.getType(a.services), typeB = Essentials.getType(b.services);
+
+					if(serviceNames[Essentials.getType(a.services)] != null)
+					{
+						typeA = serviceNames[Essentials.getType(a.services)];
+					}
+
+					if(serviceNames[Essentials.getType(b.services)] != null)
+					{
+						typeB = serviceNames[Essentials.getType(b.services)];
+					}
+
+					typeA = typeA.toLowerCase();
+					typeB = typeB.toLowerCase();
+
+					console.log(typeA, typeB, (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0);
+
+					return (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0;
+				});
+
+				devices.sort((a, b) => (Essentials.getType(a.services) == 'unsupported') ? -1 : 1);
+				devices.sort((a, b) => (Essentials.getType(a.services) == 'special') ? -1 : 1);
 				devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
 				
 				if(devices.length == 0)
@@ -128,11 +175,23 @@
 					}
 				});
 
+				const isBridge = (services) => {
+
+					if(Array.isArray(services) && services[0] != null && services[0] instanceof Object && services[0].type == 'bridge')
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				};
+
 				for(const i in devices)
 				{
-					if(!Array.isArray(devices[i].services) || !devices[i].services.includes('bridge'))
+					if(!isBridge(devices[i].services))
 					{
-						if(devices[i].ip != undefined && devices[i].active != undefined)
+						if(devices[i].ip != null && devices[i].active != null)
 						{
 							activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
 						}
@@ -153,7 +212,7 @@
 
 							title.setAttribute('class', 'title-container');
 
-							title.innerHTML = Essentials.getType(devices[i].services);
+							title.innerHTML = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
 
 							console.log('SERVICES', Essentials.getType(devices[i].services));
 
@@ -162,8 +221,7 @@
 							var typeDevices = document.createElement('div');
 
 							typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
-							typeDevices.setAttribute('style', 'display: grid; grid-gap: 20px');
-							typeDevices.setAttribute('class', 'container');
+							typeDevices.setAttribute('class', 'container device-container');
 							/*
 							if(numOfType == 1)
 							{
@@ -188,29 +246,29 @@
 						button.setAttribute('device-id', i);
 						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
 
-						if(devices[i].room)
+						if(devices[i].group)
 						{
-							button.setAttribute('room', devices[i].room.toLowerCase());
+							button.setAttribute('group', devices[i].group.toLowerCase());
 						}
 
 						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
 
-						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
+						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
 
-						if(devices[i].active == 1 || devices[i].ip == undefined || devices[i].active == undefined)
+						if(devices[i].active == 1 || devices[i].ip == null || devices[i].active == null)
 						{
-							buttonHTML += '<div class="connection">AKTIV</div>';
+							buttonHTML += '<div class="connection">%devices.active%</div>';
 						}
 						else
 						{
-							buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">INAKTIV</div>';
+							buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">%devices.inactive%</div>';
 						}
 
 						buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
 
 						button.innerHTML = buttonHTML;
 
-						if(devices[i].id != null && devices[i].plugin != null && devices[i].plugin.startsWith('SynTex')) // OPTIMIZE: Remove when device page is finished
+						if(devices[i].id != null)
 						{
 							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
 						}
@@ -235,45 +293,45 @@
 					document.getElementById('devices').className = 'grid-view';
 				}
 
-				var tmpRoom = [], rooms = [];
+				var tmpGroup = [], groups = [];
 
 				for(const i in devices)
 				{
-					if(devices[i].room && !tmpRoom.includes(devices[i].room.toLowerCase()))
+					if(devices[i].group && !tmpGroup.includes(devices[i].group.toLowerCase()))
 					{
-						rooms.push(devices[i].room);
-						tmpRoom.push(devices[i].room.toLowerCase());
+						groups.push(devices[i].group);
+						tmpGroup.push(devices[i].group.toLowerCase());
 					}
 				}
 
-				rooms.sort();
+				groups.sort();
 
-				for(const i in rooms)
+				for(const i in groups)
 				{
-					var room = document.createElement('input');
+					var group = document.createElement('input');
 
-					room.setAttribute('type', 'button');
-					room.setAttribute('onclick', 'switchRoom("' + rooms[i].toLowerCase() + '", false)');
-					room.setAttribute('room', rooms[i].toLowerCase());
-					room.setAttribute('value', rooms[i]);
-					room.setAttribute('class', 'white');
-					room.setAttribute('style', 'margin-left: 20px; cursor: grab');
+					group.setAttribute('type', 'button');
+					group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
+					group.setAttribute('group', groups[i].toLowerCase());
+					group.setAttribute('value', groups[i]);
+					group.setAttribute('class', 'white');
+					group.setAttribute('style', 'margin-left: 20px; cursor: grab');
 					
-					document.getElementById('rooms').appendChild(room);
+					document.getElementById('groups').appendChild(group);
 				}
 
-				const roomBar = document.getElementById('rooms');
+				const groupBar = document.getElementById('groups');
 
 				let pos = { top: 0, left: 0, x: 0, y: 0 };
 
 				const mouseDownHandler = function(e)
 				{
-					roomBar.style.cursor = 'grabbing';
-					roomBar.style.userSelect = 'none';
+					groupBar.style.cursor = 'grabbing';
+					groupBar.style.userSelect = 'none';
 
 					pos = {
-						left: roomBar.scrollLeft,
-						top: roomBar.scrollTop,
+						left: groupBar.scrollLeft,
+						top: groupBar.scrollTop,
 						x: e.clientX,
 						y: e.clientY,
 					};
@@ -287,32 +345,32 @@
 					const dx = e.clientX - pos.x;
 					const dy = e.clientY - pos.y;
 
-					roomBar.scrollTop = pos.top - dy;
-					roomBar.scrollLeft = pos.left - dx;
+					groupBar.scrollTop = pos.top - dy;
+					groupBar.scrollLeft = pos.left - dx;
 					
-					for(var i = 0; i < roomBar.children.length; i++)
+					for(var i = 0; i < groupBar.children.length; i++)
 					{
-						roomBar.children[i].style.pointerEvents = 'none';
+						groupBar.children[i].style.pointerEvents = 'none';
 					}
 				};
 
 				const mouseUpHandler = function()
 				{
-					roomBar.style.cursor = 'grab';
-					roomBar.style.removeProperty('user-select');
+					groupBar.style.cursor = 'grab';
+					groupBar.style.removeProperty('user-select');
 
-					for(var i = 0; i < roomBar.children.length; i++)
+					for(var i = 0; i < groupBar.children.length; i++)
 					{
-						roomBar.children[i].style.pointerEvents = 'all';
+						groupBar.children[i].style.pointerEvents = 'all';
 					}
 
 					document.removeEventListener('mousemove', mouseMoveHandler);
 					document.removeEventListener('mouseup', mouseUpHandler);
 				};
 
-				roomBar.addEventListener('mousedown', mouseDownHandler);
+				groupBar.addEventListener('mousedown', mouseDownHandler);
 
-				switchRoom((new URL(window.location.href)).searchParams.get('room') || 'all', true);
+				switchGroup(localStorage.getItem('group') || 'all', true);
 
 				Preloader.finish();
 
@@ -359,7 +417,7 @@
 
 				function setupToolbar()
 				{
-					var room = (new URL(window.location.href)).searchParams.get('room');
+					var group = localStorage.getItem('group');
 
 					activationCounter = { active : 0, disabled : 0 };
 					deviceCount = 0;
@@ -369,7 +427,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].services != 'statelessswitch' && room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+						if(devices[i].services != 'statelessswitch' && (group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase())))
 						{
 							deviceCount++;
 
@@ -383,9 +441,9 @@
 								updateCount++;
 							}
 
-							if(devices[i].ip != undefined)
+							if(devices[i].ip != null)
 							{
-								if(devices[i].active != undefined)
+								if(devices[i].active != null)
 								{
 									realDeviceCount++;
 									real.push(devices[i].ip);
@@ -404,51 +462,30 @@
 					{
 						document.getElementById('activate-all').setAttribute('switch', 1);
 						document.getElementById('activate-all').setAttribute('class', 'gradient-green');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Alle An';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.all_active%';
 					}
 					else if(activationCounter['disabled'] >= 0 && activationCounter['active'] == 0)
 					{
 						document.getElementById('activate-all').setAttribute('switch', 0);
 						document.getElementById('activate-all').setAttribute('class', 'gradient-red');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Alle Aus';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.all_inactive%';
 					}
 					else
 					{
 						document.getElementById('activate-all').setAttribute('switch', 0);
 						document.getElementById('activate-all').setAttribute('class', '');
-						document.getElementById('activate-all').innerHTML = 'Aktiv: Gemischt';
+						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.mixed_active%';
 					}
 				}
 
-				async function switchRoom(room, init)
+				async function switchGroup(group, init)
 				{
-					if(init || (((new URL(window.location.href)).searchParams.get('room') || room != 'all') && (new URL(window.location.href)).searchParams.get('room') != room))
+					if(init || localStorage.getItem('group') != group)
 					{
+						localStorage.setItem('group', group);
+
 						if(!init)
 						{
-							if(room == 'all')
-							{
-								if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-								{
-									window.history.pushState(null, null, '/?desktopApp=true');
-								}
-								else
-								{
-									window.history.pushState(null, null, '/');
-								}
-							}
-							else
-							{
-								if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-								{
-									window.history.pushState(null, null, '?room=' + room + '&desktopApp=true');
-								}
-								else
-								{
-									window.history.pushState(null, null, '?room=' + room);
-								}
-							}
-
 							document.getElementById('devices').style.opacity = 0;
 
 							//Essentials.removeOverlays(document.getElementById('restart-all'), true);
@@ -466,7 +503,7 @@
 							{
 								var r = document.getElementById('devices').children[i].children[1].children[j];
 
-								if(r.getAttribute('room') != room && room != 'all')
+								if(r.getAttribute('group') != group && group != 'all')
 								{
 									r.style.display = 'none';
 								}
@@ -478,13 +515,13 @@
 							}
 						}
 
-						for(var i = 0; i < document.getElementById('rooms').children.length; i++)
+						for(var i = 0; i < document.getElementById('groups').children.length; i++)
 						{
-							var r = document.getElementById('rooms').children[i];
+							var r = document.getElementById('groups').children[i];
 
-							if(r.getAttribute('room') == room)
+							if(r.getAttribute('group') == group)
 							{
-								r.className = 'white room-active';
+								r.className = 'white group-active';
 								//r.style.filter = 'brightness(60%)';
 							}
 							else
@@ -533,11 +570,11 @@
 
 						restarting = [];
 					
-						Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', 'Neustart ..'));
+						Essentials.showOverlay(btn, Essentials.createPendingOverlay('restart-all-pending', '%general.restarting% ..'));
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()))
+							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (localStorage.getItem('group') == 'all' || (devices[i].group != null && localStorage.getItem('group') == devices[i].group.toLowerCase())))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
@@ -551,17 +588,17 @@
 										{
 											await Essentials.newTimeout(1000);
 
-											var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' Geräten Neugestartet!';
+											var responseText = restartCounter['success'] + ' / ' + (realDeviceCount - restartCounter['idle']) + ' %devices.devices_restarted%!';
 											var color = 'yellow';
 
 											if(restartCounter['success'] >= (realDeviceCount - restartCounter['idle']))
 											{
-												responseText = 'Alle Geräte Neugestartet!';
+												responseText = '%devices.all_devices_restarted%!';
 												color = 'green';
 											}
 											else if(restartCounter['success'] == 0)
 											{
-												responseText = 'Keine Geräte Neugestartet!';
+												responseText = '%devices.no_devices_restarted%!';
 												color = 'red';
 											}
 
@@ -580,7 +617,7 @@
 
 						if(restarting.length == 0)
 						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', 'Keine Geräte zum Neustarten!'));
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-all-result', '%devices.no_devices_restart%!'));
 											
 							Essentials.removeOverlaysDelay(btn, 4000, true);
 						}
@@ -610,12 +647,12 @@
 							}
 						}
 
-						var room = (new URL(window.location.href)).searchParams.get('room');
+						var group = localStorage.getItem('group');
 						var offlineCounter = 0;
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(room == null || (devices[i].room != undefined && room == devices[i].room.toLowerCase()))
+							if(group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase()))
 							{
 								if(offline.includes(devices[i].ip))
 								{
@@ -636,7 +673,7 @@
 				{
 					if(!device.className.includes('update'))
 					{
-						device.children[1].children[0].innerHTML = 'OFFLINE';
+						device.children[1].children[0].innerHTML = '%general.offline%';
 						device.children[1].children[0].style.color = 'hsl(350, 95%, 60%)';
 					}
 
@@ -654,12 +691,12 @@
 					{
 						if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 						{
-							device.children[1].children[0].innerHTML = 'AKTIV';
+							device.children[1].children[0].innerHTML = '%devices.active%';
 							device.children[1].children[0].style.color = 'hsl(170, 90%, 50%)';
 						}
 						else
 						{
-							device.children[1].children[0].innerHTML = 'INAKTIV';
+							device.children[1].children[0].innerHTML = '%devices.inactive%';
 							device.children[1].children[0].style.color = 'rgb(130, 130, 150)';
 						}
 					}
@@ -693,7 +730,7 @@
 
 							updateButton.setAttribute('type', 'button');
 							updateButton.setAttribute('id', 'update-all');
-							updateButton.setAttribute('value', 'Updates Installieren');
+							updateButton.setAttribute('value', '%devices.update_all%');
 							updateButton.setAttribute('onclick', 'installAllUpdates(this)');
 
 							document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
@@ -710,11 +747,11 @@
 					var updateDevices = document.getElementsByClassName('update');
 					var updateCounter = { success : 0, error : 0 };
 
-					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', 'Updates werden Installiert ..', 'purple'));
+					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', '%devices.updating_all% ..', 'purple'));
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (!(new URL(window.location.href)).searchParams.get('room') || updateDevices[i].getAttribute('room') != 'undefined' && (new URL(window.location.href)).searchParams.get('room') == updateDevices[i].getAttribute('room')))
+						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (localStorage.getItem('group') == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && localStorage.getItem('group') == updateDevices[i].getAttribute('group'))))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -722,17 +759,17 @@
 
 								if(updateCounter['success'] + updateCounter['error'] >= updateCount)
 								{
-									var responseText = updateCounter['success'] + ' / ' + updateCount + ' Geräten Aktualisiert!';
+									var responseText = updateCounter['success'] + ' / ' + updateCount + ' %devices.devices_updated%!';
 									var color = 'yellow';
 
 									if(updateCounter['success'] >= updateCount)
 									{
-										responseText = 'Alle Geräte Aktualisiert!';
+										responseText = '%devices.all_devices_updated%!';
 										color = 'green';
 									}
 									else if(updateCounter['success'] == 0)
 									{
-										responseText = 'Keine Geräte Aktualisiert!';
+										responseText = '%devices.no_devices_updated%!';
 										color = 'red';
 									}
 									
@@ -763,7 +800,7 @@
 
 					if(updating.length == 0)
 					{
-						Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', 'Keine Geräte zum Aktualisieren!'));
+						Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', '%devices.no_devices_update%!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
 					}
@@ -780,14 +817,14 @@
 							updating.push(device.getAttribute('id'));
 
 							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
-							device.getElementsByClassName('connection')[0].innerHTML = 'WARTEN';
+							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
 
 							var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 20000, 1, {}, false);
 
 							if(update == null)
 							{
 								device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+								device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
 
 								setTimeout(function() {
 
@@ -801,7 +838,7 @@
 								setOnline(device);
 
 								device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = 'UPDATE';
+								device.getElementsByClassName('connection')[0].innerHTML = '%devices.updating%';
 
 								await Essentials.newTimeout(3000);
 								
@@ -810,7 +847,7 @@
 								if(update == device.getAttribute('newest-version'))
 								{
 									device.getElementsByClassName('connection')[0].style.color = '';
-									device.getElementsByClassName('connection')[0].innerHTML = 'ERFOLG';
+									device.getElementsByClassName('connection')[0].innerHTML = '%devices.success%';
 
 									device.className = 'device';
 
@@ -823,12 +860,12 @@
 								else if(update != null)
 								{
 									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = 'FEHLER';
+									device.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
 								}
 								else
 								{
 									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = 'OFFLINE';
+									device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
 								}
 
 								setTimeout(function() {
@@ -841,12 +878,12 @@
 									else if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = '';
-										this.device.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+										this.device.getElementsByClassName('connection')[0].innerHTML = '%devices.active%';
 									}
 									else if(device.getAttribute('active') == 'false') // OPTIMIZE: Replace Active Attribute With devices[i].active
 									{
 										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-										this.device.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+										this.device.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
 									}
 
 								}.bind({ device : device }), 4000);
@@ -863,11 +900,11 @@
 				{
 					var switchCounter = { success : 0, error : 0, idle : 0 }, switchableDevices = false;
 
-					Essentials.showOverlay(btn, Essentials.createPendingOverlay('', 'Hochladen ..'));
+					Essentials.showOverlay(btn, Essentials.createPendingOverlay('', '%general.uploading% ..'));
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].ip != undefined && (!(new URL(window.location.href)).searchParams.get('room') || devices[i].room != undefined && (new URL(window.location.href)).searchParams.get('room') == devices[i].room.toLowerCase()) && real.includes(devices[i].ip))
+						if(devices[i].ip != null && real.includes(devices[i].ip) && (localStorage.getItem('group') == 'all' || (devices[i].group != null && localStorage.getItem('group') == devices[i].group.toLowerCase())))
 						{
 							var settings = {
 								id: devices[i].id,
@@ -894,29 +931,29 @@
 											if(btn.getAttribute('switch') == 0)
 											{
 												d.getElementsByClassName('connection')[0].style.color = '';
-												d.getElementsByClassName('connection')[0].innerHTML = 'AKTIV';
+												d.getElementsByClassName('connection')[0].innerHTML = '%devices.active%';
 											}
 											else
 											{
 												d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-												d.getElementsByClassName('connection')[0].innerHTML = 'INAKTIV';
+												d.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
 											}
 										}
 
 										if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 										{
-											var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+											var responseText = btn.getAttribute('switch') == 1 ? '%devices.all_inactive%' : '%devices.all_active%';
 											var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
 
 											if(switchCounter['error'] > 0)
 											{
-												responseText = 'Unterschiedlich';
+												responseText = '%devices.mixed_active%';
 												color = 'gray';
 											}
 
 											btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
 											btn.setAttribute('class', 'gradient-' + color);
-											btn.innerHTML = 'Aktiv: ' + responseText;
+											btn.innerHTML = '%devices.active%: ' + responseText;
 
 											Essentials.removeOverlays(btn, true);
 										}
@@ -935,18 +972,18 @@
 
 							if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 							{
-								var responseText = 'Alle ' + (btn.getAttribute('switch') == 1 ? 'Aus' : 'An');
+								var responseText = btn.getAttribute('switch') == 1 ? '%devices.all_inactive%' : '%devices.all_active%';
 								var color = btn.getAttribute('switch') == 1 ? 'red' : 'green';
 
 								if(switchCounter['error'] > 0)
 								{
-									responseText = 'Unterschiedlich';
+									responseText = '%devices.mixed_active%';
 									color = 'gray';
 								}
 
 								btn.setAttribute('switch', btn.getAttribute('switch') == 1 ? 0 : 1);
 								btn.setAttribute('class', 'gradient-' + color);
-								btn.innerHTML = 'Aktiv: ' + responseText;
+								btn.innerHTML = '%devices.active%: ' + responseText;
 
 								Essentials.removeOverlays(btn, true);
 							}
@@ -955,7 +992,7 @@
 
 					if(!switchableDevices)
 					{
-						Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', 'Keine Geräte zum Einstellen!'));
+						Essentials.showOverlay(btn, Essentials.createErrorOverlay('switch-result', '%devices.no_devices_activation%!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
 					}
@@ -967,31 +1004,31 @@
 
 					if(timestamp < 60)
 					{
-						return Math.round(timestamp) + ' s';
+						return Math.round(timestamp) + ' ' + '%devices.time.seconds%'[0];
 					}
 					else if(timestamp < 60 * 60)
 					{
-						return Math.round(timestamp / 60) + ' m';
+						return Math.round(timestamp / 60) + ' ' + '%devices.time.minutes%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24)
 					{
-						return Math.round(timestamp / 60 / 60) + ' h';
+						return Math.round(timestamp / 60 / 60) + ' ' + '%devices.time.hours%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 7)
 					{
-						return Math.round(timestamp / 60 / 60 / 24) + ' T';
+						return Math.round(timestamp / 60 / 60 / 24) + ' ' + '%devices.time.days%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 30.5)
 					{
-						return Math.round(timestamp / 60 / 60 / 24 / 7) + 'W';
+						return Math.round(timestamp / 60 / 60 / 24 / 7) + ' ' + '%devices.time.weeks%'[0];
 					}
 					else if(timestamp < 60 * 60 * 24 * 365)
 					{
-						return Math.round(timestamp / 60 / 60 / 24 / 30.5) + 'M';
+						return Math.round(timestamp / 60 / 60 / 24 / 30.5) + ' ' + '%devices.time.months%'[0];
 					}
 					else
 					{
-						return '> 1 J';
+						return '> 1 ' + '%devices.time.years%'[0];
 					}
 				}
 
