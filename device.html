@@ -59,7 +59,7 @@
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p style="margin-top: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>%device.group%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 					</div>
 					<input id="reset-btn" type="button" value="%device.reset%" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
@@ -264,7 +264,7 @@
 
 				if(device.group != null && device.group != '')
 				{
-					infos.innerHTML += '<p><b>%device.group%: </b>' + device.group + '</p>';
+					infos.innerHTML += '<p><b>%general.group%: </b>' + device.group + '</p>';
 				}
 
 				for(const i in settings)
