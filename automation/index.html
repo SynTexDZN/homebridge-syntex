@@ -43,12 +43,12 @@
 			<div id="view" style="transition: .2s ease-in-out">
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar" class="main" style="display: flex; margin: 100px auto">
-						<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="" value="%automation.all_automations%" class="white group-active"></div>
+						<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%automation.all_automations%" class="white" style="border-left: none; cursor: grab"></div>
 						<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage()" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
 					</div>
 					<p id="no-automation" style="display: none; margin-top: 100px">%automation.no_automation%</p>
 					<p id="no-devices" style="display: none; margin-top: 100px">%automation.no_devices%</p>
-					<div id="automation"></div>
+					<div id="automation" style="transition: .2s ease-in-out"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
@@ -169,6 +169,7 @@
 					if(automation.length > 0)
 					{
 						createAutomationPanels();
+						createGroupPanel();
 
 						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
 					}
@@ -246,6 +247,134 @@
 			</script>
 			<script>
 
+				function createGroupPanel()
+				{
+					var tmpGroup = [], groups = [];
+
+					for(const i in automation)
+					{
+						if(automation[i].group && !tmpGroup.includes(automation[i].group.toLowerCase()))
+						{
+							groups.push(automation[i].group);
+							tmpGroup.push(automation[i].group.toLowerCase());
+						}
+					}
+
+					groups.sort();
+
+					for(const i in groups)
+					{
+						var group = document.createElement('input');
+
+						group.setAttribute('type', 'button');
+						group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
+						group.setAttribute('group', groups[i].toLowerCase());
+						group.setAttribute('value', groups[i]);
+						group.setAttribute('class', 'white');
+						group.setAttribute('style', 'margin-left: 20px; cursor: grab');
+						
+						document.getElementById('groups').appendChild(group);
+					}
+
+					const groupBar = document.getElementById('groups');
+
+					let pos = { top: 0, left: 0, x: 0, y: 0 };
+
+					const mouseDownHandler = function(e)
+					{
+						groupBar.style.cursor = 'grabbing';
+						groupBar.style.userSelect = 'none';
+
+						pos = {
+							left: groupBar.scrollLeft,
+							top: groupBar.scrollTop,
+							x: e.clientX,
+							y: e.clientY,
+						};
+
+						document.addEventListener('mousemove', mouseMoveHandler);
+						document.addEventListener('mouseup', mouseUpHandler);
+					};
+
+					const mouseMoveHandler = function(e)
+					{
+						const dx = e.clientX - pos.x;
+						const dy = e.clientY - pos.y;
+
+						groupBar.scrollTop = pos.top - dy;
+						groupBar.scrollLeft = pos.left - dx;
+						
+						for(var i = 0; i < groupBar.children.length; i++)
+						{
+							groupBar.children[i].style.pointerEvents = 'none';
+						}
+					};
+
+					const mouseUpHandler = function()
+					{
+						groupBar.style.cursor = 'grab';
+						groupBar.style.removeProperty('user-select');
+
+						for(var i = 0; i < groupBar.children.length; i++)
+						{
+							groupBar.children[i].style.pointerEvents = 'all';
+						}
+
+						document.removeEventListener('mousemove', mouseMoveHandler);
+						document.removeEventListener('mouseup', mouseUpHandler);
+					};
+
+					groupBar.addEventListener('mousedown', mouseDownHandler);
+
+					switchGroup(localStorage.getItem('automation-group') || 'all', true);
+				}
+
+				async function switchGroup(group, init)
+				{
+					if(init || localStorage.getItem('automation-group') != group)
+					{
+						localStorage.setItem('automation-group', group);
+
+						if(!init)
+						{
+							document.getElementById('automation').style.opacity = 0;
+
+							await Essentials.newTimeout(300);
+						}
+
+						var automationPanels = document.getElementById('automation').children;
+
+						for(var i = 0; i < automationPanels.length; i++)
+						{
+							automationPanels[i].style.display = 'none';
+
+							if(group == 'all' || automationPanels[i].getAttribute('group') == group)
+							{
+								automationPanels[i].style.display = '';
+							}
+						}
+
+						var groupButtons = document.getElementById('groups').children;
+
+						for(var i = 0; i < groupButtons.length; i++)
+						{
+							if(groupButtons[i].getAttribute('group') == group)
+							{
+								groupButtons[i].className = 'white group-active';
+							}
+							else
+							{
+								groupButtons[i].className = 'white';
+							}
+						}
+
+						document.getElementById('automation').style.opacity = 1;
+					}
+				}
+			
+			</script>
+			<script>
+
 				async function openAddPage()
 				{
 					PageManager.setHeader('%menu.automation%', '%automation.create%', true);
@@ -303,6 +432,11 @@
 						if(i == 0)
 						{
 							typeContainer.style.marginTop = '0';
+						}
+
+						if(automation[i].group != null && automation[i].group != '')
+						{
+							typeContainer.setAttribute('group', automation[i].group.toLowerCase());
 						}
 
 						var title = document.createElement('h2');

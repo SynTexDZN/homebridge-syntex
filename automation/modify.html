@@ -63,6 +63,7 @@
 						<p><b>%general.id%: <input type="button" style="max-width: 150px" disabled></b></p>
 						<p autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 						<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+						<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 					</div>
 					<div style="margin-top: 20px" class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.trigger%</h2>
@@ -319,6 +320,11 @@
 							document.getElementById('infos').getElementsByTagName('p')[1].innerHTML = '<b>%general.name%: </b>' + automation[i].name;
 							document.getElementById('infos').getElementsByTagName('p')[2].innerHTML = '<b>%automation.active%: </b>' + (automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%');
 
+							if(automation[i].group != null && automation[i].group != '')
+							{
+								document.getElementById('infos').children[0].innerHTML += '<p><b>%general.group%: </b>' + automation[i].group + '</p>';
+							}
+
 							PageManager.setHeader(null, automation[i].name);
 
 							var panel = document.createElement('button');
@@ -488,6 +494,7 @@
 							document.getElementById('settings').getElementsByTagName('input')[1].value = automation[i].name;
 							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%';
 							document.getElementById('settings').getElementsByTagName('input')[2].className = automation[i].active ? 'white' : 'outline';
+							document.getElementById('settings').getElementsByTagName('input')[3].value = automation[i].group || '';
 						}
 					}
 				}
@@ -916,6 +923,12 @@
 					automationOBJ.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
 					automationOBJ.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
 					automationOBJ.active = document.getElementById('settings').getElementsByTagName('input')[2].value == '%characteristics.boolean.active%';
+					
+					if(document.getElementById('settings').getElementsByTagName('input')[3].value != '')
+					{
+						automationOBJ.group = document.getElementById('settings').getElementsByTagName('input')[3].value;
+					}
+
 					automationOBJ.trigger = [];
 
 					for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
