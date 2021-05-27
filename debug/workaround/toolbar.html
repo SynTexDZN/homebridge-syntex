@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/style/main.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="/style/mobile.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="/style/light.css" media="screen">
+    </head>
+    <body ontouchstart="">
+		<div id="content">
+			<title>Workaround: Toolbar</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('Workaround', 'Toolbar');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<div id="toolbar" class="main" style="margin-top: 100px">
+                    <div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
+                    <div style="display: flex; margin-top: 20px">
+                        <button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
+                        <div class="custom-select" style="width: 100%; pointer-events: none">
+                            <select>
+                                <option value="0">Alphabetisch ( A-Z )</option>
+                                <option value="0">Alphabetisch ( Z-A )</option>
+                                <option value="0" selected>Nach Gerätetyp ( A-Z )</option>
+                                <option value="0">Nach Gerätetyp ( Z-A )</option>
+                                <option value="0">Nach Status ( A-Z )</option>
+                                <option value="0">Nach Status ( Z-A )</option>
+                            </select>
+                        </div>
+                        <button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+                    </div>
+                </div>
+			</div>
+			<script type="module" defer>
+
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+                import { Replacer } from '/js/replace-select.js';
+
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+
+				window.Query = Query;
+				window.Essentials = Essentials;
+                window.Replacer = Replacer;
+
+				Preloader.finish();
+
+			</script>
+			<script>
+
+				
+
+			</script>
+		</div>
+	</body>
+    <script type="module">
+
+        //import { Replacer } from '/js/replace-select.js';
+
+        //window.Replacer = Replacer;
+
+        //Replacer.createSelectMenu(document.getElementById('toolbar').getElementsByClassName('custom-select')[0]);
+
+    </script>
+</html>
