@@ -100,9 +100,22 @@ function selectMenuItem(elmnt)
 	if(s.getAttribute('onchange') != null)
 	{
 		var functionName = s.getAttribute('onchange').split('(')[0];
-		//var params = eval(s.getAttribute('onchange').split('(')[1].split(')')[0]);
+		var params = s.getAttribute('onchange').split('(')[1].split(')')[0].split(', ');
+		var args = [];
 
-		window[functionName](elmnt.parentElement.parentElement);
+		for(const i in params)
+		{
+			if(params[i] == 'this')
+			{
+				args[i] = elmnt.parentElement.parentElement;
+			}
+			else
+			{
+				args[i] = eval(params[i]);
+			}
+		}
+
+		window[functionName](...args);
 	}
 }
 
