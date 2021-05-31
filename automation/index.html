@@ -42,9 +42,41 @@
 			</div>
 			<div id="view" style="transition: .2s ease-in-out">
 				<div class="main" style="margin-bottom: 100px">
-					<div id="toolbar" class="main" style="display: flex; margin: 100px auto">
+					<div id="toolbar" class="main" style="margin: 100px auto">
 						<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%automation.all_automations%" class="white" style="border-left: none; cursor: grab"></div>
-						<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage()" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+						<div style="display: flex; margin-top: 20px">
+							<div class="custom-select" style="width: 100%">
+								<select id="sort" onchange="sortAutomation()">
+									<option img="/img/sort-asc.png" value="alphabetical-asc">Alphabetisch</option>
+									<option img="/img/sort-desc.png" value="alphabetical-desc">Alphabetisch</option>
+									<option img="/img/sort-asc.png" value="id-asc">Nach ID</option>
+									<option img="/img/sort-desc.png" value="id-desc">Nach ID</option>
+									<option img="/img/sort-asc.png" value="activation-asc">Nach Aktivierung</option>
+									<option img="/img/sort-desc.png" value="activation-desc">Nach Aktivierung</option>
+								</select>
+								<script>
+
+									var sort = 'id-asc';
+
+									if(localStorage.getItem('automation-sort') != null)
+									{
+										sort = localStorage.getItem('automation-sort');
+									}
+
+									var select = document.getElementById('sort');
+
+									for(var i = 0; i < select.children.length; i++)
+									{
+										if(select.children[i].getAttribute('value') == sort)
+										{
+											select.children[i].setAttribute('selected', '');
+										}
+									}
+
+								</script>
+							</div>
+							<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage()" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+						</div>
 					</div>
 					<p id="no-automation" style="display: none; margin-top: 100px">%automation.no_automation%</p>
 					<p id="no-devices" style="display: none; margin-top: 100px">%automation.no_devices%</p>
@@ -168,7 +200,7 @@
 
 					if(automation.length > 0)
 					{
-						createAutomationPanels();
+						sortAutomation(true);
 						createGroupPanel();
 
 						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
@@ -242,6 +274,62 @@
 							}
 						});
 					});
+				}
+
+			</script>
+			<script>
+
+				function sortAutomation(init)
+				{
+					var select = document.getElementById('sort');
+					var sort = 'id-asc';
+
+					if(init && localStorage.getItem('automation-sort') != null)
+					{
+						sort = localStorage.getItem('automation-sort');
+					}
+
+					if(!init)
+					{
+						sort = select.children[select.selectedIndex].getAttribute('value');
+
+						localStorage.setItem('automation-sort', sort);
+
+						document.getElementById('automation').style.opacity = 0;
+					}
+
+					if(sort == 'alphabetical-asc')
+					{
+						automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+					}
+					else if(sort == 'alphabetical-desc')
+					{
+						automation.sort((a, b) => (a.name < b.name) ? 1 : (b.name < a.name) ? -1 : 0);
+					}
+					else if(sort == 'id-asc')
+					{
+						automation.sort((a, b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
+					}
+					else if(sort == 'id-desc')
+					{
+						automation.sort((a, b) => (a.id < b.id) ? 1 : (b.id < a.id) ? -1 : 0);
+					}
+					else if(sort == 'activation-asc')
+					{
+						automation.sort((a, b) => (a.active == true) ? -1 : 1);
+					}
+					else if(sort == 'activation-desc')
+					{
+						automation.sort((a, b) => (a.active == false) ? -1 : 1);
+					}
+
+					setTimeout(() => {
+
+						createAutomationPanels();
+
+						document.getElementById('automation').style.opacity = 1;
+
+					}, init ? 0 : 300);
 				}
 
 			</script>
@@ -968,7 +1056,7 @@
 
 						document.getElementById('no-automation').style.display = 'none';
 
-						createAutomationPanels();
+						sortAutomation(true);
 
 						await Essentials.newTimeout(4000);
 

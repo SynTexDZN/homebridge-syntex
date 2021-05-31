@@ -47,10 +47,42 @@
 						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
 					</div>
 				</div>
-				<div id="toolbar" class="main" style="display: flex; margin-top: 100px">
-					<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
+				<div id="toolbar" class="main" style="margin: 100px auto">
 					<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
-					<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+					<div style="display: flex; margin-top: 20px">
+						<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid3.png"></button>
+						<div class="custom-select" style="width: 100%">
+							<select id="sort" onchange="sortDevices()">
+								<option img="/img/sort-asc.png" value="alphabetical-asc">Alphabetisch</option>
+								<option img="/img/sort-desc.png" value="alphabetical-desc">Alphabetisch</option>
+								<option img="/img/sort-asc.png" value="type-asc">Nach Gerätetyp</option>
+								<option img="/img/sort-desc.png" value="type-desc">Nach Gerätetyp</option>
+								<option img="/img/sort-asc.png" value="activation-asc">Nach Aktivierung</option>
+								<option img="/img/sort-desc.png" value="activation-desc">Nach Aktivierung</option>
+							</select>
+							<script>
+
+								var sort = 'id-asc';
+
+								if(localStorage.getItem('devices-sort') != null)
+								{
+									sort = localStorage.getItem('devices-sort');
+								}
+
+								var select = document.getElementById('sort');
+
+								for(var i = 0; i < select.children.length; i++)
+								{
+									if(select.children[i].getAttribute('value') == sort)
+									{
+										select.children[i].setAttribute('selected', '');
+									}
+								}
+
+							</script>
+						</div>
+						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add5.png"></button>
+					</div>
 				</div>
 				<div style="margin-top: 100px">
 					<p id="no-devices" style="display: none">%devices.no_devices%</p>
@@ -68,6 +100,7 @@
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
 				import { Presets } from '/js/presets.js';
+				import { Replacer } from '/js/replace-select.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
@@ -75,6 +108,7 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Presets = Presets;
+				window.Replacer = Replacer;
 
 				window.devices = JSON.parse('<%devices%>');
 				window.latestVersions = JSON.parse('<%updates%>');
@@ -83,7 +117,6 @@
 				window.restarting = [];
 				window.updating = [];
 				window.real = [];
-				window.temp = '';
 				window.activationCounter = { active : 0, disabled : 0 };
 				window.deviceElements = document.getElementsByClassName('device');
 				window.updateCount = 0;
@@ -126,34 +159,6 @@
 				
 				}, timeDiff > 60000 ? 60000 : 1000);
 
-				devices.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-
-				devices.sort((a, b) => {
-
-					var typeA = Essentials.getType(a.services), typeB = Essentials.getType(b.services);
-
-					if(serviceNames[Essentials.getType(a.services)] != null)
-					{
-						typeA = serviceNames[Essentials.getType(a.services)];
-					}
-
-					if(serviceNames[Essentials.getType(b.services)] != null)
-					{
-						typeB = serviceNames[Essentials.getType(b.services)];
-					}
-
-					typeA = typeA.toLowerCase();
-					typeB = typeB.toLowerCase();
-
-					console.log(typeA, typeB, (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0);
-
-					return (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0;
-				});
-
-				devices.sort((a, b) => (Essentials.getType(a.services) == 'unsupported') ? -1 : 1);
-				devices.sort((a, b) => (Essentials.getType(a.services) == 'special') ? -1 : 1);
-				devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
-				
 				if(devices.length == 0)
 				{
 					document.getElementById('device-controls').style.display = 'none';
@@ -170,120 +175,12 @@
 							document.getElementsByClassName('webhooks-needed')[i].style.display = 'none';
 						}
 
-						document.getElementsByClassName('main')[0].style.marginBottom = '0';
-						document.getElementById('content').style.paddingBottom = '0';
+						document.getElementsByClassName('main')[0].style.marginBottom = 0;
+						document.getElementById('content').style.paddingBottom = 0;
 					}
 				});
 
-				const isBridge = (services) => {
-
-					if(Array.isArray(services) && services[0] != null && services[0] instanceof Object && services[0].type == 'bridge')
-					{
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				};
-
-				for(const i in devices)
-				{
-					if(!isBridge(devices[i].services))
-					{
-						if(devices[i].ip != null && devices[i].active != null)
-						{
-							activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
-						}
-
-						if(temp != Essentials.getType(devices[i].services))
-						{
-							var typeContainer = document.createElement('div');
-
-							typeContainer.setAttribute('style', '');
-							typeContainer.setAttribute('class', 'type-container');
-
-							if(devices[i].services == 'removed')
-							{
-								typeContainer.setAttribute('class', 'type-container striped');
-							}
-
-							var title = document.createElement('h2');
-
-							title.setAttribute('class', 'title-container');
-
-							title.innerHTML = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
-
-							console.log('SERVICES', Essentials.getType(devices[i].services));
-
-							typeContainer.appendChild(title);
-
-							var typeDevices = document.createElement('div');
-
-							typeDevices.setAttribute('id', Essentials.getType(devices[i].services));
-							typeDevices.setAttribute('class', 'container device-container');
-							/*
-							if(numOfType == 1)
-							{
-								typeDevices.style.gridTemplateColumns = '100%';
-							}
-							*/
-							typeContainer.appendChild(typeDevices);
-
-							document.getElementById('devices').appendChild(typeContainer);
-						}
-
-						var button = document.createElement('button'), buttonHTML = '';
-
-						if(devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
-						{
-							button.setAttribute('version', devices[i].version);
-						}
-
-						button.setAttribute('sensortype', Essentials.getType(devices[i].services));
-						button.setAttribute('id', devices[i].ip);
-						button.setAttribute('class', 'device');
-						button.setAttribute('device-id', i);
-						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
-
-						if(devices[i].group)
-						{
-							button.setAttribute('group', devices[i].group.toLowerCase());
-						}
-
-						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
-
-						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
-
-						if(devices[i].active == 1 || devices[i].ip == null || devices[i].active == null)
-						{
-							buttonHTML += '<div class="connection">%devices.active%</div>';
-						}
-						else
-						{
-							buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">%devices.inactive%</div>';
-						}
-
-						buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
-
-						button.innerHTML = buttonHTML;
-
-						if(devices[i].id != null)
-						{
-							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
-						}
-						else
-						{
-							button.setAttribute('disabled', '');
-						}
-						
-						button.setAttribute('name', devices[i].name);
-
-						document.getElementById(Essentials.getType(devices[i].services)).appendChild(button);
-						
-						temp = Essentials.getType(devices[i].services);
-					}
-				}
+				sortDevices(true);
 
 				if(localStorage.getItem('view') == 'grid-view')
 				{
@@ -322,7 +219,7 @@
 
 				const groupBar = document.getElementById('groups');
 
-				let pos = { top: 0, left: 0, x: 0, y: 0 };
+				let pos = { top : 0, left : 0, x : 0, y : 0 };
 
 				const mouseDownHandler = function(e)
 				{
@@ -330,10 +227,10 @@
 					groupBar.style.userSelect = 'none';
 
 					pos = {
-						left: groupBar.scrollLeft,
-						top: groupBar.scrollTop,
-						x: e.clientX,
-						y: e.clientY,
+						left : groupBar.scrollLeft,
+						top : groupBar.scrollTop,
+						x : e.clientX,
+						y : e.clientY,
 					};
 
 					document.addEventListener('mousemove', mouseMoveHandler);
@@ -382,6 +279,273 @@
 				}
 
 				setupToolbar();
+
+			</script>
+			<script>
+
+				const isBridge = (services) => {
+
+					if(Array.isArray(services) && services[0] != null && services[0] instanceof Object && services[0].type == 'bridge')
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				};
+
+				function createDevicePanels()
+				{
+					var temp = '';
+
+					document.getElementById('devices').innerHTML = '';
+
+					for(const i in devices)
+					{
+						if(!isBridge(devices[i].services))
+						{
+							var pattern = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
+
+							if(sort.startsWith('alphabetical'))
+							{
+								pattern = devices[i].name[0].toUpperCase();
+							}
+							else if(sort.startsWith('activation'))
+							{
+								pattern = '%devices.unknown%';
+
+								if(devices[i].active != null)
+								{
+									pattern = devices[i].active == 1 ? '%devices.active%' : '%devices.inactive%';
+								}
+							}
+
+							if(temp != pattern)
+							{
+								var typeContainer = document.createElement('div');
+
+								typeContainer.setAttribute('style', '');
+								typeContainer.setAttribute('class', 'type-container');
+
+								if(devices[i].services == 'removed')
+								{
+									typeContainer.setAttribute('class', 'type-container striped');
+								}
+
+								var title = document.createElement('h2');
+
+								title.setAttribute('class', 'title-container');
+
+								title.innerHTML = pattern;
+
+								console.log('SERVICES', Essentials.getType(devices[i].services));
+
+								typeContainer.appendChild(title);
+
+								var typeDevices = document.createElement('div');
+
+								typeDevices.setAttribute('id', pattern.toLowerCase());
+								typeDevices.setAttribute('class', 'container device-container');
+								/*
+								if(numOfType == 1)
+								{
+									typeDevices.style.gridTemplateColumns = '100%';
+								}
+								*/
+								typeContainer.appendChild(typeDevices);
+
+								document.getElementById('devices').appendChild(typeContainer);
+							}
+
+							var button = document.createElement('button'), buttonHTML = '';
+
+							if(devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
+							{
+								button.setAttribute('version', devices[i].version);
+							}
+
+							button.setAttribute('sensortype', Essentials.getType(devices[i].services));
+							button.setAttribute('id', devices[i].ip);
+							button.setAttribute('class', 'device');
+							button.setAttribute('device-id', i);
+							button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+							if(devices[i].group)
+							{
+								button.setAttribute('group', devices[i].group.toLowerCase());
+							}
+
+							buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
+
+							button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
+
+							if(devices[i].active == 1 || devices[i].ip == null || devices[i].active == null)
+							{
+								buttonHTML += '<div class="connection">%devices.active%</div>';
+							}
+							else
+							{
+								buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">%devices.inactive%</div>';
+							}
+
+							buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
+
+							button.innerHTML = buttonHTML;
+
+							if(devices[i].id != null)
+							{
+								button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
+							}
+							else
+							{
+								button.setAttribute('disabled', '');
+							}
+							
+							button.setAttribute('name', devices[i].name);
+
+							document.getElementById(pattern.toLowerCase()).appendChild(button);
+							
+							temp = pattern;
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				window.sort = 'id-asc';
+
+				function sortDevices(init)
+				{
+					var select = document.getElementById('sort');
+
+					if(init && localStorage.getItem('devices-sort') != null)
+					{
+						sort = localStorage.getItem('devices-sort');
+					}
+
+					if(!init)
+					{
+						sort = select.children[select.selectedIndex].getAttribute('value');
+
+						localStorage.setItem('devices-sort', sort);
+
+						document.getElementById('devices').style.opacity = 0;
+					}
+
+					if(sort.endsWith('asc'))
+					{
+						devices.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : (b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0);
+					}
+					else if(sort.endsWith('desc'))
+					{
+						devices.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase()) ? 1 : (b.name.toLowerCase() < a.name.toLowerCase()) ? -1 : 0);
+					}
+
+					if(sort.startsWith('type'))
+					{
+						devices.sort((a, b) => {
+
+							var typeA = Essentials.getType(a.services), typeB = Essentials.getType(b.services);
+
+							if(serviceNames[Essentials.getType(a.services)] != null)
+							{
+								typeA = serviceNames[Essentials.getType(a.services)];
+							}
+
+							if(serviceNames[Essentials.getType(b.services)] != null)
+							{
+								typeB = serviceNames[Essentials.getType(b.services)];
+							}
+
+							typeA = typeA.toLowerCase();
+							typeB = typeB.toLowerCase();
+
+							if(sort == 'type-asc')
+							{
+								return (typeA > typeB) ? 1 : (typeB > typeA) ? -1 : 0;
+							}
+							else if(sort == 'type-desc')
+							{
+								return (typeA < typeB) ? 1 : (typeB < typeA) ? -1 : 0;
+							}
+						});
+					}
+					else if(sort == 'activation-asc')
+					{
+						devices.sort((a, b) => {
+
+							if(a.active == undefined)
+							{
+								a.active = null;
+							}
+
+							if(b.active == undefined)
+							{
+								b.active = null;
+							}
+
+							if(a.active == null)
+							{
+								return 1;
+							}
+							else if(a.active > b.active || (a.active == 0 && b.active == null))
+							{
+								return -1;
+							}
+							else
+							{
+								return 0;
+							}
+						});
+					}
+					else if(sort == 'activation-desc')
+					{
+						devices.sort((a, b) => {
+
+							if(a.active == undefined)
+							{
+								a.active = null;
+							}
+
+							if(b.active == undefined)
+							{
+								b.active = null;
+							}
+
+							if(a.active == null)
+							{
+								return 1;
+							}
+							else if(a.active > b.active || (a.active == 0 && b.active == null))
+							{
+								return -1;
+							}
+							else
+							{
+								return 0;
+							}
+						});
+
+						devices.sort((a, b) => (a.active == null ? 1 : -1));
+					}
+
+					if(sort.startsWith('type'))
+					{
+						devices.sort((a, b) => (Essentials.getType(a.services) == 'unsupported') ? -1 : 1);
+						devices.sort((a, b) => (Essentials.getType(a.services) == 'special') ? -1 : 1);
+						devices.sort((a, b) => (a.services == 'removed') ? -1 : 1);
+					}
+
+					setTimeout(() => {
+
+						createDevicePanels();
+
+						document.getElementById('devices').style.opacity = 1;
+
+					}, init ? 0 : 300);
+				}
 
 			</script>
 			<script>
@@ -441,15 +605,12 @@
 								updateCount++;
 							}
 
-							if(devices[i].ip != null)
+							if(devices[i].ip != null && devices[i].active != null)
 							{
-								if(devices[i].active != null)
-								{
-									realDeviceCount++;
-									real.push(devices[i].ip);
+								realDeviceCount++;
+								real.push(devices[i].ip);
 
-									activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
-								}
+								activationCounter[devices[i].active == 1 ? 'active' : 'disabled' ]++;
 							}
 						}
 					}
