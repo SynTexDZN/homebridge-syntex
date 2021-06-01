@@ -141,7 +141,19 @@
 					<h2>• %debug.style.basic% •</h2>
 					<input type="button" value="%debug.style.button% 1">
 					<input type="text" style="margin-top: 20px">
-					<div id="select"></div>
+					<div class="custom-select" style="margin-top: 20px">
+						<select>
+							<option value="0">1</option>
+							<option value="1">2</option>
+							<option value="2">3</option>
+							<option value="3">4</option>
+							<option value="4">5</option>
+							<option value="5">6</option>
+							<option value="6">7</option>
+							<option value="7">8</option>
+							<option value="8">9</option>
+						</select>
+					</div>
 					<h2>• %debug.style.icon_buttons% •</h2>
 					<button class="icon-button left split arrow">
 						<div class="button-icon">
@@ -232,18 +244,11 @@
 	
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
+				Replacer.SETUP();
 			
 				window.Query = Query;
 				window.Essentials = Essentials;
 
-				var select = document.createElement('div');
-
-				select.className = 'custom-select';
-				select.style.marginTop = '20px';
-				select.innerHTML = '<select><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option><option value="4">5</option><option value="5">6</option><option value="6">7</option><option value="7">8</option><option value="8">9</option></select>';
-				
-				document.getElementById('select').appendChild(Replacer.createSelectMenu(select));
-			
 				Preloader.finish();
 
 			</script>

@@ -26,6 +26,26 @@
 					<p><b>%general.name%: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<div style="display: flex">
 						<p style="margin-left: auto; margin-right: 14px"><b>%create.type%: </b></p>
+						<div class="custom-select" style="width: 325px; margin-right: auto">
+							<select id="form-services" name="service">
+								<option img="/img/accessory/airquality.png" type="airquality">%accessories.airquality%</option>
+								<option img="/img/accessory/contact.png" type="contact">%accessories.contact%</option>
+								<option img="/img/accessory/dimmer.png" type="dimmer">%accessories.dimmer%</option>
+								<option img="/img/accessory/humidity.png" type="humidity">%accessories.humidity%</option>
+								<option img="/img/accessory/led.png" type="led">%accessories.led%</option>
+								<option img="/img/accessory/light.png" type="light">%accessories.light%</option>
+								<option img="/img/accessory/motion.png" type="motion">%accessories.motion%</option>
+								<option img="/img/accessory/occupancy.png" type="occupancy">%accessories.occupancy%</option>
+								<option img="/img/accessory/outlet.png" type="outlet">%accessories.outlet%</option>
+								<option img="/img/accessory/rain.png" type="rain">%accessories.rain%</option>
+								<option img="/img/accessory/relais.png" type="relais">%accessories.relais%</option>
+								<option img="/img/accessory/rgb.png" type="rgb">%accessories.rgb%</option>
+								<option img="/img/accessory/smoke.png" type="smoke">%accessories.smoke%</option>
+								<option img="/img/accessory/statelessswitch.png" type="statelessswitch">%accessories.statelessswitch%</option>
+								<option img="/img/accessory/switch.png" type="switch">%accessories.switch%</option>
+								<option img="/img/accessory/temperature.png" type="temperature">%accessories.temperature%</option>
+							</select>	
+						</div>
 					</div>
 					<div class="widget" id="infobox" style="margin-left: 0; margin-top: 100px">
 						<button class="widget-left gradient-red">%general.important%</button>
@@ -47,28 +67,10 @@
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
+				Replacer.SETUP();
 
 				window.Query = Query;
 				window.Essentials = Essentials;
-
-				var select = document.createElement('div');
-
-				select.className = 'custom-select';
-				select.setAttribute('style', 'width: 325px; margin-right: auto');
-
-				var html = '<select id="form-services" name="service">';
-				var serviceNames = { airquality : '%accessories.airquality%', contact : '%accessories.contact%', dimmer : '%accessories.dimmer%', humidity : '%accessories.humidity%', led : '%accessories.led%', light : '%accessories.light%', motion : '%accessories.motion%', occupancy : '%accessories.occupancy%', outlet : '%accessories.outlet%', rain : '%accessories.rain%', relais : '%accessories.relais%', rgb : '%accessories.rgb%', smoke : '%accessories.smoke%', statelessswitch : '%accessories.statelessswitch%', switch : '%accessories.switch%', temperature : '%accessories.temperature%' };
-
-				for(const i in serviceNames)
-				{
-					html += '<option img="/img/accessory/' + i + '.png" type="' + i + '">' + serviceNames[i] + '</option>'
-				}
-
-				html += '</select>'
-
-				select.innerHTML = html;
-				
-				document.getElementsByTagName('form')[0].children[2].appendChild(Replacer.createSelectMenu(select));
 
 				Preloader.finish();
 

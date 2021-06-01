@@ -62,6 +62,18 @@
 					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="%general.search%" onclick="if(document.getElementById('search-params').value != '') searchLog()" style="max-width: 200px">
 				</div>
 				<div style="display: flex" id="filter">
+					<div class="custom-select" style="width: 100%; margin-right: 20px">
+						<select onchange="searchLog()">
+							<option value="all">%log.all_levels%</option>
+							<option value="debug">%log.debug%</option>
+							<option value="success">%log.success%</option>
+							<option value="update">%log.update%</option>
+							<option value="read">%log.read%</option>
+							<option value="info">%log.info%</option>
+							<option value="warn">%log.warn%</option>
+							<option value="error">%log.error%</option>
+						</select>
+					</div>
 					<input type="button" value="%log.no_filter%" onclick="clearSearch()" style="max-width: 200px">
 				</div>
 			</form>
@@ -76,6 +88,7 @@
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
+				Replacer.SETUP();
 
 				window.Query = Query;
 				window.Essentials = Essentials;
@@ -123,15 +136,6 @@
 
 				function renderGUI()
 				{
-					var filter = document.createElement('div');
-
-					filter.className = 'custom-select';
-					filter.innerHTML = '<select onchange="searchLog()"><option value="all">%log.all_levels%</option><option value="debug">%log.debug%</option><option value="success">%log.success%</option><option value="update">%log.update%</option><option value="read">%log.read%</option><option value="info">%log.info%</option><option value="warn">%log.warn%</option><option value="error">%log.error%</option></select>';
-					filter.style.width = '100%';
-					filter.style.marginRight = '20px';
-
-					document.getElementById('filter').insertBefore(Replacer.createSelectMenu(filter), document.getElementById('filter').children[0]);
-
 					for(const id in plugins)
 					{
 						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
