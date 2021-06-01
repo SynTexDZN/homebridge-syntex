@@ -100,15 +100,14 @@
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
 				import { Presets } from '/js/presets.js';
-				import { Replacer } from '/js/replace-select.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
+				Replacer.SETUP();
 
 				window.Query = Query;
 				window.Essentials = Essentials;
 				window.Presets = Presets;
-				window.Replacer = Replacer;
 
 				window.devices = JSON.parse('<%devices%>');
 				window.latestVersions = JSON.parse('<%updates%>');
@@ -283,7 +282,7 @@
 			</script>
 			<script>
 
-				const isBridge = (services) => {
+				var isBridge = (services) => {
 
 					if(Array.isArray(services) && services[0] != null && services[0] instanceof Object && services[0].type == 'bridge')
 					{

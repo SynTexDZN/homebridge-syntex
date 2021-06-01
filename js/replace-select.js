@@ -1,8 +1,13 @@
-var selects = [], x = document.getElementsByClassName('custom-select');
+var selects = [];
 
-for(var i = 0; i < x.length; i++)
+function SETUP()
 {
-	createSelectMenu(x[i]);
+	var x = document.getElementsByClassName('custom-select');
+
+	for(var i = 0; i < x.length; i++)
+	{
+		createSelectMenu(x[i]);
+	}
 }
 
 window.onclick = function(event)
@@ -139,4 +144,4 @@ function closeOtherSelectMenus(elmnt)
 	}
 }
 
-export let Replacer = { createSelectMenu, openSelectMenu, selectMenuItem };
+export let Replacer = { SETUP, createSelectMenu, openSelectMenu, selectMenuItem };

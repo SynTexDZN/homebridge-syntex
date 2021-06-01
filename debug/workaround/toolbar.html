@@ -48,14 +48,13 @@
 
 				import { Query } from '/js/query.js';
 				import { Essentials } from '/js/essentials.js';
-                import { Replacer } from '/js/replace-select.js';
 
 				Query.SETUP(Essentials);
 				Essentials.SETUP(Query, Preloader);
+                Replacer.SETUP();
 
 				window.Query = Query;
 				window.Essentials = Essentials;
-                window.Replacer = Replacer;
 
 				Preloader.finish();
 
@@ -68,10 +67,6 @@
 		</div>
 	</body>
     <script type="module">
-
-        //import { Replacer } from '/js/replace-select.js';
-
-        //window.Replacer = Replacer;
 
         //Replacer.createSelectMenu(document.getElementById('toolbar').getElementsByClassName('custom-select')[0]);
 
