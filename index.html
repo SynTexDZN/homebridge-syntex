@@ -179,16 +179,6 @@
 					}
 				});
 
-				sortDevices(true);
-
-				if(localStorage.getItem('view') == 'grid-view')
-				{
-					document.getElementById('toolbar').children[0].children[0].style.display = 'none';
-					document.getElementById('toolbar').children[0].children[1].style.display = '';
-					document.getElementById('toolbar').children[0].setAttribute('view', 'grid');
-					document.getElementById('devices').className = 'grid-view';
-				}
-
 				var tmpGroup = [], groups = [];
 
 				for(const i in devices)
@@ -266,7 +256,15 @@
 
 				groupBar.addEventListener('mousedown', mouseDownHandler);
 
-				switchGroup(localStorage.getItem('device-group') || 'all', true);
+				sortDevices(true);
+
+				if(localStorage.getItem('view') == 'grid-view')
+				{
+					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
+					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
+					document.getElementById('toolbar').children[1].children[0].setAttribute('view', 'grid');
+					document.getElementById('devices').className = 'grid-view';
+				}
 
 				Preloader.finish();
 
@@ -541,7 +539,13 @@
 
 						createDevicePanels();
 
-						document.getElementById('devices').style.opacity = 1;
+						setTimeout(() => {
+
+							switchGroup(localStorage.getItem('device-group') || 'all', true);
+
+							document.getElementById('devices').style.opacity = 1;
+
+						}, 0);
 
 					}, init ? 0 : 300);
 				}

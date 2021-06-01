@@ -326,7 +326,13 @@
 
 						createAutomationPanels();
 
-						document.getElementById('automation').style.opacity = 1;
+						setTimeout(() => {
+
+							switchGroup(localStorage.getItem('automation-group') || 'all', true);
+
+							document.getElementById('automation').style.opacity = 1;
+
+						}, 0);
 
 					}, init ? 0 : 300);
 				}
@@ -412,8 +418,6 @@
 					};
 
 					groupBar.addEventListener('mousedown', mouseDownHandler);
-
-					switchGroup(localStorage.getItem('automation-group') || 'all', true);
 				}
 
 				async function switchGroup(group, init)
