@@ -1,55 +1,51 @@
-var presets = [
-	{
-		id : 'SynTex',
-		name : 'SynTex Real Device',
-		getResetURL : function(device, params) { return 'http://' + device.ip + '/reset?type=' + params.type },
-		getRestartURL : function(device) { return 'http://' + device.ip + '/restart' },
-		getReconnectURL : function(device) { return 'http://' + device.ip + '/restart' },
-		getUpdateURL : function(device, params) { return 'http://' + device.ip + '/update?type=' + params.type },
-		getVersionURL : function(device) { return 'http://' + device.ip + '/version' },
-		getPingURL : function(device) { return 'http://' + device.ip + '/' }
-	},
-	{
-		id : 'SynTexWebHooks',
-		name : 'SynTex Virtual Device',
-		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
-		getRestartURL : function() { return null },
-		getReconnectURL : function() { return null },
-		getUpdateURL : function() { return null },
-		getVersionURL : function() { return null },
-		getPingURL : function() { return null }
-	},
-	{
-		id : 'SynTexMagicHome',
-		name : 'SynTex MagicHome Device',
-		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
-		getRestartURL : function() { return null },
-		getReconnectURL : function() { return null },
-		getUpdateURL : function() { return null },
-		getVersionURL : function() { return null },
-		getPingURL : function() { return null }
-	},
-	{
-		id : 'SynTexTuya',
-		name : 'SynTex Tuya Device',
-		getResetURL : function(device, params) { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
-		getRestartURL : function() { return null },
-		getReconnectURL : function() { return null },
-		getUpdateURL : function() { return null },
-		getVersionURL : function() { return null },
-		getPingURL : function() { return null }
-	}
-];
-
-function getPreset(id)
+class PresetManager
 {
-	for(var i = 0; i < presets.length; i++)
+	constructor()
 	{
-		if(presets[i].id == id)
-		{
-			return presets[i];
-		}
+		this.presets = {
+			SynTex : {
+				name : 'SynTex Real Device',
+				getResetURL : (device, params) => { return 'http://' + device.ip + '/reset?type=' + params.type },
+				getRestartURL : (device) => { return 'http://' + device.ip + '/restart' },
+				getReconnectURL : (device) => { return 'http://' + device.ip + '/restart' },
+				getUpdateURL : (device, params) => { return 'http://' + device.ip + '/update?type=' + params.type },
+				getVersionURL : (device) => { return 'http://' + device.ip + '/version' },
+				getPingURL : (device) => { return 'http://' + device.ip + '/' }
+			},
+			SynTexWebHooks : {
+				name : 'SynTex Virtual Device',
+				getResetURL : (device, params) => { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
+				getRestartURL : () => { return null },
+				getReconnectURL : () => { return null },
+				getUpdateURL : () => { return null },
+				getVersionURL : () => { return null },
+				getPingURL : () => { return null }
+			},
+			SynTexMagicHome : {
+				name : 'SynTex MagicHome Device',
+				getResetURL : (device, params) => { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
+				getRestartURL : () => { return null },
+				getReconnectURL : () => { return null },
+				getUpdateURL : () => { return null },
+				getVersionURL : () => { return null },
+				getPingURL : () => { return null }
+			},
+			SynTexTuya : {
+				name : 'SynTex Tuya Device',
+				getResetURL : (device, params) => { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
+				getRestartURL : () => { return null },
+				getReconnectURL : () => { return null },
+				getUpdateURL : () => { return null },
+				getVersionURL : () => { return null },
+				getPingURL : () => { return null }
+			}
+		};
+	}
+
+	getPreset(id)
+	{
+		return presets[id];
 	}
 }
 
-export let Presets = { getPreset };
+export let Presets = new PresetManager();

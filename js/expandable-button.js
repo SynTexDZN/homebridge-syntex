@@ -5,7 +5,7 @@ class ExpandableButton
 		this.buttons = [];
 		this.lastWidth = document.getElementsByTagName('body')[0].offsetWidth;
 
-		document.getElementsByTagName('body')[0].onresize = () => {
+		window.addEventListener('resize', () => {
 
 			var width = document.getElementsByTagName('body')[0].offsetWidth;
 
@@ -31,7 +31,7 @@ class ExpandableButton
 					}, 100);
 				}
 			}
-		}
+		});
 	}
 
 	createExpandableButton(btn)

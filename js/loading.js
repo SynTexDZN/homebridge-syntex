@@ -1,22 +1,28 @@
 var loadFinished = false, scriptsFinished = false;
 
-window.addEventListener('load', function ()
+class PreloadOverlay
 {
-	loadFinished = true;
-	
-	removePreloader();
-});
+	constructor()
+	{
+		window.addEventListener('load', () => {
 
-function finish()
-{
-	scriptsFinished = true;
+			loadFinished = true;
+			
+			removePreloader();
+		});
+	}
 
-	removePreloader();
-}
+	load()
+	{
+		scriptsFinished = false;
+	}
 
-function load()
-{
-	scriptsFinished = false;
+	finish()
+	{
+		scriptsFinished = true;
+
+		removePreloader();
+	}
 }
 
 function removePreloader()
@@ -31,29 +37,4 @@ function removePreloader()
 	}
 }
 
-function expandWrapper(wrapper)
-{
-	var length = 0;
-
-	for(var i = 0; i < wrapper.children.length; i++)
-	{
-		length += wrapper.children[i].offsetHeight;
-
-		if(wrapper.children[i].style.marginTop)
-		{
-			length += parseInt(wrapper.children[i].style.marginTop);
-		}
-
-		if(wrapper.children[i].style.marginBottom)
-		{
-			length += parseInt(wrapper.children[i].style.marginBottom);
-		}
-	}
-
-	wrapper.style.maxHeight = length + 1;
-	wrapper.style.opacity = 1;
-
-	setTimeout(() => { wrapper.style.maxHeight = 'none' }, 2000);
-}
-
-export let Preloader = { finish, load, expandWrapper };
+export let Preloader = new PreloadOverlay();

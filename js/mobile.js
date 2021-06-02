@@ -1,44 +1,53 @@
-function hasTouch()
+class MobileManager
 {
-	return 'ontouchstart' in document.documentElement
-		|| navigator.maxTouchPoints > 0
-		|| navigator.msMaxTouchPoints > 0;
-}
-
-if(hasTouch())
-{
-	try
+	constructor()
 	{
-		for(var si in document.styleSheets)
+		if(this.hasTouch())
 		{
-			var styleSheet = document.styleSheets[si];
+			this.enableStyleSheet();
+		}
+	}
 
-			if(styleSheet.rules && styleSheet.href)
+	hasTouch()
+	{
+		return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+	}
+
+	enableStyleSheet()
+	{
+		try
+		{
+			for(var si in document.styleSheets)
 			{
-				for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
+				var styleSheet = document.styleSheets[si];
+
+				if(styleSheet.rules && styleSheet.href)
 				{
-					console.log(ri, styleSheet.rules[ri], styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'));
-
-					if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
+					for(var ri = styleSheet.rules.length - 1; ri >= 0; ri--)
 					{
-						styleSheet.deleteRule(ri);
-					}
-					else if(styleSheet.rules[ri].cssRules)
-					{
-						for(var rj = styleSheet.rules[ri].cssRules.length - 1; rj >= 0; rj--)
+						if(styleSheet.rules[ri].selectorText && styleSheet.rules[ri].selectorText.includes(':hover'))
 						{
-							console.log(ri, rj, styleSheet.rules[ri].cssRules[rj], styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'));
-
-							if(styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'))
+							styleSheet.deleteRule(ri);
+						}
+						else if(styleSheet.rules[ri].cssRules)
+						{
+							for(var rj = styleSheet.rules[ri].cssRules.length - 1; rj >= 0; rj--)
 							{
-								//styleSheet.rules[ri].cssRules[rj].selectorText = '';
-								styleSheet.rules[ri].deleteRule(rj);
+								if(styleSheet.rules[ri].cssRules[rj].selectorText && styleSheet.rules[ri].cssRules[rj].selectorText.includes(':hover'))
+								{
+									styleSheet.rules[ri].deleteRule(rj);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		catch(e)
+		{
+			console.error(e);
+		}
 	}
-	catch(e) {}
 }
+
+new MobileManager();

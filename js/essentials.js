@@ -1,278 +1,463 @@
-var Query, Preloader;
+let self = null;
 
-function versionCount(version)
+class EssentialFeatures
 {
-	if(version != null && version != '0.0.0')
+	constructor()
 	{
-		var intVersion = version.includes('-') ? -1 : 0;
+		var supportsPassive = false;
 
-		for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
+		try
 		{
-			if(version.includes('-'))
-			{
-				intVersion += version.split('-')[0].split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
-			}
-			else
-			{
-				intVersion += version.split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
-			}
+			window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+				get : () => { supportsPassive = true } 
+			}));
 		}
+		catch(e) {}
 
-		if(version.includes('-'))
-		{
-			intVersion += parseFloat(version.split('-b')[1]) / 1000.0;
-		}
+		this.wheelOpt = supportsPassive ? { passive: false } : false;
+		this.wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+		this.types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+		this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+		this.overlays = [];
+
+		this.pageLoading = false;
+		this.pageTimer = false;
+
+		self = this;
 	}
 
-	return intVersion;
-}
-
-function checkRestart(url)
-{
-	return new Promise(async (resolve) => {
-
-		var restart = await Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
-
-		console.log('RESTART', restart);
-
-		if(restart != null && restart == 'false')
-		{
-			resolve(true);
-		}
-		else
-		{
-			setTimeout(() => resolve(checkRestart(url)), 500);
-		}
-	});
-}
-
-function checkUpdating(url)
-{
-	return new Promise(async (resolve) => {
-
-		var restart = await Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
-
-		console.log('UPDATING', restart);
-
-		if(restart != null && restart == 'false')
-		{
-			resolve(true);
-		}
-		else
-		{
-			setTimeout(() => resolve(checkUpdating(url)), 500);
-		}
-	});
-}
-
-var overlays = [];
-
-function createOverlay(level, id, value, color)
-{
-	var overlay = document.createElement('input');
-
-	overlay.setAttribute('type', 'button');
-	overlay.setAttribute('style', 'z-index: ' + level);
-	overlay.setAttribute('id', id);
-	overlay.setAttribute('value', value);
-	overlay.setAttribute('class', 'overlay gradient-' + color + ' loading-loop');
-
-	return overlay;
-}
-
-function createPendingOverlay(id, value)
-{
-	return createOverlay(1, id, value, 'blue');
-}
-
-function createSuccessOverlay(id, value)
-{
-	return createOverlay(2, id, value, 'green');
-}
-
-function createErrorOverlay(id, value)
-{
-	return createOverlay(2, id, value, 'red');
-}
-
-function showOverlay(btn, overlay)
-{
-	overlays.push({
-		reference: btn,
-		overlay: overlay
-	});
-
-	btn.parentElement.insertBefore(overlay, btn);
-
-	setTimeout(() => {
-
-		btn.style.opacity = 0;
-		
-		for(var i = 0; i < overlays.length; i++)
-		{
-			if(overlays[i].reference == btn)
-			{
-				overlays[i].overlay.style.opacity = 0;
-			}
-		}
-
-		overlay.style.opacity = 1;
-
-	}, 10);
-}
-
-function showOverlayDelay(btn, overlay, delay)
-{
-	setTimeout(() => showOverlay(btn, overlay), delay);
-}
-
-function removeOverlays(btn, show)
-{
-	if(show == true)
+	SETUP(Query, Preloader)
 	{
-		btn.style.opacity = 1;
-	}
-	else if(show == false)
-	{
-		btn.style.opacity = 0;
+		this.Query = Query;
+		this.Preloader = Preloader;
+
+		window.onpopstate = () => location.reload();
 	}
 
-	console.log(show, btn);
-	
-	for(var i = 0; i < overlays.length; i++)
+	newTimeout(ms)
 	{
-		if(overlays[i].reference == btn)
-		{
-			overlays[i].overlay.style.opacity = 0;
-
-			if(show)
-			{
-				overlays[i].overlay.style.setProperty('cursor', 'pointer', 'important');
-			}
-		}
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	if(show == false)
+	versionCount(version)
 	{
-		setTimeout(() => {
-
-			btn.style.setProperty('height', '0', 'important');
-			btn.style.paddingTop = 0;
-			btn.style.paddingBottom = 0;
-			btn.style.marginTop = 0;
-			btn.style.marginBottom = 0;
-			btn.style.borderTopWidth = 0;
-			btn.style.borderBottomWidth = 0;
-
-			console.log('MAIN BTN 2 SHRINK');
-
-		}, 300);
-	}
-
-	setTimeout(() => {
-
-		for(var i = overlays.length - 1; i >= 0; i--)
+		if(version != null && version != '0.0.0')
 		{
-			if(overlays[i].reference == btn)
+			var intVersion = version.includes('-') ? -1 : 0;
+
+			for(var i = 0; i < (version.match(/\./g) || []).length + 1; i++)
 			{
-				btn.parentElement.removeChild(overlays[i].overlay);
-
-				overlays.splice(overlays.indexOf(overlays[i]), 1);
-			}
-		}
-
-		console.log('REMOVE OVERLAYS');
-
-		if(show == false)
-		{
-			btn.parentElement.removeChild(btn);
-
-			console.log('MAIN BTN 2 REMOVE');
-		}
-
-	}, (show == null || show == true) ? 300 : 600);
-}
-
-function getType(services)
-{
-	var finalType = 'special';
-
-	if(Array.isArray(services))
-	{
-		var s = [ ...services ];
-
-		for(var i = 0; i < s.length; i++)
-		{
-			if(s[i] instanceof Object)
-			{
-				s[i] = s[i].type;
-			}
-		}
-
-		var unique = s.filter((value, index, self) => { return self.indexOf(value) == index });
-
-		if(unique.length == 1)
-		{
-			finalType = s[0];
-		}
-		else if(unique.length < 4)
-		{
-			if(s.includes('rgb'))
-			{
-				finalType = 'rgb';
-
-				if(s.includes('dimmer'))
+				if(version.includes('-'))
 				{
-					finalType = 'rgbw';
+					intVersion += version.split('-')[0].split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
+				}
+				else
+				{
+					intVersion += version.split('.')[i] * Math.pow(100, (version.match(/\./g) || []).length - i);
 				}
 			}
 
-			if(s.includes('temperature') && s.includes('humidity'))
+			if(version.includes('-'))
 			{
-				finalType = 'climate';
+				intVersion += parseFloat(version.split('-b')[1]) / 1000.0;
+			}
+		}
+
+		return intVersion;
+	}
+
+	checkRestart(url)
+	{
+		return new Promise(async (resolve) => {
+
+			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
+
+			console.log('RESTART', restart);
+
+			if(restart != null && restart == 'false')
+			{
+				resolve(true);
+			}
+			else
+			{
+				setTimeout(() => resolve(this.checkRestart(url)), 500);
+			}
+		});
+	}
+
+	checkUpdating(url)
+	{
+		return new Promise(async (resolve) => {
+
+			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
+
+			console.log('UPDATING', restart);
+
+			if(restart != null && restart == 'false')
+			{
+				resolve(true);
+			}
+			else
+			{
+				setTimeout(() => resolve(this.checkUpdating(url)), 500);
+			}
+		});
+	}
+
+	getType(services)
+	{
+		var finalType = 'special';
+
+		if(Array.isArray(services))
+		{
+			var s = [ ...services ];
+
+			for(var i = 0; i < s.length; i++)
+			{
+				if(s[i] instanceof Object)
+				{
+					s[i] = s[i].type;
+				}
+			}
+
+			var unique = s.filter((value, index, self) => { return self.indexOf(value) == index });
+
+			if(unique.length == 1)
+			{
+				finalType = s[0];
+			}
+			else if(unique.length < 4)
+			{
+				if(s.includes('rgb'))
+				{
+					finalType = 'rgb';
+
+					if(s.includes('dimmer'))
+					{
+						finalType = 'rgbw';
+					}
+				}
+
+				if(s.includes('temperature') && s.includes('humidity'))
+				{
+					finalType = 'climate';
+				}
+				
+				if(s.includes('light') && s.includes('rain'))
+				{
+					finalType = 'weather';
+				}
 			}
 			
-			if(s.includes('light') && s.includes('rain'))
+			var onlyService = onlySwitches(s);
+
+			if(onlyService != null)
 			{
-				finalType = 'weather';
+				finalType = onlyService;
 			}
-		}
-		
-		var onlyService = onlySwitches(s);
+			
+			var lastType = s[0], sameServices = true;
 
-		if(onlyService != null)
-		{
-			finalType = onlyService;
-		}
-		
-		var lastType = s[0], sameServices = true;
-
-		for(const i in s)
-		{
-			if(lastType != s[i])
+			for(const i in s)
 			{
-				sameServices = false;
+				if(lastType != s[i])
+				{
+					sameServices = false;
+				}
 			}
+
+			if(sameServices && lastType != null)
+			{
+				finalType = lastType;
+			}
+
+			/*
+			if(s.includes('lcd'))
+			{
+				finalType = 'special';
+			}
+			*/
+		}
+		else
+		{
+			finalType = services instanceof Object ? services.type : services;
 		}
 
-		if(sameServices && lastType != null)
-		{
-			finalType = lastType;
-		}
-
-		/*
-		if(s.includes('lcd'))
-		{
-			finalType = 'special';
-		}
-		*/
+		return finalType;
 	}
-	else
+
+	openDialogue(data)
 	{
-		finalType = services instanceof Object ? services.type : services;
+		var dialogue = document.createElement('div');
+		var panel = document.createElement('div');
+		var title = document.createElement('h2');
+		var subtitle = document.createElement('p');
+		var buttonArea = document.createElement('div');
+
+		disableScroll();
+
+		dialogue.className = 'dialogue';
+		dialogue.onclick = (e) => {
+
+			if(e.target.classList.contains('dialogue'))
+			{
+				this.closeDialogue(e.target);
+			}
+		};
+
+		panel.className = 'panel striped';
+		title.className = 'title-container';
+		title.innerHTML = data.title;
+		subtitle.innerHTML = data.subtitle;
+		buttonArea.className = 'button-area';
+
+		if(data.buttons != null)
+		{
+			for(const i in data.buttons)
+			{
+				var button = document.createElement('button');
+
+				button.innerHTML = data.buttons[i].text;
+
+				if(data.buttons[i].color != null)
+				{
+					button.className = 'gradient-' + data.buttons[i].color;
+				}
+
+				if(data.buttons[i].action != null)
+				{
+					button.onclick = data.buttons[i].action;
+				}
+
+				if(data.buttons[i].close)
+				{
+					if(data.buttons[i].action != null)
+					{
+						button.onclick = () => { data.buttons[i].action(); this.closeDialogue(dialogue) };
+					}
+					else
+					{
+						button.onclick = () => this.closeDialogue(dialogue);
+					}
+				}
+
+				buttonArea.appendChild(button);
+			}
+		}
+
+		panel.appendChild(title);
+		panel.appendChild(subtitle);
+		panel.appendChild(buttonArea);
+
+		dialogue.appendChild(panel);
+
+		document.body.appendChild(dialogue);
+
+		setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 50);
 	}
 
-	return finalType;
+	closeDialogue(dialogue)
+	{
+		enableScroll();
+
+		dialogue.style.opacity = 0;
+		dialogue.getElementsByClassName('panel')[0].style.opacity = 0;
+
+		setTimeout(() => dialogue.parentElement.removeChild(dialogue), 300);
+	}
+
+	letterToType(letter)
+	{
+		if(typeof letter == 'string')
+		{
+			return this.types[this.letters.indexOf(letter.toUpperCase())];
+		}
+		
+		return null;
+	}
+
+	typeToLetter(type)
+	{
+		if(typeof type == 'string')
+		{
+			return this.letters[this.types.indexOf(type.toLowerCase())];
+		}
+		
+		return null;
+	}
+
+	createOverlay(level, id, value, color)
+	{
+		var overlay = document.createElement('input');
+
+		overlay.setAttribute('type', 'button');
+		overlay.setAttribute('style', 'z-index: ' + level);
+		overlay.setAttribute('id', id);
+		overlay.setAttribute('value', value);
+		overlay.setAttribute('class', 'overlay gradient-' + color + ' loading-loop');
+
+		return overlay;
+	}
+
+	createPendingOverlay(id, value)
+	{
+		return this.createOverlay(1, id, value, 'blue');
+	}
+
+	createSuccessOverlay(id, value)
+	{
+		return this.createOverlay(2, id, value, 'green');
+	}
+
+	createErrorOverlay(id, value)
+	{
+		return this.createOverlay(2, id, value, 'red');
+	}
+
+	showOverlay(btn, overlay)
+	{
+		this.overlays.push({
+			reference: btn,
+			overlay: overlay
+		});
+
+		btn.parentElement.insertBefore(overlay, btn);
+
+		setTimeout(() => {
+
+			btn.style.opacity = 0;
+			
+			for(var i = 0; i < this.overlays.length; i++)
+			{
+				if(this.overlays[i].reference == btn)
+				{
+					this.overlays[i].overlay.style.opacity = 0;
+				}
+			}
+
+			overlay.style.opacity = 1;
+
+		}, 10);
+	}
+
+	showOverlayDelay(btn, overlay, delay)
+	{
+		setTimeout(() => this.showOverlay(btn, overlay), delay);
+	}
+
+	removeOverlays(btn, show)
+	{
+		if(show == true)
+		{
+			btn.style.opacity = 1;
+		}
+		else if(show == false)
+		{
+			btn.style.opacity = 0;
+		}
+
+		console.log(show, btn);
+		
+		for(var i = 0; i < this.overlays.length; i++)
+		{
+			if(this.overlays[i].reference == btn)
+			{
+				this.overlays[i].overlay.style.opacity = 0;
+
+				if(show)
+				{
+					this.overlays[i].overlay.style.setProperty('cursor', 'pointer', 'important');
+				}
+			}
+		}
+
+		if(show == false)
+		{
+			setTimeout(() => {
+
+				btn.style.setProperty('height', '0', 'important');
+				btn.style.paddingTop = 0;
+				btn.style.paddingBottom = 0;
+				btn.style.marginTop = 0;
+				btn.style.marginBottom = 0;
+				btn.style.borderTopWidth = 0;
+				btn.style.borderBottomWidth = 0;
+
+				console.log('MAIN BTN 2 SHRINK');
+
+			}, 300);
+		}
+
+		setTimeout(() => {
+
+			for(var i = this.overlays.length - 1; i >= 0; i--)
+			{
+				if(this.overlays[i].reference == btn)
+				{
+					btn.parentElement.removeChild(this.overlays[i].overlay);
+
+					this.overlays.splice(this.overlays.indexOf(this.overlays[i]), 1);
+				}
+			}
+
+			console.log('REMOVE OVERLAYS');
+
+			if(show == false)
+			{
+				btn.parentElement.removeChild(btn);
+
+				console.log('MAIN BTN 2 REMOVE');
+			}
+
+		}, (show == null || show == true) ? 300 : 600);
+	}
+
+	removeOverlaysDelay(btn, delay, show)
+	{
+		setTimeout(() => this.removeOverlays(btn, show), delay);
+	}
+
+	async leavePage(url)
+	{
+		if(!this.pageLoading)
+		{
+			this.pageLoading = true;
+
+			document.getElementById('preloader').style.opacity = 1;
+			document.getElementById('preloader').style.pointerEvents = 'all';
+			document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
+			document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
+
+			this.pageTimer = false;
+
+			setTimeout(() => {
+
+				this.pageTimer = true;
+				
+			}, 200);
+
+			var success = false, notFound = false;
+
+			do
+			{
+				var response = await loadPageData(url);
+				
+				if(response == 0)
+				{
+					success = true;
+				}
+				else if(response == 1)
+				{
+					notFound = true;
+				}
+			}
+			while(!success && !notFound);
+
+			this.pageLoading = false;
+		}
+	}
 }
 
 function onlySwitches(services)
@@ -297,69 +482,32 @@ function onlySwitches(services)
 	return tmp;
 }
 
-var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-function letterToType(letter)
+function preventDefaultForScrollKeys(e)
 {
-	if(typeof letter == 'string')
-	{
-		return types[letters.indexOf(letter.toUpperCase())];
-	}
+	var keys = [37, 38, 39, 40];
 	
-	return null;
+	if(keys.includes(e.keyCode))
+	{
+		e.preventDefault();
+
+		return false;
+	}
 }
 
-function typeToLetter(type)
+function disableScroll()
 {
-	if(typeof type == 'string')
-	{
-		return letters[types.indexOf(type.toLowerCase())];
-	}
-	
-	return null;
+	window.addEventListener('DOMMouseScroll', (e) => { e.preventDefault() }, false);
+	window.addEventListener(self.wheelEvent, (e) => { e.preventDefault() }, self.wheelOpt);
+	window.addEventListener('touchmove', (e) => { e.preventDefault() }, self.wheelOpt);
+	window.addEventListener('keydown', preventDefaultForScrollKeys, false);
 }
 
-var pageLoading = false, pageTimer = false;
-
-async function leavePage(url)
+function enableScroll()
 {
-	if(!pageLoading)
-	{
-		pageLoading = true;
-
-		document.getElementById('preloader').style.opacity = 1;
-		document.getElementById('preloader').style.pointerEvents = 'all';
-		document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
-		document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
-
-		pageTimer = false;
-
-		setTimeout(() => {
-
-			pageTimer = true;
-			
-		}, 200);
-
-		var success = false, notFound = false;
-
-		do
-		{
-			var response = await loadPageData(url);
-			
-			if(response == 0)
-			{
-				success = true;
-			}
-			else if(response == 1)
-			{
-				notFound = true;
-			}
-		}
-		while(!success && !notFound);
-
-		pageLoading = false;
-	}
+	window.removeEventListener('DOMMouseScroll', (e) => { e.preventDefault() }, false);
+	window.removeEventListener(self.wheelEvent, (e) => { e.preventDefault() }, self.wheelOpt); 
+	window.removeEventListener('touchmove', (e) => { e.preventDefault() }, self.wheelOpt);
+	window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
 }
 
 function loadPageData(url)
@@ -403,9 +551,9 @@ function loadPageData(url)
 						}
 					}
 
-					while(!pageTimer)
+					while(!self.pageTimer)
 					{
-						await Essentials.newTimeout(1);
+						await self.newTimeout(1);
 					}
 
 					clearTimers();
@@ -441,9 +589,9 @@ function loadPageData(url)
 						}
 					}
 
-					searchLoop();
+					LoadingLoop.searchLoop();
 
-					Preloader.load();
+					self.Preloader.load();
 				}
 				else if(client.status === 404)
 				{
@@ -462,147 +610,4 @@ function loadPageData(url)
 	});
 }
 
-function openDialogue(data)
-{
-	var dialogue = document.createElement('div');
-	var panel = document.createElement('div');
-	var title = document.createElement('h2');
-	var subtitle = document.createElement('p');
-	var buttonArea = document.createElement('div');
-
-	disableScroll();
-
-	dialogue.className = 'dialogue';
-	dialogue.onclick = (e) => {
-
-		if(e.target.classList.contains('dialogue'))
-		{
-			closeDialogue(e.target);
-		}
-	};
-
-	panel.className = 'panel striped';
-	title.className = 'title-container';
-	title.innerHTML = data.title;
-	subtitle.innerHTML = data.subtitle;
-	buttonArea.className = 'button-area';
-
-	if(data.buttons != null)
-	{
-		for(const i in data.buttons)
-		{
-			var button = document.createElement('button');
-
-			button.innerHTML = data.buttons[i].text;
-
-			if(data.buttons[i].color != null)
-			{
-				button.className = 'gradient-' + data.buttons[i].color;
-			}
-
-			if(data.buttons[i].action != null)
-			{
-				button.onclick = data.buttons[i].action;
-			}
-
-			if(data.buttons[i].close)
-			{
-				if(data.buttons[i].action != null)
-				{
-					button.onclick = () => { data.buttons[i].action(); closeDialogue(dialogue) };
-				}
-				else
-				{
-					button.onclick = () => closeDialogue(dialogue);
-				}
-			}
-
-			buttonArea.appendChild(button);
-		}
-	}
-
-	panel.appendChild(title);
-	panel.appendChild(subtitle);
-	panel.appendChild(buttonArea);
-
-	dialogue.appendChild(panel);
-
-	document.body.appendChild(dialogue);
-
-	setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 50);
-}
-
-function closeDialogue(dialogue)
-{
-	enableScroll();
-
-	dialogue.style.opacity = 0;
-	dialogue.getElementsByClassName('panel')[0].style.opacity = 0;
-
-	setTimeout(() => dialogue.parentElement.removeChild(dialogue), 300);
-}
-
-function removeOverlaysDelay(btn, delay, show)
-{
-	setTimeout(() => removeOverlays(btn, show), delay);
-}
-
-function newTimeout(ms)
-{
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-var keys = [37, 38, 39, 40];
-
-function preventDefault(e)
-{
-	e.preventDefault();
-}
-
-function preventDefaultForScrollKeys(e)
-{
-	if(keys.includes(e.keyCode))
-	{
-		preventDefault(e);
-		return false;
-	}
-}
-
-var supportsPassive = false;
-
-try
-{
-	window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
-		get : () => { supportsPassive = true } 
-	}));
-}
-catch(e) {}
-
-var wheelOpt = supportsPassive ? { passive: false } : false;
-var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
-
-function disableScroll()
-{
-	window.addEventListener('DOMMouseScroll', preventDefault, false);
-	window.addEventListener(wheelEvent, preventDefault, wheelOpt);
-	window.addEventListener('touchmove', preventDefault, wheelOpt);
-	window.addEventListener('keydown', preventDefaultForScrollKeys, false);
-}
-
-function enableScroll()
-{
-	window.removeEventListener('DOMMouseScroll', preventDefault, false);
-	window.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
-	window.removeEventListener('touchmove', preventDefault, wheelOpt);
-	window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
-}
-
-function SETUP(Q, P)
-{
-	Query = Q;
-	Preloader = P;
-
-	window.onpopstate = (event) => location.reload();
-}
-
-export let Essentials = { SETUP, newTimeout, removeOverlaysDelay, removeOverlays, versionCount, checkRestart, checkUpdating, createOverlay, createPendingOverlay, createSuccessOverlay, createErrorOverlay, showOverlay, showOverlayDelay, getType, letterToType, typeToLetter, leavePage, openDialogue, closeDialogue };
+export let Essentials = new EssentialFeatures();
