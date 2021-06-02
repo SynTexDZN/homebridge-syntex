@@ -6,7 +6,15 @@ class CustomSelect
 	{
 		window.addEventListener('click', (event) => {
 
-			if(!selects.includes(event.target.parentElement) && !event.target.classList.contains('same-as-selected'))
+			if(!isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
+			{
+				closeOtherSelectMenus(event.target);
+			}
+		});
+
+		window.addEventListener('touchstart', (event) => {
+
+			if(!isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
 			{
 				closeOtherSelectMenus(event.target);
 			}
@@ -96,6 +104,7 @@ class CustomSelect
 		if(!elmnt.classList.contains('same-as-selected'))
 		{
 			var y, i, k, s, h;
+			
 			s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
 			h = elmnt.parentNode.previousSibling;
 
@@ -154,6 +163,23 @@ function closeOtherSelectMenus(elmnt)
 			document.getElementById(selects[i].id).getElementsByClassName('select-items')[0].className = 'select-items select-hide';
 		}
 	}
+}
+
+function isChildOfSelect(child)
+{
+	var node = child.parentNode;
+
+	while(node != null)
+	{
+		if(node.classList != null && node.classList.contains('custom-select'))
+		{
+			return true;
+		}
+
+		node = node.parentNode;
+	}
+
+	return false;
 }
 
 export let Replacer = new CustomSelect();
