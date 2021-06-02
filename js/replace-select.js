@@ -6,7 +6,7 @@ class CustomSelect
 	{
 		window.addEventListener('click', (event) => {
 
-			if(!selects.includes(event.target.parentElement))
+			if(!selects.includes(event.target.parentElement) && !event.target.classList.contains('same-as-selected'))
 			{
 				closeOtherSelectMenus(event.target);
 			}
@@ -93,47 +93,53 @@ class CustomSelect
 
 	selectMenuItem(elmnt)
 	{
-		var y, i, k, s, h;
-		s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
-		h = elmnt.parentNode.previousSibling;
-
-		for(i = 0; i < s.length; i++)
+		if(!elmnt.classList.contains('same-as-selected'))
 		{
-			if(elmnt.getAttribute('counter') == i)
+			var y, i, k, s, h;
+			s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
+			h = elmnt.parentNode.previousSibling;
+
+			for(i = 0; i < s.length; i++)
 			{
-				s.selectedIndex = i;
-				h.innerHTML = elmnt.innerHTML;
-				y = elmnt.parentNode.getElementsByClassName('same-as-selected');
-				for (k = 0; k < y.length; k++)
+				if(elmnt.getAttribute('counter') == i)
 				{
-					y[k].removeAttribute('class');
-				}
-				elmnt.setAttribute('class', 'same-as-selected');
-				break;
-			}
-		}
+					s.selectedIndex = i;
+					h.innerHTML = elmnt.innerHTML;
+					y = elmnt.parentNode.getElementsByClassName('same-as-selected');
 
-		h.click();
+					for (k = 0; k < y.length; k++)
+					{
+						y[k].removeAttribute('class');
+					}
 
-		if(s.getAttribute('onchange') != null)
-		{
-			var functionName = s.getAttribute('onchange').split('(')[0];
-			var params = s.getAttribute('onchange').split('(')[1].split(')')[0].split(', ');
-			var args = [];
+					elmnt.setAttribute('class', 'same-as-selected');
 
-			for(const i in params)
-			{
-				if(params[i] == 'this')
-				{
-					args[i] = elmnt.parentElement.parentElement;
-				}
-				else
-				{
-					args[i] = eval(params[i]);
+					break;
 				}
 			}
 
-			window[functionName](...args);
+			h.click();
+
+			if(s.getAttribute('onchange') != null)
+			{
+				var functionName = s.getAttribute('onchange').split('(')[0];
+				var params = s.getAttribute('onchange').split('(')[1].split(')')[0].split(', ');
+				var args = [];
+
+				for(const i in params)
+				{
+					if(params[i] == 'this')
+					{
+						args[i] = elmnt.parentElement.parentElement;
+					}
+					else
+					{
+						args[i] = eval(params[i]);
+					}
+				}
+
+				window[functionName](...args);
+			}
 		}
 	}
 }
