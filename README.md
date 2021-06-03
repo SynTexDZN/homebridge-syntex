@@ -42,6 +42,7 @@ Also it provides special features for SynTex plugins:
         "platform": "SynTex",
         "cacheDirectory": "/var/homebridge/SynTex/settings",
         "logDirectory": "/var/homebridge/SynTex/log",
+        "automationDirectory": "/var/homebridge/SynTex/automation",
         "port": 1711,
         "language": "us",
         "debug": false
