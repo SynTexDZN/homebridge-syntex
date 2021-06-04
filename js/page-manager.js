@@ -261,8 +261,6 @@ class PageManagerModule
 				{
 					this.footerFade.children[i].style.opacity = 0;
 
-					console.log('MAIN BTN OPACITY 0');
-					
 					setTimeout(function() {
 
 						this.child.style.setProperty('height', '0', 'important');
@@ -272,8 +270,6 @@ class PageManagerModule
 						this.child.style.marginBottom = 0;
 						this.child.style.borderTopWidth = 0;
 						this.child.style.borderBottomWidth = 0;
-
-						console.log('MAIN BTN SHRINK');
 
 					}.bind({ child : this.footerFade.children[i] }), 300);
 
