@@ -44,7 +44,7 @@ class PresetManager
 
 	getPreset(id)
 	{
-		return presets[id];
+		return this.presets[id];
 	}
 }
 
