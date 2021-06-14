@@ -994,7 +994,14 @@
 
 								for(const l in activity)
 								{
-									if(l == Essentials.typeToLetter(type) + j)
+									var t = type;
+
+									if(t.startsWith('rgb'))
+									{
+										t = 'rgb';
+									}
+
+									if(l == Essentials.typeToLetter(t) + j)
 									{
 										if(activity[l].update.length > 0 || activity[l].success.length > 0)
 										{
