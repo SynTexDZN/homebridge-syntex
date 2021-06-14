@@ -9,93 +9,101 @@ class GraphManager
 
 	drawGraph(canvas, data, gradients, points)
 	{
-		var ctx = canvas.getContext('2d');
-		var height = canvas.offsetHeight - this.padding * 2 - 2;
-		var width = canvas.offsetWidth - this.padding * 2;
-		var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
-
-		for(var i = 0; i < gradients.length; i++)
+		if(data.join().replace(/,/g,'').length > 0)
 		{
-			grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-		}
+			var ctx = canvas.getContext('2d');
+			var height = canvas.offsetHeight - this.padding * 2 - 2;
+			var width = canvas.offsetWidth - this.padding * 2;
+			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
 
-		ctx.lineWidth = 2;
-		ctx.lineCap = 'round';
-		ctx.strokeStyle = grd;
-		ctx.setLineDash([]);
-
-		for(var i = 1; i < data.length; i++)
-		{
-			if(points)
+			for(var i = 0; i < gradients.length; i++)
 			{
-				ctx.fillStyle = gradients[0];
-				ctx.beginPath();
-				ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 10, 0, 360);
-				ctx.fill();
-				ctx.closePath();
-				ctx.fillStyle = gradients[1];
-				ctx.beginPath();
-				ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 5, 0, 360);
-				ctx.fill();
-				ctx.closePath();
+				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
-			ctx.beginPath();
-			ctx.moveTo((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding);
-			ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
-			ctx.stroke();
+			ctx.lineWidth = 2;
+			ctx.lineCap = 'round';
+			ctx.strokeStyle = grd;
+			ctx.setLineDash([]);
 
-			if(points)
+			for(var i = 1; i < data.length; i++)
 			{
-				ctx.fillStyle = gradients[0];
+				if(points)
+				{
+					ctx.fillStyle = gradients[0];
+					ctx.beginPath();
+					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 10, 0, 360);
+					ctx.fill();
+					ctx.closePath();
+					ctx.fillStyle = gradients[1];
+					ctx.beginPath();
+					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 5, 0, 360);
+					ctx.fill();
+					ctx.closePath();
+				}
+
 				ctx.beginPath();
-				ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 10, 0, 360);
-				ctx.fill();
-				ctx.closePath();
-				ctx.fillStyle = gradients[1];
-				ctx.beginPath();
-				ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 5, 0, 360);
-				ctx.fill();
-				ctx.closePath();
+				ctx.moveTo((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding);
+				ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+				ctx.stroke();
+
+				if(points)
+				{
+					ctx.fillStyle = gradients[0];
+					ctx.beginPath();
+					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 10, 0, 360);
+					ctx.fill();
+					ctx.closePath();
+					ctx.fillStyle = gradients[1];
+					ctx.beginPath();
+					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 5, 0, 360);
+					ctx.fill();
+					ctx.closePath();
+				}
 			}
 		}
 	}
 
 	drawFill(canvas, data, gradients, smoothing)
 	{
-		var ctx = canvas.getContext('2d');
-		var height = canvas.offsetHeight - this.padding * 2 - 2;
-		var width = canvas.offsetWidth - this.padding * 2;
-		var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
-
-		for(var i = 0; i < gradients.length; i++)
+		if(data.join().replace(/,/g,'').length > 0)
 		{
-			grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-		}
+			var ctx = canvas.getContext('2d');
+			var height = canvas.offsetHeight - this.padding * 2 - 2;
+			var width = canvas.offsetWidth - this.padding * 2;
+			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
 
-		ctx.fillStyle = grd;
-		ctx.setLineDash([]);
-
-		ctx.beginPath();
-		ctx.moveTo(0, height + this.padding);
-		ctx.lineTo(0, height - data[0] * height / 100 + this.padding);
-
-		for(var i = 1; i < data.length; i++)
-		{
-			if(smoothing == 0)
+			for(var i = 0; i < gradients.length; i++)
 			{
-				ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
-			else
+
+			ctx.fillStyle = grd;
+			ctx.setLineDash([]);
+
+			ctx.beginPath();
+			ctx.moveTo(0, height + this.padding);
+			ctx.lineTo(0, height - data[0] * height / 100 + this.padding);
+
+			for(var i = 1; i < data.length; i++)
 			{
-				ctx.bezierCurveTo(i * (width + this.padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
+				if(smoothing == 0)
+				{
+					ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+				}
+				else
+				{
+					var multiplicator = 100 / data.max * height / 100;
+
+					ctx.bezierCurveTo(i * (width + this.padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
+				}
 			}
+
+			ctx.lineTo((data.length - 1) * (width + this.padding * 2) / (data.length - 1), height + this.padding);
+
+			ctx.closePath();
+			ctx.fill();
 		}
-
-		ctx.lineTo((data.length - 1) * (width + this.padding * 2) / (data.length - 1), height + this.padding);
-
-		ctx.closePath();
-		ctx.fill();
 	}
 
 	drawGrid(canvas, data, unterteilungen)
@@ -162,53 +170,434 @@ class GraphManager
 
 	drawEvents(canvas, data, gradients)
 	{
-		var ctx = canvas.getContext('2d');
-		var height = canvas.offsetHeight - this.padding * 2 - 2;
-		var width = canvas.offsetWidth - this.padding * 2;
-		var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
-
-		for(var i = 0; i < gradients.length; i++)
+		if(data.length > 0)
 		{
-			grd.addColorStop(i / (gradients.length - 1), gradients[i]);
-		}
+			var ctx = canvas.getContext('2d');
+			var height = canvas.offsetHeight - this.padding * 2 - 2;
+			var width = canvas.offsetWidth - this.padding * 2;
+			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
 
-		ctx.fillStyle = grd;
-		ctx.lineCap = 'butt';
-		ctx.lineWidth = 1.5;
-		ctx.setLineDash([]);
-
-		for(var i = 1; i < data.length; i++)
-		{
-			if(data[i - 1] != -1)
+			for(var i = 0; i < gradients.length; i++)
 			{
-				ctx.beginPath();
-				ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 4, 0, 360);
-				ctx.fill();
-				ctx.closePath();
+				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+			}
+
+			ctx.fillStyle = grd;
+			ctx.lineCap = 'butt';
+			ctx.lineWidth = 1.5;
+			ctx.setLineDash([]);
+
+			for(var i = 1; i < data.length; i++)
+			{
+				if(data[i - 1].percent != -1)
+				{
+					ctx.beginPath();
+					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1].percent * height / 100 + this.padding, 4, 0, 360);
+					ctx.fill();
+					ctx.closePath();
+					/*
+					ctx.font = '200 12px Rubik';
+					ctx.textAlign = 'center';
+					ctx.fillText(data[i - 1].value, (i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1].percent * height / 100 + this.padding - 7);
+					*/
+				}
 			}
 		}
 	}
 
 	drawAutomation(canvas, data)
 	{
-		var ctx = canvas.getContext('2d');
-		var height = canvas.offsetHeight - this.padding * 2 - 2;
-		var width = canvas.offsetWidth - this.padding * 2;
-
-		ctx.lineCap = 'butt';
-		ctx.lineWidth = 1.5;
-		ctx.setLineDash([10, 15]);
-
-		for(var i = 0; i < data.length; i++)
+		if(data.length > 0)
 		{
-			ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
+			var ctx = canvas.getContext('2d');
+			var height = canvas.offsetHeight - this.padding * 2 - 2;
+			var width = canvas.offsetWidth - this.padding * 2;
 
-			ctx.beginPath();
-			ctx.moveTo(0, height - data[i] * height / 100 + this.padding);
-			ctx.lineTo(width + this.padding * 2, height - data[i] * height / 100 + this.padding)
-			ctx.stroke();
+			ctx.lineCap = 'butt';
+			ctx.lineWidth = 1.5;
+			ctx.setLineDash([10, 15]);
+
+			for(var i = 0; i < data.length; i++)
+			{
+				ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
+				ctx.globalCompositeOperation = 'destination-over';
+
+				ctx.beginPath();
+				ctx.moveTo(0, height - data[i].percent * height / 100 + this.padding);
+				ctx.lineTo(width + this.padding * 2, height - data[i].percent * height / 100 + this.padding)
+				ctx.stroke();
+				/*
+				if(i == 0 || data[i - 1].percent > data[i].percent + 5 || data[i - 1].percent < data[i].percent - 5)
+				{
+					ctx.font = '200 12px Rubik';
+					ctx.fillStyle = 'rgba(245, 245, 255, 0.5)';
+					ctx.globalCompositeOperation = 'source-over';
+					//ctx.textAlign = 'center';
+					ctx.fillText(data[i].value, 5, height - data[i].percent * height / 100 + this.padding - 7);
+				}
+				*/
+			}
 		}
 	}
+
+	convertActivity(device, values, automation, events, unterteilungenInMinuten)
+	{
+		var data = { id : device.id, letters : device.letters, format : device.format, sectors : renderMinutesCycle(unterteilungenInMinuten), values : [] };
+
+		data = addValues(data, values);
+		data = getMinMax(data);
+		data = getPercents(data);
+		data = getAutomations(data, automation, events);
+		data = selectValues(data);
+		data = smoothValues(data);
+
+		return data;
+	}
 }
+
+function getCycleEnd(unterteilungenInMinuten)
+{
+	var date = new Date();
+	var minutes = (unterteilungenInMinuten - date.getMinutes() % unterteilungenInMinuten) * 60000;
+
+	return Math.floor((date.getTime() + minutes) / 60000) * 60000;
+}
+
+function renderMinutesCycle(unterteilungenInMinuten)
+{
+	var data = {}, endTime = getCycleEnd(unterteilungenInMinuten);
+
+	for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 2; i++)
+	{
+		data[endTime] = [];
+
+		endTime -= 60000 * unterteilungenInMinuten;
+	}
+
+	return data;
+}
+
+function addValues(data, values)
+{
+	console.debug('VALUES', values);
+
+	for(var i = 0; i < Object.keys(data.sectors).length; i++)
+	{
+		var timeA = parseInt(Object.keys(data.sectors)[i]);
+		var timeB = parseInt(Object.keys(data.sectors)[i + 1]);
+
+		for(const v in values)
+		{
+			if(parseInt(values[v].time) * 1000 < timeA && parseInt(values[v].time) * 1000 >= timeB)
+			{
+				var value = values[v].value;
+
+				try
+				{
+					value = JSON.parse(value);
+				}
+				catch(e)
+				{
+					console.error(e);
+				}
+
+				if(data.format == 'boolean')
+				{
+					value = (value == true ? 1 : 0);
+				}
+				/*
+				if(value == 0)
+				{
+					console.debug('------------->', { time : values[v].time, value : value });
+				}
+				*/
+				data.sectors[timeA].push({ time : values[v].time, value : value });
+			}
+		}
+
+		data.sectors[timeA].sort((a, b) => { return (a.time > b.time) ? 1 : (a.time < b.time) ? -1 : 0 });
+	}
+
+	return data;
+}
+
+function getMinMax(data)
+{
+	if(data.format == 'boolean')
+	{
+		data.min = 0;
+		data.max = 1;
+	}
+	else
+	{
+		data.min = 100000;
+		data.max = -100000;
+
+		for(const i in data.sectors)
+		{
+			for(const j in data.sectors[i])
+			{
+				var value = data.sectors[i][j].value;
+
+				if(value > data.max)
+				{
+					data.max = value;
+				}
+
+				if(value < data.min)
+				{
+					data.min = value;
+				}
+			}
+		}
+	}
+
+	return data;
+}
+
+function getPercents(data)
+{
+	for(const i in data.sectors)
+	{
+		for(const j in data.sectors[i])
+		{
+			data.sectors[i][j].percents = (data.sectors[i][j].value - data.min) / (data.max - data.min) * 100;
+		}
+	}
+
+	return data;
+}
+
+function getAutomations(data, automation, events)
+{
+	for(const i in data.sectors)
+	{
+		for(const j in data.sectors[i])
+		{
+			var automationName = null;
+
+			for(const e in events)
+			{
+				if(events[e].t == data.sectors[i][j].time)
+				{
+					automationName = events[e].v;
+
+					//data.sectors[i][j].automation = true;
+				}
+			}
+
+			if(automationName != null)
+			{
+				for(const a in automation)
+				{
+					for(const b in automation[a].trigger)
+					{
+						if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
+						{
+							if(automation[a].name == automationName)
+							{
+								data.sectors[i][j].automation = JSON.parse(automation[a].trigger[b].value);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return data;
+}
+
+function selectValues(data)
+{
+	for(const i in data.sectors)
+	{
+		if(data.sectors[i].length > 0)
+		{
+			var avg = 0, max = -100000, min = 100000, automation = null, last = data.sectors[i][data.sectors[i].length - 1].value, first = data.sectors[i][0].value;
+
+			for(const j in data.sectors[i])
+			{
+				var value = parseFloat(data.sectors[i][j].value);
+
+				avg += value;
+
+				if(value < min)
+				{
+					min = value;
+				}
+
+				if(value > max)
+				{
+					max = value;
+				}
+
+				if(data.sectors[i][j].automation != null)
+				{
+					automation = data.sectors[i][j].automation;
+				}
+			}
+
+			if(data.format != 'boolean')
+			{
+				if(min == data.min)
+				{
+					min = (min - data.min) / (data.max - data.min) * 100;
+
+					data.values.push(min);
+				}
+				else if(max == data.max)
+				{
+					max = (max - data.min) / (data.max - data.min) * 100;
+
+					data.values.push(max);
+				}
+				else if(automation != null)
+				{
+					automation = (automation - data.min) / (data.max - data.min) * 100;
+
+					data.values.push(automation);
+				}
+				else
+				{
+					if(avg > 0)
+					{
+						avg /= data.sectors[i].length;
+
+						avg = (avg - data.min) / (data.max - data.min) * 100;
+					}
+					
+					data.values.push(avg);
+				}
+			}
+			else
+			{
+				if(min != max)
+				{
+					console.debug(1, data.values[data.values.length - 1], first * 100);
+
+					data.values[data.values.length - 1] = last * 100;
+					data.values.push(first * 100);
+
+					console.debug(2, data.values[data.values.length - 2], data.values[data.values.length - 1]);
+				}
+				else if(min == data.min)
+				{
+					min = (min - data.min) / (data.max - data.min) * 100;
+
+					data.values.push(min);
+				}
+				else if(max == data.max)
+				{
+					max = (max - data.min) / (data.max - data.min) * 100;
+
+					data.values.push(max);
+				}
+			}
+
+			//data.values.push((100 - max < min) ? max : min);
+		}
+		else
+		{
+			data.values.push(null);	
+		}
+	}
+	
+	if(data.format == 'boolean' && data.values[data.values.length - 1] == null && data.values.join().replace(/,/g,'').length > 0)
+	{
+		var indexX = getLastValue(data, parseInt(data.values.length - 1));
+		var indexY = getLastValue(data, parseInt(indexX.index));
+
+		//console.debug('XXX', indexX, indexY);
+
+		if(indexX != null && indexY != null)
+		{
+			if(indexX.value == indexY.value)
+			{
+				data.values[data.values.length - 1] = getLastValue(data, parseInt(data.values.length - 1)).value;
+			}
+			else
+			{
+				data.values[data.values.length - 1] = 0;
+				//data.values[data.values.length - 1] = getLastValue(data, parseInt(data.values.length - 1)).value;
+			}
+		}
+	}
+	
+	return data;
+}
+
+// NOTE: Smooth Values
+
+function smoothValues(data)
+{
+	for(const i in data.values)
+	{
+		var last = getLastValue(data, parseInt(i));
+		var next = getNextValue(data, parseInt(i));
+		//var current = { index : parseInt(i), value : data.values[i] };
+
+		if(data.values[i] == null)
+		{
+			if(data.format != 'boolean' && data.letters[0] != 'F')
+			{
+				if(last != null && next != null/* && last.value > 1 && last.value < 99 && next.value > 1 && next.value < 99*/)
+				{
+					var diffIndex = next.index - last.index;
+					var diffValue = next.value - last.value;
+
+					data.values[i] = last.value + (diffValue / diffIndex);
+				}
+				else if(next != null)
+				{
+					data.values[i] = next.value;
+				}
+				else if(last != null)
+				{
+					data.values[i] = last.value;
+				}
+			}
+			else 
+			{
+				if(next != null)
+				{
+					data.values[i] = next.value;
+				}
+				else if(last != null)
+				{
+					data.values[i] = last.value;
+				}
+			}
+		}
+	}
+
+	return data;
+}
+
+var getNextValue = (data, index) => {
+
+	for(var i = index + 1; i < data.values.length; i++)
+	{
+		if(data.values[i] != null)
+		{
+			return { index : i, value : data.values[i] };
+		}
+	}
+
+	return null;
+};
+
+var getLastValue = (data, index) => {
+
+	for(var i = index - 1; i >= 0; i--)
+	{
+		if(data.values[i] != null)
+		{
+			return { index : i, value : data.values[i] };
+		}
+	}
+
+	return null;
+};
 
 export let Graph = new GraphManager();

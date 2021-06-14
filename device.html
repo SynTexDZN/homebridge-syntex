@@ -719,8 +719,6 @@
 						color = 'hsl(40, ' + parseInt(percent * 0.85) + '%, ' + parseInt(25 + percent * 0.5) + '%)';
 					}
 
-					console.log(type, color);
-					
 					var value = percent + '%';
 
 					if(percent == 0)
@@ -1002,13 +1000,10 @@
 										{
 											if(type == 'statelessswitch')
 											{
-												for(var k = activity[l].success.length - 1; k >= 0; k--)
+												for(var k = activity[l].update.length - 1; k >= 0; k--)
 												{
-													if(activity[l].success[k].s == Essentials.typeToLetter(type) + j)
-													{
-														values[type + j].push({ time : activity[l].success[k].t, value : 'true' });
-														values[type + j].push({ time : activity[l].success[k].t, value : 'false' });
-													}
+													values[type + j].push({ time : activity[l].update[k].t, value : true });
+													values[type + j].push({ time : activity[l].update[k].t, value : false });
 												}
 											}
 											else
@@ -1097,148 +1092,65 @@
 							document.getElementsByClassName('canvas')[i].width = document.getElementById('infos').offsetWidth - 4;
 
 							Graph.drawGrid(document.getElementsByClassName('canvas')[i], [], 10);
-
-							console.log(document.getElementsByClassName('canvas')[i]);
 						}
 					}
 				}
 
 				function calcValues(values, type, c)
 				{
-					var color = 'hsl(200, 98%, 60%)';
 					var canvas = document.getElementById('canvas-' + type + '-' + c);
-					var v = [], a = [];
+					var dataSheet = {}, convertedValues = [], convertedAutomation = [], automationTriggers = [];
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
 					Graph.drawGrid(canvas, [], 10);
 
-					if(data[type].active && data[type].active.color)
-					{
-						color = data[type].active.color;
-					}
-
-					if(data[type].color)
-					{
-						color = data[type].color;
-					}
-
-					var min = 0;
-					var max = 1;
-
 					values[type + c].sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
+					
+					dataSheet = Graph.convertActivity({ id : device.id, letters : Essentials.typeToLetter(type) + c, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean' }, values[type + c], automation, activity[Essentials.typeToLetter(type) + c] != null ? activity[Essentials.typeToLetter(type) + c].success : [], getDataType(type) == 'boolean' ? 4 : 10);
+					
+					// NOTE: Convert DataSheet Values
+
+					convertedValues = dataSheet.values;
+
+					for(const i in dataSheet.sectors)
+					{
+						var a = null;
+
+						for(const j in dataSheet.sectors[i])
+						{
+							if(dataSheet.sectors[i][j].automation != null)
+							{
+								a = { percent : (dataSheet.sectors[i][j].automation - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100, value : dataSheet.sectors[i][j].automation };
+							}
+						}
+
+						convertedAutomation.push(a != null ? a : -1);
+					}
+
+					for(var i = 0; i < automation.length; i++)
+					{
+						for(var j = 0; j < automation[i].trigger.length; j++)
+						{
+							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 < 100 && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 > 0)
+							{
+								if(!automationTriggers.includes({ percent : (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100, value : automation[i].trigger[j].value }))
+								{
+									automationTriggers.push({ percent : (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100, value : automation[i].trigger[j].value });
+								}
+							}
+						}
+					}
+
+					automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
+
+					convertedValues = convertedValues.reverse();
+					convertedAutomation = convertedAutomation.reverse();
+
+					// NOTE: Draw Min, Max, Type, Update and Reload Labels
 
 					if(Object.keys(values).length != 0 && values[type + c].length != 0)
 					{
-						if(!isNaN(values[type + c][0].value))
-						{
-							min = 100000;
-							max = 0;
-
-							for(const j in values[type + c])
-							{
-								if(parseFloat(values[type + c][j].value) < min)
-								{
-									min = parseFloat(values[type + c][j].value);
-								}
-
-								if(parseFloat(values[type + c][j].value) > max)
-								{
-									max = parseFloat(values[type + c][j].value);
-								}
-							}
-						}
-
-						var unterteilungen = 24 * 15,
-							date = new Date();
-
-						if(!isNaN(values[type + c][0].value))
-						{
-							unterteilungen = 24 * 6;
-							//unterteilungen = 24 * 60;
-						}
-
-						for(var k = unterteilungen; k >= 0; k--)
-						{
-							var x = [], sum = 0, triggered = false;
-
-							for(const j in values[type + c])
-							{
-								if(values[type + c][j].time < date.getTime() / 1000 - 86400 * (k / unterteilungen) && values[type + c][j].time > date.getTime() / 1000 - 86400 * ((k + 1) / unterteilungen))
-								{
-									var value = values[type + c][j].value;
-
-									if(!isNaN(values[type + c][0].value))
-									{
-										value = (values[type + c][j].value - min) / (max - min) * 100;
-
-										sum += parseFloat(value);
-									}
-
-									if(JSON.stringify(activity[Essentials.typeToLetter(type) + c].success).includes(values[type + c][j].time))
-									{
-										triggered = true;
-									}
-									
-									x.push(value);
-								}
-							}
-
-							if(x.length > 0)
-							{
-								if(!isNaN(values[type + c][0].value))
-								{
-									v[unterteilungen - k - 1] = (100 - Math.max(...x)) < Math.min(...x) ? Math.max(...x) : Math.min(...x);
-
-									//v[unterteilungen - k - 1] = Math.abs(sum / x.length - Math.max(...x)) < Math.abs(sum / x.length - Math.min(...x)) ? Math.max(...x) : Math.min(...x);
-								}
-								else if(!(x.includes('true') && x.includes('false')))
-								{
-									v[unterteilungen - k - 1] = x.includes('true') ? 100 : 0;
-								}
-								else
-								{
-									v[unterteilungen - k - 2] = 100;
-									v[unterteilungen - k - 1] = 0;
-								}
-
-								//v[unterteilungen - k - 1] = sum / x.length;
-							}
-							else
-							{
-								if(!isNaN(v[unterteilungen - k - 2]))
-								{
-									v[unterteilungen - k - 1] = v[unterteilungen - k - 2];
-								}
-								else if(!isNaN(values[type + c][0].value))
-								{
-									v[unterteilungen - k - 1] = (values[type + c][0].value - min) / (max - min) * 100;
-								}
-								else
-								{
-									v[unterteilungen - k - 1] = 0;
-								}
-							}
-
-							if(triggered)
-							{
-								a[unterteilungen - k - 1] = v[unterteilungen - k - 1];
-							}
-							else
-							{
-								a[unterteilungen - k - 1] = -1;
-							}
-						}
-						/*
-						for(const j in values[type])
-						{
-							var value = values[type][j];
-
-							value = value == 'true' ? 1 : value == 'false' ? 0 : value;
-
-							v.push((value - min) / (max - min) * 100);
-						}
-						*/
 						if(isNaN(values[type + c][0].value) && data[type].active.text != null && data[type].inactive.text != null)
 						{
 							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
@@ -1246,8 +1158,8 @@
 						}
 						else if(data[type].text != null)
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(dataSheet.min * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(dataSheet.max * 10) / 10 + ' ' + data[type].text.toUpperCase();
 						}
 
 						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
@@ -1274,79 +1186,76 @@
 
 						canvas.parentElement.appendChild(reloadButton);
 
-						setTimeout(() => {
-
-							reloadButton.style.opacity = 1;
-
-						}, 0);
+						setTimeout(() => { reloadButton.style.opacity = 1 }, 0);
 					}
 
-					var w = [];
+					// NOTE: Set Graph Colors
 
-					for(var i = 0; i < automation.length; i++)
+					var color = 'hsl(200, 98%, 60%)';
+
+					if(data[type].active && data[type].active.color)
 					{
-						for(var j = 0; j < automation[i].trigger.length; j++)
-						{
-							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automation[i].trigger[j].value - min) / (max - min) * 100 < 100 && (automation[i].trigger[j].value - min) / (max - min) * 100 > 0)
-							{
-								w.push((automation[i].trigger[j].value - min) / (max - min) * 100);
-							}
-						}
+						color = data[type].active.color;
 					}
 
-					Graph.drawAutomation(canvas, w);
+					if(data[type].color)
+					{
+						color = data[type].color;
+					}
+
+					var cRange = data[type].colorRange,
+						vRange = data[type].valueRange;
+
+					var minColorGraph = color, maxColorGraph = color,
+						minColorFill = color, maxColorFill = color;
 
 					if(type == 'temperature')
 					{
-						var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-						if(min < data[type].valueRange[0])
+						if(dataSheet.min < data[type].valueRange[0])
 						{
-							min = data[type].valueRange[0];
+							dataSheet.min = data[type].valueRange[0];
 						}
-						else if(min > data[type].valueRange[1])
+						else if(dataSheet.min > data[type].valueRange[1])
 						{
-							min = data[type].valueRange[1];
+							dataSheet.min = data[type].valueRange[1];
 						}
 
-						if(max > data[type].valueRange[1])
+						if(dataSheet.max > data[type].valueRange[1])
 						{
-							max = data[type].valueRange[1];
+							dataSheet.max = data[type].valueRange[1];
 						}
-						else if(max < data[type].valueRange[0])
+						else if(dataSheet.max < data[type].valueRange[0])
 						{
-							max = data[type].valueRange[0];
+							dataSheet.max = data[type].valueRange[0];
 						}
 
-						var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
-						var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-						Graph.drawFill(canvas, v, [maxClr, minClr], 0);
-						Graph.drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-						Graph.drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+						minColorFill = 'hsla(' + ((dataSheet.min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+						minColorGraph = 'hsl(' + ((dataSheet.min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+						
+						maxColorFill = 'hsla(' + ((dataSheet.max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+						maxColorGraph = 'hsl(' + ((dataSheet.max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
 					}
 					else if(type == 'humidity')
 					{
-						var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-						if(min < data[type].valueRange[0])
+						if(dataSheet.min < data[type].valueRange[0])
 						{
-							min = data[type].valueRange[0];
+							dataSheet.min = data[type].valueRange[0];
 						}
 
-						if(max > data[type].valueRange[1])
+						if(dataSheet.max > data[type].valueRange[1])
 						{
-							max = data[type].valueRange[1];
+							dataSheet.max = data[type].valueRange[1];
 						}
 
-						if(min > 50)
+						if(dataSheet.min > 50)
 						{	
 							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
 						}
 
-						var minClr = 'hsla(' + ((min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+						minColorFill = 'hsla(' + ((dataSheet.min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
+						minColorGraph = 'hsl(' + ((dataSheet.min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
 
-						if(max > 50)
+						if(dataSheet.max > 50)
 						{	
 							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
 						}
@@ -1355,26 +1264,43 @@
 							cRange = [data[type].colorRange[0], data[type].colorRange[1]];
 						}
 
-						var maxClr = 'hsla(' + ((max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
-
-						Graph.drawFill(canvas, v, [maxClr, minClr], 0);
-						Graph.drawGraph(canvas, v, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')], false);
-						Graph.drawEvents(canvas, a, [maxClr.replace('hsla', 'hsl').replace(', .3)', ')'), minClr.replace('hsla', 'hsl').replace(', .1)', ')')]);
+						maxColorFill = 'hsla(' + ((dataSheet.max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';
+						maxColorGraph = 'hsl(' + ((dataSheet.max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
 					}
 					else if(type == 'light')
 					{
-						Graph.drawFill(canvas, v, ['hsla(40, 85%, 75%, .3)', 'hsla(40, 25%, 25%, .1)'], 0);
-						Graph.drawGraph(canvas, v, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)'], false);
-						Graph.drawEvents(canvas, a, ['hsl(40, 85%, 75%)', 'hsl(40, 0%, 25%)']);
+						minColorFill = 'hsla(40, 25%, 25%, .1)';
+						minColorGraph = 'hsla(40, 0%, 25%)';
+
+						maxColorFill = 'hsla(40, 85%, 75%, .3)';
+						maxColorGraph = 'hsla(40, 85%, 75%)';
 					}
 					else
 					{
-						Graph.drawFill(canvas, v, [color.replace('hsl', 'hsla').replace(')', ', .3)'), color.replace('hsl', 'hsla').replace(')', ', .1)')], 0);
-						Graph.drawGraph(canvas, v, [color, color], false);
-						Graph.drawEvents(canvas, a, [color, color]);
+						minColorFill = color.replace('hsl', 'hsla').replace(')', ', .1)');
+						maxColorFill = color.replace('hsl', 'hsla').replace(')', ', .3)');
 					}
 
+					// NOTE: Draw Graph
+
+					Graph.drawFill(canvas, convertedValues, [maxColorFill, minColorFill], 0);
+					Graph.drawGraph(canvas, convertedValues, [maxColorGraph, minColorGraph], false);
+					Graph.drawEvents(canvas, convertedAutomation, [maxColorGraph, minColorGraph]);
+					Graph.drawAutomation(canvas, automationTriggers);
+
 					canvas.style.opacity = 1;
+				}
+
+				function getDataType(type)
+				{
+					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'statelessswitch')
+					{
+						return 'numeric';
+					}
+					else
+					{
+						return 'boolean';
+					}
 				}
 
 				function switchFormButton(btn)
