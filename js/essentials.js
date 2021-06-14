@@ -282,6 +282,11 @@ class EssentialFeatures
 	{
 		if(typeof type == 'string')
 		{
+			if(type.startsWith('rgb'))
+			{
+				type = 'rgb';
+			}
+			
 			return this.letters[this.types.indexOf(type.toLowerCase())];
 		}
 		
