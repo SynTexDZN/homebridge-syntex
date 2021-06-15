@@ -955,15 +955,13 @@
 				{
 					activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
 
-					for(var i = 0; i < Object.keys(typeCounter).length; i++)
+					for(const type in typeCounter)
 					{
-						var type = Object.keys(typeCounter)[i];
-
 						if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 						{
 							for(var j = 0; j < typeCounter[type]; j++)
 							{
-								var name = device.name, n = [];
+								var name = device.name, n = [], letters = Essentials.typeToLetter(type) + j;
 
 								if(typeCounter[type] > 1)
 								{
@@ -974,11 +972,11 @@
 									name = device.name + ' ' + type;
 								}
 
-								for(var k = 0; k < device.services.length; k++)
+								for(const s in device.services)
 								{
-									if(device.services[k] instanceof Object && device.services[k].type == type)
+									if(device.services[s] instanceof Object && device.services[s].type == type)
 									{
-										n.push(device.services[k].name);
+										n.push(device.services[s].name);
 									}
 								}
 
@@ -987,82 +985,58 @@
 									name = n[j];
 								}
 
-								if(!values[type + j])
+								if(values[letters] == null)
 								{
-									values[type + j] = [];
+									values[letters] = [];
 								}
 
-								for(const l in activity)
+								for(const lettersA in activity)
 								{
-									var t = type;
-
-									if(t.startsWith('rgb'))
+									if(lettersA == letters)
 									{
-										t = 'rgb';
-									}
-
-									if(l == Essentials.typeToLetter(t) + j)
-									{
-										if(activity[l].update.length > 0 || activity[l].success.length > 0)
+										if(activity[lettersA].update.length > 0 || activity[lettersA].success.length > 0)
 										{
 											if(type == 'statelessswitch')
 											{
-												for(var k = activity[l].update.length - 1; k >= 0; k--)
+												for(const u in activity[lettersA].update)
 												{
-													values[type + j].push({ time : activity[l].update[k].t, value : true });
-													values[type + j].push({ time : activity[l].update[k].t, value : false });
+													values[letters].push({ time : activity[lettersA].update[u].t, value : true });
+													values[letters].push({ time : activity[lettersA].update[u].t, value : false });
 												}
 											}
 											else
 											{
-												for(var k = activity[l].update.length - 1; k >= 0; k--)
+												for(const u in activity[lettersA].update)
 												{
-													var obj = { time : activity[l].update[k].t };
-													var orginalValues = activity[l].update[k].v
+													var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
+													var characteristics = ['power', 'hue', 'saturation', 'brightness'];
 
-													obj.value = orginalValues;
+													obj['value'] = orginalValues;
 
-													if(orginalValues.includes('power: '))
+													for(const c in characteristics)
 													{
-														obj.value = orginalValues.split('power: ')[1];
+														if(orginalValues.includes(characteristics[c] + ': '))
+														{
+															if(characteristics[c] == 'power')
+															{
+																obj['value'] = orginalValues.split(characteristics[c] + ': ')[1];
+															}
+															else
+															{
+																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+															}
+														}
 													}
 
-													if(orginalValues.includes('hue: '))
+													for(const c in obj)
 													{
-														obj.hue = orginalValues.split('hue: ')[1];
+														if(obj[c].includes(', '))
+														{
+															obj[c] = obj[c].split(', ')[0];
+														}
 													}
 
-													if(orginalValues.includes('saturation: '))
-													{
-														obj.saturation = orginalValues.split('saturation: ')[1];
-													}
-
-													if(orginalValues.includes('brightness: '))
-													{
-														obj.brightness = orginalValues.split('brightness: ')[1];
-													}
-
-													if(obj.value.includes(', '))
-													{
-														obj.value = obj.value.split(', ')[0];
-													}
-
-													if(obj.hue != null && obj.hue.includes(', '))
-													{
-														obj.hue = obj.hue.split(', ')[0];
-													}
-
-													if(obj.saturation != null && obj.saturation.includes(', '))
-													{
-														obj.saturation = obj.saturation.split(', ')[0];
-													}
-
-													if(obj.brightness != null && obj.brightness.includes(', '))
-													{
-														obj.brightness = obj.brightness.split(', ')[0];
-													}
-
-													values[type + j].push(obj);
+													values[letters].push(obj);
 												}
 											}
 										}
@@ -1081,41 +1055,44 @@
 				{
 					if(device.plugin.startsWith('SynTex'))
 					{
-						for(const i in typeCounter)
+						for(const type in typeCounter)
 						{
-							if(i != 'lcd' && i != 'removed' && i != 'unsupported' && (i != 'statelessswitch' || services.length == 1))
+							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 							{
-								for(var j = 0; j < typeCounter[i instanceof Object ? i.type : i]; j++)
+								for(var c = 0; c < typeCounter[type]; c++)
 								{
-									calcValues(values, i instanceof Object ? i.type : i, j);
+									calcValues(values, type, c);
 								}
 							}
 						}
 					}
 					else
 					{
-						for(var i = 0; i < document.getElementsByClassName('canvas').length; i++)
-						{
-							document.getElementsByClassName('canvas')[i].width = document.getElementById('infos').offsetWidth - 4;
+						var graphs = document.getElementsByClassName('canvas');
 
-							Graph.drawGrid(document.getElementsByClassName('canvas')[i], [], 10);
+						for(var i = 0; i < graphs.length; i++)
+						{
+							graphs[i].width = document.getElementById('infos').offsetWidth - 4;
+
+							Graph.drawGrid(graphs[i], [], 10);
 						}
 					}
 				}
 
 				function calcValues(values, type, c)
 				{
-					var canvas = document.getElementById('canvas-' + type + '-' + c);
 					var dataSheet = {}, convertedValues = [], convertedAutomation = [], automationTriggers = [];
+					var canvas = document.getElementById('canvas-' + type + '-' + c);
+					var letters = Essentials.typeToLetter(type) + c;
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
 					Graph.drawGrid(canvas, [], 10);
 
-					values[type + c].sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
+					dataSheet = Graph.convertActivity({ id : device.id, letters : letters, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean' }, values[letters], automation, activity[letters] != null ? activity[letters].success : [], getDataType(type) == 'boolean' ? 4 : 10);
 					
-					dataSheet = Graph.convertActivity({ id : device.id, letters : Essentials.typeToLetter(type) + c, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean' }, values[type + c], automation, activity[Essentials.typeToLetter(type) + c] != null ? activity[Essentials.typeToLetter(type) + c].success : [], getDataType(type) == 'boolean' ? 4 : 10);
-					
+					console.log(letters, dataSheet);
+
 					// NOTE: Convert DataSheet Values
 
 					convertedValues = dataSheet.values;
@@ -1132,14 +1109,14 @@
 							}
 						}
 
-						convertedAutomation.push(a != null ? a : -1);
+						convertedAutomation.push(a || -1);
 					}
 
-					for(var i = 0; i < automation.length; i++)
+					for(const i in automation)
 					{
-						for(var j = 0; j < automation[i].trigger.length; j++)
+						for(const j in automation[i].trigger)
 						{
-							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == Essentials.typeToLetter(type) + c && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 < 100 && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 > 0)
+							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == letters && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 < 100 && (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100 > 0)
 							{
 								if(!automationTriggers.includes({ percent : (automation[i].trigger[j].value - dataSheet.min) / (dataSheet.max - dataSheet.min) * 100, value : automation[i].trigger[j].value }))
 								{
@@ -1151,14 +1128,11 @@
 
 					automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
 
-					convertedValues = convertedValues.reverse();
-					convertedAutomation = convertedAutomation.reverse();
-
 					// NOTE: Draw Min, Max, Type, Update and Reload Labels
 
-					if(Object.keys(values).length != 0 && values[type + c].length != 0)
+					if(Object.keys(values).length > 0 && values[letters].length > 0)
 					{
-						if(isNaN(values[type + c][0].value) && data[type].active.text != null && data[type].inactive.text != null)
+						if(isNaN(values[letters][0].value) && data[type].active.text != null && data[type].inactive.text != null)
 						{
 							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
@@ -1169,8 +1143,8 @@
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(dataSheet.max * 10) / 10 + ' ' + data[type].text.toUpperCase();
 						}
 
-						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[type + c][0].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[type + c][0].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
-						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[type + c].length + ' • %device.data%';
+						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
+						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
 					
 						if(canvas.parentElement.getElementsByTagName('h2').length > 0)
 						{
@@ -1200,12 +1174,12 @@
 
 					var color = 'hsl(200, 98%, 60%)';
 
-					if(data[type].active && data[type].active.color)
+					if(data[type].active != null && data[type].active.color != null)
 					{
 						color = data[type].active.color;
 					}
 
-					if(data[type].color)
+					if(data[type].color != null)
 					{
 						color = data[type].color;
 					}
@@ -1476,7 +1450,7 @@
 											obj.brightness = state.brightness.toString();
 										}
 
-										orginal[type + j].push(obj);
+										orginal[Essentials.typeToLetter(type) + j].push(obj);
 
 										if(device.plugin.startsWith('SynTex'))
 										{

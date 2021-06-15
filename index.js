@@ -252,6 +252,8 @@ class SynTexPlatform
 					activity = await this.logger.load('SynTexTuya', urlParams.id);
 				}
 
+				activity = activity.reverse();
+
 				if(activity != null)
 				{
 					for(const i in activity)

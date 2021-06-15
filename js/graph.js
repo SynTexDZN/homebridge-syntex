@@ -260,19 +260,21 @@ function getCycleEnd(unterteilungenInMinuten)
 	var date = new Date();
 	var minutes = (unterteilungenInMinuten - date.getMinutes() % unterteilungenInMinuten) * 60000;
 
-	return Math.floor((date.getTime() + minutes) / 60000) * 60000;
+	return Math.floor((date.getTime() + minutes) / 60000) * 60000 - unterteilungenInMinuten * 60000;
 }
 
 function renderMinutesCycle(unterteilungenInMinuten)
 {
 	var data = {}, endTime = getCycleEnd(unterteilungenInMinuten);
 
-	for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 2; i++)
+	for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 1; i++)
 	{
 		data[endTime] = [];
 
 		endTime -= 60000 * unterteilungenInMinuten;
 	}
+
+	data = Object.keys(data).sort().reduce((obj, key) => { obj[key] = data[key]; return obj }, {});
 
 	return data;
 }
@@ -286,9 +288,14 @@ function addValues(data, values)
 		var timeA = parseInt(Object.keys(data.sectors)[i]);
 		var timeB = parseInt(Object.keys(data.sectors)[i + 1]);
 
+		if(isNaN(timeB))
+		{
+			timeB = 8640000000000000;
+		}
+
 		for(const v in values)
 		{
-			if(parseInt(values[v].time) * 1000 < timeA && parseInt(values[v].time) * 1000 >= timeB)
+			if(parseInt(values[v].time) * 1000 >= timeA && parseInt(values[v].time) * 1000 < timeB)
 			{
 				var value = values[v].value;
 
@@ -305,17 +312,10 @@ function addValues(data, values)
 				{
 					value = (value == true ? 1 : 0);
 				}
-				/*
-				if(value == 0)
-				{
-					console.debug('------------->', { time : values[v].time, value : value });
-				}
-				*/
+
 				data.sectors[timeA].push({ time : values[v].time, value : value });
 			}
 		}
-
-		data.sectors[timeA].sort((a, b) => { return (a.time > b.time) ? 1 : (a.time < b.time) ? -1 : 0 });
 	}
 
 	return data;
@@ -374,29 +374,20 @@ function getAutomations(data, automation, events)
 	{
 		for(const j in data.sectors[i])
 		{
-			var automationName = null;
-
 			for(const e in events)
 			{
 				if(events[e].t == data.sectors[i][j].time)
 				{
-					automationName = events[e].v;
-
-					//data.sectors[i][j].automation = true;
-				}
-			}
-
-			if(automationName != null)
-			{
-				for(const a in automation)
-				{
-					for(const b in automation[a].trigger)
+					for(const a in automation)
 					{
-						if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
+						for(const b in automation[a].trigger)
 						{
-							if(automation[a].name == automationName)
+							if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
 							{
-								data.sectors[i][j].automation = JSON.parse(automation[a].trigger[b].value);
+								if(automation[a].name == events[e].v)
+								{
+									data.sectors[i][j].automation = JSON.parse(automation[a].trigger[b].value);
+								}
 							}
 						}
 					}
@@ -474,12 +465,8 @@ function selectValues(data)
 			{
 				if(min != max)
 				{
-					console.debug(1, data.values[data.values.length - 1], first * 100);
-
-					data.values[data.values.length - 1] = last * 100;
-					data.values.push(first * 100);
-
-					console.debug(2, data.values[data.values.length - 2], data.values[data.values.length - 1]);
+					data.values[data.values.length - 1] = first * 100;
+					data.values.push(last * 100);
 				}
 				else if(min == data.min)
 				{
@@ -502,11 +489,13 @@ function selectValues(data)
 			data.values.push(null);	
 		}
 	}
-	
+
+	// NOTE: Possible Past Interpretation
+	/*
 	if(data.format == 'boolean' && data.values[data.values.length - 1] == null && data.values.join().replace(/,/g,'').length > 0)
 	{
-		var indexX = getLastValue(data, parseInt(data.values.length - 1));
-		var indexY = getLastValue(data, parseInt(indexX.index));
+		var indexX = getNextValue(data, -1);
+		var indexY = getNextValue(data, parseInt(indexX.index));
 
 		//console.debug('XXX', indexX, indexY);
 
@@ -514,16 +503,16 @@ function selectValues(data)
 		{
 			if(indexX.value == indexY.value)
 			{
-				data.values[data.values.length - 1] = getLastValue(data, parseInt(data.values.length - 1)).value;
+				data.values[0] = indexX.value;
 			}
 			else
 			{
-				data.values[data.values.length - 1] = 0;
-				//data.values[data.values.length - 1] = getLastValue(data, parseInt(data.values.length - 1)).value;
+				data.values[0] = indexY.value;
+				//data.values[0] = getNextValue(data, 0).value;
 			}
 		}
 	}
-	
+	*/
 	return data;
 }
 
@@ -548,24 +537,24 @@ function smoothValues(data)
 
 					data.values[i] = last.value + (diffValue / diffIndex);
 				}
+				else if(last != null)
+				{
+					data.values[i] = last.value;
+				}
 				else if(next != null)
 				{
 					data.values[i] = next.value;
 				}
-				else if(last != null)
-				{
-					data.values[i] = last.value;
-				}
 			}
 			else 
 			{
-				if(next != null)
-				{
-					data.values[i] = next.value;
-				}
-				else if(last != null)
+				if(last != null)
 				{
 					data.values[i] = last.value;
+				}
+				else if(next != null)
+				{
+					data.values[i] = next.value;
 				}
 			}
 		}
