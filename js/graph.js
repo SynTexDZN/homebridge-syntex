@@ -240,9 +240,11 @@ class GraphManager
 		}
 	}
 
-	convertActivity(device, values, automation, events, unterteilungenInMinuten)
+	convertActivity(data, values, automation, events)
 	{
-		var data = { id : device.id, letters : device.letters, format : device.format, sectors : renderMinutesCycle(unterteilungenInMinuten), values : [] };
+		data.nextRefresh = this.getCycleEnd(data.interval) + 60000 * data.interval;
+		data.sectors = this.renderMinutesCycle(data.interval);
+		data.values = [];
 
 		data = addValues(data, values);
 		data = getMinMax(data);
@@ -253,30 +255,30 @@ class GraphManager
 
 		return data;
 	}
-}
 
-function getCycleEnd(unterteilungenInMinuten)
-{
-	var date = new Date();
-	var minutes = (unterteilungenInMinuten - date.getMinutes() % unterteilungenInMinuten) * 60000;
-
-	return Math.floor((date.getTime() + minutes) / 60000) * 60000 - unterteilungenInMinuten * 60000;
-}
-
-function renderMinutesCycle(unterteilungenInMinuten)
-{
-	var data = {}, endTime = getCycleEnd(unterteilungenInMinuten);
-
-	for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 1; i++)
+	getCycleEnd(unterteilungenInMinuten)
 	{
-		data[endTime] = [];
+		var date = new Date();
+		var minutes = (unterteilungenInMinuten - date.getMinutes() % unterteilungenInMinuten) * 60000;
 
-		endTime -= 60000 * unterteilungenInMinuten;
+		return Math.floor((date.getTime() + minutes) / 60000) * 60000 - unterteilungenInMinuten * 60000;
 	}
 
-	data = Object.keys(data).sort().reduce((obj, key) => { obj[key] = data[key]; return obj }, {});
+	renderMinutesCycle(unterteilungenInMinuten)
+	{
+		var data = {}, endTime = this.getCycleEnd(unterteilungenInMinuten);
 
-	return data;
+		for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 1; i++)
+		{
+			data[endTime] = [];
+
+			endTime -= 60000 * unterteilungenInMinuten;
+		}
+
+		data = Object.keys(data).sort().reduce((obj, key) => { obj[key] = data[key]; return obj }, {});
+
+		return data;
+	}
 }
 
 function addValues(data, values)
@@ -491,14 +493,16 @@ function selectValues(data)
 	}
 
 	// NOTE: Possible Past Interpretation
-	/*
-	if(data.format == 'boolean' && data.values[data.values.length - 1] == null && data.values.join().replace(/,/g,'').length > 0)
+	
+	if(data.format == 'boolean' && data.values[0] == null && data.values.join().replace(/,/g,'').length > 0)
 	{
+		data.values[0] = 0;
+		/*
 		var indexX = getNextValue(data, -1);
 		var indexY = getNextValue(data, parseInt(indexX.index));
-
+		
 		//console.debug('XXX', indexX, indexY);
-
+		
 		if(indexX != null && indexY != null)
 		{
 			if(indexX.value == indexY.value)
@@ -511,8 +515,9 @@ function selectValues(data)
 				//data.values[0] = getNextValue(data, 0).value;
 			}
 		}
+		*/
 	}
-	*/
+	
 	return data;
 }
 
