@@ -656,7 +656,7 @@
 
 					automation = JSON.parse(a);
 
-					loadActivity();
+					loadActivity().then(() => repaintGraphs());
 				});
 
 				if(Presets.getPreset(device.plugin) != null && Presets.getPreset(device.plugin).getVersionURL(device) != null)
@@ -979,92 +979,73 @@
 
 				}, 1000);
 
-				async function loadActivity()
+				function loadActivity()
 				{
-					activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
+					return new Promise(async (resolve) => {
 
-					for(const type in typeCounter)
-					{
-						if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+						activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
+
+						for(const type in typeCounter)
 						{
-							for(var j = 0; j < typeCounter[type]; j++)
+							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 							{
-								var name = device.name, n = [], letters = Essentials.typeToLetter(type) + j;
+								for(var j = 0; j < typeCounter[type]; j++)
+								{
+									var letters = Essentials.typeToLetter(type) + j;
 
-								if(typeCounter[type] > 1)
-								{
-									name = device.name + ' ' + type + ' ' + j;
-								}
-								else if(counter > 1)
-								{
-									name = device.name + ' ' + type;
-								}
-
-								for(const s in device.services)
-								{
-									if(device.services[s] instanceof Object && device.services[s].type == type)
+									if(values[letters] == null)
 									{
-										n.push(device.services[s].name);
+										values[letters] = [];
 									}
-								}
 
-								if(n.length > 0)
-								{
-									name = n[j];
-								}
-
-								if(values[letters] == null)
-								{
-									values[letters] = [];
-								}
-
-								for(const lettersA in activity)
-								{
-									if(lettersA == letters)
+									for(const lettersA in activity)
 									{
-										if(activity[lettersA].update.length > 0 || activity[lettersA].success.length > 0)
+										if(lettersA == letters)
 										{
-											if(type == 'statelessswitch')
+											if(activity[lettersA].update.length > 0)
 											{
-												for(const u in activity[lettersA].update)
+												if(type == 'statelessswitch')
 												{
-													values[letters].push({ time : activity[lettersA].update[u].t, value : true });
-													values[letters].push({ time : activity[lettersA].update[u].t, value : false });
+													for(const u in activity[lettersA].update)
+													{
+														values[letters].push({ time : activity[lettersA].update[u].t, value : true });
+														values[letters].push({ time : activity[lettersA].update[u].t, value : false });
+													}
 												}
-											}
-											else
-											{
-												for(const u in activity[lettersA].update)
+												else
 												{
-													var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-													var characteristics = ['power', 'hue', 'saturation', 'brightness'];
-
-													obj['value'] = orginalValues;
-
-													for(const c in characteristics)
+													for(const u in activity[lettersA].update)
 													{
-														if(orginalValues.includes(characteristics[c] + ': '))
+														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
+														var characteristics = ['power', 'hue', 'saturation', 'brightness'];
+
+														obj['value'] = orginalValues;
+
+														for(const c in characteristics)
 														{
-															if(characteristics[c] == 'power')
+															if(orginalValues.includes(characteristics[c] + ': '))
 															{
-																obj['value'] = orginalValues.split(characteristics[c] + ': ')[1];
-															}
-															else
-															{
-																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+																if(characteristics[c] == 'power')
+																{
+																	obj['value'] = orginalValues.split(characteristics[c] + ': ')[1];
+																}
+																else
+																{
+																	obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+																}
 															}
 														}
-													}
 
-													for(const c in obj)
-													{
-														if(obj[c].includes(', '))
+														for(const c in obj)
 														{
-															obj[c] = obj[c].split(', ')[0];
+															if(obj[c].includes(', '))
+															{
+																obj[c] = obj[c].split(', ')[0];
+															}
 														}
-													}
 
-													values[letters].push(obj);
+														values[letters].push(obj);
+													}
 												}
 											}
 										}
@@ -1072,12 +1053,12 @@
 								}
 							}
 						}
-					}
 
-					repaintGraphs();
+						resolve();
+					});
 				}
 
-				function repaintGraphs()
+				function repaintGraphs(letters)
 				{
 					if(device.plugin.startsWith('SynTex'))
 					{
@@ -1087,7 +1068,10 @@
 							{
 								for(var c = 0; c < typeCounter[type]; c++)
 								{
-									calcValues(type, c);
+									if(letters == null || letters == Essentials.typeToLetter(type) + c)
+									{
+										calcValues(type, c);
+									}
 								}
 							}
 						}
@@ -1117,7 +1101,7 @@
 
 					Graph.drawGrid(canvas, [], 10);
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch') ? 4 : 10, canvas : canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, type : type, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch') ? 4 : 10, canvas : canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
 					// NOTE: Convert GraphData Values
 
@@ -1187,7 +1171,7 @@
 						reloadButton.innerHTML = '↻ %general.reload%';
 						reloadButton.className = 'reload-button';
 						reloadButton.setAttribute('style', 'margin-top: -480px');
-						reloadButton.setAttribute('onclick', 'loadActivity()');
+						reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '""))');
 
 						canvas.parentElement.appendChild(reloadButton);
 
