@@ -202,6 +202,45 @@ class URLQuery
 			}
 		});
 	}
+
+	connectSocket(url, callback, tries, message)
+	{
+		let socket = new WebSocket(url);
+
+		socket.onmessage = (data) => {
+
+			var parsedData = data.data;
+
+			try
+			{
+				parsedData = JSON.parse(parsedData);
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+
+			callback(parsedData);
+		};
+
+		if(message != null)
+		{
+			socket.onopen = () => socket.send(JSON.stringify(message));
+		}
+	
+		if(tries == null)
+		{
+			socket.onclose = () => this.connectSocket(url, callback, tries, message);
+		}
+		else if(tries > 0)
+		{
+			tries--;
+
+			socket.onclose = () => this.connectSocket(url, callback, tries, message);
+		}
+
+		return socket;
+	}
 }
 
 export let Query = new URLQuery();
