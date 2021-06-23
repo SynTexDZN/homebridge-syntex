@@ -1,3 +1,5 @@
+let self;
+
 class GraphManager
 {
 	constructor() {}
@@ -5,6 +7,8 @@ class GraphManager
 	setPadding(padding)
 	{
 		this.padding = padding;
+
+		self = this;
 	}
 
 	drawGraph(canvas, data, gradients, points)
@@ -246,8 +250,18 @@ class GraphManager
 		data.sectors = this.renderMinutesCycle(data.interval);
 		data.values = [];
 
+		if(data,format == 'boolean')
+		{
+			data.min = 0;
+			data.max = 1;
+		}
+		else
+		{
+			data.min = 100000;
+			data.max = -100000;
+		}
+
 		data = addValues(data, values);
-		data = getMinMax(data);
 		data = getPercents(data);
 		data = getAutomations(data, automation, events);
 		data = selectValues(data);
@@ -256,9 +270,15 @@ class GraphManager
 		return data;
 	}
 
-	getCycleEnd(unterteilungenInMinuten)
+	getCycleEnd(unterteilungenInMinuten, timeStamp)
 	{
 		var date = new Date();
+
+		if(timeStamp != null)
+		{
+			date = new Date(timeStamp);
+		}
+
 		var minutes = (unterteilungenInMinuten - date.getMinutes() % unterteilungenInMinuten) * 60000;
 
 		return Math.floor((date.getTime() + minutes) / 60000) * 60000 - unterteilungenInMinuten * 60000;
@@ -284,76 +304,45 @@ class GraphManager
 function addValues(data, values)
 {
 	console.debug('VALUES', values);
-
-	for(var i = 0; i < Object.keys(data.sectors).length; i++)
+	
+	for(const v in values)
 	{
-		var timeA = parseInt(Object.keys(data.sectors)[i]);
-		var timeB = parseInt(Object.keys(data.sectors)[i + 1]);
+		var cycleTime = self.getCycleEnd(data.interval, parseInt(values[v].time) * 1000);
 
-		if(isNaN(timeB))
+		if(data.sectors[cycleTime] != null)
 		{
-			timeB = 8640000000000000;
-		}
+			var value = values[v].value;
 
-		for(const v in values)
-		{
-			if(parseInt(values[v].time) * 1000 >= timeA && parseInt(values[v].time) * 1000 < timeB)
+			try
 			{
-				var value = values[v].value;
-
-				try
-				{
-					value = JSON.parse(value);
-				}
-				catch(e)
-				{
-					console.error(e);
-				}
-
-				if(data.format == 'boolean')
-				{
-					value = (value == true ? 1 : 0);
-				}
-
-				data.sectors[timeA].push({ time : values[v].time, value : value });
+				value = JSON.parse(value);
 			}
-		}
-	}
-
-	return data;
-}
-
-function getMinMax(data)
-{
-	if(data.format == 'boolean')
-	{
-		data.min = 0;
-		data.max = 1;
-	}
-	else
-	{
-		data.min = 100000;
-		data.max = -100000;
-
-		for(const i in data.sectors)
-		{
-			for(const j in data.sectors[i])
+			catch(e)
 			{
-				var value = data.sectors[i][j].value;
+				console.error(e);
+			}
 
-				if(value > data.max)
+			if(data.format == 'boolean')
+			{
+				value = (value == true ? 1 : 0);
+			}
+			else
+			{
+				if(value < min)
 				{
-					data.max = value;
+					min = value;
 				}
 
-				if(value < data.min)
+				if(value > max)
 				{
-					data.min = value;
+					max = value;
 				}
 			}
+					
+			data.sectors[cycleTime].push({ time : values[v].time, value : value });
 		}
 	}
-
+	
 	return data;
 }
 
@@ -372,27 +361,34 @@ function getPercents(data)
 
 function getAutomations(data, automation, events)
 {
+	var visibleAutomation = [];
+
+	for(const a in automation)
+	{
+		for(const b in automation[a].trigger)
+		{
+			if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
+			{
+				for(const e in events)
+				{
+					if(automation[a].name == events[e].v)
+					{
+						visibleAutomation.push({ time : events[e].t, value : automation[a].trigger[b].value });
+					}
+				}
+			}
+		}
+	}
+
 	for(const i in data.sectors)
 	{
 		for(const j in data.sectors[i])
 		{
-			for(const e in events)
+			for(const a in visibleAutomation)
 			{
-				if(events[e].t == data.sectors[i][j].time)
+				if(visibleAutomation[a].time == data.sectors[i][j].time)
 				{
-					for(const a in automation)
-					{
-						for(const b in automation[a].trigger)
-						{
-							if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
-							{
-								if(automation[a].name == events[e].v)
-								{
-									data.sectors[i][j].automation = JSON.parse(automation[a].trigger[b].value);
-								}
-							}
-						}
-					}
+					data.sectors[i][j].automation = JSON.parse(visibleAutomation[a].value);
 				}
 			}
 		}
@@ -568,7 +564,7 @@ function smoothValues(data)
 	return data;
 }
 
-var getNextValue = (data, index) => {
+const getNextValue = (data, index) => {
 
 	for(var i = index + 1; i < data.values.length; i++)
 	{
@@ -581,7 +577,7 @@ var getNextValue = (data, index) => {
 	return null;
 };
 
-var getLastValue = (data, index) => {
+const getLastValue = (data, index) => {
 
 	for(var i = index - 1; i >= 0; i--)
 	{
