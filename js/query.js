@@ -230,14 +230,28 @@ class URLQuery
 	
 		if(tries == null)
 		{
-			socket.onclose = () => this.connectSocket(url, callback, tries, message);
+			socket.onclose = (data) => {
+
+				if(data.code != 4000)
+				{
+					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
+				}
+			};
 		}
 		else if(tries > 0)
 		{
 			tries--;
 
-			socket.onclose = () => this.connectSocket(url, callback, tries, message);
+			socket.onclose = () => {
+
+				if(data.code != 4000)
+				{
+					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
+				}
+			};
 		}
+
+		activeWebSockets.push(socket);
 
 		return socket;
 	}
