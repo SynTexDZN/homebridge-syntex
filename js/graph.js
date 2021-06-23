@@ -250,7 +250,7 @@ class GraphManager
 		data.sectors = this.renderMinutesCycle(data.interval);
 		data.values = [];
 
-		if(data,format == 'boolean')
+		if(data.format == 'boolean')
 		{
 			data.min = 0;
 			data.max = 1;
@@ -328,14 +328,14 @@ function addValues(data, values)
 			}
 			else
 			{
-				if(value < min)
+				if(value < data.min)
 				{
-					min = value;
+					data.min = value;
 				}
 
-				if(value > max)
+				if(value > data.max)
 				{
-					max = value;
+					data.max = value;
 				}
 			}
 					
