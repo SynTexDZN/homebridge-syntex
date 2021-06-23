@@ -219,21 +219,41 @@ module.exports = class DeviceManager
 	{
 		if(id != null && iid != null)
 		{
+			var services = this.getServices(id);
+
+			for(const i in services)
+			{
+				if(services[i].iid['state'] == iid)
+				{
+					return services[i];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	getServices(id)
+	{
+		var services = [];
+
+		if(id != null)
+		{
 			var accessory = this.getAccessory(id);
 
 			if(accessory != null && accessory.services != null && Array.isArray(accessory.services))
 			{
 				for(const i in accessory.services)
 				{
-					if(accessory.services[i].iid != null && accessory.services[i].iid instanceof Object && accessory.services[i].iid['state'] == iid)
+					if(accessory.services[i].iid != null && accessory.services[i].iid instanceof Object)
 					{
-						return accessory.services[i];
+						services.push(accessory.services[i]);
 					}
 				}
 			}
 		}
 
-		return null;
+		return services;
 	}
 
 	getAccessories()
