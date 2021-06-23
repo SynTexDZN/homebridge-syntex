@@ -255,6 +255,7 @@
 	window.originalClearInterval = window.clearInterval;
 	window.activeTimeouts = [];
 	window.activeIntervals = [];
+	window.activeWebSockets = [];
 	
 	window.setTimeout = (func, delay) => {
 
@@ -309,6 +310,16 @@
 		for(var i = activeIntervals.length - 1; i >= 0; i--)
 		{
 			clearInterval(activeIntervals[i]);
+		}
+	}
+
+	window.closeSockets = () => {
+
+		for(var i = activeWebSockets.length - 1; i >= 0; i--)
+		{
+			activeWebSockets[i].close(4000);
+
+			activeWebSockets.splice(i, 1);
 		}
 	}
 

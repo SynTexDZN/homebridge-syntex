@@ -562,6 +562,7 @@ function loadPageData(url)
 					}
 
 					clearTimers();
+					closeSockets();
 
 					document.getElementById('content').outerHTML = '<div id="content"' + client.responseText.split('<div id="content"')[1].split('</body>')[0];
 
