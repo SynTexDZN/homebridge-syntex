@@ -568,7 +568,7 @@
 
 								infoType.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); margin-top: -19.2; color: rgb(150, 150, 170); letter-spacing: 3px; text-align: center; font-weight: 300');
 
-								if(type == 'rgb' || type == 'rgbw')
+								if(type == 'rgb' || type == 'rgbw' || type == 'rgbcw' || type == 'rgbww')
 								{
 									type = type.toUpperCase();
 								}
@@ -764,26 +764,7 @@
 
 					if(state != null)
 					{
-						if(type == 'rgb')
-						{
-							if(state.value == true)
-							{
-								value = Math.round(state.brightness) + '%';
-
-								if(Math.round(state.brightness) == 100)
-								{
-									value = '%characteristics.boolean.active%';
-								}
-								
-								color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
-							}
-							else if(state.value == false)
-							{
-								value = '%characteristics.boolean.inactive%';
-								color = 'rgb(60, 60, 80)';
-							}
-						}
-						else if(type == 'dimmer')
+						if(type == 'rgb' || type == 'dimmer')
 						{
 							if(state.value == false || state.brightness == 0)
 							{
@@ -799,7 +780,14 @@
 									value = '%characteristics.boolean.active%';
 								}
 								
-								color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
+								if(type == 'rgb')
+								{
+									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+								}
+								else if(type == 'dimmer')
+								{
+									color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
+								}
 							}
 						}
 						else if(typeof state.value == 'boolean')
