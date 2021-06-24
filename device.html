@@ -373,7 +373,7 @@
 							var letters = Essentials.typeToLetter(type) + j;
 							var statusField = document.createElement('input');
 						
-							statusField.setAttribute('id', 'status-' + type + '-' + j);
+							statusField.setAttribute('id', 'status-' + letters);
 							statusField.setAttribute('class', 'control-panel loading-loop');
 							statusField.setAttribute('type', 'button');
 							statusField.setAttribute('value', '%general.loading% ..');
@@ -407,12 +407,15 @@
 							{
 								const mouseDownHandler = function(e)
 								{
-									setStatusPanel(this.field, this.type, this.counter, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
+									if(!busy.includes(this.letters))
+									{
+										controlDimmer(this.letters, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
 
-									document.addEventListener('mousemove', mouseMoveHandler);
-									document.addEventListener('mouseup', mouseUpHandler);
+										document.addEventListener('mousemove', mouseMoveHandler);
+										document.addEventListener('mouseup', mouseUpHandler);
+									}
 
-								}.bind({ field : statusField, type : type, counter : j });
+								}.bind({ field : statusField, letters });
 
 								const mouseMoveHandler = function(e)
 								{
@@ -432,9 +435,9 @@
 										percent = 100;
 									}
 
-									setStatusPanel(this.field, this.type, this.counter, percent, true);
+									controlDimmer(this.letters, percent, true);
 
-								}.bind({ field : statusField, type : type, counter : j });
+								}.bind({ field : statusField, letters });
 
 								const mouseUpHandler = function(e)
 								{
@@ -454,47 +457,55 @@
 										percent = 100;
 									}
 
-									setStatusPanel(this.field, this.type, this.counter, percent);
+									controlDimmer(this.letters, percent);
 
 									Promise.all(promiseArraySlide).then(() => {
 
-										busy.splice(busy.indexOf(letters), 1);
+										setTimeout(() => busy.splice(busy.indexOf(letters), 1), 300);
 									});
 
 									document.removeEventListener('mousemove', mouseMoveHandler);
 									document.removeEventListener('mouseup', mouseUpHandler);
 
-								}.bind({ field : statusField, type : type, counter : j });
+								}.bind({ field : statusField, letters });
 
 								statusField.addEventListener('mousedown', mouseDownHandler);
 
 								statusField.addEventListener('touchstart', function(e)
 								{
-									getTouchPosition(this.field, this.type, this.counter, e, true);
+									if(!busy.includes(letters))
+									{
+										getTouchPosition(this.field, this.letters, e, true);
+									}
 
-								}.bind({ field : statusField, type : type, counter : j }));
+								}.bind({ field : statusField, letters }));
 
 								statusField.addEventListener('touchmove', function(e)
 								{
-									this.field.style.transition = '0s ease-in-out';
+									if(!busy.includes(letters))
+									{
+										this.field.style.transition = '0s ease-in-out';
 
-									getTouchPosition(this.field, this.type, this.counter, e, true);
+										getTouchPosition(this.field, this.letters, e, true);
+									}
 
-								}.bind({ field : statusField, type : type, counter : j }));
+								}.bind({ field : statusField, letters }));
 
 								statusField.addEventListener('touchend', function(e)
 								{
-									getTouchPosition(this.field, this.type, this.counter, e);
+									if(!busy.includes(letters))
+									{
+										getTouchPosition(this.field, this.letters, e);
 
-									this.field.style.transition = '.3s ease-in-out';
+										this.field.style.transition = '.3s ease-in-out';
 
-									Promise.all(promiseArraySlide).then(() => {
+										Promise.all(promiseArraySlide).then(() => {
+											
+											setTimeout(() => busy.splice(busy.indexOf(letters), 1), 300);
+										});
+									}
 
-										busy.splice(busy.indexOf(letters), 1);
-									});
-
-
-								}.bind({ field : statusField, type : type, counter : j }));
+								}.bind({ field : statusField, letters }));
 							}
 
 							document.getElementsByClassName('control-container')[0].appendChild(statusField);
@@ -691,7 +702,7 @@
 			</script>
 			<script>
 
-				function getTouchPosition(statusField, type, counter, e, send)
+				function getTouchPosition(statusField, letters, e, send)
 				{
 					let touchobj = e.changedTouches[0];
 
@@ -707,51 +718,219 @@
 						percent = 100;
 					}
 						
-					setStatusPanel(statusField, type, counter, percent, send);
+					controlDimmer(letters, percent, send);
 
 					e.preventDefault();
 				}
 
 				window.promiseArraySlide = [];
 
-				function setStatusPanel(statusField, type, counter, percent, send)
+				function controlDimmer(letters, percent, send)
 				{
-					var letters = Essentials.typeToLetter(type) + counter;
+					if(!send && !busy.includes(letters))
+					{
+						busy.push(letters);
+					}
 
-					console.log('UPDATE STATUS PANEL', busy.includes(letters), busy);
+					percent = Math.round(percent);
 
-					if(!busy.includes(letters))
+					if(device.plugin.startsWith('SynTex'))
 					{
 						if(!send)
 						{
-							busy.push(letters);
+							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), brightness : percent  } }));
 						}
-
-						percent = Math.round(percent);
-
-						if(device.plugin.startsWith('SynTex'))
+						else
 						{
-							if(!send)
+							setControlPanel(letters, { value : (percent > 0 ? true : false), brightness : percent });
+						}
+					}
+					else if(getService(letters) != null && getService(letters).iid != null)
+					{
+						setControlPanel(letters, { value : (percent > 0 ? true : false), brightness : percent });
+
+						if(!send)
+						{
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+					
+							promiseArraySlide.push(Query.complexFetch(url, 10000, 1, {}, false));
+						}
+					}
+				}
+
+				function setControlPanel(letters, state)
+				{
+					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––';
+
+					if(state != null)
+					{
+						if(type == 'rgb')
+						{
+							if(state.value == true)
 							{
-								DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : Essentials.typeToLetter(type) + counter, name : device.name, value : (percent > 0 ? true : false), brightness : percent  } }));
+								value = Math.round(state.brightness) + '%';
+
+								if(Math.round(state.brightness) == 100)
+								{
+									value = '%characteristics.boolean.active%';
+								}
+								
+								color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+							}
+							else if(state.value == false)
+							{
+								value = '%characteristics.boolean.inactive%';
+								color = 'rgb(60, 60, 80)';
+							}
+						}
+						else if(type == 'dimmer')
+						{
+							if(state.value == false || state.brightness == 0)
+							{
+								value = '%characteristics.boolean.inactive%';
+								color = 'rgb(60, 60, 80)';
+							}
+							else if(state.value == true)
+							{
+								value = Math.round(state.brightness) + '%';
+
+								if(Math.round(state.brightness) == 100)
+								{
+									value = '%characteristics.boolean.active%';
+								}
+								
+								color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
+							}
+						}
+						else if(typeof state.value == 'boolean')
+						{
+							if(state.value)
+							{
+								value = data[type].active.text.toUpperCase();
+								color = data[type].active.color;
 							}
 							else
 							{
-								updateValues(letters, { value : (percent > 0 ? true : false), brightness : percent });
+								value = data[type].inactive.text.toUpperCase();
+								color = data[type].inactive.color;
 							}
 						}
-						else if(getService(type, counter) != null && getService(type, counter).iid != null)
+						else if(typeof state.value == 'number')
 						{
-							updateValues(letters, { value : (percent > 0 ? true : false), brightness : percent });
+							color = 'rgb(60, 60, 80)', value = state.value;
 
-							if(!send)
+							if(type == 'temperature')
 							{
-								var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
-						
-								promiseArraySlide.push(Query.complexFetch(url, 10000, 1, {}, false));
+								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+								value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+								if(state.value < 18)
+								{
+									color = 'hsl(220, 75%, 55%)';
+								}
+								else if(state.value > 26)
+								{
+									color = 'hsl(0, 75%, 55%)';
+								}
+								else
+								{
+									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+								}
+							}
+							else if(type == 'humidity')
+							{
+								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+								if(state.value > 50)
+								{	
+									cRange = [280, 0];
+								}	
+
+								if(state.value < 45 || state.value > 55)	
+								{	
+									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+								}	
+								else	
+								{	
+									color = data[type].color;	
+								}
+							}
+							else if(type == 'light')
+							{
+								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+								if(state.value > 1000)
+								{
+									color = data[type].color;
+								}
+								else
+								{
+									color = 'hsl(40, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+								}
+							}
+							else if(type == 'airquality')
+							{
+								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+								if(state.value > 4)
+								{
+									color = data[type].color;
+								}
+								else
+								{
+									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
+								}
+							}
+							else
+							{
+								value = state.value + ' ' + data[type].active.text.toUpperCase();
 							}
 						}
 					}
+					else if(type == 'statelessswitch')	
+					{	
+						value = data[type].inactive.text.toUpperCase();
+						color = data[type].inactive.color;
+					}
+
+					if(typeCounter[type] > 1)
+					{
+						var name = device.name + ' ' + type + ' ' + c;
+						var n = [];
+
+						for(var k = 0; k < device.services.length; k++)
+						{
+							if(device.services[k] instanceof Object && device.services[k].type == type)
+							{
+								n.push(device.services[k].name);
+							}
+						}
+
+						if(n.length > 0 && n[c] != null)
+						{
+							name = n[c];
+						}
+
+						if(name.includes(device.name))
+						{
+							name = name.replace(device.name, '');
+						}
+
+						document.getElementById('status-' + letters).value = name.toUpperCase() + ' [' + value + ']';
+					}
+					else
+					{
+						document.getElementById('status-' + letters).value = value;
+					}
+
+					document.getElementById('status-' + letters).style.backgroundColor = color;
 				}
 
 			</script>
@@ -838,38 +1017,30 @@
 
 				async function controlSwitch(button)
 				{
-					var type = button.getAttribute('id').split('-')[1];
-					var counter = button.getAttribute('id').split('-')[2];
-					var letters = Essentials.typeToLetter(type) + counter;
+					var letters = button.getAttribute('id').split('-')[1];
 
 					if(!busy.includes(letters))
 					{
-						var color = 'rgb(60, 60, 80)';
 						var value = 'true';
 
 						busy.push(letters);
 
-						if(temp[Essentials.typeToLetter(type) + counter] != null)
+						if(temp[letters] != null)
 						{
-							value = temp[Essentials.typeToLetter(type) + counter].value == true ? 'false' : 'true';
+							value = temp[letters].value == true ? 'false' : 'true';
 						}
 
-						//updateValues(letters, { value : (value == 'true') });
+						//setControlPanel(letters, { value : (value == 'true') });
 
 						if(device.plugin.startsWith('SynTex'))
 						{
 							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : value  } }));
 						}
-						else if(getService(type, counter) != null && getService(type, counter).iid != null)
+						else if(getService(letters) != null && getService(letters).iid != null)
 						{
-							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['state'] + '&value=' + value;
 						
-							if(await Query.complexFetch(url, 10000, 1, {}, false) == 'Success')
-							{
-								updateValues(letters, { value : (value == 'true') });
-							}
-
-							busy.splice(busy.indexOf(letters), 1);
+							Query.complexFetch(url, 10000, 1, {}, false).then((result) => busy.splice(busy.indexOf(letters), 1));
 						}
 					}
 				}
@@ -1284,15 +1455,15 @@
 					repaintGraphs();
 				}
 
-				function getService(type, counter)
+				function getService(letters)
 				{
 					var c = 0;
 
 					for(const i in device['services'])
 					{
-						if(device['services'][i].type == type)
+						if(device['services'][i].type == Essentials.letterToType(letters[0]))
 						{
-							if(c == counter)
+							if(c == letters[1])
 							{
 								return device['services'][i];
 							}
@@ -1313,8 +1484,6 @@
 						if(data instanceof Object)
 						{
 							var letters = Object.keys(data)[0];
-
-							updateValues(letters, data[letters]);
 
 							busy.splice(busy.indexOf(letters), 1);
 						}
@@ -1362,7 +1531,7 @@
 							}
 							else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 							{
-								updateValues(letters, data[letters]);
+								setControlPanel(letters, data[letters]);
 							}
 						}
 					}
@@ -1370,212 +1539,44 @@
 
 				function updateValues(letters, state)
 				{
-					if(!busy.includes(letters))
+					var type = Essentials.letterToType(letters[0]), j = letters[1];
+					
+					if(state != null)
 					{
-						var type = Essentials.letterToType(letters[0]), j = letters[1], color = '', value = '–––';
-
-						if(state != null)
+						if(values[letters] != null)
 						{
-							if(type == 'rgb')
-							{
-								if(state.value == true)
-								{
-									value = Math.round(state.brightness) + '%';
+							var obj = { time : Math.round(new Date().getTime() / 1000) };
 
-									if(Math.round(state.brightness) == 100)
-									{
-										value = '%characteristics.boolean.active%';
-									}
-									
-									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
-								}
-								else if(state.value == false)
-								{
-									value = '%characteristics.boolean.inactive%';
-									color = 'rgb(60, 60, 80)';
-								}
+							if(state.value != null)
+							{
+								obj.value = state.value.toString();
 							}
-							else if(type == 'dimmer')
+							
+							if(state.hue != null)
 							{
-								if(state.value == false || state.brightness == 0)
-								{
-									value = '%characteristics.boolean.inactive%';
-									color = 'rgb(60, 60, 80)';
-								}
-								else if(state.value == true)
-								{
-									value = Math.round(state.brightness) + '%';
-
-									if(Math.round(state.brightness) == 100)
-									{
-										value = '%characteristics.boolean.active%';
-									}
-									
-									color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
-								}
-							}
-							else if(typeof state.value == 'boolean')
-							{
-								if(state.value)
-								{
-									value = data[type].active.text.toUpperCase();
-									color = data[type].active.color;
-								}
-								else
-								{
-									value = data[type].inactive.text.toUpperCase();
-									color = data[type].inactive.color;
-								}
-							}
-							else if(typeof state.value == 'number')
-							{
-								color = 'rgb(60, 60, 80)', value = state.value;
-
-								if(type == 'temperature')
-								{
-									var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-									value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-
-									if(state.value < 18)
-									{
-										color = 'hsl(220, 75%, 55%)';
-									}
-									else if(state.value > 26)
-									{
-										color = 'hsl(0, 75%, 55%)';
-									}
-									else
-									{
-										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-									}
-								}
-								else if(type == 'humidity')
-								{
-									var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
-
-									if(state.value > 50)
-									{	
-										cRange = [280, 0];
-									}	
-
-									if(state.value < 45 || state.value > 55)	
-									{	
-										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-									}	
-									else	
-									{	
-										color = data[type].color;	
-									}
-								}
-								else if(type == 'light')
-								{
-									var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
-
-									if(state.value > 1000)
-									{
-										color = data[type].color;
-									}
-									else
-									{
-										color = 'hsl(40, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-									}
-								}
-								else if(type == 'airquality')
-								{
-									var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
-
-									if(state.value > 4)
-									{
-										color = data[type].color;
-									}
-									else
-									{
-										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
-									}
-								}
-								else
-								{
-									value = state.value + ' ' + data[type].active.text.toUpperCase();
-								}
+								obj.hue = state.hue.toString();
 							}
 
-							if(values[letters] != null)
+							if(state.saturation != null)
 							{
-								var obj = { time : Math.round(new Date().getTime() / 1000) };
+								obj.saturation = state.saturation.toString();
+							}
 
-								if(state.value != null)
-								{
-									obj.value = state.value.toString();
-								}
-								
-								if(state.hue != null)
-								{
-									obj.hue = state.hue.toString();
-								}
+							if(state.brightness != null)
+							{
+								obj.brightness = state.brightness.toString();
+							}
 
-								if(state.saturation != null)
-								{
-									obj.saturation = state.saturation.toString();
-								}
+							values[letters].push(obj);
 
-								if(state.brightness != null)
-								{
-									obj.brightness = state.brightness.toString();
-								}
-
-								values[letters].push(obj);
-
-								if(device.plugin.startsWith('SynTex'))
-								{
-									setTimeout(() => calcValues(type, j), 300);
-								}
+							if(device.plugin.startsWith('SynTex'))
+							{
+								setTimeout(() => calcValues(type, j), 300);
 							}
 						}
-						else if(type == 'statelessswitch')	
-						{	
-							value = data[type].inactive.text.toUpperCase();
-							color = data[type].inactive.color;
-						}
-
-						if(typeCounter[type] > 1)
-						{
-							var name = device.name + ' ' + type + ' ' + j;
-							var n = [];
-
-							for(var k = 0; k < device.services.length; k++)
-							{
-								if(device.services[k] instanceof Object && device.services[k].type == type)
-								{
-									n.push(device.services[k].name);
-								}
-							}
-
-							if(n.length > 0 && n[j] != null)
-							{
-								name = n[j];
-							}
-
-							if(name.includes(device.name))
-							{
-								name = name.replace(device.name, '');
-							}
-
-							document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
-						}
-						else
-						{
-							document.getElementById('status-' + type + '-' + j).value = value;
-						}
-
-						document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
 					}
+
+					setControlPanel(letters, state);
 				}
 				
 				async function restartDevice(btn)
