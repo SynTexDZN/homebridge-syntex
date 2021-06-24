@@ -366,10 +366,11 @@
 				{
 					var type = Object.keys(typeCounter)[i];
 
-					if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
+					if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 					{
 						for(var j = 0; j < typeCounter[type]; j++)
 						{
+							var letters = Essentials.typeToLetter(type) + j;
 							var statusField = document.createElement('input');
 						
 							statusField.setAttribute('id', 'status-' + type + '-' + j);
@@ -379,8 +380,12 @@
 
 							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer')
 							{
-								statusField.setAttribute('onclick', 'controlSwitch(this)');
 								statusField.style.cursor = 'pointer';
+							}
+							
+							if(type == 'outlet' || type == 'relais' || type == 'switch')
+							{
+								statusField.setAttribute('onclick', 'controlSwitch(this)');
 							}
 
 							if(typeCounter[type] > 1)
@@ -402,8 +407,6 @@
 							{
 								const mouseDownHandler = function(e)
 								{
-									busy.push(this.field.getAttribute('id'));
-
 									setStatusPanel(this.field, this.type, this.counter, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
 
 									document.addEventListener('mousemove', mouseMoveHandler);
@@ -428,7 +431,7 @@
 									{
 										percent = 100;
 									}
-									
+
 									setStatusPanel(this.field, this.type, this.counter, percent, true);
 
 								}.bind({ field : statusField, type : type, counter : j });
@@ -455,11 +458,7 @@
 
 									Promise.all(promiseArraySlide).then(() => {
 
-										setTimeout(() => {
-
-											busy.splice(busy.indexOf(this.field.getAttribute('id')), 1);
-
-										}, 3000);
+										busy.splice(busy.indexOf(letters), 1);
 									});
 
 									document.removeEventListener('mousemove', mouseMoveHandler);
@@ -471,8 +470,6 @@
 
 								statusField.addEventListener('touchstart', function(e)
 								{
-									busy.push(this.field.getAttribute('id'));
-
 									getTouchPosition(this.field, this.type, this.counter, e, true);
 
 								}.bind({ field : statusField, type : type, counter : j }));
@@ -491,11 +488,11 @@
 
 									this.field.style.transition = '.3s ease-in-out';
 
-									setTimeout(() => {
-										
-										busy.splice(busy.indexOf(this.field.getAttribute('id')), 1);
-									
-									}, 3000);
+									Promise.all(promiseArraySlide).then(() => {
+
+										busy.splice(busy.indexOf(letters), 1);
+									});
+
 
 								}.bind({ field : statusField, type : type, counter : j }));
 							}
@@ -516,7 +513,7 @@
 									frame.style.marginBottom = '20px';
 								}
 
-								console.log('SET HEIGHT', height, frame);
+								console.debug('SET HEIGHT', height, frame);
 
 								canvas.setAttribute('class', 'canvas');
 								canvas.setAttribute('id', 'canvas-' + Essentials.typeToLetter(type) + j);
@@ -641,7 +638,7 @@
 					}
 					else
 					{
-						c--;
+						c -= typeCounter[type];
 					}
 				}
 
@@ -670,10 +667,16 @@
 					{
 						pingESP();
 					}
+
+					if(device.plugin.startsWith('SynTex'))
+					{
+						setupViewer();
+						setupController();
+					}
 					else
 					{
 						fetchState();
-						
+
 						setInterval(() => {
 
 							if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
@@ -681,7 +684,7 @@
 								fetchState();
 							}
 
-						}, device.plugin.startsWith('SynTex') ? 300 : 3000);
+						}, 3000);
 					}
 				});
 
@@ -711,60 +714,43 @@
 
 				window.promiseArraySlide = [];
 
-				async function setStatusPanel(statusField, type, counter, percent, send)
+				function setStatusPanel(statusField, type, counter, percent, send)
 				{
-					var color = 'rgb(60, 60, 80)';
+					var letters = Essentials.typeToLetter(type) + counter;
 
-					percent = Math.round(percent);
+					console.log('UPDATE STATUS PANEL', busy.includes(letters), busy);
 
-					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+					if(!busy.includes(letters))
 					{
-						color = 'hsl(' + temp[type + '0'].hue + ', ' + (temp[type + '0'].saturation * percent / 100) + '%, ' + parseInt(25 + percent / 2.5) + '%)';
-					}
-					else if(type == 'dimmer')
-					{
-						color = 'hsl(40, ' + parseInt(percent * 0.85) + '%, ' + parseInt(25 + percent * 0.5) + '%)';
-					}
-
-					var value = percent + '%';
-
-					if(percent == 0)
-					{
-						value = '%characteristics.boolean.inactive%';
-
-						color = 'rgb(60, 60, 80)';
-					}
-					else if(percent == 100)
-					{
-						value = '%characteristics.boolean.active%';
-					}
-
-					statusField.style.background = color;
-					statusField.value = value;
-
-					var url;
-
-					if(device.plugin.startsWith('SynTex'))
-					{
-						url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
-					
-						if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
+						if(!send)
 						{
-							url += '&type=' + type + '&counter=' + counter;
+							busy.push(letters);
 						}
-						else if(device.plugin == 'SynTexMagicHome')
-						{
-							url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
-						}
-					}
-					else if(getService(type, counter) != null && getService(type, counter).iid != null)
-					{
-						url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
-					}
 
-					if(url != null && !send)
-					{
-						promiseArraySlide.push(await Query.complexFetch(url, 10000, 1, {}, false));
+						percent = Math.round(percent);
+
+						if(device.plugin.startsWith('SynTex'))
+						{
+							if(!send)
+							{
+								DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : Essentials.typeToLetter(type) + counter, name : device.name, value : (percent > 0 ? true : false), brightness : percent  } }));
+							}
+							else
+							{
+								updateValues(letters, { value : (percent > 0 ? true : false), brightness : percent });
+							}
+						}
+						else if(getService(type, counter) != null && getService(type, counter).iid != null)
+						{
+							updateValues(letters, { value : (percent > 0 ? true : false), brightness : percent });
+
+							if(!send)
+							{
+								var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+						
+								promiseArraySlide.push(Query.complexFetch(url, 10000, 1, {}, false));
+							}
+						}
 					}
 				}
 
@@ -852,108 +838,38 @@
 
 				async function controlSwitch(button)
 				{
-					console.log(1, 'CONTROL SWITCH');
+					var type = button.getAttribute('id').split('-')[1];
+					var counter = button.getAttribute('id').split('-')[2];
+					var letters = Essentials.typeToLetter(type) + counter;
 
-					if(!busy.includes(button.getAttribute('id')))
+					if(!busy.includes(letters))
 					{
-						busy.push(button.getAttribute('id'));
-
 						var color = 'rgb(60, 60, 80)';
-						var counter = button.getAttribute('id').split('-')[2];
-						var type = button.getAttribute('id').split('-')[1];
 						var value = 'true';
 
-						if(temp[type + counter] != null)
+						busy.push(letters);
+
+						if(temp[Essentials.typeToLetter(type) + counter] != null)
 						{
-							value = temp[type + counter].state == true ? 'false' : 'true';
+							value = temp[Essentials.typeToLetter(type) + counter].value == true ? 'false' : 'true';
 						}
 
-						console.log(2, 'CONTROL SWITCH', value, temp[type + counter]);
-
-						var v = value == 'false' ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%';
-
-						if(button.value.toUpperCase().includes('[%characteristics.boolean.active%]') || button.value.toUpperCase().includes('[%characteristics.boolean.inactive%]'))
-						{
-							v = value == 'false' ? button.value.replace('[%characteristics.boolean.active%]', '[%characteristics.boolean.inactive%]') : button.value.replace('[%characteristics.boolean.inactive%]', '[%characteristics.boolean.active%]');
-						}
-
-						if(type == 'switch' || type == 'relais' || type == 'outlet')
-						{
-							if(value == 'true')
-							{
-								color = data[type].active.color;
-							}
-							else if(value == 'false')
-							{
-								color = data[type].inactive.color;
-							}
-						}
-						else if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-						{
-							if(value == 'true')
-							{
-								if(Math.round(temp[type + counter].brightness) < 100)
-								{
-									v = Math.round(temp[type + counter].brightness) + '%';
-								}
-
-								color = 'hsl(' + parseInt(temp[type + counter].hue) + ', ' + parseInt(temp[type + counter].saturation) + '%, ' + (25 + parseInt(temp[type + counter].brightness) / 2.5) + '%)';
-							}
-							else if(value == 'false')
-							{
-								color = 'rgb(60, 60, 80)';
-							}
-						}
-						else if(type == 'dimmer')
-						{
-							if(value == 'true')
-							{
-								color = 'hsl(40, ' + parseInt(temp[type + counter].brightness * 0.85) + '%, ' + (25 + parseInt(temp[type + counter].brightness) * 0.5) + '%)';
-								
-								if(Math.round(temp[type + counter].brightness) < 100)
-								{
-									v = Math.round(temp[type + counter].brightness) + '%';
-								}
-							}
-							else if(value == 'false')
-							{
-								color = 'rgb(60, 60, 80)';
-							}
-						}
-
-						button.style.backgroundColor = color;
-						button.value = v;
-
-						var url;
+						//updateValues(letters, { value : (value == 'true') });
 
 						if(device.plugin.startsWith('SynTex'))
 						{
-							url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id + '&value=' + value;
-						
-							if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
-							{
-								url += '&type=' + type + '&counter=' + counter;
-							}
-							else if(device.plugin == 'SynTexMagicHome')
-							{
-								url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
-							}
+							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : value  } }));
 						}
 						else if(getService(type, counter) != null && getService(type, counter).iid != null)
 						{
-							url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
-						}
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, counter).iid['state'] + '&value=' + value;
+						
+							if(await Query.complexFetch(url, 10000, 1, {}, false) == 'Success')
+							{
+								updateValues(letters, { value : (value == 'true') });
+							}
 
-						if(url != null && await Query.complexFetch(url, 10000, 1, {}, false) == 'Success')
-						{
-							temp[type + counter].state = (value == 'true');
-						}
-
-						const index = busy.indexOf(button.getAttribute('id'));
-
-						if(index > -1)
-						{
-							setTimeout(() => busy.splice(index, 1), 300);
+							busy.splice(busy.indexOf(letters), 1);
 						}
 					}
 				}
@@ -1104,7 +1020,7 @@
 					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, type : type, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch') ? 4 : 10, canvas : canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
 					// NOTE: Convert GraphData Values
-
+					
 					for(const i in graphData[letters].sectors)
 					{
 						var a = null;
@@ -1390,275 +1306,278 @@
 					return null;
 				}
 
-				async function fetchState()
+				function setupController()
+				{
+					window.DeviceController = Query.connectSocket('ws://' + window.location.hostname + ':' + getPort(device.plugin) + '/devices', (data) => {
+					
+						if(data instanceof Object)
+						{
+							var letters = Object.keys(data)[0];
+
+							updateValues(letters, data[letters]);
+
+							busy.splice(busy.indexOf(letters), 1);
+						}
+					});
+				}
+
+				function setupViewer()
+				{
+					window.DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + getPort(device.plugin) + '/devices', (data) => renderNewData(data), null, { line : 'getState', params : { id : device.id } });
+				}
+				
+				function fetchState()
+				{
+					Query.fetchURL('/serverside/characteristics?id=' + device.id, 10000).then((state) => renderNewData(JSON.parse(state)));
+				}
+
+				function renderNewData(data)
 				{
 					for(var i = 0; i < Object.keys(typeCounter).length; i++)
 					{
 						var type = Object.keys(typeCounter)[i];
 
-						if(type != 'lcd' && (type != 'statelessswitch' || services.length == 1))
+						for(var j = 0; j < typeCounter[type]; j++)
 						{
-							for(var j = 0; j < typeCounter[type]; j++)
+							var letters = Essentials.typeToLetter(type) + j;
+
+							if(temp[letters] == null)
 							{
-								if(!busy.includes('status-' + type + '-' + j))
+								temp[letters] = {};
+							}
+
+							if(data[letters] != null)
+							{
+								for(const j in data[letters])
 								{
-									var state = null, url = null;
-
-									if(device.plugin.startsWith('SynTex'))
+									if(temp == null || temp[letters][j] != data[letters][j])
 									{
-										url = window.location.protocol + '//' + window.location.hostname + ':' + getPort(device.plugin) + '/devices?id=' + device.id;
-									
-										if(device.plugin == 'SynTex' || device.plugin == 'SynTexWebHooks')
-										{
-											url += '&type=' + type + '&counter=' + j;
-										}
-										else if(device.plugin == 'SynTexMagicHome')
-										{
-											url += '&type=' + device.type; // FIXME: Not Included in Accessories Fetch
-										}
+										console.log('UPDATE', letters, data[letters]);
+
+										updateValues(letters, data[letters]);
+
+										temp[letters][j] = data[letters][j];
 									}
-									else if(getService(type, j) != null && getService(type, j).iid != null)
-									{
-										url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(type, j).iid['state'];
-									}
-
-									if(url != null)
-									{
-										state = await Query.fetchURL(url, 10000);
-									}
-
-									if(state != null && state != 'Error')
-									{
-										state = JSON.parse(state);
-									}
-
-									if(state != null && state[Essentials.typeToLetter(type) + j] != null)
-									{
-										state = state[Essentials.typeToLetter(type) + j];
-									}
-
-									if(temp[type + j] != null && (state.state != temp[type + j].state || state.hue != temp[type + j].hue || state.saturation != temp[type + j].saturation || state.brightness != temp[type + j].brightness))
-									{
-										var obj = { time : Math.round(new Date().getTime() / 1000) };
-
-										if(state.state != null)
-										{
-											obj.value = state.state.toString();
-										}
-										
-										if(state.hue != null)
-										{
-											obj.hue = state.hue.toString();
-										}
-
-										if(state.saturation != null)
-										{
-											obj.saturation = state.saturation.toString();
-										}
-
-										if(state.brightness != null)
-										{
-											obj.brightness = state.brightness.toString();
-										}
-
-										values[Essentials.typeToLetter(type) + j].push(obj);
-
-										if(device.plugin.startsWith('SynTex'))
-										{
-											calcValues(type, j);
-										}
-									}
-
-									if(state != null && state != 'Error' && state.state != null)
-									{
-										temp[type + j] = state;
-
-										if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-										{
-											if(state.state == true)
-											{
-												value = Math.round(state.brightness) + '%';
-
-												if(Math.round(state.brightness) == 100)
-												{
-													value = '%characteristics.boolean.active%';
-												}
-												
-												color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
-											}
-											else if(state.state == false)
-											{
-												value = '%characteristics.boolean.inactive%';
-												color = 'rgb(60, 60, 80)';
-											}
-										}
-										else if(type == 'dimmer')
-										{
-											if(state.state == false || state.brightness == 0)
-											{
-												value = '%characteristics.boolean.inactive%';
-												color = 'rgb(60, 60, 80)';
-											}
-											else if(state.state == true)
-											{
-												value = Math.round(state.brightness) + '%';
-
-												if(Math.round(state.brightness) == 100)
-												{
-													value = '%characteristics.boolean.active%';
-												}
-												
-												color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
-											}
-										}
-										else if(typeof state.state == 'boolean')
-										{
-											if(state.state)
-											{
-												value = data[type].active.text.toUpperCase();
-												color = data[type].active.color;
-											}
-											else
-											{
-												value = data[type].inactive.text.toUpperCase();
-												color = data[type].inactive.color;
-											}
-										}
-										else if(typeof state.state == 'number')
-										{
-											var color = 'rgb(60, 60, 80)', value = state.state;
-
-											if(type == 'temperature')
-											{
-												var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-												value = ((Math.round(state.state * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
-
-												if(state.state < 18)
-												{
-													color = 'hsl(220, 75%, 55%)';
-												}
-												else if(state.state > 26)
-												{
-													color = 'hsl(0, 75%, 55%)';
-												}
-												else
-												{
-													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-												}
-											}
-											else if(type == 'humidity')
-											{
-												var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-												if(state.state > 50)
-												{	
-													cRange = [280, 0];
-												}	
-
-												if(state.state < 45 || state.state > 55)	
-												{	
-													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-												}	
-												else	
-												{	
-													color = data[type].color;	
-												}
-											}
-											else if(type == 'light')
-											{
-												var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-												if(state.state > 1000)
-												{
-													color = data[type].color;
-												}
-												else
-												{
-													color = 'hsl(40, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-												}
-											}
-											else if(type == 'airquality')
-											{
-												var cRange = data[type].colorRange, vRange = data[type].valueRange;
-
-												value = Math.round(state.state) + ' ' + data[type].text.toUpperCase();
-
-												if(state.state > 4)
-												{
-													color = data[type].color;
-												}
-												else
-												{
-													color = 'hsl(' + ((state.state - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
-												}
-											}
-											else
-											{
-												value = state.state + ' ' + data[type].active.text.toUpperCase();
-											}
-										}
-
-										if(typeCounter[type] > 1)
-										{
-											var name = device.name + ' ' + type + ' ' + j;
-											var n = [];
-
-											for(var k = 0; k < device.services.length; k++)
-											{
-												if(device.services[k] instanceof Object && device.services[k].type == type)
-												{
-													n.push(device.services[k].name);
-												}
-											}
-
-											if(n.length > 0 && n[j] != null)
-											{
-												name = n[j];
-											}
-
-											if(name.includes(device.name))
-											{
-												name = name.replace(device.name, '');
-											}
-
-											if(!busy.includes('status-' + type + '-' + j))
-											{
-												document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
-											}
-										}
-										else if(!busy.includes('status-' + type + '-' + j))
-										{
-											document.getElementById('status-' + type + '-' + j).value = value;
-										}
-
-										if(!busy.includes('status-' + type + '-' + j))
-										{
-											document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
-										}
-									}
-									else if(type == 'statelessswitch')	
-									{	
-										document.getElementById('status-' + type + '-' + j).value = data[type].inactive.text.toUpperCase();	
-										document.getElementById('status-' + type + '-' + j).style.backgroundColor = data[type].inactive.color;	
-									}
-									else/* if(document.getElementById('status-' + type + '-' + j).value != 'AN' && document.getElementById('status-' + type + '-' + j).value != 'AUS')*/
-									{
-										document.getElementById('status-' + type + '-' + j).value = '---';
-										document.getElementById('status-' + type + '-' + j).style.backgroundColor = '';
-									}
-
-									console.log('STATE', type, state);
 								}
+							}
+							else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								updateValues(letters, data[letters]);
 							}
 						}
 					}
 				}
 
+				function updateValues(letters, state)
+				{
+					if(!busy.includes(letters))
+					{
+						var type = Essentials.letterToType(letters[0]), j = letters[1], color = '', value = '–––';
+
+						if(state != null)
+						{
+							if(type == 'rgb')
+							{
+								if(state.value == true)
+								{
+									value = Math.round(state.brightness) + '%';
+
+									if(Math.round(state.brightness) == 100)
+									{
+										value = '%characteristics.boolean.active%';
+									}
+									
+									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+								}
+								else if(state.value == false)
+								{
+									value = '%characteristics.boolean.inactive%';
+									color = 'rgb(60, 60, 80)';
+								}
+							}
+							else if(type == 'dimmer')
+							{
+								if(state.value == false || state.brightness == 0)
+								{
+									value = '%characteristics.boolean.inactive%';
+									color = 'rgb(60, 60, 80)';
+								}
+								else if(state.value == true)
+								{
+									value = Math.round(state.brightness) + '%';
+
+									if(Math.round(state.brightness) == 100)
+									{
+										value = '%characteristics.boolean.active%';
+									}
+									
+									color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
+								}
+							}
+							else if(typeof state.value == 'boolean')
+							{
+								if(state.value)
+								{
+									value = data[type].active.text.toUpperCase();
+									color = data[type].active.color;
+								}
+								else
+								{
+									value = data[type].inactive.text.toUpperCase();
+									color = data[type].inactive.color;
+								}
+							}
+							else if(typeof state.value == 'number')
+							{
+								color = 'rgb(60, 60, 80)', value = state.value;
+
+								if(type == 'temperature')
+								{
+									var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+									value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+
+									if(state.value < 18)
+									{
+										color = 'hsl(220, 75%, 55%)';
+									}
+									else if(state.value > 26)
+									{
+										color = 'hsl(0, 75%, 55%)';
+									}
+									else
+									{
+										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+									}
+								}
+								else if(type == 'humidity')
+								{
+									var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+									if(state.value > 50)
+									{	
+										cRange = [280, 0];
+									}	
+
+									if(state.value < 45 || state.value > 55)	
+									{	
+										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+									}	
+									else	
+									{	
+										color = data[type].color;	
+									}
+								}
+								else if(type == 'light')
+								{
+									var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+									if(state.value > 1000)
+									{
+										color = data[type].color;
+									}
+									else
+									{
+										color = 'hsl(40, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+									}
+								}
+								else if(type == 'airquality')
+								{
+									var cRange = data[type].colorRange, vRange = data[type].valueRange;
+
+									value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+
+									if(state.value > 4)
+									{
+										color = data[type].color;
+									}
+									else
+									{
+										color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
+									}
+								}
+								else
+								{
+									value = state.value + ' ' + data[type].active.text.toUpperCase();
+								}
+							}
+
+							if(values[letters] != null)
+							{
+								var obj = { time : Math.round(new Date().getTime() / 1000) };
+
+								if(state.value != null)
+								{
+									obj.value = state.value.toString();
+								}
+								
+								if(state.hue != null)
+								{
+									obj.hue = state.hue.toString();
+								}
+
+								if(state.saturation != null)
+								{
+									obj.saturation = state.saturation.toString();
+								}
+
+								if(state.brightness != null)
+								{
+									obj.brightness = state.brightness.toString();
+								}
+
+								values[letters].push(obj);
+
+								if(device.plugin.startsWith('SynTex'))
+								{
+									setTimeout(() => calcValues(type, j), 300);
+								}
+							}
+						}
+						else if(type == 'statelessswitch')	
+						{	
+							value = data[type].inactive.text.toUpperCase();
+							color = data[type].inactive.color;
+						}
+
+						if(typeCounter[type] > 1)
+						{
+							var name = device.name + ' ' + type + ' ' + j;
+							var n = [];
+
+							for(var k = 0; k < device.services.length; k++)
+							{
+								if(device.services[k] instanceof Object && device.services[k].type == type)
+								{
+									n.push(device.services[k].name);
+								}
+							}
+
+							if(n.length > 0 && n[j] != null)
+							{
+								name = n[j];
+							}
+
+							if(name.includes(device.name))
+							{
+								name = name.replace(device.name, '');
+							}
+
+							document.getElementById('status-' + type + '-' + j).value = name.toUpperCase() + ' [' + value + ']';
+						}
+						else
+						{
+							document.getElementById('status-' + type + '-' + j).value = value;
+						}
+
+						document.getElementById('status-' + type + '-' + j).style.backgroundColor = color;
+					}
+				}
+				
 				async function restartDevice(btn)
 				{
 					if(!restarting && !updating && !saving && !resetting)
@@ -1701,22 +1620,7 @@
 								
 								Essentials.removeOverlays(document.getElementById('restart-btn'), true);
 
-								setTimeout(function()
-								{
-									restarting = false;
-								}, 300);
-							}
-
-							for(var i = 0; i <= 4000; i += 1000)
-							{
-								setTimeout(function()
-								{
-									if(!updating && !saving && !resetting)
-									{
-										fetchState();
-									}
-
-								}, i);
+								setTimeout(() => { restarting = false }, 300);
 							}
 
 							setTimeout(function()
@@ -1732,8 +1636,8 @@
 
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
-								document.getElementsByClassName('control-panel')[i].style.backgroundColor = 'rgb(60, 60, 80)';
-								document.getElementsByClassName('control-panel')[i].value = '-';
+								document.getElementsByClassName('control-panel')[i].style.backgroundColor = '';
+								document.getElementsByClassName('control-panel')[i].value = '–––';
 							}
 
 							await Essentials.newTimeout(1000);
