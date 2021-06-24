@@ -661,92 +661,120 @@ class SynTexPlatform
 		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
 
 			var accessory = DeviceManager.getAccessory(urlParams.id);
-			var service = DeviceManager.getService(urlParams.id, urlParams.iid);
 
-			if(accessory != null && service != null && accessory.aid != null && service.iid != null && service.format != null)
+			if(accessory != null && accessory.aid != null)
 			{
 				var promiseArray = [], states = {};
 				
 				if(urlParams.value != null)
 				{
-					var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+					var service = DeviceManager.getService(urlParams.id, urlParams.iid);
 
-					for(const i in characteristics)
+					if(service != null && service.iid != null && service.format != null)
 					{
-						if(urlParams[characteristics[i]] != null)
+						var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+
+						for(const i in characteristics)
 						{
-							try
+							if(urlParams[characteristics[i]] != null)
 							{
-								states[characteristics[i] == 'value' ? 'state' : characteristics[i]] = JSON.parse(urlParams[characteristics[i]]);
-							}
-							catch(e)
-							{
-								console.error(e);
+								try
+								{
+									states[characteristics[i]] = JSON.parse(urlParams[characteristics[i]]);
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
 							}
 						}
-					}
 
-					for(const i in states)
+						for(const i in states)
+						{
+							var aid = accessory.aid, iid = service.iid[i], value = states[i];
+
+							const newPromise = new Promise((resolve) => axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
+
+								resolve(res.data == '');
+
+							}).catch((e) => { console.error(e); resolve(false) }));
+
+							promiseArray.push(newPromise);
+						}
+
+						Promise.all(promiseArray).then((result) => {
+
+							response.write(result.includes(false) ? 'Error' : 'Success');
+							response.end();
+						});
+					}
+					else
 					{
-						var aid = accessory.aid, iid = service.iid[i], value = states[i];
-
-						const newPromise = new Promise((resolve) => axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
-
-							resolve(res.data == '');
-
-						}).catch((e) => { console.error(e); resolve(false) }));
-
-						promiseArray.push(newPromise);
-					}
-
-					Promise.all(promiseArray).then((result) => {
-
-						response.write(result.includes(false) ? 'Error' : 'Success');
+						response.write('Error');
 						response.end();
-					});
+					}
 				}
 				else
 				{
-					for(const i in service.iid)
+					var services = DeviceManager.getServices(urlParams.id), typeCounter = {};
+
+					for(const i in services)
 					{
-						const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + service.iid[i]).then((res) => {
+						if(typeCounter[services[i].type] == null)
+						{
+							typeCounter[services[i].type] = 0;
+						}
+						else
+						{
+							typeCounter[services[i].type]++;
+						}
 
-							if(res.data != null
-							&& res.data.characteristics != null
-							&& res.data.characteristics[0] != null
-							&& res.data.characteristics[0].value != null)
-							{
-								if(service.format[i] == 'bool' || service.format[i] == 'boolean')
+						var letters = typeToLetter(services[i].type) + typeCounter[services[i].type];
+
+						for(const j in services[i].iid)
+						{
+							const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + services[i].iid[j]).then((res) => {
+
+								if(res.data != null
+								&& res.data.characteristics != null
+								&& res.data.characteristics[0] != null
+								&& res.data.characteristics[0].value != null)
 								{
-									if(res.data.characteristics[0].value == 1)
+									var key = j == 'state' ? 'value' : j;
+
+									if(states[letters] == null)
 									{
-										states[i] = true;
+										states[letters] = {};
 									}
-									else if(res.data.characteristics[0].value == 0)
+
+									if(services[i].format[j] == 'bool' || services[i].format[j] == 'boolean')
 									{
-										states[i] = false;
+										if(res.data.characteristics[0].value == 1)
+										{
+											states[letters][key] = true;
+										}
+										else if(res.data.characteristics[0].value == 0)
+										{
+											states[letters][key] = false;
+										}
+									}
+									else
+									{
+										states[letters][key] = res.data.characteristics[0].value;
 									}
 								}
-								else
-								{
-									states[i] = res.data.characteristics[0].value;
-								}
 
-								resolve(true);
-							}
-							else
-							{
-								resolve(false);
-							}
+								resolve();
 
-						}).catch((e) => { console.error(e); resolve(false) }));
+							}).catch((e) => console.error(e)));
 
-						promiseArray.push(newPromise);
+							promiseArray.push(newPromise);
+						}
 					}
 
-					Promise.all(promiseArray).then((result) => {
+					Promise.all(promiseArray).then(() => {
 
-						response.write(result.includes(true) ? JSON.stringify(states) : 'Error');
+						response.write(JSON.stringify(states));
 						response.end();
 					});
 				}
@@ -787,4 +815,12 @@ class SynTexPlatform
 			});
 		});
 	}
+}
+
+function typeToLetter(type)
+{
+	var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+	var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+	return letters[types.indexOf(type.toLowerCase())];
 }
