@@ -122,19 +122,7 @@ class GraphManager
 		ctx.lineWidth = 1.5;
 		ctx.setLineDash([]);
 
-		ctx.strokeStyle = 'rgb(50, 50, 70)';
-
-		ctx.beginPath();
-		ctx.moveTo(0, this.padding + (height / unterteilungen) * 0);
-		ctx.lineTo(width + this.padding * 2, this.padding + (height / unterteilungen) * 0)
-		ctx.stroke();
-
-		ctx.beginPath();
-		ctx.moveTo(0, this.padding + height);
-		ctx.lineTo(width + this.padding * 2, this.padding + height)
-		ctx.stroke();
-
-		ctx.strokeStyle = 'rgb(25, 25, 35)';
+		ctx.strokeStyle = 'rgb(25, 25, 40)';
 
 		var pattern = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000];
 		var lines, space, counter = 0;
@@ -164,11 +152,15 @@ class GraphManager
 
 		for(var i = 0; i < 25; i++)
 		{
-			ctx.strokeStyle = 'rgb(40, 40, 55)';
+			ctx.strokeStyle = 'rgb(25, 25, 40)';
 			
 			if(i == 24 || i == 0)
 			{
 				ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+			}
+			else if(i == 6 || i == 12 || i == 18)
+			{
+				ctx.strokeStyle = 'rgb(40, 40, 55)';
 			}
 			
 			ctx.beginPath();
@@ -176,6 +168,18 @@ class GraphManager
 			ctx.lineTo(i * (width + this.padding * 2) / 24, height + this.padding);
 			ctx.stroke();
 		}
+
+		ctx.strokeStyle = 'rgb(50, 50, 70)';
+
+		ctx.beginPath();
+		ctx.moveTo(0, this.padding + (height / unterteilungen) * 0);
+		ctx.lineTo(width + this.padding * 2, this.padding + (height / unterteilungen) * 0)
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(0, this.padding + height);
+		ctx.lineTo(width + this.padding * 2, this.padding + height)
+		ctx.stroke();
 	}
 
 	drawEvents(canvas, data, gradients)
