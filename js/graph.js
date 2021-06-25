@@ -324,7 +324,14 @@ function addValues(data, values)
 
 			if(data.format == 'boolean')
 			{
-				value = (value == true ? 1 : 0);
+				if(values[v].brightness != null && value == true)
+				{
+					value = JSON.parse(values[v].brightness) / 100;
+				}
+				else
+				{
+					value = (value == true ? 1 : 0);
+				}
 			}
 			else
 			{
@@ -464,20 +471,9 @@ function selectValues(data)
 				if(min != max)
 				{
 					data.values[data.values.length - 1] = first * 100;
-					data.values.push(last * 100);
 				}
-				else if(min == data.min)
-				{
-					min = (min - data.min) / (data.max - data.min) * 100;
-
-					data.values.push(min);
-				}
-				else if(max == data.max)
-				{
-					max = (max - data.min) / (data.max - data.min) * 100;
-
-					data.values.push(max);
-				}
+				
+				data.values.push(last * 100);
 			}
 
 			//data.values.push((100 - max < min) ? max : min);
