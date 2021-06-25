@@ -223,7 +223,7 @@ class GraphManager
 
 			for(var i = 0; i < data.length; i++)
 			{
-				ctx.strokeStyle = 'rgba(80, 80, 90, 0.5)';
+				ctx.strokeStyle = 'rgb(40, 40, 55)';
 				ctx.globalCompositeOperation = 'destination-over';
 
 				ctx.beginPath();
