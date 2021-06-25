@@ -122,18 +122,43 @@ class GraphManager
 		ctx.lineWidth = 1.5;
 		ctx.setLineDash([]);
 
-		for(var i = 0; i < unterteilungen + 1; i++) // IDEA: Auto Adjust Graph Grid to Data
+		ctx.strokeStyle = 'rgb(50, 50, 70)';
+
+		ctx.beginPath();
+		ctx.moveTo(0, this.padding + (height / unterteilungen) * 0);
+		ctx.lineTo(width + this.padding * 2, this.padding + (height / unterteilungen) * 0)
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(0, this.padding + height);
+		ctx.lineTo(width + this.padding * 2, this.padding + height)
+		ctx.stroke();
+
+		ctx.strokeStyle = 'rgb(25, 25, 35)';
+
+		var pattern = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000];
+		var lines, space, counter = 0;
+
+		do
 		{
-			ctx.strokeStyle = 'rgb(25, 25, 35)';
+			space = pattern[counter];
 
-			if(i == unterteilungen || i == 0)
+			lines = Math.ceil((Math.ceil(data.max) - Math.floor(data.min) - space) / space);
+
+			if(lines > 10)
 			{
-				ctx.strokeStyle = 'rgb(50, 50, 70)';
+				counter++;
 			}
+		}
+		while(lines > 10 && pattern[counter] != null);
+		
+		var start = Math.floor(data.min) - Math.floor(data.min) % space + space;
 
+		for(var i = start; i < Math.ceil(data.max); i += space)
+		{
 			ctx.beginPath();
-			ctx.moveTo(0, this.padding + (height / unterteilungen) * i);
-			ctx.lineTo(width + this.padding * 2, this.padding + (height / unterteilungen) * i)
+			ctx.moveTo(0, height - ((i - data.min) / (data.max - data.min) * 100) * height / 100 + this.padding);
+			ctx.lineTo(width + this.padding * 2, height - ((i - data.min) / (data.max - data.min) * 100) * height / 100 + this.padding)
 			ctx.stroke();
 		}
 
@@ -151,25 +176,6 @@ class GraphManager
 			ctx.lineTo(i * (width + this.padding * 2) / 24, height + this.padding);
 			ctx.stroke();
 		}
-		/*
-		if(data.length < 75)
-		{
-			for(var i = 0; i < data.length; i++)
-			{
-				ctx.strokeStyle = 'rgb(40, 40, 55)';
-				
-				if(i == data.length - 1 || i == 0)
-				{
-					ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-				}
-				
-				ctx.beginPath();
-				ctx.moveTo(i * (width + this.padding * 2) / (data.length - 1), this.padding);
-				ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height + this.padding);
-				ctx.stroke();
-			}
-		}
-		*/
 	}
 
 	drawEvents(canvas, data, gradients)
