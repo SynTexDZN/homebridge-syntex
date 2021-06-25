@@ -230,7 +230,6 @@ class GraphManager
 			for(var i = 0; i < data.length; i++)
 			{
 				ctx.strokeStyle = 'rgb(40, 40, 55)';
-				ctx.globalCompositeOperation = 'destination-over';
 
 				ctx.beginPath();
 				ctx.moveTo(0, height - data[i].percent * height / 100 + this.padding);
