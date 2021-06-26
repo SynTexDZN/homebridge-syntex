@@ -150,23 +150,28 @@ class GraphManager
 			ctx.stroke();
 		}
 
-		for(var i = 0; i < 25; i++)
+		var time = Math.round((new Date().getTime() - this.getHourCycle(6)) / 3600000 * (width + this.padding * 2) / 24);
+		var space = (width + this.padding * 2) / 24, counter = 0;
+
+		for(var i = 0 - time; i < (width + this.padding * 2); i += space)
 		{
 			ctx.strokeStyle = 'rgb(25, 25, 40)';
 			
-			if(i == 24 || i == 0)
+			if(counter == 0)
 			{
 				ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
 			}
-			else if(i == 6 || i == 12 || i == 18)
+			else if(counter == 6 || counter == 12 || counter == 18 || counter == 24)
 			{
 				ctx.strokeStyle = 'rgb(40, 40, 55)';
 			}
 			
 			ctx.beginPath();
-			ctx.moveTo(i * (width + this.padding * 2) / 24, this.padding);
-			ctx.lineTo(i * (width + this.padding * 2) / 24, height + this.padding);
+			ctx.moveTo(i, this.padding);
+			ctx.lineTo(i, height + this.padding);
 			ctx.stroke();
+
+			counter++;
 		}
 
 		ctx.strokeStyle = 'rgb(50, 50, 70)';
@@ -255,7 +260,7 @@ class GraphManager
 
 	convertActivity(data, values, automation, events)
 	{
-		data.nextRefresh = this.getCycleEnd(data.interval) + 60000 * data.interval;
+		data.nextRefresh = this.getMinuteCycle(data.interval) + 60000 * data.interval;
 		data.sectors = this.renderMinutesCycle(data.interval);
 		data.values = [];
 
@@ -279,7 +284,7 @@ class GraphManager
 		return data;
 	}
 
-	getCycleEnd(unterteilungenInMinuten, timeStamp)
+	getMinuteCycle(unterteilungenInMinuten, timeStamp)
 	{
 		var date = new Date();
 
@@ -293,9 +298,23 @@ class GraphManager
 		return Math.floor((date.getTime() + minutes) / 60000) * 60000 - unterteilungenInMinuten * 60000;
 	}
 
+	getHourCycle(unterteilungenInStunden, timeStamp)
+	{
+		var date = new Date();
+
+		if(timeStamp != null)
+		{
+			date = new Date(timeStamp);
+		}
+
+		var hours = (unterteilungenInStunden - date.getHours() % unterteilungenInStunden) * 3600000;
+
+		return Math.floor((date.getTime() + hours) / 3600000) * 3600000 - unterteilungenInStunden * 3600000;
+	}
+
 	renderMinutesCycle(unterteilungenInMinuten)
 	{
-		var data = {}, endTime = this.getCycleEnd(unterteilungenInMinuten);
+		var data = {}, endTime = this.getMinuteCycle(unterteilungenInMinuten);
 
 		for(var i = 0; i < 24 * 60 / unterteilungenInMinuten + 1; i++)
 		{
@@ -316,7 +335,7 @@ function addValues(data, values)
 	
 	for(const v in values)
 	{
-		var cycleTime = self.getCycleEnd(data.interval, parseInt(values[v].time) * 1000);
+		var cycleTime = self.getMinuteCycle(data.interval, parseInt(values[v].time) * 1000);
 
 		if(data.sectors[cycleTime] != null)
 		{
