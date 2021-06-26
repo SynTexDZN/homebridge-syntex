@@ -122,6 +122,7 @@
 				window.offlineCount = 0;
 				window.deviceCount = 0;
 				window.realDeviceCount = 0;
+				window.selectedGroup = (localStorage.getItem('device-group') || 'all');
 
 				window.serviceNames = {
 					airquality : '%accessories.airquality%',
@@ -541,7 +542,7 @@
 
 						setTimeout(() => {
 
-							switchGroup(localStorage.getItem('device-group') || 'all', true);
+							switchGroup(selectedGroup, true);
 
 							document.getElementById('devices').style.opacity = 1;
 
@@ -584,8 +585,6 @@
 
 				function setupToolbar()
 				{
-					var group = localStorage.getItem('device-group');
-
 					activationCounter = { active : 0, disabled : 0 };
 					deviceCount = 0;
 					realDeviceCount = 0;
@@ -594,7 +593,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].services != 'statelessswitch' && (group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase())))
+						if(devices[i].services != 'statelessswitch' && (selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase())))
 						{
 							deviceCount++;
 
@@ -644,7 +643,7 @@
 
 				async function switchGroup(group, init)
 				{
-					if(init || localStorage.getItem('device-group') != group)
+					if(init || selectedGroup != group)
 					{
 						localStorage.setItem('device-group', group);
 
@@ -738,7 +737,7 @@
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (localStorage.getItem('device-group') == 'all' || (devices[i].group != null && localStorage.getItem('device-group') == devices[i].group.toLowerCase())))
+							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase())))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
@@ -811,12 +810,11 @@
 							}
 						}
 
-						var group = localStorage.getItem('device-group');
 						var offlineCounter = 0;
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(group == 'all' || (devices[i].group != null && group == devices[i].group.toLowerCase()))
+							if(selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase()))
 							{
 								if(offline.includes(devices[i].ip))
 								{
@@ -915,7 +913,7 @@
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (localStorage.getItem('device-group') == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && localStorage.getItem('device-group') == updateDevices[i].getAttribute('group'))))
+						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (selectedGroup == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && selectedGroup == updateDevices[i].getAttribute('group'))))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -1068,7 +1066,7 @@
 
 					for(var i = 0; i < devices.length; i++)
 					{
-						if(devices[i].ip != null && real.includes(devices[i].ip) && (localStorage.getItem('device-group') == 'all' || (devices[i].group != null && localStorage.getItem('device-group') == devices[i].group.toLowerCase())))
+						if(devices[i].ip != null && real.includes(devices[i].ip) && (selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase())))
 						{
 							var settings = {
 								id: devices[i].id,
