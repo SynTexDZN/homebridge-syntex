@@ -396,7 +396,7 @@
 										column.style.marginTop = '3px';
 									}
 
-									category.innerHTML = j == 0 ? '%automation.if%' : automation[i].combination == 'ALL' ? '%automation.and%' : '%automation.or%';
+									category.innerHTML = j == 0 ? '%automation.if%' : (automation[i].combination == 'ALL' || automation[i].combination == null) ? '%automation.and%' : '%automation.or%';
 									category.className = 'primary';
 
 									column.appendChild(category);
