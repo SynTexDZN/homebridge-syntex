@@ -358,7 +358,7 @@
 
 							var button = document.createElement('button'), buttonHTML = '';
 
-							if(devices[i].plugin != null && devices[i].plugin.startsWith('SynTex'))
+							if(devices[i].plugin != null && devices[i].plugin.alias.startsWith('SynTex'))
 							{
 								button.setAttribute('version', devices[i].version);
 							}
@@ -739,13 +739,13 @@
 
 						for(var i = 0; i < devices.length; i++)
 						{
-							if(Presets.getPreset(devices[i].plugin) != null && Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase())))
+							if(Presets.getPreset(devices[i].plugin.alias) != null && Presets.getPreset(devices[i].plugin.alias).getRestartURL(devices[i]) != null && !offline.includes(devices[i].ip) && real.includes(devices[i].ip) && (selectedGroup == 'all' || (devices[i].group != null && selectedGroup == devices[i].group.toLowerCase())))
 							{
 								if(!restarting.includes(devices[i].ip))
 								{
 									restarting.push(devices[i].ip);
 
-									Query.complexFetch(Presets.getPreset(devices[i].plugin).getRestartURL(devices[i]), 20000, 1, {}, false).then(async function(result) {
+									Query.complexFetch(Presets.getPreset(devices[i].plugin.alias).getRestartURL(devices[i]), 20000, 1, {}, false).then(async function(result) {
 
 										restartCounter[result != null ? 'success' : 'error']++;
 
@@ -983,7 +983,7 @@
 							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
 							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
 
-							var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 20000, 1, {}, false);
+							var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin.alias).getUpdateURL(devices[device.getAttribute('device-id')], { type : Essentials.getType(devices[device.getAttribute('device-id')].services) }), 20000, 1, {}, false);
 
 							if(update == null)
 							{
@@ -1006,7 +1006,7 @@
 
 								await Essentials.newTimeout(3000);
 								
-								var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin).getVersionURL(devices[device.getAttribute('device-id')]), 3000, 20, {}, false);
+								var update = await Query.complexFetch(Presets.getPreset(devices[device.getAttribute('device-id')].plugin.alias).getVersionURL(devices[device.getAttribute('device-id')]), 3000, 20, {}, false);
 
 								if(update == device.getAttribute('newest-version'))
 								{

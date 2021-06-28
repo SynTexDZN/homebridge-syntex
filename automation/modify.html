@@ -606,7 +606,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
-							html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (t && services[i].id == t.id && services[i].letters == t.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -667,7 +667,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
-							html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (c && services[i].id == c.id && services[i].letters == c.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -728,7 +728,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
 						{
-							html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option ' + (r && services[i].id == r.id && services[i].letters == r.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -772,9 +772,9 @@
 				{
 					for(var i = 0; i < accessories.length; i++)
 					{
-						if(accessories[i].plugin == 'SynTex')
+						if(accessories[i].plugin.alias == 'SynTex')
 						{
-							accessories[i].plugin = 'SynTexWebHooks';
+							accessories[i].plugin.alias = 'SynTexWebHooks';
 						}
 
 						if(accessories[i].services == 'rgbw' || accessories[i].services == 'rgbww' || accessories[i].services == 'rgbcw')
@@ -797,7 +797,7 @@
 
 									counter.type = accessories[i].services[j].type;
 									
-									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin });
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin.alias });
 								}
 								else
 								{
@@ -808,7 +808,7 @@
 
 									counter.type = accessories[i].services[j];
 
-									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin });
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin.alias });
 								}
 
 								counter.count++;
@@ -816,11 +816,11 @@
 						}
 						else if(accessories[i].services instanceof Object)
 						{
-							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin });
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin.alias });
 						}
 						else
 						{
-							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin });
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin.alias });
 						}
 					}
 
