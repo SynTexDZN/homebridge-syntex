@@ -36,7 +36,7 @@ class SynTexPlatform
 
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config.port);
+			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config.port, PluginManager);
 
 			DeviceManager.getDevices().then((devices) => {
 

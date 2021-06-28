@@ -5,13 +5,14 @@ var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(configPath, Logger, storagePath, webHooksPort)
+	constructor(configPath, Logger, storagePath, webHooksPort, PluginManager)
 	{
 		config = store(configPath);
 		logger = Logger;
 
 		this.storage = store(storagePath);
 		this.webHooksPort = webHooksPort;
+		this.PluginManager = PluginManager;
 
 		this.reloading = false;
 
@@ -541,9 +542,13 @@ module.exports = class DeviceManager
 									{
 										for(const x in configOBJ.platforms[i].accessories[j])
 										{
-											if(x != 'id')
+											if(x != 'id' && x != 'plugin')
 											{
 												accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
+											}
+											else if(x == 'plugin')
+											{
+												accessories[k].plugin = { alias : configOBJ.platforms[i].accessories[j][x] };
 											}
 										}
 									}
@@ -555,16 +560,28 @@ module.exports = class DeviceManager
 
 				// OPTIMIZE: Check if Accessory is Deleted
 
+				var plugins = this.PluginManager.getPlugins();
+
 				for(const i in accessories)
 				{
 					if(accessories[i].plugin != null)
 					{
-						if(accessories[i].plugin == 'SynTexWebHooks' && accessories[i].ip != null)
+						for(const id in plugins)
 						{
-							accessories[i].plugin = 'SynTex';
+							if(plugins[id].alias == accessories[i].plugin.alias)
+							{
+								accessories[i].plugin.id = id;
+								accessories[i].plugin.name = plugins[id].name;
+								accessories[i].plugin.port = plugins[id].port;
+							}
 						}
 
-						if(accessories[i].plugin == 'SynTexMagicHome')
+						if(accessories[i].plugin.alias == 'SynTexWebHooks' && accessories[i].ip != null)
+						{
+							accessories[i].plugin.alias = 'SynTex';
+						}
+
+						if(accessories[i].plugin.alias == 'SynTexMagicHome')
 						{
 							if(accessories[i].type == 'light')
 							{
@@ -572,7 +589,7 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(accessories[i].plugin == 'SynTexMagicHome' || accessories[i].plugin == 'SynTexTuya' || accessories[i].plugin == 'SynTexWebHooks')
+						if(accessories[i].plugin.alias == 'SynTexMagicHome' || accessories[i].plugin.alias == 'SynTexTuya' || accessories[i].plugin.alias == 'SynTexWebHooks')
 						{
 							accessories[i].version = '0.0.0';
 						}
@@ -707,7 +724,14 @@ module.exports = class DeviceManager
 
 							if(accessoryJSON[i].services[j].type == '3E' && accessoryCharacteristics[letters] != null)
 							{
-								accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
+								if(accessoryCharacteristics[letters] == 'plugin')
+								{
+									accessoryArray[i].plugin = { alias : characteristic.value };
+								}
+								else
+								{
+									accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
+								}
 							}
 							else if(characteristics[accessoryJSON[i].services[j].type] != null)
 							{
