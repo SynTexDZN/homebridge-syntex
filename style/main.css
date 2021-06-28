@@ -10,6 +10,10 @@
 	--dark-layer-two: rgb(30, 30, 40);
 	--light-layer-one: rgb(220, 220, 230);
 	--light-layer-two: rgb(245, 245, 255);
+	--drop-shadow: 	0 0px 1px rgba(0, 0, 0, 0.04), 
+					0 1px 2px rgba(0, 0, 0, 0.06), 
+					0 2px 4px rgba(0, 0, 0, 0.08), 
+					0 4px 8px rgba(0, 0, 0, 0.10);
 }
 
 *
@@ -144,10 +148,7 @@ input, textarea, button, select, .select-selected, .select-items, .scrollarea
 	font-weight: 200;
 	letter-spacing: 3px;
 	box-sizing: border-box;
-	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
-				0 1px 2px rgba(0, 0, 0, 0.06), 
-				0 2px 4px rgba(0, 0, 0, 0.08), 
-				0 4px 8px rgba(0, 0, 0, 0.10);
+	box-shadow: var(--drop-shadow);
 	white-space: normal;
 	padding: 5px 20px;
 }
@@ -465,102 +466,188 @@ h2
 	background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
 }
 */
-.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange
-{
-	background: transparent;
-	color: var(--dark-layer-one)!important;
-}
-
 .gradient-red
 {
-	background-image: linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)!important;
+	--element-main-color: 350, 95%, 60%;
+	--element-second-color: 345, 85%, 55%;
 }
 
 .gradient-green
 {
-	background-image: linear-gradient(to right, hsl(145, 85%, 50%) 0%, hsl(165, 85%, 50%) 100%)!important;
+	--element-main-color: 165, 85%, 50%;
+	--element-second-color: 145, 85%, 50%;
 }
 
 .gradient-blue
 {
-	background-image: linear-gradient(to right, hsl(200, 85%, 55%) 0%, hsl(220, 95%, 60%) 100%)!important;
+	--element-main-color: 200, 85%, 55%;
+	--element-second-color: 220, 95%, 60%;
 }
 
 .gradient-cyan
 {
-	background-image: linear-gradient(to left, hsl(190, 85%, 50%) 0%, hsl(180, 95%, 60%) 100%)!important;
+	--element-main-color: 180, 95%, 60%;
+	--element-second-color: 190, 85%, 50%;
 }
 
 .gradient-blue-green
 {
-	background-image: linear-gradient(to left, hsl(170, 90%, 50%) 0%, hsl(205, 95%, 60%) 100%)!important;
+	--element-main-color: 205, 95%, 60%;
+	--element-second-color: 170, 90%, 50%;
 }
 
 .gradient-blue-purple
 {
-	background-image: linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(200, 85%, 55%) 100%)!important;
+	--element-main-color: 200, 85%, 55%;
+	--element-second-color: 270, 85%, 55%;
 }
 
 .gradient-purple
 {
-	background-image: linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)!important;
+	--element-main-color: 280, 95%, 60%;
+	--element-second-color: 270, 85%, 55%;
 }
 
 .gradient-yellow
 {
-	background-image: linear-gradient(to left, hsl(35, 85%, 55%) 0%, hsl(50, 95%, 60%) 100%)!important;
+	--element-main-color: 50, 95%, 60%;
+	--element-second-color: 35, 85%, 55%;
 }
 
 .gradient-orange
 {
-	background-image: linear-gradient(to left, hsl(12, 85%, 55%) 0%, hsl(18, 95%, 60%) 100%)!important;
+	--element-gradient: linear-gradient(to left, hsl(12, 85%, 55%) 0%, hsl(18, 95%, 60%) 100%);
+	--element-main-color: 18, 95%, 60%;
+	--element-second-color: 12, 85%, 55%;
 }
 
-.gradient-red.striped
+.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange
 {
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(345, 85%, 55%) 0%, hsl(350, 95%, 60%) 100%)!important;
+	--element-gradient: linear-gradient(to left, hsl(var(--element-second-color)) 0%, hsl(var(--element-main-color)) 100%);
+
+	color: var(--dark-layer-one)!important;
+	background: transparent;
+	background-image: var(--element-gradient)!important;
 }
 
-.gradient-green.striped
+.gradient-red.striped, .gradient-green.striped, .gradient-blue.striped, .gradient-cyan.striped, .gradient-blue-green.striped, .gradient-blue-purple.striped, .gradient-purple.striped, .gradient-yellow.striped
 {
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to right, hsl(145, 85%, 50%) 0%, hsl(165, 85%, 50%) 100%)!important;
+	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), var(--element-gradient)!important;
 }
 
-.gradient-blue.striped
+.gradient-red.important, .gradient-green.important, .gradient-blue.important, .gradient-cyan.important, .gradient-purple.important, .gradient-yellow.important, .gradient-orange.important
 {
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to right, hsl(200, 85%, 55%) 0%, hsl(220, 95%, 60%) 100%)!important;
+	box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75), var(--drop-shadow);
+
+	animation-name: animationImportantHSL;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
-.gradient-cyan.striped
+@keyframes animationImportantHSL
 {
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(190, 85%, 50%) 0%, hsl(180, 95%, 60%) 100%)!important;
+	0%
+	{
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75), var(--drop-shadow);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75), var(--drop-shadow);
+	}
+	70%
+	{
+		-moz-box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0), var(--drop-shadow);
+		box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0), var(--drop-shadow);
+	}
+	100%
+	{
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0), var(--drop-shadow);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0), var(--drop-shadow);
+	}
+}
+/*
+@keyframes animationImportantHSL {
+	0% {
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+	}
+	35% {
+		-moz-box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+		box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+	}
+	70% {
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+	}
+	100% {
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75);
+	}
 }
 
-.gradient-blue-green.striped
-{
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(170, 90%, 50%) 0%, hsl(205, 95%, 60%) 100%)!important;
+@keyframes animationImportantHSL {
+	0% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+	}
+	35% {
+		-moz-box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.25);
+		box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.25);
+	}
+	70% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+	}
+	100% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.75);
+	}
 }
 
-.gradient-blue-purple.striped
-{
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(200, 85%, 55%) 100%)!important;
+@keyframes animationImportantHSL {
+	0% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0);
+	}
+	25% {
+		-moz-box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.25);
+		box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.25);
+	}
+	50% {
+		-moz-box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.75);
+		box-shadow: 0 0 0 10px rgba(245, 245, 255, 0.75);
+	}
+	70% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.25);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0.25);
+	}
+	100% {
+		-moz-box-shadow: 0 0 0 0 rgba(245, 245, 255, 0);
+		box-shadow: 0 0 0 0 rgba(245, 245, 255, 0);
+	}
 }
 
-.gradient-purple.striped
-{
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(270, 85%, 55%) 0%, hsl(280, 95%, 60%) 100%)!important;
+@keyframes animationImportantHSL {
+	0% {
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0);
+	}
+	25% {
+		-moz-box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+		box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+	}
+	50% {
+		-moz-box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.5);
+		box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.5);
+	}
+	75% {
+		-moz-box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+		box-shadow: 0 0 0 10px hsla(var(--element-main-color), 0.25);
+	}
+	100% {
+		-moz-box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0);
+		box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0);
+	}
 }
-
-.gradient-yellow.striped
-{
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(35, 85%, 55%) 0%, hsl(50, 95%, 60%) 100%)!important;
-}
-
-.gradient-orange.striped
-{
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to left, hsl(12, 85%, 55%) 0%, hsl(18, 95%, 60%) 100%)!important;
-}
-
+*/
 .setup-png
 {
 	width: 200px;
@@ -661,10 +748,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	font-weight: 200;
 	letter-spacing: 3px;
 	box-sizing: border-box;
-	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
-				0 1px 2px rgba(0, 0, 0, 0.06), 
-				0 2px 4px rgba(0, 0, 0, 0.08), 
-				0 4px 8px rgba(0, 0, 0, 0.10);
+	box-shadow: var(--drop-shadow);
 	border-width: 0;    
 	color: var(--dark-layer-one);
 	padding: auto;
@@ -1163,7 +1247,7 @@ button img
 
 .update-status
 {
-	width: 160px;
+	min-width: 160px;
 	text-align: center;
 	height: 32px;
 	position: relative;
@@ -1429,10 +1513,7 @@ button img
 	padding: 20px;
 	opacity: 0;
 
-	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.04), 
-		0 1px 2px rgba(0, 0, 0, 0.06), 
-		0 2px 4px rgba(0, 0, 0, 0.08), 
-		0 4px 8px rgba(0, 0, 0, 0.10);
+	box-shadow: var(--drop-shadow);
 
 	border: 3px solid rgb(60, 60, 80);
 

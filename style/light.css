@@ -22,6 +22,14 @@
 		--dark-layer-two: rgb(245, 245, 255);
 		--light-layer-one: rgb(45, 45, 60);
 		--light-layer-two: rgb(60, 60, 80);
+		--drop-shadow: 	0 1px 1px -1px rgba(0, 0, 0, 0.2),
+						0 2px 2px -1px rgba(0, 0, 0, 0.15),
+						0 4px 4px -2px rgba(0, 0, 0, 0.15),
+						0 8px 8px -2px rgba(0, 0, 0, 0.1);
+		--drop-shadow-light: 	0 1px 1px -2px rgba(0, 0, 0, 0.2),
+								0 2px 2px -2px rgba(0, 0, 0, 0.15),
+								0 4px 4px -4px rgba(0, 0, 0, 0.15),
+								0 8px 8px -4px rgba(0, 0, 0, 0.1);
 	}
 
 	*
@@ -63,6 +71,40 @@
 	.gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan
 	{
 		color: var(--light-layer-one)!important;
+	}
+
+	.gradient-green, .gradient-yellow, .gradient-blue-green, .gradient-cyan
+	{
+		--drop-shadow: var(--drop-shadow-light);
+	}
+
+	.gradient-red.important, .gradient-green.important, .gradient-blue.important, .gradient-cyan.important, .gradient-purple.important, .gradient-yellow.important, .gradient-orange.important
+	{
+		box-shadow: 0 0 0 0 hsla(var(--element-second-color), 0.75), var(--drop-shadow);
+
+		animation-name: animationImportantHSL;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	@keyframes animationImportantHSL
+	{
+		0%
+		{
+			-moz-box-shadow: 0 0 0 0 hsla(var(--element-second-color), 0.75), var(--drop-shadow);
+			box-shadow: 0 0 0 0 hsla(var(--element-second-color), 0.75), var(--drop-shadow);
+		}
+		70%
+		{
+			-moz-box-shadow: 0 0 0 10px hsla(var(--element-second-color), 0), var(--drop-shadow);
+			box-shadow: 0 0 0 10px hsla(var(--element-second-color), 0), var(--drop-shadow);
+		}
+		100%
+		{
+			-moz-box-shadow: 0 0 0 0 hsla(var(--element-second-color), 0), var(--drop-shadow);
+			box-shadow: 0 0 0 0 hsla(var(--element-second-color), 0), var(--drop-shadow);
+		}
 	}
 
 	h2, input[type='button']:disabled, .outline, input, textarea, .select-selected, .scrollarea
@@ -178,14 +220,6 @@
 	{
 		background: var(--dark-layer-two);
 		border: 2px solid var(--light-layer-one);
-	}
-
-	input, textarea, button, .widget, .scrollarea
-	{
-		box-shadow: 0 1px 1px -1px rgba(0, 0, 0, 0.2),
-					0 2px 2px -1px rgba(0, 0, 0, 0.15),
-					0 4px 4px -2px rgba(0, 0, 0, 0.15),
-					0 8px 8px -2px rgba(0, 0, 0, 0.1);
 	}
 
 	.type-container
