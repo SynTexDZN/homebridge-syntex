@@ -1601,6 +1601,22 @@
 						{
 							console.log('ESP Gefunden');
 
+							for(const type in typeCounter)
+							{
+								if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+								{
+									for(var j = 0; j < typeCounter[type]; j++)
+									{
+										var letters = Essentials.typeToLetter(type) + j;
+
+										if(temp[letters] != null)
+										{
+											setControlPanel(letters, temp[letters]);
+										}
+									}
+								}
+							}
+
 							if(restarting == true)
 							{
 								Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
