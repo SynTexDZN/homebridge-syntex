@@ -271,11 +271,6 @@
 
 				checkConnection();
 
-				for(var i = 0; i < deviceElements.length; i++)
-				{
-					checkUpdates(deviceElements[i]);
-				}
-
 				setupToolbar();
 
 			</script>
@@ -405,6 +400,8 @@
 							document.getElementById(pattern.toLowerCase()).appendChild(button);
 							
 							temp = pattern;
+
+							checkUpdates(button);
 						}
 					}
 				}
