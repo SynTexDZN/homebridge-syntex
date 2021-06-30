@@ -352,11 +352,11 @@
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name + ' ' + automation[i].trigger[j].operation + ' ' + val;
+									row.innerHTML = '<div><img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name + ' ' + automation[i].trigger[j].operation + ' ' + val + '</div>';
 								}
 								else if(automation[i].trigger[j].url)
 								{
-									row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].trigger[j].url + '"';
+									row.innerHTML = '<div><img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].trigger[j].url + '"</div>';
 								}
 							
 								column.appendChild(row);
@@ -406,11 +406,11 @@
 											src = 'climate';
 										}
 
-										row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name + ' ' + automation[i].condition[j].operation + ' ' + val;
+										row.innerHTML = '<div><img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name + ' ' + automation[i].condition[j].operation + ' ' + val + '</div>';
 									}
 									else if(automation[i].condition[j].url)
 									{
-										row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].condition[j].url + '"';
+										row.innerHTML = '<div><img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].condition[j].url + '"</div>';
 									}
 
 									column.appendChild(row);
@@ -451,11 +451,11 @@
 										src = 'climate';
 									}
 
-									row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name + ' ' + automation[i].result[j].operation + ' ' + val;
+									row.innerHTML = '<div><img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name + ' ' + automation[i].result[j].operation + ' ' + val + '</div>';
 								}
 								else if(automation[i].result[j].url)
 								{
-									row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].result[j].url + '"';
+									row.innerHTML = '<div><img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].result[j].url + '"</div>';
 								}
 
 								column.appendChild(row);
