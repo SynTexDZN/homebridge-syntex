@@ -298,11 +298,11 @@ module.exports = class DeviceManager
 	{
 		return new Promise(async (resolve) => {
 
-			if(values.id != null)
+			if(values.id != null && device.plugin != null)
 			{
 				var needToSave = false;
 
-				if(values.name != null)
+				if(values.name != null && values.plugin.startsWith('SynTex'))
 				{
 					needToSave = this.setConfigValue(values.id, 'name', values.name);
 				}
@@ -320,7 +320,7 @@ module.exports = class DeviceManager
 						
 						for(const i in values)
 						{
-							if(i != 'id' && i != 'name')
+							if(i != 'id' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
 								obj[i] = values[i];
 							}
@@ -513,7 +513,7 @@ module.exports = class DeviceManager
 								{
 									for(const x in storageAccessories[j])
 									{
-										if(x != 'id')
+										if(x != 'id' && (x != 'name' || !accessories[i].plugin.alias.startsWith('SynTex')))
 										{
 											accessories[i][x] = storageAccessories[j][x];
 										}

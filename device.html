@@ -1742,7 +1742,8 @@
 					if(!saving && !updating && !restarting && !resetting)
 					{
 						var settings = {
-							id: device.id
+							id : device.id,
+							plugin : device.plugin.alias
 						};
 
 						var form = document.getElementById('settings-form');
@@ -1791,7 +1792,7 @@
 
 						if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
 						{
-							if(Presets.getPreset(device.plugin.alias).getRestartURL(device) != null)
+							if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getRestartURL(device) != null)
 							{
 								var overlays = {
 									root : document.getElementById('save-btn'),
@@ -1812,7 +1813,7 @@
 								
 							redirect();
 						}
-						else if(Presets.getPreset(device.plugin.alias).getPingURL(device))
+						else if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null)
 						{
 							saving = false;
 
