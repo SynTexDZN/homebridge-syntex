@@ -815,12 +815,18 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	background: rgb(40, 40, 55);
 	padding: 20px;
 	border-radius: 32px;
-	margin-top: 50px;
 }
 
 .type-container, #footer-content
 {
 	border: 1px solid rgba(245, 245, 255, .015);
+}
+
+#devices, #automation
+{
+	display: flex;
+	flex-direction: column;
+	grid-gap: 50px;
 }
 
 #devices button
@@ -1209,7 +1215,17 @@ button img
 
 .table .secondary
 {
+	display: flex;
+	flex-direction: column;
+	grid-gap: 11px;
 	padding: 11px;
+}
+
+.table .secondary div
+{
+	display: flex;
+	align-items: center;
+	flex-direction: row;
 }
 
 .table .icon
@@ -1217,8 +1233,24 @@ button img
 	height: 24px;
 	margin-right: 12px;
 	position: relative;
-	top: -17px;
-	margin-bottom: -24px;
+}
+
+.vertical-view .table
+{
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.vertical-view .table .column
+{
+	flex-direction: column;
+}
+
+.vertical-view .table .primary
+{
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
 }
 
 .wrapper

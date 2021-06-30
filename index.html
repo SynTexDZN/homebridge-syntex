@@ -259,7 +259,7 @@
 
 				sortDevices(true);
 
-				if(localStorage.getItem('view') == 'grid-view')
+				if(localStorage.getItem('devices-view') == 'grid-view')
 				{
 					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
 					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
@@ -709,7 +709,7 @@
 
 						document.getElementById('devices').className = '';
 
-						localStorage.setItem('view', 'list-view');
+						localStorage.setItem('devices-view', 'list-view');
 						btn.setAttribute('view', 'list');
 					}
 					else if(btn.getAttribute('view') == 'list')
@@ -719,7 +719,7 @@
 
 						document.getElementById('devices').className = 'grid-view';
 
-						localStorage.setItem('view', 'grid-view');
+						localStorage.setItem('devices-view', 'grid-view');
 						btn.setAttribute('view', 'grid');
 					}
 				}

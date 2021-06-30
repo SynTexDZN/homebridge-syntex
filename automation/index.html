@@ -45,6 +45,7 @@
 					<div id="toolbar" class="main" style="margin: 100px auto">
 						<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%automation.all_automations%" class="white" style="border-left: none; cursor: grab"></div>
 						<div style="display: flex; margin-top: 20px">
+							<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="horizontal"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list3.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list3.png"></button>
 							<div class="custom-select" style="width: 100%">
 								<select id="sort" onchange="sortAutomation()">
 									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
@@ -191,6 +192,14 @@
 					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
+				if(localStorage.getItem('automation-view') == 'vertical')
+				{
+					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
+					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
+					document.getElementById('toolbar').children[1].children[0].setAttribute('view', 'vertical');
+					document.getElementById('automation').className = 'vertical-view';
+				}
+
 				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
 
 					automation = JSON.parse(a);
@@ -277,6 +286,30 @@
 
 			</script>
 			<script>
+
+				function switchView(btn)
+				{
+					if(btn.getAttribute('view') == 'vertical')
+					{
+						btn.children[0].style.display = '';
+						btn.children[1].style.display = 'none';
+
+						document.getElementById('automation').className = '';
+
+						localStorage.setItem('automation-view', 'horizontal');
+						btn.setAttribute('view', 'horizontal');
+					}
+					else if(btn.getAttribute('view') == 'horizontal')
+					{
+						btn.children[0].style.display = 'none';
+						btn.children[1].style.display = '';
+
+						document.getElementById('automation').className = 'vertical-view';
+
+						localStorage.setItem('automation-view', 'vertical');
+						btn.setAttribute('view', 'vertical');
+					}
+				}
 
 				function sortAutomation(init)
 				{
@@ -549,15 +582,15 @@
 
 						column.appendChild(category);
 
-						var container = document.createElement('div')
+						var container = document.createElement('div');
+
+						container.className = 'secondary';
 
 						for(var j = 0; j < automation[i].trigger.length; j++)
 						{
 							var row = document.createElement('div');
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-							row.className = 'secondary';
 
 							if(!automation[i].trigger[j].url && automation[i].trigger[j].name && automation[i].trigger[j].letters)
 							{
@@ -595,15 +628,15 @@
 
 							column.appendChild(category);
 
-							var container = document.createElement('div')
+							var container = document.createElement('div');
+
+							container.className = 'secondary';
 
 							for(var j = 0; j < automation[i].condition.length; j++)
 							{
 								var row = document.createElement('div');
 
 								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-								row.className = 'secondary';
 
 								if(!automation[i].condition[j].url && automation[i].condition[j].name && automation[i].condition[j].letters)
 								{
@@ -640,15 +673,15 @@
 
 						column.appendChild(category);
 
-						var container = document.createElement('div')
+						var container = document.createElement('div');
+
+						container.className = 'secondary';
 
 						for(var j = 0; j < automation[i].result.length; j++)
 						{
 							var row = document.createElement('div');
 
 							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-							row.className = 'secondary';
 
 							if(!automation[i].result[j].url && automation[i].result[j].name && automation[i].result[j].letters)
 							{
