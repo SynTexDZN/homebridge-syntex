@@ -13,7 +13,7 @@ class GraphManager
 
 	drawGraph(canvas, data, gradients, points)
 	{
-		if(data.join().replace(/,/g,'').length > 0)
+		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d');
 			var height = canvas.offsetHeight - this.padding * 2 - 2;
@@ -46,10 +46,17 @@ class GraphManager
 					ctx.closePath();
 				}
 
-				ctx.beginPath();
-				ctx.moveTo((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding);
-				ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
-				ctx.stroke();
+				if(data[i - 1] != null)
+				{
+					ctx.beginPath();
+					ctx.moveTo((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding);
+				}
+				
+				if(data[i] != null)
+				{
+					ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+					ctx.stroke();
+				}
 
 				if(points)
 				{
@@ -70,7 +77,7 @@ class GraphManager
 
 	drawFill(canvas, data, gradients, smoothing)
 	{
-		if(data.join().replace(/,/g,'').length > 0)
+		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d');
 			var height = canvas.offsetHeight - this.padding * 2 - 2;
@@ -91,15 +98,18 @@ class GraphManager
 
 			for(var i = 1; i < data.length; i++)
 			{
-				if(smoothing == 0)
+				if(data[i] != null)
 				{
-					ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
-				}
-				else
-				{
-					var multiplicator = 100 / data.max * height / 100;
+					if(smoothing == 0)
+					{
+						ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+					}
+					else
+					{
+						var multiplicator = 100 / data.max * height / 100;
 
-					ctx.bezierCurveTo(i * (width + this.padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
+						ctx.bezierCurveTo(i * (width + this.padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
+					}
 				}
 			}
 
@@ -279,6 +289,7 @@ class GraphManager
 		data = getPercents(data);
 		data = getAutomations(data, automation, events);
 		data = selectValues(data);
+		data = startEndPoints(data);
 		data = smoothValues(data);
 
 		return data;
@@ -514,7 +525,7 @@ function selectValues(data)
 
 	// NOTE: Possible Past Interpretation
 	
-	if(data.format == 'boolean' && data.values[0] == null && data.values.join().replace(/,/g,'').length > 0)
+	if(data.format == 'boolean' && data.values[0] == null && data.values.join().replace(/,/g, '').length > 0)
 	{
 		data.values[0] = 0;
 		/*
@@ -541,6 +552,24 @@ function selectValues(data)
 	return data;
 }
 
+function startEndPoints(data)
+{
+	var last = getLastValue(data, data.values.length - 1);
+	var next = getNextValue(data, 0);
+
+	if(data.values[0] == null && next != null)
+	{
+		data.values[0] = next.value;
+	}
+
+	if(data.values[data.values.length - 1] == null && last != null)
+	{
+		data.values[data.values.length - 1] = last.value;
+	}
+
+	return data;
+}
+
 // NOTE: Smooth Values
 
 function smoothValues(data)
@@ -548,38 +577,14 @@ function smoothValues(data)
 	for(const i in data.values)
 	{
 		var last = getLastValue(data, parseInt(i));
-		var next = getNextValue(data, parseInt(i));
-		//var current = { index : parseInt(i), value : data.values[i] };
 
-		if(data.values[i] == null)
+		if(data.values[i] == null && data.values[parseInt(i) + 1] != null)
 		{
-			if(data.format != 'boolean' && data.letters[0] != 'F')
-			{
-				if(last != null && next != null/* && last.value > 1 && last.value < 99 && next.value > 1 && next.value < 99*/)
-				{
-					var diffIndex = next.index - last.index;
-					var diffValue = next.value - last.value;
-
-					data.values[i] = last.value + (diffValue / diffIndex);
-				}
-				else if(last != null)
-				{
-					data.values[i] = last.value;
-				}
-				else if(next != null)
-				{
-					data.values[i] = next.value;
-				}
-			}
-			else 
+			if(data.format == 'boolean' || data.letters[0] == 'F')
 			{
 				if(last != null)
 				{
 					data.values[i] = last.value;
-				}
-				else if(next != null)
-				{
-					data.values[i] = next.value;
 				}
 			}
 		}
