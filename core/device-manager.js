@@ -513,7 +513,7 @@ module.exports = class DeviceManager
 								{
 									for(const x in storageAccessories[j])
 									{
-										if(x != 'id' && (x != 'name' || !accessories[i].plugin.alias.startsWith('SynTex')))
+										if(x != 'id' && x != 'version' && x != 'ip' && (x != 'name' || !accessories[i].plugin.alias.startsWith('SynTex')))
 										{
 											accessories[i][x] = storageAccessories[j][x];
 										}
