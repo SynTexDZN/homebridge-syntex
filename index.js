@@ -593,19 +593,16 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/debug/beta', async (response, urlParams, content) => {
 
-			var obj = {
-				updates: JSON.stringify(UpdateManager.getLatestVersions()),
-				tag: 'latest'
-			};
+			var tag = 'latest';
 
 			var bridgeData = await DeviceManager.getBridgeStorage();
 
 			if(bridgeData != null && bridgeData.tag != null)
 			{
-				obj.tag = bridgeData.tag;
+				tag = bridgeData.tag;
 			}
 
-			response.write(HTMLQuery.sendValues(content, obj));
+			response.write(HTMLQuery.sendValue(content, 'tag', tag));
 			response.end();
 		});
 

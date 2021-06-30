@@ -878,7 +878,7 @@
 				
 				function checkUpdates(device)
 				{
-					var newestVersion = latestVersions['devices'][device.getAttribute('sensortype')];
+					var newestVersion = latestVersions[device.getAttribute('sensortype')];
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
 					{  
