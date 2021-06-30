@@ -160,6 +160,17 @@
 							logWindow.style.height = '700px';
 							logWindow.style.maxHeight = '700px';
 
+							logWindow.addEventListener('scroll', function (e) {
+
+								if(!this.logWindow.busy && this.logWindow.scrollTop >= this.logWindow.scrollHeight - this.logWindow.clientHeight - 100)
+								{
+									this.logWindow.busy = true;
+
+									renderLogs(this.id).then(() => { this.logWindow.busy = false });
+								}
+
+							}.bind({ logWindow, id }));
+
 							logContainer.appendChild(logTitle);
 							logContainer.appendChild(logWindow);
 
@@ -272,191 +283,159 @@
 
 				window.renderedLogs = { found : {}, visible : {} };
 
-				async function renderLogs(pluginID, clear, show)
+				function renderLogs(pluginID, clear, show)
 				{
-					var weekDays = ['%log.weekdays.sunday%', '%log.weekdays.monday%', '%log.weekdays.tuesday%', '%log.weekdays.wednesday%', '%log.weekdays.thursday%', '%log.weekdays.friday%', '%log.weekdays.saturday%'];
+					return new Promise(async (resolve) => {
 
-					if(clear)
-					{
-						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
-					}
+						var weekDays = ['%log.weekdays.sunday%', '%log.weekdays.monday%', '%log.weekdays.tuesday%', '%log.weekdays.wednesday%', '%log.weekdays.thursday%', '%log.weekdays.friday%', '%log.weekdays.saturday%'];
 
-					var loadMore = document.getElementById(pluginID).getElementsByClassName('load-more-btn')[0];
-
-					renderedLogs['found'][pluginID] = 0;
-
-					if(clear)
-					{
-						renderedLogs['visible'][pluginID] = 0;
-					}
-
-					if(loadMore != null)
-					{
-						loadMore.style.opacity = 0;
-
-						await Essentials.newTimeout(200);
-					}
-
-					var count = 0;
-
-					for(var i = renderedLogs['visible'][pluginID]; i < logs[plugins[pluginID].alias].length; i++)
-					{
-						if(logs[plugins[pluginID].alias][i] != null)
+						if(clear)
 						{
-							if(logs[plugins[pluginID].alias][i].split('[').length > 4)
-							{
-								try
-								{
-									var time = new Date(parseInt(logs[plugins[pluginID].alias][i].split('[')[1].split(']')[0]) * 1000);
-									var level = logs[plugins[pluginID].alias][i].split('[')[4].split(']')[0];
-									var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state%', '');
-								
-									if(time != null && level != null && message != null)
-									{
-										var displayEntry = false;
+							document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].innerHTML = '';
+						}
 
-										if(show != null)
+						renderedLogs['found'][pluginID] = 0;
+
+						if(clear)
+						{
+							renderedLogs['visible'][pluginID] = 0;
+						}
+
+						var count = 0;
+
+						for(var i = renderedLogs['visible'][pluginID]; i < logs[plugins[pluginID].alias].length; i++)
+						{
+							if(logs[plugins[pluginID].alias][i] != null)
+							{
+								if(logs[plugins[pluginID].alias][i].split('[').length > 4)
+								{
+									try
+									{
+										var time = new Date(parseInt(logs[plugins[pluginID].alias][i].split('[')[1].split(']')[0]) * 1000);
+										var level = logs[plugins[pluginID].alias][i].split('[')[4].split(']')[0];
+										var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state%', '');
+									
+										if(time != null && level != null && message != null)
 										{
-											if(show[0] != null && show[1] != null)
+											var displayEntry = false;
+
+											if(show != null)
 											{
-												if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+												if(show[0] != null && show[1] != null)
+												{
+													if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+													{
+														displayEntry = true;
+													}
+												}
+												else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+												{
+													displayEntry = true;
+												}
+												else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
 												{
 													displayEntry = true;
 												}
 											}
-											else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+											else
 											{
 												displayEntry = true;
 											}
-											else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
-											{
-												displayEntry = true;
-											}
-										}
-										else
-										{
-											displayEntry = true;
-										}
 
-										if(displayEntry)
-										{
-											renderedLogs['found'][pluginID]++;
-										}
-
-										if(count < 20)
-										{
 											if(displayEntry)
 											{
-												var log = document.createElement('div');
-
-												log.className = 'log';
-												log.style.transition = '.3s opacity ease-in-out';
-												log.style.opacity = 0;
-
-												if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID] + 1] != null) // FIXME: Is that correct?
-												{
-													log.style.marginBottom = '20px';
-												}
-
-												var logTitle = document.createElement('div');
-
-												logTitle.className = 'log-title';
-
-												if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
-												{
-													logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
-												}
-
-												var logTime = document.createElement('div');
-
-												logTime.innerHTML = weekDays[time.getDay()][0].toUpperCase() + weekDays[time.getDay()].substring(1, 2) + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
-												logTime.style.width = '140px';
-
-												logTitle.appendChild(logTime);
-												/*
-												var logLevel = document.createElement('div');
-
-												logLevel.innerHTML = level.toUpperCase();
-
-												logTitle.appendChild(logLevel);
-												*/
-												var logSender = document.createElement('div');
-
-												if(message.includes(' ( ') && message.includes(' )'))
-												{
-													logSender.innerHTML = message.split(' ( ')[(message.match(/ \( /g) || []).length].split(' )')[0]; //
-												}
-												else
-												{
-													logSender.innerHTML = '%general.bridge%';
-												}
-
-												logTitle.appendChild(logSender);
-
-												log.appendChild(logTitle);
-
-												var logMessage = document.createElement('div');
-
-												logMessage.className = 'log-message'
-												logMessage.innerHTML = message;
-
-												if(logSender.innerHTML != '%general.bridge%')
-												{
-													logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
-												}
-
-												log.appendChild(logMessage);
-												
-												if(clear)
-												{
-													document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
-												}
-												else
-												{
-													document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].insertBefore(log, loadMore);
-												}
-
-												setTimeout(function() {
-
-													this.log.style.opacity = 1;
-
-												}.bind({ log }), 20);
-
-												count++;
+												renderedLogs['found'][pluginID]++;
 											}
 
-											renderedLogs['visible'][pluginID]++;
+											if(count < 20)
+											{
+												if(displayEntry)
+												{
+													var log = document.createElement('div');
+
+													log.className = 'log';
+													log.style.transition = '.3s opacity ease-in-out';
+													log.style.opacity = 0;
+
+													if(logs[plugins[pluginID].alias][i + 1] != null)
+													{
+														log.style.marginBottom = '20px';
+													}
+
+													var logTitle = document.createElement('div');
+
+													logTitle.className = 'log-title';
+
+													if(document.getElementById(level.toLowerCase() + '-widget') != null && document.getElementById(level.toLowerCase() + '-widget').classList[1] != null)
+													{
+														logTitle.classList.add(document.getElementById(level.toLowerCase() + '-widget').classList[1]);
+													}
+
+													var logTime = document.createElement('div');
+
+													logTime.innerHTML = weekDays[time.getDay()][0].toUpperCase() + weekDays[time.getDay()].substring(1, 2) + ' ' + ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2);
+													logTime.style.width = '140px';
+
+													logTitle.appendChild(logTime);
+													/*
+													var logLevel = document.createElement('div');
+
+													logLevel.innerHTML = level.toUpperCase();
+
+													logTitle.appendChild(logLevel);
+													*/
+													var logSender = document.createElement('div');
+
+													if(message.includes(' ( ') && message.includes(' )'))
+													{
+														logSender.innerHTML = message.split(' ( ')[(message.match(/ \( /g) || []).length].split(' )')[0]; //
+													}
+													else
+													{
+														logSender.innerHTML = '%general.bridge%';
+													}
+
+													logTitle.appendChild(logSender);
+
+													log.appendChild(logTitle);
+
+													var logMessage = document.createElement('div');
+
+													logMessage.className = 'log-message'
+													logMessage.innerHTML = message;
+
+													if(logSender.innerHTML != '%general.bridge%')
+													{
+														logMessage.innerHTML = message.replace(' ( ' + logSender.innerHTML + ' )', '');
+													}
+
+													log.appendChild(logMessage);
+
+													document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(log);
+
+													setTimeout(function() {
+
+														this.log.style.opacity = 1;
+
+													}.bind({ log }), 20);
+
+													count++;
+												}
+
+												renderedLogs['visible'][pluginID]++;
+											}
 										}
 									}
-								}
-								catch(e)
-								{
-									console.error(e);
+									catch(e)
+									{
+										console.error(e);
+									}
 								}
 							}
 						}
-						else if(loadMore != null && show == null)
-						{
-							loadMore.parentElement.removeChild(loadMore);
-						}
-					}
 
-					if(loadMore != null)
-					{
-						loadMore.style.opacity = 1;
-					}
-
-					if(logs[plugins[pluginID].alias][renderedLogs['visible'][pluginID]] != null && logs[plugins[pluginID].alias].length > 20 && loadMore == null) // FIXME: Is that correct?
-					{
-						loadMore = document.createElement('div');
-
-						loadMore.innerHTML = '<button class="white" style="margin: 0 auto; min-width: 200px; width: 30%!important; padding: 5px 30px" onclick="renderLogs(' + "'" + pluginID + "'" + ')">%log.load_more%</button>';
-						loadMore.style.display = 'flex';
-						loadMore.style.transition = '.2s opacity ease-in-out';
-						loadMore.className = 'load-more-btn';
-
-						document.getElementById(pluginID).getElementsByClassName('scrollarea')[0].appendChild(loadMore);
-					}
+						resolve();
+					});
 				}
 
 			</script>
@@ -516,11 +495,6 @@
 							if(plugins[id].alias != null && logs[plugins[id].alias] != null)
 							{
 								promiseArray.push(renderLogs(id, true, search));
-
-								if(document.getElementById(id).getElementsByClassName('load-more-btn')[0] != null)
-								{
-									document.getElementById(id).getElementsByClassName('load-more-btn')[0].children[0].setAttribute('onclick', 'renderLogs(' + "'" + id + "'" + ', false, ' + JSON.stringify(search) + ')');
-								}
 							}
 						}
 
