@@ -298,7 +298,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(async (resolve) => {
 
-			if(values.id != null && device.plugin != null)
+			if(values.id != null && values.plugin != null)
 			{
 				var needToSave = false;
 
@@ -311,7 +311,7 @@ module.exports = class DeviceManager
 				{
 					await this.saveAccessories();
 				}
-				
+
 				this.storage.load(values.id, (err, obj) => {  
 
 					if(!obj || err)
@@ -320,7 +320,7 @@ module.exports = class DeviceManager
 						
 						for(const i in values)
 						{
-							if(i != 'id' && (i != 'name' || !values.plugin.startsWith('SynTex')))
+							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
 								obj[i] = values[i];
 							}
@@ -330,7 +330,7 @@ module.exports = class DeviceManager
 					{
 						for(const i in values)
 						{
-							if(i != 'id' && i != 'name')
+							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
 								obj[i] = values[i];
 							}
