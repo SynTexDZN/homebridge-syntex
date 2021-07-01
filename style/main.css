@@ -277,11 +277,6 @@ input[type='button']:not(.widget-left):not(.widget-right):disabled, input[type='
 	opacity: .5;
 }
 
-input[type='submit']
-{
-	background-image: linear-gradient(to right, hsl(150, 85%, 50%) 0%, hsl(170, 85%, 50%) 100%);
-}
-
 input[type='button'].white, button.white, .white
 {
 	background: var(--light-layer-two);
@@ -466,62 +461,67 @@ h2
 	background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0, 0, 0, .08) 0px, rgba(0, 0, 0, .08) 12px)!important;
 }
 */
+input[type='submit']
+{
+	--element-main-color: 145, 85%, 50%;
+	--element-second-color: 165, 85%, 50%;
+}
+
 .gradient-red
 {
-	--element-main-color: 350, 95%, 60%;
-	--element-second-color: 345, 85%, 55%;
+	--element-main-color: 350, 95%, 60%!important;
+	--element-second-color: 345, 85%, 55%!important;
 }
 
 .gradient-green
 {
-	--element-main-color: 165, 85%, 50%;
-	--element-second-color: 145, 85%, 50%;
+	--element-main-color: 165, 85%, 50%!important;
+	--element-second-color: 145, 85%, 50%!important;
 }
 
 .gradient-blue
 {
-	--element-main-color: 200, 85%, 55%;
-	--element-second-color: 220, 95%, 60%;
+	--element-main-color: 200, 85%, 55%!important;
+	--element-second-color: 220, 95%, 60%!important;
 }
 
 .gradient-cyan
 {
-	--element-main-color: 180, 95%, 60%;
-	--element-second-color: 190, 85%, 50%;
+	--element-main-color: 180, 95%, 60%!important;
+	--element-second-color: 190, 85%, 50%!important;
 }
 
 .gradient-blue-green
 {
-	--element-main-color: 205, 95%, 60%;
-	--element-second-color: 170, 90%, 50%;
+	--element-main-color: 205, 95%, 60%!important;
+	--element-second-color: 170, 90%, 50%!important;
 }
 
 .gradient-blue-purple
 {
-	--element-main-color: 200, 85%, 55%;
-	--element-second-color: 270, 85%, 55%;
+	--element-main-color: 200, 85%, 55%!important;
+	--element-second-color: 270, 85%, 55%!important;
 }
 
 .gradient-purple
 {
-	--element-main-color: 280, 95%, 60%;
-	--element-second-color: 270, 85%, 55%;
+	--element-main-color: 280, 95%, 60%!important;
+	--element-second-color: 270, 85%, 55%!important;
 }
 
 .gradient-yellow
 {
-	--element-main-color: 50, 95%, 60%;
-	--element-second-color: 35, 85%, 55%;
+	--element-main-color: 50, 95%, 60%!important;
+	--element-second-color: 35, 85%, 55%!important;
 }
 
 .gradient-orange
 {
-	--element-gradient: linear-gradient(to left, hsl(12, 85%, 55%) 0%, hsl(18, 95%, 60%) 100%);
-	--element-main-color: 18, 95%, 60%;
-	--element-second-color: 12, 85%, 55%;
+	--element-main-color: 18, 95%, 60%!important;
+	--element-second-color: 12, 85%, 55%!important;
 }
 
-.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange
+.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, input[type='submit']
 {
 	--element-gradient: linear-gradient(to left, hsl(var(--element-second-color)) 0%, hsl(var(--element-main-color)) 100%);
 
@@ -530,12 +530,12 @@ h2
 	background-image: var(--element-gradient)!important;
 }
 
-.gradient-red.striped, .gradient-green.striped, .gradient-blue.striped, .gradient-cyan.striped, .gradient-blue-green.striped, .gradient-blue-purple.striped, .gradient-purple.striped, .gradient-yellow.striped
+.gradient-red.striped, .gradient-green.striped, .gradient-blue.striped, .gradient-cyan.striped, .gradient-blue-green.striped, .gradient-blue-purple.striped, .gradient-purple.striped, .gradient-yellow.striped, input[type='submit'].striped
 {
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), var(--element-gradient)!important;
 }
 
-.gradient-red.important, .gradient-green.important, .gradient-blue.important, .gradient-cyan.important, .gradient-purple.important, .gradient-yellow.important, .gradient-orange.important
+.important
 {
 	box-shadow: 0 0 0 0 hsla(var(--element-main-color), 0.75), var(--drop-shadow);
 
