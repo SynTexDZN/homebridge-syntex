@@ -283,7 +283,7 @@
 
 				window.renderedLogs = { found : {}, visible : {} };
 
-				function renderLogs(pluginID, clear, show)
+				function renderLogs(pluginID, clear)
 				{
 					return new Promise(async (resolve) => {
 
@@ -319,20 +319,20 @@
 										{
 											var displayEntry = false;
 
-											if(show != null)
+											if(searchLevel != null || searchParams != null)
 											{
-												if(show[0] != null && show[1] != null)
+												if(searchLevel != null && searchParams != null)
 												{
-													if(show[0].toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(show[1].toUpperCase()))
+													if(searchLevel.toUpperCase() == level.toUpperCase() && message.toUpperCase().includes(searchParams.toUpperCase()))
 													{
 														displayEntry = true;
 													}
 												}
-												else if(show[0] != null && show[0].toUpperCase() == level.toUpperCase())
+												else if(searchLevel != null && searchLevel.toUpperCase() == level.toUpperCase())
 												{
 													displayEntry = true;
 												}
-												else if(show[1] != null && message.toUpperCase().includes(show[1].toUpperCase()))
+												else if(searchParams != null && message.toUpperCase().includes(searchParams.toUpperCase()))
 												{
 													displayEntry = true;
 												}
@@ -444,6 +444,8 @@
 				// NOTE: Search Log Messages
 
 				window.searching = false;
+				window.searchLevel = null;
+				window.searchParams = null;
 
 				async function searchLog()
 				{
@@ -488,13 +490,24 @@
 							search = [level, null];
 						}
 
+						if(search != null)
+						{
+							searchLevel = search[0];
+							searchParams = search[1];
+						}
+						else
+						{
+							searchLevel = null;
+							searchParams = null;
+						}
+
 						var promiseArray = [];
 
 						for(const id in plugins)
 						{
 							if(plugins[id].alias != null && logs[plugins[id].alias] != null)
 							{
-								promiseArray.push(renderLogs(id, true, search));
+								promiseArray.push(renderLogs(id, true));
 							}
 						}
 
