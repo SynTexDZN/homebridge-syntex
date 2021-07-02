@@ -640,7 +640,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!t || t.value != 'true' ? 'selected' : 'false') + ' value="false">' + (t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].inactive.text : '') + '</option><option ' + (t && t.value == 'true' ? 'selected' : 'true') + ' value="true">' + (t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].active.text : '') + '</select>';
+					value.innerHTML = '<select name="value"><option ' + (!t || t.value != 'true' ? 'selected' : 'false') + ' value="false">' + (t != null && t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].inactive.text : 'false') + '</option><option ' + (t && t.value == 'true' ? 'selected' : 'true') + ' value="true">' + (t != null && t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].active.text : 'true') + '</select>';
 				
 					trigger.appendChild(Replacer.createSelectMenu(value));
 
@@ -699,7 +699,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!c || c.value != 'true' ? 'selected' : 'false') + ' value="false">' + (c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].inactive.text : '') + '</option><option ' + (c && c.value == 'true' ? 'selected' : 'true') + ' value="true">' + (c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].active.text : '') + '</select>';
+					value.innerHTML = '<select name="value"><option ' + (!c || c.value != 'true' ? 'selected' : 'false') + ' value="false">' + (c != null && c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].inactive.text : 'false') + '</option><option ' + (c && c.value == 'true' ? 'selected' : 'true') + ' value="true">' + (c != null && c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].active.text : 'true') + '</select>';
 				
 					condition.appendChild(Replacer.createSelectMenu(value));
 
@@ -758,7 +758,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!r || r.value != 'true' ? 'selected' : '') + ' value="false">' + (r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].inactive.text : 'false') + '</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">' + (r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].active.text : 'true') + '</select>';
+					value.innerHTML = '<select name="value"><option ' + (!r || r.value != 'true' ? 'selected' : '') + ' value="false">' + (r != null && r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].inactive.text : 'false') + '</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">' + (r != null && r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].active.text : 'true') + '</select>';
 				
 					result.appendChild(Replacer.createSelectMenu(value));
 
