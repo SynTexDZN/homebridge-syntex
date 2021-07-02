@@ -730,6 +730,7 @@
 
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						select.parentElement.children[3].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[3].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
 
 						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
 
@@ -799,8 +800,6 @@
 					trigger.appendChild(Replacer.createSelectMenu(select));
 					trigger.appendChild(Replacer.createSelectMenu(operations));
 
-					updateOperation(select);
-
 					trigger.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
@@ -857,8 +856,6 @@
 
 					condition.appendChild(Replacer.createSelectMenu(select));
 					condition.appendChild(Replacer.createSelectMenu(operations));
-
-					updateOperation(select);
 
 					condition.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
@@ -1185,16 +1182,20 @@
 
 					if(option.getAttribute('type') == 'boolean')
 					{
+						select.parentElement.children[1].getElementsByClassName('select-selected')[0].innerHTML = '=';
+
 						for(var i = 0; i < options.length; i++)
 						{
 							if(options[i].innerHTML == '=')
 							{
+								select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex = i;
 								options[i].style.display = '';
-								options[i].click();
+								options[i].classList.add('same-as-selected');
 							}
 							else
 							{
 								options[i].style.display = 'none';
+								options[i].classList.remove('same-as-selected');
 							}
 						}
 					}

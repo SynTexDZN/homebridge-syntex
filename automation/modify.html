@@ -519,16 +519,20 @@
 
 					if(option.getAttribute('type') == 'boolean')
 					{
+						select.parentElement.children[1].getElementsByClassName('select-selected')[0].innerHTML = '=';
+
 						for(var i = 0; i < options.length; i++)
 						{
 							if(options[i].innerHTML == '=')
 							{
+								select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex = i;
 								options[i].style.display = '';
-								options[i].click();
+								options[i].classList.add('same-as-selected');
 							}
 							else
 							{
 								options[i].style.display = 'none';
+								options[i].classList.remove('same-as-selected');
 							}
 						}
 					}
@@ -557,6 +561,7 @@
 
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
 						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						select.parentElement.children[3].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[3].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
 
 						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
 
@@ -626,8 +631,6 @@
 					trigger.appendChild(Replacer.createSelectMenu(select));
 					trigger.appendChild(Replacer.createSelectMenu(operations));
 
-					updateOperation(select);
-
 					var letters = t != null ? t.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
 					trigger.innerHTML += '<input hidden value="' + (t ? t.url ? t.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? t.value : '0' : '') + '"' + (t && t.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
@@ -637,7 +640,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!t || t.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (t && t.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
+					value.innerHTML = '<select name="value"><option ' + (!t || t.value != 'true' ? 'selected' : 'false') + ' value="false">' + (t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].inactive.text : '') + '</option><option ' + (t && t.value == 'true' ? 'selected' : 'true') + ' value="true">' + (t.letters != null && getDataType(Essentials.letterToType(t.letters[0])) == 'boolean' ? data[Essentials.letterToType(t.letters[0])].active.text : '') + '</select>';
 				
 					trigger.appendChild(Replacer.createSelectMenu(value));
 
@@ -687,8 +690,6 @@
 					condition.appendChild(Replacer.createSelectMenu(select));
 					condition.appendChild(Replacer.createSelectMenu(operations));
 
-					updateOperation(select);
-
 					var letters = c != null ? c.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
 					condition.innerHTML += '<input hidden value="' + (c ? c.url ? c.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? c.value : '0' : '') + '"' + (c && c.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
@@ -698,7 +699,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!c || c.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (c && c.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
+					value.innerHTML = '<select name="value"><option ' + (!c || c.value != 'true' ? 'selected' : 'false') + ' value="false">' + (c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].inactive.text : '') + '</option><option ' + (c && c.value == 'true' ? 'selected' : 'true') + ' value="true">' + (c.letters != null && getDataType(Essentials.letterToType(c.letters[0])) == 'boolean' ? data[Essentials.letterToType(c.letters[0])].active.text : '') + '</select>';
 				
 					condition.appendChild(Replacer.createSelectMenu(value));
 
@@ -748,8 +749,6 @@
 					result.appendChild(Replacer.createSelectMenu(select));
 					result.appendChild(Replacer.createSelectMenu(operations));
 
-					updateOperation(select);
-
 					var letters = r != null ? r.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
 					result.innerHTML += '<input hidden value="' + (r ? r.url ? r.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? r.value : '0' : '') + '"' + (r && r.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="' + (!r || r.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
@@ -759,7 +758,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!r || r.value == 'false' ? 'selected' : '') + ' value="false">false</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">true</select>';
+					value.innerHTML = '<select name="value"><option ' + (!r || r.value != 'true' ? 'selected' : '') + ' value="false">' + (r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].inactive.text : 'false') + '</option><option ' + (r && r.value == 'true' ? 'selected' : '') + ' value="true">' + (r.letters != null && getDataType(Essentials.letterToType(r.letters[0])) == 'boolean' ? data[Essentials.letterToType(r.letters[0])].active.text : 'true') + '</select>';
 				
 					result.appendChild(Replacer.createSelectMenu(value));
 
