@@ -609,7 +609,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || (services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')))
 						{
 							html += '<option ' + (e && services[i].id == e.id && services[i].letters == e.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -633,7 +633,7 @@
 
 					var letters = e != null ? e.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
-					element.innerHTML += '<input hidden value="' + (e ? e.url ? e.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? e.value : '0' : '') + '"' + (e && e.url ? '' : ' pattern="[0-9-]+"') + ' placeholder="' + (!e || e.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
+					element.innerHTML += '<input value="' + (e ? e.url ? e.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? e.value : '' : '') + '" placeholder="' + (!e || e.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
 
