@@ -626,7 +626,7 @@
 					operations.style.marginRight = '20px';
 					operations.innerHTML = '<select name="operation"><option ' + (e && e.operation == '=' ? 'selected' : '') + ' value="=">=</option></select>';
 
-					if(type == 'result')
+					if(type != 'result')
 					{
 						operations.innerHTML = '<select name="operation"><option ' + (e && e.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (e && e.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (e && e.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
 					}
@@ -645,7 +645,7 @@
 					value.className = 'custom-select';
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option ' + (!e || e.value != 'true' ? 'selected' : 'false') + ' value="false">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? data[Essentials.letterToType(e.letters[0])].inactive.text : 'false') + '</option><option ' + (e && e.value == 'true' ? 'selected' : 'true') + ' value="true">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? data[Essentials.letterToType(e.letters[0])].active.text : 'true') + '</select>';
+					value.innerHTML = '<select name="value"><option ' + (!e || e.value != 'true' ? 'selected' : '') + ' value="false">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? data[Essentials.letterToType(e.letters[0])].inactive.text : 'false') + '</option><option ' + (e && e.value == 'true' ? 'selected' : '') + ' value="true">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? data[Essentials.letterToType(e.letters[0])].active.text : 'true') + '</select>';
 				
 					element.appendChild(Replacer.createSelectMenu(value));
 
