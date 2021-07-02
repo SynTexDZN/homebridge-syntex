@@ -542,7 +542,7 @@
 
 				function updateValueInput(select)
 				{
-					updateOperation(select);
+					updateOperation(select.parentElement.children[0]);
 
 					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
 					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
@@ -624,7 +624,12 @@
 					operations.className = 'custom-select';
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
-					operations.innerHTML = '<select name="operation"><option ' + (e && e.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (e && e.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (e && e.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+					operations.innerHTML = '<select name="operation"><option ' + (e && e.operation == '=' ? 'selected' : '') + ' value="=">=</option></select>';
+
+					if(type == 'result')
+					{
+						operations.innerHTML = '<select name="operation"><option ' + (e && e.operation == '=' ? 'selected' : '') + ' value="=">=</option><option ' + (e && e.operation == '>' ? 'selected' : '') + ' value=">">></option><option ' + (e && e.operation == '<' ? 'selected' : '') + ' value="<"><</option></select>';
+					}
 
 					document.getElementById('edit-' + type).insertBefore(element, document.getElementById('edit-' + type).getElementsByClassName('add-entry-button')[0]);
 				
