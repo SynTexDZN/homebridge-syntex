@@ -241,7 +241,7 @@
 						var addBtn = document.createElement('input');
 						
 						addBtn.setAttribute('value', '+');
-						addBtn.setAttribute('onclick', a[i] == 'trigger' ? 'addTrigger()' : a[i] == 'condition' ? 'addCondition()' : a[i] == 'result' ? 'addResult()' : '');
+						addBtn.setAttribute('onclick', 'addElement(' + "'" + a[i] + "'" + ')');
 						addBtn.setAttribute('type', 'button');
 						addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
 						addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
@@ -249,8 +249,8 @@
 						document.getElementById(a[i]).appendChild(addBtn);
 					}
 					
-					addTrigger();
-					addResult();
+					addElement('trigger');
+					addElement('result');
 				}
 
 				loadPluginData();
@@ -716,7 +716,7 @@
 
 				function updateValueInput(select)
 				{
-					updateOperation(select);
+					updateOperation(select.parentElement.children[0]);
 
 					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
 					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
@@ -759,9 +759,9 @@
 					}
 				}
 
-				function addTrigger()
+				function addElement(type)
 				{
-					var trigger = document.createElement('div');
+					var element = document.createElement('div');
 					var p = document.createElement('p');
 					var b = document.createElement('b');
 					var select = document.createElement('div');
@@ -772,127 +772,18 @@
 					select.style.marginRight = '20px';
 					select.style.width = '100%';
 
-					trigger.className = 'automation-device-entry';
+					element.className = 'automation-device-entry';
 
 					var html = '<select name="service" onchange="updateValueInput(this)">';
 
-					for(var i = 0; i < services.length; i++)
+					if(type == 'result')
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
-						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
-						}
+						html += '<option img="/img/link.png" type="url">%automation.open_link%</option>';
 					}
 
-					html += '</select>';
-
-					select.innerHTML = html;
-			   
-					var operations = document.createElement('div');
-
-					operations.className = 'custom-select';
-					operations.style.width = '100%';
-					operations.style.marginRight = '20px';
-					operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
-
-					document.getElementById('trigger').insertBefore(trigger, document.getElementById('trigger').getElementsByClassName('add-entry-button')[0]);
-				
-					trigger.appendChild(Replacer.createSelectMenu(select));
-					trigger.appendChild(Replacer.createSelectMenu(operations));
-
-					trigger.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
-
-					var value = document.createElement('div');
-
-					value.className = 'custom-select';
-					value.style.width = '100%';
-					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option selected value="false">false</option><option value="true">true</select>';
-
-					trigger.appendChild(Replacer.createSelectMenu(value));
-
-					updateValueInput(value);
-
-					trigger.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
-				}
-
-				function addCondition()
-				{
-					var condition = document.createElement('div');
-					var p = document.createElement('p');
-					var b = document.createElement('b');
-					var select = document.createElement('div');
-
-					b.innerHTML = '%automation.device%: ';
-
-					select.className = 'custom-select';
-					select.style.marginRight = '20px';
-					select.style.width = '100%';
-
-					condition.className = 'automation-device-entry';
-
-					var html = '<select name="service" onchange="updateValueInput(this)">';
-
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
-						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
-						}
-					}
-
-					html += '</select>';
-
-					select.innerHTML = html;
-
-					var operations = document.createElement('div');
-
-					operations.className = 'custom-select';
-					operations.style.width = '100%';
-					operations.style.marginRight = '20px';
-					operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
-			   
-					document.getElementById('condition').insertBefore(condition, document.getElementById('condition').getElementsByClassName('add-entry-button')[0]);
-
-					condition.appendChild(Replacer.createSelectMenu(select));
-					condition.appendChild(Replacer.createSelectMenu(operations));
-
-					condition.innerHTML += '<input hidden value="0" pattern="[0-9-]+" placeholder="%automation.number%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
-
-					var value = document.createElement('div');
-
-					value.className = 'custom-select';
-					value.style.width = '100%';
-					value.style.marginRight = '20px';
-					value.innerHTML = '<select name="value"><option selected value="false">false</option><option value="true">true</select>';
-
-					condition.appendChild(Replacer.createSelectMenu(value));
-
-					updateValueInput(value);
-
-					condition.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
-				}
-
-				function addResult()
-				{
-					var result = document.createElement('div');
-					var p = document.createElement('p');
-					var b = document.createElement('b');
-					var select = document.createElement('div');
-
-					b.innerHTML = '%automation.device%: ';
-
-					select.className = 'custom-select';
-					select.style.marginRight = '20px';
-					select.style.width = '100%';
-
-					result.className = 'automation-device-entry';
-
-					var html = '<select name="service" onchange="updateValueInput(this)"><option img="/img/link.png" type="url">%automation.open_link%</option>';
-
-					for(var i = 0; i < services.length; i++)
-					{
-						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed')
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || (services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')))
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -908,13 +799,18 @@
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
 					operations.innerHTML = '<select name="operation"><option value="=">=</option></select>';
-			   
-					document.getElementById('result').insertBefore(result, document.getElementById('result').getElementsByClassName('add-entry-button')[0]);
 
-					result.appendChild(Replacer.createSelectMenu(select));
-					result.appendChild(Replacer.createSelectMenu(operations));
+					if(type != 'result')
+					{
+						operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option></select>';
+					}
 
-					result.innerHTML += '<input placeholder="%automation.link%" title="%pattern.numbers_special%: -" required name="value" type="text" style="width: 100%!important">';
+					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
+				
+					element.appendChild(Replacer.createSelectMenu(select));
+					element.appendChild(Replacer.createSelectMenu(operations));
+
+					element.innerHTML += '<input placeholder="' + (type == 'result' ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 
 					var value = document.createElement('div');
 
@@ -922,12 +818,12 @@
 					value.style.width = '100%';
 					value.style.marginRight = '20px';
 					value.innerHTML = '<select name="value"><option selected value="false">false</option><option value="true">true</select>';
-				
-					value.setAttribute('hidden', '');
 
-					result.appendChild(Replacer.createSelectMenu(value));
+					element.appendChild(Replacer.createSelectMenu(value));
 
-					result.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+					updateValueInput(value);
+
+					element.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
 				}
 
 				async function createAutomation()
@@ -1180,7 +1076,7 @@
 					var option = select.getElementsByTagName('select')[0].children[o];
 					var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
 
-					if(option.getAttribute('type') == 'boolean')
+					if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'url')
 					{
 						select.parentElement.children[1].getElementsByClassName('select-selected')[0].innerHTML = '=';
 
