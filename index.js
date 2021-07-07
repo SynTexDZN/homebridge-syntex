@@ -13,26 +13,30 @@ class SynTexPlatform
 {
 	constructor(log, config, api)
 	{
-		this.cacheDirectory = config['cacheDirectory'] || api.user.storagePath() + '/SynTex/data';
 		this.logDirectory = config['logDirectory'];
-		this.automationDirectory = config['automationDirectory'];
-		this.port = config['port'] || 1711;
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
-
-		this.config = store(api.user.storagePath());
-
+		
 		this.logger = new logger(pluginName, this.logDirectory, this.debug, this.language);
+		
+		this.port = config['port'] || 1711;
+		
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
-
+		
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 		this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
 		HTMLQuery = new HTMLQuery(this.logger);
+
+		this.automationDirectory = config['automationDirectory'];
 		
 		Automation.SETUP(this.logger, this.automationDirectory);
 
+		this.config = store(api.user.storagePath());
+
 		PluginManager = new PluginManager(this.config, this.logger, 600);
+
+		this.cacheDirectory = config['cacheDirectory'] || api.user.storagePath() + '/SynTex/data';
 
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
