@@ -2,9 +2,10 @@ const axios = require('axios');
 
 module.exports = class UpdateManager
 {
-	constructor(interval, config)
+	constructor(interval, config, logger)
 	{
 		this.config = config;
+		this.logger = logger;
 		this.newestDeviceVersions = {};
 
 		this.fetchDeviceUpdates(interval * 1000);
@@ -30,7 +31,7 @@ module.exports = class UpdateManager
 
 				resolve(true);
 
-			}).catch((e) => { console.error(e); resolve(false) });
+			}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', '%device_versions_read_error%! ' + e); resolve(false) });
 		});
 	}
 

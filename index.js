@@ -49,7 +49,7 @@ class SynTexPlatform
 					OfflineManager = new OfflineManager(this.logger, devices);
 				}
 
-				UpdateManager = new UpdateManager(600, this.config);
+				UpdateManager = new UpdateManager(600, this.config, this.logger);
 
 				this.initWebServer();
 
@@ -286,7 +286,7 @@ class SynTexPlatform
 							}
 							catch(e)
 							{
-								console.error(e);
+								this.logger.log('error', 'bridge', 'Bridge', 'Log [' + activity[i] + '] %parse_error%! ' + e);
 							}
 						}
 					}
@@ -685,7 +685,7 @@ class SynTexPlatform
 								}
 								catch(e)
 								{
-									console.error(e);
+									this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + characteristics[i] + '] %parse_error%! ' + e);
 								}
 							}
 						}
@@ -698,7 +698,7 @@ class SynTexPlatform
 
 								resolve(res.data == '');
 
-							}).catch((e) => { console.error(e); resolve(false) }));
+							}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + i + '] %update_error%! ' + e); resolve(false) }));
 
 							promiseArray.push(newPromise);
 						}
@@ -767,7 +767,7 @@ class SynTexPlatform
 
 								resolve();
 
-							}).catch((e) => console.error(e)));
+							}).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%! ' + e)));
 
 							promiseArray.push(newPromise);
 						}
