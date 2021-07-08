@@ -488,10 +488,15 @@ class EssentialFeatures
 		{
 			submit.classList.add('pulse');
 		}
-		else
+
+		submit.onanimationiteration = function()
 		{
-			submit.classList.remove('pulse');
-		}
+			if(this.changeCounter.length == 0)
+			{
+ 				this.button.classList.remove('pulse');
+			}
+
+		}.bind({ button : submit, changeCounter : this.changeCounter });
 	}
 }
 
