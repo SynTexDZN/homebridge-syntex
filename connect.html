@@ -215,6 +215,7 @@
 						if(document.getElementById('scan-btn') != null)
 						{
 							document.getElementById('scan-btn').value = '%general.search%';
+							document.getElementById('scan-btn').classList.remove('pulse');
 						}
 
 						document.getElementById('networks').innerHTML = '<p class="loading-loop">%general.loading% ..</p>';
@@ -270,11 +271,21 @@
 						}
 						else if(network == null)
 						{
-							document.getElementById('networks').innerHTML = "<p>%connect.device_connection_error%</p>";
+							document.getElementById('networks').innerHTML = '<p>%connect.device_connection_error%</p>';
+						
+							if(document.getElementById('scan-btn') != null)
+							{
+								document.getElementById('scan-btn').classList.add('pulse');
+							}
 						}
 						else
 						{
-							document.getElementById('networks').innerHTML = "<p>%connect.no_networks%<br>%connect.press_search_button%</p>";
+							document.getElementById('networks').innerHTML = '<p>%connect.no_networks%<br>%connect.press_search_button%</p>';
+
+							if(document.getElementById('scan-btn') != null)
+							{
+								document.getElementById('scan-btn').classList.add('pulse');
+							}
 						}
 
 						if(document.getElementById('scan-btn') != null)

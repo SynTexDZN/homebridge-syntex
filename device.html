@@ -65,8 +65,8 @@
 			<div id="settings" style="display: none; transition: .2s ease-in-out">
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
-						<p style="margin-top: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+						<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 					</div>
 					<input id="reset-btn" type="button" value="%device.reset_device%" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
@@ -315,19 +315,19 @@
 				{
 					if(settings[i].index == 'interval' && !services.includes('motion'))
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="%pattern.numbers%" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" pattern="[0-9]+" title="%pattern.numbers%" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
 					}
 					else if(settings[i].index == 'interval' && services.includes('motion'))
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input pattern="[0-9]+" title="%pattern.numbers%" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" pattern="[0-9]+" title="%pattern.numbers%" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
 					}
 					else if(settings[i].index == 'led' || settings[i].index == 'active')
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px"></b></p>';
 					}
 					else
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
 					}
 				}
 

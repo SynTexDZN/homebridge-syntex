@@ -14,7 +14,7 @@
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<input type="button" value="%menu.back_to_bridge%" style="margin-right: 20px" onclick="Essentials.leavePage(' + "'/bridge'" + ')"><div style="width: 100%"><input id="config-save" value="%general.save%" style="background-color: hsl(200, 85%, 55%)" type="button" onclick="saveConfig(this)"></div>';
+				main.innerHTML = '<input type="button" value="%menu.back_to_bridge%" style="margin-right: 20px" onclick="Essentials.leavePage(' + "'/bridge'" + ')"><div style="width: 100%"><button id="config-save" class="gradient-blue gradient-overlay" onclick="saveConfig(this)">%general.save%</button></div>';
 
 				PageManager.setFooter(main);
 
@@ -23,12 +23,45 @@
 				second.style.display = 'flex';
 				second.style.marginBottom = '20px';
 
-				second.innerHTML = '<input value="%debug.config.copy_all%" type="button" style="margin-right: 20px" onclick="copyConfig()"><div style="width: 100%"><input id="config-restart" value="%debug.config.restart%" type="button" onclick="restartBridge(this)"></div>';
+				second.innerHTML = '<input value="%debug.config.copy_all%" type="button" style="margin-right: 20px" onclick="copyConfig()"><div style="width: 100%"><button id="config-restart" class="gradient-overlay" onclick="restartBridge(this)">%debug.config.restart%</div>';
 
 				PageManager.addFooter(second);
 				PageManager.showFooter();
 
 			</script>
+			<style>
+
+				.gradient-overlay
+				{
+					position: relative;
+					z-index: 1;
+				}
+
+				.gradient-overlay::before
+				{
+					position: absolute;
+					content: "";
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					background-image: linear-gradient(
+						to right,
+						hsl(350, 95%, 60%),
+						hsl(345, 85%, 55%)
+					);
+					z-index: -1;
+					transition: opacity .2s linear;
+					opacity: 0;
+					border-radius: 16px;
+				}
+
+				.gradient-overlay.red::before
+				{
+					opacity: 1!important;
+				}
+
+			</style>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
@@ -43,7 +76,7 @@
 					<input class="white" type="button" value="%menu.beta%" onclick="Essentials.leavePage('/debug/beta')" style="text-transform: uppercase">
 				</div>
 				<p style="margin: 100px 0">%debug.config.description%</p>
-				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" onchange="validateJSON(this)">%general.loading% ..</textarea>
+				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" oninput="validateJSON(this)">%general.loading% ..</textarea>
 			</div>
 			<script type="module">
 
@@ -95,7 +128,7 @@
 
 							await Essentials.newTimeout(1500);
 
-							document.getElementById('config-restart').style.backgroundColor = 'hsl(350, 75%, 55%)';
+							document.getElementById('config-restart').classList.add('red');
 
 							await Essentials.newTimeout(1500);
 
@@ -122,7 +155,7 @@
 						{
 							await Essentials.newTimeout(3000);
 
-							document.getElementById('config-restart').style.backgroundColor = '';
+							document.getElementById('config-restart').classList.remove('red');
 
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
@@ -150,7 +183,16 @@
 						{
 							JSON.parse(textarea.value);
 
-							document.getElementById('config-save').style.backgroundColor = 'hsl(200, 85%, 55%)';
+							document.getElementById('config-save').classList.remove('red');
+
+							if(textarea.value != JSON.stringify(JSON.parse(configJSON), null, '\t'))
+							{
+								document.getElementById('config-save').classList.add('pulse');
+							}
+							else
+							{
+								document.getElementById('config-save').classList.remove('pulse');
+							}
 
 							return true;
 						}
@@ -161,7 +203,8 @@
 					}
 					catch(e)
 					{
-						document.getElementById('config-save').style.backgroundColor = 'hsl(350, 75%, 55%)';
+						document.getElementById('config-save').classList.add('red');
+						document.getElementById('config-save').classList.remove('pulse');
 
 						console.error(e);
 

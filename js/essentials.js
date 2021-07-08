@@ -21,6 +21,7 @@ class EssentialFeatures
 		this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 		this.overlays = [];
+		this.changeCounter = [];
 
 		this.pageLoading = false;
 		this.pageTimer = false;
@@ -460,9 +461,45 @@ class EssentialFeatures
 			}
 			while(!success && !notFound);
 
+			this.changeCounter = [];
 			this.pageLoading = false;
 		}
 	}
+
+	promoteSubmitButton(input, id)
+	{
+		var submit = document.getElementById(id), orginalValue = input.getAttribute('value'), inputID = getID(input);
+
+		if(input.hasAttribute('orginal-value'))
+		{
+			orginalValue = input.getAttribute('orginal-value');
+		}
+
+		if(input.value != orginalValue && !this.changeCounter.includes(inputID))
+		{
+			this.changeCounter.push(inputID);
+		}
+		else if(input.value == orginalValue)
+		{
+			this.changeCounter.splice(this.changeCounter.indexOf(inputID), 1);
+		}
+
+		if(this.changeCounter.length > 0)
+		{
+			submit.classList.add('pulse');
+		}
+		else
+		{
+			submit.classList.remove('pulse');
+		}
+	}
+}
+
+var idCounter = new Date().getTime();
+
+function getID(element)
+{
+	return (element.id) ? element.id : (element.id = 'unique-' + idCounter++);
 }
 
 function onlySwitches(services)

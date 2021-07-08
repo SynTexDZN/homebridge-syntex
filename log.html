@@ -58,8 +58,8 @@
 			</div>
 			<form onsubmit="event.preventDefault()" class="main" style="margin-bottom: 32px">
 				<div style="margin-bottom: 20px; display: flex">
-					<input id="search-params" type="text" placeholder="%log.search_parameter%" style="margin-right: 20px" required>
-					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="%general.search%" onclick="if(document.getElementById('search-params').value != '') searchLog()" style="max-width: 200px">
+					<input id="search-params" oninput="if (this.value != '' && this.value != searchParams) { document.getElementById('search-btn').classList.add('pulse') } else { document.getElementById('search-btn').classList.remove('pulse') }" type="text" placeholder="%log.search_parameter%" style="margin-right: 20px" required>
+					<input id="search-btn" class="gradient-blue loading-loop" type="submit" value="%general.search%" onclick="if (document.getElementById('search-params').value != '') { searchLog() }" style="max-width: 200px">
 				</div>
 				<div style="display: flex" id="filter">
 					<div class="custom-select" style="width: 100%; margin-right: 20px">
@@ -458,6 +458,7 @@
 						searching = true;
 
 						document.getElementById('search-btn').value = '%general.searching% ..';
+						document.getElementById('search-btn').classList.remove('pulse');
 
 						for(const id in plugins)
 						{
@@ -550,6 +551,7 @@
 					if(!clear)
 					{
 						document.getElementById('search-btn').value = '%general.searching% ..';
+						document.getElementById('search-btn').classList.remove('pulse');
 						document.getElementById('search-params').value = '';
 						document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
 
