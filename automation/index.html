@@ -721,30 +721,43 @@
 					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
 					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
 
-					if(option.getAttribute('type') == 'boolean')
+					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3' && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.color%')
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
-						select.parentElement.children[3].removeAttribute('hidden');
-						select.parentElement.children[3].setAttribute('required', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('required');
 						select.parentElement.children[2].removeAttribute('required');
 
-						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
-						select.parentElement.children[3].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
-						select.parentElement.children[3].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[3].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
+						select.parentElement.children[3].style.display = '';
+					}
+					else if(option.getAttribute('type') == 'boolean')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[4].setAttribute('required', '');
+						select.parentElement.children[2].removeAttribute('required');
 
-						var options = select.parentElement.children[3].getElementsByClassName('select-items')[0].children;
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[4].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						select.parentElement.children[4].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						select.parentElement.children[4].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[4].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
+
+						var options = select.parentElement.children[4].getElementsByClassName('select-items')[0].children;
 
 						for(var i = 0; i < options.length; i++)
 						{
-							options[select.parentElement.children[3].getElementsByTagName('select')[0].selectedIndex].click();
+							options[select.parentElement.children[4].getElementsByTagName('select')[0].selectedIndex].click();
 						}
 					}
 					else if(option.getAttribute('type') == 'numeric' || option.getAttribute('type') == 'url')
 					{
-						select.parentElement.children[3].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
 						select.parentElement.children[2].removeAttribute('hidden');
-						select.parentElement.children[3].removeAttribute('required');
 						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
 
 						if(option.getAttribute('type') == 'numeric')
 						{
@@ -756,6 +769,38 @@
 							select.parentElement.children[2].setAttribute('placeholder', '%automation.link%');
 							select.parentElement.children[2].removeAttribute('pattern');
 						}
+					}
+				}
+
+				function updateLightInputs(select)
+				{
+					var o = select.getElementsByTagName('select')[0].selectedIndex;
+					var option = select.getElementsByTagName('select')[0].children[o];
+
+					if(option.innerHTML == '%automation.switch%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[4].setAttribute('required', '');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						if(option.hasAttribute('letters'))
+						{
+							select.parentElement.children[4].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+							select.parentElement.children[4].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+							select.parentElement.children[4].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[4].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
+						}
+					}
+					else if(option.innerHTML == '%automation.color%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('required');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'flex';
 					}
 				}
 
@@ -785,7 +830,7 @@
 					{
 						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || (services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')))
 						{
-							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin.alias + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
 					}
 
@@ -798,11 +843,11 @@
 					operations.className = 'custom-select';
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
-					operations.innerHTML = '<select name="operation"><option value="=">=</option><option value="switch">Switch</option><option value="color">Color</option></select>';
+					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="color">%automation.color%</option></select>';
 
 					if(type != 'result')
 					{
-						operations.innerHTML = '<select name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">Switch</option><option value="color">Color</option></select>';
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="color">%automation.color%</option></select>';
 					}
 
 					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
@@ -811,6 +856,7 @@
 					element.appendChild(Replacer.createSelectMenu(operations));
 
 					element.innerHTML += '<input placeholder="' + (type == 'result' ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
+					element.innerHTML += '<div class="automation-color-container"><input placeholder="%automation.hue%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input placeholder="%automation.saturation%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input placeholder="%automation.brightness%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"></div>';
 
 					var value = document.createElement('div');
 
@@ -849,23 +895,51 @@
 							{
 								trigger.url = value.value;
 							}
-							else if(device.getAttribute('type') == 'numeric')
+							else
 							{
 								trigger.id = device.getAttribute('id');
 								trigger.name = device.getAttribute('name');
 								trigger.letters = device.getAttribute('letters');
 								trigger.plugin = device.getAttribute('plugin');
-								trigger.operation = operation.value;
-								trigger.value = value.value;
-							}
-							else if(device.getAttribute('type') == 'boolean')
-							{
-								trigger.id = device.getAttribute('id');
-								trigger.name = device.getAttribute('name');
-								trigger.letters = device.getAttribute('letters');
-								trigger.plugin = device.getAttribute('plugin');
-								trigger.operation = operation.value;
-								trigger.value = t.children[3].getElementsByTagName('select')[0].children[t.children[3].getElementsByTagName('select')[0].selectedIndex].value;
+								
+								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+								{
+									trigger.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'color')
+									{
+										trigger.value = 'true';
+
+										if(t.children[3].children[0].value != '')
+										{
+											trigger.hue = t.children[3].children[0].value;
+										}
+
+										if(t.children[3].children[1].value != '')
+										{
+											trigger.saturation = t.children[3].children[1].value;
+										}
+
+										if(t.children[3].children[2].value != '')
+										{
+											trigger.brightness = t.children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									trigger.operation = operation.value;
+									trigger.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									trigger.operation = operation.value;
+									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
 							}
 						}
 						
@@ -890,23 +964,51 @@
 								{
 									condition.url = value.value;
 								}
-								else if(device.getAttribute('type') == 'numeric')
+								else
 								{
 									condition.id = device.getAttribute('id');
 									condition.name = device.getAttribute('name');
 									condition.letters = device.getAttribute('letters');
 									condition.plugin = device.getAttribute('plugin');
-									condition.operation = operation.value;
-									condition.value = value.value;
-								}
-								else if(device.getAttribute('type') == 'boolean')
-								{
-									condition.id = device.getAttribute('id');
-									condition.name = device.getAttribute('name');
-									condition.letters = device.getAttribute('letters');
-									condition.plugin = device.getAttribute('plugin');
-									condition.operation = operation.value;
-									condition.value = c.children[3].getElementsByTagName('select')[0].children[c.children[3].getElementsByTagName('select')[0].selectedIndex].value;
+									
+									if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+									{
+										condition.operation = '=';
+
+										if(operation.value == 'switch')
+										{
+											condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+										}
+										else if(operation.value == 'color')
+										{
+											condition.value = 'true';
+
+											if(c.children[3].children[0].value != '')
+											{
+												condition.hue = c.children[3].children[0].value;
+											}
+
+											if(c.children[3].children[1].value != '')
+											{
+												condition.saturation = c.children[3].children[1].value;
+											}
+
+											if(c.children[3].children[2].value != '')
+											{
+												condition.brightness = c.children[3].children[2].value;
+											}
+										}
+									}
+									else if(device.getAttribute('type') == 'numeric')
+									{
+										condition.operation = operation.value;
+										condition.value = value.value;
+									}
+									else if(device.getAttribute('type') == 'boolean')
+									{
+										condition.operation = operation.value;
+										condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
 								}
 							}
 
@@ -930,23 +1032,51 @@
 							{
 								result.url = value.value;
 							}
-							else if(device.getAttribute('type') == 'numeric')
+							else
 							{
 								result.id = device.getAttribute('id');
 								result.name = device.getAttribute('name');
 								result.letters = device.getAttribute('letters');
 								result.plugin = device.getAttribute('plugin');
-								result.operation = operation.value;
-								result.value = value.value;
-							}
-							else if(device.getAttribute('type') == 'boolean')
-							{
-								result.id = device.getAttribute('id');
-								result.name = device.getAttribute('name');
-								result.letters = device.getAttribute('letters');
-								result.plugin = device.getAttribute('plugin');
-								result.operation = operation.value;
-								result.value = r.children[3].getElementsByTagName('select')[0].children[r.children[3].getElementsByTagName('select')[0].selectedIndex].value;
+								
+								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+								{
+									result.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'color')
+									{
+										result.value = 'true';
+
+										if(r.children[3].children[0].value != '')
+										{
+											result.hue = r.children[3].children[0].value;
+										}
+
+										if(r.children[3].children[1].value != '')
+										{
+											result.saturation = r.children[3].children[1].value;
+										}
+
+										if(r.children[3].children[2].value != '')
+										{
+											result.brightness = r.children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									result.operation = operation.value;
+									result.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									result.operation = operation.value;
+									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
 							}
 						}
 
@@ -1078,9 +1208,9 @@
 
 					var availableOptions = [];
 
-					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '9')
+					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3')
 					{
-						availableOptions = ['Switch', 'Color'];
+						availableOptions = ['%automation.switch%', '%automation.color%'];
 					}
 					else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'url')
 					{
