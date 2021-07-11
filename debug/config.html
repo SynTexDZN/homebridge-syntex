@@ -61,6 +61,22 @@
 					opacity: 1!important;
 				}
 
+				@media only screen and (max-width: 1176px)
+				{
+					.gradient-overlay::before
+					{
+						border-radius: 30px;
+					}
+				}
+
+				@media(prefers-color-scheme: light)
+				{
+					.gradient-overlay.red
+					{
+						color: rgb(45, 45, 60);
+					}
+				}
+
 			</style>
 			<div id="config" class="main">
 				<div class="main" style="margin-bottom: 20px; display: flex">
@@ -122,8 +138,14 @@
 							connectionError : { value : '%general.bridge_connection_error%' }
 						};
 
+						document.getElementById('config-container').value = JSON.stringify(JSON.parse(document.getElementById('config-container').value), null, '\t');
+
 						if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
 						{
+							configJSON = document.getElementById('config-container').value;
+
+							document.getElementById('config-save').classList.remove('pulse');
+
 							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', '%debug.config.save_success%!', 'green'));
 
 							await Essentials.newTimeout(1500);
