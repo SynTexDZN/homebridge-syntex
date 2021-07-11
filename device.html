@@ -720,6 +720,14 @@
 
 					percent = Math.round(percent);
 
+					var state = { value : (percent > 0 ? true : false), brightness : percent };
+
+					if(temp[letters] != null)
+					{
+						state.hue = temp[letters].hue;
+						state.saturation = temp[letters].saturation;
+					}
+
 					if(device.plugin.alias.startsWith('SynTex'))
 					{
 						if(!send)
@@ -728,12 +736,12 @@
 						}
 						else
 						{
-							setControlPanel(letters, { value : (percent > 0 ? true : false), brightness : percent });
+							setControlPanel(letters, state);
 						}
 					}
 					else if(getService(letters) != null && getService(letters).iid != null)
 					{
-						setControlPanel(letters, { value : (percent > 0 ? true : false), brightness : percent });
+						setControlPanel(letters, state);
 
 						if(!send)
 						{
@@ -768,7 +776,7 @@
 								
 								if(type == 'rgb')
 								{
-									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(state.saturation) + '%, ' + (25 + parseInt(state.brightness) / 2.5) + '%)';
+									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(14 + state.saturation * state.brightness / 100 / 100 * (100 - 14)) + '%, ' + (27 + state.brightness / 100 * (65 - 27)) + '%)';
 								}
 								else if(type == 'dimmer')
 								{
