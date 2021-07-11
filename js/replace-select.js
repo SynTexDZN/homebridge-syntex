@@ -157,7 +157,7 @@ function closeOtherSelectMenus(elmnt)
 {
 	for(var i = 0; i < selects.length; i++)
 	{
-		if(selects[i].id != elmnt.parentElement.id && document.getElementById(selects[i].id) != null)
+		if((elmnt.parentElement == null || selects[i].id != elmnt.parentElement.id) && document.getElementById(selects[i].id) != null)
 		{
 			document.getElementById(selects[i].id).getElementsByClassName('select-selected')[0].className = 'select-selected';
 			document.getElementById(selects[i].id).getElementsByClassName('select-items')[0].className = 'select-items select-hide';
