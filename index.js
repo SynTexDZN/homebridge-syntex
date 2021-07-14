@@ -236,24 +236,16 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				var activity = await this.logger.load('SynTexWebHooks', urlParams.id);
+				var plugins = ['SynTexWebHooks', 'SynTexMagicHome', 'SynTexTuya'], activity = [];
 
-				if(activity != null)
+				for(const p in plugins)
 				{
-					activity = activity.concat(await this.logger.load('SynTexMagicHome', urlParams.id));
-				}
-				else
-				{
-					activity = await this.logger.load('SynTexMagicHome', urlParams.id);
-				}
+					var a = await this.logger.load(plugins[p], urlParams.id);
 
-				if(activity != null)
-				{
-					activity = activity.concat(await this.logger.load('SynTexTuya', urlParams.id));
-				}
-				else
-				{
-					activity = await this.logger.load('SynTexTuya', urlParams.id);
+					if(a != null)
+					{
+						activity = activity.concat(a);
+					}
 				}
 
 				activity = activity.reverse();
