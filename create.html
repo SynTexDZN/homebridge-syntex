@@ -20,7 +20,7 @@
 				PageManager.showFooter();
 
 			</script>
-			<div id="create" style="transition: .2s ease-in-out">
+			<div id="create" style="transition: .2s opacity ease-in-out">
 				<form id="create-form" class="main" onsubmit="event.preventDefault(); createAccessory();">
 					<p style="margin-top: 0"><b>%general.id%: <input autofocus spellcheck="false" autocapitalize="false" autocomplete="false" id="form-id" pattern="[a-z0-9-]+" title="%pattern.small_letters_numbers_special%: -" required name="id" type="text" style="max-width: 325px"></b></p>
 					<p><b>%general.name%: <input id="form-name" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -53,7 +53,7 @@
 					</div>
 				</form>
 			</div>
-			<div id="success" style="display: none; transition: .2s ease-in-out">
+			<div id="success" style="display: none; transition: .2s opacity ease-in-out">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block" type="button" value="%general.waiting_for_bridge% ..">
