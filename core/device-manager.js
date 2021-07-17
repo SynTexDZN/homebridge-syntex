@@ -35,7 +35,7 @@ module.exports = class DeviceManager
 
 			if(device != null)
 			{
-				var needToSave = this.setConfigValues(id, { version, ip });
+				var needToSave = this.setConfigValues('SynTexWebHooks', id, { version, ip });
 
 				if(needToSave)
 				{
@@ -304,7 +304,7 @@ module.exports = class DeviceManager
 
 				if(values.name != null && values.plugin.startsWith('SynTex'))
 				{
-					needToSave = this.setConfigValue(values.id, 'name', values.name);
+					needToSave = this.setConfigValue(values.plugin, values.id, 'name', values.name);
 				}
 
 				if(needToSave)
@@ -353,7 +353,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	setConfigValue(id, key, value)
+	setConfigValue(plugin, id, key, value)
 	{
 		var needToSave = false;
 
@@ -361,7 +361,7 @@ module.exports = class DeviceManager
 		{
 			for(const i in configOBJ.platforms)
 			{
-				if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+				if(configOBJ.platforms[i].platform == plugin && configOBJ.platforms[i].accessories != null)
 				{
 					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
 					{
@@ -383,13 +383,13 @@ module.exports = class DeviceManager
 		return needToSave;
 	}
 
-	setConfigValues(id, values)
+	setConfigValues(plugin, id, values)
 	{
 		var needToSave = false;
 
 		for(const key in values)
 		{
-			if(this.setConfigValue(id, key, values[key]))
+			if(this.setConfigValue(plugin, id, key, values[key]))
 			{
 				needToSave = true;
 			}
