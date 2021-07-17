@@ -230,9 +230,9 @@ class URLQuery
 	
 		if(tries == null)
 		{
-			socket.onclose = (data) => {
+			socket.onclose = () => {
 
-				if(data.code != 4000)
+				if(activeWebSockets.includes(socket))
 				{
 					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
 				}
@@ -244,7 +244,7 @@ class URLQuery
 
 			socket.onclose = () => {
 
-				if(data.code != 4000)
+				if(activeWebSockets.includes(socket))
 				{
 					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
 				}
