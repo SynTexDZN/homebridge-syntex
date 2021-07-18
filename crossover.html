@@ -48,22 +48,27 @@
 				window.Query = Query;
 				window.Essentials = Essentials;
 
+				renderGUI();
+
 			</script>
 			<script>
 
 				var crossoverPlugins = JSON.parse('<%crossoverPlugins%>');
 
-				if(crossoverPlugins.length > 0)
+				function renderGUI()
 				{
-					document.getElementById('crossover-plugins').innerHTML = '';
-
-					for(const i in crossoverPlugins)
+					if(crossoverPlugins.length > 0)
 					{
-						document.getElementById('crossover-plugins').innerHTML += '<p style="margin: 0 auto">' + crossoverPlugins[i].name + '</p>';
-					}
-				}
+						document.getElementById('crossover-plugins').innerHTML = '';
 
-				Preloader.finish();
+						for(const i in crossoverPlugins)
+						{
+							document.getElementById('crossover-plugins').innerHTML += '<p style="margin: 0 auto">' + crossoverPlugins[i].name + '</p>';
+						}
+					}
+
+					Preloader.finish();
+				}
 
 			</script>
 		</div>
