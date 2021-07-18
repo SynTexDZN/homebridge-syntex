@@ -10,7 +10,8 @@ class CustomSelect
 			{
 				closeOtherSelectMenus(event.target);
 			}
-		});
+			
+		}, 'KEEP');
 
 		window.addEventListener('touchstart', (event) => {
 
@@ -18,7 +19,8 @@ class CustomSelect
 			{
 				closeOtherSelectMenus(event.target);
 			}
-		});
+
+		}, 'KEEP');
 	}
 
 	SETUP()

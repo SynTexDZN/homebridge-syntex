@@ -30,7 +30,8 @@ class PageManagerModule
 
 				}, 100);
 			}
-		});
+			
+		}, 'KEEP');
 	}
 
 	setHeader(title, subtitle, onPage)

@@ -76,7 +76,8 @@ try
 			{
 				zoomOutWindow();
 			}
-		});
+			
+		}, 'KEEP');
 	}
 }
 catch(e)

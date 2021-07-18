@@ -250,18 +250,22 @@
 <script id="static">
 
 	window.originalSetTimeout = window.setTimeout;
-	window.originalSetInterval = window.setInterval;
 	window.originalClearTimeout = window.clearTimeout;
+	window.originalSetInterval = window.setInterval;
 	window.originalClearInterval = window.clearInterval;
+	window.originalAddEventListener = window.addEventListener;
+	window.originalRemoveEventListener = window.removeEventListener;
 	window.activeTimeouts = [];
 	window.activeIntervals = [];
 	window.activeWebSockets = [];
+	window.activeEventListener = [];
 	
 	window.setTimeout = (func, delay) => {
 
 		var timerID = originalSetTimeout(() => {
 
 			func();
+
 			clearTimeout(timerID);
 
 		}, delay);
@@ -270,16 +274,7 @@
 
 		return timerID;
 	};
-	
-	window.setInterval = (func, interval) => {
 
-		var timerID = originalSetInterval(func, interval);
-
-		activeIntervals.push(timerID);
-
-		return timerID;
-	};
-	
 	window.clearTimeout = (timerID) => {
 
 		originalClearTimeout(timerID);
@@ -290,6 +285,15 @@
 		}
 	};
 	
+	window.setInterval = (func, interval) => {
+
+		var timerID = originalSetInterval(func, interval);
+
+		activeIntervals.push(timerID);
+
+		return timerID;
+	};
+
 	window.clearInterval = (timerID) => {
 
 		originalClearInterval(timerID);
@@ -298,6 +302,33 @@
 		{
 			activeIntervals.splice(activeIntervals.indexOf(timerID), 1);
 		}
+	};
+
+	window.addEventListener = (name, listener, useCapture) => {
+
+		activeEventListener.push({ name, listener, useCapture });
+
+		if(useCapture == 'KEEP')
+		{
+			useCapture = true;
+		}
+
+		originalAddEventListener(name, listener, useCapture);
+	};
+	
+	window.removeEventListener = (name, listener, useCapture) => {
+
+		if(activeEventListener.includes({ name, listener, useCapture }))
+		{
+			activeEventListener.splice(activeEventListener.indexOf({ name, listener, useCapture }), 1);
+		}
+
+		if(useCapture == 'KEEP')
+		{
+			useCapture = true;
+		}
+
+		originalRemoveEventListener(name, listener, useCapture);
 	};
 
 	window.clearTimers = () => {
@@ -322,6 +353,19 @@
 			activeWebSockets.splice(i, 1);
 		}
 	}
+
+	window.removeEventListeners = () => {
+
+		for(var i = activeEventListener.length - 1; i >= 0; i--)
+		{
+			if(activeEventListener[i].useCapture != 'KEEP')
+			{
+				window.removeEventListener(activeEventListener[i].name, activeEventListener[i].listener, activeEventListener[i].useCapture);
+
+				activeEventListener.splice(i, 1);
+			}
+		}
+	};
 
 	if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 	{

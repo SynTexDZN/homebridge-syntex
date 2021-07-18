@@ -9,7 +9,8 @@ class PreloadOverlay
 			loadFinished = true;
 			
 			removePreloader();
-		});
+			
+		}, 'KEEP');
 	}
 
 	load()
