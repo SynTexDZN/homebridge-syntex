@@ -3,13 +3,56 @@
 		<div id="content">
 			<script>
 
-				var resizeTimer;
+				var resizeTimerOne, resizeTimerTwo;
+				var lastWidth = window.innerWidth, lastHeight = window.innerHeight, windowResized = false;
+
+				setInterval(() => {
+
+					if(windowResized)
+					{
+						windowResized = false;
+
+						for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+						{
+							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+						}
+					}
+
+				}, 100);
 
 				window.addEventListener('resize', (e) => {
 
-					clearTimeout(resizeTimer);
-					
-					resizeTimer = setTimeout(() => repaintGraphs(), 250);
+					if(lastWidth < window.innerWidth || lastWidth > window.innerWidth)
+					{
+						lastWidth = window.innerWidth;
+
+						windowResized = true;
+					}
+
+					if(lastHeight < window.innerHeight || lastHeight > window.innerHeight)
+					{
+						lastHeight = window.innerHeight;
+						
+						windowResized = true;
+					}
+
+					clearTimeout(resizeTimerOne);
+					clearTimeout(resizeTimerTwo);
+
+					resizeTimerOne = setTimeout(() => repaintGraphs(), 250);
+					resizeTimerTwo = setTimeout(() => {
+						
+						if(windowResized)
+						{
+							windowResized = false;
+
+							for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+							{
+								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+							}
+						}
+
+					}, 100);
 				});
 				
 			</script>
@@ -55,14 +98,14 @@
 				}
 
 			</script>
-			<div class="main" id="infos" style="transition: .2s ease-in-out">
+			<div class="main" id="infos" style="transition: .2s opacity ease-in-out">
 				<div id="head"></div>
 				<div class="control-container"></div>
 				<h1 class="loading-loop">%general.loading% ..</h1>
 				<div id="info" class="main" style="margin-top: 100px; margin-bottom: 100px"></div>
 				<div id="activity"></div>
 			</div>
-			<div id="settings" style="display: none; transition: .2s ease-in-out">
+			<div id="settings" style="display: none; transition: .2s opacity ease-in-out">
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
 					<div id="settings-form" style="margin-bottom: 100px">
 						<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -360,12 +403,13 @@
 						for(var j = 0; j < typeCounter[type]; j++)
 						{
 							var letters = Essentials.typeToLetter(type) + j;
-							var statusField = document.createElement('input');
+							var statusField = document.createElement('button');
 						
 							statusField.setAttribute('id', 'status-' + letters);
 							statusField.setAttribute('class', 'control-panel loading-loop');
 							statusField.setAttribute('type', 'button');
-							statusField.setAttribute('value', '%general.loading% ..');
+
+							statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
 
 							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer')
 							{
@@ -375,11 +419,6 @@
 							if(type == 'outlet' || type == 'relais' || type == 'switch')
 							{
 								statusField.setAttribute('onclick', 'controlSwitch(this)');
-							}
-
-							if(typeCounter[type] > 1)
-							{
-								statusField.style.setProperty('font-size', '30px', 'important');
 							}
 
 							if(counter > 1)
@@ -410,7 +449,7 @@
 								{
 									this.field.style.pointerEvents = 'none';
 									this.field.parentElement.style.cursor = 'w-resize';
-									this.field.style.transition = '0s ease-in-out';
+									this.field.style.setProperty('transition-property', 'none', 'important');
 
 									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
 									var groupBar = this.field.getBoundingClientRect();
@@ -432,7 +471,7 @@
 								{
 									this.field.style.pointerEvents = 'all';
 									this.field.parentElement.style.cursor = 'pointer';
-									this.field.style.transition = '.3s ease-in-out';
+									this.field.style.removeProperty('transition-property');
 
 									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
 									var groupBar = this.field.getBoundingClientRect();
@@ -473,7 +512,7 @@
 								{
 									if(!busy.includes(letters))
 									{
-										this.field.style.transition = '0s ease-in-out';
+										this.field.style.setProperty('transition-property', 'none', 'important');
 
 										getTouchPosition(this.field, this.letters, e, true);
 									}
@@ -486,7 +525,7 @@
 									{
 										getTouchPosition(this.field, this.letters, e);
 
-										this.field.style.transition = '.3s ease-in-out';
+										this.field.style.removeProperty('transition-property');
 
 										Promise.all(promiseArraySlide).then(() => {
 											
@@ -644,7 +683,7 @@
 
 				if(c > 3)
 				{
-					document.getElementsByClassName('control-container')[0].style.gridTemplateColumns = 'calc(50% - 10px) calc(50% - 10px)';
+					document.getElementsByClassName('control-container')[0].classList.add('grid');
 				}
 
 				Preloader.finish();
@@ -900,19 +939,47 @@
 							name = n[c];
 						}
 
-						if(name.includes(device.name))
+						if(name.includes(device.name + ' '))
 						{
-							name = name.replace(device.name, '');
+							name = name.replace(device.name + ' ', '');
 						}
 
-						document.getElementById('status-' + letters).value = name.toUpperCase() + ' [' + value + ']';
+						document.getElementById('status-' + letters).children[0].innerHTML = name.toUpperCase() + ' [' + value + ']';
 					}
 					else
 					{
-						document.getElementById('status-' + letters).value = value;
+						document.getElementById('status-' + letters).children[0].innerHTML = value;
 					}
 
+					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
 					document.getElementById('status-' + letters).style.backgroundColor = color;
+
+					resizeFontSizeToFit(document.getElementById('status-' + letters).children[0]);
+				}
+
+			</script>
+			<script>
+
+				function resizeFontSizeToFit(element)
+				{
+					var steps = [{ fontSize : 46, letterSpacing : 20 }, { fontSize : 30, letterSpacing : 15 }, { fontSize : 22, letterSpacing : 10 }];
+					var padding = parseInt(getComputedStyle(element.parentElement).paddingLeft) + parseInt(getComputedStyle(element.parentElement).paddingRight);
+
+					element.style.setProperty('padding-left', steps[0].letterSpacing + 'px', 'important');
+
+					element.parentElement.style.setProperty('font-size', steps[0].fontSize + 'px', 'important');
+					element.parentElement.style.setProperty('letter-spacing', steps[0].letterSpacing + 'px', 'important');
+
+					for(var i = 0; i < steps.length; i++)
+					{
+						if(element.offsetHeight > element.parentElement.offsetHeight || element.offsetWidth > element.parentElement.offsetWidth - padding - steps[i].letterSpacing / 2)
+						{
+							element.style.setProperty('padding-left', steps[i].letterSpacing + 'px', 'important');
+
+							element.parentElement.style.setProperty('font-size', steps[i].fontSize + 'px', 'important');
+							element.parentElement.style.setProperty('letter-spacing', steps[i].letterSpacing + 'px', 'important');
+						}
+					}
 				}
 
 			</script>
@@ -1385,6 +1452,11 @@
 						window.history.pushState(null, null, '?id=' + device.id);
 					}
 
+					for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+					{
+						resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+					}
+
 					repaintGraphs();
 				}
 
@@ -1410,9 +1482,11 @@
 					return null;
 				}
 
+				window.DeviceController = null;
+
 				function setupController()
 				{
-					window.DeviceController = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => {
+					DeviceController = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => {
 					
 						if(data instanceof Object)
 						{
@@ -1423,9 +1497,11 @@
 					});
 				}
 
+				window.DeviceViewer = null;
+
 				function setupViewer()
 				{
-					window.DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => renderNewData(data), null, { line : 'getState', params : { id : device.id } });
+					DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => renderNewData(data), null, { line : 'getState', params : { id : device.id } });
 				}
 				
 				function fetchState()
@@ -1435,36 +1511,39 @@
 
 				function renderNewData(data)
 				{
-					for(var i = 0; i < Object.keys(typeCounter).length; i++)
+					if(data != null)
 					{
-						var type = Object.keys(typeCounter)[i];
-
-						for(var j = 0; j < typeCounter[type]; j++)
+						for(var i = 0; i < Object.keys(typeCounter).length; i++)
 						{
-							var letters = Essentials.typeToLetter(type) + j;
+							var type = Object.keys(typeCounter)[i];
 
-							if(temp[letters] == null)
+							for(var j = 0; j < typeCounter[type]; j++)
 							{
-								temp[letters] = {};
-							}
+								var letters = Essentials.typeToLetter(type) + j;
 
-							if(data[letters] != null)
-							{
-								for(const j in data[letters])
+								if(temp[letters] == null)
 								{
-									if(temp == null || temp[letters][j] != data[letters][j])
+									temp[letters] = {};
+								}
+
+								if(data[letters] != null)
+								{
+									for(const j in data[letters])
 									{
-										console.log('UPDATE', letters, data[letters]);
+										if(temp == null || temp[letters][j] != data[letters][j])
+										{
+											console.log('UPDATE', letters, data[letters]);
 
-										updateValues(letters, data[letters]);
+											updateValues(letters, data[letters]);
 
-										temp[letters][j] = data[letters][j];
+											temp[letters][j] = data[letters][j];
+										}
 									}
 								}
-							}
-							else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
-							{
-								setControlPanel(letters, data[letters]);
+								else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+								{
+									setControlPanel(letters, data[letters]);
+								}
 							}
 						}
 					}
@@ -1538,6 +1617,8 @@
 					}
 				}
 
+				var updatedAfterOffline = true;
+
 				async function pingESP()
 				{
 					if(document.getElementById('updating') == null && !saving && document.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
@@ -1546,20 +1627,25 @@
 						{
 							console.log('ESP Gefunden');
 
-							for(const type in typeCounter)
+							if(!updatedAfterOffline)
 							{
-								if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+								for(const type in typeCounter)
 								{
-									for(var j = 0; j < typeCounter[type]; j++)
+									if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 									{
-										var letters = Essentials.typeToLetter(type) + j;
-
-										if(temp[letters] != null)
+										for(var j = 0; j < typeCounter[type]; j++)
 										{
-											setControlPanel(letters, temp[letters]);
+											var letters = Essentials.typeToLetter(type) + j;
+
+											if(temp[letters] != null)
+											{
+												setControlPanel(letters, temp[letters]);
+											}
 										}
 									}
 								}
+
+								updatedAfterOffline = true;
 							}
 
 							if(restarting == true)
@@ -1582,13 +1668,15 @@
 						else
 						{
 							document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
-							document.getElementsByClassName('control-panel')[0].value = '%general.offline%';
+							document.getElementsByClassName('control-panel')[0].innerHTML = '%general.offline%';
 
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
 								document.getElementsByClassName('control-panel')[i].style.backgroundColor = '';
-								document.getElementsByClassName('control-panel')[i].value = '–––';
+								document.getElementsByClassName('control-panel')[i].innerHTML = '–––';
 							}
+
+							updatedAfterOffline = false;
 
 							await Essentials.newTimeout(1000);
 							

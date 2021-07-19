@@ -318,7 +318,7 @@
 
 							PageManager.setHeader(null, automation[i].name);
 
-							var panel = document.createElement('button');
+							var panel = document.createElement('div');
 
 							for(var j = 0; j < automation[i].trigger.length; j++)
 							{
@@ -382,7 +382,7 @@
 							document.getElementById('trigger').innerHTML = '';
 							document.getElementById('trigger').appendChild(panel);
 
-							var panel = document.createElement('button');
+							var panel = document.createElement('div');
 
 							document.getElementById('condition').innerHTML = '';
 
@@ -455,7 +455,7 @@
 								document.getElementById('condition').appendChild(panel);
 							}
 
-							var panel = document.createElement('button');
+							var panel = document.createElement('div');
 
 							for(var j = 0; j < automation[i].result.length; j++)
 							{
@@ -853,7 +853,7 @@
                                 close : true
                             },
                             {
-                                text : '%automation.remove%',
+                                text : '%general.remove%',
                                 color : 'red',
                                 close : true,
                                 action : () => removeConfirm(btn)

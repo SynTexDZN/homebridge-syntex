@@ -26,7 +26,7 @@ class PageManagerModule
 
 				setTimeout(() => {
 
-					this.headContent.style.transition = '.2s opacity ease-in-out, .2s max-height ease-in-out, .2s min-height ease-in-out';
+					this.headContent.style.removeProperty('transition');
 
 				}, 100);
 			}

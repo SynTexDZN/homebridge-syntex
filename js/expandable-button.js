@@ -26,7 +26,7 @@ class ExpandableButton
 					setTimeout(() => {
 
 						this.buttons[i].style.height = this.buttons[i].offsetHeight;
-						this.buttons[i].style.setProperty('transition', '.3s ease-in-out height', 'important');
+						this.buttons[i].style.removeProperty('transition');
 
 					}, 100);
 				}

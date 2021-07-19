@@ -547,10 +547,10 @@
 
 					for(var i = 0; i < automation.length; i++)
 					{
-						var typeContainer = document.createElement('button');
+						var typeContainer = document.createElement('div');
 
-						typeContainer.setAttribute('style', 'height: auto; box-shadow: none');
-						typeContainer.setAttribute('class', 'type-container');
+						typeContainer.setAttribute('style', 'height: auto; box-shadow: none; cursor: pointer');
+						typeContainer.setAttribute('class', 'type-container hoverable');
 						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation/modify?id=" + automation[i].id + "')");
 
 						if(i == 0)
@@ -571,7 +571,7 @@
 
 						typeContainer.appendChild(title);
 
-						var panel = document.createElement('button');
+						var panel = document.createElement('div');
 						var column = document.createElement('div');
 						var category = document.createElement('div');
 

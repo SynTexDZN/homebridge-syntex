@@ -52,6 +52,11 @@
 		background: var(--light-layer-one);
 	}
 
+	.control-panel::before
+	{
+		filter: invert(84%) sepia(10%) hue-rotate(200deg);
+	}
+
 	input:not(.control-panel):not(:disabled):not([type='radio']):not([type='submit']):hover, textarea:not(:disabled):hover
 	{
 		background: var(--light-layer-one);
@@ -129,14 +134,9 @@
 		border-color: rgba(45, 45, 55, 0);
 	}
 
-	.control-panel
-	{
-		background-image: linear-gradient(to top, var(--light-layer-one) 0%, rgb(25, 25, 35) 100%);
-	}
-
 	.setup-png
 	{
-		filter: saturate(0%);
+		filter: invert(0%) saturate(0%);
 	}
 
 	input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):hover, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.type-container):hover
@@ -310,7 +310,6 @@
 	.table
 	{
 		color: var(--light-layer-one);
-		background: var(--dark-layer-two);
 	}
 
 	.table .column
