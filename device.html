@@ -1668,12 +1668,16 @@
 						else
 						{
 							document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
-							document.getElementsByClassName('control-panel')[0].innerHTML = '%general.offline%';
+							document.getElementsByClassName('control-panel')[0].children[0].innerHTML = '%general.offline%';
+
+							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[0].children[0]);
 
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
 								document.getElementsByClassName('control-panel')[i].style.backgroundColor = '';
-								document.getElementsByClassName('control-panel')[i].innerHTML = '–––';
+								document.getElementsByClassName('control-panel')[i].children[0].innerHTML = '–––';
+
+								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
 							}
 
 							updatedAfterOffline = false;
