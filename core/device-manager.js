@@ -58,8 +58,10 @@ module.exports = class DeviceManager
 				{
 					try
 					{
-						services = JSON.parse(services);
-						events = JSON.parse(events);
+						console.log(services, JSON.parse(services), events, JSON.parse(events));
+
+						services = JSON.parse(services) || [];
+						events = JSON.parse(events) || [];
 
 						if(services.length > 0)
 						{
@@ -124,7 +126,7 @@ module.exports = class DeviceManager
 					}
 					catch(e)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ') ' + error);
+						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ' ) ' + e);
 					}
 				}
 				else
