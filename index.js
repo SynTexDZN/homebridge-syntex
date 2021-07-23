@@ -29,9 +29,17 @@ class SynTexPlatform
 		HTMLQuery = new HTMLQuery(this.logger);
 
 		this.automationDirectory = config['automationDirectory'];
-		
-		Automation.SETUP(this.logger, this.automationDirectory);
 
+		exec('sudo chmod 777 -R ' + this.automationDirectory, (error, stdout, stderr) => {
+
+			if(error)
+			{
+				this.logger.log('error', 'bridge', 'Bridge', '%permission_error% [' + this.automationDirectory + '] ' + error);
+			}
+
+			Automation.SETUP(this.logger, this.automationDirectory);
+		});
+		
 		this.config = store(api.user.storagePath());
 
 		PluginManager = new PluginManager(this.config, this.logger, 600);
