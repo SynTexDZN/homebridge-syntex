@@ -92,7 +92,7 @@
 				<form id="create-form" class="main" onsubmit="event.preventDefault(); createAutomation();">
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
-						<p><b>%general.id%: <input type="button" style="max-width: 150px" value="0" disabled></b></p>
+						<p><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
 						<p autofocus style="margin-bottom: 20px"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					</div>
 					<div style="margin-top: 20px" class="type-container">
@@ -211,7 +211,7 @@
 						sortAutomation(true);
 						createGroupPanel();
 
-						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
+						document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
 					}
 					else if(services.length > 0)
 					{
@@ -1123,8 +1123,23 @@
 
 						Essentials.removeOverlays(document.getElementById('save-btn'), true);
 
-						document.getElementById('create').getElementsByTagName('input')[0].value = automation[automation.length - 1].id + 1;
+						document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
 					}
+				}
+
+				function getNextID()
+				{
+					var lastID = 0;
+
+					for(const a in automation)
+					{
+						if(automation[a].id > lastID)
+						{
+							lastID = automation[a].id;
+						}
+					}
+
+					return lastID + 1;
 				}
 
 				function loadServices()
