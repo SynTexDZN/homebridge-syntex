@@ -21,8 +21,10 @@ class PageManagerModule
 
 				this.headContent.style.transition = 'none';
 
-				this.headContent.style.maxHeight = this.headTemp.offsetHeight + 'px';
-				this.headContent.style.minHeight = this.headTemp.offsetHeight + 'px';
+				var padding = parseInt(this.headContent.paddingTop || getComputedStyle(this.headContent).paddingTop) + parseInt(this.headContent.paddingBottom || getComputedStyle(this.headContent).paddingBottom)
+
+				this.headContent.style.maxHeight = Math.max(this.headTemp.offsetHeight, 105 + padding) + 'px';
+				this.headContent.style.minHeight = Math.max(this.headTemp.offsetHeight, 105 + padding) + 'px';
 
 				setTimeout(() => {
 
@@ -54,8 +56,10 @@ class PageManagerModule
 			{
 				setTimeout(() => {
 
-					this.headContent.style.maxHeight = this.headTemp.offsetHeight + 'px';
-					this.headContent.style.minHeight = this.headTemp.offsetHeight + 'px';
+					var padding = parseInt(this.headContent.paddingTop || getComputedStyle(this.headContent).paddingTop) + parseInt(this.headContent.paddingBottom || getComputedStyle(this.headContent).paddingBottom)
+
+					this.headContent.style.maxHeight = Math.max(this.headTemp.offsetHeight, 105 + padding) + 'px';
+					this.headContent.style.minHeight = Math.max(this.headTemp.offsetHeight, 105 + padding) + 'px';
 					
 				}, 100);
 			}
