@@ -28,6 +28,8 @@ class SynTexPlatform
 
 		HTMLQuery = new HTMLQuery(this.logger);
 
+		const { exec } = require('child_process');
+
 		this.automationDirectory = config['automationDirectory'];
 
 		exec('sudo chmod 777 -R ' + this.automationDirectory, (error, stdout, stderr) => {
@@ -66,8 +68,6 @@ class SynTexPlatform
 				DeviceManager.setBridgeStorage('restart', new Date());
 			});
 		});
-
-		const { exec } = require('child_process');
 
 		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
 
