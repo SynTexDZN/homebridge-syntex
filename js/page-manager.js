@@ -324,6 +324,8 @@ class PageManagerModule
 				await newTimeout(50);
 			}
 
+			window.scrollTo(window.scrollX, 0);
+
 			document.getElementById('preloader').style.opacity = 0;
 
 			resolve();

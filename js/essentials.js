@@ -429,6 +429,13 @@ class EssentialFeatures
 	{
 		if(!this.pageLoading)
 		{
+			/*
+			var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+
+			scrollPositions[window.location.pathname + window.location.search] = window.scrollY;
+
+			localStorage.setItem('scroll-positions', JSON.stringify(scrollPositions));
+			*/
 			this.pageLoading = true;
 
 			document.getElementById('preloader').style.opacity = 1;
@@ -609,6 +616,17 @@ function loadPageData(url)
 
 					document.getElementById('content').outerHTML = '<div id="content"' + client.responseText.split('<div id="content"')[1].split('</body>')[0];
 
+					window.scrollTo(window.scrollX, 0);
+					/*
+					var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+
+					if(scrollPositions[url] != null)
+					{
+						window.scrollTo(window.scrollX, scrollPositions[url]);
+					}
+					
+					console.log('SCROLL POSITIONS', scrollPositions);
+					*/
 					for(var i = 0; i < document.getElementsByTagName('script').length; i++)
 					{
 						if(document.getElementsByTagName('script')[i].id != 'static')
