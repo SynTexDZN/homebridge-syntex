@@ -71,7 +71,7 @@
 						<div id="networks">
 							<p class="loading-loop">%general.loading% ..</p>
 						</div>
-						<input type="password" name="wifipass" placeholder="%connect.wifi_password%" style="margin-bottom: 20px" required>
+						<input type="password" id="wifipass" placeholder="%connect.wifi_password%" style="margin-bottom: 20px" required>
 						<br>
 						<input id="connect-btn" type="submit" value="%connect.connect%">
 					</form>
@@ -304,19 +304,35 @@
 
 				async function sendWiFiSettings()
 				{
-					var form = document.getElementsByTagName('form')[1];
+					var formData = {};
 
 					if(bridgeIP != 'null')
 					{
-						var formData = new FormData(form);
+						formData['bridge-ip'] = 'http://' + bridgeIP;
+					}
 
-						formData.append('bridge-ip', 'http://' + bridgeIP);
+					if(deviceName != null)
+					{
+						formData['device-name'] = deviceName;
+					}
 
-						if(deviceName != null)
+					if(document.getElementById('wifipass').value != '')
+					{
+						formData['wifipass'] = document.getElementById('wifipass').value;
+					}
+
+					var networks = document.getElementById('networks').getElementsByTagName('input');
+
+					for(var i = 0; i < networks.length; i++)
+					{
+						if(networks[i].checked)
 						{
-							formData.append('device-name', deviceName);
+							formData['wifissid'] = networks[i].value;
 						}
+					}
 
+					if(formData['bridge-ip'] != null && formData['wifissid'] != null && formData['wifipass'] != null)
+					{
 						var overlays = {
 							root : document.getElementById('connect-btn'),
 							id : 'connecting',
