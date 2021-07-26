@@ -47,14 +47,21 @@
 		color: var(--dark-layer-one);
 	}
 
-	.control-panel, h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
+	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		background: var(--light-layer-one);
 	}
 
+	.control-panel
+	{
+		--background-color: var(--light-layer-one);
+		
+		color: var(--dark-layer-two);
+	}
+
 	.control-panel::before
 	{
-		filter: invert(84%) sepia(10%) hue-rotate(200deg);
+		filter: invert(100%) sepia(10%) hue-rotate(200deg);
 	}
 
 	input:not(.control-panel):not(:disabled):not([type='radio']):not([type='submit']):hover, textarea:not(:disabled):hover

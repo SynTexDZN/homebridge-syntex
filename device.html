@@ -952,7 +952,18 @@
 					}
 
 					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
-					document.getElementById('status-' + letters).style.backgroundColor = color;
+					document.getElementById('status-' + letters).style.setProperty('--background-color', color);
+
+					if(color.includes('rgb'))
+					{
+						console.log(color, color.split(', '));
+
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2]) - 20) + ')');
+					}
+					else if(color.includes('hsl'))
+					{
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+					}
 
 					resizeFontSizeToFit(document.getElementById('status-' + letters).children[0]);
 				}
@@ -1667,14 +1678,16 @@
 						}
 						else
 						{
-							document.getElementsByClassName('control-panel')[0].style.backgroundColor = 'hsl(350, 75%, 55%)';
+							document.getElementsByClassName('control-panel')[0].style.setProperty('--background-color', 'hsl(350, 75%, 55%)');
+							document.getElementsByClassName('control-panel')[0].style.setProperty('--box-shadow', 'hsl(350, 75%, 45%)');
 							document.getElementsByClassName('control-panel')[0].children[0].innerHTML = '%general.offline%';
 
 							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[0].children[0]);
 
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
-								document.getElementsByClassName('control-panel')[i].style.backgroundColor = '';
+								document.getElementsByClassName('control-panel')[i].style.removeProperty('--background-color');
+								document.getElementsByClassName('control-panel')[i].style.removeProperty('--box-shadow');
 								document.getElementsByClassName('control-panel')[i].children[0].innerHTML = '–––';
 
 								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
