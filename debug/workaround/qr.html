@@ -1,0 +1,111 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>QR Code: Demo</title>
+			<script type="module">
+
+				import { PageManager } from '/js/page-manager.js';
+
+				window.PageManager = PageManager;
+
+				PageManager.setHeader('QR Code', 'Demo');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<div id="qrcode"></div>
+			</div>
+			<script type="module">
+
+				import { Query } from '/js/query.js';
+				import { Essentials } from '/js/essentials.js';
+
+				Query.SETUP(Essentials);
+				Essentials.SETUP(Query, Preloader);
+
+				window.Query = Query;
+				window.Essentials = Essentials;
+
+				Preloader.finish();
+
+			</script>
+			<script src="/js/external/qrcode.min.js"></script>
+			<script>
+
+				function renderQRCode(code)
+				{
+					if(typeof QRCode !== 'undefined')
+					{
+						var QR_CODE = new QRCode("qrcode", {
+							width: 220,
+							height: 220,
+							colorDark: '#000000',
+							colorLight: 'rgb(245, 245, 255)',
+							correctLevel: QRCode.CorrectLevel.H,
+						});
+
+						QR_CODE.clear();
+						QR_CODE.makeCode(code);
+
+						document.getElementById('qrcode').style.opacity = 1;
+
+						return true;
+					}
+
+					return false;
+				}
+
+				var pairindCode = '<%pairingCode%>';
+
+				if(pairindCode != 'null')
+				{
+					if(!renderQRCode(pairindCode))
+					{
+						var renderInterval = setInterval(() => {
+
+							if(renderQRCode(pairindCode))
+							{
+								clearInterval(renderInterval);
+							}
+
+						}, 100);
+					}
+				}
+				else
+				{
+					document.getElementById('qrcode').innerHTML = 'QR Code konnte nicht generiert werden!';
+					document.getElementById('qrcode').style.opacity = 1;
+				}
+
+			</script>
+			<style>
+
+				#qrcode
+				{
+					border-radius: 50px;
+					background: rgb(245, 245, 255);
+					width: 220px;
+					height: 220px;
+					padding: 50px;
+					margin: 0 auto;
+					opacity: 0;
+					transition: .3s opacity;
+
+					font-size: 18px;
+					font-weight: 300;
+					letter-spacing: 3px;
+					text-align: center;
+				}
+
+			</style>
+		</div>
+	</body>
+</html>

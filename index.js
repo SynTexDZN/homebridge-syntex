@@ -1,6 +1,8 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
-const fs = require('fs'), store = require('json-fs-store'), axios = require('axios');
+const { Buffer } = require('buffer');
+
+const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
 
 var restart = true, updating = false;
 
@@ -91,6 +93,63 @@ class SynTexPlatform
 				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version);
 			}
 		});
+
+		this.config.load('config', (err, json) => {    
+
+			if(json && !err)
+			{
+				this.getSetupCode(api.user.storagePath(), json.bridge.username);
+			}
+		});
+	}
+
+	getSetupCode(storagePath, username)
+	{
+		if(storagePath != null && username != null)
+		{
+			fs.readFile(path.join(storagePath, 'persist', 'AccessoryInfo.' + username.split(':').join('') + '.json'), (err, data) => {
+
+				if(data && !err)
+				{
+					data = JSON.parse(data.toString());
+
+					if(data.pincode != null && data.category != null && data.setupID != null)
+					{
+						const buffer = Buffer.alloc(8);
+
+						var valueLow = parseInt(data.pincode.replace(/-/g, ''), 10),
+							valueHigh = data.category >> 1;
+
+						valueLow |= 1 << 28;
+
+						buffer.writeUInt32BE(valueLow, 4);
+
+						if(data.category & 1)
+						{
+							buffer[4] = buffer[4] | 1 << 7;
+						}
+
+						buffer.writeUInt32BE(valueHigh, 0);
+
+						let encodedPayload = (buffer.readUInt32BE(4) + (buffer.readUInt32BE(0) * Math.pow(2, 32))).toString(36).toUpperCase();
+						
+						if(encodedPayload.length !== 9)
+						{
+							for(let i = 0; i <= 9 - encodedPayload.length; i++)
+							{
+								encodedPayload = '0' + encodedPayload;
+							}
+						}
+
+						this.pairingCode = 'X-HM://' + encodedPayload + data.setupID;
+					}
+				}
+				else
+				{
+					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%! ' + err);
+				}
+			});
+		}
 	}
 
 	initWebServer()
@@ -785,6 +844,12 @@ class SynTexPlatform
 				response.write('Error');
 				response.end();
 			}
+		});
+
+		this.WebServer.addPage(['/debug/workaround/qr'], async (response, urlParams, content) => {
+
+			response.write(HTMLQuery.sendValue(content, 'pairingCode', this.pairingCode));
+			response.end();
 		});
 	}
 
