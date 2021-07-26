@@ -617,6 +617,11 @@ function loadPageData(url)
 
 							script.innerHTML = document.getElementsByTagName('script')[i].innerHTML;
 
+							if(document.getElementsByTagName('script')[i].hasAttribute('src'))
+							{
+								script.setAttribute('src', document.getElementsByTagName('script')[i].getAttribute('src'));
+							}
+
 							if(document.getElementsByTagName('script')[i].hasAttribute('type'))
 							{
 								script.setAttribute('type', document.getElementsByTagName('script')[i].getAttribute('type'));
