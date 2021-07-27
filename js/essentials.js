@@ -256,7 +256,7 @@ class EssentialFeatures
 
 		document.body.appendChild(dialogue);
 
-		setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 50);
+		setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 0);
 	}
 
 	closeDialogue(dialogue)
