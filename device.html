@@ -543,34 +543,28 @@
 								var height = 300;
 								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
 
-								frame.setAttribute('style', 'border-radius: 32px; height: ' + height + 'px; overflow: hidden; border: 2px solid rgb(40, 40, 55); background: rgb(20, 20, 30)');
+								frame.className = 'graph';
+								frame.setAttribute('style', 'height: ' + height + 'px');
 
 								document.getElementById('activity').appendChild(frame);
-
-								if(i != counter - 1) // UGLY: Handle Statusfield Margin
-								{
-									frame.style.marginBottom = '20px';
-								}
 
 								console.debug('SET HEIGHT', height, frame);
 
 								canvas.setAttribute('class', 'canvas');
 								canvas.setAttribute('id', 'canvas-' + Essentials.typeToLetter(type) + j);
-								canvas.setAttribute('style', 'border-radius: 32px; position: relative; z-index: 1; opacity: 0');
+								canvas.setAttribute('style', 'z-index: 1; opacity: 0');
 
 								canvas.width = document.getElementById('infos').offsetWidth - 4;
 								canvas.height = height;
-								canvas.style.background = 'rgb(20, 20, 30)';
 
 								frame.appendChild(canvas);
 
 								grid.setAttribute('class', 'canvas');
 								grid.setAttribute('id', 'canvas-' + type + '-' + j);
-								grid.setAttribute('style', 'border-radius: 32px; position: relative; top: -100%');
+								grid.setAttribute('style', 'top: -100%');
 
 								grid.width = document.getElementById('infos').offsetWidth - 4;
 								grid.height = height;
-								grid.style.background = 'rgb(20, 20, 30)';
 
 								frame.appendChild(grid);
 
@@ -1741,13 +1735,13 @@
 
 								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
 								{  
-									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', '%general.update_success%!', 'green'));
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_success%!', 'green'));
 
 									response = true;
 								}
 								else
 								{
-									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-result', '%general.update_failed%!', 'red'));
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_failed%!', 'red'));
 								}
 
 								document.getElementById('version-info').innerHTML = '<b>%device.version%: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 3, {}, false);
@@ -1756,7 +1750,9 @@
 
 								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
 								{
-									PageManager.removeFooter('update-btn');
+									Essentials.removeOverlays(btn, false);
+
+									PageManager.removeFooter('update-btn', true);
 								}
 								else
 								{
@@ -1818,7 +1814,7 @@
 					{
 						var overlays = {
 							root : btn,
-							id : 'update',
+							id : 'reset',
 							pending : { value : '%device.resetting% ..', z : 2 },
 							executeError : { value : '%device.reset_error%!', z : 3 },
 							connectionError : { value : (device.ip == null ? '%general.bridge_connection_error%!' : '%device.device_connection_error%!'), z : 3 }

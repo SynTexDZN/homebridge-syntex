@@ -72,6 +72,8 @@ html, body, #content, #groups, .control-panel::before, .type-container, .select-
     max-width: 400px;
 	box-sizing: border-box;
 	display: grid;
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
 }
 
 #footer-fade
@@ -104,6 +106,12 @@ html, body, #content, #groups, .control-panel::before, .type-container, .select-
 				var(--transition-normal) background-color ease-out,
 				var(--transition-normal) letter-spacing ease-out,
 				var(--transition-normal) filter ease-out!important;
+
+	box-shadow: none;
+	filter: drop-shadow(0 0px 1px rgba(0, 0, 0, 0.04))
+			drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06))
+			drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08))
+			drop-shadow(0 4px 8px rgba(0, 0, 0, 0.10));
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea
@@ -1019,8 +1027,27 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	box-sizing: border-box;
 }
 
+#activity
+{
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.graph
+{
+	border-radius: 32px;
+    height: 300px;
+    overflow: hidden;
+    border: 2px solid rgb(50, 50, 70);
+    background: rgb(20, 20, 30);
+}
+
 canvas
 {
+	border-radius: 32px;
+	position: relative;
+	background: rgb(20, 20, 30);
 	letter-spacing: 3px;
 	transition: 1s opacity;
 }
@@ -1296,6 +1323,7 @@ button img
 
 .plugin-container
 {
+	min-height: 50px;
 	transition: .3s ease-in-out height, var(--transition-color)!important;
 	letter-spacing: 3px!important;
 
@@ -1565,6 +1593,8 @@ button img
 	opacity: 0;
 	transition: var(--transition-color), .3s ease-in-out opacity;
 	z-index: 20000;
+	backdrop-filter: blur(1px);
+	-webkit-backdrop-filter: blur(1px);
 }
 
 .dialogue .panel
