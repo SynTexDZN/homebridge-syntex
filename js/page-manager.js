@@ -232,7 +232,7 @@ class PageManagerModule
 		}
 	}
 
-	removeFooter(id)
+	removeFooter(id, tempOnly)
 	{
 		if(this.footerTemp != null && this.footerFade != null)
 		{
@@ -260,29 +260,32 @@ class PageManagerModule
 				}
 			}
 
-			for(var i = 0; i < this.footerFade.children.length; i++)
+			if(!tempOnly)
 			{
-				if(this.footerFade.children[i].getAttribute('id') == id)
+				for(var i = 0; i < this.footerFade.children.length; i++)
 				{
-					this.footerFade.children[i].style.opacity = 0;
+					if(this.footerFade.children[i].getAttribute('id') == id)
+					{
+						this.footerFade.children[i].style.opacity = 0;
 
-					setTimeout(function() {
+						setTimeout(function() {
 
-						this.child.style.setProperty('height', '0', 'important');
-						this.child.style.paddingTop = 0;
-						this.child.style.paddingBottom = 0;
-						this.child.style.marginTop = 0;
-						this.child.style.marginBottom = 0;
-						this.child.style.borderTopWidth = 0;
-						this.child.style.borderBottomWidth = 0;
+							this.child.style.setProperty('height', '0', 'important');
+							this.child.style.paddingTop = 0;
+							this.child.style.paddingBottom = 0;
+							this.child.style.marginTop = 0;
+							this.child.style.marginBottom = 0;
+							this.child.style.borderTopWidth = 0;
+							this.child.style.borderBottomWidth = 0;
 
-					}.bind({ child : this.footerFade.children[i] }), 300);
+						}.bind({ child : this.footerFade.children[i] }), 300);
 
-					setTimeout(function() {
+						setTimeout(function() {
 
-						this.footerFade.removeChild(this.child);
+							this.footerFade.removeChild(this.child);
 
-					}.bind({ child : this.footerFade.children[i], footerFade : this.footerFade }), 600);
+						}.bind({ child : this.footerFade.children[i], footerFade : this.footerFade }), 600);
+					}
 				}
 			}
 		}
