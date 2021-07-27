@@ -13,29 +13,40 @@ class ExpandableButton
 			{
 				this.lastWidth = width;
 
-				for(const i in this.buttons)
-				{
-					this.buttons[i].style.setProperty('transition', 'none', 'important');
-
-					if(this.buttons[i].offsetHeight > 60)
-					{
-						//this.buttons[i].style.removeProperty('height');
-						this.buttons[i].style.height = 'auto';
-					}
-
-					setTimeout(() => {
-
-						this.buttons[i].style.height = this.buttons[i].offsetHeight;
-						this.buttons[i].style.removeProperty('transition');
-
-					}, 100);
-				}
+				this.resizeButtons();
 			}
 		});
 	}
 
+	resizeButtons()
+	{
+		for(const i in this.buttons)
+		{
+			this.buttons[i].style.setProperty('transition', 'none', 'important');
+
+			if(!this.buttons[i].opened)
+			{
+				this.buttons[i].style.removeProperty('height');
+			}
+			else
+			{
+				var padding = parseInt(this.buttons[i].style.paddingTop || getComputedStyle(this.buttons[i]).paddingTop) + parseInt(this.buttons[i].style.paddingBottom || getComputedStyle(this.buttons[i]).paddingBottom);
+
+				this.buttons[i].style.height = this.buttons[i].children[0].offsetHeight + padding;
+			}
+
+			setTimeout(() => {
+
+				this.buttons[i].style.removeProperty('transition');
+
+			}, 100);
+		}
+	}
+
 	createExpandableButton(btn)
 	{
+		btn.opened = false;
+
 		btn.onclick = () => {
 			
 			var height = btn.scrollHeight;
@@ -43,6 +54,8 @@ class ExpandableButton
 			if(height != btn.offsetHeight)
 			{
 				btn.style.height = height;
+
+				btn.opened = true;
 
 				for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 				{
@@ -52,6 +65,8 @@ class ExpandableButton
 			else
 			{
 				btn.style.removeProperty('height');
+
+				btn.opened = false;
 
 				for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 				{
