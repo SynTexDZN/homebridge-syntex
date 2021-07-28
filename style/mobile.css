@@ -125,7 +125,7 @@
 		min-width: none;
 		max-width: none;
 		grid-template-columns: 100%!important;
-		grid-gap: 0px;
+		gap: 0px;
 		top: -30px;
 	}
 
@@ -177,7 +177,7 @@
 		display: grid;
 		grid-template-columns: calc(50% - 10px) calc(50% - 10px)!important;
 		grid-template-rows: auto;
-		grid-gap: 20px;
+		gap: 20px;
 	}
 
 	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
@@ -252,7 +252,6 @@
 		/*border-radius: 60px;*/
 		width: calc(100% + 10px)!important;
 		margin-left: -25px!important;
-		box-sizing: content-box;
 		border-left-width: 0;
 		border-right-width: 0;
 	}
@@ -322,7 +321,7 @@
 
 	.table
 	{
-		line-height: 33px;
+		line-height: 24px;
 	}
 
 	.table .column
@@ -337,12 +336,24 @@
 
 	.table .secondary
 	{
-		padding-right: 16px;
+		gap: 16px;
+		padding: 16px;
 	}
 
 	.vertical-view .table
 	{
 		flex-direction: column;
+	}
+
+	.vertical-view .table .column
+	{
+		margin-bottom: 20px;
+		margin-right: 0;
+	}
+
+	.vertical-view .table .column:last-of-type
+	{
+		margin-bottom: 0;
 	}
 
 	.vertical-view .table .secondary

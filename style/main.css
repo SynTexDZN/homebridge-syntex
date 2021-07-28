@@ -453,7 +453,7 @@ h2
 	margin-top: 50px;
 	position: relative;
 	display: grid;
-	grid-gap: 20px;
+	gap: 20px;
 }
 
 .control-container.grid
@@ -870,18 +870,17 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	padding: 20px;
 	border-radius: 32px;
 	transition: var(--transition-color), 0s color;
+	margin-bottom: 50px;
+}
+
+.type-container:last-of-type
+{
+	margin-bottom: 0;
 }
 
 .type-container, #footer-content
 {
 	border: 1px solid rgba(245, 245, 255, .015);
-}
-
-#devices, #automation
-{
-	display: flex;
-	flex-direction: column;
-	gap: 50px;
 }
 
 #devices button
@@ -931,11 +930,14 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	color: hsl(170, 90%, 50%);
 }
 
-.device-container
+.device-container button
 {
-	display: flex;
-	gap: 20px;
-	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.device-container button:last-of-type
+{
+	margin-bottom: 0;
 }
 
 #devices.grid-view input[type='button'], #devices.grid-view button
@@ -1027,13 +1029,6 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
 	box-sizing: border-box;
 }
 
-#activity
-{
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
-
 .graph
 {
 	border-radius: 32px;
@@ -1041,6 +1036,12 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-
     overflow: hidden;
     border: 2px solid rgb(50, 50, 70);
     background: rgb(20, 20, 30);
+	margin-bottom: 20px;
+}
+
+.graph:last-of-type
+{
+	margin-bottom: 0;
 }
 
 canvas
@@ -1229,22 +1230,21 @@ button img
 .automation-device-entry
 {
 	display: grid;
-	grid-gap: 20px;
+	gap: 20px;
 	grid-template-columns: calc(50% - 10px) calc(20% - 50px) calc(30% - 50px) 50px;
 	margin-bottom: 20px;
 }
 
 .automation-color-container
 {
-	display: flex;
+	display: grid;
 	gap: 20px;
-	flex-direction: column;
 }
 
 .table
 {
 	text-align: left;
-	line-height: 28px;
+	line-height: 24px;
 	padding: 0;
 	pointer-events: none;
 	height: auto;
@@ -1252,8 +1252,7 @@ button img
 	background: transparent;
 	box-shadow: none;
 	display: flex;
-    flex-direction: column;
-	gap: 20px;
+	flex-direction: column;
 	font-weight: 200;
 	letter-spacing: 3px;
 }
@@ -1264,7 +1263,13 @@ button img
 	background: rgb(55, 55, 75);
 	width: 100%;
 	overflow: hidden;
-    border-radius: 16px;	
+    border-radius: 16px;
+	margin-bottom: 20px;	
+}
+
+.table .column:last-of-type
+{
+	margin-bottom: 0;
 }
 
 .table .primary
@@ -1283,10 +1288,9 @@ button img
 
 .table .secondary
 {
-	display: flex;
-	flex-direction: column;
-	gap: 11px;
-	padding: 11px;
+	display: grid;
+	gap: 13px;
+	padding: 13px;
 }
 
 .table .secondary div
@@ -1312,6 +1316,13 @@ button img
 .vertical-view .table .column
 {
 	flex-direction: column;
+	margin-right: 20px;
+	margin-bottom: 0;
+}
+
+.vertical-view .table .column:last-of-type
+{
+	margin-right: 0;
 }
 
 .vertical-view .table .primary
@@ -1588,7 +1599,7 @@ button img
 	display: flex;
 	position: fixed;
 	height: 100vh;
-	width: 100vw;
+	width: 100%;
 	top: 0;
 	opacity: 0;
 	transition: var(--transition-color), .3s ease-in-out opacity;
@@ -1630,7 +1641,16 @@ button img
 .dialogue .button-area
 {
 	display: flex;
-	gap: 20px;
+}
+
+.dialogue .button-area button
+{
+	margin-right: 20px;
+}
+
+.dialogue .button-area button:last-of-type
+{
+	margin-right: 0;
 }
 
 @media only screen and (min-width: 1177px)
