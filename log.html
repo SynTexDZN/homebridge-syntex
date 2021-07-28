@@ -550,12 +550,28 @@
 				{
 					if(!clear)
 					{
+						var options = document.getElementById('filter').getElementsByClassName('select-items')[0].children;
+
 						document.getElementById('search-btn').value = '%general.searching% ..';
 						document.getElementById('search-btn').classList.remove('pulse');
 						document.getElementById('search-params').value = '';
-						document.getElementById('filter').getElementsByClassName('select-items')[0].children[0].click();
+						
+						for(var i = 0; i < options.length; i++)
+						{
+							if(i == 0)
+							{
+								options[i].classList.add('same-as-selected');
 
-						await Essentials.newTimeout(500);
+								document.getElementById('filter').getElementsByTagName('select')[0].selectedIndex = i;
+								document.getElementById('filter').getElementsByClassName('select-selected')[0].innerHTML = options[i].innerHTML;
+							}
+							else
+							{
+								options[i].classList.remove('same-as-selected');
+							}
+						}
+
+						await searchLog();
 
 						document.getElementById('search-btn').value = '%general.search%';
 
