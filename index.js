@@ -1,6 +1,6 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
-const { Buffer } = require('buffer');
+const { Buffer } = require('buffer'), WebSocket = require('ws');
 
 const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
 
@@ -67,6 +67,7 @@ class SynTexPlatform
 				UpdateManager = new UpdateManager(600, this.config, this.logger);
 
 				this.initWebServer();
+				this.initWebSocket();
 
 				restart = false;
 
@@ -153,6 +154,21 @@ class SynTexPlatform
 				}
 			});
 		}
+	}
+
+	initWebSocket()
+	{
+		var ws = new WebSocket('ws://syntex.sytes.net:8080/');
+		/*
+		ws.on('open', () => ws.send('Hallo'));
+		*/
+		ws.on('message', (path) => {
+			
+			axios.get('http://127.0.0.1:' + this.port + path).then((response) => {
+
+				ws.send(JSON.stringify({ path, data : response.data }));
+			});
+		});
 	}
 
 	initWebServer()
