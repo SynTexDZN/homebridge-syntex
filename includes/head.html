@@ -1,4 +1,36 @@
 <head>
+	<script type="module">
+
+		if('serviceWorker' in navigator)
+		{
+			window.addEventListener('load', () => {
+	
+				navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then((registration) => {
+	
+					console.log('[ServiceWorker] Registriert');
+
+				}).catch((error) => {
+	
+					console.log('[ServiceWorker] Fehler bei der Registration', error);
+				});
+
+				navigator.serviceWorker.ready.then(() => {
+
+					navigator.serviceWorker.addEventListener('controllerchange', () => {
+
+						navigator.serviceWorker.controller.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+
+						console.log('[ServiceWorker] Bereit');
+					});
+				});
+			});
+		}
+		else
+		{
+			console.log('[ServiceWorker] Registrierung nicht möglich');
+		}
+	
+	</script>
 	<style>
 
 		#preloader
