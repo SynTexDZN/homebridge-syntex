@@ -340,7 +340,7 @@
 							connectionError : { value : '%connect.device_connection_error%!' }
 						};
 
-						var mac = await Query.complexFetch(deviceURL + 'settings', 20000, 1, overlays, false, formData);
+						var mac = await Query.complexFetch(deviceURL + 'settings', 20000, 1, overlays, false, JSON.stringify(formData));
 
 						if(mac != null)
 						{
