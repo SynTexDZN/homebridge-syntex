@@ -170,14 +170,14 @@ class SynTexPlatform
 
 				if(message.post != null)
 				{
-					axios.post('http://127.0.0.1:' + this.port + message.path, message.post).then((response) => {
+					axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => {
 
 						ws.send(JSON.stringify({ path : message.path, data : response.data }));
 					});
 				}
 				else
 				{
-					axios.get('http://127.0.0.1:' + this.port + message.path).then((response) => {
+					axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => {
 
 						ws.send(JSON.stringify({ path : message.path, data : response.data }));
 					});
