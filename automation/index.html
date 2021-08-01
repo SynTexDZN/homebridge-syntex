@@ -206,12 +206,12 @@
 
 					console.log('AUTOMATION', automation);
 
+					document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
+
 					if(automation.length > 0)
 					{
 						sortAutomation(true);
 						createGroupPanel();
-
-						document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
 					}
 					else if(services.length > 0)
 					{
@@ -1129,7 +1129,7 @@
 
 				function getNextID()
 				{
-					var lastID = 0;
+					var lastID = -1;
 
 					for(const a in automation)
 					{
