@@ -158,36 +158,43 @@ class SynTexPlatform
 
 	initWebSocket()
 	{
-		var ws = new WebSocket('ws://syntex.sytes.net:8080/');
+		try
+		{
+			var ws = new WebSocket('ws://syntex.sytes.net:8080/');
+
+			ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000)); 
 		
-		ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000));
-		
-		ws.on('message', (message) => {
-			
-			try
-			{
-				message = JSON.parse(message);
-
-				if(message.post != null)
+			ws.on('message', (message) => {
+				
+				try
 				{
-					axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => {
+					message = JSON.parse(message);
 
-						ws.send(JSON.stringify({ path : message.path, data : response.data }));
-					});
+					if(message.post != null)
+					{
+						axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => {
+
+							ws.send(JSON.stringify({ path : message.path, data : response.data }));
+						});
+					}
+					else
+					{
+						axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => {
+
+							ws.send(JSON.stringify({ path : message.path, data : response.data }));
+						});
+					}
 				}
-				else
+				catch(e)
 				{
-					axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => {
-
-						ws.send(JSON.stringify({ path : message.path, data : response.data }));
-					});
+					console.log(e);
 				}
-			}
-			catch(e)
-			{
-				console.log(e);
-			}
-		});
+			});
+		}
+		catch(e)
+		{
+			setTimeout(() => this.initWebSocket(), 3000);
+		}
 	}
 
 	initWebServer()

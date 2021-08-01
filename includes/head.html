@@ -9,19 +9,11 @@
 	
 					console.log('[ServiceWorker] Registriert');
 
+					registration.active.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+
 				}).catch((error) => {
 	
 					console.log('[ServiceWorker] Fehler bei der Registration', error);
-				});
-
-				navigator.serviceWorker.ready.then(() => {
-
-					navigator.serviceWorker.addEventListener('controllerchange', () => {
-
-						navigator.serviceWorker.controller.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
-
-						console.log('[ServiceWorker] Bereit');
-					});
 				});
 			});
 		}
