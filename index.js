@@ -159,15 +159,34 @@ class SynTexPlatform
 	initWebSocket()
 	{
 		var ws = new WebSocket('ws://syntex.sytes.net:8080/');
-		/*
-		ws.on('open', () => ws.send('Hallo'));
-		*/
-		ws.on('message', (path) => {
+		
+		ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000));
+		
+		ws.on('message', (message) => {
 			
-			axios.get('http://127.0.0.1:' + this.port + path).then((response) => {
+			try
+			{
+				message = JSON.parse(message);
 
-				ws.send(JSON.stringify({ path, data : response.data }));
-			});
+				if(message.post != null)
+				{
+					axios.post('http://127.0.0.1:' + this.port + message.path, message.post).then((response) => {
+
+						ws.send(JSON.stringify({ path : message.path, data : response.data }));
+					});
+				}
+				else
+				{
+					axios.get('http://127.0.0.1:' + this.port + message.path).then((response) => {
+
+						ws.send(JSON.stringify({ path : message.path, data : response.data }));
+					});
+				}
+			}
+			catch(e)
+			{
+				console.log(e);
+			}
 		});
 	}
 
