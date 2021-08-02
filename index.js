@@ -162,7 +162,7 @@ class SynTexPlatform
 		{
 			var ws = new WebSocket('ws://syntex.sytes.net:8080/');
 
-			ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000)); 
+			ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000));
 		
 			ws.on('message', (message) => {
 				
