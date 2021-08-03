@@ -158,13 +158,24 @@ class SynTexPlatform
 
 	initWebSocket()
 	{
+		const isAlive = () => {
+
+			clearTimeout(this.WebSocket.pingTimeout);
+		  
+			this.WebSocket.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
+		}
+		
 		try
 		{
-			var ws = new WebSocket('ws://syntex.sytes.net:8080/');
+			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/', { handshakeTimeout : 30000 });
 
-			ws.on('close', () => setTimeout(() => this.initWebSocket(), 3000));
-		
-			ws.on('message', (message) => {
+			this.WebSocket.on('open', () => isAlive());
+
+			this.WebSocket.on('ping', () => isAlive());
+
+			this.WebSocket.on('close', (e, b) => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000) }); 
+
+			this.WebSocket.on('message', (message) => {
 				
 				try
 				{
@@ -174,14 +185,14 @@ class SynTexPlatform
 					{
 						axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => {
 
-							ws.send(JSON.stringify({ path : message.path, data : response.data }));
+							this.WebSocket.send(JSON.stringify({ path : message.path, data : response.data }));
 						});
 					}
 					else
 					{
 						axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => {
 
-							ws.send(JSON.stringify({ path : message.path, data : response.data }));
+							this.WebSocket.send(JSON.stringify({ path : message.path, data : response.data }));
 						});
 					}
 				}
