@@ -239,6 +239,133 @@
 	</script>
 	<link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
 	<script src="/js/menu.js" id="static" defer></script>
+	<script id="static">
+
+		window.originalSetTimeout = window.setTimeout;
+		window.originalClearTimeout = window.clearTimeout;
+		window.originalSetInterval = window.setInterval;
+		window.originalClearInterval = window.clearInterval;
+		window.originalAddEventListener = window.addEventListener;
+		window.originalRemoveEventListener = window.removeEventListener;
+		window.activeTimeouts = [];
+		window.activeIntervals = [];
+		window.activeWebSockets = [];
+		window.activeEventListener = [];
+		
+		window.setTimeout = (func, delay) => {
+	
+			var timerID = originalSetTimeout(() => {
+	
+				func();
+	
+				clearTimeout(timerID);
+	
+			}, delay);
+	
+			activeTimeouts.push(timerID);
+	
+			return timerID;
+		};
+	
+		window.clearTimeout = (timerID) => {
+	
+			originalClearTimeout(timerID);
+	
+			if(activeTimeouts.includes(timerID))
+			{
+				activeTimeouts.splice(activeTimeouts.indexOf(timerID), 1);
+			}
+		};
+		
+		window.setInterval = (func, interval) => {
+	
+			var timerID = originalSetInterval(func, interval);
+	
+			activeIntervals.push(timerID);
+	
+			return timerID;
+		};
+	
+		window.clearInterval = (timerID) => {
+	
+			originalClearInterval(timerID);
+	
+			if(activeIntervals.includes(timerID))
+			{
+				activeIntervals.splice(activeIntervals.indexOf(timerID), 1);
+			}
+		};
+	
+		window.addEventListener = (name, listener, useCapture) => {
+	
+			activeEventListener.push({ name, listener, useCapture });
+	
+			if(useCapture == 'KEEP')
+			{
+				useCapture = true;
+			}
+	
+			originalAddEventListener(name, listener, useCapture);
+		};
+		
+		window.removeEventListener = (name, listener, useCapture) => {
+	
+			if(activeEventListener.includes({ name, listener, useCapture }))
+			{
+				activeEventListener.splice(activeEventListener.indexOf({ name, listener, useCapture }), 1);
+			}
+	
+			if(useCapture == 'KEEP')
+			{
+				useCapture = true;
+			}
+	
+			originalRemoveEventListener(name, listener, useCapture);
+		};
+	
+		window.clearTimers = () => {
+	
+			for(var i = activeTimeouts.length - 1; i >= 0; i--)
+			{
+				clearTimeout(activeTimeouts[i]);
+			}
+	
+			for(var i = activeIntervals.length - 1; i >= 0; i--)
+			{
+				clearInterval(activeIntervals[i]);
+			}
+		}
+	
+		window.closeSockets = () => {
+	
+			for(var i = activeWebSockets.length - 1; i >= 0; i--)
+			{
+				activeWebSockets[i].close(4000);
+	
+				activeWebSockets.splice(i, 1);
+			}
+		}
+	
+		window.removeEventListeners = () => {
+	
+			for(var i = activeEventListener.length - 1; i >= 0; i--)
+			{
+				if(activeEventListener[i].useCapture != 'KEEP')
+				{
+					window.removeEventListener(activeEventListener[i].name, activeEventListener[i].listener, activeEventListener[i].useCapture);
+	
+					activeEventListener.splice(i, 1);
+				}
+			}
+		};
+	
+		if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+		{
+			document.getElementById('menu').style.display = '';
+			document.getElementById('menu-style').removeAttribute('disabled');
+		}
+	
+	</script>
 </head>
 <nav id="menu" style="display: none">
 	<img src="/favicon-clean.ico">
@@ -279,133 +406,6 @@
 		</div>
 	</div>
 </nav>
-<script id="static">
-
-	window.originalSetTimeout = window.setTimeout;
-	window.originalClearTimeout = window.clearTimeout;
-	window.originalSetInterval = window.setInterval;
-	window.originalClearInterval = window.clearInterval;
-	window.originalAddEventListener = window.addEventListener;
-	window.originalRemoveEventListener = window.removeEventListener;
-	window.activeTimeouts = [];
-	window.activeIntervals = [];
-	window.activeWebSockets = [];
-	window.activeEventListener = [];
-	
-	window.setTimeout = (func, delay) => {
-
-		var timerID = originalSetTimeout(() => {
-
-			func();
-
-			clearTimeout(timerID);
-
-		}, delay);
-
-		activeTimeouts.push(timerID);
-
-		return timerID;
-	};
-
-	window.clearTimeout = (timerID) => {
-
-		originalClearTimeout(timerID);
-
-		if(activeTimeouts.includes(timerID))
-		{
-			activeTimeouts.splice(activeTimeouts.indexOf(timerID), 1);
-		}
-	};
-	
-	window.setInterval = (func, interval) => {
-
-		var timerID = originalSetInterval(func, interval);
-
-		activeIntervals.push(timerID);
-
-		return timerID;
-	};
-
-	window.clearInterval = (timerID) => {
-
-		originalClearInterval(timerID);
-
-		if(activeIntervals.includes(timerID))
-		{
-			activeIntervals.splice(activeIntervals.indexOf(timerID), 1);
-		}
-	};
-
-	window.addEventListener = (name, listener, useCapture) => {
-
-		activeEventListener.push({ name, listener, useCapture });
-
-		if(useCapture == 'KEEP')
-		{
-			useCapture = true;
-		}
-
-		originalAddEventListener(name, listener, useCapture);
-	};
-	
-	window.removeEventListener = (name, listener, useCapture) => {
-
-		if(activeEventListener.includes({ name, listener, useCapture }))
-		{
-			activeEventListener.splice(activeEventListener.indexOf({ name, listener, useCapture }), 1);
-		}
-
-		if(useCapture == 'KEEP')
-		{
-			useCapture = true;
-		}
-
-		originalRemoveEventListener(name, listener, useCapture);
-	};
-
-	window.clearTimers = () => {
-
-		for(var i = activeTimeouts.length - 1; i >= 0; i--)
-		{
-			clearTimeout(activeTimeouts[i]);
-		}
-
-		for(var i = activeIntervals.length - 1; i >= 0; i--)
-		{
-			clearInterval(activeIntervals[i]);
-		}
-	}
-
-	window.closeSockets = () => {
-
-		for(var i = activeWebSockets.length - 1; i >= 0; i--)
-		{
-			activeWebSockets[i].close(4000);
-
-			activeWebSockets.splice(i, 1);
-		}
-	}
-
-	window.removeEventListeners = () => {
-
-		for(var i = activeEventListener.length - 1; i >= 0; i--)
-		{
-			if(activeEventListener[i].useCapture != 'KEEP')
-			{
-				window.removeEventListener(activeEventListener[i].name, activeEventListener[i].listener, activeEventListener[i].useCapture);
-
-				activeEventListener.splice(i, 1);
-			}
-		}
-	};
-
-	if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
-	{
-		document.getElementById('menu').style.display = '';
-		document.getElementById('menu-style').removeAttribute('disabled');
-	}
-
-</script>
 <div id="head-container">
 	<div id="head-content" class="hidden">
 		<h1 class="hidden" style="margin-bottom: 0; margin-top: 0"></h1>
