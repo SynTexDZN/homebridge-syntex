@@ -1,34 +1,56 @@
 <head>
 	<script type="module">
 
-		if('serviceWorker' in navigator)
-		{
-			window.addEventListener('load', () => {
-	
-				navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then((registration) => {
-	
-					console.log('[ServiceWorker] Registriert');
+			function resisterServiceWorker()
+			{
+				return new Promise((resolve) => {
 
-					if(registration.active != null)
+					if('serviceWorker' in navigator)
 					{
-						registration.active.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
-					}
+						window.addEventListener('load', () => {
 
-				}).catch((error) => {
-	
-					console.log('[ServiceWorker] Fehler bei der Registration', error);
+							navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then((registration) => {
+
+								console.log('[ServiceWorker] Registriert');
+
+								if(registration.active != null)
+								{
+									registration.active.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+
+									resolve(true);
+								}
+								else
+								{
+									resolve(false);
+								}
+
+							}).catch((error) => {
+
+								console.log('[ServiceWorker] Fehler bei der Registration', error);
+
+								resolve(false);
+							});
+							
+							navigator.serviceWorker.addEventListener('controllerchange', () => {
+								
+								navigator.serviceWorker.controller.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+
+								resovle(true);
+							});
+						});
+					}
+					else
+					{
+						console.log('[ServiceWorker] Registrierung nicht möglich');
+
+						resolve(false);
+					}
 				});
-				
-				navigator.serviceWorker.addEventListener('controllerchange', () => {
-					
-					navigator.serviceWorker.controller.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
-				});
-			});
-		}
-		else
-		{
-			console.log('[ServiceWorker] Registrierung nicht möglich');
-		}
+			};
+
+			resisterServiceWorker();
+
+			window.resisterServiceWorker = resisterServiceWorker;
 	
 	</script>
 	<style>
