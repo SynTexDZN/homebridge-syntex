@@ -173,7 +173,7 @@ class SynTexPlatform
 
 			this.WebSocket.on('ping', () => isAlive());
 
-			this.WebSocket.on('close', (e, b) => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000) }); 
+			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); this.initWebSocket() }); 
 
 			this.WebSocket.on('message', (message) => {
 				
