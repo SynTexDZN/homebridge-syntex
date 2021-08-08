@@ -15,7 +15,7 @@
 
 								if(registration.active != null)
 								{
-									registration.active.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+									registration.active.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
 
 									resolve(true);
 								}
@@ -33,7 +33,7 @@
 							
 							navigator.serviceWorker.addEventListener('controllerchange', () => {
 								
-								navigator.serviceWorker.controller.postMessage({ bridgeIP : localStorage.getItem('bridge-ip') });
+								navigator.serviceWorker.controller.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
 
 								resolve(true);
 							});

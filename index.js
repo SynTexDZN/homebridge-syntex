@@ -67,7 +67,6 @@ class SynTexPlatform
 				UpdateManager = new UpdateManager(600, this.config, this.logger);
 
 				this.initWebServer();
-				this.initWebSocket();
 
 				restart = false;
 
@@ -99,6 +98,8 @@ class SynTexPlatform
 					if(data.data != null)
 					{
 						this.bridgeID = data.data;
+
+						this.initWebSocket();
 					}
 				});
 			}
@@ -173,7 +174,7 @@ class SynTexPlatform
 		
 		try
 		{
-			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/', { handshakeTimeout : 30000 });
+			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
 
 			this.WebSocket.on('open', () => isAlive());
 
