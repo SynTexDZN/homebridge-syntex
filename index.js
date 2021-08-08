@@ -94,7 +94,13 @@ class SynTexPlatform
 
 			if(stdout)
 			{
-				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version);
+				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version).then((data) => {
+					
+					if(data.data != null)
+					{
+						this.bridgeID = data.data;
+					}
+				});
 			}
 		});
 
@@ -623,10 +629,11 @@ class SynTexPlatform
 		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (response, urlParams, content) => {
 
 			var obj = {
-				tag: 'latest',
-				ip: null,
-				wlanMac: null,
-				ethernetMac: null
+				tag : 'latest',
+				bridgeID : null,
+				bridgeIP : null,
+				wlanMac : null,
+				ethernetMac : null
 			};
 
 			var bridgeData = await DeviceManager.getBridgeStorage();
@@ -634,6 +641,11 @@ class SynTexPlatform
 			if(bridgeData != null && bridgeData.tag != null)
 			{
 				obj.tag = bridgeData.tag;
+			}
+
+			if(this.bridgeID != null)
+			{
+				obj.bridgeID = this.bridgeID;
 			}
 
 			const ifaces = require('os').networkInterfaces();
@@ -645,7 +657,7 @@ class SynTexPlatform
 					return details.family === 'IPv4' && details.internal === false;
 				});
 
-				if(iface.length > 0) obj.ip = iface[0].address;
+				if(iface.length > 0) obj.bridgeIP = iface[0].address;
 			}
 
 			const { exec } = require('child_process');

@@ -30,6 +30,10 @@
 					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
 				</div>
 				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
+					<button class="widget-left">%bridge.bridge_id%</button>
+					<button class="widget-right gradient-blue" style="user-select: text">-</button>
+				</div>
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
 					<button class="widget-left">%bridge.ip_address%</button>
 					<button class="widget-right gradient-blue" style="user-select: text">-</button>
 				</div>
@@ -64,26 +68,32 @@
 
 				// NOTE: Mac and IP Widgets
 
-				window.bridgeIP = '<%ip%>';
+				window.bridgeID = '<%bridgeID%>';
+				window.bridgeIP = '<%bridgeIP%>';
 				window.wlanMac = '<%wlanMac%>';
 				window.ethernetMac = '<%ethernetMac%>';
 
+				if(bridgeID != 'null')
+				{
+					document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeID;
+				}
+
 				if(bridgeIP != 'null')
 				{
-					document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
+					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = bridgeIP;
 				}
 
 				if(wlanMac != 'null' && ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>' + ethernetMac.toUpperCase();
 				}
 				else if(wlanMac != 'null')
 				{
-					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = wlanMac.toUpperCase() + '<br>-';
 				}
 				else if(ethernetMac != 'null')
 				{
-					document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
+					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
 				}
 
 				// NOTE: Load Plugin Versions
