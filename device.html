@@ -694,12 +694,12 @@
 					checkUpdates();
 				}
 
-				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null)
+				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null && window.location.protocol != 'https:')
 				{
 					pingESP();
 				}
 
-				if(device.plugin.alias.startsWith('SynTex'))
+				if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
 				{
 					setupViewer();
 					setupController();
@@ -761,7 +761,7 @@
 						state.saturation = temp[letters].saturation;
 					}
 
-					if(device.plugin.alias.startsWith('SynTex'))
+					if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
 					{
 						if(!send)
 						{
@@ -778,7 +778,7 @@
 
 						if(!send)
 						{
-							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['state'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
 					
 							promiseArraySlide.push(Query.complexFetch(url, 10000, 1, {}, false));
 						}
@@ -1037,13 +1037,13 @@
 
 						//setControlPanel(letters, { value : (value == 'true') });
 
-						if(device.plugin.alias.startsWith('SynTex'))
+						if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
 						{
 							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : value  } }));
 						}
 						else if(getService(letters) != null && getService(letters).iid != null)
 						{
-							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['state'] + '&value=' + value;
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + value;
 						
 							Query.complexFetch(url, 10000, 1, {}, false).then((result) => busy.splice(busy.indexOf(letters), 1));
 						}
@@ -1769,7 +1769,7 @@
 
 				async function checkUpdates()
 				{
-					var newestVersion = await Query.complexFetch('http://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
+					var newestVersion = await Query.complexFetch('https://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
 					{
@@ -1922,7 +1922,7 @@
 								
 							redirect();
 						}
-						else if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null)
+						else if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null && window.location.protocol != 'https:')
 						{
 							saving = false;
 

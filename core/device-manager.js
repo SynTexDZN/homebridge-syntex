@@ -226,7 +226,7 @@ module.exports = class DeviceManager
 
 			for(const i in services)
 			{
-				if(services[i].iid['state'] == iid)
+				if(services[i].iid['value'] == iid)
 				{
 					return services[i];
 				}
@@ -676,22 +676,22 @@ module.exports = class DeviceManager
 
 			var characteristics = {
 				'A2' : { name : 'bridge', type : {} },
-				'43' : { name : 'led', type : { state : '25', hue : '13', saturation : '2F', brightness : '8' } },
-				'47' : { name : 'outlet', type : { state : '25' } },
-				'49' : { name : 'switch', type : { state : '25' } },
-				'80' : { name : 'contact', type : { state : '6A' } },
-				'82' : { name : 'humidity', type : { state : '10' } },
-				'83' : { name : 'rain', type : { state : '70' } },
-				'84' : { name : 'light', type : { state : '6B' } },
-				'85' : { name : 'motion', type : { state : '22' } },
-				'86' : { name : 'occupancy', type : { state : '71' } },
-				'89' : { name : 'statelessswitch', type : { state : '73' } },
-				'8A' : { name : 'temperature', type : { state : '11' } },
-				'8D' : { name : 'airquality', type: { state : '95' } },
-				'87' : { name : 'smoke', type: { state : '76' } }/*,
-				'7E' : { name : 'security', type: { state : '' } },
-				'41' : { name : 'garagedoor', type: { state : '' } },
-				'45' : { name : 'lock', type: { state : '' } }*/
+				'43' : { name : 'led', type : { value : '25', hue : '13', saturation : '2F', brightness : '8' } },
+				'47' : { name : 'outlet', type : { value : '25' } },
+				'49' : { name : 'switch', type : { value : '25' } },
+				'80' : { name : 'contact', type : { value : '6A' } },
+				'82' : { name : 'humidity', type : { value : '10' } },
+				'83' : { name : 'rain', type : { value : '70' } },
+				'84' : { name : 'light', type : { value : '6B' } },
+				'85' : { name : 'motion', type : { value : '22' } },
+				'86' : { name : 'occupancy', type : { value : '71' } },
+				'89' : { name : 'statelessswitch', type : { value : '73' } },
+				'8A' : { name : 'temperature', type : { value : '11' } },
+				'8D' : { name : 'airquality', type: { value : '95' } },
+				'87' : { name : 'smoke', type: { value : '76' } }/*,
+				'7E' : { name : 'security', type: { value : '' } },
+				'41' : { name : 'garagedoor', type: { value : '' } },
+				'45' : { name : 'lock', type: { value : '' } }*/
 			};
 
 			var accessoryCharacteristics = {
