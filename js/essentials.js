@@ -364,8 +364,6 @@ class EssentialFeatures
 			btn.style.opacity = 0;
 		}
 
-		console.log(show, btn);
-		
 		for(var i = 0; i < this.overlays.length; i++)
 		{
 			if(this.overlays[i].reference == btn)

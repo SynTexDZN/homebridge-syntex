@@ -959,8 +959,6 @@
 
 					if(color.includes('rgb'))
 					{
-						console.log(color, color.split(', '));
-
 						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2]) - 20) + ')');
 					}
 					else if(color.includes('hsl'))

@@ -58,8 +58,6 @@ module.exports = class DeviceManager
 				{
 					try
 					{
-						console.log(services, JSON.parse(services), events, JSON.parse(events));
-
 						services = JSON.parse(services) || [];
 						events = JSON.parse(events) || [];
 
