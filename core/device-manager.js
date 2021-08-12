@@ -544,7 +544,7 @@ module.exports = class DeviceManager
 									{
 										for(const x in configOBJ.platforms[i].accessories[j])
 										{
-											if(x != 'id' && x != 'plugin')
+											if(x != 'id' && x != 'plugin' && x != 'services')
 											{
 												accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
 											}
@@ -553,6 +553,8 @@ module.exports = class DeviceManager
 												accessories[k].plugin = { alias : configOBJ.platforms[i].accessories[j][x] };
 											}
 										}
+
+										accessories[k].services = convertServices(accessories[k].services, configOBJ.platforms[i].accessories[j].services);
 									}
 								}
 							}
@@ -784,6 +786,8 @@ module.exports = class DeviceManager
 							}
 						}
 					}
+
+					accessoryArray[i].services = getLetters(accessoryArray[i].services);
 				}
 
 				resolve(accessoryArray);
@@ -869,4 +873,79 @@ function addToConfig(id, ip, name, services, buttons)
 			}
 		}
 	}
+}
+
+function convertServices(orginal, additional)
+{
+	var services = [];
+
+	if(Array.isArray(additional))
+	{
+		for(const i in additional)
+		{
+			if(additional[i] instanceof Object)
+			{
+				services.push(additional[i]);
+			}
+			else
+			{
+				services.push({ type : additional[i] });
+			}	
+		}
+	}
+	else if(additional instanceof Object)
+	{
+		services.push(additional);
+	}
+	else
+	{
+		services.push({ type : additional });
+	}
+
+	services = getLetters(services);
+
+	for(const i in services)
+	{
+		for(const x in orginal)
+		{
+			if(services[i].letters == orginal[x].letters)
+			{
+				for(const y in orginal[x])
+				{
+					services[i][y] = orginal[x][y];
+				}
+			}
+		}
+	}
+
+	return services;
+}
+
+function getLetters(services)
+{
+	var typeCounter = {};
+
+	for(const i in services)
+	{
+		if(typeCounter[services[i].type] != null)
+		{
+			typeCounter[services[i].type]++;
+		}
+		else
+		{
+			typeCounter[services[i].type] = 0;
+		}
+
+		services[i].letters = typeToLetter(services[i].type) + typeCounter[services[i].type];
+	}
+
+	return services;
+}
+
+function typeToLetter(type)
+{
+	var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
+	var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+	return letters[types.indexOf(type.toLowerCase())];
 }
