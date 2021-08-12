@@ -912,7 +912,17 @@ function convertServices(orginal, additional)
 			{
 				for(const y in orginal[x])
 				{
-					services[i][y] = orginal[x][y];
+					if(y != 'type')
+					{
+						services[i][y] = orginal[x][y];
+					}
+				}
+
+				if(services[i].orginalLetters != null)
+				{
+					services[i].letters = services[i].orginalLetters;
+
+					delete services[i].orginalLetters;
 				}
 			}
 		}
@@ -936,7 +946,25 @@ function getLetters(services)
 			typeCounter[services[i].type] = 0;
 		}
 
-		services[i].letters = typeToLetter(services[i].type) + typeCounter[services[i].type];
+		if(services[i].type == 'relais')
+		{
+			services[i].orginalLetters = typeToLetter(services[i].type) + typeCounter[services[i].type];
+
+			if(typeCounter['outlet'] != null)
+			{
+				typeCounter['outlet']++;
+			}
+			else
+			{
+				typeCounter['outlet'] = 0;
+			}
+
+			services[i].letters = typeToLetter('outlet') + typeCounter['outlet'];
+		}
+		else
+		{
+			services[i].letters = typeToLetter(services[i].type) + typeCounter[services[i].type];
+		}
 	}
 
 	return services;
