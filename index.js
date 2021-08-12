@@ -862,40 +862,40 @@ class SynTexPlatform
 
 						for(const j in services[i].iid)
 						{
-							const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + services[i].iid[j]).then((res) => {
+							const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + services[i].iid[j]).then(function (res) {
 
 								if(res.data != null
 								&& res.data.characteristics != null
 								&& res.data.characteristics[0] != null
 								&& res.data.characteristics[0].value != null)
 								{
-									var key = j == 'state' ? 'value' : j;
+									var key = this.j == 'state' ? 'value' : this.j;
 
-									if(states[letters] == null)
+									if(states[this.letters] == null)
 									{
-										states[letters] = {};
+										states[this.letters] = {};
 									}
 
 									if(services[i].format[j] == 'bool' || services[i].format[j] == 'boolean')
 									{
 										if(res.data.characteristics[0].value == 1)
 										{
-											states[letters][key] = true;
+											states[this.letters][key] = true;
 										}
 										else if(res.data.characteristics[0].value == 0)
 										{
-											states[letters][key] = false;
+											states[this.letters][key] = false;
 										}
 									}
 									else
 									{
-										states[letters][key] = res.data.characteristics[0].value;
+										states[this.letters][key] = res.data.characteristics[0].value;
 									}
 								}
 
 								resolve();
 
-							}).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%! ' + e)));
+							}.bind({ letters, j })).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%! ' + e)));
 
 							promiseArray.push(newPromise);
 						}
