@@ -428,9 +428,23 @@
 							{
 								const mouseDownHandler = function(e)
 								{
+									controlActive = true;
+
 									if(!busy.includes(this.letters))
 									{
-										controlDimmer(this.letters, Math.round(e.offsetX / this.field.offsetWidth * 100), true);
+										var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
+										var groupBar = this.field.getBoundingClientRect();
+
+										if(e.clientX < groupBar.left)
+										{
+											percent = 0;
+										}
+										else if(e.clientX > groupBar.right)
+										{
+											percent = 100;
+										}
+										
+										controlDimmer(this.letters, percent, true);
 
 										document.addEventListener('mousemove', mouseMoveHandler);
 										document.addEventListener('mouseup', mouseUpHandler);
@@ -482,7 +496,7 @@
 
 									Promise.all(promiseArraySlide).then(() => {
 
-										setTimeout(() => busy.splice(busy.indexOf(letters), 1), 300);
+										setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = false }, 300);
 									});
 
 									document.removeEventListener('mousemove', mouseMoveHandler);
@@ -494,6 +508,8 @@
 
 								statusField.addEventListener('touchstart', function(e)
 								{
+									controlActive = true;
+
 									if(!busy.includes(letters))
 									{
 										getTouchPosition(this.field, this.letters, e, true);
@@ -522,7 +538,7 @@
 
 										Promise.all(promiseArraySlide).then(() => {
 											
-											setTimeout(() => busy.splice(busy.indexOf(letters), 1), 300);
+											setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = true; }, 300);
 										});
 									}
 
@@ -1489,9 +1505,11 @@
 					Query.fetchURL('/serverside/characteristics?id=' + device.id, 10000).then((state) => renderNewData(JSON.parse(state)));
 				}
 
+				window.controlActive = false;
+
 				function renderNewData(data)
 				{
-					if(data != null)
+					if(!controlActive && data != null)
 					{
 						for(var i = 0; i < Object.keys(typeCounter).length; i++)
 						{
