@@ -89,6 +89,21 @@ class SynTexPlatform
 			});
 		});
 
+		this.connectBridge();
+
+		this.config.load('config', (err, json) => {    
+
+			if(json && !err)
+			{
+				this.getSetupCode(api.user.storagePath(), json.bridge.username);
+			}
+		});
+	}
+
+	connectBridge()
+	{
+		const { exec } = require('child_process');
+
 		exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
 
 			if(stdout)
@@ -101,15 +116,17 @@ class SynTexPlatform
 
 						this.initWebSocket();
 					}
+					else
+					{
+						setTimeout(() => this.connectBridge(), 30000);
+					}
+
+				}).catch((e) => {
+
+					this.logger.err(e);
+
+					setTimeout(() => this.connectBridge(), 30000);
 				});
-			}
-		});
-
-		this.config.load('config', (err, json) => {    
-
-			if(json && !err)
-			{
-				this.getSetupCode(api.user.storagePath(), json.bridge.username);
 			}
 		});
 	}
