@@ -189,11 +189,11 @@ class SynTexPlatform
 			this.WebSocket.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		}
 
-		isAlive();
-		
 		try
 		{
 			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
+
+			isAlive();
 
 			this.WebSocket.on('open', () => isAlive());
 
