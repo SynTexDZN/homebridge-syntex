@@ -188,6 +188,8 @@ class SynTexPlatform
 		  
 			this.WebSocket.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		}
+
+		isAlive();
 		
 		try
 		{
