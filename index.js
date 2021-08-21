@@ -191,9 +191,9 @@ class SynTexPlatform
 
 		try
 		{
-			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
+			this.logger.debug('Mit Remote Link verbinden ..');
 
-			isAlive();
+			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
 
 			this.WebSocket.on('open', () => isAlive());
 
@@ -229,9 +229,13 @@ class SynTexPlatform
 					console.log(e);
 				}
 			});
+
+			isAlive();
 		}
 		catch(e)
 		{
+			this.logger.err(e);
+
 			setTimeout(() => this.initWebSocket(), 3000);
 		}
 	}
