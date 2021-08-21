@@ -201,7 +201,7 @@ class SynTexPlatform
 
 			this.WebSocket.on('error', (e) => this.logger.err(e));
 
-			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); this.initWebSocket() }); 
+			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000) }); 
 
 			this.WebSocket.on('message', (message) => {
 				
