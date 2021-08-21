@@ -56,7 +56,7 @@
 
 				function loadSysLog()
                 {
-                    Query.complexFetch('/serverside/syslog', 10000, 2, {}, false).then((logs) => {
+                    Query.complexFetch('/serverside/syslog', 60000, 2, {}, false).then((logs) => {
 
                         document.getElementById('syslog').value = logs;
                     });
