@@ -42,13 +42,6 @@
 		background: rgba(245, 245, 255, .5);
 	}
 
-	#footer-temp button, #footer-temp input, #footer-fade button, #footer-fade input
-	{
-		filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.12))
-				drop-shadow(0 4px 2px rgba(0, 0, 0, 0.12))
-				drop-shadow(0 8px 6px rgba(0, 0, 0, 0.06));
-	}
-
 	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		color: var(--dark-layer-one);
@@ -87,7 +80,7 @@
 		color: var(--light-layer-one);
 	}
 
-	.gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan
+	.gradient-red, .gradient-green, .gradient-blue, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .gradient-cyan, .overlay-red::before, .overlay-green::before, .overlay-blue::before, .overlay-blue-green::before, .overlay-blue-purple::before, .overlay-purple::before, .overlay-yellow::before, .overlay-orange::before, .overlay-cyan::before
 	{
 		color: var(--light-layer-one)!important;
 	}
@@ -196,6 +189,15 @@
 	.gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 	.gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 	.gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+	.overlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+	.overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
 	input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):hover
 	{
 		filter: brightness(90%)!important;
@@ -210,6 +212,15 @@
 	.gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
 	.gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
 	.gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+	.overlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+	.overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
 	input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):active
 	{
 		filter: brightness(90%)!important;
@@ -378,5 +389,10 @@
 	.graph
 	{
 		border: 2px solid var(--dark-layer-two);
+	}
+
+	.gradient-overlay.activated
+	{
+		color: rgb(45, 45, 60);
 	}
 }

@@ -123,31 +123,6 @@
 					}
 				}
 
-				.gradient-overlay
-				{
-					position: relative;
-					z-index: 1;
-				}
-
-				.gradient-overlay::before
-				{
-					position: absolute;
-					content: "";
-					top: 0;
-					right: 0;
-					bottom: 0;
-					left: 0;
-					background-image: linear-gradient(
-						to right,
-						hsl(350, 95%, 60%),
-						hsl(345, 85%, 55%)
-					);
-					z-index: -1;
-					transition: opacity .2s linear;
-					opacity: 0;
-					border-radius: 16px;
-				}
-
 				.gradient-overlay:hover::before
 				{
 					opacity: 1!important;
@@ -256,7 +231,7 @@
 						<div id="update-status-' + id + '" class="update-status loading-loop gradient-purple shine">%debug.style.shine%</div>
 					</button>
 					<input type="button" value="Wichtig" style="margin-top: 20px" class="gradient-red pulse">
-					<button class="gradient-blue gradient-overlay" style="margin-top: 20px">Übergang</button>
+					<button class="gradient-blue gradient-overlay overlay-red" style="margin-top: 20px">Übergang</button>
 					<h2>• %debug.style.gradients% •</h2>
 					<input type="button" value="%debug.style.blue% %debug.style.purple%" class="gradient-blue-purple">
 					<input type="button" value="%debug.style.blue% %debug.style.green%" style="margin-top: 20px" class="gradient-blue-green">

@@ -106,12 +106,6 @@ html, body, #content, #groups, .control-panel::before, .type-container, .select-
 				var(--transition-normal) background-color ease-out,
 				var(--transition-normal) letter-spacing ease-out,
 				var(--transition-normal) filter ease-out!important;
-
-	box-shadow: none;
-	filter: drop-shadow(0 0px 1px rgba(0, 0, 0, 0.04))
-			drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06))
-			drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08))
-			drop-shadow(0 4px 8px rgba(0, 0, 0, 0.10));
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea
@@ -221,6 +215,15 @@ input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 .gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 .gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
 .gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover,
+.overlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
 input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):hover
 {
 	filter: brightness(75%)!important;
@@ -235,6 +238,15 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 .gradient-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
 .gradient-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
 .gradient-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active,
+.overlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
 input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):active
 {
 	filter: brightness(75%)!important;
@@ -522,61 +534,61 @@ input[type='submit']
 	--element-second-color: 165, 85%, 50%;
 }
 
-.gradient-red
+.gradient-red, .overlay-red::before
 {
 	--element-main-color: 350, 95%, 60%!important;
 	--element-second-color: 345, 85%, 55%!important;
 }
 
-.gradient-green
+.gradient-green, .overlay-green::before
 {
 	--element-main-color: 165, 85%, 50%!important;
 	--element-second-color: 145, 85%, 50%!important;
 }
 
-.gradient-blue
+.gradient-blue, .overlay-blue::before
 {
 	--element-main-color: 200, 85%, 55%!important;
 	--element-second-color: 220, 95%, 60%!important;
 }
 
-.gradient-cyan
+.gradient-cyan, .overlay-cyan::before
 {
 	--element-main-color: 180, 95%, 60%!important;
 	--element-second-color: 190, 85%, 50%!important;
 }
 
-.gradient-blue-green
+.gradient-blue-green, .overlay-blue-green::before
 {
 	--element-main-color: 205, 95%, 60%!important;
 	--element-second-color: 170, 90%, 50%!important;
 }
 
-.gradient-blue-purple
+.gradient-blue-purple, .overlay-blue-purple::before
 {
 	--element-main-color: 200, 85%, 55%!important;
 	--element-second-color: 270, 85%, 55%!important;
 }
 
-.gradient-purple
+.gradient-purple, .overlay-purple::before
 {
 	--element-main-color: 280, 95%, 60%!important;
 	--element-second-color: 270, 85%, 55%!important;
 }
 
-.gradient-yellow
+.gradient-yellow, .overlay-yellow::before
 {
 	--element-main-color: 50, 95%, 60%!important;
 	--element-second-color: 35, 85%, 55%!important;
 }
 
-.gradient-orange
+.gradient-orange, .overlay-orange::before
 {
 	--element-main-color: 18, 95%, 60%!important;
 	--element-second-color: 12, 85%, 55%!important;
 }
 
-.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, input[type='submit']
+.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .overlay-red::before, .overlay-green::before, .overlay-blue::before, .overlay-cyan::before, .overlay-blue-green::before, .overlay-blue-purple::before, .overlay-purple::before, .overlay-yellow::before, .overlay-orange::before, input[type='submit']
 {
 	--element-gradient: linear-gradient(to left, hsl(var(--element-second-color)) 0%, hsl(var(--element-main-color)) 100%);
 
@@ -1658,6 +1670,31 @@ button img
 .dialogue .button-area button:last-of-type
 {
 	margin-right: 0;
+}
+
+.gradient-overlay
+{
+	position: relative;
+	z-index: 1;
+}
+
+.gradient-overlay::before
+{
+	position: absolute;
+	content: "";
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+	transition: opacity .2s linear;
+	opacity: 0;
+	border-radius: 16px;
+}
+
+.gradient-overlay.activated::before
+{
+	opacity: 1!important;
 }
 
 @media only screen and (min-width: 1177px)
