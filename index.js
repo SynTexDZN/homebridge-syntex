@@ -200,13 +200,13 @@ class SynTexPlatform
 
 			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
 
-			this.WebSocket.on('open', () => isAlive());
+			this.WebSocket.on('open', () => { isAlive(); this.logger.debug('Remote Link verbunden!') });
 
 			this.WebSocket.on('ping', () => isAlive());
 
 			this.WebSocket.on('error', (e) => this.logger.err(e));
 
-			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000) }); 
+			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000); this.logger.debug('Remote Link getrennt!') }); 
 
 			this.WebSocket.on('message', (message) => {
 				
