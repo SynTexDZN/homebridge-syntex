@@ -187,7 +187,12 @@ class SynTexPlatform
 			clearTimeout(this.WebSocket.pingTimeout);
 		  
 			this.WebSocket.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
-		}
+		};
+
+		const sendResponse = (path, response) => {
+
+			this.WebSocket.send(JSON.stringify({ path, status : response.status, data : response.data }));
+		};
 
 		try
 		{
@@ -211,17 +216,11 @@ class SynTexPlatform
 
 					if(message.post != null)
 					{
-						axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => {
-
-							this.WebSocket.send(JSON.stringify({ path : message.path, data : response.data }));
-						});
+						axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
 					}
 					else
 					{
-						axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => {
-
-							this.WebSocket.send(JSON.stringify({ path : message.path, data : response.data }));
-						});
+						axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
 					}
 				}
 				catch(e)
