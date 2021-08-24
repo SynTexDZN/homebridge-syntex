@@ -184,9 +184,9 @@ class SynTexPlatform
 	{
 		const isAlive = () => {
 
-			clearTimeout(this.WebSocket.pingTimeout);
+			clearTimeout(this.pingTimeout);
 		  
-			this.WebSocket.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
+			this.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		};
 
 		const sendResponse = (path, response) => {
@@ -202,11 +202,11 @@ class SynTexPlatform
 
 			this.WebSocket.on('open', () => { isAlive(); this.logger.debug('Remote Link verbunden!') });
 
-			this.WebSocket.on('ping', () => isAlive());
+			this.WebSocket.on('ping', () => { isAlive(); this.logger.debug('Ping'); });
 
 			this.WebSocket.on('error', (e) => this.logger.err(e));
 
-			this.WebSocket.on('close', () => { clearTimeout(this.WebSocket.pingTimeout); setTimeout(() => this.initWebSocket(), 3000); this.logger.debug('Remote Link getrennt!') }); 
+			this.WebSocket.on('close', () => { clearTimeout(this.pingTimeout); setTimeout(() => this.initWebSocket(), 3000); this.logger.debug('Remote Link getrennt!') }); 
 
 			this.WebSocket.on('message', (message) => {
 				
