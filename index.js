@@ -95,6 +95,8 @@ class SynTexPlatform
 
 			if(json && !err)
 			{
+				this.bridgeName = json.bridge.name;
+
 				this.getSetupCode(api.user.storagePath(), json.bridge.username);
 			}
 		});
@@ -241,6 +243,16 @@ class SynTexPlatform
 
 	initWebServer()
 	{
+		this.WebServer.addPage('/info', async (response) => {
+
+			var infos = {
+				name : this.bridgeName
+			};
+
+			response.write(JSON.stringify(infos));
+			response.end();
+		});
+
 		this.WebServer.addPage('/serverside/remove-device', async (response, urlParams) => {
 
 			if(urlParams.id != null)
