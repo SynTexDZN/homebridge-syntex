@@ -86,7 +86,7 @@ html, body, #content, #groups, .control-panel::before, .type-container, .select-
 	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out;
 }
 
-#head-content.hidden, #footer-content.hidden
+#head-content.hidden, #footer-content.hidden, #top-menu.hidden
 {
 	opacity: 0;
 	pointer-events: none;
@@ -1697,6 +1697,25 @@ button img
 	opacity: 1!important;
 }
 
+#top-menu
+{
+	width: 100%;
+	display: flex;
+	position: fixed;
+	top: calc(env(safe-area-inset-top) + 12.5px);
+	height: 24px;
+	z-index: 30000;
+	justify-content: center;
+	transition: .2s opacity ease-in-out;
+}
+
+#top-menu button
+{
+	height: 100%;
+	padding: 0;
+	box-shadow: none;
+}
+
 @media only screen and (min-width: 1177px)
 {
 	#content
@@ -1711,7 +1730,7 @@ button img
 		max-height: none!important;
 	}
 
-	#head-content.hidden, #footer-content.hidden
+	#head-content.hidden, #footer-content.hidden, #top-menu.hidden
 	{
 		display: none;
 	}

@@ -11,6 +11,8 @@ class PageManagerModule
 		this.headTemp = document.getElementById('head-temp');
 		this.headContent = document.getElementById('head-content');
 
+		this.topMenu = document.getElementById('top-menu');
+
 		window.addEventListener('resize', () => {
 
 			var width = document.getElementsByTagName('body')[0].offsetWidth;
@@ -77,6 +79,11 @@ class PageManagerModule
 					this.headContent.children[1].classList.add('hidden');
 				}
 
+				if(this.topMenu != null && window.location.protocol == 'https:' && window.location.pathname == '/remote')
+				{
+					this.topMenu.classList.add('hidden');
+				}
+
 				setTimeout(() => {
 
 					if(title != null && this.headContent.children[0] != null && title != this.headContent.children[0].innerHTML)
@@ -94,6 +101,11 @@ class PageManagerModule
 					}
 
 					this.headContent.classList.remove('hidden');
+
+					if(this.topMenu != null && window.location.protocol == 'https:' && window.location.pathname != '/remote')
+					{
+						this.topMenu.classList.remove('hidden');
+					}
 	
 				}, !onPage && (this.headContent.classList.contains('hidden') || document.getElementsByTagName('body')[0].offsetWidth > 1151) ? 0 : 200);
 			}
