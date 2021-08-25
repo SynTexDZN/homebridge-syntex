@@ -274,18 +274,21 @@
 		window.activeWebSockets = [];
 		window.activeEventListener = [];
 		
-		window.setTimeout = (func, delay) => {
-	
+		window.setTimeout = (func, delay, static) => {
+
 			var timerID = originalSetTimeout(() => {
-	
+
 				func();
-	
+
 				clearTimeout(timerID);
-	
+
 			}, delay);
-	
-			activeTimeouts.push(timerID);
-	
+
+			if(!static)
+			{
+				activeTimeouts.push(timerID);
+			}
+
 			return timerID;
 		};
 	
