@@ -1699,21 +1699,25 @@ button img
 
 #top-menu
 {
-	width: 100%;
 	display: flex;
 	position: fixed;
-	top: calc(env(safe-area-inset-top) + 12.5px);
-	height: 24px;
+	top: env(safe-area-inset-top);
+	left: env(safe-area-inset-left);
 	z-index: 30000;
-	justify-content: center;
 	transition: .2s opacity ease-in-out;
+	padding: 20px;
+	height: 100%;
+	box-sizing: border-box;
+	flex-direction: column;
 }
 
 #top-menu button
 {
-	height: 100%;
-	padding: 0;
+	height: 50px;
+	padding: 10px;
 	box-shadow: none;
+	transition: var(--transition-color);
+	margin-bottom: 20px;
 }
 
 @media only screen and (min-width: 1177px)
