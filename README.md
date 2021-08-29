@@ -17,6 +17,7 @@ Also it provides special features for SynTex plugins:
 - **Plugin Manager** ( *for information, updates and more* )
 - **Colorful Log** ( *with filter tools and log level* )
 - **Automation System** ( *faster and more stable than HomeKit automation* )
+- **Remote Link** ( *app with offline mode and connection outside the local network* )
 
 
 ---
@@ -45,7 +46,8 @@ Also it provides special features for SynTex plugins:
         "automationDirectory": "/var/homebridge/SynTex/automation",
         "port": 1711,
         "language": "us",
-        "debug": false
+        "debug": false,
+        "remote": true
     },
     {
         "platform": "SynTexWebHooks",
@@ -68,6 +70,7 @@ Also it provides special features for SynTex plugins:
 ### Optional Parameters
 - `language` You can use your country initials if you want to change it ( *Currently supported: `us`, `en`, `de`* )
 - `debug` For further information because of troubleshooting and bug reports.
+- `remote` To control your devices on the go with the enhanced offline app without port forwarding. ( *Currently in beta, more information soon* )
 
 ### SynTex WebHooks Config
 Please visit GitHub for the config and other informations:<br>

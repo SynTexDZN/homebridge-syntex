@@ -22,6 +22,7 @@ class SynTexPlatform
 		this.logger = new logger(pluginName, this.logDirectory, this.debug, this.language);
 		
 		this.port = config['port'] || 1711;
+		this.remote = config['remote'] || false;
 		
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
 		
@@ -116,7 +117,10 @@ class SynTexPlatform
 					{
 						this.bridgeID = data.data;
 
-						this.initWebSocket();
+						if(this.remote)
+						{
+							this.initWebSocket();
+						}
 					}
 					else
 					{
