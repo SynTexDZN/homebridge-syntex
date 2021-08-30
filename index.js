@@ -960,6 +960,15 @@ class SynTexPlatform
 			response.write(HTMLQuery.sendValue(content, 'pairingCode', this.pairingCode));
 			response.end();
 		});
+
+		this.WebServer.addPage(['/serverside/config'], async (response, urlParams, content) => {
+
+			this.getPluginConfig('SynTex').then((config) => {
+
+				response.write(JSON.stringify(config));
+				response.end();
+			});
+		});
 	}
 
 	getPluginConfig(pluginName)
