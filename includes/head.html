@@ -445,6 +445,18 @@
 		<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px"></p>
 	</div>
 </div>
+<script>
+
+	try
+	{
+		window.appSettings = JSON.parse(localStorage.getItem('app-settings')) || {};
+	}
+	catch(e)
+	{
+		console.error(e);
+	}
+
+</script>
 <div id="preloader">
 	<div class="loader-4"><span></span></div>
 </div>
