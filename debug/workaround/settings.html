@@ -45,7 +45,8 @@
 				};
 
 				window.appSettingsTemplate = {
-					topBar : { default : false, type : 'button', name : 'Top Bar Anzeigen' }
+					topBar : { default : false, type : 'button', name : 'Top Bar Anzeigen' },
+					betaPluginVersions : { default : false, type : 'button', name : 'Beta Zugang' }
 				};
 
 				loadBridgeConfig().then((config) => renderGUI(config));
@@ -130,6 +131,8 @@
 				{
 					var appSettings = document.getElementsByClassName('type-container')[0].children, appSettingsObj = {};
 
+					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save%!'));
+
 					for(var i = 1; i < appSettings.length; i++)
 					{
 						if(appSettings[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
@@ -148,7 +151,11 @@
 
 					realTimeUpdate();
 
+					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('save-result', '%device.saved%!'));
+
 					document.getElementById('save-btn').classList.remove('pulse');
+
+					Essentials.removeOverlaysDelay(document.getElementById('save-btn'), 4000, true);
 				}
 
 				function realTimeUpdate()
