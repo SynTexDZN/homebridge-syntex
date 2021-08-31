@@ -21,7 +21,19 @@
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
-				<form id="config-editor" onsubmit="event.preventDefault(); saveConfig()"></form>
+				<div class="main" style="margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
+				</div>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
+				</div>
+				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.settings%" onclick="Essentials.leavePage('/debug/settings')" style="text-transform: uppercase" disabled>
+				</div>
+				<form id="config-editor" style="margin-top: 100px" onsubmit="event.preventDefault(); saveConfig()"></form>
 			</div>
 			<script type="module">
 

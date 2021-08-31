@@ -763,7 +763,7 @@ class SynTexPlatform
 			});
 		});
 
-		this.WebServer.addPage('/debug/beta', async (response, urlParams, content) => {
+		this.WebServer.addPage('/debug/workaround/beta', async (response, urlParams, content) => {
 
 			var tag = 'latest';
 

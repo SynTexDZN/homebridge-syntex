@@ -8,33 +8,21 @@
 
 				window.PageManager = PageManager;
 
-				PageManager.setHeader('%menu.debug%', '%debug.beta.programm%');
+				PageManager.setHeader('%menu.debug%', 'Beta Programm');
 
-				var main = document.createElement('input');
+				var main = document.createElement('div');
 
-				main.setAttribute('type', 'button');
-				main.setAttribute('value', '%menu.back_to_bridge%');
-				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/bridge'" + ')');
+				main.style.display = 'flex';
+
+				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/debug'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="config-editor" value="%general.save%"></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
 
 			</script>
 			<div id="beta" class="main">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.beta%" onclick="Essentials.leavePage('/debug/beta')" style="text-transform: uppercase" disabled>
-				</div>
 				<div class="type-container" style="margin: 100px auto; width: 500px">
-					<h2 class="title-container">%debug.beta.access%</h2>
+					<h2 class="title-container">Beta Zugang</h2>
 					<input value="%general.loading% .." id="beta-active" type="button" class="outline loading-loop" onclick="switchBeta(this)" style="border-width: 3px">
 				</div>
 			</div>
