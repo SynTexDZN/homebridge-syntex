@@ -45,8 +45,8 @@
 				};
 
 				window.appSettingsTemplate = {
-					topBar : { default : false, type : 'button', name : 'Top Bar Anzeigen' },
-					betaPluginVersions : { default : false, type : 'button', name : 'Beta Zugang' }
+					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' },
+					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' }
 				};
 
 				loadBridgeConfig().then((config) => renderGUI(config));
@@ -84,7 +84,7 @@
 
 					try
 					{
-						createFormInputs('App Einstellungen', appSettingsTemplate, appSettings);
+						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, appSettings);
 					}
 					catch(e)
 					{
@@ -137,7 +137,7 @@
 					{
 						if(appSettings[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
-							appSettingsObj[appSettings[i].getElementsByTagName('input')[0].getAttribute('name')] = appSettings[i].getElementsByTagName('input')[0].getAttribute('value') == 'An';
+							appSettingsObj[appSettings[i].getElementsByTagName('input')[0].getAttribute('name')] = appSettings[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
 						}
 						else
 						{
