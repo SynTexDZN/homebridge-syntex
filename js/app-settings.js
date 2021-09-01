@@ -4,7 +4,9 @@ class AppSettingsManager
 	{
 		try
 		{
-			this.settings = JSON.parse(localStorage.getItem('app-settings')) || {};
+			this.id = localStorage.getItem('bridge-id') || window.location.hostname;
+			this.allSettings = JSON.parse(localStorage.getItem('app-settings')) || {};
+			this.settings = this.allSettings[this.id] || {};
 		}
 		catch(e)
 		{
@@ -21,7 +23,9 @@ class AppSettingsManager
 	{
 		this.settings[key] = value;
 
-		localStorage.setItem('app-settings', JSON.stringify(this.settings));
+		this.allSettings[this.id] = this.settings;
+
+		localStorage.setItem('app-settings', JSON.stringify(this.allSettings));
 	}
 
 	getSettings()
