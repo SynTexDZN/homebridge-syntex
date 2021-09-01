@@ -255,8 +255,10 @@
 	<script type="module">
 
 		import { Replacer } from '/js/replace-select.js';
+		import { AppSettings } from '/js/app-settings.js';
 
 		window.Replacer = Replacer;
+		window.AppSettings = AppSettings;
 	
 	</script>
 	<link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
@@ -445,18 +447,6 @@
 		<p class="loading-loop" style="margin-bottom: 0; margin-top: 20px"></p>
 	</div>
 </div>
-<script>
-
-	try
-	{
-		window.appSettings = JSON.parse(localStorage.getItem('app-settings')) || {};
-	}
-	catch(e)
-	{
-		console.error(e);
-	}
-
-</script>
 <div id="preloader">
 	<div class="loader-4"><span></span></div>
 </div>

@@ -96,7 +96,7 @@
 
 					try
 					{
-						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, appSettings);
+						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, AppSettings.getSettings());
 					}
 					catch(e)
 					{
@@ -141,25 +141,21 @@
 
 				function saveConfig()
 				{
-					var appSettings = document.getElementsByClassName('type-container')[0].children, appSettingsObj = {};
+					var appSettingsForm = document.getElementsByClassName('type-container')[0].children;
 
 					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save%!'));
 
-					for(var i = 1; i < appSettings.length; i++)
+					for(var i = 1; i < appSettingsForm.length; i++)
 					{
-						if(appSettings[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						if(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
-							appSettingsObj[appSettings[i].getElementsByTagName('input')[0].getAttribute('name')] = appSettings[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
 						}
 						else
 						{
-							appSettingsObj[appSettings[i].getElementsByTagName('input')[0].getAttribute('name')] = appSettings[i].getElementsByTagName('input')[0].getAttribute('value');
+							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value'));
 						}
 					}
-
-					localStorage.setItem('app-settings', JSON.stringify(appSettingsObj));
-
-					window.appSettings = appSettingsObj;
 
 					realTimeUpdate();
 
@@ -174,11 +170,11 @@
 				{
 					if(window.location.protocol != 'https:')
 					{
-						if(appSettings['topBar'] == false)
+						if(AppSettings.getItem('topBar') == false)
 						{
 							document.getElementById('top-menu').classList.add('hidden');
 						}
-						else if(appSettings['topBar'] == true)
+						else if(AppSettings.getItem('topBar') == true)
 						{
 							document.getElementById('top-menu').classList.remove('hidden');
 						}
