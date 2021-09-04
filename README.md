@@ -21,9 +21,8 @@ Also it provides special features for SynTex plugins:
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
-⮬ Report us your Issues
-<br><br>
-⮮ Or Join our Discord Server
+- `Report` us your `Issues`
+- `Join` our `Discord Server`
 #### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
 
 
