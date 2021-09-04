@@ -14,25 +14,13 @@
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/debug'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="config-editor" value="%general.save%"></div>';
+				main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/bridge'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="config-editor" value="%general.save%"></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.settings%" onclick="Essentials.leavePage('/debug/settings')" style="text-transform: uppercase" disabled>
-				</div>
 				<form id="config-editor" style="margin-top: 100px" onsubmit="event.preventDefault(); saveConfig()"></form>
 			</div>
 			<script type="module">
@@ -58,7 +46,8 @@
 
 				window.appSettingsTemplate = {
 					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' },
-					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' }
+					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' },
+					expertMode : { default : false, type : 'button', name : '%bridge.expert_mode%' }
 				};
 
 				loadBridgeConfig().then((config) => renderGUI(config));
@@ -143,7 +132,7 @@
 				{
 					var appSettingsForm = document.getElementsByClassName('type-container')[0].children;
 
-					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save%!'));
+					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save% ..'));
 
 					for(var i = 1; i < appSettingsForm.length; i++)
 					{
@@ -159,11 +148,11 @@
 
 					realTimeUpdate();
 
-					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('save-result', '%device.saved%!'));
+					Essentials.showOverlayDelay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('save-result', '%device.saved%!'), 500);
 
 					document.getElementById('save-btn').classList.remove('pulse');
 
-					Essentials.removeOverlaysDelay(document.getElementById('save-btn'), 4000, true);
+					Essentials.removeOverlaysDelay(document.getElementById('save-btn'), 4500, true);
 				}
 
 				function realTimeUpdate()
