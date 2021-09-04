@@ -4,9 +4,7 @@ class AppSettingsManager
 	{
 		try
 		{
-			this.id = localStorage.getItem('bridge-id') || window.location.hostname;
-			this.allSettings = JSON.parse(localStorage.getItem('app-settings')) || {};
-			this.settings = this.allSettings[this.id] || {};
+			this.settings = JSON.parse(localStorage.getItem('app-settings')) || {};
 		}
 		catch(e)
 		{
@@ -16,21 +14,24 @@ class AppSettingsManager
 
 	getItem(key)
 	{
-		return this.settings[key];
+		return this.settings[this.getBridgeID()][key];
 	}
 
 	setItem(key, value)
 	{
-		this.settings[key] = value;
+		this.settings[this.getBridgeID()][key] = value;
 
-		this.allSettings[this.id] = this.settings;
-
-		localStorage.setItem('app-settings', JSON.stringify(this.allSettings));
+		localStorage.setItem('app-settings', JSON.stringify(this.settings));
 	}
 
 	getSettings()
 	{
-		return this.settings;
+		return this.settings[this.getBridgeID()];
+	}
+
+	getBridgeID()
+	{
+		return localStorage.getItem('bridge-id') || window.location.hostname;
 	}
 }
 
