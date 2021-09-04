@@ -21,7 +21,7 @@
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
-				<form id="config-editor" style="margin-top: 100px" onsubmit="event.preventDefault(); saveConfig()"></form>
+				<form id="config-editor" onsubmit="event.preventDefault(); saveConfig()"></form>
 			</div>
 			<script type="module">
 
@@ -45,9 +45,9 @@
 				};
 
 				window.appSettingsTemplate = {
-					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' },
 					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' },
-					expertMode : { default : false, type : 'button', name : '%bridge.expert_mode%' }
+					expertMode : { default : false, type : 'button', name : '%bridge.expert_mode%' },
+					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' }
 				};
 
 				loadBridgeConfig().then((config) => renderGUI(config));
