@@ -1,56 +1,56 @@
 <head>
 	<script type="module">
 
-			function resisterServiceWorker()
-			{
-				return new Promise((resolve) => {
+		function resisterServiceWorker()
+		{
+			return new Promise((resolve) => {
 
-					if('serviceWorker' in navigator)
-					{
-						window.addEventListener('load', () => {
+				if('serviceWorker' in navigator)
+				{
+					window.addEventListener('load', () => {
 
-							navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then((registration) => {
+						navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then((registration) => {
 
-								console.log('[ServiceWorker] Registriert');
+							console.log('[ServiceWorker] Registriert');
 
-								if(registration.active != null)
-								{
-									registration.active.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
-
-									resolve(true);
-								}
-								else
-								{
-									resolve(false);
-								}
-
-							}).catch((error) => {
-
-								console.log('[ServiceWorker] Fehler bei der Registration', error);
-
-								resolve(false);
-							});
-							
-							navigator.serviceWorker.addEventListener('controllerchange', () => {
-								
-								navigator.serviceWorker.controller.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
+							if(registration.active != null)
+							{
+								registration.active.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
 
 								resolve(true);
-							});
+							}
+							else
+							{
+								resolve(false);
+							}
+
+						}).catch((error) => {
+
+							console.log('[ServiceWorker] Fehler bei der Registration', error);
+
+							resolve(false);
 						});
-					}
-					else
-					{
-						console.log('[ServiceWorker] Registrierung nicht möglich');
+						
+						navigator.serviceWorker.addEventListener('controllerchange', () => {
+							
+							navigator.serviceWorker.controller.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
 
-						resolve(false);
-					}
-				});
-			};
+							resolve(true);
+						});
+					});
+				}
+				else
+				{
+					console.log('[ServiceWorker] Registrierung nicht möglich');
 
-			resisterServiceWorker();
+					resolve(false);
+				}
+			});
+		};
 
-			window.resisterServiceWorker = resisterServiceWorker;
+		resisterServiceWorker();
+
+		window.resisterServiceWorker = resisterServiceWorker;
 	
 	</script>
 	<style>
@@ -391,7 +391,7 @@
 			document.getElementById('menu').style.display = '';
 			document.getElementById('menu-style').removeAttribute('disabled');
 		}
-	
+
 	</script>
 </head>
 <nav id="menu" style="display: none">
