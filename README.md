@@ -1,10 +1,9 @@
 # Homebridge SynTex UI
-[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgreen)](https://www.npmjs.com/package/homebridge-syntex)
-[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta)](https://www.npmjs.com/package/homebridge-syntex)
-[![GitHub Commits](https://badgen.net/github/commits/SynTexDZN/homebridge-syntex?color=yellow)](https://github.com/SynTexDZN/homebridge-syntex/commits)
-[![NPM Downloads](https://badgen.net/npm/dt/homebridge-syntex?color=purple)](https://www.npmjs.com/package/homebridge-syntex)
-[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex?color=0af)](https://github.com/SynTexDZN/homebridge-syntex)
-[![Discord](https://img.shields.io/discord/442095224953634828?color=728ED5&label=discord)](https://discord.gg/XUqghtw4DE)
+[![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex)
+[![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex)
+[![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex)
+[![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex/2.0.1?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/commits)
+[![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex)
 
 A simple UI to control and manage all of your homebridge accessory.<br>
 Also it provides special features for SynTex plugins:
@@ -18,6 +17,13 @@ Also it provides special features for SynTex plugins:
 - **Colorful Log** ( *with filter tools and log level* )
 - **Automation System** ( *faster and more stable than HomeKit automation* )
 - **Remote Link** ( *app with offline mode and connection outside the local network* )
+
+
+## Troubleshooting
+#### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
+- `Report` us your `Issues`
+- `Join` our `Discord Server`
+#### [![Discord](https://img.shields.io/discord/442095224953634828?color=5865F2&logoColor=white&label=discord&logo=discord&style=for-the-badge)](https://discord.gg/XUqghtw4DE)
 
 
 ---
