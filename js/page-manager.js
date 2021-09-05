@@ -120,6 +120,16 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 
+					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && (window.location.protocol == 'https:' || AppSettings.getItem('topBar') == true))
+					{
+						this.topMenu.classList.remove('hidden');
+
+						if(window.location.protocol == 'https:')
+						{
+							this.topMenu.children[0].style.display = '';
+						}
+					}
+
 				}, (/*(!this.headContent.classList.contains('hidden') && onPage) || */(this.headContent.classList.contains('hidden') && !onPage)) ? 0 : 200);
 			}
 		}
@@ -137,7 +147,7 @@ class PageManagerModule
 
 				if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote')
 				{
-					this.topMenu.classList.remove('hidden');
+					this.topMenu.classList.add('hidden');
 
 					if(window.location.protocol == 'https:')
 					{
