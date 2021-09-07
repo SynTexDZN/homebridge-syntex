@@ -35,13 +35,13 @@
 				window.Essentials = Essentials;
 
 				window.configTemplate = {
-					port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
-					language : { default : "us", type : 'text', name : 'Sprache' },
-					debug : { default : false, type : 'button', name : 'Debug' },
-					remote : { default : true, type : 'button', name : 'Fernsteuerung' },
+					/*port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
+					language : { default : "us", type : 'text', name : 'Sprache' },*/
+					debug : { default : false, type : 'button', name : '%debug.settings.debug%' },
+					remote : { default : true, type : 'button', name : '%debug.settings.remote%' }/*,
 					cacheDirectory : { default : "/var/homebridge/SynTex/settings", type : 'text', name : 'Cache Pfad' },
 					logDirectory : { default : "/var/homebridge/SynTex/log", type : 'text', name : 'Log Pfad' },
-					automationDirectory : { default : "/var/homebridge/SynTex/automation", type : 'text', name : 'Automation Pfad' }
+					automationDirectory : { default : "/var/homebridge/SynTex/automation", type : 'text', name : 'Automation Pfad' }*/
 				};
 
 				window.appSettingsTemplate = {
@@ -81,7 +81,7 @@
 
 				function renderGUI(config)
 				{
-					//createFormInputs('Bridge Einstellungen', configTemplate, config);
+					createFormInputs('Bridge Einstellungen', configTemplate, config);
 
 					try
 					{
@@ -130,7 +130,7 @@
 
 				function saveConfig()
 				{
-					var appSettingsForm = document.getElementsByClassName('type-container')[0].children;
+					var appSettingsForm = document.getElementsByClassName('type-container')[1].children;
 
 					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save% ..'));
 
