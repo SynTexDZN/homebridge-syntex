@@ -92,7 +92,7 @@
 
 					try
 					{
-						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, AppSettings.getSettings());
+						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, AppSettings.getSettings() || {});
 					}
 					catch(e)
 					{
