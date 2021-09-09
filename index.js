@@ -961,40 +961,83 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/serverside/config'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/serverside/config'], async (response, urlParams, content, postJSON) => {
 
-			this.getPluginConfig('SynTex').then((config) => {
+			if(postJSON != null)
+			{
+				this.setPluginConfig('SynTex', postJSON).then((result) => {
 
-				response.write(JSON.stringify(config));
-				response.end();
-			});
+					response.write(result);
+					response.end();
+				});
+			}
+			else
+			{
+				this.getPluginConfig('SynTex').then((config) => {
+
+					response.write(JSON.stringify(config));
+					response.end();
+				});
+			}
 		});
 	}
 
 	getPluginConfig(pluginName)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			
 			this.config.load('config', (err, obj) => {    
 
-				try
+				if(obj && !err)
 				{
-					if(obj && !err)
-					{       
-						for(const i in obj.platforms)
+					for(const i in obj.platforms)
+					{
+						if(obj.platforms[i].platform === pluginName)
 						{
-							if(obj.platforms[i].platform === pluginName)
-							{
-								resolve(obj.platforms[i]);
-							}
+							resolve(obj.platforms[i]);
 						}
 					}
-
-					resolve(null);
 				}
-				catch(e)
+
+				resolve(null);
+			});
+		});
+	}
+
+	setPluginConfig(pluginName, additionalConfig)
+	{
+		return new Promise((resolve) => {
+			
+			this.config.load('config', (err, obj) => {    
+
+				if(obj && !err)
 				{
-					this.logger.err(e);
+					for(const i in obj.platforms)
+					{
+						if(obj.platforms[i].platform === pluginName)
+						{
+							for(const x in additionalConfig)
+							{
+								obj.platforms[i][x] = additionalConfig[x];
+							}
+
+							this.config.add(obj, (err) => {
+
+								if(err)
+								{
+									this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+								}
+				
+								resolve(err ? 'Error' : 'Success');
+							});
+						}
+					}
+				}
+				else
+				{
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+
+					resolve('Error');
 				}
 			});
 		});

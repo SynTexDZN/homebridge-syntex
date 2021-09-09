@@ -42,7 +42,7 @@
 					/*port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
 					language : { default : "us", type : 'text', name : 'Sprache' },*/
 					debug : { default : false, type : 'button', name : '%debug.settings.debug%' },
-					remote : { default : true, type : 'button', name : '%debug.settings.remote%' }/*,
+					remote : { default : false, type : 'button', name : '%debug.settings.remote%' }/*,
 					cacheDirectory : { default : "/var/homebridge/SynTex/settings", type : 'text', name : 'Cache Pfad' },
 					logDirectory : { default : "/var/homebridge/SynTex/log", type : 'text', name : 'Log Pfad' },
 					automationDirectory : { default : "/var/homebridge/SynTex/automation", type : 'text', name : 'Automation Pfad' }*/
@@ -58,7 +58,7 @@
 
 					renderGUI(config);
 
-				Preloader.finish();
+					Preloader.finish();
 				});
 
 			</script>
@@ -118,11 +118,11 @@
 
 						if(template[i].type == 'button')
 						{
-							html += 'value="' + ((settings[i] || template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] || template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] || template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+							html += 'value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
 						}
 						else
 						{
-							html += 'value="' + (settings[i] || template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
+							html += 'value="' + (settings[i] != null ? settings[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
 						}
 
 						html += '</b></p>';
@@ -155,11 +155,29 @@
 
 					realTimeUpdate();
 
-					Essentials.showOverlayDelay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('save-result', '%device.saved%!'), 200);
+					var bridgeConfigForm = document.getElementsByClassName('type-container')[0].children, configObject = {};
 
-					document.getElementById('save-btn').classList.remove('pulse');
+					for(var i = 1; i < bridgeConfigForm.length; i++)
+					{
+						if(bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						{
+							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+						}
+						else
+						{
+							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('value');
+						}
+					}
 
-					Essentials.removeOverlaysDelay(document.getElementById('save-btn'), 3800, true);
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'saving',
+						success : { value : '%device.saved%!' },
+						executeError : { value : '%device.save_error%!' },
+						connectionError : { value : '%device.save_error%!' }
+					};
+
+					Query.complexFetch('/serverside/config', 10000, 1, overlays, true, JSON.stringify(configObject)).then(() => document.getElementById('save-btn').classList.remove('pulse'));
 				}
 
 				function realTimeUpdate()
