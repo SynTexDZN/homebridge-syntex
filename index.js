@@ -208,7 +208,7 @@ class SynTexPlatform
 
 			this.WebSocket.on('open', () => { isAlive(); this.logger.debug('Remote Link verbunden!') });
 
-			this.WebSocket.on('ping', () => { isAlive(); this.logger.debug('Ping'); });
+			this.WebSocket.on('ping', () => isAlive());
 
 			this.WebSocket.on('error', (e) => this.logger.err(e));
 
