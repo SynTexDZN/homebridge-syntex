@@ -14,11 +14,21 @@ class AppSettingsManager
 
 	getItem(key)
 	{
-		return this.settings[this.getBridgeID()][key];
+		if(this.settings[this.getBridgeID()] != null)
+		{
+			return this.settings[this.getBridgeID()][key];
+		}
+
+		return null;
 	}
 
 	setItem(key, value)
 	{
+		if(this.settings[this.getBridgeID()] == null)
+		{
+			this.settings[this.getBridgeID()] = {};
+		}
+
 		this.settings[this.getBridgeID()][key] = value;
 
 		localStorage.setItem('app-settings', JSON.stringify(this.settings));
