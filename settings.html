@@ -50,9 +50,12 @@
 					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' }
 				};
 
-				loadBridgeConfig().then((config) => renderGUI(config));
+				loadBridgeConfig().then((config) => {
+
+					renderGUI(config);
 
 				Preloader.finish();
+				});
 
 			</script>
 			<script>
