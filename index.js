@@ -2,7 +2,7 @@ let DeviceManager = require('./core/device-manager'), PluginManager = require('.
 
 const { Buffer } = require('buffer'), WebSocket = require('ws');
 
-const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
+const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path'), https = require('https');
 
 var restart = true, updating = false;
 
@@ -23,7 +23,7 @@ class SynTexPlatform
 		
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
-		
+
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
 		
 		this.WebServer.setHead(__dirname + '/includes/head.html');
@@ -90,7 +90,12 @@ class SynTexPlatform
 			});
 		});
 
-		this.connectBridge();
+		this.getBridgeID().then((bridgeID) => {
+			
+			this.bridgeID = bridgeID,
+
+			this.connectBridge();
+		});
 
 		this.config.load('config', (err, json) => {    
 
@@ -105,35 +110,34 @@ class SynTexPlatform
 
 	connectBridge()
 	{
-		const { exec } = require('child_process');
+		const httpsAgent = new https.Agent({ rejectUnauthorized : false });
 
-		exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
-
-			if(stdout)
+		axios.get('https://syntex.sytes.net:8000/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + require('./package.json').version, { httpsAgent }).then((data) => {
+			
+			if(data.data != null)
 			{
-				axios.get('http://syntex.sytes.net/smarthome/init-bridge.php?plugin=SynTex&mac=' + stdout + '&version=' + require('./package.json').version).then((data) => {
-					
-					if(data.data != null)
-					{
-						this.bridgeID = data.data;
+				if(data.data != this.bridgeID)
+				{
+					this.bridgeID = data.data;
 
-						if(this.remote)
-						{
-							this.initWebSocket();
-						}
-					}
-					else
-					{
-						setTimeout(() => this.connectBridge(), 30000);
-					}
+					setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
+				}
 
-				}).catch((e) => {
-
-					this.logger.err(e);
-
-					setTimeout(() => this.connectBridge(), 30000);
-				});
+				if(this.remote)
+				{
+					this.initWebSocket();
+				}
 			}
+			else
+			{
+				setTimeout(() => this.connectBridge(), 30000);
+			}
+
+		}).catch((e) => {
+
+			this.logger.err(e);
+
+			setTimeout(() => this.connectBridge(), 30000);
 		});
 	}
 
@@ -1027,6 +1031,52 @@ class SynTexPlatform
 					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
 
 					resolve('Error');
+				}
+			});
+		});
+	}
+
+	getBridgeID()
+	{
+		return new Promise((resolve) => {
+			
+			this.config.load('config', (err, obj) => {    
+
+				if(obj && !err)
+				{
+					resolve(obj.bridge.id || null);
+				}
+
+				resolve(null);
+			});
+		});
+	}
+
+	setBridgeID(bridgeID)
+	{
+		return new Promise((resolve) => {
+			
+			this.config.load('config', (err, obj) => {    
+
+				if(obj && !err)
+				{
+					obj.bridge.id = bridgeID;
+
+					this.config.add(obj, (err) => {
+
+						if(err)
+						{
+							this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+						}
+		
+						resolve(err == null);
+					});
+				}
+				else
+				{
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+
+					resolve(false);
 				}
 			});
 		});
