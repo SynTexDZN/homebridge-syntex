@@ -794,17 +794,6 @@ class SynTexPlatform
 			});
 		});
 
-		this.WebServer.addPage('/serverside/beta', async (response, urlParams, content) => {
-
-			if(urlParams.enable != null)
-			{
-				DeviceManager.setBridgeStorage('tag', urlParams.enable == 'true' ? 'beta' : 'latest');
-
-				response.write('Success');
-				response.end();
-			}
-		});
-
 		this.WebServer.addPage('/serverside/command', async (response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
