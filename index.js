@@ -2,12 +2,13 @@ let DeviceManager = require('./core/device-manager'), PluginManager = require('.
 
 const { Buffer } = require('buffer'), WebSocket = require('ws');
 
-const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path'), https = require('https');
+const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
 
 var restart = true, updating = false;
 
 const pluginID = 'homebridge-syntex';
 const pluginName = 'SynTex';
+const pluginVersion = require('./package.json').version;
 
 module.exports = (homebridge) => homebridge.registerPlatform(pluginID, pluginName, SynTexPlatform);
 
@@ -92,7 +93,7 @@ class SynTexPlatform
 
 		this.getBridgeID().then((bridgeID) => {
 			
-			this.bridgeID = bridgeID,
+			this.bridgeID = bridgeID;
 
 			this.connectBridge();
 		});
@@ -110,9 +111,7 @@ class SynTexPlatform
 
 	connectBridge()
 	{
-		const httpsAgent = new https.Agent({ rejectUnauthorized : false });
-
-		axios.get('https://syntex.sytes.net:8000/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + require('./package.json').version, { httpsAgent }).then((data) => {
+		axios.get('http://syntex.sytes.net:8800/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + pluginVersion).then((data) => {
 			
 			if(data.data != null)
 			{
