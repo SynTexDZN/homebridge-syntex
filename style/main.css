@@ -1671,7 +1671,7 @@ button img
 	margin-bottom: 100px;
 }
 
-.dialogue
+#dialogue
 {
 	background: rgba(0, 0, 10, .6);
 	display: flex;
@@ -1681,12 +1681,13 @@ button img
 	top: 0;
 	opacity: 0;
 	transition: var(--transition-color), .3s ease-in-out opacity;
-	z-index: 20000;
+	z-index: 30000;
 	backdrop-filter: blur(1px);
-	-webkit-backdrop-filter: blur(1px);
+	-webkit-backdrop-filter: blur(2px);
+	pointer-events: none;
 }
 
-.dialogue .panel
+#dialogue .panel
 {
 	width: max(600px, 50%);
 	max-width: calc(100% - 40px);
@@ -1706,27 +1707,27 @@ button img
 	transition: var(--transition-color), .3s cubic-bezier(0.68, -0.55, 0.27, 1.55) transform, .3s ease-in-out opacity;
 }
 
-.dialogue p
+#dialogue p
 {
 	margin: 50px auto;
 }
 
-.dialogue h2
+#dialogue h2
 {
 	border: 3px solid rgb(60, 60, 80);
 }
 
-.dialogue .button-area
+#dialogue .button-area
 {
 	display: flex;
 }
 
-.dialogue .button-area button
+#dialogue .button-area button
 {
 	margin-right: 20px;
 }
 
-.dialogue .button-area button:last-of-type
+#dialogue .button-area button:last-of-type
 {
 	margin-right: 0;
 }

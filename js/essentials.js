@@ -191,82 +191,82 @@ class EssentialFeatures
 
 	openDialogue(data)
 	{
-		var dialogue = document.createElement('div');
-		var panel = document.createElement('div');
-		var title = document.createElement('h2');
-		var subtitle = document.createElement('p');
-		var buttonArea = document.createElement('div');
+		var dialogue = document.getElementById('dialogue');
 
-		disableScroll();
-
-		dialogue.className = 'dialogue';
-		dialogue.onclick = (e) => {
-
-			if(e.target.classList.contains('dialogue'))
-			{
-				this.closeDialogue(e.target);
-			}
-		};
-
-		panel.className = 'panel striped';
-		title.className = 'title-container';
-		title.innerHTML = data.title;
-		subtitle.innerHTML = data.subtitle;
-		buttonArea.className = 'button-area';
-
-		if(data.buttons != null)
+		if(dialogue != null)
 		{
-			for(const i in data.buttons)
+			var panel = dialogue.getElementsByClassName('panel')[0];
+			var title = dialogue.getElementsByClassName('title-container')[0];
+			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
+			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
+
+			disableScroll();
+
+			dialogue.onclick = (e) => {
+
+				if(e.target.classList.contains('dialogue'))
+				{
+					this.closeDialogue(e.target);
+				}
+			};
+
+			title.innerHTML = data.title;
+			subtitle.innerHTML = data.subtitle;
+
+			buttonArea.innerHTML = '';
+
+			if(data.buttons != null)
 			{
-				var button = document.createElement('button');
-
-				button.innerHTML = data.buttons[i].text;
-
-				if(data.buttons[i].color != null)
+				for(const i in data.buttons)
 				{
-					button.className = 'gradient-' + data.buttons[i].color;
-				}
+					var button = document.createElement('button');
 
-				if(data.buttons[i].action != null)
-				{
-					button.onclick = data.buttons[i].action;
-				}
+					button.innerHTML = data.buttons[i].text;
 
-				if(data.buttons[i].close)
-				{
+					if(data.buttons[i].color != null)
+					{
+						button.className = 'gradient-' + data.buttons[i].color;
+					}
+
 					if(data.buttons[i].action != null)
 					{
-						button.onclick = () => { data.buttons[i].action(); this.closeDialogue(dialogue) };
+						button.onclick = data.buttons[i].action;
 					}
-					else
+
+					if(data.buttons[i].close)
 					{
-						button.onclick = () => this.closeDialogue(dialogue);
+						if(data.buttons[i].action != null)
+						{
+							button.onclick = () => { data.buttons[i].action(); this.closeDialogue(dialogue) };
+						}
+						else
+						{
+							button.onclick = () => this.closeDialogue(dialogue);
+						}
 					}
+
+					buttonArea.appendChild(button);
 				}
-
-				buttonArea.appendChild(button);
 			}
+
+			dialogue.style.opacity = 1;
+			dialogue.style.pointerEvents = 'all';
+			panel.style.opacity = 1;
+			panel.style.transform = 'scale(1)';
 		}
-
-		panel.appendChild(title);
-		panel.appendChild(subtitle);
-		panel.appendChild(buttonArea);
-
-		dialogue.appendChild(panel);
-
-		document.body.appendChild(dialogue);
-
-		setTimeout(() => { dialogue.style.opacity = 1; panel.style.opacity = 1; panel.style.transform = 'scale(1)' }, 0);
 	}
 
 	closeDialogue(dialogue)
 	{
+		var panel = dialogue.getElementsByClassName('panel')[0];
+
 		enableScroll();
 
 		dialogue.style.opacity = 0;
-		dialogue.getElementsByClassName('panel')[0].style.opacity = 0;
-
-		setTimeout(() => dialogue.parentElement.removeChild(dialogue), 300);
+		dialogue.style.pointerEvents = 'none';
+		panel.style.opacity = 0;
+		
+		setTimeout(() => { panel.style.transform = '' }, 300);
 	}
 
 	letterToType(letter)
