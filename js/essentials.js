@@ -265,7 +265,7 @@ class EssentialFeatures
 		dialogue.style.opacity = 0;
 		dialogue.style.pointerEvents = 'none';
 		panel.style.opacity = 0;
-		
+
 		setTimeout(() => { panel.style.transform = '' }, 300);
 	}
 
@@ -463,6 +463,8 @@ class EssentialFeatures
 				{
 					notFound = true;
 				}
+
+				await this.newTimeout(1000);
 			}
 			while(!success && !notFound);
 
@@ -548,18 +550,23 @@ function preventDefaultForScrollKeys(e)
 
 function disableScroll()
 {
-	window.addEventListener('DOMMouseScroll', (e) => { e.preventDefault() }, false);
-	window.addEventListener(self.wheelEvent, (e) => { e.preventDefault() }, self.wheelOpt);
-	window.addEventListener('touchmove', (e) => { e.preventDefault() }, self.wheelOpt);
+	window.addEventListener('DOMMouseScroll', preventDefault, false);
+	window.addEventListener(self.wheelEvent, preventDefault, self.wheelOpt);
+	window.addEventListener('touchmove', preventDefault, self.wheelOpt);
 	window.addEventListener('keydown', preventDefaultForScrollKeys, false);
 }
 
 function enableScroll()
 {
-	window.removeEventListener('DOMMouseScroll', (e) => { e.preventDefault() }, false);
-	window.removeEventListener(self.wheelEvent, (e) => { e.preventDefault() }, self.wheelOpt); 
-	window.removeEventListener('touchmove', (e) => { e.preventDefault() }, self.wheelOpt);
+	window.removeEventListener('DOMMouseScroll', preventDefault, false);
+	window.removeEventListener(self.wheelEvent, preventDefault, self.wheelOpt); 
+	window.removeEventListener('touchmove', preventDefault, self.wheelOpt);
 	window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+
+function preventDefault(e)
+{
+	e.preventDefault();
 }
 
 function loadPageData(url)
