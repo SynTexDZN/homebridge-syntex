@@ -250,7 +250,7 @@ class SynTexPlatform
 
 	initWebServer()
 	{
-		this.WebServer.addPage('/serversie/info', async (response) => {
+		this.WebServer.addPage('/serverside/info', async (response) => {
 
 			var infos = {
 				name : this.bridgeName
