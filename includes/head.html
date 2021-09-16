@@ -275,8 +275,8 @@
 		window.activeIntervals = [];
 		window.activeWebSockets = [];
 		window.activeEventListener = [];
-		
-		window.setTimeout = (func, delay, static) => {
+
+		window.setTimeout = (func, delay, stay) => {
 
 			var timerID = originalSetTimeout(() => {
 
@@ -286,101 +286,104 @@
 
 			}, delay);
 
-			if(!static)
+			if(!stay)
 			{
 				activeTimeouts.push(timerID);
 			}
 
 			return timerID;
 		};
-	
+
 		window.clearTimeout = (timerID) => {
-	
+
 			originalClearTimeout(timerID);
-	
+
 			if(activeTimeouts.includes(timerID))
 			{
 				activeTimeouts.splice(activeTimeouts.indexOf(timerID), 1);
 			}
 		};
-		
+
 		window.setInterval = (func, interval) => {
-	
+
 			var timerID = originalSetInterval(func, interval);
-	
+
 			activeIntervals.push(timerID);
-	
+
 			return timerID;
 		};
-	
+
 		window.clearInterval = (timerID) => {
-	
+
 			originalClearInterval(timerID);
-	
+
 			if(activeIntervals.includes(timerID))
 			{
 				activeIntervals.splice(activeIntervals.indexOf(timerID), 1);
 			}
 		};
-	
+
 		window.addEventListener = (name, listener, useCapture) => {
-	
+
 			activeEventListener.push({ name, listener, useCapture });
-	
+
 			if(useCapture == 'KEEP')
 			{
 				useCapture = true;
 			}
-	
+
 			originalAddEventListener(name, listener, useCapture);
 		};
-		
+
 		window.removeEventListener = (name, listener, useCapture) => {
-	
-			if(activeEventListener.includes({ name, listener, useCapture }))
+
+			for(const i in activeEventListener)
 			{
-				activeEventListener.splice(activeEventListener.indexOf({ name, listener, useCapture }), 1);
+				if(activeEventListener[i].name == name && activeEventListener[i].listener == listener && activeEventListener[i].useCapture == useCapture)
+				{
+					activeEventListener.splice(i, 1);
+				}
 			}
-	
+
 			if(useCapture == 'KEEP')
 			{
 				useCapture = true;
 			}
-	
+
 			originalRemoveEventListener(name, listener, useCapture);
 		};
-	
+
 		window.clearTimers = () => {
-	
+
 			for(var i = activeTimeouts.length - 1; i >= 0; i--)
 			{
 				clearTimeout(activeTimeouts[i]);
 			}
-	
+
 			for(var i = activeIntervals.length - 1; i >= 0; i--)
 			{
 				clearInterval(activeIntervals[i]);
 			}
 		}
-	
+
 		window.closeSockets = () => {
-	
+
 			for(var i = activeWebSockets.length - 1; i >= 0; i--)
 			{
 				activeWebSockets[i].close(4000);
-	
+
 				activeWebSockets.splice(i, 1);
 			}
 		}
-	
+
 		window.removeEventListeners = () => {
-	
+
 			for(var i = activeEventListener.length - 1; i >= 0; i--)
 			{
 				if(activeEventListener[i].useCapture != 'KEEP')
 				{
 					window.removeEventListener(activeEventListener[i].name, activeEventListener[i].listener, activeEventListener[i].useCapture);
-	
+
 					activeEventListener.splice(i, 1);
 				}
 			}
