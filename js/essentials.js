@@ -464,7 +464,10 @@ class EssentialFeatures
 					notFound = true;
 				}
 
-				await this.newTimeout(1000);
+				if(!success && !notFound)
+				{
+					await this.newTimeout(1000);
+				}
 			}
 			while(!success && !notFound);
 
