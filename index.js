@@ -250,7 +250,7 @@ class SynTexPlatform
 
 	initWebServer()
 	{
-		this.WebServer.addPage('/info', async (response) => {
+		this.WebServer.addPage('/serversie/info', async (response) => {
 
 			var infos = {
 				name : this.bridgeName
@@ -354,7 +354,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/version', async (response, urlParams, content) => {
+		this.WebServer.addPage('/serverside/version', async (response) => {
 
 			const pJSON = require('./package.json');
 
@@ -462,7 +462,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/log', (response, urlParams) => {
+		this.WebServer.addPage('/serverside/log', (response) => {
 
 			fs.readdir(this.logDirectory, async (err, files) => {
 
@@ -573,7 +573,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/reload-accessories', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/reload-accessories', async (response) => {
 
 			DeviceManager.reloadAccessories();
 
