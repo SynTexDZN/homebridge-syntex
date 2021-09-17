@@ -206,7 +206,7 @@ class EssentialFeatures
 
 			dialogue.onclick = (e) => {
 
-				if(e.target.classList.contains('dialogue'))
+				if(e.target.id == 'dialogue')
 				{
 					this.closeDialogue();
 				}
@@ -221,7 +221,9 @@ class EssentialFeatures
 			{
 				for(const i in data.buttons)
 				{
-					var button = document.createElement('button');
+					var container = document.createElement('div'), button = document.createElement('button');
+
+					container.style.width = '100%';
 
 					button.innerHTML = data.buttons[i].text;
 
@@ -247,7 +249,9 @@ class EssentialFeatures
 						}
 					}
 
-					buttonArea.appendChild(button);
+					container.appendChild(button);
+
+					buttonArea.appendChild(container);
 				}
 			}
 
@@ -258,9 +262,114 @@ class EssentialFeatures
 		}
 	}
 
-	closeDialogue(dialogue)
+	openOfflineDialogue(data)
 	{
-		var panel = dialogue.getElementsByClassName('panel')[0];
+		var dialogue = document.getElementById('dialogue');
+
+		dialogue.style.setProperty('z-index', '40000');
+
+		if(dialogue != null)
+		{
+			var panel = dialogue.getElementsByClassName('panel')[0];
+			var title = dialogue.getElementsByClassName('title-container')[0];
+			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
+			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
+
+			if(title.innerHTML != data.title)
+			{
+				disableScroll();
+
+				title.innerHTML = data.title;
+
+				if(!navigator.onLine)
+				{
+					subtitle.innerHTML = '<div id="connection-status" class="gradient-green gradient-overlay overlay-red activated" style="margin-bottom: 50px">%general.offline%</div>%general.no_connection_to_internet%!';
+				}
+				else
+				{
+					subtitle.innerHTML = '<div id="connection-status" class="gradient-green gradient-overlay overlay-red" style="margin-bottom: 50px">%general.online%</div>%general.page_loading_error%!';
+				}
+
+				const updateOnlineStatus = () => {
+
+					if(navigator.onLine)
+					{
+						document.getElementById('connection-status').innerHTML = '%general.online%';
+						document.getElementById('connection-status').classList.remove('activated');
+					}
+					else
+					{
+						document.getElementById('connection-status').innerHTML = '%general.offline%';
+						document.getElementById('connection-status').classList.add('activated');
+					}
+				};
+
+				updateOnlineStatus();
+
+				window.addEventListener('online',  updateOnlineStatus);
+				window.addEventListener('offline', updateOnlineStatus);
+
+				buttonArea.innerHTML = '';
+
+				if(data.buttons != null)
+				{
+					for(const i in data.buttons)
+					{
+						var container = document.createElement('div'), button = document.createElement('button');
+
+						container.style.width = '100%';
+
+						button.innerHTML = data.buttons[i].text;
+
+						if(data.buttons[i].color != null)
+						{
+							button.className = 'gradient-' + data.buttons[i].color;
+						}
+
+						if(data.buttons[i].action != null)
+						{
+							button.onclick = data.buttons[i].action;
+						}
+
+						if(data.buttons[i].close)
+						{
+							if(data.buttons[i].action != null)
+							{
+								button.onclick = () => {
+
+									window.removeEventListener('online',  updateOnlineStatus);
+									window.removeEventListener('offline', updateOnlineStatus);
+				
+									this.closeDialogue();
+
+									data.buttons[i].action();
+								};
+							}
+							else
+							{
+								button.onclick = () => {
+									
+									window.removeEventListener('online',  updateOnlineStatus);
+									window.removeEventListener('offline', updateOnlineStatus);
+				
+									this.closeDialogue();
+								};
+							}
+						}
+
+						container.appendChild(button);
+
+						buttonArea.appendChild(container);
+					}
+				}
+
+				dialogue.style.opacity = 1;
+				dialogue.style.pointerEvents = 'all';
+				panel.style.opacity = 1;
+				panel.style.transform = 'scale(1)';
+			}
+		}
+	}
 
 	closeDialogue()
 	{
@@ -429,57 +538,76 @@ class EssentialFeatures
 		setTimeout(() => this.removeOverlays(btn, show), delay);
 	}
 
-	async leavePage(url)
+	leavePage(url)
 	{
-		if(!this.pageLoading)
-		{
-			/*
-			var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+		return new Promise(async (resolve) => {
 
-			scrollPositions[window.location.pathname + window.location.search] = window.scrollY;
-
-			localStorage.setItem('scroll-positions', JSON.stringify(scrollPositions));
-			*/
-			this.pageLoading = true;
-
-			document.getElementById('preloader').style.opacity = 1;
-			document.getElementById('preloader').style.pointerEvents = 'all';
-			document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
-			document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
-
-			this.pageTimer = false;
-
-			setTimeout(() => {
-
-				this.pageTimer = true;
-				
-			}, 200);
-
-			var success = false, notFound = false;
-
-			do
+			if(!this.pageLoading)
 			{
+				/*
+				var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+
+				scrollPositions[window.location.pathname + window.location.search] = window.scrollY;
+
+				localStorage.setItem('scroll-positions', JSON.stringify(scrollPositions));
+				*/
+				this.pageLoading = true;
+
+				document.getElementById('preloader').style.opacity = 1;
+				document.getElementById('preloader').style.pointerEvents = 'all';
+				document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.transition = 'opacity 1s cubic-bezier(0.770, 0.000, 0.175, 1.000) 1s';
+				document.getElementById('preloader').getElementsByClassName('loader-4')[0].style.opacity = 1;
+
+				this.pageTimer = false;
+
+				setTimeout(() => { this.pageTimer = true }, 200);
+
 				var response = await loadPageData(url);
-				
-				if(response == 0)
+
+				if(response != 200 && !navigator.onLine)
 				{
-					success = true;
-				}
-				else if(response == 1)
-				{
-					notFound = true;
+					var dialogue = {
+						title : '%general.connection_error%',
+						buttons : [
+							{
+								text : '%general.reload%',
+								action : () => {
+
+									var button = document.getElementById('dialogue').getElementsByTagName('button')[0];
+
+									this.showOverlay(button, this.createPendingOverlay('reload', '%general.loading% ..'));
+									
+									this.leavePage(url).then((status) => {
+									
+										if(status == 200)
+										{
+											Essentials.closeDialogue();
+										}
+										else
+										{
+											this.showOverlay(button, this.createErrorOverlay('reload', '%general.connection_error%'));
+
+											this.removeOverlaysDelay(button, 2000, true);
+										}
+									})
+								}
+							}
+						]
+					};
+
+					this.openOfflineDialogue(dialogue);
 				}
 
-				if(!success && !notFound)
-				{
-					await this.newTimeout(1000);
-				}
+				resolve(response);
+
+				this.changeCounter = [];
+				this.pageLoading = false;
 			}
-			while(!success && !notFound);
-
-			this.changeCounter = [];
-			this.pageLoading = false;
-		}
+			else
+			{
+				resolve(404);
+			}
+		});
 	}
 
 	promoteSubmitButton(input, id)
@@ -591,7 +719,7 @@ function loadPageData(url)
 		client.onreadystatechange = async () => {
 			
 			if(client.readyState === 4)
-			{  
+			{
 				resolve(client.status);
 
 				if(client.status === 200)
