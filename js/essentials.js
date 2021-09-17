@@ -193,6 +193,8 @@ class EssentialFeatures
 	{
 		var dialogue = document.getElementById('dialogue');
 
+		dialogue.style.removeProperty('z-index');
+
 		if(dialogue != null)
 		{
 			var panel = dialogue.getElementsByClassName('panel')[0];
@@ -206,7 +208,7 @@ class EssentialFeatures
 
 				if(e.target.classList.contains('dialogue'))
 				{
-					this.closeDialogue(e.target);
+					this.closeDialogue();
 				}
 			};
 
@@ -237,11 +239,11 @@ class EssentialFeatures
 					{
 						if(data.buttons[i].action != null)
 						{
-							button.onclick = () => { data.buttons[i].action(); this.closeDialogue(dialogue) };
+							button.onclick = () => { data.buttons[i].action(); this.closeDialogue() };
 						}
 						else
 						{
-							button.onclick = () => this.closeDialogue(dialogue);
+							button.onclick = () => this.closeDialogue();
 						}
 					}
 
