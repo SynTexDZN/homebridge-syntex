@@ -262,6 +262,10 @@ class EssentialFeatures
 	{
 		var panel = dialogue.getElementsByClassName('panel')[0];
 
+	closeDialogue()
+	{
+		var dialogue = document.getElementById('dialogue'), panel = dialogue.getElementsByClassName('panel')[0];
+
 		enableScroll();
 
 		dialogue.style.opacity = 0;
