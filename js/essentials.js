@@ -592,10 +592,10 @@ function loadPageData(url)
 			
 			if(client.readyState === 4)
 			{  
+				resolve(client.status);
+
 				if(client.status === 200)
 				{
-					resolve(0);
-
 					if(url.includes('syntex.local'))
 					{
 						if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
@@ -678,16 +678,6 @@ function loadPageData(url)
 					LoadingLoop.searchLoop();
 
 					self.Preloader.load();
-				}
-				else if(client.status === 404)
-				{
-					resolve(1);
-
-					// TODO: Add 404 Page When Page Path Not Found
-				}
-				else
-				{
-					resolve(2);
 				}
 			}
 		}
