@@ -1,6 +1,6 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
 
-const { Buffer } = require('buffer'), WebSocket = require('ws');
+const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
 const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
 
@@ -24,6 +24,7 @@ class SynTexPlatform
 		
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
+		this.passwort = config['password'] || '';
 
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
 		
@@ -223,13 +224,16 @@ class SynTexPlatform
 				{
 					message = JSON.parse(message);
 
-					if(message.post != null)
+					if(this.password == '' || message.password == md5(this.password))
 					{
-						axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
-					}
-					else
-					{
-						axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+						if(message.post != null)
+						{
+							axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+						}
+						else
+						{
+							axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+						}
 					}
 				}
 				catch(e)

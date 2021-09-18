@@ -53,7 +53,8 @@ Also it provides special features for SynTex plugins:
         "port": 1711,
         "language": "us",
         "debug": false,
-        "remote": true
+        "remote": true,
+        "password": '1234'
     },
     {
         "platform": "SynTexWebHooks",
@@ -77,6 +78,7 @@ Also it provides special features for SynTex plugins:
 - `language` You can use your country initials if you want to change it ( *Currently supported: `us`, `en`, `de`* )
 - `debug` For further information because of troubleshooting and bug reports.
 - `remote` To control your devices on the go with the enhanced offline app without port forwarding. ( *Currently in beta, more information soon* )
+- `password` To protect your remote connection against strangers. ( *Only needed when `remote` is enabled* )
 
 ### SynTex WebHooks Config
 Please visit GitHub for the config and other informations:<br>

@@ -42,7 +42,8 @@
 					/*port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
 					language : { default : "us", type : 'text', name : 'Sprache' },*/
 					debug : { default : false, type : 'button', name : '%debug.settings.debug%' },
-					remote : { default : false, type : 'button', name : '%debug.settings.remote%' }/*,
+					remote : { default : false, type : 'button', name : '%debug.settings.remote%' },
+					password : { default : '', type : 'password', name : '%debug.settings.password%' }/*,
 					cacheDirectory : { default : "/var/homebridge/SynTex/settings", type : 'text', name : 'Cache Pfad' },
 					logDirectory : { default : "/var/homebridge/SynTex/log", type : 'text', name : 'Log Pfad' },
 					automationDirectory : { default : "/var/homebridge/SynTex/automation", type : 'text', name : 'Automation Pfad' }*/
@@ -149,7 +150,7 @@
 						}
 						else
 						{
-							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value'));
+							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].value);
 						}
 					}
 
@@ -165,7 +166,7 @@
 						}
 						else
 						{
-							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('value');
+							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].value;
 						}
 					}
 
