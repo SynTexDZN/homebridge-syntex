@@ -24,7 +24,7 @@ class SynTexPlatform
 		
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
-		this.passwort = config['password'] || '';
+		this.password = config['password'] || '';
 
 		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
 		
@@ -234,6 +234,10 @@ class SynTexPlatform
 						{
 							axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
 						}
+					}
+					else
+					{
+						this.WebSocket.send(JSON.stringify({ path, status : 401, data : '' }));
 					}
 				}
 				catch(e)
