@@ -52,7 +52,7 @@
 				window.appSettingsTemplate = {
 					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' },
 					expertMode : { default : false, type : 'button', name : '%bridge.expert_mode%' },
-					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%' }
+					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%', local : true }
 				};
 
 				loadBridgeConfig().then((config) => {
@@ -115,22 +115,25 @@
 
 					for(const i in template)
 					{
-						var container = document.createElement('div'), html = '<p><b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
-
-						if(template[i].type == 'button')
+						if(template[i].local == null || window.location.protocol != 'https:')
 						{
-							html += 'value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+							var container = document.createElement('div'), html = '<p><b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
+
+							if(template[i].type == 'button')
+							{
+								html += 'value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+							}
+							else
+							{
+								html += 'value="' + (settings[i] != null ? settings[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
+							}
+
+							html += '</b></p>';
+
+							container.innerHTML = html;
+
+							group.appendChild(container);
 						}
-						else
-						{
-							html += 'value="' + (settings[i] != null ? settings[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
-						}
-
-						html += '</b></p>';
-
-						container.innerHTML = html;
-
-						group.appendChild(container);
 					}
 
 					document.getElementById('config-editor').appendChild(group);
