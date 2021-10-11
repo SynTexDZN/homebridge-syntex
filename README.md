@@ -48,8 +48,7 @@ Also it provides special features for SynTex plugins:
     {
         "platform": "SynTex",
         "cacheDirectory": "/var/homebridge/SynTex/settings",
-        "logDirectory": "/var/homebridge/SynTex/log",
-        "automationDirectory": "/var/homebridge/SynTex/automation",
+        "baseDirectory": "/var/homebridge/SynTex",
         "port": 1711,
         "language": "us",
         "debug": false,
@@ -58,8 +57,7 @@ Also it provides special features for SynTex plugins:
     },
     {
         "platform": "SynTexWebHooks",
-        "logDirectory": "/var/homebridge/SynTex/log",
-        "automationDirectory": "/var/homebridge/SynTex/automation",
+        "baseDirectory": "/var/homebridge/SynTex",
         "port": 1710,
         "language": "us",
         "debug": false,
