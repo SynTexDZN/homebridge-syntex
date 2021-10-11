@@ -149,15 +149,20 @@
 
 				console.log('DEVICES', devices);
 
-				var timeDiff = new Date() - new Date('<%restart%>');
+				window.restartDate = parseInt('<%restart%>');
 
-				document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(timeDiff);
+				if(!isNaN(restartDate))
+				{
+					var timeDiff = new Date() - new Date(restartDate);
 
-				window.timeInterval = setInterval(() => {
+					document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(timeDiff);
 
-					document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(new Date() - new Date('<%restart%>'));
-				
-				}, timeDiff > 60000 ? 60000 : 1000);
+					window.timeInterval = setInterval(() => {
+
+						document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(new Date() - new Date(restartDate));
+					
+					}, timeDiff > 60000 ? 60000 : 1000);
+				}
 
 				if(devices.length == 0)
 				{

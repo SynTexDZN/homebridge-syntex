@@ -424,52 +424,6 @@ module.exports = class DeviceManager
 		return null;
 	}
 
-	getBridgeStorage()
-	{
-		return new Promise(resolve => {
-			
-			this.storage.load('Bridge', (err, obj) => {  
-
-				if(!obj || err)
-				{
-					resolve(null);
-				}
-				else
-				{
-					resolve(obj.data);
-				}
-			});
-		});
-	}
-
-	setBridgeStorage(key, value)
-	{
-		return new Promise(resolve => {
-			
-			this.storage.load('Bridge', (err, obj) => {  
-
-				if(!obj || err)
-				{
-					obj = { id : 'Bridge', data : { [key] : value } };
-				}
-				else
-				{
-					obj.data[key] = value;              
-				}
-
-				this.storage.add(obj, (err) => {
-
-					if(err)
-					{
-						logger.log('error', 'bridge', 'Bridge', 'Bridge.json %update_error%! ' + err);
-					}
-
-					resolve(err ? false : true);
-				});
-			});
-		});
-	}
-
 	getBridgePort()
 	{
 		if(configOBJ != null && configOBJ.bridge != null && configOBJ.bridge.port != null)

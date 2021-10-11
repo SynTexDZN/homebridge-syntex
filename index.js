@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
@@ -16,11 +16,12 @@ class SynTexPlatform
 {
 	constructor(log, config, api)
 	{
-		this.logDirectory = config['logDirectory'];
+		this.baseDirectory = config['baseDirectory'] || api.user.storagePath() + '/SynTex';
+
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
 		
-		this.logger = new logger(pluginName, this.logDirectory, this.debug, this.language);
+		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'cache', 'log']);
 		
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
@@ -73,7 +74,7 @@ class SynTexPlatform
 
 				restart = false;
 
-				DeviceManager.setBridgeStorage('restart', new Date());
+				this.files.writeFile('info.json', { restart : new Date().getTime() });
 			});
 		});
 
@@ -631,7 +632,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (response, urlParams, content) => {
 
-			var bridgeData = await DeviceManager.getBridgeStorage();
+			var bridgeData = await this.files.readFile('info.json');
 
 			await DeviceManager.reloadAccessories();
 
@@ -681,19 +682,11 @@ class SynTexPlatform
 		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (response, urlParams, content) => {
 
 			var obj = {
-				tag : 'latest',
 				bridgeID : null,
 				bridgeIP : null,
 				wlanMac : null,
 				ethernetMac : null
 			};
-
-			var bridgeData = await DeviceManager.getBridgeStorage();
-
-			if(bridgeData != null && bridgeData.tag != null)
-			{
-				obj.tag = bridgeData.tag;
-			}
 
 			if(this.bridgeID != null)
 			{
@@ -772,21 +765,6 @@ class SynTexPlatform
 				response.write(HTMLQuery.sendValues(content, obj));
 				response.end();
 			});
-		});
-
-		this.WebServer.addPage('/debug/workaround/beta', async (response, urlParams, content) => {
-
-			var tag = 'latest';
-
-			var bridgeData = await DeviceManager.getBridgeStorage();
-
-			if(bridgeData != null && bridgeData.tag != null)
-			{
-				tag = bridgeData.tag;
-			}
-
-			response.write(HTMLQuery.sendValue(content, 'tag', tag));
-			response.end();
 		});
 
 		this.WebServer.addPage('/debug/config', async (response, urlParams, content) => {
@@ -1047,14 +1025,16 @@ class SynTexPlatform
 	{
 		return new Promise((resolve) => {
 			
-			this.config.load('config', (err, obj) => {    
+			this.files.readFile('config.json').then((data) => {
 
-				if(obj && !err)
+				if(data != null)
 				{
-					resolve(obj.bridge.id || null);
+					resolve(data.bridgeID || null);
 				}
-
+				else
+				{
 				resolve(null);
+				}
 			});
 		});
 	}
@@ -1063,28 +1043,14 @@ class SynTexPlatform
 	{
 		return new Promise((resolve) => {
 			
-			this.config.load('config', (err, obj) => {    
+			this.files.writeFile('config.json', { bridgeID }).then((success) => {
 
-				if(obj && !err)
-				{
-					obj.bridge.id = bridgeID;
-
-					this.config.add(obj, (err) => {
-
-						if(err)
+				if(!success)
 						{
 							this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
 						}
 		
-						resolve(err == null);
-					});
-				}
-				else
-				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
-
-					resolve(false);
-				}
+				resolve(success);
 			});
 		});
 	}
