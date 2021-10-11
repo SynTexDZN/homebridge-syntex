@@ -12,11 +12,11 @@ Also it provides special features for SynTex plugins:
 - `homebridge-syntex-webhooks`
 
 ## Core Fearures
-- **Device Overfiew** ( *view and control their characteristics* )
-- **Plugin Manager** ( *for information, updates and more* )
-- **Colorful Log** ( *with filter tools and log level* )
-- **Automation System** ( *faster and more stable than HomeKit automation* )
-- **Remote Link** ( *app with offline mode and connection outside the local network* )
+- **Device Overfiew** *( view and control their characteristics )*
+- **Plugin Manager** *( for information, updates and more )*
+- **Colorful Log** *( with filter tools and log level )*
+- **Automation System** *( faster and more stable than HomeKit automation )*
+- **Remote Link** *( app with offline mode and connection outside the local network )*
 
 
 ## Troubleshooting
@@ -33,15 +33,16 @@ Also it provides special features for SynTex plugins:
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
 3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks`<br>
-( *to enable all features of the UI* )
+*( to enable all features of the UI )*
 4. Update your configuration file. See snippet below.
 5. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`
 
 
 ## Example Config
-**Important:** If the `logDirectory` and `cacheDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
-- `sudo chown -R homebridge /var/homebridge/SynTex/` ( *permissions only for homebridge* )
-- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` ( *permissions for many processes* )
+**Info:** If the `baseDirectory` for the storage can't be created you have to do it by yourself and give it full write permissions!
+- `sudo mkdir -p /var/homebridge/SynTex/` *( create the directory )*
+- `sudo chown -R homebridge /var/homebridge/SynTex/` *( permissions only for homebridge )*
+- `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` *( permissions for many processes )*
 
 ```json
 "platforms": [
@@ -73,10 +74,10 @@ Also it provides special features for SynTex plugins:
 - `port` To access the bridge website.
 
 ### Optional Parameters
-- `language` You can use your country initials if you want to change it ( *Currently supported: `us`, `en`, `de`* )
+- `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
-- `remote` To control your devices on the go with the enhanced offline app without port forwarding. ( *Currently in beta, more information soon* )
-- `password` To protect your remote connection against strangers. ( *Only needed when `remote` is enabled* )
+- `remote` To control your devices on the go with the enhanced offline app without port forwarding. *( Currently in beta, more information soon )*
+- `password` To protect your remote connection against strangers. *( Only needed when `remote` is enabled )*
 
 ### SynTex WebHooks Config
 Please visit GitHub for the config and other informations:<br>
@@ -101,7 +102,7 @@ https://github.com/SynTexDZN/homebridge-syntex-webhooks
 - Switch
 - Stateless Switch
 - LED Controller
-- Special Devices ( *Doorbell, Multi-Device, ..* )
+- Special Devices *( Doorbell, Multi-Device, .. )*
 
 ### Other Accessories
 - Temperature Sensor
