@@ -20,7 +20,9 @@ class SynTexPlatform
 
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
-		
+
+		this.logger = new logger(pluginName, path.join(this.baseDirectory, 'log'), this.debug, this.language);
+
 		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'cache', 'log']);
 		
 		this.port = config['port'] || 1711;
@@ -34,32 +36,15 @@ class SynTexPlatform
 
 		HTMLQuery = new HTMLQuery(this.logger);
 
-		const { exec } = require('child_process');
-
-		this.automationDirectory = config['automationDirectory'];
-
-		if(this.automationDirectory != null)
-		{
-			exec('sudo chmod 777 -R ' + this.automationDirectory, (error, stdout, stderr) => {
-
-				if(error)
-				{
-					this.logger.log('error', 'bridge', 'Bridge', '%permission_error% [' + this.automationDirectory + '] ' + error);
-				}
-	
-				Automation.SETUP(this.logger, this.automationDirectory);
-			});
-		}
+		Automation = new Automation(this.logger, this.files);
 
 		this.config = store(api.user.storagePath());
 
 		PluginManager = new PluginManager(this.config, this.logger, 600);
 
-		this.cacheDirectory = config['cacheDirectory'] || api.user.storagePath() + '/SynTex/data';
-
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.cacheDirectory, config.port, PluginManager);
+			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, path.join(this.baseDirectory, 'devices'), config.port, PluginManager);
 
 			DeviceManager.getDevices().then((devices) => {
 
@@ -77,6 +62,8 @@ class SynTexPlatform
 				this.files.writeFile('info.json', { restart : new Date().getTime() });
 			});
 		});
+
+		const { exec } = require('child_process');
 
 		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
 
@@ -473,7 +460,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/log', (response) => {
 
-			fs.readdir(this.logDirectory, async (err, files) => {
+			fs.readdir(path.join(this.baseDirectory, 'log'), async (err, files) => {
 
 				var obj = {};
 
@@ -1026,14 +1013,14 @@ class SynTexPlatform
 		return new Promise((resolve) => {
 			
 			this.files.readFile('config.json').then((data) => {
-
+				
 				if(data != null)
 				{
 					resolve(data.bridgeID || null);
 				}
 				else
 				{
-				resolve(null);
+					resolve(null);
 				}
 			});
 		});
@@ -1044,12 +1031,12 @@ class SynTexPlatform
 		return new Promise((resolve) => {
 			
 			this.files.writeFile('config.json', { bridgeID }).then((success) => {
-
+				
 				if(!success)
-						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
-						}
-		
+				{
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+				}
+
 				resolve(success);
 			});
 		});
