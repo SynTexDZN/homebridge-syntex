@@ -218,6 +218,15 @@ input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 .overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
 .overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
 .overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::before,
+.underlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
+.underlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):hover::after,
 input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):hover
 {
 	filter: brightness(75%)!important;
@@ -241,6 +250,15 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 .overlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
 .overlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
 .overlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::before,
+.underlay-blue:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-blue-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-blue-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-cyan:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-green:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-orange:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-purple:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-red:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
+.underlay-yellow:not(div):not(:disabled):not(.control-panel):not(.overlay):not(.widget-left):not(.widget-right):active::after,
 input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):active
 {
 	filter: brightness(75%)!important;
@@ -528,61 +546,61 @@ input[type='submit']
 	--element-second-color: 165, 85%, 50%;
 }
 
-.gradient-red, .overlay-red::before
+.gradient-red, .overlay-red::before, .underlay-red::after
 {
 	--element-main-color: 350, 95%, 60%!important;
 	--element-second-color: 345, 85%, 55%!important;
 }
 
-.gradient-green, .overlay-green::before
+.gradient-green, .overlay-green::before, .underlay-green::after
 {
 	--element-main-color: 165, 85%, 50%!important;
 	--element-second-color: 145, 85%, 50%!important;
 }
 
-.gradient-blue, .overlay-blue::before
+.gradient-blue, .overlay-blue::before, .underlay-blue::after
 {
 	--element-main-color: 200, 85%, 55%!important;
 	--element-second-color: 220, 95%, 60%!important;
 }
 
-.gradient-cyan, .overlay-cyan::before
+.gradient-cyan, .overlay-cyan::before, .underlay-cyan::after
 {
 	--element-main-color: 180, 95%, 60%!important;
 	--element-second-color: 190, 85%, 50%!important;
 }
 
-.gradient-blue-green, .overlay-blue-green::before
+.gradient-blue-green, .overlay-blue-green::before, .underlay-blue-green::after
 {
 	--element-main-color: 205, 95%, 60%!important;
 	--element-second-color: 170, 90%, 50%!important;
 }
 
-.gradient-blue-purple, .overlay-blue-purple::before
+.gradient-blue-purple, .overlay-blue-purple::before, .underlay-blue-purple::after
 {
 	--element-main-color: 200, 85%, 55%!important;
 	--element-second-color: 270, 85%, 55%!important;
 }
 
-.gradient-purple, .overlay-purple::before
+.gradient-purple, .overlay-purple::before, .underlay-purple::after
 {
 	--element-main-color: 280, 95%, 60%!important;
 	--element-second-color: 270, 85%, 55%!important;
 }
 
-.gradient-yellow, .overlay-yellow::before
+.gradient-yellow, .overlay-yellow::before, .underlay-yellow::after
 {
 	--element-main-color: 50, 95%, 60%!important;
 	--element-second-color: 35, 85%, 55%!important;
 }
 
-.gradient-orange, .overlay-orange::before
+.gradient-orange, .overlay-orange::before, .underlay-orange::after
 {
 	--element-main-color: 18, 95%, 60%!important;
 	--element-second-color: 12, 85%, 55%!important;
 }
 
-.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .overlay-red::before, .overlay-green::before, .overlay-blue::before, .overlay-cyan::before, .overlay-blue-green::before, .overlay-blue-purple::before, .overlay-purple::before, .overlay-yellow::before, .overlay-orange::before, input[type='submit']
+.gradient-red, .gradient-green, .gradient-blue, .gradient-cyan, .gradient-blue-green, .gradient-blue-purple, .gradient-purple, .gradient-yellow, .gradient-orange, .overlay-red::before, .overlay-green::before, .overlay-blue::before, .overlay-cyan::before, .overlay-blue-green::before, .overlay-blue-purple::before, .overlay-purple::before, .overlay-yellow::before, .overlay-orange::before, .underlay-red::after, .underlay-green::after, .underlay-blue::after, .underlay-cyan::after, .underlay-blue-green::after, .underlay-blue-purple::after, .underlay-purple::after, .underlay-yellow::after, .underlay-orange::after, input[type='submit']
 {
 	--element-gradient: linear-gradient(to left, hsl(var(--element-second-color)) 0%, hsl(var(--element-main-color)) 100%);
 
@@ -1738,7 +1756,7 @@ button img
 	z-index: 1;
 }
 
-.gradient-overlay::before
+.gradient-overlay::before, .gradient-overlay::after
 {
 	position: absolute;
 	content: "";
@@ -1753,6 +1771,11 @@ button img
 }
 
 .gradient-overlay.activated::before
+{
+	opacity: 1!important;
+}
+
+.gradient-overlay.deactivated::after
 {
 	opacity: 1!important;
 }

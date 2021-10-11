@@ -642,6 +642,62 @@ class EssentialFeatures
 
 		}.bind({ button : submit, changeCounter : this.changeCounter });
 	}
+
+	gradientBackgroundFade(button, color)
+	{
+		if(button.classList.contains('activated'))
+		{
+			button.classList.add('underlay-' + color);
+
+			button.classList.remove('activated');
+			button.classList.add('deactivated');
+
+			setTimeout(() => {
+
+				var style = button.classList;
+
+				for(const i in style)
+				{
+					console.log(style[i]);
+					
+					if(typeof style[i] == 'string' && style[i].startsWith('overlay'))
+					{
+						button.classList.remove(style[i]);
+					}
+				}
+
+			}, 200);
+		}
+		else if(button.classList.contains('deactivated'))
+		{
+			button.classList.add('overlay-' + color);
+
+			button.classList.remove('deactivated');
+			button.classList.add('activated');
+
+			setTimeout(() => {
+
+				var style = button.classList;
+
+				for(const i in style)
+				{
+					console.log(style[i]);
+
+					if(typeof style[i] == 'string' && style[i].startsWith('underlay'))
+					{
+						button.classList.remove(style[i]);
+					}
+				}
+
+			}, 200);
+		}
+		else
+		{
+			button.classList.add('overlay-' + color);
+
+			button.classList.add('activated');
+		}
+	}
 }
 
 var idCounter = new Date().getTime();
