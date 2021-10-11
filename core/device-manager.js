@@ -357,6 +357,11 @@ module.exports = class DeviceManager
 	{
 		var needToSave = false;
 
+		if(plugin == 'SynTex')
+		{
+			plugin = 'SynTexWebHooks';
+		}
+
 		if(configOBJ != null && configOBJ.platforms != null)
 		{
 			for(const i in configOBJ.platforms)
