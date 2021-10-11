@@ -138,7 +138,7 @@
 				{
 					for(const id in plugins)
 					{
-						if(plugins[id].config != null && plugins[id].config.logDirectory != null)
+						if(plugins[id].config != null && plugins[id].config.baseDirectory != null)
 						{
 							var logContainer = document.createElement('div');
 
@@ -208,7 +208,7 @@
 
 								for(const id in plugins)
 								{
-									if(plugins[id].config != null && plugins[id].config.logDirectory != null && (pluginID == null || pluginID == plugins[id].alias))
+									if(plugins[id].config != null && plugins[id].config.baseDirectory != null && (pluginID == null || pluginID == plugins[id].alias))
 									{
 										if(logs[plugins[id].alias] != null)
 										{
