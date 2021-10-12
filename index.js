@@ -23,7 +23,7 @@ class SynTexPlatform
 
 		this.logger = new logger(pluginName, path.join(this.baseDirectory, 'log'), this.debug, this.language);
 
-		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'cache', 'log']);
+		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 		
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
