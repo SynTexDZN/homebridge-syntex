@@ -80,13 +80,6 @@ class SynTexPlatform
 			});
 		});
 
-		this.getBridgeID().then((bridgeID) => {
-			
-			this.bridgeID = bridgeID;
-
-			this.connectBridge();
-		});
-
 		this.config.load('config', (err, json) => {    
 
 			if(json && !err)
@@ -95,12 +88,19 @@ class SynTexPlatform
 
 				this.getSetupCode(api.user.storagePath(), json.bridge.username);
 			}
+
+			this.getBridgeID().then((bridgeID) => {
+			
+				this.bridgeID = bridgeID;
+	
+				this.connectBridge();
+			});
 		});
 	}
 
 	connectBridge()
 	{
-		axios.get('http://syntex.sytes.net:8800/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + pluginVersion).then((data) => {
+		axios.get('http://syntex.sytes.net:8800/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + pluginVersion + '&name=' + this.bridgeName).then((data) => {
 			
 			if(data.data != null)
 			{
