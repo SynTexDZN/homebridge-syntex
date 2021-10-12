@@ -64,9 +64,9 @@
 
 								var sort = 'type-asc';
 
-								if(localStorage.getItem('devices-sort') != null)
+								if(Storage.getItem('devices-sort') != null)
 								{
-									sort = localStorage.getItem('devices-sort');
+									sort = Storage.getItem('devices-sort');
 								}
 
 								var select = document.getElementById('sort');
@@ -122,7 +122,7 @@
 				window.offlineCount = 0;
 				window.deviceCount = 0;
 				window.realDeviceCount = 0;
-				window.selectedGroup = (localStorage.getItem('device-group') || 'all');
+				window.selectedGroup = (Storage.getItem('device-group') || 'all');
 
 				window.serviceNames = {
 					airquality : '%accessories.airquality%',
@@ -264,7 +264,7 @@
 
 				sortDevices(true);
 
-				if(localStorage.getItem('devices-view') == 'grid-view')
+				if(Storage.getItem('devices-view') == 'grid-view')
 				{
 					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
 					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
@@ -422,16 +422,16 @@
 				{
 					var select = document.getElementById('sort');
 
-					if(init && localStorage.getItem('devices-sort') != null)
+					if(init && Storage.getItem('devices-sort') != null)
 					{
-						sort = localStorage.getItem('devices-sort');
+						sort = Storage.getItem('devices-sort');
 					}
 
 					if(!init)
 					{
 						sort = select.children[select.selectedIndex].getAttribute('value');
 
-						localStorage.setItem('devices-sort', sort);
+						Storage.setItem('devices-sort', sort);
 
 						document.getElementById('devices').style.opacity = 0;
 					}
@@ -651,7 +651,7 @@
 					{
 						selectedGroup = group;
 
-						localStorage.setItem('device-group', group);
+						Storage.setItem('device-group', group);
 
 						if(!init)
 						{
@@ -713,7 +713,7 @@
 
 						document.getElementById('devices').className = '';
 
-						localStorage.setItem('devices-view', 'list-view');
+						Storage.setItem('devices-view', 'list-view');
 						btn.setAttribute('view', 'list');
 					}
 					else if(btn.getAttribute('view') == 'list')
@@ -723,7 +723,7 @@
 
 						document.getElementById('devices').className = 'grid-view';
 
-						localStorage.setItem('devices-view', 'grid-view');
+						Storage.setItem('devices-view', 'grid-view');
 						btn.setAttribute('view', 'grid');
 					}
 				}

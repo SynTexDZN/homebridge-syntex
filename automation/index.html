@@ -59,9 +59,9 @@
 
 									var sort = 'id-asc';
 
-									if(localStorage.getItem('automation-sort') != null)
+									if(Storage.getItem('automation-sort') != null)
 									{
-										sort = localStorage.getItem('automation-sort');
+										sort = Storage.getItem('automation-sort');
 									}
 
 									var select = document.getElementById('sort');
@@ -192,7 +192,7 @@
 					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
 				};
 
-				if(localStorage.getItem('automation-view') == 'vertical')
+				if(Storage.getItem('automation-view') == 'vertical')
 				{
 					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
 					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
@@ -296,7 +296,7 @@
 
 						document.getElementById('automation').className = '';
 
-						localStorage.setItem('automation-view', 'horizontal');
+						Storage.setItem('automation-view', 'horizontal');
 						btn.setAttribute('view', 'horizontal');
 					}
 					else if(btn.getAttribute('view') == 'horizontal')
@@ -306,7 +306,7 @@
 
 						document.getElementById('automation').className = 'vertical-view';
 
-						localStorage.setItem('automation-view', 'vertical');
+						Storage.setItem('automation-view', 'vertical');
 						btn.setAttribute('view', 'vertical');
 					}
 				}
@@ -316,16 +316,16 @@
 					var select = document.getElementById('sort');
 					var sort = 'id-asc';
 
-					if(init && localStorage.getItem('automation-sort') != null)
+					if(init && Storage.getItem('automation-sort') != null)
 					{
-						sort = localStorage.getItem('automation-sort');
+						sort = Storage.getItem('automation-sort');
 					}
 
 					if(!init)
 					{
 						sort = select.children[select.selectedIndex].getAttribute('value');
 
-						localStorage.setItem('automation-sort', sort);
+						Storage.setItem('automation-sort', sort);
 
 						document.getElementById('automation').style.opacity = 0;
 					}
@@ -361,7 +361,7 @@
 
 						setTimeout(() => {
 
-							switchGroup(localStorage.getItem('automation-group') || 'all', true);
+							switchGroup(Storage.getItem('automation-group') || 'all', true);
 
 							document.getElementById('automation').style.opacity = 1;
 
@@ -455,9 +455,9 @@
 
 				async function switchGroup(group, init)
 				{
-					if(init || localStorage.getItem('automation-group') != group)
+					if(init || Storage.getItem('automation-group') != group)
 					{
-						localStorage.setItem('automation-group', group);
+						Storage.setItem('automation-group', group);
 
 						if(!init)
 						{

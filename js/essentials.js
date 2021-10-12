@@ -545,11 +545,11 @@ class EssentialFeatures
 			if(!this.pageLoading)
 			{
 				/*
-				var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+				var scrollPositions = Storage.getItem('scroll-positions') || {};
 
 				scrollPositions[window.location.pathname + window.location.search] = window.scrollY;
 
-				localStorage.setItem('scroll-positions', JSON.stringify(scrollPositions));
+				Storage.setItem('scroll-positions', scrollPositions);
 				*/
 				this.pageLoading = true;
 
@@ -816,7 +816,7 @@ function loadPageData(url)
 
 					window.scrollTo(window.scrollX, 0);
 					/*
-					var scrollPositions = JSON.parse(localStorage.getItem('scroll-positions')) || {};
+					var scrollPositions = Storage.getItem('scroll-positions') || {};
 
 					if(scrollPositions[url] != null)
 					{
