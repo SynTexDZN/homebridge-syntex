@@ -4,7 +4,7 @@ const fs = require('fs'), axios = require('axios'), path = require('path');
 
 module.exports = class PluginManager
 {
-	constructor(config, logger, updateInterval)
+	constructor(logger, config, updateInterval)
 	{
         this.plugins = {};
 

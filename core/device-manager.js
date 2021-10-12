@@ -1,17 +1,16 @@
-const store = require('json-fs-store'), axios = require('axios');
+const axios = require('axios');
 
 var config, logger, files, accessories;
 var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(configPath, Logger, Files, webHooksPort, PluginManager)
+	constructor(Logger, Config, Files, PluginManager)
 	{
-		config = store(configPath);
+		config = Config;
 		logger = Logger;
 		files = Files;
 
-		this.webHooksPort = webHooksPort;
 		this.PluginManager = PluginManager;
 
 		this.reloading = false;
@@ -23,6 +22,11 @@ module.exports = class DeviceManager
 				this.reloadAccessories();
 			}
 		});
+	}
+
+	setWebHooksPort(webHooksPort)
+	{
+		this.webHooksPort = webHooksPort;
 	}
 
 	initDevice(id, ip, name, version, events, services)

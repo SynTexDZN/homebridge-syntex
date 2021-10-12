@@ -4,10 +4,13 @@ var temp = [], offline = [];
 
 module.exports = class OfflineManager
 {
-	constructor(logger, devices)
+	constructor(logger)
 	{
 		this.logger = logger;
+	}
 
+	setDevices(devices)
+	{
 		pingDevices(devices);
 	}
 

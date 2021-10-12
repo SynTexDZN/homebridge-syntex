@@ -2,11 +2,11 @@ const axios = require('axios');
 
 module.exports = class UpdateManager
 {
-	constructor(interval, config, logger)
+	constructor(logger, interval)
 	{
-		this.config = config;
-		this.logger = logger;
 		this.newestDeviceVersions = {};
+		
+		this.logger = logger;
 
 		this.fetchDeviceUpdates(interval * 1000);
 

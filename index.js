@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
@@ -17,14 +17,21 @@ class SynTexPlatform
 	constructor(log, config, api)
 	{
 		this.baseDirectory = config['baseDirectory'] || api.user.storagePath() + '/SynTex';
+		this.config = store(api.user.storagePath());
 
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
 
-		this.logger = new logger(pluginName, path.join(this.baseDirectory, 'log'), this.debug, this.language);
-
+		this.logger = new Logger(pluginName, path.join(this.baseDirectory, 'log'), this.debug, this.language);
 		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 		
+		HTMLQuery = new HTMLQuery(this.logger);
+		Automation = new Automation(this.logger, this.files);
+		PluginManager = new PluginManager(this.logger, this.config, 600);
+		DeviceManager = new DeviceManager(this.logger, this.config, this.files, PluginManager);
+		UpdateManager = new UpdateManager(this.logger, 600);
+		OfflineManager = new OfflineManager(this.logger);
+
 		this.port = config['port'] || 1711;
 		this.remote = config['remote'] || false;
 		this.password = config['password'] || '';
@@ -34,49 +41,22 @@ class SynTexPlatform
 		this.WebServer.setHead(__dirname + '/includes/head.html');
 		this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
-		HTMLQuery = new HTMLQuery(this.logger);
-
-		Automation = new Automation(this.logger, this.files);
-
-		this.config = store(api.user.storagePath());
-
-		PluginManager = new PluginManager(this.config, this.logger, 600);
-
 		this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-			DeviceManager = new DeviceManager(api.user.storagePath(), this.logger, this.files, config.port, PluginManager);
+			DeviceManager.setWebHooksPort(config.port);
 
 			DeviceManager.getDevices().then((devices) => {
 
 				if(devices != null)
 				{
-					OfflineManager = new OfflineManager(this.logger, devices);
+					OfflineManager.setDevices(devices);
 				}
-
-				UpdateManager = new UpdateManager(600, this.config, this.logger);
 
 				this.initWebServer();
 
 				restart = false;
 
 				this.files.writeFile('info.json', { restart : new Date().getTime() });
-			});
-		});
-
-		const { exec } = require('child_process');
-
-		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-			exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-				if(error || stderr.includes('ERR!'))
-				{
-					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
-				}
-				else
-				{
-					this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
-				}
 			});
 		});
 
@@ -94,6 +74,23 @@ class SynTexPlatform
 				this.bridgeID = bridgeID;
 	
 				this.connectBridge();
+			});
+		});
+
+		const { exec } = require('child_process');
+
+		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+			exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+				if(error || stderr.includes('ERR!'))
+				{
+					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
+				}
+				else
+				{
+					this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
+				}
 			});
 		});
 	}
