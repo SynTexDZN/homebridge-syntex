@@ -187,7 +187,7 @@ function setAlias()
 
 		if(err)
 		{
-			this.logger.log('error', 'bridge', 'Bridge', 'Alias %cache_update_error%! ' + err);
+			this.logger.log('error', 'bridge', 'Bridge', 'Alias %cache_update_error%!', err);
 		}
 	});
 }

@@ -122,7 +122,7 @@ module.exports = class DeviceManager
 					}
 					catch(e)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ' ) ' + e);
+						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ' )', e);
 					}
 				}
 				else
@@ -559,7 +559,7 @@ module.exports = class DeviceManager
 
 				if(err)
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+					logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
 				}
 				else
 				{
@@ -596,7 +596,7 @@ module.exports = class DeviceManager
 
 				if(!success)
 				{
-					logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%! ' + err);
+					logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!', err);
 				}
 
 				reloadConfig().then((success) => {
@@ -745,7 +745,7 @@ function reloadConfig()
 
 			if(!obj || err)
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
 
 				resolve(false);
 			}

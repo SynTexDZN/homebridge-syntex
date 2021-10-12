@@ -71,7 +71,7 @@ class SynTexPlatform
 
 				if(error || stderr.includes('ERR!'))
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!');
+					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
 				}
 				else
 				{
@@ -172,7 +172,7 @@ class SynTexPlatform
 				}
 				else
 				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%! ' + err);
+					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%!', err);
 				}
 			});
 		}
@@ -279,7 +279,7 @@ class SynTexPlatform
 						}
 						catch(e)
 						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Name %json_parse_error%! ( ' + res[1] + ') ' + e);
+							this.logger.log('error', 'bridge', 'Bridge', 'Name %json_parse_error%! ( ' + res[1] + ')', e);
 						}
 					}
 
@@ -378,7 +378,7 @@ class SynTexPlatform
 
 					if(error || (stderr && stderr.includes('ERR!')))
 					{
-						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%! ' + (error || stderr));
+						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%!', (error || stderr));
 					}
 					else
 					{
@@ -447,7 +447,7 @@ class SynTexPlatform
 							}
 							catch(e)
 							{
-								this.logger.log('error', 'bridge', 'Bridge', 'Log [' + activity[i] + '] %parse_error%! ' + e);
+								this.logger.log('error', 'bridge', 'Bridge', 'Log [' + activity[i] + '] %parse_error%!', e);
 							}
 						}
 					}
@@ -497,7 +497,7 @@ class SynTexPlatform
 				{
 					response.write('Error');
 
-					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%! ' + err);
+					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%!', err);
 				}
 
 				response.end();
@@ -596,7 +596,7 @@ class SynTexPlatform
 
 					if(err)
 					{
-						this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+						this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
 					}
 					else
 					{
@@ -818,7 +818,7 @@ class SynTexPlatform
 								}
 								catch(e)
 								{
-									this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + characteristics[i] + '] %parse_error%! ' + e);
+									this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + characteristics[i] + '] %parse_error%!', e);
 								}
 							}
 						}
@@ -831,7 +831,7 @@ class SynTexPlatform
 
 								resolve(res.data == '');
 
-							}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + i + '] %update_error%! ' + e); resolve(false) }));
+							}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + i + '] %update_error%!', e); resolve(false) }));
 
 							promiseArray.push(newPromise);
 						}
@@ -900,7 +900,7 @@ class SynTexPlatform
 
 								resolve();
 
-							}.bind({ letters, j })).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%! ' + e)));
+							}.bind({ letters, j })).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%!', e)));
 
 							promiseArray.push(newPromise);
 						}
@@ -990,7 +990,7 @@ class SynTexPlatform
 
 								if(err)
 								{
-									this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+									this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
 								}
 				
 								resolve(err ? 'Error' : 'Success');
@@ -1000,7 +1000,7 @@ class SynTexPlatform
 				}
 				else
 				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
 
 					resolve('Error');
 				}
@@ -1034,7 +1034,7 @@ class SynTexPlatform
 				
 				if(!success)
 				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%! ' + err);
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
 				}
 
 				resolve(success);

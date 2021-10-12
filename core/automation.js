@@ -42,7 +42,7 @@ module.exports = class Automation
 						}
 						else
 						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
+							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
 						}
 
 						resolve(success);
@@ -82,7 +82,7 @@ module.exports = class Automation
 							}
 							else
 							{
-								this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
+								this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
 							}
 
 							resolve(success);
@@ -129,7 +129,7 @@ module.exports = class Automation
 						}
 						else
 						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%! ' + err);
+							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
 						}
 
 						resolve(success);

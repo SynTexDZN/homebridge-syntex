@@ -52,7 +52,7 @@ module.exports = class PluginManager
             }
             else
             {
-                this.logger.log('error', 'bridge', 'Bridge', 'Node Path %read_error%! ' + err);
+                this.logger.log('error', 'bridge', 'Bridge', 'Node Path %read_error%!', err);
             }
         });
     }
@@ -88,12 +88,12 @@ module.exports = class PluginManager
                     }
                     catch(e)
                     {
-                        this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %json_parse_error%! ' + e);
+                        this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %json_parse_error%!', e);
                     }
                 }
                 else
                 {
-                    this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %read_error%! ' + err);
+                    this.logger.log('error', 'bridge', 'Bridge', this.nodePath + '/' + pluginID + '/package.json %read_error%!', err);
                 }
 
                 resolve();
@@ -163,7 +163,7 @@ module.exports = class PluginManager
             }
             else
             {
-                this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%! ' + err);
+                this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
             }
         });
     }
@@ -197,7 +197,7 @@ module.exports = class PluginManager
 
                 resolve();
 
-            }).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%! ' + e); resolve() });
+            }).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%!', e); resolve() });
         });
     }
 
