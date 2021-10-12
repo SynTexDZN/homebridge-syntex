@@ -1,16 +1,16 @@
 const store = require('json-fs-store'), axios = require('axios');
 
-var config, logger, accessories;
+var config, logger, files, accessories;
 var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(configPath, Logger, storagePath, webHooksPort, PluginManager)
+	constructor(configPath, Logger, Files, webHooksPort, PluginManager)
 	{
 		config = store(configPath);
 		logger = Logger;
+		files = Files;
 
-		this.storage = store(storagePath);
 		this.webHooksPort = webHooksPort;
 		this.PluginManager = PluginManager;
 
@@ -83,15 +83,9 @@ module.exports = class DeviceManager
 										led: 1
 									};
 
-									this.storage.add(device, (err) => {
+									files.writeFile('/devices/' + id + '.json', device).then((success) => {
 
-										if(err)
-										{
-											logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
-
-											resolve(['Error', '']);
-										}
-										else
+										if(success)
 										{
 											logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
@@ -106,6 +100,10 @@ module.exports = class DeviceManager
 											};
 
 											resolve(['Init', JSON.stringify(obj)]);
+										}
+										else
+										{
+											resolve(['Error', '']);
 										}
 									});
 								}
@@ -182,21 +180,15 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			this.storage.load(id, (err, obj) => {  
-				
-				resolve(!obj || err ? null : obj);
-			});
+			files.readFile('/devices/' + id + '.json').then((data) => resolve(data));
 		});
 	}
 
 	getDevices()
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			
-			this.storage.list((err, objs) => {  
-
-				resolve(!objs || err ? null : objs);
-			});
+			files.readDirectory('/devices').then((data) => resolve(data));
 		});
 	}
 
@@ -265,30 +257,26 @@ module.exports = class DeviceManager
 	setValue(id, param, value)
 	{
 		return new Promise(resolve => {
-			
-			this.storage.load(id, (err, obj) => {  
 
-				if(!obj || err)
-				{
-					resolve(false);
-				}
-				else
-				{
-					obj[param] = value;
-					
-					this.storage.add(obj, (err) => {
+			files.readFile('/devices/' + id + '.json').then((data) => {
 
-						if(err)
-						{
-							logger.log('error', 'bridge', 'Bridge', id + '.json %update_error%! ' + err);
-						}
-						else
+				if(data != null)
+				{
+					data[param] = value;
+
+					files.writeFile('/devices/' + id + '.json', data).then((success) => {
+
+						if(success)
 						{
 							this.reloadAccessories();
 						}
 
-						resolve(err ? false : true);
+						resolve(success);
 					});
+				}
+				else
+				{
+					resolve(false);
 				}
 			});
 		});
@@ -312,41 +300,36 @@ module.exports = class DeviceManager
 					await this.saveAccessories();
 				}
 
-				this.storage.load(values.id, (err, obj) => {  
+				files.readFile('/devices/' + values.id + '.json').then((data) => {
 
-					if(!obj || err)
+					if(data != null)
 					{
-						obj = { id : values.id };
-						
 						for(const i in values)
 						{
 							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
-								obj[i] = values[i];
+								data[i] = values[i];
 							}
-						}
+						}    
 					}
 					else
 					{
+						data = { id : values.id };
+						
 						for(const i in values)
 						{
 							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
-								obj[i] = values[i];
+								data[i] = values[i];
 							}
-						}                
+						}
 					}
 
-					this.storage.add(obj, (err) => {
+					files.writeFile('/devices/' + values.id + '.json', data).then((success) => {
 
-						if(err)
-						{
-							logger.log('error', 'bridge', 'Bridge', values.id + '.json %update_error%! ' + err);
-						}
-						
 						this.reloadAccessories();
 
-						resolve(err ? false : true);
+						resolve(success);
 					});
 				});
 			}
@@ -609,9 +592,9 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			this.storage.remove(id, (err) => {
-									
-				if(err)
+			files.deleteFile('/devices/' + id + '.json').then((success) => {
+
+				if(!success)
 				{
 					logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%! ' + err);
 				}
@@ -624,7 +607,7 @@ module.exports = class DeviceManager
 					}
 				});
 
-				resolve(err && err.code != 'ENOENT' ? false : true);
+				resolve(success);
 			});
 		});
 	}
