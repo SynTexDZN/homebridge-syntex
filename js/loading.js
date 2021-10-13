@@ -38,4 +38,4 @@ function removePreloader()
 	}
 }
 
-export let Preloader = new PreloadOverlay();
+window.Preloader = new PreloadOverlay();

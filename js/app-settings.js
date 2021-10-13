@@ -45,4 +45,4 @@ class AppSettingsManager
 	}
 }
 
-export let AppSettings = new AppSettingsManager();
+window.AppSettings = new AppSettingsManager();

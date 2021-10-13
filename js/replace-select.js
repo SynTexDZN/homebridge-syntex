@@ -184,4 +184,4 @@ function isChildOfSelect(child)
 	return false;
 }
 
-export let Replacer = new CustomSelect();
+window.Replacer = new CustomSelect();
