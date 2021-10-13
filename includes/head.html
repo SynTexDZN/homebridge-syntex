@@ -244,10 +244,18 @@
 	<link rel="manifest" href="/manifest.json">
 	<script src="/js/data-storage.js" id="static"></script>
 	<script src="/js/app-settings.js" id="static"></script>
-	<script src="/js/mobile.js" defer></script>
-	<script src="/js/loading.js" defer></script>
-	<script src="/js/loading-loop.js" defer></script>
-	<script src="/js/replace-select.js" defer></script>
+	<script type="module">
+
+		import { Preloader } from '/js/loading.js';
+		import { LoadingLoop } from '/js/loading-loop.js';
+		import { Replacer } from '/js/replace-select.js';
+
+		window.Preloader = Preloader;
+		window.LoadingLoop = LoadingLoop;
+		window.Replacer = Replacer;
+	
+	</script>
+	<script src="/js/mobile.js" id="static" defer></script>
 	<link id="menu-style" href="/style/menu.css" rel="stylesheet" disabled>
 	<script src="/js/menu.js" id="static" defer></script>
 	<script id="static">

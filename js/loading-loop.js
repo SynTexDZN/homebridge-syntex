@@ -43,4 +43,4 @@ class Loop
 	}
 }
 
-window.LoadingLoop = new Loop();
+export let LoadingLoop = new Loop();
