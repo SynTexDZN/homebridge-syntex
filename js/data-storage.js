@@ -9,6 +9,11 @@ class DataStorage
 			this.activeUser = localStorage.getItem('active-user');
 		}
 
+		if(window.location.protocol == 'http:')
+		{
+			this.setSession('local');
+		}
+
 		for(var i = 0; i < localStorage.length; i++)
 		{
 			var key = localStorage.key(i);
@@ -75,4 +80,4 @@ class DataStorage
 	}
 }
 
-export let Storage = new DataStorage();
+window.Storage = new DataStorage();
