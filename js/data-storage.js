@@ -110,7 +110,7 @@ class DataStorage
 			{
 				if(bridges.settings == null)
 				{
-					bridges[id].settings = {};s
+					bridges[id].settings = {};
 				}
 			}
 
