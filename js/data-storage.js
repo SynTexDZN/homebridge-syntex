@@ -102,6 +102,16 @@ class DataStorage
 		return false;
 	}
 
+	getBridges()
+	{
+		if(this.session != null && this.data[this.session] != null)
+		{
+			return this.data[this.session].bridges;
+		}
+
+		return null;
+	}
+
 	setBridges(bridges)
 	{
 		if(this.session != null)
@@ -136,11 +146,18 @@ class DataStorage
 		return false;
 	}
 
-	getBridges()
+	getSettings()
 	{
-		if(this.session != null && this.data[this.session] != null)
+		var sessionStorage = this.data[this.session];
+
+		if(sessionStorage != null)
 		{
-			return this.data[this.session].bridges;
+			var bridgeStorage = sessionStorage.bridges[this.bridge];
+
+			if(bridgeStorage != null)
+			{
+				return bridgeStorage.settings;
+			}
 		}
 
 		return null;
