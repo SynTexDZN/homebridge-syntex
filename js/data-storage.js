@@ -122,7 +122,7 @@ class DataStorage
 		{
 			for(const id in bridges)
 			{
-				if(bridges.settings == null)
+				if(bridges[id].settings == null)
 				{
 					bridges[id].settings = {};
 				}
