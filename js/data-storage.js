@@ -6,7 +6,12 @@ class DataStorage
 
 		if(localStorage.getItem('active-user') != null)
 		{
-			this.activeUser = localStorage.getItem('active-user');
+			this.session = localStorage.getItem('active-user');
+		}
+
+		if(localStorage.getItem('bridge-id') != null)
+		{
+			this.bridge = localStorage.getItem('bridge-id');
 		}
 
 		if(window.location.protocol == 'http:')
@@ -34,23 +39,31 @@ class DataStorage
 
 	setSession(sessionID)
 	{
-		this.activeUser = sessionID;
-
-		if(this.data[sessionID] == null)
-		{
-			this.data[sessionID] = {};
-		}
+		this.session = sessionID;
 
 		localStorage.setItem('active-user', sessionID);
 	}
 
+	setBridge(bridgeID, bridgePassword)
+	{
+		this.bridge = bridgeID;
+
+		localStorage.setItem('bridge-id', bridgeID);
+		localStorage.setItem('bridge-password', bridgePassword);
+	}
+
 	getItem(key)
 	{
-		var data = this.data[this.activeUser];
+		var sessionStorage = this.data[this.session];
 
-		if(data != null)
+		if(sessionStorage != null)
 		{
-			return data[key];
+			var bridgeStorage = sessionStorage.bridges[this.bridge];
+
+			if(bridgeStorage != null)
+			{
+				return bridgeStorage.settings[key];
+			}
 		}
 
 		return null;
@@ -58,15 +71,25 @@ class DataStorage
 
 	setItem(key, value)
 	{
-		var data = this.data[this.activeUser];
-
-		if(data != null)
+		if(this.session != null && this.data[this.session] != null)
 		{
-			data[key] = value;
+			if(this.bridge != null)
+			{
+				console.log(this.data[this.session].bridges[this.bridge]);
+
+				if(this.data[this.session].bridges[this.bridge] != null && this.data[this.session].bridges[this.bridge].settings != null)
+				{
+					this.data[this.session].bridges[this.bridge].settings[key] = value;
+				}
+			}
+			else
+			{
+				this.data[this.session][key] = value;
+			}
 
 			try
 			{
-				localStorage.setItem(this.activeUser, JSON.stringify(data));
+				localStorage.setItem(this.session, JSON.stringify(this.data[this.session]));
 
 				return true;
 			}
@@ -77,6 +100,50 @@ class DataStorage
 		}
 
 		return false;
+	}
+
+	setBridges(bridges)
+	{
+		if(this.session != null)
+		{
+			for(const id in bridges)
+			{
+				if(bridges.settings == null)
+				{
+					bridges[id].settings = {};s
+				}
+			}
+
+			if(this.data[this.session] == null)
+			{
+				this.data[this.session] = {};
+			}
+
+			this.data[this.session].bridges = bridges;
+
+			try
+			{
+				localStorage.setItem(this.session, JSON.stringify(this.data[this.session]));
+
+				return true;
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		}
+
+		return false;
+	}
+
+	getBridges()
+	{
+		if(this.session != null && this.data[this.session] != null)
+		{
+			return this.data[this.session].bridges;
+		}
+
+		return null;
 	}
 }
 
