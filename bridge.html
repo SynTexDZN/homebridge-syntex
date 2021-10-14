@@ -97,14 +97,14 @@
 					document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + ethernetMac.toUpperCase();
 				}
 
-				if(AppSettings.getItem('expertMode') == true)
+				if(Storage.getItem('expertMode') == true)
 				{
 					document.getElementById('expert-mode').style.display = '';
 				}
 
 				// NOTE: Load Plugin Versions
 
-				window.tag = AppSettings.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
+				window.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 				window.plugins = {};
 				window.versions = {};
 				window.latestVersions = {};

@@ -93,7 +93,7 @@
 
 					try
 					{
-						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, AppSettings.getSettings() || {});
+						createFormInputs('%debug.settings.app_settings%', appSettingsTemplate, Storage.getSettings() || {});
 					}
 					catch(e)
 					{
@@ -149,11 +149,11 @@
 					{
 						if(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
-							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
+							Storage.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
 						}
 						else
 						{
-							AppSettings.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].value);
+							Storage.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].value);
 						}
 					}
 
@@ -188,11 +188,11 @@
 				{
 					if(window.location.protocol != 'https:')
 					{
-						if(AppSettings.getItem('topBar') == false)
+						if(Storage.getItem('topBar') == false)
 						{
 							document.getElementById('top-menu').classList.add('hidden');
 						}
-						else if(AppSettings.getItem('topBar') == true)
+						else if(Storage.getItem('topBar') == true)
 						{
 							document.getElementById('top-menu').classList.remove('hidden');
 						}

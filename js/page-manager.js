@@ -102,7 +102,7 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 
-					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.protocol == 'https:' || AppSettings.getItem('topBar') == true))
+					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.protocol == 'https:' || Storage.getItem('topBar') == true))
 					{
 						this.topMenu.classList.remove('hidden');
 
@@ -120,7 +120,7 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 
-					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.protocol == 'https:' || AppSettings.getItem('topBar') == true))
+					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.protocol == 'https:' || Storage.getItem('topBar') == true))
 					{
 						this.topMenu.classList.remove('hidden');
 
