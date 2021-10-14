@@ -17,6 +17,8 @@ class DataStorage
 		if(window.location.protocol == 'http:')
 		{
 			this.setSession('local');
+
+			this.data['local'] = { settings : {} };
 		}
 
 		for(var i = 0; i < localStorage.length; i++)
@@ -39,31 +41,38 @@ class DataStorage
 
 	setSession(sessionID)
 	{
-		this.session = sessionID;
+		if(sessionID != null)
+		{
+			this.session = sessionID;
 
-		localStorage.setItem('active-user', sessionID);
+			localStorage.setItem('active-user', sessionID);
+		}
 	}
 
 	setBridge(bridgeID, bridgePassword)
 	{
-		this.bridge = bridgeID;
+		if(bridgeID != null)
+		{
+			this.bridge = bridgeID;
 
-		localStorage.setItem('bridge-id', bridgeID);
-		localStorage.setItem('bridge-password', bridgePassword);
+			localStorage.setItem('bridge-id', bridgeID);
+		}
+
+		if(bridgePassword != null)
+		{
+			localStorage.setItem('bridge-password', bridgePassword);
+		}
 	}
 
 	getItem(key)
 	{
-		var sessionStorage = this.data[this.session];
-
-		if(sessionStorage != null)
+		if(this.checkStructure() == 'local')
 		{
-			var bridgeStorage = sessionStorage.bridges[this.bridge];
-
-			if(bridgeStorage != null)
-			{
-				return bridgeStorage.settings[key];
-			}
+			return this.data[this.session].bridges[this.bridge].settings[key];
+		}
+		else if(this.checkStructure() == 'global')
+		{
+			return this.data[this.session].settings[key];
 		}
 
 		return null;
@@ -71,22 +80,17 @@ class DataStorage
 
 	setItem(key, value)
 	{
-		if(this.session != null && this.data[this.session] != null)
+		if(this.checkStructure() == 'local')
 		{
-			if(this.bridge != null)
-			{
-				console.log(this.data[this.session].bridges[this.bridge]);
+			this.data[this.session].bridges[this.bridge].settings[key] = value;
+		}
+		else if(this.checkStructure() == 'global')
+		{
+			this.data[this.session].settings[key] = value;
+		}
 
-				if(this.data[this.session].bridges[this.bridge] != null && this.data[this.session].bridges[this.bridge].settings != null)
-				{
-					this.data[this.session].bridges[this.bridge].settings[key] = value;
-				}
-			}
-			else
-			{
-				this.data[this.session][key] = value;
-			}
-
+		if(this.checkStructure() != null)
+		{
 			try
 			{
 				localStorage.setItem(this.session, JSON.stringify(this.data[this.session]));
@@ -104,7 +108,7 @@ class DataStorage
 
 	getBridges()
 	{
-		if(this.session != null && this.data[this.session] != null)
+		if(this.checkSession())
 		{
 			return this.data[this.session].bridges;
 		}
@@ -126,7 +130,7 @@ class DataStorage
 
 			if(this.data[this.session] == null)
 			{
-				this.data[this.session] = {};
+				this.data[this.session] = { settings : {} };
 			}
 
 			this.data[this.session].bridges = bridges;
@@ -148,15 +152,44 @@ class DataStorage
 
 	getSettings()
 	{
-		var sessionStorage = this.data[this.session];
-
-		if(sessionStorage != null)
+		if(this.checkStructure() == 'local')
 		{
-			var bridgeStorage = sessionStorage.bridges[this.bridge];
+			return this.data[this.session].bridges[this.bridge].settings;
+		}
+		else if(this.checkStructure() == 'global')
+		{
+			return this.data[this.session].settings;
+		}
 
-			if(bridgeStorage != null)
+		return null;
+	}
+
+	checkSession()
+	{
+		return this.session != null && this.data[this.session] != null;
+	}
+
+	checkBridge()
+	{
+		return this.bridge != null;
+	}
+
+	checkStructure()
+	{
+		if(this.checkSession())
+		{
+			var sessionStorage = this.data[this.session];
+
+			if(this.checkBridge())
 			{
-				return bridgeStorage.settings;
+				if(typeof sessionStorage.bridges == 'object' && typeof sessionStorage.bridges[this.bridge] == 'object' && typeof sessionStorage.bridges[this.bridge].settings == 'object')
+				{
+					return 'local';
+				}
+			}
+			else if(typeof sessionStorage.settings == 'object')
+			{
+				return 'global';
 			}
 		}
 
