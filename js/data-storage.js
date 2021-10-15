@@ -3,15 +3,21 @@ class DataStorage
 	constructor()
 	{
 		this.data = {};
+		this.remote = {};
 
-		if(localStorage.getItem('active-user') != null)
+		if(localStorage.getItem('remote') != null)
 		{
-			this.session = localStorage.getItem('active-user');
-		}
+			try
+			{
+				this.remote = JSON.parse(localStorage.getItem('remote'));
 
-		if(localStorage.getItem('bridge-id') != null)
-		{
-			this.bridge = localStorage.getItem('bridge-id');
+				this.session = this.remote['session-id'];
+				this.bridge = this.remote['bridge-id'];
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
 		}
 
 		if(window.location.protocol == 'http:')
@@ -25,7 +31,7 @@ class DataStorage
 		{
 			var key = localStorage.key(i);
 
-			if(key != 'active-user' && key != 'bridge-id' && key != 'bridge-password')
+			if(key != 'remote')
 			{
 				try
 				{
@@ -43,9 +49,30 @@ class DataStorage
 	{
 		if(sessionID != null)
 		{
-			this.session = sessionID;
+			this.remote['session-id'] = sessionID;
 
-			localStorage.setItem('active-user', sessionID);
+			try
+			{
+				localStorage.setItem('remote', JSON.stringify(this.remote));
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		}
+	}
+
+	resetSession()
+	{
+		delete this.remote['session-id'];
+		
+		try
+		{
+			localStorage.setItem('remote', JSON.stringify(this.remote));
+		}
+		catch(e)
+		{
+			console.error(e);
 		}
 	}
 
@@ -53,14 +80,42 @@ class DataStorage
 	{
 		if(bridgeID != null)
 		{
-			this.bridge = bridgeID;
-
-			localStorage.setItem('bridge-id', bridgeID);
+			this.remote['bridge-id'] = bridgeID;
+			this.remote['last-bridge-id'] = bridgeID;
 		}
 
 		if(bridgePassword != null)
 		{
-			localStorage.setItem('bridge-password', bridgePassword);
+			this.remote['bridge-password'] = bridgePassword;
+		}
+
+		try
+		{
+			localStorage.setItem('remote', JSON.stringify(this.remote));
+		}
+		catch(e)
+		{
+			console.error(e);
+		}
+	}
+
+	getRemote(key)
+	{
+		return this.remote[key];
+	}
+
+	resetRemote()
+	{
+		delete this.remote['bridge-id'];
+		delete this.remote['bridge-password'];
+
+		try
+		{
+			localStorage.setItem('remote', JSON.stringify(this.remote));
+		}
+		catch(e)
+		{
+			console.error(e);
 		}
 	}
 
@@ -87,6 +142,34 @@ class DataStorage
 		else if(this.checkStructure() == 'global')
 		{
 			this.data[this.session].settings[key] = value;
+		}
+
+		if(this.checkStructure() != null)
+		{
+			try
+			{
+				localStorage.setItem(this.session, JSON.stringify(this.data[this.session]));
+
+				return true;
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		}
+
+		return false;
+	}
+
+	removeItem(key)
+	{
+		if(this.checkStructure() == 'local')
+		{
+			delete this.data[this.session].bridges[this.bridge].settings[key];
+		}
+		else if(this.checkStructure() == 'global')
+		{
+			delete this.data[this.session].settings[key];
 		}
 
 		if(this.checkStructure() != null)

@@ -15,7 +15,7 @@
 
 							if(registration.active != null)
 							{
-								registration.active.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
+								registration.active.postMessage({ bridgeID : Storage.getRemote('bridge-id'), bridgePassword : Storage.getRemote('bridge-password') });
 
 								resolve(true);
 							}
@@ -33,7 +33,7 @@
 						
 						navigator.serviceWorker.addEventListener('controllerchange', () => {
 							
-							navigator.serviceWorker.controller.postMessage({ bridgeID : localStorage.getItem('bridge-id') });
+							navigator.serviceWorker.controller.postMessage({ bridgeID : Storage.getRemote('bridge-id'), bridgePassword : Storage.getRemote('bridge-password') });
 
 							resolve(true);
 						});
@@ -432,7 +432,7 @@
 </nav>
 <div id="head-container">
 	<div class="hidden" id="top-menu">
-		<button onclick="Essentials.leavePage('/remote')" style="display: none"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); transform: none" src="/img/back-arrow.png"></button>
+		<button onclick="Essentials.leavePage('/remote'); Storage.resetRemote()" style="display: none"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); transform: none" src="/img/back-arrow.png"></button>
 		<button onclick="window.location.reload()"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); transform: none" src="/img/reload-page.png"></button>
 	</div>
 	<div id="head-content" class="hidden">
