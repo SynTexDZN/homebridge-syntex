@@ -124,6 +124,7 @@
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
 				window.services = [];
+				window.plugins = {};
 				
 				window.data = {
 					motion: {
@@ -200,17 +201,47 @@
 					document.getElementById('automation').className = 'vertical-view';
 				}
 
-				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
+				loadServices();
 
-					automation = JSON.parse(a);
+				Promise.all([loadData('/serverside/plugins', 'plugins'), loadData('/serverside/automation', 'automation')]).then(() => renderGUI());
 
-					console.log('AUTOMATION', automation);
+			</script>
+			<script>
 
-					document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
+				// NOTE: Fetch Data
+
+				function loadData(url, key)
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch(url, 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								window[key] = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+
+							console.log(url, window[key]);
+						});
+					});
+				}
+
+				function renderGUI()
+				{
+					console.log(services, automation, plugins);
 
 					if(automation.length > 0)
 					{
 						sortAutomation(true);
+
 						createGroupPanel();
 					}
 					else if(services.length > 0)
@@ -228,60 +259,34 @@
 
 						Preloader.finish();
 					}
-				});
-
-				loadServices();
-				
-				if(services.length > 0)
-				{
-					var a = ['trigger', 'condition', 'result'];
-
-					for(var i = 0; i < a.length; i++)
-					{
-						var addBtn = document.createElement('input');
-						
-						addBtn.setAttribute('value', '+');
-						addBtn.setAttribute('onclick', 'addElement(' + "'" + a[i] + "'" + ')');
-						addBtn.setAttribute('type', 'button');
-						addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-						addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
-
-						document.getElementById(a[i]).appendChild(addBtn);
-					}
 					
-					addElement('trigger');
-					addElement('result');
-				}
+					document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
+					document.getElementById('create').getElementsByTagName('input')[1].value = '';
 
-				loadPluginData();
+					document.getElementById('trigger').innerHTML = '';
+					document.getElementById('condition').innerHTML = '';
+					document.getElementById('result').innerHTML = '';
 
-			</script>
-			<script>
+					if(services.length > 0)
+					{
+						var a = ['trigger', 'condition', 'result'];
 
-				// NOTE: Reload Plugin Data
+						for(var i = 0; i < a.length; i++)
+						{
+							var addBtn = document.createElement('input');
+							
+							addBtn.setAttribute('value', '+');
+							addBtn.setAttribute('onclick', 'addElement(' + "'" + a[i] + "'" + ')');
+							addBtn.setAttribute('type', 'button');
+							addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+							addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
 
-				window.plugins = {};
-
-				function loadPluginData()
-				{
-					return new Promise((resolve) => {
-
-						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
-
-							try
-							{
-								plugins = JSON.parse(p);
-
-								resolve(true);
-							}
-							catch(e)
-							{
-								console.error(e);
-
-								resolve(false);
-							}
-						});
-					});
+							document.getElementById(a[i]).appendChild(addBtn);
+						}
+						
+						addElement('trigger');
+						addElement('result');
+					}
 				}
 
 			</script>
@@ -1107,9 +1112,9 @@
 						
 						Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createOverlay(3, 'reset-result', '%automation.create_success%!', 'green'));
 
-						var a = await Query.complexFetch('/serverside/automation', 5000, 2, {}, false);
+						automation.push(automationOBJ);
 
-						automation = JSON.parse(a);
+						renderGUI();
 
 						document.getElementById('no-automation').style.display = 'none';
 
@@ -1122,8 +1127,6 @@
 						await Essentials.newTimeout(600);
 
 						Essentials.removeOverlays(document.getElementById('save-btn'), true);
-
-						document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
 					}
 				}
 
