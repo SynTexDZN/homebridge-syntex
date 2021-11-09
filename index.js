@@ -402,7 +402,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				var plugins = ['SynTexWebHooks', 'SynTexMagicHome', 'SynTexTuya'], activity = [];
+				var plugins = ['SynTexWebHooks', 'SynTexMagicHome', 'SynTexTuya', 'SynTexKNX'], activity = [];
 
 				for(const p in plugins)
 				{

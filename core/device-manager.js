@@ -537,7 +537,7 @@ module.exports = class DeviceManager
 							}
 						}
 
-						if(accessories[i].plugin.alias == 'SynTexMagicHome' || accessories[i].plugin.alias == 'SynTexTuya' || accessories[i].plugin.alias == 'SynTexWebHooks')
+						if(accessories[i].plugin.alias == 'SynTexWebHooks' || accessories[i].plugin.alias == 'SynTexMagicHome' || accessories[i].plugin.alias == 'SynTexTuya' || accessories[i].plugin.alias == 'SynTexKNX')
 						{
 							accessories[i].version = '0.0.0';
 						}

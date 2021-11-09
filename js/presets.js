@@ -38,6 +38,15 @@ class PresetManager
 				getUpdateURL : () => { return null },
 				getVersionURL : () => { return null },
 				getPingURL : () => { return null }
+			},
+			SynTexKNX : {
+				name : 'SynTex KNX Device',
+				getResetURL : (device, params) => { return params.url + '/devices?id=' + device.id + '&remove=CONFIRM' },
+				getRestartURL : () => { return null },
+				getReconnectURL : () => { return null },
+				getUpdateURL : () => { return null },
+				getVersionURL : () => { return null },
+				getPingURL : () => { return null }
 			}
 		};
 	}
