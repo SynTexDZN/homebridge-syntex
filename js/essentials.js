@@ -768,7 +768,7 @@ function loadPageData(url)
 
 		var client = new XMLHttpRequest();
 
-		client.timeout = 3000;
+		client.timeout = 5000;
 
 		client.open('GET', url);
 
