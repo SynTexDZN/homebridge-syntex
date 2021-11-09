@@ -1114,8 +1114,6 @@
 
 						automation.push(automationOBJ);
 
-						renderGUI();
-
 						document.getElementById('no-automation').style.display = 'none';
 
 						sortAutomation(true);
@@ -1125,6 +1123,8 @@
 						openViewPage('create');
 
 						await Essentials.newTimeout(600);
+
+						renderGUI();
 
 						Essentials.removeOverlays(document.getElementById('save-btn'), true);
 					}
