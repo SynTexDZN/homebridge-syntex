@@ -228,16 +228,12 @@
 
 								resolve(false);
 							}
-
-							console.log(url, window[key]);
 						});
 					});
 				}
 
 				function renderGUI()
 				{
-					console.log(services, automation, plugins);
-
 					if(automation.length > 0)
 					{
 						sortAutomation(true);
@@ -744,9 +740,11 @@
 
 						select.parentElement.children[3].style.display = 'none';
 
-						select.parentElement.children[4].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
-						select.parentElement.children[4].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
-						select.parentElement.children[4].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[4].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
+						var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+						valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
 
 						var options = select.parentElement.children[4].getElementsByClassName('select-items')[0].children;
 
@@ -793,9 +791,11 @@
 
 						if(option.hasAttribute('letters'))
 						{
-							select.parentElement.children[4].getElementsByClassName('select-items')[0].children[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
-							select.parentElement.children[4].getElementsByClassName('select-items')[0].children[1].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
-							select.parentElement.children[4].getElementsByClassName('select-selected')[0].innerHTML = select.parentElement.children[4].getElementsByClassName('select-items')[0].getElementsByClassName('same-as-selected')[0].innerHTML;
+							var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+							valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+							valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+							valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
 						}
 					}
 					else if(option.innerHTML == '%automation.color%')
@@ -857,7 +857,7 @@
 
 					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
 				
-					element.appendChild(Replacer.createSelectMenu(select));
+					element.appendChild(Replacer.createSelectMenu(select, true));
 					element.appendChild(Replacer.createSelectMenu(operations));
 
 					element.innerHTML += '<input placeholder="' + (type == 'result' ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
@@ -1220,58 +1220,44 @@
 
 				function updateOperation(select)
 				{
-					var o = select.getElementsByTagName('select')[0].selectedIndex;
-					var option = select.getElementsByTagName('select')[0].children[o];
-					var options = select.parentElement.children[1].getElementsByClassName('select-items')[0].children;
+					var availableOptions = [],
+						customSelect = Replacer.getSelect(select.parentElement.children[1]),
+						selectOptions = select.getElementsByTagName('select')[0].children[select.getElementsByTagName('select')[0].selectedIndex];
 
-					var availableOptions = [];
-
-					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3')
+					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
 					{
 						availableOptions = ['%automation.switch%', '%automation.color%'];
 					}
-					else if(option.getAttribute('type') == 'boolean' || option.getAttribute('type') == 'url')
+					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
 					{
 						availableOptions = ['='];
 					}
-					else if(option.getAttribute('type') == 'numeric')
+					else if(selectOptions.getAttribute('type') == 'numeric')
 					{
 						availableOptions = ['=', '&gt;', '&lt;'];
 					}
 
-					var setDefault = false;
-
-					if(!availableOptions.includes(select.parentElement.children[1].getElementsByClassName('same-as-selected')[0].innerHTML))
+					for(const i in customSelect.items)
 					{
-						select.parentElement.children[1].getElementsByClassName('select-selected')[0].innerHTML = availableOptions[0];
-
-						setDefault = true;
-					}
-
-					for(var i = 0; i < options.length; i++)
-					{
-						if(availableOptions.includes(options[i].innerHTML))
+						if(availableOptions.includes(customSelect.items[i].text))
 						{
-							options[i].style.display = '';
-
-							if(setDefault)
-							{
-								if(options[i].innerHTML == availableOptions[0])
-								{
-									options[i].classList.add('same-as-selected');
-
-									select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex = i;
-								}
-								else
-								{
-									options[i].classList.remove('same-as-selected');
-								}
-							}
+							customSelect.items[i].element.style.display = '';
 						}
 						else
 						{
-							options[i].style.display = 'none';
-							options[i].classList.remove('same-as-selected');
+							customSelect.items[i].element.style.display = 'none';
+						}
+					}
+
+					if(!availableOptions.includes(customSelect.selected.text))
+					{
+						if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
+						{
+							customSelect.updateSelected(1);
+						}
+						else
+						{
+							customSelect.updateSelected(0);
 						}
 					}
 				}

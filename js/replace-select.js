@@ -25,68 +25,81 @@ class CustomSelect
 
 	SETUP()
 	{
-		var x = document.getElementsByClassName('custom-select');
+		var customSelects = document.getElementsByClassName('custom-select');
 
-		for(var i = 0; i < x.length; i++)
+		for(var i = 0; i < customSelects.length; i++)
 		{
-			this.createSelectMenu(x[i]);
+			this.createSelectMenu(customSelects[i]);
 		}
 	}
 
-	createSelectMenu(container)
+	createSelectMenu(container, search)
 	{
-		var j, a, b, c, selElmnt;
-
-		selElmnt = container.getElementsByTagName('select')[0];
+		var nativeSelect = container.getElementsByTagName('select')[0];
 
 		container.setAttribute('id', 'select-' + selects.length);
 
-		a = document.createElement('div');
-		a.setAttribute('class', 'select-selected');
+		var searchElement = document.createElement('input');
 
-		if(selElmnt.options[selElmnt.selectedIndex].hasAttribute('img'))
+		searchElement.setAttribute('class', 'select-search');
+		searchElement.setAttribute('type', 'text');
+		searchElement.setAttribute('placeholder', 'Suchen');
+		searchElement.setAttribute('style', 'display: none');
+		searchElement.setAttribute('oninput', 'Replacer.filterSelectMenu(this)');
+		searchElement.setAttribute('value', nativeSelect.options[nativeSelect.selectedIndex].innerHTML);
+
+		var selectedElement = document.createElement('div');
+
+		selectedElement.setAttribute('class', 'select-selected');
+
+		if(nativeSelect.options[nativeSelect.selectedIndex].hasAttribute('img'))
 		{
-			a.style.paddingLeft = '15px';
-			a.innerHTML = '<img src="' + selElmnt.options[selElmnt.selectedIndex].getAttribute('img') + '">';
+			selectedElement.style.paddingLeft = '12px';
+			selectedElement.innerHTML = '<img class="select-image" src="' + nativeSelect.options[nativeSelect.selectedIndex].getAttribute('img') + '">';
 		}
 
-		a.innerHTML += selElmnt.options[selElmnt.selectedIndex].innerHTML;
+		selectedElement.innerHTML += '<div class="select-text">' + nativeSelect.options[nativeSelect.selectedIndex].innerHTML + '</div>';
 
-		a.setAttribute('name', selElmnt.getAttribute('name'));
+		selectedElement.setAttribute('name', nativeSelect.getAttribute('name'));
 
-		container.appendChild(a);
-		/* For each element, create a new DIV that will contain the option list: */
-		b = document.createElement('div');
-		b.setAttribute('class', 'select-items select-hide');
+		if(search)
+		{
+			selectedElement.appendChild(searchElement);
+		}
+
+		container.appendChild(selectedElement);
+
+		var selectItems = document.createElement('div');
+
+		selectItems.setAttribute('class', 'select-items select-hide');
 		
-		for(j = 0; j < selElmnt.length; j++)
+		for(var i = 0; i < nativeSelect.options.length; i++)
 		{
-			/* For each option in the original select element,
-			create a new DIV that will act as an option item: */
-			c = document.createElement('div');
+			var selectItem = document.createElement('div');
 
-			if(selElmnt.options[j].hasAttribute('img'))
+			selectItem.setAttribute('class', 'select-item');
+			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
+			selectItem.setAttribute('counter', i);
+
+			if(nativeSelect.options[i].hasAttribute('img'))
 			{
-				c.style.paddingLeft = '15px';
-				c.innerHTML = '<img src="' + selElmnt.options[j].getAttribute('img') + '">';
+				selectItem.style.paddingLeft = '15px';
+				selectItem.innerHTML = '<img class="select-image" src="' + nativeSelect.options[i].getAttribute('img') + '">';
 			}
 
-			c.innerHTML += selElmnt.options[j].innerHTML;
+			selectItem.innerHTML += '<div class="select-text">' + nativeSelect.options[i].innerHTML + '</div>';
 
-			if(c.innerHTML == a.innerHTML)
+			if(selectItem.innerHTML.split('</div>')[0] == selectedElement.innerHTML.split('</div>')[0])
 			{
-				c.className = 'same-as-selected';
+				selectItem.classList.add('same-as-selected');
 			}
 
-			c.setAttribute('counter', j);
-			c.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
-
-			b.appendChild(c);
+			selectItems.appendChild(selectItem);
 		}
 
-		container.appendChild(b);
+		container.appendChild(selectItems);
 
-		a.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
+		selectedElement.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
 		
 		selects.push(container);
 
@@ -95,35 +108,80 @@ class CustomSelect
 
 	openSelectMenu(btn)
 	{
+		var select = btn.parentElement,
+			selectedItems = select.getElementsByClassName('select-items')[0],
+			selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0].getElementsByClassName('select-text')[0];
+
+		var searchElement = btn.getElementsByClassName('select-search')[0],
+			selectText = btn.getElementsByClassName('select-text')[0];
+
+		var selectItems = btn.parentElement.getElementsByClassName('select-item');
+
 		btn.nextSibling.classList.toggle('select-hide');
 		btn.classList.toggle('select-active');
+
+		if(searchElement != null)
+		{
+			if(btn.classList.contains('select-active'))
+			{
+				searchElement.style.display = '';
+				searchElement.value = selectText.innerHTML;
+				
+				searchElement.setSelectionRange(0, searchElement.value.length);
+				searchElement.focus();
+
+				for(var i = 0; i < selectItems.length; i++)
+				{
+					selectItems[i].style.display = '';
+				}
+
+				selectText.innerHTML = '';
+
+				scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
+			}
+			else
+			{
+				selectText.innerHTML = selectedItem.innerHTML;
+
+				searchElement.style.display = 'none';
+			}
+		}
 
 		closeOtherSelectMenus(btn);
 	}
 
-	selectMenuItem(elmnt)
+	selectMenuItem(element)
 	{
-		if(!elmnt.classList.contains('same-as-selected'))
+		if(!element.classList.contains('same-as-selected'))
 		{
 			var y, i, k, s, h;
 			
-			s = elmnt.parentNode.parentNode.getElementsByTagName('select')[0];
-			h = elmnt.parentNode.previousSibling;
+			s = element.parentNode.parentNode.getElementsByTagName('select')[0];
+			h = element.parentNode.previousSibling;
 
 			for(i = 0; i < s.length; i++)
 			{
-				if(elmnt.getAttribute('counter') == i)
+				if(element.getAttribute('counter') == i)
 				{
-					s.selectedIndex = i;
-					h.innerHTML = elmnt.innerHTML;
-					y = elmnt.parentNode.getElementsByClassName('same-as-selected');
+					h.getElementsByClassName('select-text')[0].innerHTML = element.getElementsByClassName('select-text')[0].innerHTML;
 
-					for (k = 0; k < y.length; k++)
+					if(element.getElementsByClassName('select-image')[0] != null && h.getElementsByClassName('select-image')[0] != null)
 					{
-						y[k].removeAttribute('class');
+						h.getElementsByClassName('select-image')[0].src = element.getElementsByClassName('select-image')[0].src;
 					}
 
-					elmnt.setAttribute('class', 'same-as-selected');
+					y = element.parentNode.getElementsByClassName('same-as-selected');
+
+					for(k = 0; k < y.length; k++)
+					{
+						y[k].classList.remove('same-as-selected');
+					}
+
+					h.getElementsByClassName('select-text')[0].innerHTML = s[i].innerHTML;
+
+					element.classList.add('same-as-selected');
+
+					s.selectedIndex = i;
 
 					break;
 				}
@@ -141,7 +199,7 @@ class CustomSelect
 				{
 					if(params[i] == 'this')
 					{
-						args[i] = elmnt.parentElement.parentElement;
+						args[i] = element.parentElement.parentElement;
 					}
 					else
 					{
@@ -153,16 +211,108 @@ class CustomSelect
 			}
 		}
 	}
+
+	filterSelectMenu(search)
+	{
+		var selectItems = search.parentElement.parentElement.getElementsByClassName('select-item');
+
+		for(var i = 0; i < selectItems.length; i++)
+		{
+			var selectText = selectItems[i].getElementsByClassName('select-text')[0];
+
+			if(!selectText.innerHTML.toLowerCase().includes(search.value.toLowerCase()) && search.value != null)
+			{
+				selectItems[i].style.display = 'none';
+			}
+			else
+			{
+				selectItems[i].style.display = '';
+			}
+		}
+	}
+
+	getSelect(select)
+	{
+		var obj = { items : [] };
+
+		var selectItems = select.getElementsByClassName('select-items')[0].children;
+		var selectedItem = select.getElementsByClassName('select-selected')[0],
+			selectedItemText = selectedItem.getElementsByClassName('select-text')[0],
+			selectedItemImage = selectedItem.getElementsByClassName('select-image')[0];
+
+		for(var i = 0; i < selectItems.length; i++)
+		{
+			var item = { element : selectItems[i], text : selectItems[i].getElementsByClassName('select-text')[0].innerHTML }
+
+			if(selectItems[i].getElementsByClassName('select-image')[0] != null)
+			{
+				item.image = selectItems[i].getElementsByClassName('select-image')[0].src;
+			}
+
+			obj.items.push(item);
+		}
+
+		obj.updateSelected = (index) => {
+
+			select.getElementsByTagName('select')[0].selectedIndex = index;
+
+			selectedItemText.innerHTML = obj.items[index].text;
+			
+			if(selectedItemImage != null)
+			{
+				selectedItemImage.src = obj.items[index].image;
+			}
+
+			for(const i in obj.items)
+			{
+				if(i == index)
+				{
+					obj.items[i].element.classList.add('same-as-selected');
+				}
+				else
+				{
+					obj.items[i].element.classList.remove('same-as-selected');
+				}
+			}
+		};
+
+		var selected = { index : select.getElementsByTagName('select')[0].selectedIndex, display : selectedItem };
+
+		selected.element = selectItems[selected.index];
+
+		selected.text = selectItems[selected.index].getElementsByClassName('select-text')[0].innerHTML;
+
+		if(selectItems[selected.index].getElementsByClassName('select-image')[0] != null)
+		{
+			selected.image = selectItems[selected.index].getElementsByClassName('select-image')[0].src;
+		}
+
+		obj.selected = selected;
+
+		return obj;
+	}
 }
 
-function closeOtherSelectMenus(elmnt)
+function closeOtherSelectMenus(element)
 {
 	for(var i = 0; i < selects.length; i++)
 	{
-		if((elmnt.parentElement == null || selects[i].id != elmnt.parentElement.id) && document.getElementById(selects[i].id) != null)
+		if((element.parentElement == null || selects[i].id != element.parentElement.id) && document.getElementById(selects[i].id) != null)
 		{
-			document.getElementById(selects[i].id).getElementsByClassName('select-selected')[0].className = 'select-selected';
-			document.getElementById(selects[i].id).getElementsByClassName('select-items')[0].className = 'select-items select-hide';
+			var select = document.getElementById(selects[i].id),
+				selectedItems = select.getElementsByClassName('select-items')[0],
+				selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0].getElementsByClassName('select-text')[0],
+				selectedElement = select.getElementsByClassName('select-selected')[0];
+
+			selectedElement.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
+
+			selectedElement.className = 'select-selected';
+			selectedItems.className = 'select-items select-hide';
+		
+			if(selectedElement.children[2] != null)
+			{
+				selectedElement.children[2].style.display = 'none';
+			}
 		}
 	}
 }
@@ -182,6 +332,26 @@ function isChildOfSelect(child)
 	}
 
 	return false;
+}
+
+function scrollParentToChild(parent, child)
+{
+	var parentRect = parent.getBoundingClientRect(), childRect = child.getBoundingClientRect();
+
+	if(!(childRect.top >= parentRect.top && childRect.bottom <= parentRect.top + parent.clientHeight))
+	{
+		const scrollTop = childRect.top - parentRect.top;
+		const scrollBot = childRect.bottom - parentRect.bottom;
+
+		if(Math.abs(scrollTop) < Math.abs(scrollBot))
+		{
+			parent.scrollTop += scrollTop;
+		}
+		else
+		{
+			parent.scrollTop += scrollBot;
+		}
+	}
 }
 
 export let Replacer = new CustomSelect();

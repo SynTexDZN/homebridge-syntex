@@ -30,7 +30,7 @@
 	-webkit-touch-callout: none;
 }
 
-html, body, #content, #groups, .control-panel::before, .type-container, .select-items div, .column, .log-message, .button-icon, h1, h2, p, a, label, img
+html, body, #content, #groups, .control-panel::before, .type-container, .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
 {
 	transition: var(--transition-color);
 }
@@ -265,13 +265,13 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 }
 
 
-.select-items div:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
+.select-items .select-item:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
 {
 	transition: var(--transition-normal) ease-out;
 	background: rgb(200, 200, 220);
 }
 
-.select-items div:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
+.select-items .select-item:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 {
 	transition: var(--transition-normal) ease-out;
 	background: rgb(200, 200, 220);
@@ -1186,6 +1186,7 @@ button img
 	height: 23px;
 	margin-right: 14px;
 	position: relative;
+	z-index: 2;
 }
 
 .icon
@@ -1207,6 +1208,7 @@ button img
 	width: 0;
 	height: 0;
 	border: 5px solid transparent;
+	z-index: 2;
 	border-color: var(--light-layer-two) transparent transparent transparent;
 	transition: var(--transition-color), 0s border-color;
 }
@@ -1229,7 +1231,7 @@ button img
 	z-index: 25000;
 }
 
-.custom-select > .select-items div
+.custom-select > .select-items .select-item
 {
 	display: flex;
 	align-items: center;
@@ -1239,6 +1241,18 @@ button img
 	background: var(--light-layer-one);
 	color: var(--dark-layer-one);
 	line-height: 24px;
+}
+
+.custom-select > .select-selected .select-search
+{
+	color: var(--dark-layer-one);
+	background: transparent;
+	box-shadow: none;
+	position: absolute;
+    border: none;
+	left: 0;
+    padding-left: 52px;
+	z-index: 1;
 }
 
 .select-items
