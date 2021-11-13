@@ -48,13 +48,16 @@
 			});
 		};
 
-		navigator.serviceWorker.getRegistrations().then((registrations) => {
+		if('serviceWorker' in navigator)
+		{
+			navigator.serviceWorker.getRegistrations().then((registrations) => {
 
-			for(let registration of registrations)
-			{
-				registration.unregister();
-			}
-		})
+				for(let registration of registrations)
+				{
+					registration.unregister();
+				}
+			});
+		}
 
 		//resisterServiceWorker();
 
