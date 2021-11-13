@@ -768,9 +768,12 @@ function loadPageData(url)
 
 		var client = new XMLHttpRequest();
 
-		client.timeout = 5000;
+		client.timeout = 10000;
 
 		client.open('GET', url);
+
+		client.setRequestHeader('bridge', Storage.getRemote('bridge-id'));
+		client.setRequestHeader('password', Storage.getRemote('bridge-password'));
 
 		client.onreadystatechange = async () => {
 			

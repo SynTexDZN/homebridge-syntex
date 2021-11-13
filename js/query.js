@@ -7,7 +7,7 @@ class URLQuery
 		this.Essentials = Essentials;
 	}
 
-	fetchURL(url, timeout, post)
+	fetchURL(url, timeout, post, headers)
 	{
 		return new Promise(resolve => {
 			
@@ -15,12 +15,15 @@ class URLQuery
 
 			client.timeout = 10000;
 
-			if(timeout != undefined)
+			if(timeout != null)
 			{
 				client.timeout = timeout;
 			}
 
 			client.open('POST', url);
+
+			client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
+			client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
 
 			client.onreadystatechange = () => {
 
@@ -37,7 +40,7 @@ class URLQuery
 				}
 			}
 
-			if(post != undefined)
+			if(post != null)
 			{
 				client.send(post);
 			}
@@ -48,7 +51,7 @@ class URLQuery
 		});
 	}
 
-	complexFetch(url, timeout, tries, overlays, remove, post)
+	complexFetch(url, timeout, tries, overlays, remove, post, headers)
 	{
 		return new Promise(async (resolve) => {
 
@@ -86,11 +89,11 @@ class URLQuery
 				{
 					if(post != undefined)
 					{
-						var fetch = await this.fetchURL(url, timeout, post);
+						var fetch = await this.fetchURL(url, timeout, post, headers);
 					}
 					else
 					{
-						var fetch = await this.fetchURL(url, timeout);
+						var fetch = await this.fetchURL(url, timeout, null, headers);
 					}
 					
 					tries--;
