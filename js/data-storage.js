@@ -62,6 +62,7 @@ class DataStorage
 	resetSession()
 	{
 		delete this.remote['session-id'];
+		delete this.remote['last-bridge-id'];
 		
 		try
 		{
@@ -105,7 +106,6 @@ class DataStorage
 	{
 		delete this.remote['bridge-id'];
 		delete this.remote['bridge-password'];
-		delete this.remote['last-bridge-id'];
 
 		try
 		{
