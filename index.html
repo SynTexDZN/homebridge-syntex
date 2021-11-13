@@ -684,19 +684,19 @@
 							}
 						}
 
-						for(var i = 0; i < document.getElementById('groups').children.length; i++)
-						{
-							var r = document.getElementById('groups').children[i];
+						var groupButtons = document.getElementById('groups').children;
 
-							if(r.getAttribute('group') == group)
+						for(var i = 0; i < groupButtons.length; i++)
+						{
+							if(groupButtons[i].getAttribute('group') == group)
 							{
-								r.className = 'white group-active';
-								//r.style.filter = 'brightness(60%)';
+								groupButtons[i].className = 'white group-active';
+
+								Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
 							}
 							else
 							{
-								r.className = 'white';
-								//r.style.filter = '';
+								groupButtons[i].className = 'white';
 							}
 						}
 

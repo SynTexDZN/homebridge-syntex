@@ -137,7 +137,7 @@ class CustomSelect
 
 				selectText.innerHTML = '';
 
-				scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
+				Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
 			}
 			else
 			{
@@ -176,8 +176,6 @@ class CustomSelect
 					{
 						y[k].classList.remove('same-as-selected');
 					}
-
-					h.getElementsByClassName('select-text')[0].innerHTML = s[i].innerHTML;
 
 					element.classList.add('same-as-selected');
 
@@ -332,26 +330,6 @@ function isChildOfSelect(child)
 	}
 
 	return false;
-}
-
-function scrollParentToChild(parent, child)
-{
-	var parentRect = parent.getBoundingClientRect(), childRect = child.getBoundingClientRect();
-
-	if(!(childRect.top >= parentRect.top && childRect.bottom <= parentRect.top + parent.clientHeight))
-	{
-		const scrollTop = childRect.top - parentRect.top;
-		const scrollBot = childRect.bottom - parentRect.bottom;
-
-		if(Math.abs(scrollTop) < Math.abs(scrollBot))
-		{
-			parent.scrollTop += scrollTop;
-		}
-		else
-		{
-			parent.scrollTop += scrollBot;
-		}
-	}
 }
 
 export let Replacer = new CustomSelect();

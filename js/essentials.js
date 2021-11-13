@@ -698,6 +698,41 @@ class EssentialFeatures
 			button.classList.add('activated');
 		}
 	}
+
+	scrollParentToChild(parent, child)
+	{
+		var parentRect = parent.getBoundingClientRect(), childRect = child.getBoundingClientRect();
+
+		if(!(childRect.top >= parentRect.top && childRect.bottom <= parentRect.top + parent.clientHeight))
+		{
+			const scrollTop = childRect.top - parentRect.top;
+			const scrollBot = childRect.bottom - parentRect.bottom;
+
+			if(Math.abs(scrollTop) < Math.abs(scrollBot))
+			{
+				parent.scrollTop += scrollTop;
+			}
+			else
+			{
+				parent.scrollTop += scrollBot;
+			}
+		}
+
+		if(!(childRect.left >= parentRect.left && childRect.right <= parentRect.left + parent.clientWidth))
+		{
+			const scrollLeft = childRect.left - parentRect.left;
+			const scrollRight = childRect.right - parentRect.right;
+
+			if(Math.abs(scrollLeft) < Math.abs(scrollRight))
+			{
+				parent.scrollLeft += scrollLeft;
+			}
+			else
+			{
+				parent.scrollLeft += scrollRight;
+			}
+		}
+	}
 }
 
 var idCounter = new Date().getTime();
