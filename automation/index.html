@@ -550,8 +550,14 @@
 					{
 						var typeContainer = document.createElement('div');
 
+						typeContainer.className = 'type-container hoverable';
+
+						if(!automation[i].active)
+						{
+							typeContainer.classList.add('striped');
+						}
+
 						typeContainer.setAttribute('style', 'height: auto; box-shadow: none; cursor: pointer');
-						typeContainer.setAttribute('class', 'type-container hoverable');
 						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation/modify?id=" + automation[i].id + "')");
 
 						if(i == 0)
@@ -568,7 +574,7 @@
 
 						title.setAttribute('class', 'title-container');
 
-						title.innerHTML = automation[i].name + ' • ' + (automation[i].active ? '%automation.active%' : '%automation.inactive%');
+						title.innerHTML = automation[i].name;
 
 						typeContainer.appendChild(title);
 
