@@ -1238,13 +1238,15 @@ button img
 	top: 70px;
 	left: 0;
 	right: 0;
-	z-index: 10;
-	max-height: 245px;
+	max-height: 600px;
 	overflow: hidden;
 	overflow-y: auto;
 	height: auto;
 	border-width: 0;
 	padding: 0;
+	opacity: 1;
+	will-change: opacity;
+	transition: var(--transition-color), var(--transition-normal) opacity ease-out;
 }
 
 .custom-select.on-top > .select-items
@@ -1277,9 +1279,15 @@ button img
 	z-index: 1;
 }
 
-.custom-select select, .select-hide
+.custom-select select
 {
 	display: none;
+}
+
+.select-hide
+{
+	opacity: 0!important;
+	max-height: 0!important;
 }
 
 .same-as-selected

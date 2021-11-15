@@ -4,9 +4,23 @@ class CustomSelect
 {
 	constructor()
 	{
-		window.addEventListener('click', (event) => {
+		var moved = false;
 
-			if(!isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
+		window.addEventListener('mousedown', (event) => {
+
+			moved = false;
+			
+		}, 'KEEP');
+
+		window.addEventListener('mousemove', (event) => {
+
+			moved = true;
+			
+		}, 'KEEP');
+
+		window.addEventListener('mouseup', (event) => {
+
+			if(!moved && !isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
 			{
 				closeOtherSelectMenus(event.target);
 			}
@@ -15,7 +29,19 @@ class CustomSelect
 
 		window.addEventListener('touchstart', (event) => {
 
-			if(!isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
+			moved = false;
+
+		}, 'KEEP');
+
+		window.addEventListener('touchmove', (event) => {
+
+			moved = true;
+
+		}, 'KEEP');
+
+		window.addEventListener('touchend', (event) => {
+
+			if(!moved && !isChildOfSelect(event.target) && !event.target.classList.contains('same-as-selected'))
 			{
 				closeOtherSelectMenus(event.target);
 			}
@@ -120,6 +146,15 @@ class CustomSelect
 		btn.nextSibling.classList.toggle('select-hide');
 		btn.classList.toggle('select-active');
 
+		if(select.getBoundingClientRect().top - document.body.getBoundingClientRect().top < document.body.getBoundingClientRect().height - 600)
+		{
+			select.classList.remove('on-top');
+		}
+		else
+		{
+			select.classList.add('on-top');
+		}
+
 		if(searchElement != null)
 		{
 			if(btn.classList.contains('select-active'))
@@ -149,7 +184,47 @@ class CustomSelect
 
 		closeOtherSelectMenus(btn);
 	}
+	/*
+	setMenuDimensions(select, selectedItems)
+	{
+		var isMobile = document.getElementsByTagName('body')[0].offsetWidth < 1151;
 
+		if(select.getBoundingClientRect().y < window.innerHeight / 2 + 5)
+		{
+			var height = Math.min(window.innerHeight - select.getBoundingClientRect().y, 800);
+
+			if(isMobile)
+			{
+				height -= 201;
+			}
+			else
+			{
+				height -= 70;
+			}
+
+			select.classList.remove('on-top');
+
+			selectedItems.style.maxHeight = height + 'px';
+		}
+		else
+		{
+			var height = Math.min(select.getBoundingClientRect().y, 800);
+
+			if(isMobile)
+			{
+				height -= 210;
+			}
+			else
+			{
+				height -= 20;
+			}
+
+			select.classList.add('on-top');
+
+			selectedItems.style.maxHeight = height + 'px';
+		}
+	}
+	*/
 	selectMenuItem(element)
 	{
 		if(!element.classList.contains('same-as-selected'))
