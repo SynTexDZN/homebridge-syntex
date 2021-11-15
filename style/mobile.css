@@ -135,7 +135,7 @@
 		top: -30px;
 	}
 
-	input, textarea, button, select, .select-selected, .select-items, .scrollarea
+	input, textarea, button, select, .select-selected, .custom-select > .select-items, .scrollarea
 	{
 		font-size: 18px;
 		font-weight: 300!important;
@@ -186,12 +186,12 @@
 		gap: 20px;
 	}
 
-	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
+	textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select > .select-items::-webkit-scrollbar-track, .custom-select > .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 	{
 		border-radius: 0 26px 26px 0;
 	}
 
-	textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .select-items::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-corner, .scrollarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-corner
+	textarea::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-corner, .custom-select > .select-items::-webkit-scrollbar-thumb, .custom-select > .select-items::-webkit-scrollbar-corner, .scrollarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-corner
 	{
 		min-height: 52px;
 	}
@@ -305,13 +305,14 @@
 	
 	.custom-select > .select-items
 	{
-		z-index: 10000;
-	}
-
-	.select-items
-	{
 		top: 80px;
 		max-height: 230px;
+	}
+
+	.custom-select.on-top > .select-items
+	{
+		top: auto;
+		bottom: 80px;
 	}
 
 	.custom-select > .select-items .select-item

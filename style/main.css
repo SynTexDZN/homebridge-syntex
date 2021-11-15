@@ -30,7 +30,7 @@
 	-webkit-touch-callout: none;
 }
 
-html, body, #content, #groups, .control-panel::before, .type-container, .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
+html, body, #content, #groups, .control-panel::before, .type-container, .custom-select > .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
 {
 	transition: var(--transition-color);
 }
@@ -138,7 +138,7 @@ b
 	font-weight: 300;
 }
 
-input, textarea, button, select, .select-selected, .select-items, .scrollarea
+input, textarea, button, select, .select-selected, .custom-select > .select-items, .scrollarea
 {
 	height: 50px;
 	width: 100%!important;
@@ -148,13 +148,17 @@ input, textarea, button, select, .select-selected, .select-items, .scrollarea
 	border: 3px solid var(--light-layer-two);
 	border-radius: 16px;
 	font-size: 16px;
-	transition: var(--transition-normal) ease-out, var(--transition-color), var(--transition-normal) height ease-in-out, var(--transition-normal) padding ease-in-out, var(--transition-normal) border-width ease-in-out;
 	font-weight: 200;
 	letter-spacing: 3px;
 	box-sizing: border-box;
 	box-shadow: var(--drop-shadow);
 	white-space: normal;
 	padding: 5px 20px;
+}
+
+input, textarea, button, select, .select-selected, .scrollarea
+{
+	transition: var(--transition-normal) ease-out, var(--transition-color), var(--transition-normal) height ease-in-out, var(--transition-normal) padding ease-in-out, var(--transition-normal) border-width ease-in-out;
 }
 
 input[type='text']::placeholder, input[type='password']::placeholder
@@ -265,13 +269,13 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 }
 
 
-.select-items .select-item:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
+.custom-select > .select-items .select-item:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
 {
 	transition: var(--transition-normal) ease-out;
 	background: rgb(200, 200, 220);
 }
 
-.select-items .select-item:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
+.custom-select > .select-items .select-item:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 {
 	transition: var(--transition-normal) ease-out;
 	background: rgb(200, 200, 220);
@@ -759,7 +763,7 @@ input[type='submit']
 	min-height: 66px;
 }
 
-textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb, .select-items::-webkit-scrollbar-thumb
+textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb, .custom-select > .select-items::-webkit-scrollbar-thumb
 {
 	background: transparent;
 	border-radius: 0;
@@ -772,12 +776,12 @@ textarea::-webkit-scrollbar-thumb, .scrollarea::-webkit-scrollbar-thumb
 	border-width: 20px 9px 20px 12px;
 }
 
-.select-items::-webkit-scrollbar-thumb
+.custom-select > .select-items::-webkit-scrollbar-thumb
 {
 	border-width: 20px 10.5px 20px 10.5px;
 }
 
-textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .select-items::-webkit-scrollbar-track, .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
+textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select > .select-items::-webkit-scrollbar-track, .custom-select > .select-items::-webkit-scrollbar, .scrollarea::-webkit-scrollbar-track, .scrollarea::-webkit-scrollbar
 {
 	border-radius: 0 13px 13px 0;
 }
@@ -1179,7 +1183,7 @@ button img
 	cursor: pointer;
 }
 
-.select-selected img, .select-items img
+.select-selected img, .custom-select > .select-items img
 {
 	pointer-events: none;
 	filter: invert(95%) sepia(10%) hue-rotate(200deg);
@@ -1194,7 +1198,7 @@ button img
 	filter: invert(95%) sepia(10%) hue-rotate(200deg);
 }
 
-.icon-inverted, .select-selected.select-active img, .select-items img
+.icon-inverted, .select-selected.select-active img, .custom-select > .select-items img
 {
 	filter: invert(8%) sepia(100%) hue-rotate(205deg);
 }
@@ -1229,6 +1233,24 @@ button img
 {
 	background: var(--light-layer-one);
 	z-index: 25000;
+	position: absolute;
+	border-radius: 16px;
+	top: 70px;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	max-height: 245px;
+	overflow: hidden;
+	overflow-y: auto;
+	height: auto;
+	border-width: 0;
+	padding: 0;
+}
+
+.custom-select.on-top > .select-items
+{
+	top: auto;
+	bottom: 70px;
 }
 
 .custom-select > .select-items .select-item
@@ -1253,22 +1275,6 @@ button img
 	left: 0;
     padding-left: 52px;
 	z-index: 1;
-}
-
-.select-items
-{
-	position: absolute;
-	border-radius: 16px;
-	top: 70px;
-	left: 0;
-	right: 0;
-	z-index: 10;
-	max-height: 245px;
-	overflow: hidden;
-	overflow-y: auto;
-	height: auto;
-	border-width: 0;
-	padding: 0;
 }
 
 .custom-select select, .select-hide
