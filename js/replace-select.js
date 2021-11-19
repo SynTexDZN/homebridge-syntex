@@ -146,7 +146,7 @@ class CustomSelect
 		btn.nextSibling.classList.toggle('select-hide');
 		btn.classList.toggle('select-active');
 
-		if(select.getBoundingClientRect().top - document.body.getBoundingClientRect().top < document.body.getBoundingClientRect().height - 600)
+		if(document.getElementById('content').getBoundingClientRect().bottom - selectedItems.getBoundingClientRect().bottom > 0)
 		{
 			select.classList.remove('on-top');
 		}
