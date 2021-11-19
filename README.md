@@ -12,12 +12,11 @@ Also it provides special features for SynTex plugins:
 - `homebridge-syntex-webhooks`
 
 ## Core Fearures
-- **Device Overfiew** *( view and control their characteristics )*
+- **Device Overview** *( view and control their characteristics )*
 - **Plugin Manager** *( for information, updates and more )*
 - **Colorful Log** *( with filter tools and log level )*
 - **Automation System** *( faster and more stable than HomeKit automation )*
 - **Remote Link** *( app with offline mode and connection outside the local network )*
-
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
@@ -34,7 +33,7 @@ Also it provides special features for SynTex plugins:
 2. Install this plugin using: `sudo npm install -g homebridge-syntex`
 3. Install the webhooks plugin using: `sudo npm install -g homebridge-syntex-webhooks`<br>
 *( to enable all features of the UI )*
-4. Update your configuration file. See snippet below.
+4. Update your `config.json` file. See snippet below.
 5. Restart the Homebridge Service with: `sudo systemctl restart homebridge; sudo journalctl -fau homebridge`
 
 
