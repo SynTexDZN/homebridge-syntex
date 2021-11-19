@@ -43,7 +43,7 @@
 			<div id="view" style="transition: .2s opacity ease-in-out">
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar" class="main" style="margin: 100px auto">
-						<div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%automation.all_automations%" class="white" style="border-left: none; cursor: grab"></div>
+						<div id="groups" style="display: flex; width: 100%"></div>
 						<div style="display: flex; margin-top: 20px">
 							<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="horizontal"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png"></button>
 							<div class="custom-select" style="width: 100%">
@@ -391,6 +391,18 @@
 					groups.sort();
 
 					document.getElementById('groups').innerHTML = '';
+
+					var allAutomations = document.createElement('input');
+
+					allAutomations.setAttribute('type', 'button');
+					allAutomations.setAttribute('group', 'all');
+					allAutomations.setAttribute('value', '%automation.all_automations%');
+					allAutomations.setAttribute('class', 'white');
+					allAutomations.setAttribute('style', 'border-left: none; cursor: grab');
+
+					allAutomations.onclick = () => switchGroup('all', false);
+
+					document.getElementById('groups').appendChild(allAutomations);
 
 					for(const i in groups)
 					{
