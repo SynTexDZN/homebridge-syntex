@@ -146,13 +146,22 @@ class CustomSelect
 		btn.nextSibling.classList.toggle('select-hide');
 		btn.classList.toggle('select-active');
 
-		if(document.getElementById('content').getBoundingClientRect().bottom - selectedItems.getBoundingClientRect().bottom > 0)
+		selectedItems.style.removeProperty('max-height');
+
+		if(document.getElementById('content').getBoundingClientRect().bottom - selectedItems.getBoundingClientRect().bottom < 0)
 		{
-			select.classList.remove('on-top');
+			select.classList.add('on-top');
 		}
 		else
 		{
-			select.classList.add('on-top');
+			select.classList.remove('on-top');
+		}
+
+		if(document.getElementById('content').getBoundingClientRect().top - selectedItems.getBoundingClientRect().top > 0)
+		{
+			select.classList.remove('on-top');
+
+			selectedItems.style.maxHeight = document.getElementById('footer-content').getBoundingClientRect().top - btn.getBoundingClientRect().bottom - 40;
 		}
 
 		if(searchElement != null)
