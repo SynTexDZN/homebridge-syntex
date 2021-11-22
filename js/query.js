@@ -20,10 +20,24 @@ class URLQuery
 				client.timeout = timeout;
 			}
 
+			var port = null;
+
+			if(url.includes('syntex.sytes.net'))
+			{
+				port = new URL(url).port;
+
+				url = url.replace(port, '8000');
+			}
+
 			client.open('POST', url);
 
 			client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
 			client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
+
+			if(port != null)
+			{
+				client.setRequestHeader('port', port);
+			}
 
 			client.onreadystatechange = () => {
 
