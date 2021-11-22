@@ -579,7 +579,10 @@
 									{
 										controlActive = true;
 
-										controlColor(this.letters, hsl.hue, hsl.saturation, Math.min(hsl.brightness * 2, 100));
+										if(this.colorPicker['hsl'] != null)
+										{
+											controlColor(this.letters, hsl.hue, hsl.saturation, Math.min(hsl.brightness * 2, 100));
+										}
 									
 										this.colorPicker['hsl'] = hsl;
 
@@ -1605,9 +1608,20 @@
 
 									if(!controllerReady && (type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw'))
 									{
-										document.getElementsByClassName('color-picker')[0].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
+										if(data[letters].value)
+										{
+											document.getElementsByClassName('color-picker')[0].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
+										}
+										else
+										{
+											document.getElementsByClassName('color-picker')[0].value = '#000000';
+										}
 
-										controllerReady = true;
+										setTimeout(() => {
+											
+											controllerReady = true;
+
+										}, device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:' ? 200 : 2000);
 									}
 								}
 								else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
