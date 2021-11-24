@@ -47,7 +47,6 @@ Also it provides special features for SynTex plugins:
 "platforms": [
     {
         "platform": "SynTex",
-        "cacheDirectory": "/var/homebridge/SynTex/settings",
         "baseDirectory": "/var/homebridge/SynTex",
         "port": 1711,
         "language": "us",
@@ -68,8 +67,7 @@ Also it provides special features for SynTex plugins:
 
 ### Required Parameters
 - `platform` is always `SynTex`
-- `logDirectory` The path where your logs are stored.
-- `cacheDirectory` The path where your data is stored.
+- `baseDirectory` The path where your data and logs are stored.
 - `port` To access the bridge website.
 
 ### Optional Parameters
