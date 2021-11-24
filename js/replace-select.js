@@ -300,9 +300,9 @@ class CustomSelect
 
 		for(var i = 0; i < selectItems.length; i++)
 		{
-			var selectText = selectItems[i].getElementsByClassName('select-text')[0];
+			var selectText = selectItems[i].getElementsByClassName('select-text')[0], selectOption = search.parentElement.parentElement.getElementsByTagName('option')[i];
 
-			if(!selectText.innerHTML.toLowerCase().includes(search.value.toLowerCase()) && search.value != null)
+			if(search.value != null && !selectText.innerHTML.toLowerCase().includes(search.value.toLowerCase()) && selectOption != null && selectOption.id != null && !selectOption.id.toLowerCase().includes(search.value.toLowerCase()))
 			{
 				selectItems[i].style.display = 'none';
 			}
