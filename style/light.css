@@ -301,9 +301,15 @@
 		background: rgb(110, 110, 130)!important;
 	}
 
-	.select-selected.select-active, .same-as-selected
+	.select-selected.select-active
 	{
 		background: var(--light-layer-one)!important;
+		color: var(--dark-layer-one)!important;
+	}
+
+	.same-as-selected
+	{
+		background: var(--light-layer-two)!important;
 		color: var(--dark-layer-one)!important;
 	}
 
@@ -328,9 +334,9 @@
 		color: var(--dark-layer-one);
 	}
 
-	.custom-select > .select-items .select-item:hover
+	.custom-select > .select-items .select-item:not(.same-as-selected):hover
 	{
-		background: var(--light-layer-two);
+		background: var(--light-layer-one);
 		color: var(--dark-layer-one);
 	}
 
