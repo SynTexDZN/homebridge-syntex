@@ -520,7 +520,11 @@ module.exports = class DeviceManager
 							{
 								accessories[i].plugin.id = id;
 								accessories[i].plugin.name = plugins[id].name;
-								accessories[i].plugin.port = plugins[id].config.port;
+
+								if(plugins[id].config != null)
+								{
+									accessories[i].plugin.port = plugins[id].config.port;
+								}
 							}
 						}
 

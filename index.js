@@ -16,15 +16,37 @@ class SynTexPlatform
 {
 	constructor(log, config, api)
 	{
-		this.baseDirectory = config['baseDirectory'] || api.user.storagePath() + '/SynTex';
-		this.config = store(api.user.storagePath());
+		if(config == null || api == null)
+		{
+			console.log('Keine Config gefunden, das Plugin wird deaktiviert!');
+
+			return;
+		}
+
+		if(config['baseDirectory'] != null)
+		{
+			try
+			{
+				fs.accessSync(config['baseDirectory'], fs.constants.W_OK);
+
+				this.baseDirectory = config['baseDirectory'];
+
+				this.logDirectory = path.join(this.baseDirectory, 'log');
+			}
+			catch(e)
+			{
+				console.error('Please apply write permissions to [' + config['baseDirectory'] + ']', e);
+			}
+		}
 
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
 
-		this.logger = new Logger(pluginName, path.join(this.baseDirectory, 'log'), this.debug, this.language);
+		this.logger = new Logger(pluginName, this.logDirectory, this.debug, this.language);
 		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 		
+		this.config = store(api.user.storagePath());
+
 		HTMLQuery = new HTMLQuery(this.logger);
 		Automation = new Automation(this.logger, this.files);
 		PluginManager = new PluginManager(this.logger, this.config, 600);
@@ -461,25 +483,25 @@ class SynTexPlatform
 			{
 				fs.readdir(this.logDirectory, async (err, files) => {
 
-				var obj = {};
-
-				for(var i = 0; i < files.length; i++)
-				{
-					var file = files[i].split('.')[0];
-					
-					obj[file] = '[]';
-
-					var logs = await this.logger.load(file, null);
-
-					if(logs != null)
+					var obj = {};
+	
+					for(var i = 0; i < files.length; i++)
 					{
-						obj[file] = JSON.stringify(logs);
+						var file = files[i].split('.')[0];
+						
+						obj[file] = '[]';
+	
+						var logs = await this.logger.load(file, null);
+	
+						if(logs != null)
+						{
+							obj[file] = JSON.stringify(logs);
+						}
 					}
-				}
-
-				response.write(JSON.stringify(obj));
-				response.end();
-			});
+	
+					response.write(JSON.stringify(obj));
+					response.end();
+				});
 			}
 			else
 			{
