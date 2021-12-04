@@ -53,6 +53,8 @@ html, body, #content, #groups, .control-panel::before, .type-container, .custom-
 	z-index: 20000;
 	overflow: hidden;
 	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out, var(--transition-normal) max-height ease-in-out, var(--transition-normal) min-height ease-in-out;
+
+	will-change: opacity, max-height, min-height;
 }
 
 #head-content
@@ -84,6 +86,8 @@ html, body, #content, #groups, .control-panel::before, .type-container, .custom-
 #head-content h1, #head-content p, #footer-fade
 {
 	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out;
+
+	will-change: opacity;
 }
 
 #footer-temp button, #footer-temp input, #footer-fade button, #footer-fade input
@@ -100,6 +104,8 @@ html, body, #content, #groups, .control-panel::before, .type-container, .custom-
 				var(--transition-normal) background-color ease-out,
 				var(--transition-normal) letter-spacing ease-out,
 				var(--transition-normal) filter ease-out!important;
+
+	will-change: height, margin-top, margin-bottom, padding-top, padding-bottom, border-top-width, border-bottom-width, opacity, background-color, letter-spacing, filter;
 }
 
 textarea, input[type='text'], input[type='password'], input[type='textarea'], .scrollarea
@@ -159,6 +165,8 @@ input, textarea, button, select, .select-selected, .custom-select > .select-item
 input, textarea, button, select, .select-selected, .scrollarea
 {
 	transition: var(--transition-normal) ease-out, var(--transition-color), var(--transition-normal) height ease-in-out, var(--transition-normal) padding ease-in-out, var(--transition-normal) border-width ease-in-out;
+
+	will-change: height, padding, border-width;
 }
 
 input[type='text']::placeholder, input[type='password']::placeholder
@@ -172,6 +180,8 @@ input[type='radio']
 	transition: var(--transition-color), .15s border-width ease-in-out, .15s background-color ease-in-out;
 	cursor: pointer;
 	padding: 0;
+
+	will-change: border-width, background-color;
 }
 
 input[type='radio']:active, input[type='radio']:checked
@@ -192,12 +202,7 @@ input[type='text']:hover, input[type='password']:hover, textarea:focus, textarea
 	color: var(--dark-layer-one);
 }
 
-input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):hover, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):hover, .hoverable:hover
-{
-	filter: brightness(120%);
-	transition: var(--transition-normal) ease-out;
-}
-
+input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):hover, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):hover, .hoverable:hover,
 input[type='button']:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):active, button:not(:disabled):not(.control-panel):not(.widget-left):not(.widget-right):not(.white):active, .hoverable:active
 {
 	filter: brightness(120%);
@@ -269,12 +274,7 @@ input[type='submit']:not(:disabled):not(.control-panel):not(.widget-left):not(.w
 }
 
 
-.custom-select > .select-items .select-item:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active
-{
-	transition: var(--transition-normal) ease-out;
-	background: rgb(200, 200, 220);
-}
-
+.custom-select > .select-items .select-item:not(.same-as-selected):active, input[type='button']:not(:disabled).white:active, button:not(:disabled).white:active,
 .custom-select > .select-items .select-item:not(.same-as-selected):hover, input[type='button']:not(:disabled).white:hover, button:not(:disabled).white:hover
 {
 	transition: var(--transition-normal) ease-out;
@@ -451,6 +451,8 @@ h2
 	transition: var(--transition-color), 1s opacity ease-in-out;
 	opacity: 0;
 	z-index: 1;
+
+	will-change: opacity;
 }
 /*
 .indicator
@@ -509,6 +511,8 @@ h2
 	z-index: 1;
 	background-color: var(--background-color);
 	box-shadow: 0 4px 0 0 var(--box-shadow);
+
+	will-change: background-color, box-shadow;
 }
 
 .control-panel::before
@@ -626,6 +630,8 @@ input[type='submit']
 	animation-duration: 2s;
 	animation-iteration-count: infinite;
 	animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+
+	will-change: box-shadow;
 }
 
 @keyframes animationImportantHSL
@@ -1095,6 +1101,8 @@ canvas
 	background: rgb(20, 20, 30);
 	letter-spacing: 3px;
 	transition: 1s opacity;
+
+	will-change: opacity;
 }
 
 .striped, #footer-content
@@ -1245,8 +1253,9 @@ button img
 	border-width: 0;
 	padding: 0;
 	opacity: 1;
-	will-change: opacity;
 	transition: var(--transition-color), var(--transition-normal) opacity ease-out;
+
+	will-change: opacity;
 }
 
 .custom-select.on-top > .select-items
@@ -1410,7 +1419,9 @@ button img
 	line-height: 2;
 	overflow: hidden;
 	padding: 9px 20px;
-	text-align: left; 
+	text-align: left;
+
+	will-change: height;
 }
 
 .plugin-container b
@@ -1436,6 +1447,8 @@ button img
 {
 	opacity: 0;
 	transition: var(--transition-color), .3s linear opacity;
+
+	will-change: opacity;
 }
 
 .shine
@@ -1465,6 +1478,8 @@ button img
 		rgba(255, 255, 255, 0.18) 92%,
 		rgba(255, 255, 255, 0.0) 100%
 	);
+
+	will-change: left, opacity;
 }
 
 .shine:before
@@ -1671,6 +1686,8 @@ button img
 	margin-bottom: 20px;
 	transition: .3s opacity ease-in-out;
 	opacity: 0;
+
+	will-change: opacity;
 }
 
 .log:last-child
@@ -1731,6 +1748,8 @@ button img
 	backdrop-filter: blur(1px);
 	-webkit-backdrop-filter: blur(2px);
 	pointer-events: none;
+
+	will-change: opacity;
 }
 
 #dialogue .panel
@@ -1751,6 +1770,8 @@ button img
 	transform: scale(.8);
 	transform-style: preserve-3d;
 	transition: var(--transition-color), .3s cubic-bezier(0.68, -0.55, 0.27, 1.55) transform, .3s ease-in-out opacity;
+
+	will-change: transform, opacity;
 }
 
 #dialogue p
@@ -1796,6 +1817,8 @@ button img
 	transition: opacity .2s linear;
 	opacity: 0;
 	border-radius: 16px;
+
+	will-change: opacity;
 }
 
 .gradient-overlay.activated::before
@@ -1821,6 +1844,8 @@ button img
 	width: 90px;
 	box-sizing: border-box;
 	flex-direction: column;
+
+	will-change: opacity;
 }
 
 #top-menu button
