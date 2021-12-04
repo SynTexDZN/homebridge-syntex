@@ -7,6 +7,7 @@
 
 A simple UI to control and manage all of your homebridge accessory.<br>
 Also it provides special features for SynTex plugins:
+- `homebridge-syntex-knx`
 - `homebridge-syntex-magichome`
 - `homebridge-syntex-tuya`
 - `homebridge-syntex-webhooks`
@@ -52,7 +53,7 @@ Also it provides special features for SynTex plugins:
         "language": "us",
         "debug": false,
         "remote": true,
-        "password": '1234'
+        "password": "1234"
     },
     {
         "platform": "SynTexWebHooks",
