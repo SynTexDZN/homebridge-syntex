@@ -23,6 +23,11 @@ class SynTexPlatform
 			return;
 		}
 
+		this.debug = config['debug'] || false;
+		this.language = config['language'] || 'en';
+
+		this.logger = new Logger(pluginName, this.debug, this.language);
+
 		if(config['baseDirectory'] != null)
 		{
 			try
@@ -31,20 +36,16 @@ class SynTexPlatform
 
 				this.baseDirectory = config['baseDirectory'];
 
-				this.logDirectory = path.join(this.baseDirectory, 'log');
+				this.logger.setLogDirectory(path.join(this.baseDirectory, 'log'));
 			}
 			catch(e)
 			{
-				console.error('Please apply write permissions to [' + config['baseDirectory'] + ']', e);
+				this.logger.log('error', 'bridge', 'Bridge', '%directory_permission_error%', '[' + config['baseDirectory'] + ']', '%visit_github_for_support%: https://github.com/SynTexDZN/homebridge-syntex#troubleshooting', e);
 			}
 		}
-
-		this.debug = config['debug'] || false;
-		this.language = config['language'] || 'en';
-
-		this.logger = new Logger(pluginName, this.logDirectory, this.debug, this.language);
-		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 		
+		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
+
 		this.config = store(api.user.storagePath());
 
 		HTMLQuery = new HTMLQuery(this.logger);
