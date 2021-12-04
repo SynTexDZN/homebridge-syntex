@@ -457,7 +457,9 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/log', (response) => {
 
-			fs.readdir(path.join(this.baseDirectory, 'log'), async (err, files) => {
+			if(this.logDirectory != null)
+			{
+				fs.readdir(this.logDirectory, async (err, files) => {
 
 				var obj = {};
 
@@ -478,6 +480,12 @@ class SynTexPlatform
 				response.write(JSON.stringify(obj));
 				response.end();
 			});
+			}
+			else
+			{
+				response.write('{}');
+				response.end();
+			}
 		});
 
 		this.WebServer.addPage('/serverside/syslog', (response, urlParams) => {
