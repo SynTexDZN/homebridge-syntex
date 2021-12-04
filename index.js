@@ -40,7 +40,7 @@ class SynTexPlatform
 			}
 			catch(e)
 			{
-				this.logger.log('error', 'bridge', 'Bridge', '%directory_permission_error%', '[' + config['baseDirectory'] + ']', '%visit_github_for_support%: https://github.com/SynTexDZN/homebridge-syntex#troubleshooting', e);
+				this.logger.log('error', 'bridge', 'Bridge', '%directory_permission_error% [' + config['baseDirectory'] + ']', '%visit_github_for_support%: https://github.com/SynTexDZN/homebridge-syntex#troubleshooting', e);
 			}
 		}
 		
@@ -295,7 +295,7 @@ class SynTexPlatform
 					{
 						try
 						{
-							this.logger.log('info', urlParams.id, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] %accessory_connected%! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
+							this.logger.log('info', urlParams.id, JSON.parse(res[1]).name + '[' + JSON.parse(res[1]).name + '] %accessory_connected%! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
 						}
 						catch(e)
 						{
