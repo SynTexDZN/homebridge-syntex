@@ -78,7 +78,7 @@ Also it provides special features for SynTex plugins:
 - `password` To protect your remote connection against strangers. *( Only needed when `remote` is enabled )*
 
 ### SynTex WebHooks Config
-Please visit the `Homebridge SynTex WebHooks` README for the config and further information:<br>
+Please visit the `Homebridge SynTex WebHooks` README file for the config and further information:<br>
 https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme
 
 
