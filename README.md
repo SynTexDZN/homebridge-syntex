@@ -12,12 +12,14 @@ Also it provides special features for SynTex plugins:
 - `homebridge-syntex-tuya`
 - `homebridge-syntex-webhooks`
 
+
 ## Core Fearures
 - **Device Overview** *( view and control their characteristics )*
 - **Plugin Manager** *( for information, updates and more )*
 - **Colorful Log** *( with filter tools and log level )*
 - **Automation System** *( faster and more stable than HomeKit automation )*
 - **Remote Link** *( app with offline mode and connection outside the local network )*
+
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex/issues)
