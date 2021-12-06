@@ -47,6 +47,28 @@ class CustomSelect
 			}
 
 		}, 'KEEP');
+
+		this.lastWidth = document.getElementsByTagName('body')[0].offsetWidth;
+
+		window.addEventListener('resize', () => {
+
+			var width = document.getElementsByTagName('body')[0].offsetWidth;
+
+			if(this.lastWidth < 1151 && width > 1151 || this.lastWidth > 1151 && width < 1151)
+			{
+				this.lastWidth = width;
+
+				setTimeout(() => {
+					
+					for(const i in selects)
+					{
+						this._checkDirection(selects[i]);
+						this._checkOversized(selects[i]);
+					}
+
+				}, 1000);
+			}
+		});
 	}
 
 	SETUP()
@@ -64,6 +86,8 @@ class CustomSelect
 		var nativeSelect = container.getElementsByTagName('select')[0];
 
 		container.setAttribute('id', 'select-' + selects.length);
+		
+		container.classList.add('on-top');
 
 		var searchElement = document.createElement('input');
 
@@ -129,6 +153,13 @@ class CustomSelect
 		
 		selects.push(container);
 
+		setTimeout(() => {
+
+			this._checkDirection(document.getElementById(container.id));
+			this._checkOversized(document.getElementById(container.id));
+
+		}, 0);
+
 		return container;
 	}
 
@@ -148,21 +179,8 @@ class CustomSelect
 
 		selectedItems.style.removeProperty('max-height');
 
-		if(document.getElementById('content').getBoundingClientRect().bottom - selectedItems.getBoundingClientRect().bottom < 0)
-		{
-			select.classList.add('on-top');
-		}
-		else
-		{
-			select.classList.remove('on-top');
-		}
-
-		if(document.getElementById('content').getBoundingClientRect().top - selectedItems.getBoundingClientRect().top > 0)
-		{
-			select.classList.remove('on-top');
-
-			selectedItems.style.maxHeight = document.getElementById('footer-content').getBoundingClientRect().top - btn.getBoundingClientRect().bottom - 40;
-		}
+		this._checkDirection(select);
+		this._checkOversized(select);
 
 		if(searchElement != null)
 		{
@@ -372,6 +390,53 @@ class CustomSelect
 		obj.selected = selected;
 
 		return obj;
+	}
+
+	_checkDirection(select)
+	{
+		var selectItems = select.getElementsByClassName('select-items')[0],
+			selectSelected = select.getElementsByClassName('select-selected')[0];
+
+		var direction = select.classList.contains('on-top') ? 'bottom' : 'top', style = getComputedStyle(selectItems);
+
+		if(style != null && style[direction] != null)
+		{
+			try
+			{
+				var gap = parseInt(style[direction]);
+
+				if(document.getElementById('content').getBoundingClientRect().bottom - selectSelected.getBoundingClientRect().top - selectItems.getBoundingClientRect().height - gap < 0)
+				{
+					select.classList.add('on-top');
+
+					return true;
+				}
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+
+			select.classList.remove('on-top');
+
+			return false;
+		}
+	}
+
+	_checkOversized(select)
+	{
+		var selectItems = select.getElementsByClassName('select-items')[0];
+
+		if(document.getElementById('content').getBoundingClientRect().top - selectItems.getBoundingClientRect().top > 0)
+		{
+			select.classList.remove('on-top');
+
+			selectItems.style.maxHeight = document.getElementById('footer-content').getBoundingClientRect().top - selectItems.getBoundingClientRect().top;
+
+			return true;
+		}
+
+		return false;
 	}
 }
 
