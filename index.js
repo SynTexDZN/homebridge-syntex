@@ -480,9 +480,9 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/log', (response) => {
 
-			if(this.logDirectory != null)
+			if(this.logger.logDirectory != null)
 			{
-				fs.readdir(this.logDirectory, async (err, files) => {
+				fs.readdir(this.logger.logDirectory, async (err, files) => {
 
 					var obj = {};
 	
