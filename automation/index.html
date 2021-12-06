@@ -235,13 +235,11 @@
 
 				function renderGUI()
 				{
-					console.log(automation.length, automation);
+					createGroupPanel();
 
 					if(automation.length > 0)
 					{
 						sortAutomation(true);
-
-						createGroupPanel();
 					}
 					else if(services.length > 0)
 					{
@@ -393,8 +391,6 @@
 
 					groups.sort();
 
-					console.log('GROUPS', groups);
-
 					document.getElementById('groups').innerHTML = '';
 
 					var allAutomations = document.createElement('input');
@@ -406,8 +402,6 @@
 					allAutomations.setAttribute('style', 'border-left: none; cursor: grab');
 
 					allAutomations.onclick = () => switchGroup('all', false);
-
-					console.log('APPEND ALL AUTOMATIONS BUTTON');
 
 					document.getElementById('groups').appendChild(allAutomations);
 
