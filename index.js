@@ -574,10 +574,19 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/create-automation', async (response, urlParams, content, postJSON) => {
 
+			console.log('X1');
+
 			if(postJSON != null)
 			{
+				console.log('X2');
+
 				response.write(await Automation.createAutomation(postJSON) ? 'Success' : 'Error');
+
+				console.log('X3');
+
 				response.end();
+
+				console.log('X4');
 			}
 		});
 
