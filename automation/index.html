@@ -743,21 +743,34 @@
 					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
 					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
 
+
 					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3' && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.color%')
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
 						select.parentElement.children[4].setAttribute('hidden', '');
-						select.parentElement.children[4].removeAttribute('required');
 						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].removeAttribute('required');
 
 						select.parentElement.children[3].style.display = '';
+					}
+					else if(option.hasAttribute('letters') && (option.getAttribute('letters')[0] == '3' || option.getAttribute('letters')[0] == '9') && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
 					}
 					else if(option.getAttribute('type') == 'boolean')
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
 						select.parentElement.children[4].removeAttribute('hidden');
-						select.parentElement.children[4].setAttribute('required', '');
 						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].setAttribute('required', '');
 
 						select.parentElement.children[3].style.display = 'none';
 
@@ -819,6 +832,18 @@
 							valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
 						}
 					}
+					else if(option.innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+					}
 					else if(option.innerHTML == '%automation.color%')
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
@@ -869,11 +894,11 @@
 					operations.className = 'custom-select';
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
-					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="color">%automation.color%</option></select>';
+					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
 
 					if(type != 'result')
 					{
-						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="color">%automation.color%</option></select>';
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
 					}
 
 					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
@@ -934,13 +959,18 @@
 								trigger.letters = device.getAttribute('letters');
 								trigger.plugin = device.getAttribute('plugin');
 								
-								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
 								{
 									trigger.operation = '=';
 
 									if(operation.value == 'switch')
 									{
 										trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										trigger.value = 'true';
+										trigger.brightness = value.value;
 									}
 									else if(operation.value == 'color')
 									{
@@ -1003,13 +1033,18 @@
 									condition.letters = device.getAttribute('letters');
 									condition.plugin = device.getAttribute('plugin');
 									
-									if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+									if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
 									{
 										condition.operation = '=';
 
 										if(operation.value == 'switch')
 										{
 											condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+										}
+										else if(operation.value == 'brightness')
+										{
+											condition.value = 'true';
+											condition.brightness = value.value;
 										}
 										else if(operation.value == 'color')
 										{
@@ -1071,13 +1106,18 @@
 								result.letters = device.getAttribute('letters');
 								result.plugin = device.getAttribute('plugin');
 								
-								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3')
+								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
 								{
 									result.operation = '=';
 
 									if(operation.value == 'switch')
 									{
 										result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										result.value = 'true';
+										result.brightness = value.value;
 									}
 									else if(operation.value == 'color')
 									{
@@ -1253,7 +1293,11 @@
 
 					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
 					{
-						availableOptions = ['%automation.switch%', '%automation.color%'];
+						availableOptions = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+					}
+					else if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '9')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%'];
 					}
 					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
 					{
@@ -1278,9 +1322,16 @@
 
 					if(!availableOptions.includes(customSelect.selected.text))
 					{
-						if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
+						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
 						{
-							customSelect.updateSelected(1);
+							if(select.parentElement.parentElement.id != 'result')
+							{
+								customSelect.updateSelected(3);;
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
 						}
 						else
 						{
