@@ -177,14 +177,11 @@ class CustomSelect
 		btn.nextSibling.classList.toggle('select-hide');
 		btn.classList.toggle('select-active');
 
-		selectedItems.style.removeProperty('max-height');
-
-		this._checkDirection(select);
-		this._checkOversized(select);
-
-		if(searchElement != null)
+		if(btn.classList.contains('select-active'))
 		{
-			if(btn.classList.contains('select-active'))
+			selectedItems.style.removeProperty('max-height');
+
+			if(searchElement != null)
 			{
 				searchElement.style.display = '';
 				searchElement.value = selectText.innerHTML;
@@ -201,12 +198,15 @@ class CustomSelect
 
 				Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
 			}
-			else
-			{
-				selectText.innerHTML = selectedItem.innerHTML;
 
-				searchElement.style.display = 'none';
-			}
+			this._checkDirection(select);
+			this._checkOversized(select);
+		}
+		else if(searchElement != null)
+		{
+			selectText.innerHTML = selectedItem.innerHTML;
+
+			searchElement.style.display = 'none';
 		}
 
 		closeOtherSelectMenus(btn);
@@ -454,7 +454,7 @@ function closeOtherSelectMenus(element)
 			selectedElement.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
 
 			selectedElement.className = 'select-selected';
-			selectedItems.className = 'select-items select-hide';
+			selectedItems.classList.add('select-hide');
 		
 			if(selectedElement.children[2] != null)
 			{
