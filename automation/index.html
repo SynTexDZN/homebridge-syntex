@@ -736,6 +736,61 @@
 					Preloader.finish();
 				}
 
+				function updateOperation(select)
+				{
+					var availableOptions = [],
+						customSelect = Replacer.getSelect(select.parentElement.children[1]),
+						selectOptions = select.getElementsByTagName('select')[0].children[select.getElementsByTagName('select')[0].selectedIndex];
+
+					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+					}
+					else if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '9')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%'];
+					}
+					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
+					{
+						availableOptions = ['='];
+					}
+					else if(selectOptions.getAttribute('type') == 'numeric')
+					{
+						availableOptions = ['=', '&gt;', '&lt;'];
+					}
+
+					for(const i in customSelect.items)
+					{
+						if(availableOptions.includes(customSelect.items[i].text))
+						{
+							customSelect.items[i].element.style.display = '';
+						}
+						else
+						{
+							customSelect.items[i].element.style.display = 'none';
+						}
+					}
+
+					if(!availableOptions.includes(customSelect.selected.text))
+					{
+						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
+						{
+							if(select.parentElement.parentElement.id != 'result')
+							{
+								customSelect.updateSelected(3);;
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
+						}
+						else
+						{
+							customSelect.updateSelected(0);
+						}
+					}
+				}
+
 				function updateValueInput(select)
 				{
 					updateOperation(select.parentElement.children[0]);
@@ -1282,61 +1337,6 @@
 					else
 					{
 						return 'boolean';
-					}
-				}
-
-				function updateOperation(select)
-				{
-					var availableOptions = [],
-						customSelect = Replacer.getSelect(select.parentElement.children[1]),
-						selectOptions = select.getElementsByTagName('select')[0].children[select.getElementsByTagName('select')[0].selectedIndex];
-
-					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
-					{
-						availableOptions = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
-					}
-					else if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '9')
-					{
-						availableOptions = ['%automation.switch%', '%automation.dimming%'];
-					}
-					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
-					{
-						availableOptions = ['='];
-					}
-					else if(selectOptions.getAttribute('type') == 'numeric')
-					{
-						availableOptions = ['=', '&gt;', '&lt;'];
-					}
-
-					for(const i in customSelect.items)
-					{
-						if(availableOptions.includes(customSelect.items[i].text))
-						{
-							customSelect.items[i].element.style.display = '';
-						}
-						else
-						{
-							customSelect.items[i].element.style.display = 'none';
-						}
-					}
-
-					if(!availableOptions.includes(customSelect.selected.text))
-					{
-						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
-						{
-							if(select.parentElement.parentElement.id != 'result')
-							{
-								customSelect.updateSelected(3);;
-							}
-							else
-							{
-								customSelect.updateSelected(1);
-							}
-						}
-						else
-						{
-							customSelect.updateSelected(0);
-						}
 					}
 				}
 
