@@ -92,12 +92,7 @@ class SynTexPlatform
 				this.getSetupCode(api.user.storagePath(), json.bridge.username);
 			}
 
-			this.getBridgeID().then((bridgeID) => {
-			
-				this.bridgeID = bridgeID;
-	
-				this.connectBridge();
-			});
+			this.connectBridge();
 		});
 
 		const { exec } = require('child_process');
@@ -120,33 +115,46 @@ class SynTexPlatform
 
 	connectBridge()
 	{
-		axios.get('http://syntex.sytes.net:8800/init-bridge?id=' + this.bridgeID + '&plugin=SynTex&version=' + pluginVersion + '&name=' + this.bridgeName).then((data) => {
+		if(this.baseDirectory != null)
+		{
+			this.getBridgeID().then((bridgeID) => {
+
+				var url = 'http://syntex.sytes.net:8800/init-bridge?name=' + this.bridgeName + '&plugin=' + pluginName + '&version=' + pluginVersion;
+
+				if(bridgeID != null)
+				{
+					url += '&id=' + bridgeID;
+				}
+
+				axios.get(url).then((data) => {
 			
-			if(data.data != null)
-			{
-				if(data.data != this.bridgeID)
-				{
-					this.bridgeID = data.data;
+					if(data != null && data.data != null)
+					{
+						if(data.data != bridgeID)
+						{
+							this.bridgeID = data.data;
 
-					setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
-				}
+							setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
+						}
 
-				if(this.remote)
-				{
-					this.initWebSocket();
-				}
-			}
-			else
-			{
-				setTimeout(() => this.connectBridge(), 30000);
-			}
+						if(this.remote)
+						{
+							this.initWebSocket();
+						}
+					}
+					else
+					{
+						setTimeout(() => this.connectBridge(), 30000);
+					}
 
-		}).catch((e) => {
+				}).catch((e) => {
 
-			this.logger.err(e);
+					this.logger.err(e);
 
-			setTimeout(() => this.connectBridge(), 30000);
-		});
+					setTimeout(() => this.connectBridge(), 30000);
+				});
+			});
+		}
 	}
 
 	getSetupCode(storagePath, username)
@@ -1044,9 +1052,9 @@ class SynTexPlatform
 			
 			this.files.readFile('config.json').then((data) => {
 				
-				if(data != null)
+				if(data != null && data.bridgeID != null)
 				{
-					resolve(data.bridgeID || null);
+					resolve(data.bridgeID);
 				}
 				else
 				{
