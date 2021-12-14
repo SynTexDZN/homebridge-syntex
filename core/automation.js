@@ -10,7 +10,7 @@ module.exports = class Automation
 	{
 		return new Promise(resolve => {
 
-			this.files.readFile('/automation/automation.json').then((data) => {
+			this.files.readFile('automation/automation.json').then((data) => {
 
 				resolve(data || []);
 			});
@@ -23,7 +23,7 @@ module.exports = class Automation
 
 			if(this.isValid(automation))
 			{
-				this.files.readFile('/automation/automation.json').then((data) => {
+				this.files.readFile('automation/automation.json').then((data) => {
 
 					if(data != null)
 					{
@@ -34,7 +34,7 @@ module.exports = class Automation
 						data = [ automation ];
 					}
 
-					this.files.writeFile('/automation/automation.json', data).then((success) => {
+					this.files.writeFile('automation/automation.json', data).then((success) => {
 
 						if(success)
 						{
@@ -62,7 +62,7 @@ module.exports = class Automation
 
 			if(this.isValid(automation))
 			{
-				this.files.readFile('/automation/automation.json').then((data) => {
+				this.files.readFile('automation/automation.json').then((data) => {
 
 					if(data != null)
 					{
@@ -74,7 +74,7 @@ module.exports = class Automation
 							}
 						}
 
-						this.files.writeFile('/automation/automation.json', data).then((success) => {
+						this.files.writeFile('automation/automation.json', data).then((success) => {
 
 							if(success)
 							{
@@ -105,7 +105,7 @@ module.exports = class Automation
 	{
 		return new Promise(resolve => {
 
-			this.files.readFile('/automation/automation.json').then((data) => {
+			this.files.readFile('automation/automation.json').then((data) => {
 
 				if(data != null)
 				{
@@ -121,7 +121,7 @@ module.exports = class Automation
 						}
 					}
 
-					this.files.writeFile('/automation/automation.json', data).then((success) => {
+					this.files.writeFile('automation/automation.json', data).then((success) => {
 
 						if(success)
 						{

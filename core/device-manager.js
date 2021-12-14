@@ -87,7 +87,7 @@ module.exports = class DeviceManager
 										led: 1
 									};
 
-									files.writeFile('/devices/' + id + '.json', device).then((success) => {
+									files.writeFile('devices/' + id + '.json', device).then((success) => {
 
 										if(success)
 										{
@@ -184,7 +184,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			files.readFile('/devices/' + id + '.json').then((data) => resolve(data));
+			files.readFile('devices/' + id + '.json').then((data) => resolve(data));
 		});
 	}
 
@@ -192,7 +192,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 			
-			files.readDirectory('/devices').then((data) => resolve(data));
+			files.readDirectory('devices').then((data) => resolve(data));
 		});
 	}
 
@@ -262,13 +262,13 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			files.readFile('/devices/' + id + '.json').then((data) => {
+			files.readFile('devices/' + id + '.json').then((data) => {
 
 				if(data != null)
 				{
 					data[param] = value;
 
-					files.writeFile('/devices/' + id + '.json', data).then((success) => {
+					files.writeFile('devices/' + id + '.json', data).then((success) => {
 
 						if(success)
 						{
@@ -304,7 +304,7 @@ module.exports = class DeviceManager
 					await this.saveAccessories();
 				}
 
-				files.readFile('/devices/' + values.id + '.json').then((data) => {
+				files.readFile('devices/' + values.id + '.json').then((data) => {
 
 					if(data != null)
 					{
@@ -329,7 +329,7 @@ module.exports = class DeviceManager
 						}
 					}
 
-					files.writeFile('/devices/' + values.id + '.json', data).then((success) => {
+					files.writeFile('devices/' + values.id + '.json', data).then((success) => {
 
 						this.reloadAccessories();
 
@@ -600,7 +600,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			files.deleteFile('/devices/' + id + '.json').then((success) => {
+			files.deleteFile('devices/' + id + '.json').then((success) => {
 
 				if(!success)
 				{
