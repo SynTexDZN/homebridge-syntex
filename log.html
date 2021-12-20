@@ -313,7 +313,7 @@
 									{
 										var time = new Date(parseInt(logs[plugins[pluginID].alias][i].split('[')[1].split(']')[0]) * 1000);
 										var level = logs[plugins[pluginID].alias][i].split('[')[4].split(']')[0];
-										var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state%', '');
+										var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state% ', '').replace('\n', '<br>');
 									
 										if(time != null && level != null && message != null)
 										{
