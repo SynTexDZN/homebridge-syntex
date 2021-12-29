@@ -313,8 +313,8 @@
 									{
 										var time = new Date(parseInt(logs[plugins[pluginID].alias][i].split('[')[1].split(']')[0]) * 1000);
 										var level = logs[plugins[pluginID].alias][i].split('[')[4].split(']')[0];
-										var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state% ', '').replace('\n', '<br>');
-									
+										var message = logs[plugins[pluginID].alias][i].replace(logs[plugins[pluginID].alias][i].split('] ')[0] + '] ', '').replace(new RegExp(/\[/, 'g'), "'").replace(new RegExp(/\]/, 'g'), "'").replace('%log.read_state% ', '').replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, '<br>');
+
 										if(time != null && level != null && message != null)
 										{
 											var displayEntry = false;
