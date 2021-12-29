@@ -161,12 +161,10 @@ class SynTexPlatform
 	{
 		if(storagePath != null && username != null)
 		{
-			fs.readFile(path.join(storagePath, 'persist', 'AccessoryInfo.' + username.split(':').join('') + '.json'), (err, data) => {
+			this.files.readFile(path.join(storagePath, 'persist', 'AccessoryInfo.' + username.split(':').join('') + '.json')).then((data) => {
 
-				if(data && !err)
+				if(data != null)
 				{
-					data = JSON.parse(data.toString());
-
 					if(data.pincode != null && data.category != null && data.setupID != null)
 					{
 						const buffer = Buffer.alloc(8);
@@ -197,10 +195,6 @@ class SynTexPlatform
 
 						this.pairingCode = 'X-HM://' + encodedPayload + data.setupID;
 					}
-				}
-				else
-				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%!', err);
 				}
 			});
 		}
@@ -544,23 +538,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/syslog', (response, urlParams) => {
 
-			fs.readFile('/var/log/syslog', (err, data) => {
-
-				if(data && !err)
-				{
-					data = data.toString();
-
-					response.write(data);
-				}
-				else
-				{
-					response.write('Error');
-
-					this.logger.log('error', 'bridge', 'Bridge', 'Syslog %read_error%!', err);
-				}
-
-				response.end();
-			});
+			this.files.readFile('/var/log/syslog').then((data) => response.end(data != null ? data : 'Error'));
 		});
 
 		this.WebServer.addPage('/serverside/time', (response) => {
@@ -961,7 +939,7 @@ class SynTexPlatform
 
 								resolve();
 
-							}.bind({ letters, j })).catch((e) => this.logger.log('error', 'bridge', 'Bridge', 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%!', e)));
+							}.bind({ letters, j })).catch((e) => this.logger.log('error', urlParams.id, letters, 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%!', e.stack)));
 
 							promiseArray.push(newPromise);
 						}
