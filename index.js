@@ -427,7 +427,7 @@ class SynTexPlatform
 					}
 					else
 					{
-						this.logger.log('success', 'bridge', 'Bridge', '%bridge_update_success[0]% [' + version + '] %bridge_update_success[1]%!');
+						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
 						
 						restart = true;
 
