@@ -62,10 +62,13 @@ class CustomSelect
 					
 					for(const i in selects)
 					{
-						var id = selects[i].id;
+						var element = document.getElementById(selects[i].id);
 
-						this._checkDirection(document.getElementById(id));
-						this._checkOversized(document.getElementById(id));
+						if(element != null)
+						{
+							this._checkDirection(element);
+							this._checkOversized(element);
+						}
 					}
 
 				}, 1000);
@@ -398,10 +401,13 @@ class CustomSelect
 	{
 		for(const i in selects)
 		{
-			var id = selects[i].id;
+			var element = document.getElementById(selects[i].id);
 
-			this._checkDirection(document.getElementById(id));
-			this._checkOversized(document.getElementById(id));
+			if(element != null)
+			{
+				this._checkDirection(element);
+				this._checkOversized(element);
+			}
 		}
 	}
 
