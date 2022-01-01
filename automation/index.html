@@ -775,14 +775,7 @@
 					{
 						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
 						{
-							if(select.parentElement.parentElement.id != 'result')
-							{
-								customSelect.updateSelected(3);;
-							}
-							else
-							{
-								customSelect.updateSelected(1);
-							}
+							customSelect.updateSelected(1);
 						}
 						else
 						{
@@ -934,7 +927,7 @@
 
 					for(var i = 0; i < services.length; i++)
 					{
-						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || (services[i].type != 'statelessswitch' && services[i].type != 'rgb' && services[i].type != 'rgbw')))
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || services[i].type != 'statelessswitch'))
 						{
 							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
 						}
@@ -950,11 +943,6 @@
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
 					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
-
-					if(type != 'result')
-					{
-						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
-					}
 
 					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
 				
