@@ -361,15 +361,17 @@ class PageManagerModule
 				await newTimeout(200);
 			}
 
+			window.scrollTo(window.scrollX, 0);
+
 			document.getElementById(previous).style.display = 'none';
 			document.getElementById(next).style.display = '';
+
+			Replacer.refreshPositions();
 
 			if(!init)
 			{
 				await newTimeout(50);
 			}
-
-			window.scrollTo(window.scrollX, 0);
 
 			document.getElementById('preloader').style.opacity = 0;
 

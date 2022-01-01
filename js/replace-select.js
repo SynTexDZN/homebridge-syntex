@@ -392,6 +392,17 @@ class CustomSelect
 		return obj;
 	}
 
+	refreshPositions()
+	{
+		for(const i in selects)
+		{
+			var id = selects[i].id;
+
+			this._checkDirection(document.getElementById(id));
+			this._checkOversized(document.getElementById(id));
+		}
+	}
+
 	_checkDirection(select)
 	{
 		var selectItems = select.getElementsByClassName('select-items')[0],
