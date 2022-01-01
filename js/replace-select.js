@@ -62,8 +62,10 @@ class CustomSelect
 					
 					for(const i in selects)
 					{
-						this._checkDirection(selects[i]);
-						this._checkOversized(selects[i]);
+						var id = selects[i].id;
+
+						this._checkDirection(document.getElementById(id));
+						this._checkOversized(document.getElementById(id));
 					}
 
 				}, 1000);
