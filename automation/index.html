@@ -775,7 +775,14 @@
 					{
 						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
 						{
-							customSelect.updateSelected(1);
+							if(select.parentElement.parentElement.id != 'result')
+							{
+								customSelect.updateSelected(3);
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
 						}
 						else
 						{
@@ -943,6 +950,11 @@
 					operations.style.width = '100%';
 					operations.style.marginRight = '20px';
 					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
+
+					if(type != 'result')
+					{
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
+					}
 
 					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
 				

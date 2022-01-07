@@ -603,7 +603,14 @@
 					{
 						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
 						{
-							customSelect.updateSelected(1);
+							if(select.parentElement.parentElement.id != 'edit-result')
+							{
+								customSelect.updateSelected(3);
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
 						}
 						else
 						{
@@ -796,6 +803,11 @@
 					};
 
 					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option ' + (isSelected('=') ? 'selected' : '') + ' value="=">=</option><option ' + (isSelected('switch') ? 'selected' : '') + ' value="switch">%automation.switch%</option><option ' + (isSelected('dimming') ? 'selected' : '') + ' value="brightness">%automation.dimming%</option><option ' + (isSelected('color') ? 'selected' : '') + ' value="color">%automation.color%</option></select>';
+
+					if(type != 'result')
+					{
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option ' + (isSelected('=') ? 'selected' : '') + ' value="=">=</option><option ' + (isSelected('>') ? 'selected' : '') + ' value=">">></option><option ' + (isSelected('<') ? 'selected' : '') + ' value="<"><</option><option ' + (isSelected('switch') ? 'selected' : '') + ' value="switch">%automation.switch%</option><option ' + (isSelected('dimming') ? 'selected' : '') + ' value="brightness">%automation.dimming%</option><option ' + (isSelected('color') ? 'selected' : '') + ' value="color">%automation.color%</option></select>';
+					}
 
 					document.getElementById('edit-' + type).insertBefore(element, document.getElementById('edit-' + type).getElementsByClassName('add-entry-button')[0]);
 				
