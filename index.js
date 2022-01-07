@@ -92,7 +92,16 @@ class SynTexPlatform
 				this.getSetupCode(api.user.storagePath(), json.bridge.username);
 			}
 
-			this.connectBridge();
+			if(this.baseDirectory != null)
+			{
+				this.generateID().then((bridgeID, initBridge) => {
+
+					if(bridgeID != null)
+					{
+						this.connectBridge(bridgeID, initBridge);
+					}
+				});
+			}
 		});
 
 		const { exec } = require('child_process');
@@ -113,48 +122,62 @@ class SynTexPlatform
 		});
 	}
 
-	connectBridge()
+	generateID()
 	{
-		if(this.baseDirectory != null)
-		{
-			this.getBridgeID().then((bridgeID) => {
+		return new Promise((resolve) => {
 
-				var url = 'http://syntex.sytes.net:8800/init-bridge?name=' + this.bridgeName + '&plugin=' + pluginName + '&version=' + pluginVersion;
+			this.getBridgeID().then((bridgeID) => {
 
 				if(bridgeID != null)
 				{
-					url += '&id=' + bridgeID;
+					resolve(bridgeID, false);
+				}
+				else
+				{
+					bridgeID = new Date().getTime().toString(16);
+
+					this.setBridgeID(bridgeID).then((success) => resolve(success ? bridgeID : null, true));
+				}
+			});
+		});
+	}
+
+	connectBridge(bridgeID, initBridge)
+	{
+		var url = 'http://syntex.sytes.net:8800/init-bridge?id=' + bridgeID + '&plugin=' + pluginName + '&version=' + pluginVersion + '&name=' + this.bridgeName;
+
+		if(initBridge)
+		{
+			url += '&init=true';
+		}
+
+		axios.get(url).then((data) => {
+
+			if(data != null && data.data != null)
+			{
+				this.bridgeID = data.data;
+
+				if(data.data != this.bridgeID)
+				{
+					setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
 				}
 
-				axios.get(url).then((data) => {
-			
-					if(data != null && data.data != null)
-					{
-						this.bridgeID = data.data;
+				if(this.remote)
+				{
+					this.initWebSocket();
+				}
+			}
+			else
+			{
+				setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
+			}
 
-						if(data.data != this.bridgeID)
-						{
-							setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
-						}
+		}).catch((e) => {
 
-						if(this.remote)
-						{
-							this.initWebSocket();
-						}
-					}
-					else
-					{
-						setTimeout(() => this.connectBridge(), 30000);
-					}
+			this.logger.err(e);
 
-				}).catch((e) => {
-
-					this.logger.err(e);
-
-					setTimeout(() => this.connectBridge(), 30000);
-				});
-			});
-		}
+			setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
+		});
 	}
 
 	getSetupCode(storagePath, username)
