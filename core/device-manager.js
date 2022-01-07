@@ -87,9 +87,9 @@ module.exports = class DeviceManager
 										led: 1
 									};
 
-									files.writeFile('devices/' + id + '.json', device).then((success) => {
+									files.writeFile('devices/' + id + '.json', device).then((response) => {
 
-										if(success)
+										if(response.success)
 										{
 											logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
@@ -268,14 +268,14 @@ module.exports = class DeviceManager
 				{
 					data[param] = value;
 
-					files.writeFile('devices/' + id + '.json', data).then((success) => {
+					files.writeFile('devices/' + id + '.json', data).then((response) => {
 
-						if(success)
+						if(response.success)
 						{
 							this.reloadAccessories();
 						}
 
-						resolve(success);
+						resolve(response.success);
 					});
 				}
 				else
@@ -329,11 +329,11 @@ module.exports = class DeviceManager
 						}
 					}
 
-					files.writeFile('devices/' + values.id + '.json', data).then((success) => {
+					files.writeFile('devices/' + values.id + '.json', data).then((response) => {
 
 						this.reloadAccessories();
 
-						resolve(success);
+						resolve(response.success);
 					});
 				});
 			}

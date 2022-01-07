@@ -1069,14 +1069,14 @@ class SynTexPlatform
 	{
 		return new Promise((resolve) => {
 			
-			this.files.writeFile('config.json', { bridgeID }).then((success) => {
+			this.files.writeFile('config.json', { bridgeID }).then((response) => {
 				
-				if(!success)
+				if(!response.success)
 				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
+					this.logger.log('error', 'bridge', 'Bridge', '[bridgeID] %update_error%!');
 				}
 
-				resolve(success);
+				resolve(response.success);
 			});
 		});
 	}

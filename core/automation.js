@@ -34,18 +34,14 @@ module.exports = class Automation
 						data = [ automation ];
 					}
 
-					this.files.writeFile('automation/automation.json', data).then((success) => {
+					this.files.writeFile('automation/automation.json', data).then((response) => {
 
-						if(success)
+						if(response.success)
 						{
 							this.logger.log('success', 'bridge', 'Bridge', '%automation_created[0]% [' + automation.id + '] %automation_created[1]%!');
 						}
-						else
-						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
-						}
 
-						resolve(success);
+						resolve(response.success);
 					});
 				});
 			}
@@ -74,18 +70,14 @@ module.exports = class Automation
 							}
 						}
 
-						this.files.writeFile('automation/automation.json', data).then((success) => {
+						this.files.writeFile('automation/automation.json', data).then((response) => {
 
-							if(success)
+							if(response.success)
 							{
 								this.logger.log('success', 'bridge', 'Bridge', '%automation_updated[0]% [' + automation.id + '] %automation_updated[1]%!');
 							}
-							else
-							{
-								this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
-							}
 
-							resolve(success);
+							resolve(response.success);
 						});
 					}
 					else
@@ -121,18 +113,14 @@ module.exports = class Automation
 						}
 					}
 
-					this.files.writeFile('automation/automation.json', data).then((success) => {
+					this.files.writeFile('automation/automation.json', data).then((response) => {
 
-						if(success)
+						if(response.success)
 						{
 							this.logger.log('success', 'bridge', 'Bridge', '%automation_removed[0]% [' + name + '] %automation_removed[1]%!');
 						}
-						else
-						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Automation.json %update_error%!', err);
-						}
 
-						resolve(success);
+						resolve(response.success);
 					});
 				}
 				else
