@@ -75,6 +75,7 @@ module.exports = class PluginManager
 
                             this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Syntex', 'SynTex');
                             this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Homebridge', 'HomeBridge');
+                            this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Knx', 'KNX');
                             this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Magichome', 'MagicHome');
                             this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Webhooks', 'WebHooks');
                             this.plugins[pluginID].name = this.plugins[pluginID].name.replace('Homeconnect', 'HomeConnect');
@@ -131,6 +132,7 @@ module.exports = class PluginManager
 
         displayName = displayName.replace('Syntex', 'SynTex');
         displayName = displayName.replace('Homebridge', 'HomeBridge');
+        displayName = displayName.replace('Knx', 'KNX');
         displayName = displayName.replace('Magichome', 'MagicHome');
         displayName = displayName.replace('Webhooks', 'WebHooks');
         displayName = displayName.replace('Homeconnect', 'HomeConnect');
