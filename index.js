@@ -268,7 +268,7 @@ class SynTexPlatform
 				}
 				else
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%remote_link_connection_failed%!');
+					this.logger.log('error', 'bridge', 'Bridge', '%remote_link_connection_error%!');
 				}
 
 				this.WebSocket.connected = false;
