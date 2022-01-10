@@ -1,17 +1,13 @@
 const path = require('path');
+
 const EventEmitter = require('events').EventEmitter;
 
-let pluginAlias;
-let pluginType;
-
-let callbacks = {}, alias = { id : 'alias' }, storage;
+let aliasManager, pluginAlias, callbacks = {}, alias = {};
 
 const HomebridgeApiMock = {
 
 	registerPlatform(pluginIdentifier, platformName, constructor)
 	{
-		pluginType = 'platform';
-
 		if(typeof platformName === 'function')
 		{
 			constructor = platformName;
@@ -26,12 +22,10 @@ const HomebridgeApiMock = {
 		alias[this.id] = pluginAlias;
 		callbacks[this.id](pluginAlias);
 
-		setAlias();
+		aliasManager.setAlias();
 	},
 	registerAccessory(pluginIdentifier, accessoryName, constructor)
 	{
-		pluginType = 'accessory';
-
 		if(typeof accessoryName === 'function')
 		{
 			constructor = accessoryName;
@@ -46,7 +40,7 @@ const HomebridgeApiMock = {
 		alias[this.id] = pluginAlias;
 		callbacks[this.id](pluginAlias);
 
-		setAlias();
+		aliasManager.setAlias();
 	},
 	version: 2.5,
 	serverVersion: '1.2.3',
@@ -111,22 +105,23 @@ const HomebridgeApiMock = {
 
 module.exports = class AliasExtractor
 {
-	constructor(Storage, logger)
+	constructor(platform)
 	{
-		this.logger = logger;
+		this.logger = platform.logger;
+		this.files = platform.files;
 
-		storage = Storage;
+		aliasManager = this;
 	}
 
 	loadAlias()
 	{
 		return new Promise((resolve) => {
 
-			storage.load('alias', (err, json) => {
+			this.files.readFile('alias.json').then((data) => {
 
-				if(!err && json)
+				if(data != null)
 				{
-					alias = json;
+					alias = data;
 				}
 
 				resolve();
@@ -177,17 +172,9 @@ module.exports = class AliasExtractor
 			callback(alias[pluginID]);
 		}
 	}
-}
 
-function setAlias()
-{
-	alias.id = 'alias';
-
-	storage.add(alias, (err) => {
-
-		if(err)
-		{
-			this.logger.log('error', 'bridge', 'Bridge', 'Alias %cache_update_error%!', err);
-		}
-	});
+	setAlias()
+	{
+		this.files.writeFile('alias.json', alias);
+	}
 }

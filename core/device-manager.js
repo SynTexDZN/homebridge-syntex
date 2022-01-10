@@ -1,21 +1,22 @@
 const axios = require('axios');
 
-var config, logger, files, accessories;
+var platform, accessories;
 var configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(Logger, Config, Files, PluginManager)
+	constructor(platform, PluginManager)
 	{
-		config = Config;
-		logger = Logger;
-		files = Files;
+		this.platform = platform;
+
+		this.logger = platform.logger;
+		this.files = platform.files;
 
 		this.PluginManager = PluginManager;
 
 		this.reloading = false;
 
-		reloadConfig().then((success) => {
+		this.reloadConfig().then((success) => {
 
 			if(success)
 			{
@@ -87,11 +88,11 @@ module.exports = class DeviceManager
 										led: 1
 									};
 
-									files.writeFile('devices/' + id + '.json', device).then((response) => {
+									this.files.writeFile('devices/' + id + '.json', device).then((response) => {
 
 										if(response.success)
 										{
-											logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+											this.logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
 											this.reloadAccessories();
 
@@ -119,19 +120,19 @@ module.exports = class DeviceManager
 						}
 						else
 						{
-							logger.log('error', 'bridge', 'Bridge', '%no_services%!');
+							this.logger.log('error', 'bridge', 'Bridge', '%no_services%!');
 
 							resolve(['Error', 'Keine Services!']);
 						}
 					}
 					catch(e)
 					{
-						logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ' )', e);
+						this.logger.log('error', 'bridge', 'Bridge', 'Services / Events %json_parse_error%! ( ' + services + ' )', e);
 					}
 				}
 				else
 				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 					resolve(['Error', 'Fehler beim Lesen!']);
 				}
@@ -159,7 +160,7 @@ module.exports = class DeviceManager
 
 					if(success)
 					{
-						logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+						this.logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
 
 						this.reloadAccessories();
 
@@ -173,7 +174,7 @@ module.exports = class DeviceManager
 			}
 			else
 			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+				this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 
 				resolve(['Error', 'Fehler beim Erstellen!']);
 			}
@@ -184,7 +185,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 			
-			files.readFile('devices/' + id + '.json').then((data) => resolve(data));
+			this.files.readFile('devices/' + id + '.json').then((data) => resolve(data));
 		});
 	}
 
@@ -192,7 +193,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 			
-			files.readDirectory('devices').then((data) => resolve(data));
+			this.files.readDirectory('devices').then((data) => resolve(data));
 		});
 	}
 
@@ -262,13 +263,13 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			files.readFile('devices/' + id + '.json').then((data) => {
+			this.files.readFile('devices/' + id + '.json').then((data) => {
 
 				if(data != null)
 				{
 					data[param] = value;
 
-					files.writeFile('devices/' + id + '.json', data).then((response) => {
+					this.files.writeFile('devices/' + id + '.json', data).then((response) => {
 
 						if(response.success)
 						{
@@ -304,7 +305,7 @@ module.exports = class DeviceManager
 					await this.saveAccessories();
 				}
 
-				files.readFile('devices/' + values.id + '.json').then((data) => {
+				this.files.readFile('devices/' + values.id + '.json').then((data) => {
 
 					if(data != null)
 					{
@@ -329,7 +330,7 @@ module.exports = class DeviceManager
 						}
 					}
 
-					files.writeFile('devices/' + values.id + '.json', data).then((response) => {
+					this.files.writeFile('devices/' + values.id + '.json', data).then((response) => {
 
 						this.reloadAccessories();
 
@@ -369,7 +370,7 @@ module.exports = class DeviceManager
 		}
 		else
 		{
-			logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+			this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 		}
 
 		return needToSave;
@@ -410,7 +411,7 @@ module.exports = class DeviceManager
 		}
 		else
 		{
-			logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+			this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 		}
 
 		return null;
@@ -563,18 +564,14 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			config.add(configOBJ, (err) => {
+			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', configOBJ).then((response) => {
 
-				if(err)
-				{
-					logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
-				}
-				else
+				if(response.success)
 				{
 					this.reloadAccessories();
 				}
 
-				resolve(err ? false : true);
+				resolve(response.success);
 			});
 		});
 	}
@@ -600,14 +597,14 @@ module.exports = class DeviceManager
 	{
 		return new Promise(resolve => {
 
-			files.deleteFile('devices/' + id + '.json').then((success) => {
+			this.files.deleteFile('devices/' + id + '.json').then((success) => {
 
 				if(!success)
 				{
-					logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!', err);
+					this.logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!', err);
 				}
 
-				reloadConfig().then((success) => {
+				this.reloadConfig().then((success) => {
 
 					if(success)
 					{
@@ -740,31 +737,25 @@ module.exports = class DeviceManager
 
 				resolve(accessoryArray);
 
-			}).catch((e) => { logger.err(e); resolve(null) });
+			}).catch((e) => { this.logger.err(e); resolve(null) });
 		});
 	}
-}
 
-function reloadConfig()
-{
-	return new Promise(resolve => {
+	reloadConfig()
+	{
+		return new Promise(resolve => {
 
-		config.load('config', (err, obj) => {    
+			this.files.readFile(this.platform.api.user.storagePath() + '/config.json').then((config) => {
 
-			if(!obj || err)
-			{
-				logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
+				if(config != null)
+				{
+					configOBJ = config;
+				}
 
-				resolve(false);
-			}
-			else
-			{
-				configOBJ = obj;
-
-				resolve(true);
-			}
+				resolve(config != null);
+			});
 		});
-	});
+	}
 }
 
 function checkID(id)

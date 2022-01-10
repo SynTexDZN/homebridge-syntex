@@ -4,16 +4,18 @@ const fs = require('fs'), axios = require('axios'), path = require('path');
 
 module.exports = class PluginManager
 {
-	constructor(logger, config, updateInterval)
+	constructor(platform, updateInterval)
 	{
         this.plugins = {};
 
-        this.config = config;
-        this.logger = logger;
+        this.platform = platform;
+
+        this.logger = platform.logger;
+        this.files = platform.files;
 
         this.nodePath = path.resolve(__dirname, '../..',);
 
-        AliasManager = new AliasManager(this.config, this.logger);
+        AliasManager = new AliasManager(platform);
 
         fs.readdir(this.nodePath, async (err, plugins) => {
 
@@ -143,29 +145,31 @@ module.exports = class PluginManager
 
     getConfig(pluginID, pluginName)
     {
-        this.config.load('config', (err, config) => {    
+        this.files.readFile(this.platform.api.user.storagePath() + '/config.json').then((config) => {
 
-            if(!err && config)
+            if(config != null)
             {
-                for(const i in config.platforms)
+                if(config.platforms != null)
                 {
-                    if(config.platforms[i].platform == pluginName)
+                    for(const i in config.platforms)
                     {
-                        this.plugins[pluginID].config = config.platforms[i];
+                        if(config.platforms[i].platform == pluginName)
+                        {
+                            this.plugins[pluginID].config = config.platforms[i];
+                        }
                     }
                 }
 
-                for(const i in config.accessories)
+                if(config.accessories != null)
                 {
-                    if(config.accessories[i].accessory == pluginName)
+                    for(const i in config.accessories)
                     {
-                        this.plugins[pluginID].config = config.accessories[i];
+                        if(config.accessories[i].accessory == pluginName)
+                        {
+                            this.plugins[pluginID].config = config.accessories[i];
+                        }
                     }
                 }
-            }
-            else
-            {
-                this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
             }
         });
     }

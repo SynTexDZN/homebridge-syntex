@@ -2,7 +2,7 @@ let DeviceManager = require('./core/device-manager'), PluginManager = require('.
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
-const fs = require('fs'), store = require('json-fs-store'), axios = require('axios'), path = require('path');
+const fs = require('fs'), axios = require('axios'), path = require('path');
 
 var restart = true, updating = false;
 
@@ -22,6 +22,8 @@ class SynTexPlatform
 
 			return;
 		}
+
+		this.api = api;
 
 		this.debug = config['debug'] || false;
 		this.language = config['language'] || 'en';
@@ -46,12 +48,10 @@ class SynTexPlatform
 		
 		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 
-		this.config = store(api.user.storagePath());
-
 		HTMLQuery = new HTMLQuery(this.logger);
 		Automation = new Automation(this.logger, this.files);
-		PluginManager = new PluginManager(this.logger, this.config, 600);
-		DeviceManager = new DeviceManager(this.logger, this.config, this.files, PluginManager);
+		PluginManager = new PluginManager(this, 600);
+		DeviceManager = new DeviceManager(this, PluginManager);
 		UpdateManager = new UpdateManager(this.logger, 600);
 		OfflineManager = new OfflineManager(this.logger);
 
@@ -83,13 +83,19 @@ class SynTexPlatform
 			});
 		});
 
-		this.config.load('config', (err, json) => {    
+		this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
-			if(json && !err)
+			if(config != null && config.bridge != null)
 			{
-				this.bridgeName = json.bridge.name;
+				if(config.bridge.name != null)
+				{
+					this.bridgeName = config.bridge.name;
+				}
 
-				this.getSetupCode(api.user.storagePath(), json.bridge.username);
+				if(config.bridge.username != null)
+				{
+					this.getSetupCode(config.bridge.username);
+				}
 			}
 
 			if(this.baseDirectory != null)
@@ -180,11 +186,11 @@ class SynTexPlatform
 		});
 	}
 
-	getSetupCode(storagePath, username)
+	getSetupCode(username)
 	{
-		if(storagePath != null && username != null)
+		if(username != null)
 		{
-			this.files.readFile(path.join(storagePath, 'persist', 'AccessoryInfo.' + username.split(':').join('') + '.json')).then((data) => {
+			this.files.readFile(path.join(this.api.user.storagePath(), 'persist', 'AccessoryInfo.' + username.split(':').join('') + '.json')).then((data) => {
 
 				if(data != null)
 				{
@@ -654,19 +660,14 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				this.config.add(postJSON, (err) => {
+				this.files.writeFile(this.api.user.storagePath() + '/config.json', postJSON).then((response) => {
 
-					if(err)
-					{
-						this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
-					}
-					else
+					if(response.success)
 					{
 						DeviceManager.reloadAccessories();
 					}
 	
-					response.write(err ? 'Error' : 'Success');
-					response.end();
+					response.end(response.success ? 'Success' : 'Error');
 				});
 			}
 		});
@@ -818,12 +819,12 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/debug/config', async (response, urlParams, content) => {
 
-			this.config.load('config', (err, json) => {    
+			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
-				if(json && !err)
+				if(config != null)
 				{
 					var obj = {
-						configJSON: JSON.stringify(json)
+						configJSON: JSON.stringify(config)
 					};
 
 					response.write(HTMLQuery.sendValues(content, obj));
@@ -992,9 +993,9 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				this.setPluginConfig('SynTex', postJSON).then((result) => {
+				this.setPluginConfig('SynTex', postJSON).then((success) => {
 
-					response.write(result);
+					response.write(success ? 'Success' : 'Error');
 					response.end();
 				});
 			}
@@ -1013,20 +1014,27 @@ class SynTexPlatform
 	{
 		return new Promise((resolve) => {
 			
-			this.config.load('config', (err, obj) => {    
+			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
-				if(obj && !err)
+				var found = false;
+
+				if(config != null && config.platforms != null)
 				{
-					for(const i in obj.platforms)
+					for(const i in config.platforms)
 					{
-						if(obj.platforms[i].platform === pluginName)
+						if(config.platforms[i].platform == pluginName)
 						{
-							resolve(obj.platforms[i]);
+							found = true;
+
+							resolve(config.platforms[i]);
 						}
 					}
 				}
 
-				resolve(null);
+				if(!found)
+				{
+					resolve(null);
+				}
 			});
 		});
 	}
@@ -1035,36 +1043,34 @@ class SynTexPlatform
 	{
 		return new Promise((resolve) => {
 			
-			this.config.load('config', (err, obj) => {    
+			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
-				if(obj && !err)
+				var found = false;
+
+				if(config != null && config.platforms != null)
 				{
-					for(const i in obj.platforms)
+					for(const i in config.platforms)
 					{
-						if(obj.platforms[i].platform === pluginName)
+						if(config.platforms[i].platform == pluginName)
 						{
+							found = true;
+
 							for(const x in additionalConfig)
 							{
-								obj.platforms[i][x] = additionalConfig[x];
+								config.platforms[i][x] = additionalConfig[x];
 							}
 
-							this.config.add(obj, (err) => {
+							this.files.writeFile(this.api.user.storagePath() + '/config.json', config).then((response) => {
 
-								if(err)
-								{
-									this.logger.log('error', 'bridge', 'Bridge', 'Config.json %update_error%!', err);
-								}
-				
-								resolve(err ? 'Error' : 'Success');
+								resolve(response.success);
 							});
 						}
 					}
 				}
-				else
+				
+				if(!found)
 				{
-					this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!', err);
-
-					resolve('Error');
+					resolve(false);
 				}
 			});
 		});
