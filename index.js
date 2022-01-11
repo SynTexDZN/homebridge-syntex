@@ -660,14 +660,14 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				this.files.writeFile(this.api.user.storagePath() + '/config.json', postJSON).then((response) => {
+				this.files.writeFile(this.api.user.storagePath() + '/config.json', postJSON).then((writeResponse) => {
 
-					if(response.success)
+					if(writeResponse.success)
 					{
 						DeviceManager.reloadAccessories();
 					}
 	
-					response.end(response.success ? 'Success' : 'Error');
+					response.end(writeResponse.success ? 'Success' : 'Error');
 				});
 			}
 		});
