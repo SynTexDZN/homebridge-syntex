@@ -234,7 +234,7 @@ class SynTexPlatform
 		const isAlive = () => {
 
 			clearTimeout(this.pingTimeout);
-		  
+
 			this.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		};
 
@@ -565,7 +565,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/syslog', (response, urlParams) => {
+		this.WebServer.addPage('/serverside/syslog', (response) => {
 
 			this.files.readFile('/var/log/syslog').then((data) => response.end(data != null ? data : 'Error'));
 		});
@@ -787,7 +787,7 @@ class SynTexPlatform
 				obj.push({ name : 'SynTex Tuya' });
 			}
 
-			var t = this.getPluginConfig('SynTexMagicHome');
+			t = this.getPluginConfig('SynTexMagicHome');
 
 			if(t != null)
 			{

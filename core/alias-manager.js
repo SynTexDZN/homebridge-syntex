@@ -6,11 +6,10 @@ let aliasManager, pluginAlias, callbacks = {}, alias = {};
 
 const HomebridgeApiMock = {
 
-	registerPlatform(pluginIdentifier, platformName, constructor)
+	registerPlatform(pluginIdentifier, platformName)
 	{
 		if(typeof platformName === 'function')
 		{
-			constructor = platformName;
 			platformName = pluginIdentifier;
 			pluginAlias = platformName;
 		}
@@ -24,11 +23,10 @@ const HomebridgeApiMock = {
 
 		aliasManager.setAlias();
 	},
-	registerAccessory(pluginIdentifier, accessoryName, constructor)
+	registerAccessory(pluginIdentifier, accessoryName)
 	{
 		if(typeof accessoryName === 'function')
 		{
-			constructor = accessoryName;
 			accessoryName = pluginIdentifier;
 			pluginAlias = accessoryName;
 		}

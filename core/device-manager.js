@@ -1,7 +1,6 @@
 const axios = require('axios');
 
-var platform, accessories;
-var configOBJ = null;
+var accessories, configOBJ = null;
 
 module.exports = class DeviceManager
 {
@@ -601,7 +600,7 @@ module.exports = class DeviceManager
 
 				if(!success)
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!', err);
+					this.logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!');
 				}
 
 				this.reloadConfig().then((success) => {
