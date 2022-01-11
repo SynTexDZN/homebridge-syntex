@@ -137,7 +137,7 @@ module.exports = class Automation
 		{
 			var valid = { trigger : false, condition : false, result : false };
 
-			for(var i = 0; i < automation.trigger.length; i++)
+			for(let i = 0; i < automation.trigger.length; i++)
 			{
 				if(automation.trigger[i].id != null && automation.trigger[i].name != null && automation.trigger[i].letters != null && automation.trigger[i].value != null && automation.trigger[i].operation != null)
 				{
@@ -151,7 +151,7 @@ module.exports = class Automation
 
 			if(automation.condition != null)
 			{
-				for(var i = 0; i < automation.condition.length; i++)
+				for(let i = 0; i < automation.condition.length; i++)
 				{
 					if(automation.condition[i].id != null && automation.condition[i].name != null && automation.condition[i].letters != null && automation.condition[i].value != null && automation.condition[i].operation != null)
 					{
@@ -164,7 +164,7 @@ module.exports = class Automation
 				}
 			}
 
-			for(var i = 0; i < automation.result.length; i++)
+			for(let i = 0; i < automation.result.length; i++)
 			{
 				if(automation.result[i].id != null && automation.result[i].name != null && automation.result[i].letters != null && automation.result[i].value != null && automation.result[i].operation != null)
 				{

@@ -757,16 +757,16 @@ class SynTexPlatform
 
 			const { exec } = require('child_process');
 
-			exec('cat /sys/class/net/wlan0/address', (error, wMac, stderr) => {
+			exec('cat /sys/class/net/wlan0/address', (error, wMac) => {
 
-				if(wMac)
+				if(wMac != null)
 				{
 					obj.wlanMac = wMac.replace(/\s/g, '');
 				}
 				
-				exec('cat /sys/class/net/eth0/address', (error, eMac, stderr) => {
+				exec('cat /sys/class/net/eth0/address', (error, eMac) => {
 
-					if(eMac)
+					if(eMac != null)
 					{
 						obj.ethernetMac = eMac.replace(/\s/g, '');
 					}
