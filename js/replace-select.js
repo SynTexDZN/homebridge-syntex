@@ -6,13 +6,13 @@ class CustomSelect
 	{
 		var moved = false;
 
-		window.addEventListener('mousedown', () => {
+		window.addEventListener('mousedown', (event) => {
 
 			moved = false;
 			
 		}, 'KEEP');
 
-		window.addEventListener('mousemove', () => {
+		window.addEventListener('mousemove', (event) => {
 
 			moved = true;
 			
@@ -27,13 +27,13 @@ class CustomSelect
 			
 		}, 'KEEP');
 
-		window.addEventListener('touchstart', () => {
+		window.addEventListener('touchstart', (event) => {
 
 			moved = false;
 
 		}, 'KEEP');
 
-		window.addEventListener('touchmove', () => {
+		window.addEventListener('touchmove', (event) => {
 
 			moved = true;
 
@@ -450,7 +450,7 @@ class CustomSelect
 		{
 			select.classList.remove('on-top');
 
-			selectItems.style.maxHeight = document.getElementById('footer-content').getBoundingClientRect().top - selectItems.getBoundingClientRect().top;
+			selectItems.style.maxHeight = document.getElementById('footer-content').getBoundingClientRect().bottom - selectItems.getBoundingClientRect().top;
 
 			return true;
 		}
