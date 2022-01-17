@@ -100,12 +100,16 @@ class SynTexPlatform
 
 			if(this.baseDirectory != null)
 			{
-				this.generateID().then((bridgeID, initBridge) => {
+				this.generateID().then((bridgeInit) => {
+					
+					setTimeout(() => this.getBridgeID().then((bridgeID) => {
 
-					if(bridgeID != null)
-					{
-						this.connectBridge(bridgeID, initBridge);
-					}
+						if(bridgeID != null)
+						{
+							this.connectBridge(bridgeID, bridgeInit);
+						}
+
+					}), bridgeInit ? 3000 : 0);
 				});
 			}
 		});
@@ -136,13 +140,11 @@ class SynTexPlatform
 
 				if(bridgeID != null)
 				{
-					resolve(bridgeID, false);
+					resolve(false);
 				}
 				else
 				{
-					bridgeID = new Date().getTime().toString(16);
-
-					this.setBridgeID(bridgeID).then((success) => resolve(success ? bridgeID : null, true));
+					this.setBridgeID(new Date().getTime().toString(16)).then((success) => resolve(success));
 				}
 			});
 		});
