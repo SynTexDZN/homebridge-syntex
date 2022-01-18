@@ -816,7 +816,7 @@
 
 					var letters = e != null ? e.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
 
-					element.innerHTML += '<input value="' + (e ? e.url ? e.url : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? e.value : '' : '') + '" placeholder="' + (!e || e.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
+					element.innerHTML += '<input value="' + (e ? e.url ? e.url : isSelected('dimming') ? e.brightness : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? e.value : '' : '') + '" placeholder="' + (!e || e.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
 					element.innerHTML += '<div class="automation-color-container"><input ' + (e && e.hue != null ? 'value="' + e.hue + '"' : '') + ' placeholder="%automation.hue%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input ' + (e && e.saturation != null ? 'value="' + e.saturation + '"' : '') + ' placeholder="%automation.saturation%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input ' + (e && e.brightness != null ? 'value="' + e.brightness + '"' : '') + ' placeholder="%automation.brightness%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"></div>';
 
 					var value = document.createElement('div');
