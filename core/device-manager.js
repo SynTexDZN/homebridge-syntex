@@ -523,7 +523,7 @@ module.exports = class DeviceManager
 
 								if(plugins[id].config != null)
 								{
-									accessories[i].plugin.port = plugins[id].config.port;
+									accessories[i].plugin.port = plugins[id].config.options.port;
 								}
 							}
 						}

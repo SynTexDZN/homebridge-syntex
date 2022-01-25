@@ -74,7 +74,7 @@ class SynTexPlatform
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-				DeviceManager.setWebHooksPort(config.port);
+				DeviceManager.setWebHooksPort(config.options.port);
 
 				DeviceManager.getDevices().then((devices) => {
 
