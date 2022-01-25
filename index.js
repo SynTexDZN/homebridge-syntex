@@ -25,8 +25,18 @@ class SynTexPlatform
 
 		this.api = api;
 
-		this.debug = config['debug'] || false;
-		this.language = config['language'] || 'en';
+		this.options = {};
+
+		if(config['options'] != null)
+		{
+			this.options = config['options'];
+		}
+
+		this.port = this.options['port'] || 1711;
+		this.language = this.options['language'] || 'en';
+		this.debug = this.options['debug'] || false;
+		this.remote = this.options['remote'] || false;
+		this.password = this.options['password'] || '';
 
 		this.logger = new Logger(pluginName, this.debug, this.language);
 
@@ -45,91 +55,94 @@ class SynTexPlatform
 				this.logger.log('error', 'bridge', 'Bridge', '%directory_permission_error% [' + config['baseDirectory'] + ']', '%visit_github_for_support%: https://github.com/SynTexDZN/homebridge-syntex#troubleshooting', e);
 			}
 		}
-		
-		this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 
-		HTMLQuery = new HTMLQuery(this.logger);
-		Automation = new Automation(this.logger, this.files);
-		PluginManager = new PluginManager(this, 600);
-		DeviceManager = new DeviceManager(this, PluginManager);
-		UpdateManager = new UpdateManager(this.logger, 600);
-		OfflineManager = new OfflineManager(this.logger);
+		if(this.logger != null && this.baseDirectory != null)
+		{
+			this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
 
-		this.port = config['port'] || 1711;
-		this.remote = config['remote'] || false;
-		this.password = config['password'] || '';
+			HTMLQuery = new HTMLQuery(this.logger);
+			Automation = new Automation(this.logger, this.files);
+			PluginManager = new PluginManager(this, 600);
+			DeviceManager = new DeviceManager(this, PluginManager);
+			UpdateManager = new UpdateManager(this.logger, 600);
+			OfflineManager = new OfflineManager(this.logger);
 
-		this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
-		
-		this.WebServer.setHead(__dirname + '/includes/head.html');
-		this.WebServer.setFooter(__dirname + '/includes/footer.html');
+			this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
+			
+			this.WebServer.setHead(__dirname + '/includes/head.html');
+			this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
-		this.getPluginConfig('SynTexWebHooks').then((config) => {
+			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-			DeviceManager.setWebHooksPort(config.port);
+				DeviceManager.setWebHooksPort(config.port);
 
-			DeviceManager.getDevices().then((devices) => {
+				DeviceManager.getDevices().then((devices) => {
 
-				if(devices != null)
-				{
-					OfflineManager.setDevices(devices);
-				}
+					if(devices != null)
+					{
+						OfflineManager.setDevices(devices);
+					}
 
-				this.initWebServer();
+					this.initWebServer();
 
-				restart = false;
+					restart = false;
 
-				this.files.writeFile('info.json', { restart : new Date().getTime() });
-			});
-		});
-
-		this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
-
-			if(config != null && config.bridge != null)
-			{
-				if(config.bridge.name != null)
-				{
-					this.bridgeName = config.bridge.name;
-				}
-
-				if(config.bridge.username != null)
-				{
-					this.getSetupCode(config.bridge.username);
-				}
-			}
-
-			if(this.baseDirectory != null)
-			{
-				this.generateID().then((bridgeInit) => {
-					
-					setTimeout(() => this.getBridgeID().then((bridgeID) => {
-
-						if(bridgeID != null)
-						{
-							this.connectBridge(bridgeID, bridgeInit);
-						}
-
-					}), bridgeInit ? 3000 : 0);
+					this.files.writeFile('info.json', { restart : new Date().getTime() });
 				});
-			}
-		});
+			});
 
-		const { exec } = require('child_process');
+			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
-		exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-			exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
-
-				if(error || stderr.includes('ERR!'))
+				if(config != null && config.bridge != null)
 				{
-					this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
+					if(config.bridge.name != null)
+					{
+						this.bridgeName = config.bridge.name;
+					}
+
+					if(config.bridge.username != null)
+					{
+						this.getSetupCode(config.bridge.username);
+					}
 				}
-				else
+
+				if(this.baseDirectory != null)
 				{
-					this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
+					this.generateID().then((bridgeInit) => {
+						
+						setTimeout(() => this.getBridgeID().then((bridgeID) => {
+
+							if(bridgeID != null)
+							{
+								this.connectBridge(bridgeID, bridgeInit);
+							}
+
+						}), bridgeInit ? 3000 : 0);
+					});
 				}
 			});
-		});
+
+			const { exec } = require('child_process');
+
+			exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+				exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+
+					if(error || stderr.includes('ERR!'))
+					{
+						this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
+					}
+					else
+					{
+						this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
+					}
+				});
+			});
+		}
+		else
+		{
+			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex/blob/master/README.md');
+		}
 	}
 
 	generateID()

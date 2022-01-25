@@ -51,18 +51,22 @@ Also it provides special features for SynTex plugins:
     {
         "platform": "SynTex",
         "baseDirectory": "/var/homebridge/SynTex",
-        "port": 1711,
-        "language": "us",
-        "debug": false,
-        "remote": true,
-        "password": "1234"
+        "options": {
+            "port": 1711,
+            "language": "us",
+            "debug": false,
+            "remote": true,
+            "password": "1234"
+        }
     },
     {
         "platform": "SynTexWebHooks",
         "baseDirectory": "/var/homebridge/SynTex",
-        "port": 1710,
-        "language": "us",
-        "debug": false,
+        "options": {
+            "port": 1710,
+            "language": "us",
+            "debug": false
+        },
         "accessories": []
     }
 ]
@@ -71,9 +75,9 @@ Also it provides special features for SynTex plugins:
 ### Required Parameters
 - `platform` is always `SynTex`
 - `baseDirectory` The path where your data and logs are stored.
-- `port` To access the bridge website.
 
 ### Optional Parameters
+- `port` To access the bridge website.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
 - `remote` To control your devices on the go with the enhanced offline app without port forwarding. *( Currently in beta, more information soon )*
