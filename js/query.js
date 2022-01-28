@@ -22,21 +22,36 @@ class URLQuery
 
 			var port = null;
 
-			if(url.includes('syntex.sytes.net'))
+			try
 			{
-				port = new URL(url).port;
+				url = new URL(url);
+			}
+			catch(e)
+			{
+				//console.error(e);
+			}
 
-				url = url.replace(port, '8000');
+			if(url instanceof URL && url.port != '' && window.location.hostname == 'syntex.sytes.net')
+			{
+				port = url.port;
+			}
+
+			if(port != null)
+			{
+				url = new URL(url.href.replace(port, '8000'));
 			}
 
 			client.open('POST', url);
 
-			client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
-			client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
-
-			if(port != null)
+			if(port == '8000' || !(url instanceof URL))
 			{
-				client.setRequestHeader('port', port);
+				client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
+				client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
+
+				if(port != null)
+				{
+					client.setRequestHeader('port', port);
+				}
 			}
 
 			client.onreadystatechange = () => {
