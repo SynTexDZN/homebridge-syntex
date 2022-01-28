@@ -1980,25 +1980,23 @@
 
 						if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
 						{
+							await Essentials.newTimeout(200);
+							
 							if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getRestartURL(device) != null)
 							{
 								var overlays = {
 									root : document.getElementById('save-btn'),
 									id : 'refresh',
-									success : { value : '%device.save_success%!' },
 									executeError : { value : '%device.save_error%!' },
 									connectionError : { value : '%device.saved%!', color : 'yellow' }
 								};
 								
-								await Query.complexFetch(Presets.getPreset(device.plugin.alias).getRestartURL(device), 20000, 1, overlays, true);
-							}
-							else
-							{
-								Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createSuccessOverlay('refresh-result', '%device.saved%!'));
+								if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getRestartURL(device), 20000, 1, overlays, true) == null)
+								{
+									await Essentials.newTimeout(1800);
+								}
 							}
 
-							await Essentials.newTimeout(2000);
-								
 							redirect();
 						}
 						else if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null && window.location.protocol != 'https:')
