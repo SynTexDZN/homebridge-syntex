@@ -385,7 +385,7 @@ function addValues(data, values)
 				}
 			}
 					
-			data.sectors[cycleTime].push({ time : values[v].time, value : value });
+			data.sectors[cycleTime].push({ time : values[v].time, value });
 		}
 	}
 	
