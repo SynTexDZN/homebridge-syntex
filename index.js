@@ -335,7 +335,7 @@ class SynTexPlatform
 
 	initWebServer()
 	{
-		this.WebServer.addPage('/serverside/info', async (response) => {
+		this.WebServer.addPage('/serverside/info', async (request, response) => {
 
 			var infos = {
 				name : this.bridgeName
@@ -345,7 +345,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/remove-device', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/remove-device', async (request, response, urlParams) => {
 
 			if(urlParams.id != null)
 			{
@@ -354,7 +354,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/init', (response, urlParams) => {
+		this.WebServer.addPage('/serverside/init', (request, response, urlParams) => {
 	
 			if(urlParams.name != null && urlParams.id != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
 			{
@@ -390,7 +390,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/init-accessory', (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/init-accessory', (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null && postJSON.id != null && postJSON.name != null && postJSON.services != null)
 			{
@@ -419,7 +419,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/restart', (response) => {
+		this.WebServer.addPage('/serverside/restart', (request, response) => {
 
 			restart = true;
 
@@ -433,13 +433,13 @@ class SynTexPlatform
 			exec('sudo systemctl restart homebridge');
 		});
 
-		this.WebServer.addPage('/serverside/check-restart', (response) => {
+		this.WebServer.addPage('/serverside/check-restart', (request, response) => {
 
 			response.write(restart.toString());
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/version', async (response) => {
+		this.WebServer.addPage('/serverside/version', async (request, response) => {
 
 			const pJSON = require('./package.json');
 
@@ -447,7 +447,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/update', (response, urlParams) => {
+		this.WebServer.addPage('/serverside/update', (request, response, urlParams) => {
 
 			if(urlParams.status != null)
 			{
@@ -488,7 +488,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/activity', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/activity', async (request, response, urlParams) => {
 
 			var result = {};
 
@@ -547,7 +547,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/log', (response) => {
+		this.WebServer.addPage('/serverside/log', (request, response) => {
 
 			if(this.logger.logDirectory != null)
 			{
@@ -580,12 +580,12 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/syslog', (response) => {
+		this.WebServer.addPage('/serverside/syslog', (request, response) => {
 
 			this.files.readFile('/var/log/syslog').then((data) => response.end(data != null ? data : 'Error'));
 		});
 
-		this.WebServer.addPage('/serverside/time', (response) => {
+		this.WebServer.addPage('/serverside/time', (request, response) => {
 
 			var date = new Date();
 
@@ -593,13 +593,13 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/offline-devices', (response) => {
+		this.WebServer.addPage('/serverside/offline-devices', (request, response) => {
 
 			response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/check-device', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/check-device', async (request, response, urlParams) => {
 
 			if(urlParams.id != null)
 			{
@@ -610,7 +610,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/save-config', async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/save-config', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -619,13 +619,13 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/automation', async (response) => {
+		this.WebServer.addPage('/serverside/automation', async (request, response) => {
 
 			response.write(JSON.stringify(await Automation.loadAutomation())); 
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/create-automation', async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/create-automation', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -634,7 +634,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/modify-automation', async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/modify-automation', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -643,7 +643,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/remove-automation', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/remove-automation', async (request, response, urlParams) => {
 
 			if(urlParams.id != null)
 			{
@@ -652,7 +652,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/reload-accessories', async (response) => {
+		this.WebServer.addPage('/serverside/reload-accessories', async (request, response) => {
 
 			DeviceManager.reloadAccessories();
 
@@ -660,7 +660,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/plugins', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/plugins', async (request, response, urlParams) => {
 
 			if(urlParams.reload != null)
 			{
@@ -671,7 +671,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/update-config', async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/update-config', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -687,7 +687,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/device', async (response, urlParams, content) => {
+		this.WebServer.addPage('/device', async (request, response, urlParams, content) => {
 
 			await DeviceManager.reloadAccessories();
 
@@ -695,7 +695,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
 
 			var bridgeData = await this.files.readFile('info.json');
 
@@ -716,7 +716,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/settings', async (response, urlParams, content) => {
+		this.WebServer.addPage('/settings', async (request, response, urlParams, content) => {
 
 			var devices = await DeviceManager.getDevices();
 
@@ -724,7 +724,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/connect'], (response, urlParams, content) => {
+		this.WebServer.addPage(['/connect'], (request, response, urlParams, content) => {
 
 			const ifaces = require('os').networkInterfaces();
 
@@ -744,7 +744,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (request, response, urlParams, content) => {
 
 			var obj = {
 				bridgeID : null,
@@ -792,7 +792,7 @@ class SynTexPlatform
 			});
 		});
 
-		this.WebServer.addPage('/crossover', (response, urlParams, content) => {
+		this.WebServer.addPage('/crossover', (request, response, urlParams, content) => {
 
 			var obj = [];
 			var t = this.getPluginConfig('SynTexTuya');
@@ -813,13 +813,13 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/automation/', '/automation/modify'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/automation/', '/automation/modify'], async (request, response, urlParams, content) => {
 
 			response.write(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
 			response.end();
 		});
 
-		this.WebServer.addPage('/debug/', (response, urlParams, content) => {
+		this.WebServer.addPage('/debug/', (request, response, urlParams, content) => {
 
 			fs.readdir(__dirname + '/debug/workaround/', async (err, files) => {
 
@@ -832,7 +832,7 @@ class SynTexPlatform
 			});
 		});
 
-		this.WebServer.addPage('/debug/config', async (response, urlParams, content) => {
+		this.WebServer.addPage('/debug/config', async (request, response, urlParams, content) => {
 
 			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
 
@@ -848,7 +848,7 @@ class SynTexPlatform
 			});
 		});
 
-		this.WebServer.addPage('/serverside/command', async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/command', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -870,7 +870,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/characteristics', async (response, urlParams) => {
+		this.WebServer.addPage('/serverside/characteristics', async (request, response, urlParams) => {
 
 			var accessory = DeviceManager.getAccessory(urlParams.id);
 
@@ -998,13 +998,13 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage(['/debug/workaround/qr'], async (response, urlParams, content) => {
+		this.WebServer.addPage(['/debug/workaround/qr'], async (request, response, urlParams, content) => {
 
 			response.write(HTMLQuery.sendValue(content, 'pairingCode', this.pairingCode));
 			response.end();
 		});
 
-		this.WebServer.addPage(['/serverside/config'], async (response, urlParams, content, postJSON) => {
+		this.WebServer.addPage(['/serverside/config'], async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
