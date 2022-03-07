@@ -1170,7 +1170,7 @@
 													for(const u in activity[lettersA].update)
 													{
 														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-														var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+														var characteristics = ['power', 'hue', 'saturation', 'brightness'];
 
 														obj['value'] = orginalValues;
 
@@ -1178,7 +1178,14 @@
 														{
 															if(orginalValues.includes(characteristics[c] + ': '))
 															{
-																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+																if(characteristics[c] == 'power')
+																{
+																	obj['value'] = orginalValues.split(characteristics[c] + ': ')[1];
+																}
+																else
+																{
+																	obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+																}
 															}
 														}
 
