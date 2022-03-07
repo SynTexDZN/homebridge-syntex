@@ -658,7 +658,7 @@ module.exports = class DeviceManager
 
 					for(const j in accessoryJSON[i].services)
 					{
-						var type, service = { iid : {}, format : {} };
+						var type, service = { iid : {}, format : {}, state : {} };
 
 						if(characteristics[accessoryJSON[i].services[j].type] != null)
 						{
@@ -701,6 +701,7 @@ module.exports = class DeviceManager
 									{
 										service.iid[l] = characteristic.iid;
 										service.format[l] = characteristic.format;
+										service.state[l] = characteristic.value;
 
 										if(characteristic.minValue == 0 && characteristic.maxValue == 1)
 										{
