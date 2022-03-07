@@ -1612,11 +1612,11 @@
 									{
 										if(data[letters].value)
 										{
-											document.getElementsByClassName('color-picker')[0].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
+											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
 										}
 										else
 										{
-											document.getElementsByClassName('color-picker')[0].value = '#000000';
+											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = '#000000';
 										}
 
 										setTimeout(() => {
