@@ -23,9 +23,13 @@ class SynTexPlatform
 			return;
 		}
 
+		this.options = {};
+
 		this.api = api;
 
-		this.options = {};
+		this.pluginID = pluginID;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
 
 		if(config['options'] != null)
 		{
@@ -67,7 +71,7 @@ class SynTexPlatform
 			UpdateManager = new UpdateManager(this.logger, 600);
 			OfflineManager = new OfflineManager(this.logger);
 
-			this.WebServer = new WebServer('SynTex Bridge', this.logger, this.port, __dirname + '/languages', this.language, true);
+			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
 			
 			this.WebServer.setHead(__dirname + '/includes/head.html');
 			this.WebServer.setFooter(__dirname + '/includes/footer.html');
