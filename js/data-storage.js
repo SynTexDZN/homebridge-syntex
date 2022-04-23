@@ -268,12 +268,12 @@ class DataStorage
 
 			if(this.checkBridge())
 			{
-				if(typeof sessionStorage.bridges == 'object' && typeof sessionStorage.bridges[this.remote['bridge-id']] == 'object' && typeof sessionStorage.bridges[this.remote['bridge-id']].settings == 'object')
+				if(typeof sessionStorage.bridges instanceof Object && sessionStorage.bridges[this.remote['bridge-id']] instanceof Object && sessionStorage.bridges[this.remote['bridge-id']].settings instanceof Object)
 				{
 					return 'local';
 				}
 			}
-			else if(typeof sessionStorage.settings == 'object')
+			else if(sessionStorage.settings instanceof Object)
 			{
 				return 'global';
 			}
