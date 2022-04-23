@@ -268,7 +268,7 @@ class DataStorage
 
 			if(this.checkBridge())
 			{
-				if(typeof sessionStorage.bridges instanceof Object && sessionStorage.bridges[this.remote['bridge-id']] instanceof Object && sessionStorage.bridges[this.remote['bridge-id']].settings instanceof Object)
+				if(sessionStorage.bridges instanceof Object && sessionStorage.bridges[this.remote['bridge-id']] instanceof Object && sessionStorage.bridges[this.remote['bridge-id']].settings instanceof Object)
 				{
 					return 'local';
 				}
