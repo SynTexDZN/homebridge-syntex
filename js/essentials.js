@@ -803,7 +803,7 @@ function loadPageData(url)
 
 		var client = new XMLHttpRequest();
 
-		client.timeout = 10000;
+		client.timeout = 30000;
 
 		client.open('GET', url);
 
