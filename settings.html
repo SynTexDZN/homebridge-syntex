@@ -121,11 +121,11 @@
 
 							if(template[i].type == 'button')
 							{
-								html += 'value="' + ((settings[i] != null ? settings[i] : settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+								html += 'value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
 							}
 							else
 							{
-								html += 'value="' + (settings[i] != null ? settings[i] : settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
+								html += 'value="' + (settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
 							}
 
 							html += '</b></p>';
