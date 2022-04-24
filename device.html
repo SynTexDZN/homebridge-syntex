@@ -107,9 +107,12 @@
 			</div>
 			<div id="settings" style="display: none; transition: .2s opacity ease-in-out">
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
-					<div id="settings-form" style="margin-bottom: 100px">
-						<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜ0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+					<div class="type-container" style="margin-bottom: 20px">
+						<h2 class="title-container" style="margin-bottom: 40px">%device.general%</h2>
+						<div id="general-settings">
+							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						</div>
 					</div>
 					<input id="reset-btn" type="button" value="%device.reset_device%" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
@@ -340,7 +343,7 @@
 
 				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
-				var settingsForm = document.getElementById('settings-form');
+				var settingsForm = document.getElementById('general-settings');
 
 				if(device.plugin.alias == 'SynTexTuya')
 				{
@@ -1936,35 +1939,32 @@
 							plugin : device.plugin.alias
 						};
 
-						var form = document.getElementById('settings-form');
+						var form = document.getElementById('general-settings').getElementsByTagName('input');
 
-						for(var i = 0; i < form.childElementCount; i++)
+						for(var i = 0; i < form.length; i++)
 						{
-							if(!form.children[i].hasAttribute('type'))
+							if(form[i].getAttribute('name') == 'interval')
 							{
-								if(form.children[i].getElementsByTagName('input')[0].getAttribute('name') == 'interval')
+								if(!services.includes('motion'))
 								{
-									if(!services.includes('motion'))
-									{
-										settings['interval'] = form.children[i].getElementsByTagName('input')[0].value * 1000;
-									}
-									else if(services.includes('motion'))
-									{
-										settings['interval'] = (form.children[i].getElementsByTagName('input')[0].value - 1.5) * 1000;
-									}
-									else
-									{
-										settings['interval'] = form.children[i].getElementsByTagName('input')[0].value;
-									}
+									settings['interval'] = form[i].value * 1000;
 								}
-								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+								else if(services.includes('motion'))
 								{
-									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = (form.children[i].getElementsByTagName('input')[0].value == '%characteristics.boolean.active%' ? 1 : 0);
+									settings['interval'] = (form[i].value - 1.5) * 1000;
 								}
-								else if(form.children[i].getElementsByTagName('input')[0].getAttribute('type') == 'text' && (form.children[i].getElementsByTagName('input')[0].value != '' || !form.children[i].getElementsByTagName('input')[0].hasAttribute('required')))
+								else
 								{
-									settings[form.children[i].getElementsByTagName('input')[0].getAttribute('name')] = form.children[i].getElementsByTagName('input')[0].value;
+									settings['interval'] = form[i].value;
 								}
+							}
+							else if(form[i].getAttribute('type') == 'button')
+							{
+								settings[form[i].getAttribute('name')] = (form[i].value == '%characteristics.boolean.active%' ? 1 : 0);
+							}
+							else if(form[i].getAttribute('type') == 'text' && (form[i].value != '' || !form[i].hasAttribute('required')))
+							{
+								settings[form[i].getAttribute('name')] = form[i].value;
 							}
 						}
 
