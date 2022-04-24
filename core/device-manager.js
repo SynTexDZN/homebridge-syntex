@@ -47,7 +47,7 @@ module.exports = class DeviceManager
 				}
 
 				var obj = {
-					name : this.getConfigValue(id, 'name') || name,
+					name : this.getConfigAccessory(id) != null && this.getConfigAccessory(id).name != null ? this.getConfigAccessory(id).name : name,
 					active : device['active'] || 1,
 					interval : device['interval'] || 10000,
 					led : device['led'] || 0,
@@ -390,19 +390,19 @@ module.exports = class DeviceManager
 		return needToSave;
 	}
 
-	getConfigValue(id, key)
+	getConfigAccessory(id)
 	{
 		if(configOBJ != null && configOBJ.platforms != null)
 		{
 			for(const i in configOBJ.platforms)
 			{
-				if(configOBJ.platforms[i].platform === 'SynTexWebHooks' && configOBJ.platforms[i].accessories != null)
+				if(configOBJ.platforms[i].accessories != null)
 				{
 					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
 					{
-						if(configOBJ.platforms[i].accessories[j].id == id && configOBJ.platforms[i].accessories[j][key] != null)
+						if(configOBJ.platforms[i].accessories[j].id == id)
 						{
-							return configOBJ.platforms[i].accessories[j][key];
+							return configOBJ.platforms[i].accessories[j];
 						}	
 					}
 				}
