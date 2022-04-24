@@ -39,7 +39,7 @@ module.exports = class DeviceManager
 
 			if(device != null)
 			{
-				var needToSave = this.setConfigValues('SynTexWebHooks', id, { version, ip });
+				var needToSave = this.setConfigAccessory(id, { version, ip });
 
 				if(needToSave)
 				{
@@ -296,7 +296,7 @@ module.exports = class DeviceManager
 
 				if(values.name != null && values.plugin.startsWith('SynTex'))
 				{
-					needToSave = this.setConfigValue(values.plugin, values.id, 'name', values.name);
+					needToSave = this.setConfigAccessory(values.id, { name : values.name });
 				}
 
 				if(needToSave)
@@ -340,36 +340,21 @@ module.exports = class DeviceManager
 		});
 	}
 
-	setConfigValue(plugin, id, key, value)
+	setConfigAccessory(id, values)
 	{
-		var needToSave = false;
+		var needToSave = false, accessory = this.getConfigAccessory(id);
 
-		if(plugin == 'SynTex')
+		if(accessory != null)
 		{
-			plugin = 'SynTexWebHooks';
-		}
-
-		if(configOBJ != null && configOBJ.platforms != null)
+			for(const x in values)
 		{
-			for(const i in configOBJ.platforms)
+				if(accessory[x] != values[x])
 			{
-				if(configOBJ.platforms[i].platform == plugin && configOBJ.platforms[i].accessories != null)
-				{
-					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
-					{
-						if(configOBJ.platforms[i].accessories[j].id == id && value != configOBJ.platforms[i].accessories[j][key])
-						{
-							configOBJ.platforms[i].accessories[j][key] = value;
+					accessory[x] = values[x];
 
 							needToSave = true;
 						}	
 					}
-				}
-			}
-		}
-		else
-		{
-			this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
 		}
 
 		return needToSave;
