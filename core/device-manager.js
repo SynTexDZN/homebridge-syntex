@@ -347,28 +347,13 @@ module.exports = class DeviceManager
 		if(accessory != null)
 		{
 			for(const x in values)
-		{
-				if(accessory[x] != values[x])
 			{
+				if(accessory[x] != values[x])
+				{
 					accessory[x] = values[x];
 
-							needToSave = true;
-						}	
-					}
-		}
-
-		return needToSave;
-	}
-
-	setConfigValues(plugin, id, values)
-	{
-		var needToSave = false;
-
-		for(const key in values)
-		{
-			if(this.setConfigValue(plugin, id, key, values[key]))
-			{
-				needToSave = true;
+					needToSave = true;
+				}
 			}
 		}
 
