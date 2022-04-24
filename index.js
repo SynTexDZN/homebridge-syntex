@@ -80,7 +80,7 @@ class SynTexPlatform
 
 				DeviceManager.setWebHooksPort(config.options.port);
 
-				DeviceManager.getDevices().then((devices) => {
+				DeviceManager.getStorageAccessories().then((devices) => {
 
 					if(devices != null)
 					{
@@ -353,7 +353,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				response.write(await DeviceManager.removeFromSettingsStorage(urlParams.id) ? 'Success' : 'Error');
+				response.write(await DeviceManager.removeFromStorage(urlParams.id) ? 'Success' : 'Error');
 				response.end();
 			}
 		});
@@ -607,7 +607,7 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				var device = await DeviceManager.getDevice(urlParams.id);
+				var device = await DeviceManager.getStorageAccessory(urlParams.id);
 
 				response.write(device ? 'Success' : 'Error');
 				response.end();
@@ -618,7 +618,7 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.write(await DeviceManager.setValues(postJSON) ? 'Success' : 'Error'); 
+				response.write(await DeviceManager.setStorageAccessory(postJSON) ? 'Success' : 'Error'); 
 				response.end();
 			}
 		});
@@ -722,7 +722,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/settings', async (request, response, urlParams, content) => {
 
-			var devices = await DeviceManager.getDevices();
+			var devices = await DeviceManager.getStorageAccessories();
 
 			response.write(HTMLQuery.sendValue(content, 'devices', JSON.stringify(devices)));
 			response.end();

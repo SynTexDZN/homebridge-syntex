@@ -33,7 +33,7 @@ module.exports = class DeviceManager
 	{
 		return new Promise(async (resolve) => {
 			
-			var device = await this.getDevice(id);
+			var device = await this.getStorageAccessory(id);
 
 			name = name.replace(new RegExp('%', 'g'), ' ');
 
@@ -180,7 +180,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	getDevice(id)
+	getStorageAccessory(id)
 	{
 		return new Promise(resolve => {
 			
@@ -188,7 +188,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	getDevices()
+	getStorageAccessories()
 	{
 		return new Promise((resolve) => {
 			
@@ -258,7 +258,7 @@ module.exports = class DeviceManager
 		return accessories;
 	}
 
-	setValue(id, param, value)
+	setStorageAccessory(id, key, value)
 	{
 		return new Promise(resolve => {
 
@@ -266,7 +266,7 @@ module.exports = class DeviceManager
 
 				if(data != null)
 				{
-					data[param] = value;
+					data[key] = value;
 
 					this.files.writeFile('devices/' + id + '.json', data).then((response) => {
 
@@ -445,7 +445,7 @@ module.exports = class DeviceManager
 					accessories.push.apply(accessories, bridgeAccessories);
 				}
 
-				var storageAccessories = await this.getDevices();
+				var storageAccessories = await this.getStorageAccessories();
 
 				if(storageAccessories != null)
 				{
@@ -592,7 +592,7 @@ module.exports = class DeviceManager
 		}
 	}
 
-	removeFromSettingsStorage(id)
+	removeFromStorage(id)
 	{
 		return new Promise(resolve => {
 
