@@ -19,7 +19,7 @@ module.exports = class DeviceManager
 
 			if(success)
 			{
-				this.reloadAccessories();
+				this.convertConfig() ? this.saveAccessories() : this.reloadAccessories();
 			}
 		});
 	}
@@ -725,6 +725,56 @@ module.exports = class DeviceManager
 				resolve(config != null);
 			});
 		});
+	}
+
+	convertConfig()
+	{
+		var needToSave = false;
+
+		if(configOBJ != null && configOBJ.platforms != null)
+		{
+			for(const i in configOBJ.platforms)
+			{
+				if(configOBJ.platforms[i].platform.startsWith('SynTex') && configOBJ.platforms[i].accessories != null)
+				{
+					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
+					{
+						var accessory = configOBJ.platforms[i].accessories[j];
+
+						if(Array.isArray(accessory.services))
+						{
+							for(const k in accessory.services)
+							{
+								if(!(accessory.services[k] instanceof Object))
+								{
+									accessory.services[k] = { type : accessory.services[k] };
+
+									needToSave = true;
+								}
+							}
+						}
+						else if(accessory.services instanceof Object)
+						{
+							accessory.services = [{ ...accessory.services }];
+
+							needToSave = true;
+						}
+						else
+						{
+							accessory.services = [{ type : accessory.services }];
+
+							needToSave = true;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			this.logger.log('error', 'bridge', 'Bridge', 'Config.json %read_error%!');
+		}
+
+		return needToSave;
 	}
 }
 
