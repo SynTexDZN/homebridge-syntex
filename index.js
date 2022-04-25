@@ -618,7 +618,7 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.write(await DeviceManager.setStorageAccessory(postJSON) ? 'Success' : 'Error'); 
+				response.write(await DeviceManager.setAccessoryValues(postJSON) ? 'Success' : 'Error'); 
 				response.end();
 			}
 		});

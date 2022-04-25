@@ -286,7 +286,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	setValues(values)
+	setAccessoryValues(values)
 	{
 		return new Promise(async (resolve) => {
 
