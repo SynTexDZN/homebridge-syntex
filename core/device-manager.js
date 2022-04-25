@@ -844,7 +844,7 @@ function convertServices(orginal, additional)
 		{
 			if(additional[i] instanceof Object)
 			{
-				services.push(additional[i]);
+				services.push({ ...additional[i] });
 			}
 			else
 			{
@@ -854,7 +854,7 @@ function convertServices(orginal, additional)
 	}
 	else if(additional instanceof Object)
 	{
-		services.push(additional);
+		services.push({ ...additional });
 	}
 	else
 	{
