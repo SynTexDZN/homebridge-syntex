@@ -2244,30 +2244,25 @@
 
 				function getConfigService(letters)
 				{
+					var typeCounter = {};
+
 					if(letters != null)
 					{
-						var type = Essentials.letterToType(letters[0]);
+						for(const i in device.config.services)
+						{
+							if(typeCounter[device.config.services[i].type] != null)
+							{
+								typeCounter[device.config.services[i].type]++;
+							}
+							else
+							{
+								typeCounter[device.config.services[i].type] = 0;
+							}
 
-						if(Array.isArray(device.config.services))
-						{
-							for(const i in device.config.services)
+							if(Essentials.typeToLetter(device.config.services[i].type) + '' + typeCounter[device.config.services[i].type] == letters)
 							{
-								if(device.config.services[i].type == type)
-								{
-									return device.config.services[i];
-								}
+								return device.config.services[i];
 							}
-						}
-						else if(device.config.services instanceof Object)
-						{
-							if(device.config.services.type == type)
-							{
-								return device.config.services;
-							}
-						}
-						else
-						{
-							return { type : device.config.services };
 						}
 					}
 
