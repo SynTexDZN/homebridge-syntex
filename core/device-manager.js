@@ -294,9 +294,23 @@ module.exports = class DeviceManager
 			{
 				var needToSave = false;
 
-				if(values.name != null && values.plugin.startsWith('SynTex'))
+				if(values.plugin.startsWith('SynTex'))
 				{
-					needToSave = this.setConfigAccessory(values.id, { name : values.name });
+					if(values.name != null)
+					{
+						if(this.setConfigAccessory(values.id, { name : values.name }))
+						{
+							needToSave = true;
+						}
+					}
+
+					if(values.services != null)
+					{
+						if(this.setConfigServices(values.id, values.services))
+						{
+							needToSave = true;
+						}
+					}
 				}
 
 				if(needToSave)
@@ -310,7 +324,7 @@ module.exports = class DeviceManager
 					{
 						for(const i in values)
 						{
-							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
+							if(i != 'id' && i != 'plugin' && i != 'services' && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
 								data[i] = values[i];
 							}
@@ -322,7 +336,7 @@ module.exports = class DeviceManager
 						
 						for(const i in values)
 						{
-							if(i != 'id' && i != 'plugin' && (i != 'name' || !values.plugin.startsWith('SynTex')))
+							if(i != 'id' && i != 'plugin' && i != 'services'  && (i != 'name' || !values.plugin.startsWith('SynTex')))
 							{
 								data[i] = values[i];
 							}
@@ -456,6 +470,8 @@ module.exports = class DeviceManager
 								{
 									if(accessories[k].id == configOBJ.platforms[i].accessories[j].id)
 									{
+										accessories[k].config = configOBJ.platforms[i].accessories[j];
+
 										for(const x in configOBJ.platforms[i].accessories[j])
 										{
 											if(x != 'id' && x != 'plugin' && x != 'services')
@@ -725,6 +741,73 @@ module.exports = class DeviceManager
 				resolve(config != null);
 			});
 		});
+	}
+
+	getConfigService(id, letters)
+	{
+		var accessory = this.getConfigAccessory(id), typeCounter = {};
+
+		if(accessory != null)
+		{
+			for(const i in accessory.services)
+			{
+				if(typeCounter[accessory.services[i].type] != null)
+				{
+					typeCounter[accessory.services[i].type]++;
+				}
+				else
+				{
+					typeCounter[accessory.services[i].type] = 0;
+				}
+
+				if(typeToLetter(accessory.services[i].type) + '' + typeCounter[accessory.services[i].type] == letters)
+				{
+					return accessory.services[i];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	setConfigService(id, letters, values)
+	{
+		var needToSave = false, service = this.getConfigService(id, letters);
+
+		if(service != null)
+		{
+			for(const x in values)
+			{
+				if(x != 'letters' && service[x] != values[x])
+				{
+					service[x] = values[x];
+
+					needToSave = true;
+				}
+			}
+
+			if(values.name == '' && service.name != null)
+			{
+				delete service.name;
+			}
+		}
+
+		return needToSave;
+	}
+
+	setConfigServices(id, services)
+	{
+		var needToSave = false;
+
+		for(const i in services)
+		{
+			if(this.setConfigService(id, services[i].letters, services[i]))
+			{
+				needToSave = true;
+			}
+		}
+
+		return needToSave;
 	}
 
 	convertConfig()

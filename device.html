@@ -114,6 +114,7 @@
 							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 						</div>
 					</div>
+					<div id="service-form" style="margin-bottom: 20px"></div>
 					<input id="reset-btn" type="button" value="%device.reset_device%" onclick="resetDevice(this)">
 					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
 				</form>
@@ -380,6 +381,85 @@
 				settingsForm.setAttribute('device_id', device.id);
 				settingsForm.setAttribute('ip', device.ip);
 				settingsForm.setAttribute('type', Essentials.getType(services));
+
+				if(device.plugin.alias != 'SynTexTuya')
+				{
+					var serviceForm = document.getElementById('service-form');
+
+					for(const i in device.services)
+					{
+						var container = document.createElement('div'), title = document.createElement('h2'), serviceConfig = document.createElement('div');
+
+						container.className = 'type-container';
+
+						title.className = 'title-container';
+
+						if(device.services[i].letters != null)
+						{
+							title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters[1];
+						}
+						else
+						{
+							title.innerHTML = device.services[i].type + ' ' + i;
+						}
+
+						title.style.marginBottom = '40px';
+
+						serviceConfig.className = 'service-settings';
+						serviceConfig.setAttribute('letters', device.services[i].letters);
+
+						var configService = getConfigService(device.services[i].letters);
+
+						if(configService != null)
+						{
+							for(const j in device.services[i])
+							{
+								if(j != 'iid' && j != 'format' && j != 'state' && j != 'letters' && j != 'type' && j != 'function' && !(device.services[i][j] instanceof Object) && !Array.isArray(device.services[i][j]))
+								{
+									var p = document.createElement('p'), b = document.createElement('b'), input = document.createElement('input');
+
+									b.innerHTML = j + ': ';
+
+									input.setAttribute('name', j);
+									input.setAttribute('value', device.services[i][j]);
+									input.setAttribute('type', 'text');
+									input.setAttribute('required', '');
+									input.setAttribute('style', 'max-width: 325px');
+									input.setAttribute('oninput', 'Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')');
+
+									if(j == 'name')
+									{
+										input.removeAttribute('required');
+
+										if(configService.name == null)
+										{
+											input.setAttribute('placeholder', device.services[i].name);
+
+											input.removeAttribute('value');
+										}
+										else
+										{
+											input.setAttribute('value', configService.name);
+										}
+									}
+
+									b.appendChild(input);
+									p.appendChild(b);
+
+									serviceConfig.appendChild(p);
+								}
+							}
+						}
+
+						if(serviceConfig.childElementCount > 0)
+						{
+							container.appendChild(title);
+							container.appendChild(serviceConfig);
+
+							document.getElementById('service-form').appendChild(container);
+						}
+					}
+				}
 
 				for(var i = 0; i < counter; i++)
 				{
@@ -1968,6 +2048,31 @@
 							}
 						}
 
+						settings.services = [];
+
+						var serviceSettings = document.getElementsByClassName('service-settings');
+
+						for(var i = 0; i < serviceSettings.length; i++)
+						{
+							var form = serviceSettings[i].getElementsByTagName('input'), serviceConfig = {};
+
+							serviceConfig.letters = serviceSettings[i].getAttribute('letters');
+
+							for(var j = 0; j < form.length; j++)
+							{
+								if(form[j].getAttribute('type') == 'button')
+								{
+									serviceConfig[form[j].getAttribute('name')] = (form[j].value == '%characteristics.boolean.active%' ? 1 : 0);
+								}
+								else if(form[j].getAttribute('type') == 'text' && (form[j].value != '' || !form[j].hasAttribute('required')))
+								{
+									serviceConfig[form[j].getAttribute('name')] = form[j].value;
+								}
+							}
+
+							settings.services.push(serviceConfig);
+						}
+
 						console.log('SAVE DEVIE CONFIG', settings);
 
 						var overlays = {
@@ -2133,6 +2238,40 @@
 					}
 
 					return '#' + r + g + b;
+				}
+
+				// TODO: Need To Add Counter From Letters
+
+				function getConfigService(letters)
+				{
+					if(letters != null)
+					{
+						var type = Essentials.letterToType(letters[0]);
+
+						if(Array.isArray(device.config.services))
+						{
+							for(const i in device.config.services)
+							{
+								if(device.config.services[i].type == type)
+								{
+									return device.config.services[i];
+								}
+							}
+						}
+						else if(device.config.services instanceof Object)
+						{
+							if(device.config.services.type == type)
+							{
+								return device.config.services;
+							}
+						}
+						else
+						{
+							return { type : device.config.services };
+						}
+					}
+
+					return null;
 				}
 
 			</script>
