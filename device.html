@@ -107,7 +107,7 @@
 			</div>
 			<div id="settings" style="display: none; transition: .2s opacity ease-in-out">
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
-					<div class="type-container" style="margin-bottom: 20px">
+					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%device.general%</h2>
 						<div id="general-settings">
 							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
@@ -421,6 +421,7 @@
 									b.innerHTML = j + ': ';
 
 									input.setAttribute('name', j);
+									input.setAttribute('placeholder', configService.name || device.services[i].name);
 									input.setAttribute('value', device.services[i][j]);
 									input.setAttribute('type', 'text');
 									input.setAttribute('required', '');
@@ -433,8 +434,6 @@
 
 										if(configService.name == null)
 										{
-											input.setAttribute('placeholder', device.services[i].name);
-
 											input.removeAttribute('value');
 										}
 										else
