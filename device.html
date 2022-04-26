@@ -76,6 +76,33 @@
 					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form-main" value="%general.save%"></div>';
 
 					PageManager.setFooter(main);
+
+					if(device.plugin.alias.startsWith('SynTex'))
+					{
+						var reset = document.createElement('input');
+
+						reset.setAttribute('id', 'reset-btn');
+						reset.setAttribute('type', 'button');
+						reset.setAttribute('value', '%device.reset_device%');
+						reset.setAttribute('onclick', 'resetDevice(this)');
+						reset.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reset);
+					}
+
+					if(device.plugin.alias == 'SynTex')
+					{
+						var reconnect = document.createElement('input');
+
+						reconnect.setAttribute('id', 'reconnect-btn');
+						reconnect.setAttribute('type', 'button');
+						reconnect.setAttribute('value', '%device.reconnect%');
+						reconnect.setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
+						reconnect.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reconnect);
+					}
+					
 					PageManager.showFooter();
 
 					PageManager.switchPage('infos', 'settings', true);
@@ -115,8 +142,6 @@
 						</div>
 					</div>
 					<div id="service-form" style="margin-bottom: 20px"></div>
-					<input id="reset-btn" type="button" value="%device.reset_device%" onclick="resetDevice(this)">
-					<input id="reconnect-btn" style="margin-top: 20px" type="button" value="%device.reconnect%">
 				</form>
 			</div>
 			<script type="module">
@@ -243,16 +268,6 @@
 
 				loadServices();
 
-				if(Presets.getPreset(device.plugin.alias) == null || Presets.getPreset(device.plugin.alias).getReconnectURL(device) == null)
-				{
-					document.getElementById('reconnect-btn').style.display = 'none';
-				}
-
-				if(Presets.getPreset(device.plugin.alias) == null || Presets.getPreset(device.plugin.alias).getResetURL(device, { type : Essentials.getType(services) }) == null)
-				{
-					document.getElementById('reset-btn').style.display = 'none';
-				}
-
 				if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
 				{
 					if(device.active != null)
@@ -341,8 +356,6 @@
 
 				document.getElementById('footer-content').setAttribute('type', Essentials.getType(services));
 				document.getElementById('footer-content').setAttribute('version', device.version);
-
-				document.getElementById('reconnect-btn').setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
 
 				var settingsForm = document.getElementById('general-settings');
 
@@ -1555,6 +1568,33 @@
 					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form-main" value="%device.save%"></div>';
 
 					PageManager.setFooter(main);
+
+					if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getResetURL(device, { type : Essentials.getType(services) }) != null)
+					{
+						var reset = document.createElement('input');
+
+						reset.setAttribute('id', 'reset-btn');
+						reset.setAttribute('type', 'button');
+						reset.setAttribute('value', '%device.reset_device%');
+						reset.setAttribute('onclick', 'resetDevice(this)');
+						reset.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reset);
+					}
+
+					if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getReconnectURL(device) != null)
+					{
+						var reconnect = document.createElement('input');
+
+						reconnect.setAttribute('id', 'reconnect-btn');
+						reconnect.setAttribute('type', 'button');
+						reconnect.setAttribute('value', '%device.reconnect%');
+						reconnect.setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
+						reconnect.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reconnect);
+					}
+
 					PageManager.showFooter(true);
 
 					await PageManager.switchPage(previous, 'settings', false);
