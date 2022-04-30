@@ -4,7 +4,7 @@ var accessories, configOBJ = null;
 
 module.exports = class DeviceManager
 {
-	constructor(platform, PluginManager)
+	constructor(platform, PluginManager, OfflineManager)
 	{
 		this.platform = platform;
 
@@ -12,15 +12,21 @@ module.exports = class DeviceManager
 		this.files = platform.files;
 
 		this.PluginManager = PluginManager;
+		this.OfflineManager = OfflineManager;
 
 		this.reloading = false;
 
-		this.reloadConfig().then((success) => {
+		this.files.readFile('storage.json').then((storage) => {
 
-			if(success)
-			{
-				this.convertConfig() ? this.saveAccessories() : this.reloadAccessories();
-			}
+			this.storage = storage || {};
+
+			this.reloadConfig().then((success) => {
+
+				if(success)
+				{
+					(this.convertConfig() ? this.saveAccessories() : this.reloadAccessories()).then(() => { platform.restart = false });
+				}
+			});
 		});
 	}
 
@@ -29,11 +35,49 @@ module.exports = class DeviceManager
 		this.webHooksPort = webHooksPort;
 	}
 
+	setAccessoryValues(values)
+	{
+		return new Promise((resolve) => {
+
+			if(values.id != null && values.plugin != null)
+			{
+				if(values.plugin.startsWith('SynTex'))
+				{
+					var needToSave = false;
+
+					if(this.setConfigAccessory(values.id, values))
+					{
+						needToSave = true;
+					}
+
+					if(values.services != null)
+					{
+						if(this.setConfigServices(values.id, values.services))
+						{
+							needToSave = true;
+						}
+					}
+
+					if(needToSave)
+					{
+						resolve(this.saveAccessories());
+					}
+				}
+				else
+				{
+					resolve(this.setStorageAccessory(values.id, values));
+				}
+			}
+		});
+	}
+
+	// NOTE: Create Accessories / Services
+
 	initDevice(id, ip, name, version, events, services)
 	{
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 			
-			var device = await this.getStorageAccessory(id);
+			var device = this.getConfigAccessory(id);
 
 			name = name.replace(new RegExp('%', 'g'), ' ');
 
@@ -47,7 +91,7 @@ module.exports = class DeviceManager
 				}
 
 				var obj = {
-					name : this.getConfigAccessory(id) != null && this.getConfigAccessory(id).name != null ? this.getConfigAccessory(id).name : name,
+					name : device['name'] || name,
 					active : device['active'] || 1,
 					interval : device['interval'] || 10000,
 					led : device['led'] || 0,
@@ -72,44 +116,25 @@ module.exports = class DeviceManager
 								this.removeFromConfig(id);
 							}
 
-							addToConfig(id, ip, name, services, events.length);
+							addToConfig({ id, name, ip, services, active : 1, led : 1, interval : 10000 }, events.length);
 
 							this.saveAccessories().then((success) => {
 
 								if(success)
 								{
-									var device = {
-										id: id,
-										ip: ip,
-										name: name,
-										active: 1,
-										interval: 10000,
-										led: 1
+									this.logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
+
+									this.reloadAccessories();
+
+									var obj = {
+										name : name, 
+										active : 1,
+										interval : 10000,
+										led : 1,
+										port : this.webHooksPort
 									};
 
-									this.files.writeFile('devices/' + id + '.json', device).then((response) => {
-
-										if(response.success)
-										{
-											this.logger.log('success', id, name, '[' + name + '] %accessory_add%! ( ' + id + ' )');
-
-											this.reloadAccessories();
-
-											var obj = {
-												name : name, 
-												active : 1,
-												interval : 10000,
-												led : 1,
-												port : this.webHooksPort
-											};
-
-											resolve(['Init', JSON.stringify(obj)]);
-										}
-										else
-										{
-											resolve(['Error', '']);
-										}
-									});
+									resolve(['Init', JSON.stringify(obj)]);
 								}
 								else
 								{
@@ -143,7 +168,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	initAccessory(id, name, services)
+	initAccessory(id, name, type)
 	{
 		return new Promise((resolve) => {
 			
@@ -153,7 +178,7 @@ module.exports = class DeviceManager
 			}
 			else if(configOBJ != null)
 			{
-				addToConfig(id, null, name, services, 0);
+				addToConfig({ id, name, services : [{ type }] }, 0);
 
 				this.saveAccessories().then((success) => {
 
@@ -180,21 +205,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	getStorageAccessory(id)
-	{
-		return new Promise(resolve => {
-			
-			this.files.readFile('devices/' + id + '.json').then((data) => resolve(data));
-		});
-	}
-
-	getStorageAccessories()
-	{
-		return new Promise((resolve) => {
-			
-			this.files.readDirectory('devices').then((data) => resolve(data));
-		});
-	}
+	// NOTE: Combined Accessories / Services
 
 	getAccessory(id)
 	{
@@ -210,6 +221,11 @@ module.exports = class DeviceManager
 		}
 
 		return null;
+	}
+
+	getAccessories()
+	{
+		return accessories;
 	}
 
 	getService(id, iid)
@@ -253,126 +269,65 @@ module.exports = class DeviceManager
 		return services;
 	}
 
-	getAccessories()
+	// NOTE: Non SynTex Plugin Data Storage
+
+	getStorageAccessory(id)
 	{
-		return accessories;
-	}
-
-	setStorageAccessory(id, key, value)
-	{
-		return new Promise(resolve => {
-
-			this.files.readFile('devices/' + id + '.json').then((data) => {
-
-				if(data != null)
-				{
-					data[key] = value;
-
-					this.files.writeFile('devices/' + id + '.json', data).then((response) => {
-
-						if(response.success)
-						{
-							this.reloadAccessories();
-						}
-
-						resolve(response.success);
-					});
-				}
-				else
-				{
-					resolve(false);
-				}
-			});
-		});
-	}
-
-	setAccessoryValues(values)
-	{
-		return new Promise(async (resolve) => {
-
-			if(values.id != null && values.plugin != null)
-			{
-				var needToSave = false;
-
-				if(values.plugin.startsWith('SynTex'))
-				{
-					if(values.name != null)
-					{
-						if(this.setConfigAccessory(values.id, { name : values.name }))
-						{
-							needToSave = true;
-						}
-					}
-
-					if(values.services != null)
-					{
-						if(this.setConfigServices(values.id, values.services))
-						{
-							needToSave = true;
-						}
-					}
-				}
-
-				if(needToSave)
-				{
-					await this.saveAccessories();
-				}
-
-				this.files.readFile('devices/' + values.id + '.json').then((data) => {
-
-					if(data != null)
-					{
-						for(const i in values)
-						{
-							if(i != 'id' && i != 'plugin' && i != 'services' && (i != 'name' || !values.plugin.startsWith('SynTex')))
-							{
-								data[i] = values[i];
-							}
-						}    
-					}
-					else
-					{
-						data = { id : values.id };
-						
-						for(const i in values)
-						{
-							if(i != 'id' && i != 'plugin' && i != 'services'  && (i != 'name' || !values.plugin.startsWith('SynTex')))
-							{
-								data[i] = values[i];
-							}
-						}
-					}
-
-					this.files.writeFile('devices/' + values.id + '.json', data).then((response) => {
-
-						this.reloadAccessories();
-
-						resolve(response.success);
-					});
-				});
-			}
-		});
-	}
-
-	setConfigAccessory(id, values)
-	{
-		var needToSave = false, accessory = this.getConfigAccessory(id);
-
-		if(accessory != null)
+		if(this.storage != null)
 		{
-			for(const x in values)
-			{
-				if(accessory[x] != values[x])
-				{
-					accessory[x] = values[x];
-
-					needToSave = true;
-				}
-			}
+			return this.storage[id];
+		}
+		else
+		{
+			// TODO: Log Storage Not Ready
 		}
 
-		return needToSave;
+		return null;
 	}
+
+	getStorageAccessories()
+	{
+		if(this.storage != null)
+		{
+			return this.storage;
+		}
+		else
+		{
+			// TODO: Log Storage Not Ready
+		}
+
+		return null;
+	}
+
+	setStorageAccessory(id, values)
+	{
+		return new Promise((resolve) => {
+
+			if(this.storage != null)
+			{
+				if(this.storage[id] == null)
+				{
+					this.storage[id] = {};
+				}
+
+				for(const x in values)
+				{
+					if(x != 'id' && x != 'plugin' && x != 'services')
+					{	
+						this.storage[id][x] = values[x];
+					}
+				}
+
+				this.files.writeFile('storage.json', this.storage).then((response) => resolve(response.success));
+			}
+			else
+			{
+				// TODO: Log Storage Not Ready
+			}
+		});
+	}
+
+	// NOTE: Config Accessories / Services
 
 	getConfigAccessory(id)
 	{
@@ -382,7 +337,7 @@ module.exports = class DeviceManager
 			{
 				if(configOBJ.platforms[i].accessories != null)
 				{
-					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
+					for(const j in configOBJ.platforms[i].accessories)
 					{
 						if(configOBJ.platforms[i].accessories[j].id == id)
 						{
@@ -400,6 +355,104 @@ module.exports = class DeviceManager
 		return null;
 	}
 
+	setConfigAccessory(id, values)
+	{
+		var needToSave = false, accessory = this.getConfigAccessory(id);
+
+		if(accessory != null)
+		{
+			for(const x in values)
+			{
+				if(accessory[x] != values[x] && x != 'id' && x != 'plugin' && x != 'services')
+				{
+					accessory[x] = values[x];
+
+					needToSave = true;
+				}
+			}
+
+			if(values.group == '' && accessory.group != null)
+			{
+				delete accessory.group;
+
+				needToSave = true;
+			}
+		}
+
+		return needToSave;
+	}
+
+	getConfigService(id, letters)
+	{
+		var accessory = this.getConfigAccessory(id), typeCounter = {};
+
+		if(accessory != null)
+		{
+			for(const i in accessory.services)
+			{
+				if(typeCounter[accessory.services[i].type] != null)
+				{
+					typeCounter[accessory.services[i].type]++;
+				}
+				else
+				{
+					typeCounter[accessory.services[i].type] = 0;
+				}
+
+				if(typeToLetter(accessory.services[i].type) + '' + typeCounter[accessory.services[i].type] == letters)
+				{
+					return accessory.services[i];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	setConfigService(id, letters, values)
+	{
+		var needToSave = false, service = this.getConfigService(id, letters);
+
+		if(service != null)
+		{
+			for(const x in values)
+			{
+				if(service[x] != values[x] && x != 'letters')
+				{
+					service[x] = values[x];
+
+					needToSave = true;
+				}
+			}
+
+			if(values.name == '' && service.name != null)
+			{
+				delete service.name;
+
+				needToSave = true;
+			}
+		}
+
+		return needToSave;
+	}
+
+	setConfigServices(id, services)
+	{
+		var needToSave = false;
+
+		for(const i in services)
+		{
+			if(this.setConfigService(id, services[i].letters, services[i]))
+			{
+				needToSave = true;
+			}
+		}
+
+		return needToSave;
+	}
+
+	// NOTE: Other Stuff
+
 	getBridgePort()
 	{
 		if(configOBJ != null && configOBJ.bridge != null && configOBJ.bridge.port != null)
@@ -414,129 +467,129 @@ module.exports = class DeviceManager
 
 	reloadAccessories()
 	{
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 
 			if(!this.reloading)
 			{
 				this.reloading = true;
 
-				accessories = [];
+				this.getBridgeAccessories().then((bridgeAccessories) => {
 
-				var bridgeAccessories = await this.getBridgeAccessories();
+					accessories = bridgeAccessories || [];
 
-				if(bridgeAccessories != null)
-				{
-					accessories.push.apply(accessories, bridgeAccessories);
-				}
+					var storageAccessories = this.getStorageAccessories();
 
-				var storageAccessories = await this.getStorageAccessories();
-
-				if(storageAccessories != null)
-				{
-					if(accessories.length > 0)
+					if(storageAccessories != null)
 					{
-						for(const i in accessories)
+						if(accessories.length > 0)
 						{
-							for(const j in storageAccessories)
+							for(const i in accessories)
 							{
-								if(storageAccessories[j].id == accessories[i].id)
+								for(const id in storageAccessories)
 								{
-									for(const x in storageAccessories[j])
+									if(accessories[i].id == id)
 									{
-										if(x != 'id' && x != 'version' && x != 'ip' && (x != 'name' || !accessories[i].plugin.alias.startsWith('SynTex')))
+										for(const x in storageAccessories[id])
 										{
-											accessories[i][x] = storageAccessories[j][x];
+											if(x != 'id' && x != 'version' && x != 'ip' && (x != 'name' || !accessories[i].plugin.alias.startsWith('SynTex')))
+											{
+												accessories[i][x] = storageAccessories[id][x];
+											}
+										}
+									}
+								}
+							}
+						}
+						else
+						{
+							// TODO: Convert storageAccessories to Array
+
+							accessories.push.apply(accessories, storageAccessories);
+						}
+					}
+
+					if(configOBJ != null && configOBJ.platforms != null)
+					{
+						for(const i in configOBJ.platforms)
+						{
+							if(configOBJ.platforms[i].platform != null && configOBJ.platforms[i].accessories != null && configOBJ.platforms[i].platform.startsWith('SynTex'))
+							{
+								for(const j in configOBJ.platforms[i].accessories)
+								{
+									for(const k in accessories)
+									{
+										if(accessories[k].id == configOBJ.platforms[i].accessories[j].id)
+										{
+											accessories[k].config = configOBJ.platforms[i].accessories[j];
+
+											for(const x in configOBJ.platforms[i].accessories[j])
+											{
+												if(x != 'id' && x != 'plugin' && x != 'services')
+												{
+													accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
+												}
+												else if(x == 'plugin')
+												{
+													accessories[k].plugin = { alias : configOBJ.platforms[i].accessories[j][x] };
+												}
+											}
+
+											accessories[k].services = convertServices(accessories[k].services, configOBJ.platforms[i].accessories[j].services);
 										}
 									}
 								}
 							}
 						}
 					}
-					else
-					{
-						accessories.push.apply(accessories, storageAccessories);
-					}
-				}
 
-				if(configOBJ != null && configOBJ.platforms != null)
-				{
-					for(const i in configOBJ.platforms)
+					// OPTIMIZE: Check if Accessory is Deleted
+
+					var plugins = this.PluginManager.getPlugins();
+
+					for(const i in accessories)
 					{
-						if(configOBJ.platforms[i].platform != null && configOBJ.platforms[i].accessories != null && configOBJ.platforms[i].platform.startsWith('SynTex'))
+						if(accessories[i].plugin != null)
 						{
-							for(const j in configOBJ.platforms[i].accessories)
+							for(const id in plugins)
 							{
-								for(const k in accessories)
+								if(plugins[id].alias == accessories[i].plugin.alias)
 								{
-									if(accessories[k].id == configOBJ.platforms[i].accessories[j].id)
+									accessories[i].plugin.id = id;
+									accessories[i].plugin.name = plugins[id].name;
+
+									if(plugins[id].config != null)
 									{
-										accessories[k].config = configOBJ.platforms[i].accessories[j];
-
-										for(const x in configOBJ.platforms[i].accessories[j])
-										{
-											if(x != 'id' && x != 'plugin' && x != 'services')
-											{
-												accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
-											}
-											else if(x == 'plugin')
-											{
-												accessories[k].plugin = { alias : configOBJ.platforms[i].accessories[j][x] };
-											}
-										}
-
-										accessories[k].services = convertServices(accessories[k].services, configOBJ.platforms[i].accessories[j].services);
+										accessories[i].plugin.port = plugins[id].config.options.port;
 									}
 								}
 							}
-						}
-					}
-				}
 
-				// OPTIMIZE: Check if Accessory is Deleted
-
-				var plugins = this.PluginManager.getPlugins();
-
-				for(const i in accessories)
-				{
-					if(accessories[i].plugin != null)
-					{
-						for(const id in plugins)
-						{
-							if(plugins[id].alias == accessories[i].plugin.alias)
+							if(accessories[i].plugin.alias == 'SynTexWebHooks' && accessories[i].ip != null)
 							{
-								accessories[i].plugin.id = id;
-								accessories[i].plugin.name = plugins[id].name;
+								accessories[i].plugin.alias = 'SynTex';
+							}
 
-								if(plugins[id].config != null)
+							if(accessories[i].plugin.alias == 'SynTexMagicHome')
+							{
+								if(accessories[i].type == 'light')
 								{
-									accessories[i].plugin.port = plugins[id].config.options.port;
+									accessories[i].spectrum = 'HSL'; 
 								}
 							}
-						}
 
-						if(accessories[i].plugin.alias == 'SynTexWebHooks' && accessories[i].ip != null)
-						{
-							accessories[i].plugin.alias = 'SynTex';
-						}
-
-						if(accessories[i].plugin.alias == 'SynTexMagicHome')
-						{
-							if(accessories[i].type == 'light')
+							if(accessories[i].plugin.alias == 'SynTexWebHooks' || accessories[i].plugin.alias == 'SynTexMagicHome' || accessories[i].plugin.alias == 'SynTexTuya' || accessories[i].plugin.alias == 'SynTexKNX')
 							{
-								accessories[i].spectrum = 'HSL'; 
+								accessories[i].version = '0.0.0';
 							}
 						}
-
-						if(accessories[i].plugin.alias == 'SynTexWebHooks' || accessories[i].plugin.alias == 'SynTexMagicHome' || accessories[i].plugin.alias == 'SynTexTuya' || accessories[i].plugin.alias == 'SynTexKNX')
-						{
-							accessories[i].version = '0.0.0';
-						}
 					}
-				}
 
-				this.reloading = false;
+					this.OfflineManager.setDevices(accessories);
 
-				resolve();
+					this.reloading = false;
+
+					resolve();
+				});
 			}
 			else
 			{
@@ -547,16 +600,18 @@ module.exports = class DeviceManager
 
 	saveAccessories()
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', configOBJ).then((response) => {
 
 				if(response.success)
 				{
-					this.reloadAccessories();
+					this.reloadAccessories().then(() => resolve(true));
 				}
-
-				resolve(response.success);
+				else
+				{
+					resolve(false);
+				}
 			});
 		});
 	}
@@ -580,7 +635,7 @@ module.exports = class DeviceManager
 
 	removeFromStorage(id)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.files.deleteFile('devices/' + id + '.json').then((success) => {
 
@@ -729,7 +784,7 @@ module.exports = class DeviceManager
 
 	reloadConfig()
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.files.readFile(this.platform.api.user.storagePath() + '/config.json').then((config) => {
 
@@ -741,73 +796,6 @@ module.exports = class DeviceManager
 				resolve(config != null);
 			});
 		});
-	}
-
-	getConfigService(id, letters)
-	{
-		var accessory = this.getConfigAccessory(id), typeCounter = {};
-
-		if(accessory != null)
-		{
-			for(const i in accessory.services)
-			{
-				if(typeCounter[accessory.services[i].type] != null)
-				{
-					typeCounter[accessory.services[i].type]++;
-				}
-				else
-				{
-					typeCounter[accessory.services[i].type] = 0;
-				}
-
-				if(typeToLetter(accessory.services[i].type) + '' + typeCounter[accessory.services[i].type] == letters)
-				{
-					return accessory.services[i];
-				}
-			}
-		}
-
-		return null;
-	}
-
-	setConfigService(id, letters, values)
-	{
-		var needToSave = false, service = this.getConfigService(id, letters);
-
-		if(service != null)
-		{
-			for(const x in values)
-			{
-				if(x != 'letters' && service[x] != values[x])
-				{
-					service[x] = values[x];
-
-					needToSave = true;
-				}
-			}
-
-			if(values.name == '' && service.name != null)
-			{
-				delete service.name;
-			}
-		}
-
-		return needToSave;
-	}
-
-	setConfigServices(id, services)
-	{
-		var needToSave = false;
-
-		for(const i in services)
-		{
-			if(this.setConfigService(id, services[i].letters, services[i]))
-			{
-				needToSave = true;
-			}
-		}
-
-		return needToSave;
 	}
 
 	convertConfig()
@@ -874,7 +862,7 @@ function checkID(id)
 	return true;
 }
 
-function addToConfig(id, ip, name, services, buttons)
+function addToConfig(accessory, buttons)
 {
 	for(const i in configOBJ.platforms)
 	{
@@ -883,13 +871,13 @@ function addToConfig(id, ip, name, services, buttons)
 			var accessories = configOBJ.platforms[i].accessories;
 			var index = accessories.length;
 
-			accessories[index] = { id : id, name : name, services : services };
+			accessories[index] = accessory;
 
-			if(services.includes('relais') || services.includes('statelessswitch') || services.includes('rgb') || services.includes('rgbw') || services.includes('rgbww') || services.includes('rgbcw'))
+			if(accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || accessory.services.includes('rgb') || accessory.services.includes('rgbw') || accessory.services.includes('rgbww') || accessory.services.includes('rgbcw'))
 			{
-				for(var j = 0; j < services.length; j++)
+				for(var j = 0; j < accessory.services.length; j++)
 				{
-					var type = services[j];
+					var type = accessory.services[j];
 
 					if(type == 'relais' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
@@ -898,13 +886,13 @@ function addToConfig(id, ip, name, services, buttons)
 
 					if(type == 'relais')
 					{
-						accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + ip + '/relais?value=true' });
-						accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + ip + '/relais?value=false' });
+						accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=true' });
+						accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=false' });
 					}
 					
 					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 					{
-						accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + ip + '/color' });
+						accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + accessory.ip + '/color' });
 					}
 
 					if(type == 'statelessswitch')

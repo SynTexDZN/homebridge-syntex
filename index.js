@@ -4,8 +4,6 @@ const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('
 
 const fs = require('fs'), axios = require('axios'), path = require('path');
 
-var restart = true, updating = false;
-
 const pluginID = 'homebridge-syntex';
 const pluginName = 'SynTex';
 const pluginVersion = require('./package.json').version;
@@ -24,6 +22,9 @@ class SynTexPlatform
 		}
 
 		this.options = {};
+
+		this.restart = true;
+		this.updating = false;
 
 		this.api = api;
 
@@ -62,14 +63,14 @@ class SynTexPlatform
 
 		if(this.logger != null && this.baseDirectory != null)
 		{
-			this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'devices', 'log']);
+			this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'log']);
 
 			HTMLQuery = new HTMLQuery(this.logger);
 			Automation = new Automation(this.logger, this.files);
 			PluginManager = new PluginManager(this, 600);
-			DeviceManager = new DeviceManager(this, PluginManager);
-			UpdateManager = new UpdateManager(this.logger, 600);
 			OfflineManager = new OfflineManager(this.logger);
+			DeviceManager = new DeviceManager(this, PluginManager, OfflineManager);
+			UpdateManager = new UpdateManager(this.logger, 600);
 
 			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
 			
@@ -80,19 +81,9 @@ class SynTexPlatform
 
 				DeviceManager.setWebHooksPort(config.options.port);
 
-				DeviceManager.getStorageAccessories().then((devices) => {
+				this.initWebServer();
 
-					if(devices != null)
-					{
-						OfflineManager.setDevices(devices);
-					}
-
-					this.initWebServer();
-
-					restart = false;
-
-					this.files.writeFile('info.json', { restart : new Date().getTime() });
-				});
+				this.files.writeFile('info.json', { restart : new Date().getTime() });
 			});
 
 			this.files.readFile(this.api.user.storagePath() + '/config.json').then((config) => {
@@ -128,17 +119,26 @@ class SynTexPlatform
 
 			const { exec } = require('child_process');
 
-			exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+			exec('sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (ethError, ethStdOut, ethStdErr) => {
 
-				exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (error, stdout, stderr) => {
+				if(ethError || ethStdErr.includes('ERR!'))
+				{
+					this.logger.log('warn', 'bridge', 'Bridge', 'LAN %port_redirection_error%!', ethError);
+				}
+				else
+				{
+					this.logger.log('info', 'bridge', 'Bridge', 'LAN %port_redirection_success% [80]');
+				}
 
-					if(error || stderr.includes('ERR!'))
+				exec('sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 1711', (wlanError, wlanStdOut, wlanStdErr) => {
+
+					if(wlanError || wlanStdErr.includes('ERR!'))
 					{
-						this.logger.log('error', 'bridge', 'Bridge', '%port_redirection_error%!', error);
+						this.logger.log('warn', 'bridge', 'Bridge', 'WLAN %port_redirection_error%!', wlanError);
 					}
 					else
 					{
-						this.logger.log('warn', 'bridge', 'Bridge', '%port_redirection_success% [80]');
+						this.logger.log('info', 'bridge', 'Bridge', 'WLAN %port_redirection_success% [80]');
 					}
 				});
 			});
@@ -349,15 +349,6 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/remove-device', async (request, response, urlParams) => {
-
-			if(urlParams.id != null)
-			{
-				response.write(await DeviceManager.removeFromStorage(urlParams.id) ? 'Success' : 'Error');
-				response.end();
-			}
-		});
-
 		this.WebServer.addPage('/serverside/init', (request, response, urlParams) => {
 	
 			if(urlParams.name != null && urlParams.id != null && urlParams.ip != null && urlParams.version != null && urlParams.buttons != null)
@@ -381,7 +372,7 @@ class SynTexPlatform
 
 					if(res[0] == 'Init')
 					{
-						restart = true;
+						this.restart = true;
 
 						const { exec } = require('child_process');
 
@@ -405,7 +396,7 @@ class SynTexPlatform
 
 					if(res[0] == 'Success')
 					{
-						restart = true;
+						this.restart = true;
 
 						const { exec } = require('child_process');
 
@@ -425,7 +416,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/restart', (request, response) => {
 
-			restart = true;
+			this.restart = true;
 
 			const { exec } = require('child_process');
 			
@@ -439,7 +430,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/check-restart', (request, response) => {
 
-			response.write(restart.toString());
+			response.write(this.restart.toString());
 			response.end();
 		});
 
@@ -455,7 +446,7 @@ class SynTexPlatform
 
 			if(urlParams.status != null)
 			{
-				response.write(updating.toString());
+				response.write(this.updating.toString());
 				response.end();
 			}
 			else
@@ -463,7 +454,7 @@ class SynTexPlatform
 				var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
 				var version = urlParams.version != null ? urlParams.version : 'latest';
 
-				updating = true;
+				this.updating = true;
 
 				const { exec } = require('child_process');
 				
@@ -477,14 +468,14 @@ class SynTexPlatform
 					{
 						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
 						
-						restart = true;
+						this.restart = true;
 
 						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 						
 						exec('sudo systemctl restart homebridge');
 					}
 
-					updating = false;
+					this.updating = false;
 				});
 
 				response.write('Success');
@@ -607,9 +598,9 @@ class SynTexPlatform
 
 			if(urlParams.id != null)
 			{
-				var device = await DeviceManager.getStorageAccessory(urlParams.id);
+				var device = await DeviceManager.getConfigAccessory(urlParams.id);
 
-				response.write(device ? 'Success' : 'Error');
+				response.write(device != null ? 'Success' : 'Error');
 				response.end();
 			}
 		});
@@ -656,14 +647,6 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/reload-accessories', async (request, response) => {
-
-			DeviceManager.reloadAccessories();
-
-			response.write('Success');
-			response.end();
-		});
-
 		this.WebServer.addPage('/serverside/plugins', async (request, response, urlParams) => {
 
 			if(urlParams.reload != null)
@@ -683,7 +666,13 @@ class SynTexPlatform
 
 					if(writeResponse.success)
 					{
-						DeviceManager.reloadAccessories();
+						DeviceManager.reloadConfig().then((success) => {
+
+							if(success)
+							{
+								DeviceManager.reloadAccessories();
+							}
+						});
 					}
 	
 					response.end(writeResponse.success ? 'Success' : 'Error');
@@ -692,6 +681,8 @@ class SynTexPlatform
 		});
 
 		this.WebServer.addPage('/device', async (request, response, urlParams, content) => {
+
+			// TODO: Remove When Reload On Every Change Is Stable
 
 			await DeviceManager.reloadAccessories();
 
@@ -702,6 +693,8 @@ class SynTexPlatform
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
 
 			var bridgeData = await this.files.readFile('info.json');
+
+			// TODO: Remove When Reload On Every Change Is Stable
 
 			await DeviceManager.reloadAccessories();
 
@@ -717,14 +710,6 @@ class SynTexPlatform
 			}
 			
 			response.write(HTMLQuery.sendValues(content, obj));
-			response.end();
-		});
-
-		this.WebServer.addPage('/settings', async (request, response, urlParams, content) => {
-
-			var devices = await DeviceManager.getStorageAccessories();
-
-			response.write(HTMLQuery.sendValue(content, 'devices', JSON.stringify(devices)));
 			response.end();
 		});
 

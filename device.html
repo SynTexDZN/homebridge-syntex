@@ -2033,8 +2033,6 @@
 
 							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', '%device.reset_success%!', 'green'));
 
-							await Query.complexFetch('/serverside/remove-device?id=' + device.id, 20000, 1, {}, false);
-
 							await Essentials.newTimeout(3000);
 
 							Essentials.leavePage('/');
