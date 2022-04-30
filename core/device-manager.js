@@ -598,65 +598,6 @@ module.exports = class DeviceManager
 		});
 	}
 
-	writeConfig()
-	{
-		return new Promise((resolve) => {
-
-			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', this.config).then((response) => {
-
-				if(response.success)
-				{
-					this.reloadAccessories().then(() => resolve(true));
-				}
-				else
-				{
-					resolve(false);
-				}
-			});
-		});
-	}
-
-	removeFromConfig(id)
-	{
-		for(const i in this.config.platforms)
-		{
-			if(this.config.platforms[i].platform === 'SynTexWebHooks')
-			{
-				for(const j in this.config.platforms[i].accessories)
-				{
-					if(this.config.platforms[i].accessories[j].id == id)
-					{
-						this.config.platforms[i].accessories.splice(j, 1);
-					}
-				}
-			}
-		}
-	}
-
-	removeFromStorage(id)
-	{
-		return new Promise((resolve) => {
-
-			this.files.deleteFile('devices/' + id + '.json').then((success) => {
-
-				if(!success)
-				{
-					this.logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!');
-				}
-
-				this.readConfig().then((success) => {
-
-					if(success)
-					{
-						this.reloadAccessories();
-					}
-				});
-
-				resolve(success);
-			});
-		});
-	}
-
 	getBridgeAccessories()
 	{
 		return new Promise((resolve) => {
@@ -798,6 +739,24 @@ module.exports = class DeviceManager
 		});
 	}
 
+	writeConfig()
+	{
+		return new Promise((resolve) => {
+
+			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', this.config).then((response) => {
+
+				if(response.success)
+				{
+					this.reloadAccessories().then(() => resolve(true));
+				}
+				else
+				{
+					resolve(false);
+				}
+			});
+		});
+	}
+
 	convertConfig()
 	{
 		var needToSave = false;
@@ -885,6 +844,23 @@ module.exports = class DeviceManager
 						{
 							accessories[index]['services'][j]['buttons'] = buttons;
 						}
+					}
+				}
+			}
+		}
+	}
+
+	removeFromConfig(id)
+	{
+		for(const i in this.config.platforms)
+		{
+			if(this.config.platforms[i].platform === 'SynTexWebHooks')
+			{
+				for(const j in this.config.platforms[i].accessories)
+				{
+					if(this.config.platforms[i].accessories[j].id == id)
+					{
+						this.config.platforms[i].accessories.splice(j, 1);
 					}
 				}
 			}
