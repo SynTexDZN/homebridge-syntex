@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-var accessories, configOBJ = null;
+var accessories = [];
 
 module.exports = class DeviceManager
 {
@@ -20,11 +20,11 @@ module.exports = class DeviceManager
 
 			this.storage = storage || {};
 
-			this.reloadConfig().then((success) => {
+			this.readConfig().then((success) => {
 
 				if(success)
 				{
-					(this.convertConfig() ? this.saveAccessories() : this.reloadAccessories()).then(() => { platform.restart = false });
+					(this.convertConfig() ? this.writeConfig() : this.reloadAccessories()).then(() => { platform.restart = false });
 				}
 			});
 		});
@@ -60,7 +60,7 @@ module.exports = class DeviceManager
 
 					if(needToSave)
 					{
-						resolve(this.saveAccessories());
+						resolve(this.writeConfig());
 					}
 				}
 				else
@@ -87,7 +87,7 @@ module.exports = class DeviceManager
 
 				if(needToSave)
 				{
-					this.saveAccessories();
+					this.writeConfig();
 				}
 
 				var obj = {
@@ -102,7 +102,7 @@ module.exports = class DeviceManager
 			}
 			else if(checkID(name))
 			{
-				if(configOBJ != null)
+				if(this.config != null)
 				{
 					try
 					{
@@ -116,9 +116,9 @@ module.exports = class DeviceManager
 								this.removeFromConfig(id);
 							}
 
-							addToConfig({ id, name, ip, services, active : 1, led : 1, interval : 10000 }, events.length);
+							this.addToConfig({ id, name, ip, services, active : 1, led : 1, interval : 10000 }, events.length);
 
-							this.saveAccessories().then((success) => {
+							this.writeConfig().then((success) => {
 
 								if(success)
 								{
@@ -176,11 +176,11 @@ module.exports = class DeviceManager
 			{
 				resolve(['Error', 'ID ist bereits Vergeben!']);          
 			}
-			else if(configOBJ != null)
+			else if(this.config != null)
 			{
-				addToConfig({ id, name, services : [{ type }] }, 0);
+				this.addToConfig({ id, name, services : [{ type }] }, 0);
 
-				this.saveAccessories().then((success) => {
+				this.writeConfig().then((success) => {
 
 					if(success)
 					{
@@ -331,17 +331,17 @@ module.exports = class DeviceManager
 
 	getConfigAccessory(id)
 	{
-		if(configOBJ != null && configOBJ.platforms != null)
+		if(this.config != null && this.config.platforms != null)
 		{
-			for(const i in configOBJ.platforms)
+			for(const i in this.config.platforms)
 			{
-				if(configOBJ.platforms[i].accessories != null)
+				if(this.config.platforms[i].accessories != null)
 				{
-					for(const j in configOBJ.platforms[i].accessories)
+					for(const j in this.config.platforms[i].accessories)
 					{
-						if(configOBJ.platforms[i].accessories[j].id == id)
+						if(this.config.platforms[i].accessories[j].id == id)
 						{
-							return configOBJ.platforms[i].accessories[j];
+							return this.config.platforms[i].accessories[j];
 						}	
 					}
 				}
@@ -455,9 +455,9 @@ module.exports = class DeviceManager
 
 	getBridgePort()
 	{
-		if(configOBJ != null && configOBJ.bridge != null && configOBJ.bridge.port != null)
+		if(this.config != null && this.config.bridge != null && this.config.bridge.port != null)
 		{
-			return configOBJ.bridge.port;
+			return this.config.bridge.port;
 		}
 		else
 		{
@@ -508,33 +508,33 @@ module.exports = class DeviceManager
 						}
 					}
 
-					if(configOBJ != null && configOBJ.platforms != null)
+					if(this.config != null && this.config.platforms != null)
 					{
-						for(const i in configOBJ.platforms)
+						for(const i in this.config.platforms)
 						{
-							if(configOBJ.platforms[i].platform != null && configOBJ.platforms[i].accessories != null && configOBJ.platforms[i].platform.startsWith('SynTex'))
+							if(this.config.platforms[i].platform != null && this.config.platforms[i].accessories != null && this.config.platforms[i].platform.startsWith('SynTex'))
 							{
-								for(const j in configOBJ.platforms[i].accessories)
+								for(const j in this.config.platforms[i].accessories)
 								{
 									for(const k in accessories)
 									{
-										if(accessories[k].id == configOBJ.platforms[i].accessories[j].id)
+										if(accessories[k].id == this.config.platforms[i].accessories[j].id)
 										{
-											accessories[k].config = configOBJ.platforms[i].accessories[j];
+											accessories[k].config = this.config.platforms[i].accessories[j];
 
-											for(const x in configOBJ.platforms[i].accessories[j])
+											for(const x in this.config.platforms[i].accessories[j])
 											{
 												if(x != 'id' && x != 'plugin' && x != 'services')
 												{
-													accessories[k][x] = configOBJ.platforms[i].accessories[j][x];
+													accessories[k][x] = this.config.platforms[i].accessories[j][x];
 												}
 												else if(x == 'plugin')
 												{
-													accessories[k].plugin = { alias : configOBJ.platforms[i].accessories[j][x] };
+													accessories[k].plugin = { alias : this.config.platforms[i].accessories[j][x] };
 												}
 											}
 
-											accessories[k].services = convertServices(accessories[k].services, configOBJ.platforms[i].accessories[j].services);
+											accessories[k].services = convertServices(accessories[k].services, this.config.platforms[i].accessories[j].services);
 										}
 									}
 								}
@@ -598,11 +598,11 @@ module.exports = class DeviceManager
 		});
 	}
 
-	saveAccessories()
+	writeConfig()
 	{
 		return new Promise((resolve) => {
 
-			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', configOBJ).then((response) => {
+			this.files.writeFile(this.platform.api.user.storagePath() + '/config.json', this.config).then((response) => {
 
 				if(response.success)
 				{
@@ -618,15 +618,15 @@ module.exports = class DeviceManager
 
 	removeFromConfig(id)
 	{
-		for(const i in configOBJ.platforms)
+		for(const i in this.config.platforms)
 		{
-			if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
+			if(this.config.platforms[i].platform === 'SynTexWebHooks')
 			{
-				for(const j in configOBJ.platforms[i].accessories)
+				for(const j in this.config.platforms[i].accessories)
 				{
-					if(configOBJ.platforms[i].accessories[j].id == id)
+					if(this.config.platforms[i].accessories[j].id == id)
 					{
-						configOBJ.platforms[i].accessories.splice(j, 1);
+						this.config.platforms[i].accessories.splice(j, 1);
 					}
 				}
 			}
@@ -644,7 +644,7 @@ module.exports = class DeviceManager
 					this.logger.log('error', 'bridge', 'Bridge', '%accessory_remove_settings_error%!');
 				}
 
-				this.reloadConfig().then((success) => {
+				this.readConfig().then((success) => {
 
 					if(success)
 					{
@@ -782,7 +782,7 @@ module.exports = class DeviceManager
 		});
 	}
 
-	reloadConfig()
+	readConfig()
 	{
 		return new Promise((resolve) => {
 
@@ -790,7 +790,7 @@ module.exports = class DeviceManager
 
 				if(config != null)
 				{
-					configOBJ = config;
+					this.config = config;
 				}
 
 				resolve(config != null);
@@ -802,15 +802,15 @@ module.exports = class DeviceManager
 	{
 		var needToSave = false;
 
-		if(configOBJ != null && configOBJ.platforms != null)
+		if(this.config != null && this.config.platforms != null)
 		{
-			for(const i in configOBJ.platforms)
+			for(const i in this.config.platforms)
 			{
-				if(configOBJ.platforms[i].platform.startsWith('SynTex') && configOBJ.platforms[i].accessories != null)
+				if(this.config.platforms[i].platform.startsWith('SynTex') && this.config.platforms[i].accessories != null)
 				{
-					for(var j = 0; j < configOBJ.platforms[i].accessories.length; j++)
+					for(var j = 0; j < this.config.platforms[i].accessories.length; j++)
 					{
-						var accessory = configOBJ.platforms[i].accessories[j];
+						var accessory = this.config.platforms[i].accessories[j];
 
 						if(Array.isArray(accessory.services))
 						{
@@ -847,6 +847,49 @@ module.exports = class DeviceManager
 
 		return needToSave;
 	}
+
+	addToConfig(accessory, buttons)
+	{
+		for(const i in this.config.platforms)
+		{
+			if(this.config.platforms[i].platform === 'SynTexWebHooks')
+			{
+				var accessories = this.config.platforms[i].accessories;
+				var index = accessories.length;
+
+				accessories[index] = accessory;
+
+				if(accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || accessory.services.includes('rgb') || accessory.services.includes('rgbw') || accessory.services.includes('rgbww') || accessory.services.includes('rgbcw'))
+				{
+					for(var j = 0; j < accessory.services.length; j++)
+					{
+						var type = accessory.services[j];
+
+						if(type == 'relais' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+						{
+							accessories[index]['services'][j] = { type : accessories[index]['services'][j], requests : [] };
+						}
+
+						if(type == 'relais')
+						{
+							accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=true' });
+							accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=false' });
+						}
+						
+						if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+						{
+							accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + accessory.ip + '/color' });
+						}
+
+						if(type == 'statelessswitch')
+						{
+							accessories[index]['services'][j]['buttons'] = buttons;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function checkID(id)
@@ -860,49 +903,6 @@ function checkID(id)
 	}
 
 	return true;
-}
-
-function addToConfig(accessory, buttons)
-{
-	for(const i in configOBJ.platforms)
-	{
-		if(configOBJ.platforms[i].platform === 'SynTexWebHooks')
-		{
-			var accessories = configOBJ.platforms[i].accessories;
-			var index = accessories.length;
-
-			accessories[index] = accessory;
-
-			if(accessory.services.includes('relais') || accessory.services.includes('statelessswitch') || accessory.services.includes('rgb') || accessory.services.includes('rgbw') || accessory.services.includes('rgbww') || accessory.services.includes('rgbcw'))
-			{
-				for(var j = 0; j < accessory.services.length; j++)
-				{
-					var type = accessory.services[j];
-
-					if(type == 'relais' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-					{
-						accessories[index]['services'][j] = { type : accessories[index]['services'][j], requests : [] };
-					}
-
-					if(type == 'relais')
-					{
-						accessories[index]['services'][j]['requests'].push({ trigger : 'on', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=true' });
-						accessories[index]['services'][j]['requests'].push({ trigger : 'off', method : 'GET', url : 'http://' + accessory.ip + '/relais?value=false' });
-					}
-					
-					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-					{
-						accessories[index]['services'][j]['requests'].push({ trigger : 'color', method : 'GET', url : 'http://' + accessory.ip + '/color' });
-					}
-
-					if(type == 'statelessswitch')
-					{
-						accessories[index]['services'][j]['buttons'] = buttons;
-					}
-				}
-			}
-		}
-	}
 }
 
 function convertServices(orginal, additional)

@@ -662,21 +662,13 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				this.files.writeFile(this.api.user.storagePath() + '/config.json', postJSON).then((writeResponse) => {
+				DeviceManager.config = postJSON;
 
-					if(writeResponse.success)
-					{
-						DeviceManager.reloadConfig().then((success) => {
-
-							if(success)
-							{
-								DeviceManager.reloadAccessories();
-							}
-						});
-					}
-	
-					response.end(writeResponse.success ? 'Success' : 'Error');
-				});
+				DeviceManager.writeConfig().then((success) => response.end(success ? 'Success' : 'Error'));
+			}
+			else
+			{
+				response.end('Error');
 			}
 		});
 
