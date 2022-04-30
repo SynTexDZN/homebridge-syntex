@@ -631,8 +631,7 @@ module.exports = class DeviceManager
 
 			axios.get('http://localhost:' + (this.getBridgePort() || '51826') + '/accessories').then((response) => {
 
-				var accessoryArray = [];
-				var accessoryJSON = response.data.accessories;
+				var accessoryArray = [], accessoryJSON = response.data.accessories;
 
 				for(const i in accessoryJSON)
 				{
