@@ -647,6 +647,11 @@ class SynTexPlatform
 			}
 		});
 
+		this.WebServer.addPage('/serverside/reload-accessories', async (request, response) => {
+
+			DeviceManager.reloadAccessories().then(() => response.end('Success'));
+		});
+
 		this.WebServer.addPage('/serverside/plugins', async (request, response, urlParams) => {
 
 			if(urlParams.reload != null)
@@ -674,10 +679,6 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/device', async (request, response, urlParams, content) => {
 
-			// TODO: Remove When Reload On Every Change Is Stable
-
-			await DeviceManager.reloadAccessories();
-
 			response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
 			response.end();
 		});
@@ -685,10 +686,6 @@ class SynTexPlatform
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
 
 			var bridgeData = await this.files.readFile('info.json');
-
-			// TODO: Remove When Reload On Every Change Is Stable
-
-			await DeviceManager.reloadAccessories();
 
 			var obj = {
 				devices: JSON.stringify(DeviceManager.getAccessories()),

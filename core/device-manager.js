@@ -62,6 +62,10 @@ module.exports = class DeviceManager
 					{
 						resolve(this.writeConfig());
 					}
+					else
+					{
+						resolve(true);
+					}
 				}
 				else
 				{
@@ -305,6 +309,8 @@ module.exports = class DeviceManager
 
 			if(this.storage != null)
 			{
+				var needToSave = false;
+
 				if(this.storage[id] == null)
 				{
 					this.storage[id] = {};
@@ -312,13 +318,22 @@ module.exports = class DeviceManager
 
 				for(const x in values)
 				{
-					if(x != 'id' && x != 'plugin' && x != 'services')
+					if(this.storage[id][x] != values[x] && x != 'id' && x != 'plugin' && x != 'services')
 					{	
 						this.storage[id][x] = values[x];
+
+						needToSave = true;
 					}
 				}
 
-				this.files.writeFile('storage.json', this.storage).then((response) => resolve(response.success));
+				if(needToSave)
+				{
+					this.files.writeFile('storage.json', this.storage).then((response) => this.reloadAccessories().then(() => resolve(response.success)));
+				}
+				else
+				{
+					resolve(true);
+				}
 			}
 			else
 			{

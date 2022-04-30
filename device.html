@@ -2029,7 +2029,7 @@
 
 						if(await Query.complexFetch(url, 20000, 1, overlays, true) == 'Success')
 						{
-							await Essentials.newTimeout(3000);
+							await Query.fetchURL('/serverside/reload-accessories', 20000);
 
 							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', '%device.reset_success%!', 'green'));
 
@@ -2040,6 +2040,7 @@
 						else
 						{
 							await Essentials.newTimeout(4010);
+
 							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
 						}
 
