@@ -158,7 +158,7 @@ class URLQuery
 
 					if(overlays.root && (overlays.connectionError.remove == undefined || overlays.connectionError.remove == true))
 					{
-						setTimeout(() => this.Essentials.removeOverlays(overlays.root, true), 4000);
+						setTimeout(() => this.Essentials.removeOverlays(overlays.root, true), 2000);
 					}
 				}
 				else if(fetch != 'Success' && overlays.root && overlays.executeError)
@@ -190,7 +190,7 @@ class URLQuery
 
 					if(overlays.root && (overlays.executeError.remove == undefined || overlays.executeError.remove == true))
 					{
-						setTimeout(() => this.Essentials.removeOverlays(overlays.root, true), 4000);
+						setTimeout(() => this.Essentials.removeOverlays(overlays.root, true), 2000);
 					}
 				}
 				else if(overlays.root && overlays.success)
@@ -222,7 +222,7 @@ class URLQuery
 
 					if(overlays.root && (overlays.success.remove == undefined || overlays.success.remove == true))
 					{
-						setTimeout(() => this.Essentials.removeOverlays(overlays.root, remove), 4000);
+						setTimeout(() => this.Essentials.removeOverlays(overlays.root, remove), 2000);
 					}
 				}
 
