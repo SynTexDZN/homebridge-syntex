@@ -164,8 +164,6 @@
 						}
 					}
 
-					// TODO: Add Dialogue With Restart Button Only When Changing The Bridge Config
-
 					var overlays = {
 						root : document.getElementById('save-btn'),
 						id : 'saving',
@@ -174,12 +172,15 @@
 						connectionError : { value : '%device.save_error%!' }
 					};
 
-					Query.complexFetch('/serverside/config', 10000, 1, overlays, true, JSON.stringify(configObject)).then(() => document.getElementById('save-btn').classList.remove('pulse'));
-				
-					if(JSON.stringify(configObject) != JSON.stringify(configJSON))
-					{
-						Dialogues.showRestartPanel('Da du Einstellungen der Bridge geändert hast, muss sie manuell neugestartet werden!');
-					}
+					Query.complexFetch('/serverside/config', 10000, 1, overlays, true, JSON.stringify(configObject)).then((data) => {
+
+						document.getElementById('save-btn').classList.remove('pulse');
+
+						if(data == 'Success' && JSON.stringify(configObject) != JSON.stringify(configJSON))
+						{
+							Dialogues.showRestartPanel('Da du Einstellungen der Bridge geändert hast, muss sie manuell neugestartet werden!');
+						}
+					});
 				}
 
 				function realTimeUpdate()
