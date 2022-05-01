@@ -4,10 +4,6 @@
 			<title>%general.dashboard%: %menu.automation%</title>
 			<script type="module">
 
-				import { PageManager } from '/js/page-manager.js';
-
-				window.PageManager = PageManager;
-
 				if((new URL(window.location.href)).searchParams.get('create') == '')
 				{
 					PageManager.setHeader('%menu.automation%', '%automation.create%');
