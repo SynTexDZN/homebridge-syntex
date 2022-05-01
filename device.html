@@ -165,73 +165,6 @@
 				window.temp = {};
 				window.graphData = {};
 
-				window.data = {
-					motion: {
-						active : { text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					occupancy: {
-						active : { text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					smoke: {
-						active : { text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					contact: {
-						active : { text : '%characteristics.contact.active%', color : 'hsl(350, 75%, 55%)' },
-						inactive : { text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					outlet: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					relais: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					switch: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					rain: {
-						active : { text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)' },
-						inactive : { text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					statelessswitch: {
-						active : { text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					led: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					dimmer: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgb: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbw: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbww: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbcw: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-					light: { text : '%characteristics.light%', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
-				};
-
 				window.serviceNames = {
 					airquality : '%accessories.airquality%',
 					contact : '%accessories.contact%',
@@ -986,13 +919,13 @@
 						{
 							if(state.value)
 							{
-								value = data[type].active.text.toUpperCase();
-								color = data[type].active.color;
+								value = servicePresets[type].active.text.toUpperCase();
+								color = servicePresets[type].active.color;
 							}
 							else
 							{
-								value = data[type].inactive.text.toUpperCase();
-								color = data[type].inactive.color;
+								value = servicePresets[type].inactive.text.toUpperCase();
+								color = servicePresets[type].inactive.color;
 							}
 						}
 						else if(typeof state.value == 'number')
@@ -1001,9 +934,9 @@
 
 							if(type == 'temperature')
 							{
-								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
 
-								value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + data[type].text.toUpperCase();
+								value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + servicePresets[type].text.toUpperCase();
 
 								if(state.value < 18)
 								{
@@ -1020,9 +953,9 @@
 							}
 							else if(type == 'humidity')
 							{
-								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
 
-								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
 
 								if(state.value > 50)
 								{	
@@ -1035,18 +968,18 @@
 								}	
 								else	
 								{	
-									color = data[type].color;	
+									color = servicePresets[type].color;	
 								}
 							}
 							else if(type == 'light')
 							{
-								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
 
-								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
 
 								if(state.value > 1000)
 								{
-									color = data[type].color;
+									color = servicePresets[type].color;
 								}
 								else
 								{
@@ -1055,13 +988,13 @@
 							}
 							else if(type == 'airquality')
 							{
-								var cRange = data[type].colorRange, vRange = data[type].valueRange;
+								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
 
-								value = Math.round(state.value) + ' ' + data[type].text.toUpperCase();
+								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
 
 								if(state.value > 4)
 								{
-									color = data[type].color;
+									color = servicePresets[type].color;
 								}
 								else
 								{
@@ -1070,14 +1003,14 @@
 							}
 							else
 							{
-								value = state.value + ' ' + data[type].active.text.toUpperCase();
+								value = state.value + ' ' + servicePresets[type].active.text.toUpperCase();
 							}
 						}
 					}
 					else if(type == 'statelessswitch')	
 					{	
-						value = data[type].inactive.text.toUpperCase();
-						color = data[type].inactive.color;
+						value = servicePresets[type].inactive.text.toUpperCase();
+						color = servicePresets[type].inactive.color;
 					}
 
 					if(typeCounter[type] > 1)
@@ -1377,15 +1310,15 @@
 
 					if(Object.keys(values).length > 0 && values[letters].length > 0)
 					{
-						if(isNaN(values[letters][0].value) && data[type].active.text != null && data[type].inactive.text != null)
+						if(isNaN(values[letters][0].value) && servicePresets[type].active.text != null && servicePresets[type].inactive.text != null)
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = data[type].inactive.text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = data[type].active.text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = servicePresets[type].inactive.text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = servicePresets[type].active.text.toUpperCase();
 						}
-						else if(data[type].text != null)
+						else if(servicePresets[type].text != null)
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + data[type].text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + data[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
 						}
 
 						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
@@ -1419,40 +1352,40 @@
 
 					var color = 'hsl(200, 98%, 60%)';
 
-					if(data[type].active != null && data[type].active.color != null)
+					if(servicePresets[type].active != null && servicePresets[type].active.color != null)
 					{
-						color = data[type].active.color;
+						color = servicePresets[type].active.color;
 					}
 
-					if(data[type].color != null)
+					if(servicePresets[type].color != null)
 					{
-						color = data[type].color;
+						color = servicePresets[type].color;
 					}
 
-					var cRange = data[type].colorRange,
-						vRange = data[type].valueRange;
+					var cRange = servicePresets[type].colorRange,
+						vRange = servicePresets[type].valueRange;
 
 					var minColorGraph = color, maxColorGraph = color,
 						minColorFill = color, maxColorFill = color;
 
 					if(type == 'temperature')
 					{
-						if(graphData[letters].min < data[type].valueRange[0])
+						if(graphData[letters].min < servicePresets[type].valueRange[0])
 						{
-							graphData[letters].min = data[type].valueRange[0];
+							graphData[letters].min = servicePresets[type].valueRange[0];
 						}
-						else if(graphData[letters].min > data[type].valueRange[1])
+						else if(graphData[letters].min > servicePresets[type].valueRange[1])
 						{
-							graphData[letters].min = data[type].valueRange[1];
+							graphData[letters].min = servicePresets[type].valueRange[1];
 						}
 
-						if(graphData[letters].max > data[type].valueRange[1])
+						if(graphData[letters].max > servicePresets[type].valueRange[1])
 						{
-							graphData[letters].max = data[type].valueRange[1];
+							graphData[letters].max = servicePresets[type].valueRange[1];
 						}
-						else if(graphData[letters].max < data[type].valueRange[0])
+						else if(graphData[letters].max < servicePresets[type].valueRange[0])
 						{
-							graphData[letters].max = data[type].valueRange[0];
+							graphData[letters].max = servicePresets[type].valueRange[0];
 						}
 
 						minColorFill = 'hsla(' + ((graphData[letters].min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
@@ -1463,19 +1396,19 @@
 					}
 					else if(type == 'humidity')
 					{
-						if(graphData[letters].min < data[type].valueRange[0])
+						if(graphData[letters].min < servicePresets[type].valueRange[0])
 						{
-							graphData[letters].min = data[type].valueRange[0];
+							graphData[letters].min = servicePresets[type].valueRange[0];
 						}
 
-						if(graphData[letters].max > data[type].valueRange[1])
+						if(graphData[letters].max > servicePresets[type].valueRange[1])
 						{
-							graphData[letters].max = data[type].valueRange[1];
+							graphData[letters].max = servicePresets[type].valueRange[1];
 						}
 
 						if(graphData[letters].min > 50)
 						{	
-							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+							cRange = [servicePresets[type].colorRange[1], servicePresets[type].colorRange[0]];
 						}
 
 						minColorFill = 'hsla(' + ((graphData[letters].min - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .1)';
@@ -1483,11 +1416,11 @@
 
 						if(graphData[letters].max > 50)
 						{	
-							cRange = [data[type].colorRange[1], data[type].colorRange[0]];
+							cRange = [servicePresets[type].colorRange[1], servicePresets[type].colorRange[0]];
 						}
 						else
 						{
-							cRange = [data[type].colorRange[0], data[type].colorRange[1]];
+							cRange = [servicePresets[type].colorRange[0], servicePresets[type].colorRange[1]];
 						}
 
 						maxColorFill = 'hsla(' + ((graphData[letters].max - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%, .3)';

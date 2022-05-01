@@ -115,73 +115,6 @@
 				window.services = [];
 				window.plugins = {};
 				
-				window.data = {
-					motion: {
-						active : { text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					occupancy: {
-						active : { text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					smoke: {
-						active : { text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)' },
-						inactive : { text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					contact: {
-						active : { text : '%characteristics.contact.active%', color : 'hsl(350, 75%, 55%)' },
-						inactive : { text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					outlet: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					relais: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					switch: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
-					},
-					rain: {
-						active : { text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)' },
-						inactive : { text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					statelessswitch: {
-						active : { text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)' },
-						inactive : { text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)' }
-					},
-					led: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					dimmer: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgb: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbw: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbww: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					rgbcw: {
-						active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-						inactive : { text : '%characteristics.boolean.inactive%', color : 'hsl(205, 75%, 55%)' }
-					},
-					temperature: { text : '°C', colorRange : [220, 0], valueRange : [18, 26] },
-					humidity: { text : '%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 280], valueRange : [0, 100] },
-					light: { text : '%characteristics.light%', color : 'hsl(40, 85%, 85%)', colorRange : [25, 85], valueRange : [0, 1000] },
-					airquality: { text : '%characteristics.airquality%', color : 'hsl(180, 75%, 55%)', colorRange : [180, 0], valueRange : [0, 5] }
-				};
-
 				if(Storage.getItem('automation-view') == 'vertical')
 				{
 					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
@@ -822,8 +755,8 @@
 
 						var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
 
-						valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
-						valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
 						valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
 
 						var options = select.parentElement.children[4].getElementsByClassName('select-items')[0].children;
@@ -873,8 +806,8 @@
 						{
 							var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
 
-							valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
-							valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = data[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+							valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+							valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
 							valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
 						}
 					}
