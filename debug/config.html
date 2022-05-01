@@ -19,7 +19,7 @@
 				second.style.display = 'flex';
 				second.style.marginBottom = '20px';
 
-				second.innerHTML = '<input value="%debug.config.copy_all%" type="button" style="margin-right: 20px" onclick="copyConfig()"><div style="width: 100%"><button id="config-restart" class="gradient-overlay overlay-red" onclick="restartBridge(this)">%debug.config.restart%</div>';
+				second.innerHTML = '<input value="%debug.config.copy_all%" type="button" style="margin-right: 20px" onclick="copyConfig()"><input value="%debug.config.clear_all%" type="button" onclick="clearConfig()">';
 
 				PageManager.addFooter(second);
 				PageManager.showFooter();
@@ -63,6 +63,13 @@
 					alert('%debug.config.copy_success%!');
 				}
 
+				function clearConfig()
+				{
+					var textarea = document.getElementById('config-container');
+
+					textarea.value = '';
+				}
+
 				async function saveConfig(btn)
 				{
 					if(validateJSON(document.getElementById('config-container')))
@@ -80,57 +87,20 @@
 
 						if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
 						{
-							configJSON = document.getElementById('config-container').value;
-
 							document.getElementById('config-save').classList.remove('pulse');
 
 							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'saving', '%debug.config.save_success%!', 'green'));
 
-							await Essentials.newTimeout(1500);
-
-							document.getElementById('config-restart').classList.add('activated');
-
-							await Essentials.newTimeout(1500);
-
-							Essentials.removeOverlays(btn, true);
-						}
-					}
-				}
-
-				async function restartBridge(btn)
-				{
-					if(!restarting)
-					{
-						var overlays = {
-							root : btn,
-							id : 'restarting',
-							pending : { value : '%debug.config.restarting% ..' },
-							executeError : { value : '%debug.config.restart_failed%!' },
-							connectionError : { value : '%general.bridge_connection_error%!' }
-						};
-
-						restarting = true;
-
-						if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
-						{
-							await Essentials.newTimeout(3000);
-
-							document.getElementById('config-restart').classList.remove('activated');
-
-							if(await Essentials.checkRestart('/serverside/check-restart'))
+							if(JSON.stringify(JSON.parse(document.getElementById('config-container').value), null, '\t') != JSON.stringify(JSON.parse(configJSON), null, '\t'))
 							{
-								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%debug.config.restart_success%!'));
-							}
-							else
-							{
-								Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%debug.config.restart_failed%!'));
+								Dialogues.showRestartPanel('Da du die Config geändert hast, muss die Bridge neugestartet werden!');
 							}
 
-							await Essentials.newTimeout(4000);
+							configJSON = document.getElementById('config-container').value;
+
+							await Essentials.newTimeout(2000);
 
 							Essentials.removeOverlays(btn, true);
-
-							restarting = false;
 						}
 					}
 				}
@@ -145,7 +115,7 @@
 
 							document.getElementById('config-save').classList.remove('activated');
 
-							if(textarea.value != JSON.stringify(JSON.parse(configJSON), null, '\t'))
+							if(JSON.stringify(JSON.parse(textarea.value), null, '\t') != JSON.stringify(JSON.parse(configJSON), null, '\t'))
 							{
 								document.getElementById('config-save').classList.add('pulse');
 							}
