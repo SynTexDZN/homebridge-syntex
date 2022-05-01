@@ -685,21 +685,32 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
 
-			var bridgeData = await this.files.readFile('info.json');
+			var bridgeData = await this.files.readFile('info.json'),
+				accessories = DeviceManager.getAccessories(),
+				updates = UpdateManager.getLatestVersions();
 
-			var obj = {
-				devices: JSON.stringify(DeviceManager.getAccessories()),
-				updates: JSON.stringify(UpdateManager.getLatestVersions()),
-				restart: '-'
-			};
+			var devices = [];
+
+			for(const i in accessories)
+			{
+				if(accessories[i].services[0].type != 'bridge')
+				{
+					devices.push({ ...accessories[i] });
+				}
+			}
 			
+			var obj = {
+				devices : JSON.stringify(devices),
+				updates : JSON.stringify(updates),
+				restart : '-'
+			};
+
 			if(bridgeData != null && bridgeData.restart != null)
 			{
 				obj.restart = bridgeData.restart;
 			}
 			
-			response.write(HTMLQuery.sendValues(content, obj));
-			response.end();
+			response.end(HTMLQuery.sendValues(content, obj));
 		});
 
 		this.WebServer.addPage(['/connect'], (request, response, urlParams, content) => {
