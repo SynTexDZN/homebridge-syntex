@@ -272,6 +272,7 @@
 		import { Query } from '/js/query.js';
 		import { Essentials } from '/js/essentials.js';
 		import { PageManager } from '/js/page-manager.js';
+		import { Dialogues } from '/js/dialogues.js';
 
 		window.Preloader = Preloader;
 		window.LoadingLoop = LoadingLoop;
@@ -279,9 +280,11 @@
 		window.Query = Query;
 		window.Essentials = Essentials;
 		window.PageManager = PageManager;
+		window.Dialogues = Dialogues;
 
 		Query.SETUP(Essentials);
 		Essentials.SETUP(Query, Preloader);
+		Dialogues.SETUP(Query, Essentials);
 	
 	</script>
 	<script src="/js/mobile.js" id="static" defer></script>

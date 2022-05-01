@@ -178,7 +178,7 @@
 				
 					if(JSON.stringify(configObject) != JSON.stringify(configJSON))
 					{
-						showRestartPanel();
+						Dialogues.showRestartPanel('Da du Einstellungen der Bridge geändert hast, muss sie manuell neugestartet werden!');
 					}
 				}
 
@@ -209,55 +209,6 @@
 						btn.setAttribute('class', 'white');
 						btn.setAttribute('value', '%characteristics.boolean.active%');
 					}
-				}
-
-				function showRestartPanel()
-				{
-					var dialogue = {
-						title : 'Bridge Neustarten',
-						subtitle : 'Da du Einstellungen der Bridge geändert hast, muss sie manuell neugestartet werden!',
-						buttons : [
-							{
-								text : 'Zurück',
-								close : true
-							},
-							{
-								text : 'Neustart',
-								action : async () => {
-
-									var btn = document.getElementById('dialogue').getElementsByClassName('button-area')[0].children[1].children[0];
-
-									var overlays = {
-										root : btn,
-										id : 'restart',
-										pending : { value : '%general.restarting% ..' },
-										executeError : { value : '%general.restart_failed%!' },
-										connectionError : { value : '%general.bridge_connection_error%!' }
-									};
-
-									if(await Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
-									{
-										await Essentials.newTimeout(3000);
-
-										if(await Essentials.checkRestart('/serverside/check-restart'))
-										{
-											Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
-										}
-										else
-										{
-											Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
-										}
-
-										await Essentials.newTimeout(4000);
-
-										Essentials.closeDialogue();
-									}
-								}
-							}
-						]
-					};
-
-					Essentials.openDialogue(dialogue);
 				}
 
 			</script>
