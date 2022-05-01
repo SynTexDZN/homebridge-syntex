@@ -65,15 +65,8 @@
 			</div>
 			<script type="module">
 
-				import { Query } from '/js/query.js';
-				import { Essentials } from '/js/essentials.js';
 				import { Presets } from '/js/presets.js';
 
-				Query.SETUP(Essentials);
-				Essentials.SETUP(Query, Preloader);
-
-				window.Query = Query;
-				window.Essentials = Essentials;
 				window.Presets = Presets;
 
 				window.devices = JSON.parse('<%devices%>');

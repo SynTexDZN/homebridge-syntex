@@ -146,18 +146,11 @@
 			</div>
 			<script type="module">
 
-				import { Query } from '/js/query.js';
-				import { Essentials } from '/js/essentials.js';
 				import { Presets } from '/js/presets.js';
 				import { Graph } from '/js/graph.js';
 
-				Query.SETUP(Essentials);
-				Essentials.SETUP(Query, Preloader);
-				
 				Graph.setPadding(50);
 
-				window.Query = Query;
-				window.Essentials = Essentials;
 				window.Presets = Presets;
 				window.Graph = Graph;
 

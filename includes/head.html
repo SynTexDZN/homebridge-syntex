@@ -269,10 +269,17 @@
 		import { Preloader } from '/js/loading.js';
 		import { LoadingLoop } from '/js/loading-loop.js';
 		import { Replacer } from '/js/replace-select.js';
+		import { Query } from '/js/query.js';
+		import { Essentials } from '/js/essentials.js';
 
 		window.Preloader = Preloader;
 		window.LoadingLoop = LoadingLoop;
 		window.Replacer = Replacer;
+		window.Query = Query;
+		window.Essentials = Essentials;
+
+		Query.SETUP(Essentials);
+		Essentials.SETUP(Query, Preloader);
 	
 	</script>
 	<script src="/js/mobile.js" id="static" defer></script>

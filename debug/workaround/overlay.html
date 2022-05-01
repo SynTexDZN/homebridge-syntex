@@ -45,15 +45,8 @@
 			</div>
 			<script type="module">
 
-				import { Query } from '/js/query.js';
-				import { Essentials } from '/js/essentials.js';
                 import { Preloader } from '/js/loading.js';
 
-				Query.SETUP(Essentials);
-				Essentials.SETUP(Query, Preloader);
-
-				window.Query = Query;
-				window.Essentials = Essentials;
                 window.Preloader = Preloader;
 
 				Preloader.finish();
