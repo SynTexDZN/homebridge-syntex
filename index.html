@@ -279,80 +279,80 @@
 
 					for(const i in devices)
 					{
-							var pattern = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
+						var pattern = (serviceNames[Essentials.getType(devices[i].services)] || Essentials.getType(devices[i].services));
 
-							if(sort.startsWith('alphabetical'))
+						if(sort.startsWith('alphabetical'))
+						{
+							pattern = devices[i].name[0].toUpperCase();
+						}
+						else if(sort.startsWith('activation'))
+						{
+							pattern = '%devices.unknown%';
+
+							if(devices[i].active != null)
 							{
-								pattern = devices[i].name[0].toUpperCase();
+								pattern = devices[i].active == 1 ? '%devices.active%' : '%devices.inactive%';
 							}
-							else if(sort.startsWith('activation'))
+						}
+
+						if(temp != pattern)
+						{
+							var typeContainer = document.createElement('div');
+
+							typeContainer.setAttribute('style', '');
+							typeContainer.setAttribute('class', 'type-container');
+
+							if(devices[i].services == 'removed')
 							{
-								pattern = '%devices.unknown%';
-
-								if(devices[i].active != null)
-								{
-									pattern = devices[i].active == 1 ? '%devices.active%' : '%devices.inactive%';
-								}
-							}
-
-							if(temp != pattern)
-							{
-								var typeContainer = document.createElement('div');
-
-								typeContainer.setAttribute('style', '');
-								typeContainer.setAttribute('class', 'type-container');
-
-								if(devices[i].services == 'removed')
-								{
-									typeContainer.setAttribute('class', 'type-container striped');
-								}
-
-								var title = document.createElement('h2');
-
-								title.setAttribute('class', 'title-container');
-
-								title.innerHTML = pattern;
-
-								console.log('SERVICES', Essentials.getType(devices[i].services));
-
-								typeContainer.appendChild(title);
-
-								var typeDevices = document.createElement('div');
-
-								typeDevices.setAttribute('id', pattern.toLowerCase());
-								typeDevices.setAttribute('class', 'container device-container');
-								/*
-								if(numOfType == 1)
-								{
-									typeDevices.style.gridTemplateColumns = '100%';
-								}
-								*/
-								typeContainer.appendChild(typeDevices);
-
-								document.getElementById('devices').appendChild(typeContainer);
+								typeContainer.setAttribute('class', 'type-container striped');
 							}
 
-							var button = document.createElement('button'), buttonHTML = '';
+							var title = document.createElement('h2');
 
-							if(devices[i].plugin != null && devices[i].plugin.alias.startsWith('SynTex'))
+							title.setAttribute('class', 'title-container');
+
+							title.innerHTML = pattern;
+
+							console.log('SERVICES', Essentials.getType(devices[i].services));
+
+							typeContainer.appendChild(title);
+
+							var typeDevices = document.createElement('div');
+
+							typeDevices.setAttribute('id', pattern.toLowerCase());
+							typeDevices.setAttribute('class', 'container device-container');
+							/*
+							if(numOfType == 1)
 							{
-								button.setAttribute('version', devices[i].version);
+								typeDevices.style.gridTemplateColumns = '100%';
 							}
+							*/
+							typeContainer.appendChild(typeDevices);
 
-							button.setAttribute('sensortype', Essentials.getType(devices[i].services));
-							button.setAttribute('id', devices[i].ip);
-							button.setAttribute('class', 'device');
-							button.setAttribute('device-id', i);
-							button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+							document.getElementById('devices').appendChild(typeContainer);
+						}
 
-							if(devices[i].group)
-							{
-								button.setAttribute('group', devices[i].group.toLowerCase());
-							}
+						var button = document.createElement('button'), buttonHTML = '';
 
-							buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
+						if(devices[i].plugin != null && devices[i].plugin.alias.startsWith('SynTex'))
+						{
+							button.setAttribute('version', devices[i].version);
+						}
 
-							button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
+						button.setAttribute('sensortype', Essentials.getType(devices[i].services));
+						button.setAttribute('id', devices[i].ip);
+						button.setAttribute('class', 'device');
+						button.setAttribute('device-id', i);
+						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+
+						if(devices[i].group)
+						{
+							button.setAttribute('group', devices[i].group.toLowerCase());
+						}
+
+						buttonHTML = '<img class="accessory-img" src="/img/accessory/' + Essentials.getType(devices[i].services) + '.png"><div class="name-connection">';
+
+						button.setAttribute('active', devices[i].active == 1 || devices[i].ip == null || devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
 
 							if(devices[i].active == 1 || devices[i].ip == null || devices[i].active == null)
 							{
@@ -361,28 +361,28 @@
 							else
 							{
 								buttonHTML += '<div class="connection" style="color: rgb(130, 130, 150)">%devices.inactive%</div>';
-							}
+						}
 
-							buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
+						buttonHTML += '<div class="device-name">' + devices[i].name + '</div></div>';
 
-							button.innerHTML = buttonHTML;
+						button.innerHTML = buttonHTML;
 
-							if(devices[i].id != null)
-							{
-								button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
-							}
-							else
-							{
-								button.setAttribute('disabled', '');
-							}
-							
-							button.setAttribute('name', devices[i].name);
+						if(devices[i].id != null)
+						{
+							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + devices[i].id + "')");
+						}
+						else
+						{
+							button.setAttribute('disabled', '');
+						}
+						
+						button.setAttribute('name', devices[i].name);
 
-							document.getElementById(pattern.toLowerCase()).appendChild(button);
-							
-							temp = pattern;
+						document.getElementById(pattern.toLowerCase()).appendChild(button);
+						
+						temp = pattern;
 
-							checkUpdates(button);
+						checkUpdates(button);
 					}
 
 					document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
