@@ -26,6 +26,8 @@ class SynTexPlatform
 		this.restart = true;
 		this.updating = false;
 
+		this.lastAccessoryRefresh = new Date().getTime();
+
 		this.api = api;
 
 		this.pluginID = pluginID;
@@ -685,6 +687,13 @@ class SynTexPlatform
 		});
 
 		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
+
+			if(new Date().getTime() - this.lastAccessoryRefresh > this.refresh)
+			{
+				this.lastAccessoryRefresh = new Date().getTime();
+
+				await DeviceManager.reloadAccessories();
+			}
 
 			var bridgeData = await this.files.readFile('info.json'),
 				accessories = DeviceManager.getAccessories(),

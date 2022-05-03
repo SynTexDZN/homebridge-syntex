@@ -55,7 +55,7 @@ Also it provides special features for SynTex plugins:
             "port": 1711,
             "language": "us",
             "debug": false,
-            "remote": true,
+            "remote": false,
             "password": "1234",
             "refresh": 60000
         }
