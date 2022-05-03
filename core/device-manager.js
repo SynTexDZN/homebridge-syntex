@@ -28,6 +28,11 @@ module.exports = class DeviceManager
 				}
 			});
 		});
+
+		if(platform.refresh > 0)
+		{
+			this.refreshInterval = setInterval(() => this.reloadAccessories(), platform.refresh);
+		}
 	}
 
 	setWebHooksPort(webHooksPort)

@@ -56,7 +56,8 @@ Also it provides special features for SynTex plugins:
             "language": "us",
             "debug": false,
             "remote": true,
-            "password": "1234"
+            "password": "1234",
+            "refresh": 60000
         }
     },
     {
@@ -82,6 +83,7 @@ Also it provides special features for SynTex plugins:
 - `debug` For further information because of troubleshooting and bug reports.
 - `remote` To control your devices on the go with the enhanced offline app without port forwarding. *( Currently in beta, more information soon )*
 - `password` To protect your remote connection against strangers. *( Only needed when `remote` is enabled )*
+- `refresh` Sets the update interval for device states. *( 0 = only refresh on restart )*
 
 ### SynTex WebHooks Config
 Please visit the `Homebridge SynTex WebHooks` README file for the config and further information:<br>

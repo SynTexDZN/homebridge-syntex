@@ -42,6 +42,7 @@ class SynTexPlatform
 		this.debug = this.options['debug'] || false;
 		this.remote = this.options['remote'] || false;
 		this.password = this.options['password'] || '';
+		this.refresh = this.options['refresh'] || 0;
 
 		this.logger = new Logger(pluginName, this.debug, this.language);
 
