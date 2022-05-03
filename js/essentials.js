@@ -733,6 +733,135 @@ class EssentialFeatures
 			}
 		}
 	}
+
+	getServiceColor(service)
+	{
+		var result = { text : null, color : null };
+
+		if(service.letters != null && service.state != null)
+		{
+			var type = Essentials.letterToType(service.letters[0]);
+
+			if(type == 'rgb' || type == 'dimmer')
+			{
+				if(service.state.value == false || service.state.brightness == 0)
+				{
+					result.text = '%characteristics.boolean.inactive%';
+					result.color = 'rgb(60, 60, 80)';
+				}
+				else if(service.state.value == true)
+				{
+					result.text = Math.round(service.state.brightness) + '%';
+
+					if(Math.round(service.state.brightness) == 100)
+					{
+						result.text = '%characteristics.boolean.active%';
+					}
+					
+					if(type == 'rgb')
+					{
+						result.color = 'hsl(' + parseInt(service.state.hue) + ', ' + parseInt(14 + service.state.saturation * service.state.brightness / 100 / 100 * (100 - 14)) + '%, ' + (27 + service.state.brightness / 100 * (65 - 27)) + '%)';
+					}
+					else if(type == 'dimmer')
+					{
+						result.color = 'hsl(40, ' + parseInt(service.state.brightness * 0.85) + '%, ' + (25 + parseInt(service.state.brightness) * 0.5) + '%)';
+					}
+				}
+			}
+			else if(service.format.value == 'bool' || service.format.value == 'boolean')
+			{
+				if(service.state.value)
+				{
+					result.text = window.servicePresets[type].active.text;
+					result.color = window.servicePresets[type].active.color;
+				}
+				else
+				{
+					result.text = window.servicePresets[type].inactive.text;
+					result.color = window.servicePresets[type].inactive.color;
+				}
+			}
+			else if(service.format.value == 'int' || service.format.value == 'float')
+			{
+				var cRange = window.servicePresets[type].colorRange, vRange = window.servicePresets[type].valueRange;
+
+				result.color = 'rgb(60, 60, 80)', result.text = service.state.value;
+
+				if(type == 'temperature')
+				{
+					result.text = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + window.servicePresets[type].text;
+
+					if(service.state.value < 18)
+					{
+						result.color = 'hsl(220, 75%, 55%)';
+					}
+					else if(service.state.value > 26)
+					{
+						result.color = 'hsl(0, 75%, 55%)';
+					}
+					else
+					{
+						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+					}
+				}
+				else if(type == 'humidity')
+				{
+					result.text = Math.round(service.state.value) + ' ' + window.servicePresets[type].text;
+
+					if(service.state.value > 50)
+					{	
+						cRange = [280, 0];
+					}	
+
+					if(service.state.value < 45 || service.state.value > 55)	
+					{	
+						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+					}	
+					else	
+					{	
+						result.color = window.servicePresets[type].color;	
+					}
+				}
+				else if(type == 'light')
+				{
+					result.text = Math.round(service.state.value) + ' ' + window.servicePresets[type].text;
+
+					if(service.state.value > 1000)
+					{
+						result.color = window.servicePresets[type].color;
+					}
+					else
+					{
+						result.color = 'hsl(40, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
+					}
+				}
+				else if(type == 'airquality')
+				{
+					result.text = Math.round(service.state.value) + ' ' + window.servicePresets[type].text;
+
+					if(service.state.value > 4)
+					{
+						result.color = window.servicePresets[type].color;
+					}
+					else
+					{
+						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
+					}
+				}
+				else
+				{
+					result.text = service.state.value + ' ' + window.servicePresets[type].active.text;
+				}
+			}
+		}
+		else if(type == 'statelessswitch')	
+		{	
+			result.text = window.servicePresets[type].inactive.text;
+			result.color = window.servicePresets[type].inactive.color;
+		}
+
+		return result;
+	}
 }
 
 var idCounter = new Date().getTime();
