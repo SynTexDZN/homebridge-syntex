@@ -71,20 +71,22 @@ class EssentialFeatures
 
 	checkRestart(url)
 	{
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 
-			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
+			this.Query.fetchURL(url, 3000).then((restart) => {
 
-			console.log('RESTART', restart);
+				console.log('RESTART', restart);
 
-			if(restart != null && restart == 'false')
-			{
-				resolve(true);
-			}
-			else
-			{
-				setTimeout(() => resolve(this.checkRestart(url)), 500);
-			}
+				if(restart != null && restart == 'false')
+				{
+					resolve(true);
+				}
+				else
+				{
+					setTimeout(() => resolve(this.checkRestart(url)), 500);
+				}
+				
+			}); // OPTIMIZE: Change to Module ( complexFetch )
 		});
 	}
 
@@ -637,7 +639,7 @@ class EssentialFeatures
 		{
 			if(this.changeCounter.length == 0)
 			{
- 				this.button.classList.remove('pulse');
+				this.button.classList.remove('pulse');
 			}
 
 		}.bind({ button : submit, changeCounter : this.changeCounter });
@@ -975,9 +977,9 @@ function loadPageData(url)
 						await self.newTimeout(1);
 					}
 
-					clearTimers();
-					closeSockets();
-					removeEventListeners();
+					window.clearTimers();
+					window.closeSockets();
+					window.removeEventListeners();
 
 					document.getElementById('content').outerHTML = '<div id="content"' + client.responseText.split('<div id="content"')[1].split('</body>')[0];
 
@@ -1026,7 +1028,7 @@ function loadPageData(url)
 						}
 					}
 
-					LoadingLoop.searchLoop();
+					window.LoadingLoop.searchLoop();
 
 					self.Preloader.load();
 				}
