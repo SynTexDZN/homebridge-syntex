@@ -42,7 +42,7 @@
 		background: rgba(245, 245, 255, .5);
 	}
 
-	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, #devices button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
+	h1, input[type='button']:not(.control-panel), input[type='button']:not(:disabled).white, button:not(:disabled).white, button, input[type='text']:focus, input[type='password']:focus, textarea:focus, .log-message
 	{
 		color: var(--dark-layer-one);
 	}
@@ -52,7 +52,7 @@
 		background: var(--light-layer-one);
 	}
 
-	.control-panel
+	.control-panel, #devices button
 	{
 		--background-color: var(--light-layer-one);
 		
@@ -455,5 +455,10 @@
 	.icon-button.split.layer.right.gradient-red .button-icon, .icon-button.split.layer.right.gradient-green .button-icon, .icon-button.split.layer.right.gradient-blue .button-icon, .icon-button.split.layer.right.gradient-cyan .button-icon, .icon-button.split.layer.right.gradient-blue-green .button-icon, .icon-button.split.layer.right.gradient-blue-purple .button-icon, .icon-button.split.layer.right.gradient-purple .button-icon, .icon-button.split.layer.right.gradient-yellow .button-icon, .icon-button.split.layer.right.gradient-orange .button-icon
 	{
 		box-shadow: 12px 0 12px -12px inset rgb(0 0 0 / 50%);
-	}	
+	}
+	
+	.accessory-img
+	{
+		filter: invert(95%) sepia(10%) hue-rotate(200deg);
+	}
 }

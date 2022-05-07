@@ -300,13 +300,15 @@
 							stateElement = document.createElement('div'),
 							nameElement = document.createElement('div');
 
+						var result = getServiceState(data.devices[i]);
+
 						button.setAttribute('sensortype', Essentials.getType(data.devices[i].services));
 						button.setAttribute('id', data.devices[i].ip);
 						button.setAttribute('class', 'device');
 						button.setAttribute('aid', data.devices[i].aid);
 						button.setAttribute('name', data.devices[i].name);
 						button.setAttribute('active', data.devices[i].active == 1 || data.devices[i].ip == null || data.devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
-						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative');
+						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative; background-color: ' + result.color);
 
 						if(data.devices[i].id != null)
 						{
@@ -332,11 +334,8 @@
 
 						infoContaner.className = 'name-connection';
 
-						var result = getServiceState(data.devices[i]);
-
 						stateElement.className = 'connection';
 						stateElement.innerHTML = result.text;
-						stateElement.style.color = result.color;
 
 						nameElement.className = 'device-name';
 						nameElement.innerHTML = data.devices[i].name;
@@ -786,8 +785,9 @@
 				{
 					if(!device.className.includes('update'))
 					{
+						device.style.backgroundColor = 'hsl(350, 95%, 60%)';
+
 						device.children[1].children[0].innerHTML = '%general.offline%';
-						device.children[1].children[0].style.color = 'hsl(350, 95%, 60%)';
 					}
 
 					if(!offline.includes(device.getAttribute('id')))
@@ -802,18 +802,11 @@
 				{
 					if(!device.className.includes('update'))
 					{
-						if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
-						{
-							var result = getServiceState(getDevice(device.getAttribute('aid')));
+						var result = getServiceState(getDevice(device.getAttribute('aid')));
 							
-							device.children[1].children[0].innerHTML = result.text;
-							device.children[1].children[0].style.color = result.color;
-						}
-						else
-						{
-							device.children[1].children[0].innerHTML = '%devices.inactive%';
-							device.children[1].children[0].style.color = 'rgb(130, 130, 150)';
-						}
+						device.style.backgroundColor = result.color;
+
+						device.children[1].children[0].innerHTML = result.text;
 					}
 
 					if(offline.includes(device.getAttribute('id')))
@@ -990,17 +983,13 @@
 										this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
 										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
 									}
-									else if(device.getAttribute('active') == 'true') // OPTIMIZE: Replace Active Attribute With devices[i].active
+									else
 									{
 										var result = getServiceState(getDevice(device.getAttribute('aid')));
 
-										this.device.getElementsByClassName('connection')[0].style.color = result.color;
+										this.device.style.backgroundColor = result.color;
+
 										this.device.getElementsByClassName('connection')[0].innerHTML = result.text;
-									}
-									else if(device.getAttribute('active') == 'false') // OPTIMIZE: Replace Active Attribute With devices[i].active
-									{
-										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-										this.device.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
 									}
 
 								}.bind({ device : device }), 4000);
@@ -1045,18 +1034,11 @@
 
 										if(!d.className.includes('update'))
 										{
-											if(btn.getAttribute('switch') == 0)
-											{
-												var result = getServiceState(data.devices[i]);
+											var result = getServiceState(data.devices[i]);
 
-												d.getElementsByClassName('connection')[0].style.color = result.color;
-												d.getElementsByClassName('connection')[0].innerHTML = result.text;
-											}
-											else
-											{
-												d.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-												d.getElementsByClassName('connection')[0].innerHTML = '%devices.inactive%';
-											}
+											d.style.backgroundColor = result.color;
+
+											d.getElementsByClassName('connection')[0].innerHTML = result.text;
 										}
 
 										if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
@@ -1167,7 +1149,11 @@
 						else if(serviceState.text != null && serviceState.color != null)
 						{
 							text = serviceState.text;
-							color = serviceState.color;
+
+							if((device.services[0].format.value != 'bool' && device.services[0].format.value != 'boolean') || device.services[0].state.value == true)
+							{
+								color = serviceState.color;
+							}
 						}
 
 						if(color == 'rgb(60, 60, 80)')
