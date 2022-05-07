@@ -29,6 +29,7 @@ class SynTexPlatform
 		this.lastAccessoryRefresh = new Date().getTime();
 
 		this.api = api;
+		this.config = config;
 
 		this.pluginID = pluginID;
 		this.pluginName = pluginName;
@@ -46,7 +47,7 @@ class SynTexPlatform
 		this.password = this.options['password'] || '';
 		this.refresh = this.options['refresh'] || 0;
 
-		this.logger = new Logger(pluginName, this.debug, this.language);
+		this.logger = new Logger(this);
 
 		if(config['baseDirectory'] != null)
 		{

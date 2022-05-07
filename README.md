@@ -54,10 +54,12 @@ Also it provides special features for SynTex plugins:
         "options": {
             "port": 1711,
             "language": "us",
-            "debug": false,
             "remote": false,
             "password": "1234",
             "refresh": 60000
+        },
+        "log": {
+            "debug": false
         }
     },
     {
