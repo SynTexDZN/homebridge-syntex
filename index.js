@@ -83,7 +83,10 @@ class SynTexPlatform
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-				DeviceManager.setWebHooksPort(config.options.port);
+				if(config != null)
+				{
+					DeviceManager.setWebHooksPort(config.port);
+				}
 
 				this.initWebServer();
 
@@ -793,6 +796,8 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/crossover', (request, response, urlParams, content) => {
 
+			// TODO: Plugin Check Doesn't Work When No Options Are Set
+
 			var obj = [];
 			var t = this.getPluginConfig('SynTexTuya');
 
@@ -1036,11 +1041,11 @@ class SynTexPlatform
 				{
 					for(const i in config.platforms)
 					{
-						if(config.platforms[i].platform == pluginName)
+						if(config.platforms[i].platform == pluginName && config.platforms[i].options != null)
 						{
 							found = true;
 
-							resolve(config.platforms[i]);
+							resolve(config.platforms[i].options);
 						}
 					}
 				}
@@ -1069,9 +1074,14 @@ class SynTexPlatform
 						{
 							found = true;
 
+							if(config.platforms[i].options == null)
+							{
+								config.platforms[i].options = {};
+							}
+
 							for(const x in additionalConfig)
 							{
-								config.platforms[i][x] = additionalConfig[x];
+								config.platforms[i].options[x] = additionalConfig[x];
 							}
 
 							this.files.writeFile(this.api.user.storagePath() + '/config.json', config).then((response) => {

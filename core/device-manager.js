@@ -135,7 +135,7 @@ module.exports = class DeviceManager
 										active : 1,
 										interval : 10000,
 										led : 1,
-										port : this.webHooksPort
+										port : this.webHooksPort || 1710
 									};
 
 									resolve(['Init', JSON.stringify(obj)]);
