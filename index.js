@@ -595,12 +595,6 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/offline-devices', (request, response) => {
-
-			response.write(JSON.stringify(OfflineManager.getOfflineDevices()));
-			response.end();
-		});
-
 		this.WebServer.addPage('/serverside/check-device', async (request, response, urlParams) => {
 
 			if(urlParams.id != null)
@@ -701,7 +695,8 @@ class SynTexPlatform
 
 			var bridgeData = await this.files.readFile('info.json'),
 				accessories = DeviceManager.getAccessories(),
-				updates = UpdateManager.getLatestVersions();
+				updates = UpdateManager.getLatestVersions(),
+				offline = OfflineManager.getOfflineDevices();
 
 			var devices = [];
 
@@ -709,7 +704,14 @@ class SynTexPlatform
 			{
 				if(accessories[i].services[0].type != 'bridge')
 				{
-					devices.push({ ...accessories[i] });
+					var accessory = { ...accessories[i] };
+
+					if(accessories[i].ip != null)
+					{
+						accessory.online = !offline.includes(accessories[i].ip);
+					}
+
+					devices.push(accessory);
 				}
 			}
 			

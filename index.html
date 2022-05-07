@@ -99,7 +99,6 @@
 
 				window.Presets = Presets;
 
-				window.offline = [];
 				window.update = [];
 				window.restarting = [];
 				window.updating = [];
@@ -210,8 +209,6 @@
 
 					sortDevices(true);
 
-					checkConnection();
-
 					setupToolbar();
 				}
 
@@ -307,7 +304,6 @@
 						button.setAttribute('class', 'device');
 						button.setAttribute('aid', data.devices[i].aid);
 						button.setAttribute('name', data.devices[i].name);
-						button.setAttribute('active', data.devices[i].active == 1 || data.devices[i].ip == null || data.devices[i].active == null ? 'true' : 'false'); // OPTIMIZE: Remove Active Attribute
 						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative; background-color: ' + result.color);
 
 						if(data.devices[i].id != null)
@@ -545,7 +541,7 @@
 						{
 							deviceCount++;
 
-							if(offline.includes(data.devices[i].ip))
+							if(data.devices[i].online == false)
 							{
 								offlineCount++;
 							}
@@ -687,7 +683,7 @@
 
 						for(var i = 0; i < data.devices.length; i++)
 						{
-							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && !offline.includes(data.devices[i].ip) && real.includes(data.devices[i].ip) && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
+							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && data.devices[i].online == true && real.includes(data.devices[i].ip) && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
 							{
 								if(!restarting.includes(data.devices[i].ip))
 								{
@@ -739,86 +735,6 @@
 
 			</script>
 			<script>
-
-				async function checkConnection()
-				{
-					var offline = await Query.fetchURL('/serverside/offline-devices', 5000);
-
-					if(offline != null)
-					{
-						offline = JSON.parse(offline);
-
-						for(var i = 0; i < deviceElements.length; i++)
-						{
-							if(offline.includes(deviceElements[i].id))
-							{
-								setOffline(deviceElements[i]);
-							}
-							else
-							{
-								setOnline(deviceElements[i]);
-							}
-						}
-
-						var offlineCounter = 0;
-
-						for(var i = 0; i < data.devices.length; i++)
-						{
-							if(selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase()))
-							{
-								if(offline.includes(data.devices[i].ip))
-								{
-									offlineCounter++;
-								}
-							}
-						}
-
-						document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCounter;
-
-						await Essentials.newTimeout(10000);
-					}
-
-					checkConnection();
-				}
-				
-				function setOffline(device)
-				{
-					if(!device.className.includes('update'))
-					{
-						device.style.backgroundColor = 'hsl(350, 95%, 60%)';
-
-						device.children[1].children[0].innerHTML = '%general.offline%';
-					}
-
-					if(!offline.includes(device.getAttribute('id')))
-					{
-						offline.push(device.getAttribute('id'));
-
-						offlineCount++;
-					}
-				}
-
-				function setOnline(device)
-				{
-					if(!device.className.includes('update'))
-					{
-						var result = getServiceState(getDevice(device.getAttribute('aid')));
-							
-						device.style.backgroundColor = result.color;
-
-						device.children[1].children[0].innerHTML = result.text;
-					}
-
-					if(offline.includes(device.getAttribute('id')))
-					{
-						offline.splice(offline.indexOf(device.getAttribute('id')), 1);
-
-						offlineCount--;
-					}
-				}
-
-			</script>
-			<script>
 				
 				function checkUpdates(device)
 				{
@@ -852,14 +768,16 @@
 				
 				function installAllUpdates(btn)
 				{
-					var updateDevices = document.getElementsByClassName('update');
-					var updateCounter = { success : 0, error : 0 };
+					var updateDevices = document.getElementsByClassName('update'),
+						updateCounter = { success : 0, error : 0 };
 
 					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', '%devices.updating_all% ..', 'purple'));
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						if(!offline.includes(updateDevices[i].getAttribute('ip')) && (selectedGroup == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && selectedGroup == updateDevices[i].getAttribute('group'))))
+						var updateDevice = getDevice(updateDevices[i].getAttribute('aid'));
+
+						if(updateDevice != null && updateDevice.online == true && (selectedGroup == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && selectedGroup == updateDevices[i].getAttribute('group')))) // TODO: Improve
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -943,8 +861,6 @@
 							}
 							else if(update == 'Success')
 							{
-								setOnline(device);
-
 								device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
 								device.getElementsByClassName('connection')[0].innerHTML = '%devices.updating%';
 
@@ -1021,7 +937,7 @@
 
 							if(await Query.complexFetch('/serverside/save-config', 5000, 2, {}, false, JSON.stringify(settings)) == 'Success')
 							{
-								if(!offline.includes(data.devices[i].ip))
+								if(data.devices[i].online == true)
 								{
 									Query.complexFetch('http://' + data.devices[i].ip + '/refresh', 20000, 1, {}, false).then(function (refresh) {
 
@@ -1030,7 +946,6 @@
 										switchCounter['success']++;
 
 										this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
-										d.setAttribute('active', this.active == 1 ? 'true' : 'false');
 
 										if(!d.className.includes('update'))
 										{
@@ -1141,7 +1056,12 @@
 					{
 						var serviceState = Essentials.getServiceColor(device.services[0]);
 
-						if(device.active != null && device.active == 0 && device.ip != null)
+						if(device.ip != null && device.online == false)
+						{
+							text = '%general.offline%';
+							color = 'hsl(350, 95%, 60%)';
+						}
+						else if(device.ip != null && device.active == 0)
 						{
 							text = '%devices.inactive%';
 							color = 'rgb(130, 130, 150)';
