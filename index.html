@@ -929,8 +929,9 @@
 						if(data.devices[i].ip != null && real.includes(data.devices[i].ip) && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
 						{
 							var settings = {
-								id: data.devices[i].id,
-								active: btn.getAttribute('switch') == 1 ? 0 : 1
+								id : data.devices[i].id,
+								plugin : data.devices[i].plugin.alias,
+								active : btn.getAttribute('switch') == 1 ? 0 : 1
 							};
 
 							switchableDevices = true;
