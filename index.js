@@ -687,7 +687,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/', '/index', '/debug/workaround/', '/debug/workaround/index'], async (request, response, urlParams, content) => {
+		this.WebServer.addPage(['/serverside/devices'], async (request, response) => {
 
 			if(new Date().getTime() - this.lastAccessoryRefresh > this.refresh)
 			{
@@ -711,9 +711,8 @@ class SynTexPlatform
 			}
 			
 			var obj = {
-				devices : JSON.stringify(devices),
-				updates : JSON.stringify(updates),
-				restart : '-'
+				devices : devices,
+				updates : updates
 			};
 
 			if(bridgeData != null && bridgeData.restart != null)
@@ -721,7 +720,7 @@ class SynTexPlatform
 				obj.restart = bridgeData.restart;
 			}
 			
-			response.end(HTMLQuery.sendValues(content, obj));
+			response.end(JSON.stringify(obj));
 		});
 
 		this.WebServer.addPage(['/connect'], (request, response, urlParams, content) => {
