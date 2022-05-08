@@ -879,7 +879,7 @@ function onlySwitches(services)
 
 	for(const i in services)
 	{
-		if(services[i] != 'switch')
+		if(services[i] != 'switch' && services[i] != 'statelessswitch' && services[i] != 'unsupported')
 		{
 			if(tmp == null)
 			{
