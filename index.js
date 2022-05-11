@@ -314,13 +314,42 @@ class SynTexPlatform
 
 					if(this.password == '' || message.password == md5(this.password))
 					{
-						if(message.post != null)
+						if(message.protocol == 'http')
 						{
-							axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+							if(message.post != null)
+							{
+								axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+							}
+							else
+							{
+								axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+							}
 						}
-						else
+						else if(message.protocol == 'ws')
 						{
-							axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+							var socket = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
+
+							socket.on('message', (data) => {
+				
+								try
+								{
+									data = JSON.parse(data);
+
+									sendResponse(message.path, { status : 400, data });
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
+							});
+
+							socket.on('open', () => {
+				
+								if(message.data != null)
+								{
+									socket.send(JSON.stringify(message.data));
+								}
+							});
 						}
 					}
 					else
