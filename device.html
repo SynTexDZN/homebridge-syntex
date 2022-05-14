@@ -607,10 +607,10 @@
 
 											controlActive = false;
 
-										}, device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:' ? 200 : 2000);
+										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
 									}
 
-								}.bind({ colorPicker, letters }), device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:' ? 300 : 3000);
+								}.bind({ colorPicker, letters }), device.plugin.alias.startsWith('SynTex') ? 300 : 3000);
 
 								statusField.appendChild(colorPicker);
 							}
@@ -834,7 +834,7 @@
 
 					var state = { value : (percent > 0 ? true : false), brightness : percent };
 
-					if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
+					if(device.plugin.alias.startsWith('SynTex'))
 					{
 						if(!send)
 						{
@@ -868,7 +868,7 @@
 
 						var state = { value : (percent > 0 ? true : false), hue, saturation, brightness : percent };
 
-						if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
+						if(device.plugin.alias.startsWith('SynTex'))
 						{
 							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue : hue, saturation : saturation, brightness : percent  } }));
 						
@@ -1115,7 +1115,7 @@
 
 						//setControlPanel(letters, { value : (value == 'true') });
 
-						if(device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:')
+						if(device.plugin.alias.startsWith('SynTex'))
 						{
 							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value  } }));
 						}
@@ -1667,7 +1667,7 @@
 											
 											controllerReady = true;
 
-										}, device.plugin.alias.startsWith('SynTex') && window.location.protocol != 'https:' ? 200 : 2000);
+										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
 									}
 								}
 								else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
