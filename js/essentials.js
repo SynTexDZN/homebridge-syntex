@@ -71,9 +71,9 @@ class EssentialFeatures
 
 	checkRestart(url)
 	{
-		return new Promise((resolve) => {
+		return new Promise(async (resolve) => {
 
-			this.Query.fetchURL(url, 3000).then((restart) => {
+			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
 
 				console.log('RESTART', restart);
 
@@ -85,8 +85,6 @@ class EssentialFeatures
 				{
 					setTimeout(() => resolve(this.checkRestart(url)), 500);
 				}
-				
-			}); // OPTIMIZE: Change to Module ( complexFetch )
 		});
 	}
 

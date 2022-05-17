@@ -237,6 +237,32 @@ class URLQuery
 
 	connectSocket(url, callback, tries, message)
 	{
+		try
+		{
+			url = new URL(url);
+
+			if(window.location.hostname == 'syntex.sytes.net')
+			{
+				url = new URL(url.href.replace('ws', 'wss'));
+
+				if(url.port != '')
+				{
+					var port = url.port;
+
+					url = new URL(url.href.replace(port, '8000'));
+
+					url.searchParams.set('port', port);
+				}
+			}
+
+			url.searchParams.set('bridge-id', Storage.getRemote('bridge-id'));
+			url.searchParams.set('bridge-password', Storage.getRemote('bridge-password'));
+		}
+		catch(e)
+		{
+			console.error(e);
+		}
+		
 		let socket = new WebSocket(url);
 
 		socket.onmessage = (data) => {
