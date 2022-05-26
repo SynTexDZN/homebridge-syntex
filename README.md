@@ -67,7 +67,9 @@ Also it provides special features for SynTex plugins:
         "baseDirectory": "/var/homebridge/SynTex",
         "options": {
             "port": 1710,
-            "language": "us",
+            "language": "us"
+        },
+        "log": {
             "debug": false
         },
         "accessories": []
