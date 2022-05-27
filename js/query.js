@@ -1,6 +1,9 @@
 class URLQuery
 {
-	constructor() {}
+	constructor()
+	{
+		this.isRemote = window.location.hostname == 'syntex.sytes.net';
+	}
 
 	SETUP(Essentials)
 	{
@@ -9,7 +12,7 @@ class URLQuery
 
 	fetchURL(url, timeout, post, headers)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			
 			var client = new XMLHttpRequest();
 
@@ -25,25 +28,22 @@ class URLQuery
 			try
 			{
 				url = new URL(url);
+
+				if(this.isRemote && url.port != '')
+				{
+					port = url.port;
+
+					url = new URL(url.href.replace(port, '8000'));
+				}
 			}
 			catch(e)
 			{
 				//console.error(e);
 			}
 
-			if(url instanceof URL && url.port != '' && window.location.hostname == 'syntex.sytes.net')
-			{
-				port = url.port;
-			}
-
-			if(port != null)
-			{
-				url = new URL(url.href.replace(port, '8000'));
-			}
-
 			client.open('POST', url);
 
-			if(port == '8000' || !(url instanceof URL))
+			if(this.isRemote)
 			{
 				client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
 				client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
@@ -116,14 +116,7 @@ class URLQuery
 
 				do
 				{
-					if(post != undefined)
-					{
-						var fetch = await this.fetchURL(url, timeout, post, headers);
-					}
-					else
-					{
-						var fetch = await this.fetchURL(url, timeout, null, headers);
-					}
+					var fetch = await this.fetchURL(url, timeout, post != undefined ? post : null, headers);
 					
 					tries--;
 				}
