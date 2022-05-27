@@ -20,19 +20,19 @@
 				<div id="widgets" style="display: grid; grid-template-columns: calc(25% - 15px) calc(25% - 15px) calc(25% - 15px) calc(25% - 15px); grid-gap: 20px">
 					<div class="widget">
 						<button class="widget-left">%devices.devices%</button>
-						<button class="widget-right gradient-blue">0</button>
+						<button class="widget-right gradient-blue" id="toolbar-devices">0</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">%devices.updates%</button>
-						<button class="widget-right gradient-purple">0</button>
+						<button class="widget-right gradient-purple" id="toolbar-updates">0</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">%general.offline%</button>
-						<button class="widget-right gradient-red">0</button>
+						<button class="widget-right gradient-red" id="toolbar-offline">0</button>
 					</div>
 					<div class="widget">
 						<button class="widget-left">%devices.online%</button>
-						<button class="widget-right gradient-green">-</button>
+						<button class="widget-right gradient-green" id="toolbar-online">-</button>
 					</div>
 				</div>
 				<div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
@@ -185,19 +185,6 @@
 				{
 					console.log('DATA', data);
 
-					if(data.restart != null)
-					{
-						var timeDiff = new Date() - new Date(data.restart);
-
-						document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(timeDiff);
-
-						window.timeInterval = setInterval(() => {
-
-							document.getElementById('widgets').children[3].getElementsByClassName('widget-right')[0].innerHTML = formatTimestamp(new Date() - new Date(data.restart));
-						
-						}, timeDiff > 60000 ? 60000 : 1000);
-					}
-
 					if(data.devices.length == 0)
 					{
 						document.getElementById('device-controls').style.display = 'none';
@@ -205,11 +192,11 @@
 						document.getElementById('no-devices').style.display = '';
 					}
 
-					createGroupBar();
+					setupToolBar();
+
+					setupGroupBar();
 
 					sortDevices(true);
-
-					setupToolbar();
 				}
 
 				loadPluginData().then(() => {
@@ -527,7 +514,7 @@
 			</script>
 			<script>
 
-				function setupToolbar()
+				function setupToolBar()
 				{
 					activationCounter = { active : 0, disabled : 0 };
 					deviceCount = 0;
@@ -535,9 +522,9 @@
 					offlineCount = 0;
 					updateCount = 0;
 
-					for(var i = 0; i < data.devices.length; i++)
+					for(const i in data.devices)
 					{
-						if(data.devices[i].services != 'statelessswitch' && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
+						if(selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase()))
 						{
 							deviceCount++;
 
@@ -554,16 +541,28 @@
 							if(data.devices[i].ip != null && data.devices[i].active != null)
 							{
 								realDeviceCount++;
+
 								real.push(data.devices[i].ip);
 
-								activationCounter[data.devices[i].active == 1 ? 'active' : 'disabled' ]++;
+								activationCounter[data.devices[i].active == 1 ? 'active' : 'disabled']++;
 							}
 						}
 					}
 
-					document.getElementById('widgets').children[0].getElementsByClassName('widget-right')[0].innerHTML = deviceCount;
-					document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
-					document.getElementById('widgets').children[2].getElementsByClassName('widget-right')[0].innerHTML = offlineCount;
+					document.getElementById('toolbar-devices').innerHTML = deviceCount;
+					document.getElementById('toolbar-updates').innerHTML = updateCount;
+					document.getElementById('toolbar-offline').innerHTML = offlineCount;
+
+					if(data.restart != null)
+					{
+						document.getElementById('toolbar-online').innerHTML = formatTimestamp(new Date() - new Date(data.restart));
+
+						window.timeInterval = setInterval(() => {
+
+							document.getElementById('toolbar-online').innerHTML = formatTimestamp(new Date() - new Date(data.restart));
+						
+						}, new Date() - new Date(data.restart) > 60000 ? 60000 : 1000);
+					}
 
 					if(activationCounter['disabled'] == 0 && activationCounter['active'] >= 0)
 					{
@@ -580,7 +579,7 @@
 					else
 					{
 						document.getElementById('activate-all').setAttribute('switch', 0);
-						document.getElementById('activate-all').setAttribute('class', '');
+						document.getElementById('activate-all').removeAttribute('class');
 						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.mixed_active%';
 					}
 				}
@@ -601,7 +600,7 @@
 
 							await Essentials.newTimeout(300);
 
-							setupToolbar();
+							setupToolBar();
 						}
 
 						for(var i = 0; i < document.getElementById('devices').children.length; i++)
