@@ -155,7 +155,7 @@
 
 						Query.fetchURL('/serverside/devices', 3000).then((data) => {
 
-							if(data != null)
+							if(data != null && data != 'Error')
 							{
 								try
 								{
@@ -220,8 +220,6 @@
 				{
 					var temp = '';
 
-					document.getElementById('devices').innerHTML = '';
-
 					for(const i in data.devices)
 					{
 						var pattern = (serviceNames[Essentials.getType(data.devices[i].services)] || Essentials.getType(data.devices[i].services));
@@ -240,11 +238,10 @@
 							}
 						}
 
-						if(temp != pattern)
+						if(temp != pattern && document.getElementById(pattern.toLowerCase()) == null)
 						{
 							var typeContainer = document.createElement('div');
 
-							typeContainer.setAttribute('style', '');
 							typeContainer.setAttribute('class', 'type-container');
 
 							if(data.devices[i].services == 'removed')
@@ -277,64 +274,73 @@
 							document.getElementById('devices').appendChild(typeContainer);
 						}
 
-						var button = document.createElement('button'),
-							deviceImage = document.createElement('img'),
-							infoContaner = document.createElement('div'),
-							stateContainer = document.createElement('div'),
-							stateElement = document.createElement('div'),
-							nameElement = document.createElement('div');
-
 						var result = getServiceState(data.devices[i]);
 
-						button.setAttribute('sensortype', Essentials.getType(data.devices[i].services));
-						button.setAttribute('id', data.devices[i].ip);
-						button.setAttribute('class', 'device');
-						button.setAttribute('aid', data.devices[i].aid);
-						button.setAttribute('name', data.devices[i].name);
-						button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative; background-color: ' + result.color);
-
-						if(data.devices[i].id != null)
+						if(document.getElementById(data.devices[i].aid) == null)
 						{
-							button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + data.devices[i].id + "')");
+							var button = document.createElement('button'),
+								deviceImage = document.createElement('img'),
+								infoContaner = document.createElement('div'),
+								stateContainer = document.createElement('div'),
+								stateElement = document.createElement('div'),
+								nameElement = document.createElement('div');
+
+							button.setAttribute('sensortype', Essentials.getType(data.devices[i].services));
+							button.setAttribute('id', data.devices[i].aid);
+							button.setAttribute('class', 'device');
+							button.setAttribute('ip', data.devices[i].ip);
+							button.setAttribute('name', data.devices[i].name);
+							button.setAttribute('style', 'text-align: left; padding-left: 18px; position: relative; background-color: ' + result.color);
+
+							if(data.devices[i].id != null)
+							{
+								button.setAttribute('onclick', "Essentials.leavePage('/device?id=" + data.devices[i].id + "')");
+							}
+							else
+							{
+								button.setAttribute('disabled', '');
+							}
+
+							if(data.devices[i].plugin != null && data.devices[i].plugin.alias.startsWith('SynTex'))
+							{
+								button.setAttribute('version', data.devices[i].version);
+							}
+
+							if(data.devices[i].group)
+							{
+								button.setAttribute('group', data.devices[i].group.toLowerCase());
+							}
+
+							deviceImage.className = 'accessory-img';
+							deviceImage.src = '/img/accessory/' + Essentials.getType(data.devices[i].services) + '.png';
+
+							infoContaner.className = 'name-connection';
+
+							stateElement.className = 'connection';
+							stateElement.innerHTML = result.text;
+
+							nameElement.className = 'device-name';
+							nameElement.innerHTML = data.devices[i].name;
+
+							button.appendChild(deviceImage);
+
+							infoContaner.appendChild(stateElement);
+							infoContaner.appendChild(nameElement);
+
+							button.appendChild(infoContaner);
+
+							document.getElementById(pattern.toLowerCase()).appendChild(button);
+							
+							temp = pattern;
+
+							checkUpdates(button);
 						}
 						else
 						{
-							button.setAttribute('disabled', '');
+							document.getElementById(data.devices[i].aid).style.backgroundColor = result.color;
+
+							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text;
 						}
-
-						if(data.devices[i].plugin != null && data.devices[i].plugin.alias.startsWith('SynTex'))
-						{
-							button.setAttribute('version', data.devices[i].version);
-						}
-
-						if(data.devices[i].group)
-						{
-							button.setAttribute('group', data.devices[i].group.toLowerCase());
-						}
-
-						deviceImage.className = 'accessory-img';
-						deviceImage.src = '/img/accessory/' + Essentials.getType(data.devices[i].services) + '.png';
-
-						infoContaner.className = 'name-connection';
-
-						stateElement.className = 'connection';
-						stateElement.innerHTML = result.text;
-
-						nameElement.className = 'device-name';
-						nameElement.innerHTML = data.devices[i].name;
-
-						button.appendChild(deviceImage);
-
-						infoContaner.appendChild(stateElement);
-						infoContaner.appendChild(nameElement);
-
-						button.appendChild(infoContaner);
-
-						document.getElementById(pattern.toLowerCase()).appendChild(button);
-						
-						temp = pattern;
-
-						checkUpdates(button);
 					}
 
 					document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
@@ -469,6 +475,11 @@
 
 					setTimeout(() => {
 
+						if(!init)
+						{
+							document.getElementById('devices').innerHTML = '';
+						}
+
 						createDevicePanels();
 
 						setTimeout(() => {
@@ -538,7 +549,7 @@
 								updateCount++;
 							}
 
-							if(data.devices[i].ip != null && data.devices[i].active != null)
+							if(data.devices[i].plugin != null && data.devices[i].plugin.alias == 'SynTex')
 							{
 								realDeviceCount++;
 
@@ -759,7 +770,7 @@
 							document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
 						}
 
-						update.push(device.getAttribute('id'));
+						update.push(device.getAttribute('ip'));
 
 						updateCount++;
 					}
@@ -837,9 +848,9 @@
 
 						var response = false;
 
-						if(!updating.includes(device.getAttribute('id')))
+						if(!updating.includes(device.getAttribute('ip')))
 						{
-							updating.push(device.getAttribute('id'));
+							updating.push(device.getAttribute('ip'));
 
 							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
 							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
@@ -876,7 +887,7 @@
 
 									document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
 
-									window.update.splice(window.update.indexOf(device.getAttribute('id')), 1);
+									window.update.splice(window.update.indexOf(device.getAttribute('ip')), 1);
 
 									response = true;
 								}
@@ -910,7 +921,7 @@
 								}.bind({ device : device }), 4000);
 							}
 
-							updating.splice(updating.indexOf(device.getAttribute('id')), 1);
+							updating.splice(updating.indexOf(device.getAttribute('ip')), 1);
 						}
 						
 						resolve(response);
@@ -941,7 +952,7 @@
 								{
 									Query.complexFetch('http://' + data.devices[i].ip + '/refresh', 20000, 1, {}, false).then(function (refresh) {
 
-										var d = document.getElementById(this.device.ip);
+										var d = document.getElementById(this.device.aid);
 
 										switchCounter['success']++;
 
@@ -1085,87 +1096,95 @@
 					return { text, color };
 				}
 
-				function createGroupBar()
+				window.tempGroups = [];
+				window.groups = [];
+
+				function setupGroupBar()
 				{
-					var tmpGroup = [], groups = [];
+					var changed = false;
 
 					for(const i in data.devices)
 					{
-						if(data.devices[i].group != null && data.devices[i].group != '' && !tmpGroup.includes(data.devices[i].group.toLowerCase()))
+						if(data.devices[i].group != null && data.devices[i].group != '' && !tempGroups.includes(data.devices[i].group.toLowerCase()))
 						{
 							groups.push(data.devices[i].group);
 
-							tmpGroup.push(data.devices[i].group.toLowerCase());
+							tempGroups.push(data.devices[i].group.toLowerCase());
+
+							changed = true;
 						}
 					}
 
-					groups.sort();
-
-					document.getElementById('groups').innerHTML = '<input type="button" onclick="switchGroup(' + "'all'" + ', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">';
-
-					for(const i in groups)
+					if(changed)
 					{
-						var group = document.createElement('input');
+						groups.sort();
 
-						group.setAttribute('type', 'button');
-						group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
-						group.setAttribute('group', groups[i].toLowerCase());
-						group.setAttribute('value', groups[i]);
-						group.setAttribute('class', 'white');
-						group.setAttribute('style', 'margin-left: 20px; cursor: grab');
-						
-						document.getElementById('groups').appendChild(group);
-					}
+						document.getElementById('groups').innerHTML = '<input type="button" onclick="switchGroup(' + "'all'" + ', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">';
 
-					const groupBar = document.getElementById('groups');
+						for(const i in groups)
+						{
+							var group = document.createElement('input');
 
-					let pos = { top : 0, left : 0, x : 0, y : 0 };
+							group.setAttribute('type', 'button');
+							group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
+							group.setAttribute('group', groups[i].toLowerCase());
+							group.setAttribute('value', groups[i]);
+							group.setAttribute('class', 'white');
+							group.setAttribute('style', 'margin-left: 20px; cursor: grab');
+							
+							document.getElementById('groups').appendChild(group);
+						}
 
-					const mouseDownHandler = function(e)
-					{
-						groupBar.style.cursor = 'grabbing';
-						groupBar.style.userSelect = 'none';
+						const groupBar = document.getElementById('groups');
 
-						pos = {
-							left : groupBar.scrollLeft,
-							top : groupBar.scrollTop,
-							x : e.clientX,
-							y : e.clientY,
+						let pos = { top : 0, left : 0, x : 0, y : 0 };
+
+						const mouseDownHandler = function(e)
+						{
+							groupBar.style.cursor = 'grabbing';
+							groupBar.style.userSelect = 'none';
+
+							pos = {
+								left : groupBar.scrollLeft,
+								top : groupBar.scrollTop,
+								x : e.clientX,
+								y : e.clientY,
+							};
+
+							document.addEventListener('mousemove', mouseMoveHandler);
+							document.addEventListener('mouseup', mouseUpHandler);
 						};
 
-						document.addEventListener('mousemove', mouseMoveHandler);
-						document.addEventListener('mouseup', mouseUpHandler);
-					};
-
-					const mouseMoveHandler = function(e)
-					{
-						const dx = e.clientX - pos.x;
-						const dy = e.clientY - pos.y;
-
-						groupBar.scrollTop = pos.top - dy;
-						groupBar.scrollLeft = pos.left - dx;
-						
-						for(var i = 0; i < groupBar.children.length; i++)
+						const mouseMoveHandler = function(e)
 						{
-							groupBar.children[i].style.pointerEvents = 'none';
-						}
-					};
+							const dx = e.clientX - pos.x;
+							const dy = e.clientY - pos.y;
 
-					const mouseUpHandler = function()
-					{
-						groupBar.style.cursor = 'grab';
-						groupBar.style.removeProperty('user-select');
+							groupBar.scrollTop = pos.top - dy;
+							groupBar.scrollLeft = pos.left - dx;
+							
+							for(var i = 0; i < groupBar.children.length; i++)
+							{
+								groupBar.children[i].style.pointerEvents = 'none';
+							}
+						};
 
-						for(var i = 0; i < groupBar.children.length; i++)
+						const mouseUpHandler = function()
 						{
-							groupBar.children[i].style.pointerEvents = 'all';
-						}
+							groupBar.style.cursor = 'grab';
+							groupBar.style.removeProperty('user-select');
 
-						document.removeEventListener('mousemove', mouseMoveHandler);
-						document.removeEventListener('mouseup', mouseUpHandler);
-					};
+							for(var i = 0; i < groupBar.children.length; i++)
+							{
+								groupBar.children[i].style.pointerEvents = 'all';
+							}
 
-					groupBar.addEventListener('mousedown', mouseDownHandler);
+							document.removeEventListener('mousemove', mouseMoveHandler);
+							document.removeEventListener('mouseup', mouseUpHandler);
+						};
+
+						groupBar.addEventListener('mousedown', mouseDownHandler);
+					}
 				}
 
 				function getDevice(aid)

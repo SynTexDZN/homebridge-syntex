@@ -718,46 +718,53 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/serverside/devices'], async (request, response) => {
 
-			if(new Date().getTime() - this.lastAccessoryRefresh > this.refresh)
+			if(!this.restart)
 			{
-				this.lastAccessoryRefresh = new Date().getTime();
-
-				await DeviceManager.reloadAccessories();
-			}
-
-			var bridgeData = await this.files.readFile('info.json'),
-				accessories = DeviceManager.getAccessories(),
-				updates = UpdateManager.getLatestVersions(),
-				offline = OfflineManager.getOfflineDevices();
-
-			var devices = [];
-
-			for(const i in accessories)
-			{
-				if(accessories[i].services[0].type != 'bridge')
+				if(new Date().getTime() - this.lastAccessoryRefresh > this.refresh)
 				{
-					var accessory = { ...accessories[i] };
+					this.lastAccessoryRefresh = new Date().getTime();
 
-					if(accessories[i].ip != null)
-					{
-						accessory.online = !offline.includes(accessories[i].ip);
-					}
-
-					devices.push(accessory);
+					await DeviceManager.reloadAccessories();
 				}
-			}
-			
-			var obj = {
-				devices : devices,
-				updates : updates
-			};
 
-			if(bridgeData != null && bridgeData.restart != null)
-			{
-				obj.restart = bridgeData.restart;
+				var bridgeData = await this.files.readFile('info.json'),
+					accessories = DeviceManager.getAccessories(),
+					updates = UpdateManager.getLatestVersions(),
+					offline = OfflineManager.getOfflineDevices();
+
+				var devices = [];
+
+				for(const i in accessories)
+				{
+					if(accessories[i].services[0].type != 'bridge')
+					{
+						var accessory = { ...accessories[i] };
+
+						if(accessories[i].ip != null)
+						{
+							accessory.online = !offline.includes(accessories[i].ip);
+						}
+
+						devices.push(accessory);
+					}
+				}
+				
+				var obj = {
+					devices : devices,
+					updates : updates
+				};
+
+				if(bridgeData != null && bridgeData.restart != null)
+				{
+					obj.restart = bridgeData.restart;
+				}
+				
+				response.end(JSON.stringify(obj));
 			}
-			
-			response.end(JSON.stringify(obj));
+			else
+			{
+				response.end('Error');
+			}
 		});
 
 		this.WebServer.addPage(['/connect'], (request, response, urlParams, content) => {
