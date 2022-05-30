@@ -350,39 +350,43 @@ function addValues(data, values)
 
 		if(data.sectors[cycleTime] != null)
 		{
-			var value = values[v].value;
+			var value = values[v].value, brightness = values[v].brightness;
 
 			try
 			{
-				value = JSON.parse(value);
+				if(value != null)
+				{
+					value = JSON.parse(value);
+				}
+
+				if(brightness != null)
+				{
+					brightness = JSON.parse(brightness);
+				}
 			}
 			catch(e)
 			{
 				console.error(e);
 			}
 
-			if(data.format == 'boolean')
+			if(typeof value == 'boolean')
 			{
-				if(values[v].brightness != null && value == true)
-				{
-					value = JSON.parse(values[v].brightness) / 100;
-				}
-				else
-				{
-					value = (value == true ? 1 : 0);
-				}
+				value = value ? 100 : 0;
 			}
-			else
-			{
-				if(value < data.min)
-				{
-					data.min = value;
-				}
 
-				if(value > data.max)
-				{
-					data.max = value;
-				}
+			if(brightness != null && value == 100)
+			{
+				value = brightness;
+			}
+
+			if(value < data.min)
+			{
+				data.min = value;
+			}
+
+			if(value > data.max)
+			{
+				data.max = value;
 			}
 					
 			data.sectors[cycleTime].push({ time : values[v].time, value });
@@ -509,10 +513,10 @@ function selectValues(data)
 			{
 				if(min != max)
 				{
-					data.values[data.values.length - 1] = first * 100;
+					data.values[data.values.length - 1] = first;
 				}
 				
-				data.values.push(last * 100);
+				data.values.push(last);
 			}
 
 			//data.values.push((100 - max < min) ? max : min);
