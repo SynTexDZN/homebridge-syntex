@@ -768,7 +768,7 @@ class EssentialFeatures
 					}
 				}
 			}
-			else if(service.format.value == 'bool' || service.format.value == 'boolean')
+			else if(service.format.value.includes('bool'))
 			{
 				if(service.state.value)
 				{
@@ -781,7 +781,7 @@ class EssentialFeatures
 					result.color = window.servicePresets[type].inactive.color;
 				}
 			}
-			else if(service.format.value == 'int' || service.format.value == 'float')
+			else if(service.format.value.includes('int') || service.format.value.includes('float'))
 			{
 				var cRange = window.servicePresets[type].colorRange, vRange = window.servicePresets[type].valueRange;
 

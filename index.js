@@ -1004,7 +1004,7 @@ class SynTexPlatform
 										states[this.letters] = {};
 									}
 
-									if(services[i].format[j] == 'bool' || services[i].format[j] == 'boolean')
+									if(services[i].format[j].includes('bool'))
 									{
 										if(res.data.characteristics[0].value == 1)
 										{
