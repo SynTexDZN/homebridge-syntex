@@ -13,6 +13,8 @@ class GraphManager
 
 	drawGraph(canvas, data, gradients, points)
 	{
+		console.log('--------->', data, gradients);
+
 		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d');
@@ -453,13 +455,11 @@ function selectValues(data)
 	{
 		if(data.sectors[i].length > 0)
 		{
-			var avg = 0, max = -100000, min = 100000, automation = null, last = data.sectors[i][data.sectors[i].length - 1].value, first = data.sectors[i][0].value;
+			var avg = 0, max = -100000, min = 100000, automation = null, last = data.sectors[i][data.sectors[i].length - 1].percents, first = data.sectors[i][0].percents;
 
 			for(const j in data.sectors[i])
 			{
-				var value = parseFloat(data.sectors[i][j].value);
-
-				avg += value;
+				var value = parseFloat(data.sectors[i][j].percents);
 
 				if(value < min)
 				{
@@ -473,39 +473,33 @@ function selectValues(data)
 
 				if(data.sectors[i][j].automation != null)
 				{
-					automation = data.sectors[i][j].automation;
+					automation = data.sectors[i][j].percents;
 				}
+
+				avg += value;
+			}
+
+			if(avg > 0)
+			{
+				avg /= data.sectors[i].length;
 			}
 
 			if(data.format != 'boolean' && data.letters[0] != 'G')
 			{
-				if(min == data.min)
+				if(min == 0)
 				{
-					min = (min - data.min) / (data.max - data.min) * 100;
-
 					data.values.push(min);
 				}
-				else if(max == data.max)
+				else if(max == 100)
 				{
-					max = (max - data.min) / (data.max - data.min) * 100;
-
 					data.values.push(max);
 				}
 				else if(automation != null)
 				{
-					automation = (automation - data.min) / (data.max - data.min) * 100;
-
 					data.values.push(automation);
 				}
 				else
 				{
-					if(avg > 0)
-					{
-						avg /= data.sectors[i].length;
-
-						avg = (avg - data.min) / (data.max - data.min) * 100;
-					}
-					
 					data.values.push(avg);
 				}
 			}
