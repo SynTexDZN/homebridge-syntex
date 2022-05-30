@@ -1659,7 +1659,7 @@
 
 				function setupViewer()
 				{
-					DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => renderNewData(data), null, { line : 'getState', params : { id : device.id } });
+					DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => renderNewData(data), { line : 'getState', params : { id : device.id } });
 				}
 				
 				function fetchState()

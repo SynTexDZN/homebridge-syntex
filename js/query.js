@@ -3,6 +3,22 @@ class URLQuery
 	constructor()
 	{
 		this.isRemote = window.location.hostname == 'syntex.sytes.net';
+
+		this.socketInterval = setInterval(() => {
+
+			for(var i = window.activeWebSockets.length - 1; i >= 0; i--)
+			{
+				var socket = window.activeWebSockets[i];
+
+				if(socket.socket.readyState == 3 && navigator.onLine)
+				{
+					window.activeWebSockets.splice(i, 1);
+
+					this.connectSocket(socket.url, socket.callback, socket.message);
+				}
+			}
+
+		}, 1000);
 	}
 
 	SETUP(Essentials)
@@ -228,7 +244,7 @@ class URLQuery
 		});
 	}
 
-	connectSocket(url, callback, tries, message)
+	connectSocket(url, callback, message)
 	{
 		try
 		{
@@ -279,30 +295,7 @@ class URLQuery
 			socket.onopen = () => socket.send(JSON.stringify(message));
 		}
 	
-		if(tries == null)
-		{
-			socket.onclose = (event) => {
-
-				if(!event.wasClean)
-				{
-					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
-				}
-			};
-		}
-		else if(tries > 0)
-		{
-			tries--;
-
-			socket.onclose = (event) => {
-
-				if(!event.wasClean)
-				{
-					setTimeout(() => this.connectSocket(url, callback, tries, message), 1000);
-				}
-			};
-		}
-
-		activeWebSockets.push(socket);
+		window.activeWebSockets.push({ url, callback, message, socket });
 
 		return socket;
 	}
