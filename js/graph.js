@@ -13,8 +13,6 @@ class GraphManager
 
 	drawGraph(canvas, data, gradients, points)
 	{
-		console.log('--------->', data, gradients);
-
 		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d');
