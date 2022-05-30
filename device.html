@@ -168,6 +168,7 @@
 				window.serviceNames = {
 					airquality : '%accessories.airquality%',
 					contact : '%accessories.contact%',
+					blind : '%accessories.blind%',
 					dimmer : '%accessories.dimmer%',
 					humidity : '%accessories.humidity%',
 					led : '%accessories.led%',
@@ -421,7 +422,7 @@
 
 							statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
 
-							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer' || type == 'led')
+							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer' || type == 'led' || type == 'blind')
 							{
 								statusField.style.cursor = 'pointer';
 							}
@@ -441,7 +442,7 @@
 								statusField.style.setProperty('margin-bottom', '0', 'important');
 							}
 
-							if(type == 'dimmer')
+							if(type == 'dimmer' || type == 'blind')
 							{
 								const mouseDownHandler = function(e)
 								{
@@ -834,11 +835,16 @@
 
 					var state = { value : (percent > 0 ? true : false), brightness : percent };
 
+					if(Essentials.letterToType(letters[0]) == 'blind')
+					{
+						state = { value : percent };
+					}
+
 					if(device.plugin.alias.startsWith('SynTex'))
 					{
 						if(!send)
 						{
-							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), brightness : percent  } }));
+							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, ...state  } }));
 						}
 						else
 						{
@@ -999,6 +1005,33 @@
 								else
 								{
 									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
+								}
+							}
+							else if(type == 'blind')
+							{
+								if(state.value == 0)
+								{
+									value = '%characteristics.blind.inactive%';
+								}
+								else if(state.value == 100)
+								{
+									value = '%characteristics.blind.active%';
+									color = servicePresets[type].color;
+								}
+								else
+								{
+									var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
+
+									value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
+
+									if(state.value > 100)
+									{
+										color = servicePresets[type].color;
+									}
+									else
+									{
+										color = 'hsl(190, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 10) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 30) + '%)';
+									}
 								}
 							}
 							else
@@ -1269,7 +1302,7 @@
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, type : type, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch') ? 4 : 10, canvas : canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, type : type, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10, canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
 					Graph.drawGrid(canvas, graphData[letters], 10);
 
@@ -1434,6 +1467,21 @@
 						maxColorFill = 'hsla(40, 85%, 75%, .3)';
 						maxColorGraph = 'hsla(40, 85%, 75%)';
 					}
+					else if(type == 'blind')
+					{
+						if(graphData[letters].min < servicePresets[type].valueRange[0])
+						{
+							graphData[letters].min = servicePresets[type].valueRange[0];
+						}
+
+						if(graphData[letters].max > servicePresets[type].valueRange[1])
+						{
+							graphData[letters].max = servicePresets[type].valueRange[1];
+						}
+
+						minColorFill = color.replace('hsl', 'hsla').replace(')', ', .1)');
+						maxColorFill = color.replace('hsl', 'hsla').replace(')', ', .3)');
+					}
 					else
 					{
 						minColorFill = color.replace('hsl', 'hsla').replace(')', ', .1)');
@@ -1452,7 +1500,7 @@
 
 				function getDataType(type)
 				{
-					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'statelessswitch')
+					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'blind' || type == 'statelessswitch')
 					{
 						return 'numeric';
 					}

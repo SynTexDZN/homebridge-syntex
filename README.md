@@ -127,3 +127,4 @@ https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme
 - Stateless Switch
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
+- Window Coverings

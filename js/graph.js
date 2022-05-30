@@ -473,7 +473,7 @@ function selectValues(data)
 				}
 			}
 
-			if(data.format != 'boolean')
+			if(data.format != 'boolean' && data.letters[0] != 'G')
 			{
 				if(min == data.min)
 				{
@@ -580,7 +580,7 @@ function smoothValues(data)
 
 		if(data.values[i] == null && data.values[parseInt(i) + 1] != null)
 		{
-			if(data.format == 'boolean' || data.letters[0] == 'F')
+			if(data.format == 'boolean' || data.letters[0] == 'F' || data.letters[0] == 'G')
 			{
 				if(last != null)
 				{

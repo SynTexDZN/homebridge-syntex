@@ -17,8 +17,8 @@ class EssentialFeatures
 		this.wheelOpt = supportsPassive ? { passive: false } : false;
 		this.wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
-		this.types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-		this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+		this.types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind'];
+		this.letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
 		this.overlays = [];
 		this.changeCounter = [];
@@ -846,6 +846,23 @@ class EssentialFeatures
 					else
 					{
 						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
+					}
+				}
+				else if(type == 'blind')
+				{
+					if(service.state.value == 0)
+					{
+						result.text = '%characteristics.blind.inactive%';
+					}
+					else if(service.state.value == 100)
+					{
+						result.text = '%characteristics.blind.active%';
+						result.color = window.servicePresets[type].color;
+					}
+					else
+					{
+						result.text = Math.round(service.state.value) + ' ' + window.servicePresets[type].text.toUpperCase();
+						result.color = 'hsl(190, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 10) + '%, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 30) + '%)';
 					}
 				}
 				else

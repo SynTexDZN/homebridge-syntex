@@ -630,6 +630,7 @@ module.exports = class DeviceManager
 				'86' : { name : 'occupancy', type : { value : '71' } },
 				'89' : { name : 'statelessswitch', type : { value : '73' } },
 				'8A' : { name : 'temperature', type : { value : '11' } },
+				'8C' : { name : 'blind', type: { value : '7C' } },
 				'8D' : { name : 'airquality', type: { value : '95' } },
 				'87' : { name : 'smoke', type: { value : '76' } }/*,
 				'7E' : { name : 'security', type: { value : '' } },
@@ -992,8 +993,8 @@ function getLetters(services)
 
 function typeToLetter(type)
 {
-	var types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-	var letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+	var types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind'];
+	var letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
 	return letters[types.indexOf(type.toLowerCase())];
 }
