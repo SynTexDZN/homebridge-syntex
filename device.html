@@ -1104,7 +1104,7 @@
 					element.parentElement.style.setProperty('font-size', steps[0].fontSize + 'px', 'important');
 					element.parentElement.style.setProperty('letter-spacing', steps[0].letterSpacing + 'px', 'important');
 
-					for(var i = 0; i < steps.length; i++)
+					for(const i in steps)
 					{
 						if(element.offsetHeight > element.parentElement.offsetHeight || element.offsetWidth > element.parentElement.offsetWidth - padding - steps[i].letterSpacing / 2)
 						{
