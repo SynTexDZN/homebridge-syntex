@@ -1302,7 +1302,7 @@
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters : letters, type : type, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10, canvas }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
 					Graph.drawGrid(canvas, graphData[letters], 10);
 
