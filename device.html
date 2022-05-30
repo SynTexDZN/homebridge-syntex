@@ -1341,18 +1341,40 @@
 
 					// NOTE: Draw Min, Max, Type, Update and Reload Labels
 
-					if(Object.keys(values).length > 0 && values[letters].length > 0)
+					if(graphData[letters] != null && graphData[letters].values.length > 0 && values[letters] != null && values[letters].length > 0)
 					{
-						if(isNaN(values[letters][0].value) && servicePresets[type].active.text != null && servicePresets[type].inactive.text != null)
+						var min = null, max = null;
+
+						if(servicePresets[type].text != null)
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = servicePresets[type].inactive.text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = servicePresets[type].active.text.toUpperCase();
+							min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+							max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+
+							if(graphData[letters].values.includes(graphData[letters].min) && servicePresets[type].inactive != null && servicePresets[type].inactive.text != null)
+							{
+								min = servicePresets[type].inactive.text.toUpperCase();
+							}
+							
+							if(graphData[letters].values.includes(graphData[letters].max) && servicePresets[type].active != null && servicePresets[type].active.text != null)
+							{
+								max = servicePresets[type].active.text.toUpperCase();
+							}
 						}
-						else if(servicePresets[type].text != null)
+						else
 						{
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+							if(servicePresets[type].inactive != null)
+							{
+								min = servicePresets[type].inactive.text.toUpperCase();
+							}
+
+							if(servicePresets[type].active != null)
+							{
+								max = servicePresets[type].active.text.toUpperCase();
+							}
 						}
+
+						canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
+						canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
 
 						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
 						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
