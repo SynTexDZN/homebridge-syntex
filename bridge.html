@@ -348,7 +348,7 @@
 
 						var success = false;
 							
-						if(await Essentials.checkUpdating('/serverside/update?status')
+						if(await Essentials.checkRestart('/serverside/update?status')
 						&& await Essentials.checkRestart('/serverside/check-restart'))
 						{
 							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
