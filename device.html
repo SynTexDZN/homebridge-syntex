@@ -891,159 +891,25 @@
 
 				function setControlPanel(letters, state)
 				{
-					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––';
+					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––', service = getService(letters);
 
-					if(state != null)
+					console.log(service, letters);
+					
+					if(service != null && service.iid != null)
 					{
-						if(type == 'rgb' || type == 'dimmer')
+						var serviceState = Essentials.getServiceColor({ ...service, state });
+
+						if(serviceState.text != null)
 						{
-							if(state.value == false || state.brightness == 0)
-							{
-								value = '%characteristics.boolean.inactive%';
-								color = 'rgb(60, 60, 80)';
-							}
-							else if(state.value == true)
-							{
-								value = Math.round(state.brightness) + '%';
-
-								if(Math.round(state.brightness) == 100)
-								{
-									value = '%characteristics.boolean.active%';
-								}
-								
-								if(type == 'rgb')
-								{
-									color = 'hsl(' + parseInt(state.hue) + ', ' + parseInt(14 + state.saturation * state.brightness / 100 / 100 * (100 - 14)) + '%, ' + (27 + state.brightness / 100 * (65 - 27)) + '%)';
-								}
-								else if(type == 'dimmer')
-								{
-									color = 'hsl(40, ' + parseInt(state.brightness * 0.85) + '%, ' + (25 + parseInt(state.brightness) * 0.5) + '%)';
-								}
-							}
+							value = serviceState.text;
 						}
-						else if(typeof state.value == 'boolean')
+
+						if(serviceState.color != null)
 						{
-							if(state.value)
-							{
-								value = servicePresets[type].active.text.toUpperCase();
-								color = servicePresets[type].active.color;
-							}
-							else
-							{
-								value = servicePresets[type].inactive.text.toUpperCase();
-								color = servicePresets[type].inactive.color;
-							}
+							color = serviceState.color;
 						}
-						else if(typeof state.value == 'number')
-						{
-							color = 'rgb(60, 60, 80)', value = state.value;
 
-							if(type == 'temperature')
-							{
-								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
-
-								value = ((Math.round(state.value * 10.0)) / 10.0) + ' ' + servicePresets[type].text.toUpperCase();
-
-								if(state.value < 18)
-								{
-									color = 'hsl(220, 75%, 55%)';
-								}
-								else if(state.value > 26)
-								{
-									color = 'hsl(0, 75%, 55%)';
-								}
-								else
-								{
-									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-								}
-							}
-							else if(type == 'humidity')
-							{
-								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
-
-								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
-
-								if(state.value > 50)
-								{	
-									cRange = [280, 0];
-								}	
-
-								if(state.value < 45 || state.value > 55)	
-								{	
-									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
-								}	
-								else	
-								{	
-									color = servicePresets[type].color;	
-								}
-							}
-							else if(type == 'light')
-							{
-								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
-
-								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
-
-								if(state.value > 1000)
-								{
-									color = servicePresets[type].color;
-								}
-								else
-								{
-									color = 'hsl(40, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0] + 25) + cRange[0] - 25) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + '%)';
-								}
-							}
-							else if(type == 'airquality')
-							{
-								var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
-
-								value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
-
-								if(state.value > 4)
-								{
-									color = servicePresets[type].color;
-								}
-								else
-								{
-									color = 'hsl(' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 85%, 65%)';
-								}
-							}
-							else if(type == 'blind')
-							{
-								if(state.value == 0)
-								{
-									value = '%characteristics.blind.inactive%';
-								}
-								else if(state.value == 100)
-								{
-									value = '%characteristics.blind.active%';
-									color = servicePresets[type].color;
-								}
-								else
-								{
-									var cRange = servicePresets[type].colorRange, vRange = servicePresets[type].valueRange;
-
-									value = Math.round(state.value) + ' ' + servicePresets[type].text.toUpperCase();
-
-									if(state.value > 100)
-									{
-										color = servicePresets[type].color;
-									}
-									else
-									{
-										color = 'hsl(190, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 10) + '%, ' + ((state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 30) + '%)';
-									}
-								}
-							}
-							else
-							{
-								value = state.value + ' ' + servicePresets[type].active.text.toUpperCase();
-							}
-						}
-					}
-					else if(type == 'statelessswitch')	
-					{	
-						value = servicePresets[type].inactive.text.toUpperCase();
-						color = servicePresets[type].inactive.color;
+						console.log(serviceState);
 					}
 
 					if(typeCounter[type] > 1)
@@ -1086,6 +952,10 @@
 					else if(color.includes('hsl'))
 					{
 						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+					}
+					else
+					{
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', color);
 					}
 
 					resizeFontSizeToFit(document.getElementById('status-' + letters).children[0]);

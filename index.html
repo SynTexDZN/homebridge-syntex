@@ -1078,22 +1078,20 @@
 							text = '%devices.inactive%';
 							color = 'rgb(130, 130, 150)';
 						}
-						else if(serviceState.text != null && serviceState.color != null)
+						else
 						{
-							text = serviceState.text;
-
-							if((device.services[0].format.value != 'bool' && device.services[0].format.value != 'boolean') || device.services[0].state.value == true)
+							if(serviceState.text != null)
 							{
-								if(device.services[0].type != 'blind' || device.services[0].state.value > 0)
+								text = serviceState.text;
+							}
+
+							if(serviceState.color != null)
+							{
+								if((device.services[0].format.value != null && !device.services[0].format.value.includes('bool')) || device.services[0].state.value == true)
 								{
 									color = serviceState.color;
 								}
 							}
-						}
-
-						if(color == 'rgb(60, 60, 80)')
-						{
-							color = 'rgb(130, 130, 150)';
 						}
 					}
 

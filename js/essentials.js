@@ -71,9 +71,9 @@ class EssentialFeatures
 
 	checkRestart(url)
 	{
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 
-			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
+			this.Query.fetchURL(url, 3000).then((restart) => {
 
 				console.log('RESTART', restart);
 
@@ -85,25 +85,8 @@ class EssentialFeatures
 				{
 					setTimeout(() => resolve(this.checkRestart(url)), 500);
 				}
-		});
-	}
 
-	checkUpdating(url)
-	{
-		return new Promise(async (resolve) => {
-
-			var restart = await this.Query.fetchURL(url, 3000); // OPTIMIZE: Change to Module ( complexFetch )
-
-			console.log('UPDATING', restart);
-
-			if(restart != null && restart == 'false')
-			{
-				resolve(true);
-			}
-			else
-			{
-				setTimeout(() => resolve(this.checkUpdating(url)), 500);
-			}
+			}); // OPTIMIZE: Change to Module ( complexFetch )
 		});
 	}
 
@@ -747,7 +730,6 @@ class EssentialFeatures
 				if(service.state.value == false || service.state.brightness == 0)
 				{
 					result.text = '%characteristics.boolean.inactive%';
-					result.color = 'rgb(60, 60, 80)';
 				}
 				else if(service.state.value == true)
 				{
@@ -785,7 +767,7 @@ class EssentialFeatures
 			{
 				var cRange = window.servicePresets[type].colorRange, vRange = window.servicePresets[type].valueRange;
 
-				result.color = 'rgb(60, 60, 80)', result.text = service.state.value;
+				result.text = service.state.value;
 
 				if(type == 'temperature')
 				{
