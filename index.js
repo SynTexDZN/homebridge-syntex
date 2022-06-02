@@ -313,7 +313,11 @@ class SynTexPlatform
 				{
 					message = JSON.parse(message);
 
-					if(this.password == '' || message.password == md5(this.password))
+					if(message.close != null)
+					{
+						this.internalSockets[message.id].close();
+					}
+					else if(this.password == '' || message.password == md5(this.password))
 					{
 						if(message.protocol == 'http')
 						{
