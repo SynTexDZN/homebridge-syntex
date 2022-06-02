@@ -1,61 +1,71 @@
 const axios = require('axios');
 
-var temp = [], offline = [];
-
 module.exports = class OfflineManager
 {
 	constructor(logger)
 	{
+		this.devices = [];
+		this.offline = [];
+
+		this.connections = {};
+
 		this.logger = logger;
 	}
 
 	setDevices(devices)
 	{
-		pingDevices(devices);
+		this.devices = devices;
+
+		if(this.checkInterval == null)
+		{
+			this.checkInterval = setInterval(() => this.pingDevices(), 30000);
+
+			this.pingDevices();
+		}
 	}
 
 	getOfflineDevices()
 	{
-		return offline;
+		return this.offline;
 	}
-}
 
-function checkConnection(ip)
-{
-	axios.get('http://' + ip + '/', { timeout : 25000 }).then(() => {
-
-		if(temp.includes(ip))
-		{
-			temp.splice(temp.indexOf(ip), 1);
-		}
-		
-		if(offline.includes(ip))
-		{
-			offline.splice(offline.indexOf(ip), 1);
-		}		
-
-	}).catch(() => {
-
-		if(!temp.includes(ip))
-		{
-			temp.push(ip);
-		}
-		else if(!offline.includes(ip))
-		{
-			offline.push(ip);
-		}
-	});
-}
-
-function pingDevices(devices)
-{
-	for(var i = 0; i < devices.length; i++)
+	checkConnection(ip)
 	{
-		if(devices[i].ip != undefined)
+		if(this.connections[ip] == null)
 		{
-			checkConnection(devices[i].ip);
+			this.connections[ip] = 0;
 		}
+
+		axios.get('http://' + ip + '/', { timeout : 25000 }).then(() => {
+
+			this.connections[ip] = 0;
+
+			if(this.offline.includes(ip))
+			{
+				this.offline.splice(this.offline.indexOf(ip), 1);
+			}
+
+		}).catch(() => {
+
+			if(this.connections[ip] < 2)
+			{
+				this.connections[ip]++;
+			}
+			else if(!this.offline.includes(ip))
+			{
+				this.offline.push(ip);
+			}
+		});
 	}
 
-	setTimeout(() => pingDevices(devices), 30000);
+	pingDevices()
+	{
+		for(const i in this.devices)
+		{
+			if(this.devices[i].ip != null)
+			{
+				this.checkConnection(this.devices[i].ip);
+			}
+		}
+	}
 }
