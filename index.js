@@ -264,9 +264,9 @@ class SynTexPlatform
 			this.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		};
 
-		const sendResponse = (path, response) => {
+		const sendResponse = (message, response) => {
 
-			this.WebSocket.send(JSON.stringify({ path, status : response.status, data : response.data }));
+			this.WebSocket.send(JSON.stringify({ path : message.path, init : message.data, status : response.status, data : response.data }));
 		};
 
 		try
@@ -318,11 +318,11 @@ class SynTexPlatform
 						{
 							if(message.post != null)
 							{
-								axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+								axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message, response)).catch((error) => sendResponse(message, error.response));
 							}
 							else
 							{
-								axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message.path, response)).catch((error) => sendResponse(message.path, error.response));
+								axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message, response)).catch((error) => sendResponse(message, error.response));
 							}
 						}
 						else if(message.protocol == 'ws')
@@ -330,12 +330,12 @@ class SynTexPlatform
 							var socket = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
 
 							socket.on('message', (data) => {
-				
+								
 								try
 								{
 									data = JSON.parse(data);
 
-									sendResponse(message.path, { status : 400, data });
+									sendResponse(message, { status : 400, data });
 								}
 								catch(e)
 								{

@@ -262,10 +262,10 @@ class URLQuery
 
 					url.searchParams.set('port', port);
 				}
+				
+				url.searchParams.set('bridge-id', Storage.getRemote('bridge-id'));
+				url.searchParams.set('bridge-password', Storage.getRemote('bridge-password'));
 			}
-
-			url.searchParams.set('bridge-id', Storage.getRemote('bridge-id'));
-			url.searchParams.set('bridge-password', Storage.getRemote('bridge-password'));
 		}
 		catch(e)
 		{
