@@ -265,9 +265,9 @@ class SynTexPlatform
 			this.pingTimeout = setTimeout(() => this.WebSocket.terminate(), 30000 + 1000);
 		};
 
-		const sendResponse = (message, response) => {
+		const sendResponse = (request, response) => {
 
-			this.WebSocket.send(JSON.stringify({ path : message.path, init : message.data, status : response.status, data : response.data }));
+			this.WebSocket.send(JSON.stringify({ request, status : response.status, data : response.data }));
 		};
 
 		try
@@ -328,11 +328,11 @@ class SynTexPlatform
 						}
 						else if(message.protocol == 'ws')
 						{
-							var socket = this.internalSockets[message.path + '/' + message.data.line];
+							var socket = this.internalSockets[message.id];
 
 							if(socket == null)
 							{
-								socket = this.internalSockets[message.path + '/' + message.data.line] = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
+								socket = this.internalSockets[message.id] = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
 							
 								socket.on('message', (data) => {
 								
