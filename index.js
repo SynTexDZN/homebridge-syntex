@@ -22,6 +22,7 @@ class SynTexPlatform
 		}
 
 		this.options = {};
+		this.internalSockets = {};
 
 		this.restart = true;
 		this.updating = false;
@@ -327,29 +328,38 @@ class SynTexPlatform
 						}
 						else if(message.protocol == 'ws')
 						{
-							var socket = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
+							var socket = this.internalSockets[message.path + '/' + message.data.line];
 
-							socket.on('message', (data) => {
+							if(socket == null)
+							{
+								socket = this.internalSockets[message.path + '/' + message.data.line] = new WebSocket('ws://127.0.0.1:' + (message.port || this.port) + message.path, { handshakeTimeout : 30000 });
+							
+								socket.on('message', (data) => {
 								
-								try
-								{
-									data = JSON.parse(data);
+									try
+									{
+										data = JSON.parse(data);
 
-									sendResponse(message, { status : 400, data });
-								}
-								catch(e)
-								{
-									console.error(e);
-								}
-							});
-
-							socket.on('open', () => {
-				
-								if(message.data != null)
-								{
-									socket.send(JSON.stringify(message.data));
-								}
-							});
+										sendResponse(message, { status : 400, data });
+									}
+									catch(e)
+									{
+										console.error(e);
+									}
+								});
+	
+								socket.on('open', () => {
+					
+									if(message.data != null)
+									{
+										socket.send(JSON.stringify(message.data));
+									}
+								});
+							}
+							else if(message.data != null)
+							{
+								socket.send(JSON.stringify(message.data));
+							}
 						}
 					}
 					else
