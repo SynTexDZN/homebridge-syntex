@@ -938,7 +938,7 @@
 								trigger.letters = device.getAttribute('letters');
 								trigger.plugin = device.getAttribute('plugin');
 								
-								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 								{
 									trigger.operation = '=';
 
@@ -970,6 +970,11 @@
 											trigger.brightness = t.children[3].children[2].value;
 										}
 									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									trigger.operation = operation.value;
+									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
 								}
 								else if(device.getAttribute('type') == 'numeric')
 								{
@@ -1012,7 +1017,7 @@
 									condition.letters = device.getAttribute('letters');
 									condition.plugin = device.getAttribute('plugin');
 									
-									if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
+									if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 									{
 										condition.operation = '=';
 
@@ -1044,6 +1049,11 @@
 												condition.brightness = c.children[3].children[2].value;
 											}
 										}
+									}
+									else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+									{
+										condition.operation = operation.value;
+										condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
 									}
 									else if(device.getAttribute('type') == 'numeric')
 									{
@@ -1085,7 +1095,7 @@
 								result.letters = device.getAttribute('letters');
 								result.plugin = device.getAttribute('plugin');
 								
-								if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == '3' || device.hasAttribute('letters') && device.getAttribute('letters')[0] == '9')
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 								{
 									result.operation = '=';
 
@@ -1117,6 +1127,11 @@
 											result.brightness = r.children[3].children[2].value;
 										}
 									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									result.operation = operation.value;
+									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
 								}
 								else if(device.getAttribute('type') == 'numeric')
 								{
