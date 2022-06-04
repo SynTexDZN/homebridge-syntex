@@ -450,19 +450,7 @@
 
 									if(!busy.includes(this.letters))
 									{
-										var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
-										var groupBar = this.field.getBoundingClientRect();
-
-										if(e.clientX < groupBar.left)
-										{
-											percent = 0;
-										}
-										else if(e.clientX > groupBar.right)
-										{
-											percent = 100;
-										}
-										
-										controlDimmer(this.letters, percent, true);
+										controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()), true);
 
 										document.addEventListener('mousemove', mouseMoveHandler);
 										document.addEventListener('mouseup', mouseUpHandler);
@@ -476,19 +464,7 @@
 									this.field.parentElement.style.cursor = 'w-resize';
 									this.field.style.setProperty('transition-property', 'none', 'important');
 
-									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
-									var groupBar = this.field.getBoundingClientRect();
-
-									if(e.clientX < groupBar.left)
-									{
-										percent = 0;
-									}
-									else if(e.clientX > groupBar.right)
-									{
-										percent = 100;
-									}
-
-									controlDimmer(this.letters, percent, true);
+									controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()), true);
 
 								}.bind({ field : statusField, letters });
 
@@ -498,19 +474,7 @@
 									this.field.parentElement.style.cursor = 'pointer';
 									this.field.style.removeProperty('transition-property');
 
-									var percent = Math.min(Math.max(e.offsetX / this.field.offsetWidth * 100, 0), 100);
-									var groupBar = this.field.getBoundingClientRect();
-									
-									if(e.clientX < groupBar.left)
-									{
-										percent = 0;
-									}
-									else if(e.clientX > groupBar.right)
-									{
-										percent = 100;
-									}
-
-									controlDimmer(this.letters, percent);
+									controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()));
 
 									Promise.all(promiseArraySlide).then(() => {
 
@@ -800,6 +764,14 @@
 
 			</script>
 			<script>
+
+				function getPercent(field, e, groupBar)
+				{
+					var groupBar = field.getBoundingClientRect(),
+						padding = 0;
+
+					return Math.min(Math.max((e.x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
+				}
 
 				function getTouchPosition(statusField, letters, e, send)
 				{
