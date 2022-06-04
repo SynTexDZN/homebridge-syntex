@@ -450,7 +450,7 @@
 
 									if(!busy.includes(this.letters))
 									{
-										controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()), true);
+										controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
 
 										document.addEventListener('mousemove', mouseMoveHandler);
 										document.addEventListener('mouseup', mouseUpHandler);
@@ -464,7 +464,7 @@
 									this.field.parentElement.style.cursor = 'w-resize';
 									this.field.style.setProperty('transition-property', 'none', 'important');
 
-									controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()), true);
+									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
 
 								}.bind({ field : statusField, letters });
 
@@ -474,7 +474,7 @@
 									this.field.parentElement.style.cursor = 'pointer';
 									this.field.style.removeProperty('transition-property');
 
-									controlDimmer(this.letters, getPercent(this.field, e, this.field.getBoundingClientRect()));
+									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()));
 
 									Promise.all(promiseArraySlide).then(() => {
 
@@ -765,12 +765,13 @@
 			</script>
 			<script>
 
-				function getPercent(field, e, groupBar)
+				function getPercent(field, x, groupBar)
 				{
 					var groupBar = field.getBoundingClientRect(),
-						padding = 0;
+						padding = 50;
 
-					return Math.min(Math.max((e.x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
+
+					return Math.min(Math.max((x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
 				}
 
 				function getTouchPosition(statusField, letters, e, send)
@@ -780,16 +781,7 @@
 					var groupBar = statusField.getBoundingClientRect();
 					var percent = (touchobj.clientX - groupBar.left - 25) / (statusField.offsetWidth - 50) * 100;
 
-					if(touchobj.clientX < groupBar.left || percent < 0)
-					{
-						percent = 0;
-					}
-					else if(touchobj.clientX > groupBar.right || percent > 100)
-					{
-						percent = 100;
-					}
-						
-					controlDimmer(letters, percent, send);
+					controlDimmer(letters, getPercent(statusField, touchobj.clientX, statusField.getBoundingClientRect()), send);
 
 					e.preventDefault();
 				}
