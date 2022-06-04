@@ -16,23 +16,27 @@
 				PageManager.showFooter();
 
 			</script>
-			<div class="main">
-				<form id="config-editor" onsubmit="event.preventDefault(); saveConfig()"></form>
-				<div class="widget" id="infobox" style="margin-left: 0; margin: 100px 0">
-					<button class="widget-left gradient-orange">%general.important%</button>
-					<button class="widget-right left">%debug.settings.may_need_restart%!</button>
-				</div>
-			</div>
+			<form class="main" id="config-editor" onsubmit="event.preventDefault(); saveConfig()"></form>
 			<script type="module">
 
 				window.configTemplate = {
-					/*port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
+					options : {
+						remote : { default : false, type : 'button', name : '%debug.settings.remote%' },
+						password : { default : '', type : 'password', name : '%debug.settings.password%' },
+						refresh : { default : 60000, type : 'text', name : '%debug.settings.refresh%' }
+					},
+					log : {
+						error : { default : true, type : 'button', name : '%log.error%' },
+						warn : { default : true, type : 'button', name : '%log.warn%' },
+						info : { default : true, type : 'button', name : '%log.info%' },
+						read : { default : true, type : 'button', name : '%log.read%' },
+						update : { default : true, type : 'button', name : '%log.update%' },
+						success : { default : true, type : 'button', name : '%log.success%' },
+						debug : { default : true, type : 'button', name : '%log.debug%' }
+					}/*,
+					port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
 					language : { default : "us", type : 'text', name : 'Sprache' },
-					baseDirectory : { default : "/var/homebridge/SynTex", type : 'text', name : 'Basis Pfad' },*/
-					debug : { default : false, type : 'button', name : '%debug.settings.debug%' },
-					remote : { default : false, type : 'button', name : '%debug.settings.remote%' },
-					password : { default : '', type : 'password', name : '%debug.settings.password%' },
-					refresh : { default : 60000, type : 'text', name : '%debug.settings.refresh%' }
+					baseDirectory : { default : "/var/homebridge/SynTex", type : 'text', name : 'Basis Pfad' }*/
 				};
 
 				window.appSettingsTemplate = {
@@ -73,11 +77,12 @@
 					});
 				}
 
-				window.configJSON = null;
+				window.configJSON = {};
 
 				function renderGUI(config)
 				{
-					configJSON = createFormInputs('%debug.settings.bridge_settings%', configTemplate, config);
+					configJSON.options = createFormInputs('%debug.settings.bridge_settings%', configTemplate.options, config.options);
+					configJSON.log = createFormInputs('%debug.settings.log_settings%', configTemplate.log, config.log);
 
 					try
 					{
@@ -103,26 +108,29 @@
 
 					for(const i in template)
 					{
-						if(template[i].local == null || window.location.protocol != 'https:')
+						if(template[i].name != null && template[i].type != null && template[i].default != null)
 						{
-							var container = document.createElement('div'), html = '<p><b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
-
-							if(template[i].type == 'button')
+							if(template[i].local == null || window.location.protocol != 'https:')
 							{
-								html += 'value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+								var container = document.createElement('div'), html = '<p><b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
+
+								if(template[i].type == 'button')
+								{
+									html += 'value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+								}
+								else
+								{
+									html += 'value="' + (settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
+								}
+
+								html += '</b></p>';
+
+								formObject[i] = settings[i] != null ? settings[i] : template[i].default;
+
+								container.innerHTML = html;
+
+								group.appendChild(container);
 							}
-							else
-							{
-								html += 'value="' + (settings[i] != null ? settings[i] : settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
-							}
-
-							html += '</b></p>';
-
-							formObject[i] = settings[i] != null ? settings[i] : template[i].default;
-
-							container.innerHTML = html;
-
-							group.appendChild(container);
 						}
 					}
 
@@ -133,7 +141,7 @@
 
 				function saveConfig()
 				{
-					var appSettingsForm = document.getElementsByClassName('type-container')[1].children;
+					var appSettingsForm = document.getElementsByClassName('type-container')[2].children;
 
 					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save% ..'));
 
@@ -151,17 +159,31 @@
 
 					realTimeUpdate();
 
-					var bridgeConfigForm = document.getElementsByClassName('type-container')[0].children, configObject = {};
+					var bridgeOptionForm = document.getElementsByClassName('type-container')[0].children, configObject = { options : {}, log : {} };
 
-					for(var i = 1; i < bridgeConfigForm.length; i++)
+					for(var i = 1; i < bridgeOptionForm.length; i++)
 					{
-						if(bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						if(bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
-							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+							configObject.options[bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
 						}
 						else
 						{
-							configObject[bridgeConfigForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeConfigForm[i].getElementsByTagName('input')[0].value;
+							configObject.options[bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeOptionForm[i].getElementsByTagName('input')[0].value;
+						}
+					}
+
+					var bridgeLogForm = document.getElementsByClassName('type-container')[1].children;
+
+					for(var i = 1; i < bridgeLogForm.length; i++)
+					{
+						if(bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						{
+							configObject.log[bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+						}
+						else
+						{
+							configObject.log[bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeLogForm[i].getElementsByTagName('input')[0].value;
 						}
 					}
 

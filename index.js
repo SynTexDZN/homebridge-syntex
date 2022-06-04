@@ -84,9 +84,9 @@ class SynTexPlatform
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
-				if(config != null)
+				if(config != null && config.options != null)
 				{
-					DeviceManager.setWebHooksPort(config.port);
+					DeviceManager.setWebHooksPort(config.options.port);
 				}
 
 				this.initWebServer();
@@ -1096,11 +1096,11 @@ class SynTexPlatform
 				{
 					for(const i in config.platforms)
 					{
-						if(config.platforms[i].platform == pluginName && config.platforms[i].options != null)
+						if(config.platforms[i].platform == pluginName)
 						{
 							found = true;
 
-							resolve(config.platforms[i].options);
+							resolve(config.platforms[i]);
 						}
 					}
 				}
@@ -1134,9 +1134,19 @@ class SynTexPlatform
 								config.platforms[i].options = {};
 							}
 
-							for(const x in additionalConfig)
+							if(config.platforms[i].log == null)
 							{
-								config.platforms[i].options[x] = additionalConfig[x];
+								config.platforms[i].log = {};
+							}
+
+							for(const x in additionalConfig.options)
+							{
+								config.platforms[i].options[x] = additionalConfig.options[x];
+							}
+
+							for(const x in additionalConfig.log)
+							{
+								config.platforms[i].log[x] = additionalConfig.log[x];
 							}
 
 							this.files.writeFile(this.api.user.storagePath() + '/config.json', config).then((response) => {
