@@ -776,12 +776,7 @@
 
 				function getTouchPosition(statusField, letters, e, send)
 				{
-					let touchobj = e.changedTouches[0];
-
-					var groupBar = statusField.getBoundingClientRect();
-					var percent = (touchobj.clientX - groupBar.left - 25) / (statusField.offsetWidth - 50) * 100;
-
-					controlDimmer(letters, getPercent(statusField, touchobj.clientX, statusField.getBoundingClientRect()), send);
+					controlDimmer(letters, getPercent(statusField, e.changedTouches[0].clientX, statusField.getBoundingClientRect()), send);
 
 					e.preventDefault();
 				}
