@@ -750,7 +750,7 @@ class SynTexPlatform
 
 				for(const i in accessories)
 				{
-					if(accessories[i].services[0].type != 'bridge')
+					if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
 					{
 						var accessory = { ...accessories[i] };
 
