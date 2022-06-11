@@ -41,7 +41,7 @@ module.exports = class DeviceManager
 
 			if(values.id != null && values.plugin != null)
 			{
-				if(values.plugin.startsWith('SynTex') && values.plugin != 'SynTexTuya')
+				if(values.plugin.startsWith('SynTex'))
 				{
 					var needToSave = false;
 

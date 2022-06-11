@@ -282,16 +282,7 @@
 
 				var settingsForm = document.getElementById('general-settings');
 
-				if(device.plugin.alias == 'SynTexTuya')
-				{
-					settingsForm.getElementsByTagName('input')[0].setAttribute('placeholder', '%device.change_in_tuya%');
-					settingsForm.getElementsByTagName('input')[0].setAttribute('disabled', '');
-				}
-				else
-				{
-					settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
-				}
-
+				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.group || '');
 
 				for(const i in settings)
@@ -318,81 +309,78 @@
 				settingsForm.setAttribute('ip', device.ip);
 				settingsForm.setAttribute('type', Essentials.getType(services));
 
-				if(device.plugin.alias != 'SynTexTuya')
+				var serviceForm = document.getElementById('service-form');
+
+				for(const i in device.services)
 				{
-					var serviceForm = document.getElementById('service-form');
+					var container = document.createElement('div'), title = document.createElement('h2'), serviceConfig = document.createElement('div');
 
-					for(const i in device.services)
+					container.className = 'type-container';
+
+					title.className = 'title-container';
+
+					if(device.services[i].letters != null)
 					{
-						var container = document.createElement('div'), title = document.createElement('h2'), serviceConfig = document.createElement('div');
+						title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters[1];
+					}
+					else
+					{
+						title.innerHTML = device.services[i].type + ' ' + i;
+					}
 
-						container.className = 'type-container';
+					title.style.marginBottom = '40px';
 
-						title.className = 'title-container';
+					serviceConfig.className = 'service-settings';
+					serviceConfig.setAttribute('letters', device.services[i].letters);
 
-						if(device.services[i].letters != null)
+					var configService = getConfigService(device.services[i].letters);
+
+					if(configService != null)
+					{
+						for(const j in device.services[i])
 						{
-							title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters[1];
-						}
-						else
-						{
-							title.innerHTML = device.services[i].type + ' ' + i;
-						}
-
-						title.style.marginBottom = '40px';
-
-						serviceConfig.className = 'service-settings';
-						serviceConfig.setAttribute('letters', device.services[i].letters);
-
-						var configService = getConfigService(device.services[i].letters);
-
-						if(configService != null)
-						{
-							for(const j in device.services[i])
+							if(j != 'iid' && j != 'format' && j != 'state' && j != 'letters' && j != 'type' && j != 'function' && !(device.services[i][j] instanceof Object) && !Array.isArray(device.services[i][j]))
 							{
-								if(j != 'iid' && j != 'format' && j != 'state' && j != 'letters' && j != 'type' && j != 'function' && !(device.services[i][j] instanceof Object) && !Array.isArray(device.services[i][j]))
+								var p = document.createElement('p'), b = document.createElement('b'), input = document.createElement('input');
+
+								b.innerHTML = j + ': ';
+
+								input.setAttribute('name', j);
+								input.setAttribute('placeholder', configService.name || device.services[i].name);
+								input.setAttribute('value', device.services[i][j]);
+								input.setAttribute('type', 'text');
+								input.setAttribute('required', '');
+								input.setAttribute('style', 'max-width: 325px');
+								input.setAttribute('oninput', 'Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')');
+
+								if(j == 'name')
 								{
-									var p = document.createElement('p'), b = document.createElement('b'), input = document.createElement('input');
+									input.removeAttribute('required');
 
-									b.innerHTML = j + ': ';
-
-									input.setAttribute('name', j);
-									input.setAttribute('placeholder', configService.name || device.services[i].name);
-									input.setAttribute('value', device.services[i][j]);
-									input.setAttribute('type', 'text');
-									input.setAttribute('required', '');
-									input.setAttribute('style', 'max-width: 325px');
-									input.setAttribute('oninput', 'Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')');
-
-									if(j == 'name')
+									if(configService.name == null)
 									{
-										input.removeAttribute('required');
-
-										if(configService.name == null)
-										{
-											input.removeAttribute('value');
-										}
-										else
-										{
-											input.setAttribute('value', configService.name);
-										}
+										input.removeAttribute('value');
 									}
-
-									b.appendChild(input);
-									p.appendChild(b);
-
-									serviceConfig.appendChild(p);
+									else
+									{
+										input.setAttribute('value', configService.name);
+									}
 								}
+
+								b.appendChild(input);
+								p.appendChild(b);
+
+								serviceConfig.appendChild(p);
 							}
 						}
+					}
 
-						if(serviceConfig.childElementCount > 0)
-						{
-							container.appendChild(title);
-							container.appendChild(serviceConfig);
+					if(serviceConfig.childElementCount > 0)
+					{
+						container.appendChild(title);
+						container.appendChild(serviceConfig);
 
-							document.getElementById('service-form').appendChild(container);
-						}
+						document.getElementById('service-form').appendChild(container);
 					}
 				}
 
