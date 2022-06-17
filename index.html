@@ -1066,8 +1066,6 @@
 
 					if(device != null)
 					{
-						var serviceState = Essentials.getServiceColor(device.services[0]);
-
 						if(device.ip != null && device.online == false)
 						{
 							text = '%general.offline%';
@@ -1080,17 +1078,71 @@
 						}
 						else
 						{
-							if(serviceState.text != null)
+							var primaryState = Essentials.getServiceColor(device.services[0]),
+								type = device.services[0].type, format = 'boolean',
+								counter = { all : 0, active : 0 },
+								min = 100000, max = 0;
+
+							if(device.services[0].format != null && device.services[0].format.value != null && !device.services[0].format.value.includes('bool'))
 							{
-								text = serviceState.text;
+								format = 'numeric';
 							}
 
-							if(serviceState.color != null)
+							if(primaryState.text != null)
 							{
-								if((device.services[0].format.value != null && !device.services[0].format.value.includes('bool')) || device.services[0].state.value == true)
+								text = primaryState.text;
+							}
+
+							if(primaryState.color != null && format == 'numeric')
+							{
+								color = primaryState.color;
+							}
+
+							for(const i in device.services)
+							{
+								if(device.services[i].type == type)
 								{
-									color = serviceState.color;
+									var serviceState = Essentials.getServiceColor(device.services[i]);
+
+									if(device.services[i].state != null && device.services[i].state.value != null)
+									{
+										if(serviceState.text != null && device.services[i].state.value == true)
+										{
+											text = serviceState.text;
+										}
+
+										if(serviceState.color != null && device.services[i].state.value == true)
+										{
+											color = serviceState.color;
+										}
+
+										if(device.services[i].state.value < min)
+										{
+											min = device.services[i].state.value;
+										}
+
+										if(device.services[i].state.value > max)
+										{
+											max = device.services[i].state.value;
+										}
+
+										if(device.services[i].state.value == true)
+										{
+											counter.active++;
+										}
+									}
+
+									counter.all++;
 								}
+							}
+
+							if(format == 'numeric' && counter.all > 1)
+							{
+								text = min + ' - ' + max + ' ' + primaryState.text.split(' ')[1];
+							}
+							else if(format == 'boolean' && counter.active != counter.all && counter.active > 0)
+							{
+								text = counter.active + ' / ' + counter.all + ' ' + text;
 							}
 						}
 					}
