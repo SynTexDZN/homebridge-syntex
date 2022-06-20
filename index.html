@@ -1149,7 +1149,7 @@
 							}
 							else if((format == 'boolean' || type == 'blind') && counter.active != counter.all && counter.active > 0)
 							{
-								text = counter.active + ' / ' + counter.all + ' ' + preset.active.text;
+								text = counter.active + ' / ' + counter.all + ' ' + (type == 'blind' ? preset.inactive.text : preset.active.text);
 
 								color = preset.active.color;
 							}
