@@ -973,19 +973,11 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	text-transform: uppercase;
 }
 
-.device-container button
+.device-container
 {
-	margin-bottom: 20px;
-}
-
-.device-container button:last-of-type
-{
-	margin-bottom: 0;
-}
-
-#devices.grid-view .device-container button
-{
-	margin-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
 
 #devices.grid-view input[type='button'], #devices.grid-view button
@@ -1000,9 +992,14 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 */
 #devices.grid-view .device-container
 {
-	display: grid;
-	gap: 20px;
-	grid-template-columns: calc(33% - 13px) calc(34% - 14px) calc(33% - 13px);
+	flex-flow: wrap;
+}
+
+#devices.grid-view .device-container button
+{
+	flex-basis: calc(33.33% - 13.33px);
+    flex-shrink: 0;
+	flex-grow: 1;
 }
 
 #devices.grid-view .name-connection
