@@ -823,7 +823,7 @@
 
 						if(device.plugin.alias.startsWith('SynTex'))
 						{
-							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue : hue, saturation : saturation, brightness : percent  } }));
+							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue, saturation, brightness : percent  } }));
 						
 							setControlPanel(letters, state);
 						}
@@ -1037,7 +1037,7 @@
 													for(const u in activity[lettersA].update)
 													{
 														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-														var characteristics = ['power', 'hue', 'saturation', 'brightness'];
+														var characteristics = ['value', 'hue', 'saturation', 'brightness'];
 
 														obj['value'] = orginalValues;
 
@@ -1045,14 +1045,7 @@
 														{
 															if(orginalValues.includes(characteristics[c] + ': '))
 															{
-																if(characteristics[c] == 'power')
-																{
-																	obj['value'] = orginalValues.split(characteristics[c] + ': ')[1];
-																}
-																else
-																{
-																	obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
-																}
+																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
 															}
 														}
 
