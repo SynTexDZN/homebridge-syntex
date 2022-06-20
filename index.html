@@ -1062,7 +1062,7 @@
 
 				function getServiceState(device)
 				{
-					var color = '', text = '%devices.active%';
+					var color = '', text = '%devices.active%', preset = servicePresets[device.services[0].type];
 
 					if(device != null)
 					{
@@ -1076,7 +1076,7 @@
 							text = '%devices.inactive%';
 							color = 'rgb(130, 130, 150)';
 						}
-						else if(device.services != null && device.services[0] != null)
+						else if(preset != null && device.services != null && device.services[0] != null)
 						{
 							var primaryState = Essentials.getServiceColor(device.services[0]),
 								type = device.services[0].type, format = 'boolean',
@@ -1126,7 +1126,7 @@
 											max = device.services[i].state.value;
 										}
 
-										if(device.services[i].state.value == true)
+										if(device.services[i].state.value == true || (type == 'blind' && device.services[i].state.value == 100))
 										{
 											counter.active++;
 										}
@@ -1136,25 +1136,22 @@
 								}
 							}
 
-							if(format == 'numeric' && min != max && counter.all > 1)
+							if(format == 'numeric' && type != 'blind' && min != max && counter.all > 1)
 							{
 								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : (min + max) / 2 } });
 
-								text = min + ' - ' + max;
-
-								if(primaryState.text.includes(' '))
-								{
-									text +=  + ' ' + primaryState.text.split(' ')[1];
-								}
+								text = min + ' - ' + max + ' ' + preset.text;
 
 								if(serviceState.color != null)
 								{
 									color = serviceState.color;
 								}
 							}
-							else if(format == 'boolean' && counter.active != counter.all && counter.active > 0)
+							else if((format == 'boolean' || type == 'blind') && counter.active != counter.all && counter.active > 0)
 							{
-								text = counter.active + ' / ' + counter.all + ' ' + text;
+								text = counter.active + ' / ' + counter.all + ' ' + preset.active.text;
+
+								color = preset.active.color;
 							}
 						}
 					}
