@@ -1104,7 +1104,7 @@
 								{
 									var serviceState = Essentials.getServiceColor(device.services[i]);
 
-									if(device.services[i].state != null && device.services[i].state.value != null)
+									if(serviceState != null && device.services[i].state != null && device.services[i].state.value != null)
 									{
 										if(serviceState.text != null && device.services[i].state.value == true)
 										{
@@ -1126,7 +1126,7 @@
 											max = device.services[i].state.value;
 										}
 
-										if(device.services[i].state.value == true || (type == 'blind' && device.services[i].state.value == 100))
+										if(device.services[i].state.value == true || (type == 'blind' && device.services[i].state.value > 0))
 										{
 											counter.active++;
 										}
@@ -1142,7 +1142,7 @@
 
 								text = min + ' - ' + max + ' ' + preset.text;
 
-								if(serviceState.color != null)
+								if(serviceState != null && serviceState.color != null)
 								{
 									color = serviceState.color;
 								}
