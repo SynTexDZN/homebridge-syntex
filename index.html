@@ -263,7 +263,7 @@
 							var typeDevices = document.createElement('div');
 
 							typeDevices.setAttribute('id', pattern.toLowerCase());
-							typeDevices.setAttribute('class', 'container device-container');
+							typeDevices.setAttribute('class', 'device-container');
 							/*
 							if(numOfType == 1)
 							{
@@ -1140,7 +1140,12 @@
 							{
 								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : (min + max) / 2 } });
 
-								text = min + ' - ' + max + ' ' + primaryState.text.split(' ')[1];
+								text = min + ' - ' + max;
+
+								if(primaryState.text.includes(' '))
+								{
+									text +=  + ' ' + primaryState.text.split(' ')[1];
+								}
 
 								if(serviceState.color != null)
 								{
