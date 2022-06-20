@@ -1076,7 +1076,7 @@
 							text = '%devices.inactive%';
 							color = 'rgb(130, 130, 150)';
 						}
-						else
+						else if(device.services != null && device.services[0] != null)
 						{
 							var primaryState = Essentials.getServiceColor(device.services[0]),
 								type = device.services[0].type, format = 'boolean',
@@ -1136,9 +1136,16 @@
 								}
 							}
 
-							if(format == 'numeric' && counter.all > 1)
+							if(format == 'numeric' && min != max && counter.all > 1)
 							{
+								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : (min + max) / 2 } });
+
 								text = min + ' - ' + max + ' ' + primaryState.text.split(' ')[1];
+
+								if(serviceState.color != null)
+								{
+									color = serviceState.color;
+								}
 							}
 							else if(format == 'boolean' && counter.active != counter.all && counter.active > 0)
 							{
