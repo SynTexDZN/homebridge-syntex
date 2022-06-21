@@ -788,7 +788,7 @@
 
 					for(var i = 0; i < updateDevices.length; i++)
 					{
-						var updateDevice = getDevice(updateDevices[i].getAttribute('aid'));
+						var updateDevice = getDevice(updateDevices[i].getAttribute('id'));
 
 						if(updateDevice != null && updateDevice.online == true && (selectedGroup == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && selectedGroup == updateDevices[i].getAttribute('group')))) // TODO: Improve
 						{
@@ -858,7 +858,7 @@
 							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
 							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
 
-							var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('aid')).plugin.alias).getUpdateURL(getDevice(device.getAttribute('aid')), { type : Essentials.getType(getDevice(device.getAttribute('aid')).services) }), 20000, 1, {}, false);
+							var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('id')).plugin.alias).getUpdateURL(getDevice(device.getAttribute('id')), { type : Essentials.getType(getDevice(device.getAttribute('id')).services) }), 20000, 1, {}, false);
 
 							if(update == null)
 							{
@@ -879,7 +879,7 @@
 
 								await Essentials.newTimeout(3000);
 								
-								var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('aid')).plugin.alias).getVersionURL(getDevice(device.getAttribute('aid'))), 3000, 20, {}, false);
+								var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('id')).plugin.alias).getVersionURL(getDevice(device.getAttribute('id'))), 3000, 20, {}, false);
 
 								if(update == device.getAttribute('newest-version'))
 								{
@@ -914,7 +914,7 @@
 									}
 									else
 									{
-										var result = getServiceState(getDevice(device.getAttribute('aid')));
+										var result = getServiceState(getDevice(device.getAttribute('id')));
 
 										this.device.style.backgroundColor = result.color;
 
