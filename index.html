@@ -309,11 +309,6 @@
 								button.setAttribute('version', data.devices[i].version);
 							}
 
-							if(data.devices[i].group)
-							{
-								button.setAttribute('group', data.devices[i].group.toLowerCase());
-							}
-
 							deviceImage.className = 'accessory-img';
 							deviceImage.src = '/img/accessory/' + Essentials.getType(data.devices[i].services) + '.png';
 
@@ -538,7 +533,7 @@
 
 					for(const i in data.devices)
 					{
-						if(selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase()))
+						if(hasGroup(data.devices[i].aid, selectedGroup))
 						{
 							deviceCount++;
 
@@ -625,14 +620,15 @@
 							{
 								var r = document.getElementById('devices').children[i].children[1].children[j];
 
-								if(r.getAttribute('group') != group && group != 'all')
+								if(hasGroup(r.getAttribute('id'), group))
 								{
-									r.style.display = 'none';
+									r.style.display = '';
+
+									document.getElementById('devices').children[i].style.display = '';
 								}
 								else
 								{
-									r.style.display = '';
-									document.getElementById('devices').children[i].style.display = '';
+									r.style.display = 'none';
 								}
 							}
 						}
@@ -696,7 +692,7 @@
 
 						for(var i = 0; i < data.devices.length; i++)
 						{
-							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && data.devices[i].online == true && real.includes(data.devices[i].ip) && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
+							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && data.devices[i].online == true && real.includes(data.devices[i].ip) && hasGroup(data.devices[i].aid, selectedGroup))
 							{
 								if(!restarting.includes(data.devices[i].ip))
 								{
@@ -790,7 +786,7 @@
 					{
 						var updateDevice = getDevice(updateDevices[i].getAttribute('id'));
 
-						if(updateDevice != null && updateDevice.online == true && (selectedGroup == 'all' || (updateDevices[i].getAttribute('group') != 'undefined' && selectedGroup == updateDevices[i].getAttribute('group')))) // TODO: Improve
+						if(updateDevice != null && updateDevice.online == true && hasGroup(updateDevices[i].getAttribute('id'), selectedGroup))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -939,7 +935,7 @@
 
 					for(var i = 0; i < data.devices.length; i++)
 					{
-						if(data.devices[i].ip != null && real.includes(data.devices[i].ip) && (selectedGroup == 'all' || (data.devices[i].group != null && selectedGroup == data.devices[i].group.toLowerCase())))
+						if(data.devices[i].ip != null && real.includes(data.devices[i].ip) && hasGroup(data.devices[i].aid, selectedGroup))
 						{
 							var settings = {
 								id : data.devices[i].id,
@@ -1170,13 +1166,21 @@
 
 					for(const i in data.devices)
 					{
-						if(data.devices[i].group != null && data.devices[i].group != '' && !tempGroups.includes(data.devices[i].group.toLowerCase()))
+						if(data.devices[i].group != null && data.devices[i].group != '')
 						{
-							groups.push(data.devices[i].group);
+							var groupArray = Array.isArray(data.devices[i].group) ? data.devices[i].group : [ data.devices[i].group ];
 
-							tempGroups.push(data.devices[i].group.toLowerCase());
+							for(const j in groupArray)
+							{
+								if(!tempGroups.includes(groupArray[j].toLowerCase()))
+								{
+									groups.push(groupArray[j]);
 
-							changed = true;
+									tempGroups.push(groupArray[j].toLowerCase());
+
+									changed = true;
+								}
+							}
 						}
 					}
 
@@ -1250,6 +1254,36 @@
 
 						groupBar.addEventListener('mousedown', mouseDownHandler);
 					}
+				}
+
+				function hasGroup(aid, group)
+				{
+					var device = getDevice(aid);
+
+					if(group == 'all')
+					{
+						return true;
+					}
+
+					if(device != null && device.group != null)
+					{
+						if(Array.isArray(device.group))
+						{
+							for(const i in device.group)
+							{
+								if(device.group[i].toLowerCase() == group.toLowerCase())
+								{
+									return true;
+								}
+							}
+						}
+						else if(device.group.toLowerCase() == group.toLowerCase())
+						{
+							return true;
+						}
+					}
+
+					return false;
 				}
 
 				function getDevice(aid)

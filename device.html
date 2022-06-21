@@ -133,8 +133,8 @@
 					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%device.general%</h2>
 						<div id="general-settings">
-							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 						</div>
 					</div>
 					<div id="service-form" style="margin-bottom: 20px"></div>
@@ -247,7 +247,7 @@
 
 				if(device.group != null && device.group != '')
 				{
-					infos.innerHTML += '<p><b>%general.group%: </b>' + device.group + '</p>';
+					infos.innerHTML += '<p><b>%general.group%: </b>' + (Array.isArray(device.group) ? device.group.join(', ') : device.group) + '</p>';
 				}
 
 				for(const i in settings)
@@ -283,7 +283,11 @@
 				var settingsForm = document.getElementById('general-settings');
 
 				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
-				settingsForm.getElementsByTagName('input')[1].setAttribute('value', device.group || '');
+
+				if(device.group != null)
+				{
+					settingsForm.getElementsByTagName('input')[1].setAttribute('value', Array.isArray(device.group) ? device.group.join(', ') : device.group);
+				}
 
 				for(const i in settings)
 				{
@@ -1877,6 +1881,17 @@
 								{
 									settings['interval'] = form[i].value;
 								}
+							}
+							else if(form[i].getAttribute('name') == 'group' && form[i].value.includes(','))
+							{
+								var array = form[i].value.split(',');
+
+								for(const i in array)
+								{
+									array[i] = array[i].trim();
+								}
+								
+								settings[form[i].getAttribute('name')] = array;
 							}
 							else if(form[i].getAttribute('type') == 'button')
 							{
