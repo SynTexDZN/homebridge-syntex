@@ -388,7 +388,7 @@ function addValues(data, values)
 			{
 				data.max = value;
 			}
-					
+
 			data.sectors[cycleTime].push({ time : values[v].time, value });
 		}
 	}
@@ -402,7 +402,14 @@ function getPercents(data)
 	{
 		for(const j in data.sectors[i])
 		{
-			data.sectors[i][j].percents = (data.sectors[i][j].value - data.min) / (data.max - data.min) * 100;
+			if(data.min != data.max)
+			{
+				data.sectors[i][j].percents = (data.sectors[i][j].value - data.min) / (data.max - data.min) * 100;
+			}
+			else
+			{
+				data.sectors[i][j].percents = data.min;
+			}
 		}
 	}
 
