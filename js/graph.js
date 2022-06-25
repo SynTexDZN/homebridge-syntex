@@ -274,16 +274,8 @@ class GraphManager
 		data.sectors = this.renderMinutesCycle(data.interval);
 		data.values = [];
 
-		if(data.format == 'boolean')
-		{
-			data.min = 0;
-			data.max = 1;
-		}
-		else
-		{
-			data.min = 100000;
-			data.max = -100000;
-		}
+		data.min = 100000;
+		data.max = -100000;
 
 		data = addValues(data, values);
 		data = getPercents(data);
