@@ -278,8 +278,8 @@ class GraphManager
 		data.max = -100000;
 
 		data = addValues(data, values);
-		data = getPercents(data);
 		data = getAutomations(data, automation, events);
+		data = getPercents(data);
 		data = selectValues(data);
 		data = startEndPoints(data);
 		data = smoothValues(data);
@@ -394,7 +394,11 @@ function getPercents(data)
 	{
 		for(const j in data.sectors[i])
 		{
-			if(data.min != data.max)
+			if(data.sectors[i][j].automation != null)
+			{
+				data.sectors[i][j].percents = (data.sectors[i][j].automation - data.min) / (data.max - data.min) * 100;
+			}
+			else if(data.min != data.max)
 			{
 				data.sectors[i][j].percents = (data.sectors[i][j].value - data.min) / (data.max - data.min) * 100;
 			}
