@@ -8,17 +8,17 @@ class URLQuery
 
 			for(var i = window.activeWebSockets.length - 1; i >= 0; i--)
 			{
-				var socket = window.activeWebSockets[i];
+				var reference = window.activeWebSockets[i];
 
-				if(socket.socket.readyState == 3 && navigator.onLine)
+				if(reference.socket.readyState == 3 && navigator.onLine)
 				{
 					window.activeWebSockets.splice(i, 1);
 
-					this.connectSocket(socket.url, socket.callback, socket.message);
+					this.connectSocket(reference);
 				}
 			}
 
-		}, 1000);
+		}, 1000, true);
 	}
 
 	SETUP(Essentials)
@@ -244,27 +244,29 @@ class URLQuery
 		});
 	}
 
-	connectSocket(url, callback, message)
+	connectSocket(reference)
 	{
+		var request = reference.url;
+
 		try
 		{
-			url = new URL(url);
+			request = new URL(request);
 
 			if(window.location.hostname == 'syntex.sytes.net')
 			{
-				url = new URL(url.href.replace('ws', 'wss'));
+				request = new URL(request.href.replace('ws:', 'wss:'));
 
-				if(url.port != '')
+				if(request.port != '')
 				{
-					var port = url.port;
+					var port = request.port;
 
-					url = new URL(url.href.replace(port, '8000'));
+					request = new URL(request.href.replace(port, '8000'));
 
-					url.searchParams.set('port', port);
+					request.searchParams.set('port', port);
 				}
 				
-				url.searchParams.set('bridge-id', Storage.getRemote('bridge-id'));
-				url.searchParams.set('bridge-password', Storage.getRemote('bridge-password'));
+				request.searchParams.set('bridge-id', Storage.getRemote('bridge-id'));
+				request.searchParams.set('bridge-password', Storage.getRemote('bridge-password'));
 			}
 		}
 		catch(e)
@@ -272,11 +274,11 @@ class URLQuery
 			console.error(e);
 		}
 		
-		let socket = new WebSocket(url);
+		reference.socket = new WebSocket(request);
 
-		socket.onmessage = (data) => {
+		reference.socket.onmessage = (response) => {
 
-			var parsedData = data.data;
+			var parsedData = response.data;
 
 			try
 			{
@@ -287,17 +289,15 @@ class URLQuery
 				console.error(e);
 			}
 
-			callback(parsedData);
+			reference.callback(parsedData);
 		};
 
-		if(message != null)
+		if(reference.message != null)
 		{
-			socket.onopen = () => socket.send(JSON.stringify(message));
+			reference.socket.onopen = () => reference.socket.send(JSON.stringify(reference.message));
 		}
 	
-		window.activeWebSockets.push({ url, callback, message, socket });
-
-		return socket;
+		window.activeWebSockets.push(reference);
 	}
 }
 

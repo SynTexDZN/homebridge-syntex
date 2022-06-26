@@ -795,7 +795,7 @@
 					{
 						if(!send)
 						{
-							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, ...state  } }));
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, ...state  } }));
 						}
 						else
 						{
@@ -827,7 +827,7 @@
 
 						if(device.plugin.alias.startsWith('SynTex'))
 						{
-							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue, saturation, brightness : percent  } }));
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue, saturation, brightness : percent  } }));
 						
 							setControlPanel(letters, state);
 						}
@@ -971,7 +971,7 @@
 
 						if(device.plugin.alias.startsWith('SynTex'))
 						{
-							DeviceController.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value  } }));
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value  } }));
 						}
 						else if(getService(letters) != null && getService(letters).iid != null)
 						{
@@ -1480,22 +1480,38 @@
 
 				function setupController()
 				{
-					DeviceController = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => {
-					
-						if(data instanceof Object)
-						{
-							var letters = Object.keys(data)[0];
+					DeviceController = {
+						url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						callback : (data) => {
+						
+							if(data instanceof Object)
+							{
+								var letters = Object.keys(data)[0];
 
-							busy.splice(busy.indexOf(letters), 1);
+								busy.splice(busy.indexOf(letters), 1);
+							}
 						}
-					});
+					};
+
+					Query.connectSocket(DeviceController);
 				}
 
 				window.DeviceViewer = null;
 
 				function setupViewer()
 				{
-					DeviceViewer = Query.connectSocket('ws://' + window.location.hostname + ':' + device.plugin.port + '/devices', (data) => renderNewData(data), { line : 'getState', params : { id : device.id } });
+					DeviceViewer = {
+						url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						message : {
+							line : 'getState',
+							params : {
+								id : device.id
+							}
+						},
+						callback : (data) => renderNewData(data)
+					};
+					
+					Query.connectSocket(DeviceViewer);
 				}
 				
 				function fetchState()
