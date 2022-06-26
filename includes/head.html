@@ -408,11 +408,14 @@
 			}
 		};
 
-		window.setInterval = (func, interval) => {
+		window.setInterval = (func, interval, stay) => {
 
 			var timerID = originalSetInterval(func, interval);
 
-			activeIntervals.push(timerID);
+			if(!stay)
+			{
+				activeIntervals.push(timerID);
+			}
 
 			return timerID;
 		};
