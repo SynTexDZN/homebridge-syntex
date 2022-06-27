@@ -1134,7 +1134,7 @@
 							}
 						}
 
-						convertedAutomation.push(a || -1);
+						convertedAutomation.push(a || null);
 					}
 
 					for(const i in automation)
@@ -1329,7 +1329,7 @@
 					Graph.drawAutomation(canvas, automationTriggers);
 					Graph.drawFill(canvas, graphData[letters].values, [maxColorFill, minColorFill], 0);
 					Graph.drawGraph(canvas, graphData[letters].values, [maxColorGraph, minColorGraph], false);
-					Graph.drawEvents(canvas, convertedAutomation, [maxColorGraph, minColorGraph]);
+					Graph.drawEvents(canvas, convertedAutomation, [maxColorGraph, minColorGraph], type);
 
 					canvas.style.opacity = 1;
 				}

@@ -197,8 +197,10 @@ class GraphManager
 		ctx.stroke();
 	}
 
-	drawEvents(canvas, data, gradients)
+	drawEvents(canvas, data, gradients, type)
 	{
+		var drawn = [];
+
 		if(data.length > 0)
 		{
 			var ctx = canvas.getContext('2d');
@@ -206,7 +208,7 @@ class GraphManager
 			var width = canvas.offsetWidth - this.padding * 2;
 			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
 
-			for(var i = 0; i < gradients.length; i++)
+			for(const i in gradients)
 			{
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
@@ -216,19 +218,52 @@ class GraphManager
 			ctx.lineWidth = 1.5;
 			ctx.setLineDash([]);
 
-			for(var i = 1; i < data.length; i++)
+			for(var i = data.length - 1; i >= 0; i--)
 			{
-				if(data[i - 1].percent != -1)
+				if(data[i] != null && data[i].percent != null)
 				{
 					ctx.beginPath();
-					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1].percent * height / 100 + this.padding, 4, 0, 360);
+					ctx.arc((i) * (width + this.padding * 2) / (data.length - 1), height - data[i].percent * height / 100 + this.padding, 4, 0, 360);
 					ctx.fill();
 					ctx.closePath();
-					/*
-					ctx.font = '200 12px Rubik';
-					ctx.textAlign = 'center';
-					ctx.fillText(data[i - 1].value, (i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1].percent * height / 100 + this.padding - 7);
-					*/
+					
+					if(data[i].value != null && !drawn.includes(data[i].value))
+					{
+						var padding = 10,
+							textValue = (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
+							textWidth = ctx.measureText(textValue).width,
+							textX = (i) * (width + this.padding * 2) / (data.length - 1),
+							textY = height - Math.round(data[i].percent) * height / 100 + this.padding - padding - 2;
+
+						ctx.font = '300 14px Rubik';
+						ctx.textBaseline = 'center';
+						ctx.textAlign = 'center';
+						ctx.lineWidth = 2;
+						ctx.strokeStyle = 'rgba(20, 20, 30, 0.8)';
+
+						if(textX - (textWidth / 2) < padding)
+						{
+							textX = padding;
+
+							ctx.textAlign = 'left';
+						}
+						else if(textX + (textWidth / 2) >= canvas.width - padding)
+						{
+							textX = canvas.width - padding;
+
+							ctx.textAlign = 'right';
+						}
+
+						if(textY < this.padding + 14 + 10)
+						{
+							textY += 21 + padding + 2;
+						}
+
+						ctx.strokeText(textValue, textX, textY);
+						ctx.fillText(textValue, textX, textY);
+
+						drawn.push(data[i].value);
+					}
 				}
 			}
 		}
