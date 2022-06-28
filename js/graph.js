@@ -229,7 +229,7 @@ class GraphManager
 					
 					if(data[i].value != null && !drawn.includes(data[i].value))
 					{
-						var padding = 10,
+						var padding = 8,
 							textValue = (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
 							textWidth = ctx.measureText(textValue).width,
 							textX = (i) * (width + this.padding * 2) / (data.length - 1),
@@ -239,7 +239,7 @@ class GraphManager
 						ctx.textBaseline = 'center';
 						ctx.textAlign = 'center';
 						ctx.lineWidth = 2;
-						ctx.strokeStyle = 'rgba(20, 20, 30, 0.8)';
+						ctx.strokeStyle = 'rgba(20, 20, 30, 0.6)';
 
 						if(textX - (textWidth / 2) < padding)
 						{
