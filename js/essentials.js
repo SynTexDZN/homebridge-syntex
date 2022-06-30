@@ -773,13 +773,13 @@ class EssentialFeatures
 				{
 					result.text = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + window.servicePresets[type].text;
 
-					if(service.state.value < 18)
+					if(service.state.value < vRange[0])
 					{
-						result.color = 'hsl(220, 75%, 55%)';
+						result.color = 'hsl(' + cRange[0] + ', 65%, 55%)';
 					}
-					else if(service.state.value > 26)
+					else if(service.state.value > vRange[1])
 					{
-						result.color = 'hsl(0, 75%, 55%)';
+						result.color = 'hsl(' + cRange[1] + ', 65%, 55%)';
 					}
 					else
 					{
