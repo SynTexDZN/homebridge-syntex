@@ -1104,27 +1104,29 @@
 
 									if(serviceState != null && device.services[i].state != null && device.services[i].state.value != null)
 									{
-										if(serviceState.text != null && device.services[i].state.value == true)
+										var value = device.services[i].state.value;
+
+										if(serviceState.text != null && value == true)
 										{
 											text = serviceState.text;
 										}
 
-										if(serviceState.color != null && device.services[i].state.value == true)
+										if(serviceState.color != null && value == true)
 										{
 											color = serviceState.color;
 										}
 
-										if(device.services[i].state.value < min)
+										if(value < min)
 										{
-											min = device.services[i].state.value;
+											min = value;
 										}
 
-										if(device.services[i].state.value > max)
+										if(value > max)
 										{
-											max = device.services[i].state.value;
+											max = value;
 										}
 
-										if(device.services[i].state.value == true || (type == 'blind' && device.services[i].state.value > 0))
+										if(value == true || (type == 'blind' && value > 0))
 										{
 											counter.active++;
 										}
