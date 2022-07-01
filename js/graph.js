@@ -15,12 +15,10 @@ class GraphManager
 	{
 		if(data.join().replace(/,/g, '').length > 0)
 		{
-			var ctx = canvas.getContext('2d');
-			var height = canvas.offsetHeight - this.padding * 2 - 2;
-			var width = canvas.offsetWidth - this.padding * 2;
-			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
+			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
+			var grd = ctx.createLinearGradient(0, this.getPoint(canvas, 100), 0, this.getPoint(canvas, 0));
 
-			for(var i = 0; i < gradients.length; i++)
+			for(const i in gradients)
 			{
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
@@ -28,6 +26,7 @@ class GraphManager
 			ctx.lineWidth = 2;
 			ctx.lineCap = 'round';
 			ctx.strokeStyle = grd;
+
 			ctx.setLineDash([]);
 
 			for(var i = 1; i < data.length; i++)
@@ -35,13 +34,16 @@ class GraphManager
 				if(points)
 				{
 					ctx.fillStyle = gradients[0];
+
 					ctx.beginPath();
-					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 10, 0, 360);
+					ctx.arc((i - 1) * width / (data.length - 1), this.getPoint(canvas, data[i - 1]), 10, 0, 360);
 					ctx.fill();
 					ctx.closePath();
+
 					ctx.fillStyle = gradients[1];
+
 					ctx.beginPath();
-					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding, 5, 0, 360);
+					ctx.arc((i - 1) * width / (data.length - 1), this.getPoint(canvas, data[i - 1]), 5, 0, 360);
 					ctx.fill();
 					ctx.closePath();
 				}
@@ -49,25 +51,28 @@ class GraphManager
 				if(data[i - 1] != null)
 				{
 					ctx.beginPath();
-					ctx.moveTo((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[i - 1] * height / 100 + this.padding);
+					ctx.moveTo((i - 1) * width / (data.length - 1), this.getPoint(canvas, data[i - 1]));
 				}
 				
 				if(data[i] != null)
 				{
-					ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+					ctx.lineTo(i * width / (data.length - 1), this.getPoint(canvas, data[i]));
 					ctx.stroke();
 				}
 
 				if(points)
 				{
 					ctx.fillStyle = gradients[0];
+
 					ctx.beginPath();
-					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 10, 0, 360);
+					ctx.arc((i - 1) * width / (data.length - 1), this.getPoint(canvas, data[data.length - 1]), 10, 0, 360);
 					ctx.fill();
 					ctx.closePath();
+
 					ctx.fillStyle = gradients[1];
+
 					ctx.beginPath();
-					ctx.arc((i - 1) * (width + this.padding * 2) / (data.length - 1), height - data[data.length - 1] * height / 100 + this.padding, 5, 0, 360);
+					ctx.arc((i - 1) * width / (data.length - 1), this.getPoint(canvas, data[data.length - 1]), 5, 0, 360);
 					ctx.fill();
 					ctx.closePath();
 				}
@@ -79,22 +84,21 @@ class GraphManager
 	{
 		if(data.join().replace(/,/g, '').length > 0)
 		{
-			var ctx = canvas.getContext('2d');
-			var height = canvas.offsetHeight - this.padding * 2 - 2;
-			var width = canvas.offsetWidth - this.padding * 2;
-			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
+			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
+			var grd = ctx.createLinearGradient(0, this.getPoint(canvas, 100), 0, this.getPoint(canvas, 0));
 
-			for(var i = 0; i < gradients.length; i++)
+			for(const i in gradients)
 			{
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
 			ctx.fillStyle = grd;
+
 			ctx.setLineDash([]);
 
 			ctx.beginPath();
-			ctx.moveTo(0, height + this.padding);
-			ctx.lineTo(0, height - data[0] * height / 100 + this.padding);
+			ctx.moveTo(0, this.getPoint(canvas, 0));
+			ctx.lineTo(0, this.getPoint(canvas, data[0]));
 
 			for(var i = 1; i < data.length; i++)
 			{
@@ -102,34 +106,33 @@ class GraphManager
 				{
 					if(smoothing == 0)
 					{
-						ctx.lineTo(i * (width + this.padding * 2) / (data.length - 1), height - data[i] * height / 100 + this.padding);
+						ctx.lineTo(i * width / (data.length - 1), this.getPoint(canvas, data[i]));
 					}
 					else
 					{
-						var multiplicator = 100 / data.max * height / 100;
+						var multiplicator = 100 / data.max * height / 100, height = canvas.offsetHeight - this.padding * 2 - 2;
 
-						ctx.bezierCurveTo(i * (width + this.padding * 2) / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
+						ctx.bezierCurveTo(i * width / (data.length - 1) - width / smoothing / (data.length - 1), height - data[i - 1] * multiplicator, i * width / (data.length - 1) + this.padding - width / smoothing / (data.length - 1), height - data[i] * multiplicator - this.padding , i * width / (data.length - 1) + this.padding, height - data[i] * multiplicator - this.padding ); // FIXME: Graph Smoothing Improvements
 					}
 				}
 			}
 
-			ctx.lineTo((data.length - 1) * (width + this.padding * 2) / (data.length - 1), height + this.padding);
+			ctx.lineTo((data.length - 1) * width / (data.length - 1), this.getPoint(canvas, 0));
 
 			ctx.closePath();
 			ctx.fill();
 		}
 	}
 
-	drawGrid(canvas, data, unterteilungen)
+	drawGrid(canvas, data)
 	{
-		var ctx = canvas.getContext('2d');
-		var height = canvas.offsetHeight - this.padding * 2 - 2;
-		var width = canvas.offsetWidth - this.padding * 2;
+		var ctx = canvas.getContext('2d'), height = canvas.offsetHeight - this.padding * 2 - 2, width = canvas.offsetWidth;
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		ctx.lineCap = 'butt';
 		ctx.lineWidth = 1.5;
+		
 		ctx.setLineDash([]);
 
 		ctx.strokeStyle = 'rgb(25, 25, 40)';
@@ -152,33 +155,31 @@ class GraphManager
 		
 		var start = Math.floor(data.min) - Math.floor(data.min) % space + space;
 
-		for(var i = start; i < Math.ceil(data.max); i += space)
+		for(let i = start; i < Math.ceil(data.max); i += space)
 		{
 			ctx.beginPath();
 			ctx.moveTo(0, height - ((i - data.min) / (data.max - data.min) * 100) * height / 100 + this.padding);
-			ctx.lineTo(width + this.padding * 2, height - ((i - data.min) / (data.max - data.min) * 100) * height / 100 + this.padding)
+			ctx.lineTo(width, height - ((i - data.min) / (data.max - data.min) * 100) * height / 100 + this.padding)
 			ctx.stroke();
 		}
 
-		var time = Math.round((new Date().getTime() - this.getHourCycle(6)) / 3600000 * (width + this.padding * 2) / 24);
-		var space = (width + this.padding * 2) / 24, counter = 0;
+		var time = Math.round((new Date().getTime() - this.getHourCycle(6)) / 3600000 * width / 24);
+		
+		space = width / 24;
+		counter = 0;
 
-		for(var i = 0 - time; i < (width + this.padding * 2); i += space)
+		for(let i = 0; i < 30; i++)
 		{
 			ctx.strokeStyle = 'rgb(25, 25, 40)';
 			
-			if(counter == 0)
-			{
-				ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-			}
-			else if(counter == 6 || counter == 12 || counter == 18 || counter == 24)
+			if(counter == 0 || counter == 6 || counter == 12 || counter == 18 || counter == 24)
 			{
 				ctx.strokeStyle = 'rgb(40, 40, 55)';
 			}
 			
 			ctx.beginPath();
-			ctx.moveTo(i, this.padding);
-			ctx.lineTo(i, height + this.padding);
+			ctx.moveTo(i * space - time, this.getPoint(canvas, 0));
+			ctx.lineTo(i * space - time, this.getPoint(canvas, 100));
 			ctx.stroke();
 
 			counter++;
@@ -187,13 +188,13 @@ class GraphManager
 		ctx.strokeStyle = 'rgb(50, 50, 70)';
 
 		ctx.beginPath();
-		ctx.moveTo(0, this.padding + (height / unterteilungen) * 0);
-		ctx.lineTo(width + this.padding * 2, this.padding + (height / unterteilungen) * 0)
+		ctx.moveTo(0, this.getPoint(canvas, 0));
+		ctx.lineTo(width, this.getPoint(canvas, 0))
 		ctx.stroke();
 
 		ctx.beginPath();
-		ctx.moveTo(0, this.padding + height);
-		ctx.lineTo(width + this.padding * 2, this.padding + height)
+		ctx.moveTo(0, this.getPoint(canvas, 100));
+		ctx.lineTo(width, this.getPoint(canvas, 100))
 		ctx.stroke();
 	}
 
@@ -203,10 +204,8 @@ class GraphManager
 
 		if(data.length > 0)
 		{
-			var ctx = canvas.getContext('2d');
-			var height = canvas.offsetHeight - this.padding * 2 - 2;
-			var width = canvas.offsetWidth - this.padding * 2;
-			var grd = ctx.createLinearGradient(0, this.padding, 0, (height + this.padding * 2 + 2) - this.padding);
+			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
+			var grd = ctx.createLinearGradient(0, this.getPoint(canvas, 100), 0, this.getPoint(canvas, 0));
 
 			for(const i in gradients)
 			{
@@ -223,7 +222,7 @@ class GraphManager
 				if(data[i] != null && data[i].percent != null)
 				{
 					ctx.beginPath();
-					ctx.arc((i) * (width + this.padding * 2) / (data.length - 1), height - data[i].percent * height / 100 + this.padding, 4, 0, 360);
+					ctx.arc(i * width / (data.length - 1), this.getPoint(canvas, data[i].percent), 4, 0, 360);
 					ctx.fill();
 					ctx.closePath();
 					
@@ -232,8 +231,8 @@ class GraphManager
 						var padding = 8,
 							textValue = (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
 							textWidth = ctx.measureText(textValue).width,
-							textX = (i) * (width + this.padding * 2) / (data.length - 1),
-							textY = height - Math.round(data[i].percent) * height / 100 + this.padding - padding - 2;
+							textX = i * width / (data.length - 1),
+							textY = this.getPoint(canvas, data[i].percent) - padding - 2;
 
 						ctx.font = '300 14px Rubik';
 						ctx.textBaseline = 'center';
@@ -247,14 +246,14 @@ class GraphManager
 
 							ctx.textAlign = 'left';
 						}
-						else if(textX + (textWidth / 2) >= canvas.width - padding)
+						else if(textX + (textWidth / 2) >= width - padding)
 						{
-							textX = canvas.width - padding;
+							textX = width - padding;
 
 							ctx.textAlign = 'right';
 						}
 
-						if(textY < this.padding + 14 + 10)
+						if(textY < this.padding + 14 + padding)
 						{
 							textY += 21 + padding + 2;
 						}
@@ -273,21 +272,19 @@ class GraphManager
 	{
 		if(data.length > 0)
 		{
-			var ctx = canvas.getContext('2d');
-			var height = canvas.offsetHeight - this.padding * 2 - 2;
-			var width = canvas.offsetWidth - this.padding * 2;
+			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
 
 			ctx.lineCap = 'butt';
 			ctx.lineWidth = 1.5;
 			ctx.setLineDash([10, 15]);
 
-			for(var i = 0; i < data.length; i++)
+			for(const i in data)
 			{
 				ctx.strokeStyle = 'rgb(40, 40, 55)';
 
 				ctx.beginPath();
-				ctx.moveTo(0, height - data[i].percent * height / 100 + this.padding);
-				ctx.lineTo(width + this.padding * 2, height - data[i].percent * height / 100 + this.padding)
+				ctx.moveTo(0, this.getPoint(canvas, data[i].percent));
+				ctx.lineTo(width, this.getPoint(canvas, data[i].percent))
 				ctx.stroke();
 				/*
 				if(i == 0 || data[i - 1].percent > data[i].percent + 5 || data[i - 1].percent < data[i].percent - 5)
@@ -364,6 +361,13 @@ class GraphManager
 		data = Object.keys(data).sort().reduce((obj, key) => { obj[key] = data[key]; return obj }, {});
 
 		return data;
+	}
+
+	getPoint(canvas, percent)
+	{
+		var height = canvas.offsetHeight - this.padding * 2 - 2;
+		
+		return height - percent * height / 100 + this.padding;
 	}
 }
 
