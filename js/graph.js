@@ -181,7 +181,42 @@ class GraphManager
 			ctx.moveTo(i * space - time, this.getPoint(canvas, 0));
 			ctx.lineTo(i * space - time, this.getPoint(canvas, 100));
 			ctx.stroke();
+			
+			counter++;
+		}
 
+		var align = 'left';
+
+		counter = 0;
+
+		ctx.font = '300 14px Rubik';
+
+		for(let i = width - time; i > 0; i -= space)
+		{
+			var padding = 6,
+				text = (new Date(this.getHourCycle(6) - (counter * 60 * 60 * 1000)).getHours() + ':00').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202)),
+				textX = i + padding;
+
+			if(textX + ctx.measureText(text).width + padding > width)
+			{
+				align = 'right';
+			}
+
+			if(align == 'right')
+			{
+				textX = i - padding;
+			}
+
+			if(counter == 0 || counter == 6 || counter == 12 || counter == 18)
+			{
+				ctx.fillStyle = 'rgb(50, 50, 70)';
+
+				ctx.textBaseline = 'center';
+				ctx.textAlign = align;
+
+				ctx.fillText(text, textX, height + this.padding - 1.5 - padding);
+			}
+			
 			counter++;
 		}
 
