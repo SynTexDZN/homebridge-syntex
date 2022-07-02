@@ -1104,29 +1104,44 @@
 
 									if(serviceState != null && device.services[i].state != null && device.services[i].state.value != null)
 									{
-										var value = device.services[i].state.value;
+										var state = device.services[i].state;
 
-										if(serviceState.text != null && value == true)
+										if(serviceState.text != null && state.value == true)
 										{
 											text = serviceState.text;
 										}
 
-										if(serviceState.color != null && value == true)
+										if(serviceState.color != null && state.value == true)
 										{
 											color = serviceState.color;
 										}
 
-										if(value < min)
+										if((type == 'dimmer' || type == 'rgb') && state.brightness != null && state.value == true)
 										{
-											min = value;
+											if(state.brightness < min)
+											{
+												min = state.brightness;
+											}
+
+											if(state.brightness > max)
+											{
+												max = state.brightness;
+											}
+										}
+										else
+										{
+											if(state.value < min)
+											{
+												min = state.value;
+											}
+
+											if(state.value > max)
+											{
+												max = state.value;
+											}
 										}
 
-										if(value > max)
-										{
-											max = value;
-										}
-
-										if(value == true || (type == 'blind' && value > 0))
+										if(state.value == true || (type == 'blind' && state.value > 0))
 										{
 											counter.active++;
 										}
@@ -1149,9 +1164,20 @@
 							}
 							else if((format == 'boolean' || type == 'blind') && counter.active != counter.all && counter.active > 0)
 							{
-								text = counter.active + ' / ' + counter.all + ' ' + (type == 'blind' ? preset.inactive.text : preset.active.text);
+								text = counter.active + ' / ' + counter.all + ' ' + preset.active.text;
 
 								color = preset.active.color;
+							}
+							else if((type == 'dimmer' || type == 'rgb') && min != max)
+							{
+								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : max > 0, brightness : (min + max) / 2 } });
+
+								text = min + ' - ' + max + ' ' + preset.text;
+
+								if(serviceState != null && serviceState.color != null)
+								{
+									color = serviceState.color;
+								}
 							}
 						}
 					}
