@@ -131,7 +131,7 @@ class GraphManager
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		ctx.lineCap = 'butt';
-		ctx.lineWidth = 1.5;
+		ctx.lineWidth = 2;
 		
 		ctx.setLineDash([]);
 
@@ -185,42 +185,48 @@ class GraphManager
 			counter++;
 		}
 
-		var align = 'left';
-
 		counter = 0;
 
 		ctx.font = '300 14px Rubik';
+		ctx.textBaseline = 'center';
+		ctx.textAlign = 'center';
+		ctx.fillStyle = 'rgb(150, 150, 170)';
+		ctx.strokeStyle = 'rgb(50, 50, 70)';
 
 		for(let i = width - time; i > 0; i -= space)
 		{
-			var padding = 6,
-				text = (new Date(this.getHourCycle(6) - (counter * 60 * 60 * 1000)).getHours() + ':00').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202)),
-				textX = i + padding;
+			var padding = 5,
+				hour = new Date(this.getHourCycle(6) - (counter * 60 * 60 * 1000)).getHours();
 
-			if(textX + ctx.measureText(text).width + padding > width)
+			if(hour == 0)
 			{
-				align = 'right';
+				hour = 24;
 			}
 
-			if(align == 'right')
+			var cycleLabel = {
+				text : (hour + ' Uhr').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202)),
+				x : i + 2,
+				y : this.getPoint(canvas, -15 + padding),
+				width : ctx.measureText((hour + ' Uhr').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202))).width
+			};
+
+			if(cycleLabel.x + (cycleLabel.width / 2) + padding > width)
 			{
-				textX = i - padding;
+				cycleLabel.x = width - (cycleLabel.width / 2) - padding;
+			}
+
+			if(cycleLabel.x - (cycleLabel.width / 2) - padding < 0)
+			{
+				cycleLabel.x = (cycleLabel.width / 2) + padding;
 			}
 
 			if(counter == 0 || counter == 6 || counter == 12 || counter == 18)
 			{
-				ctx.fillStyle = 'rgb(50, 50, 70)';
-
-				ctx.textBaseline = 'center';
-				ctx.textAlign = align;
-
-				ctx.fillText(text, textX, height + this.padding - 1.5 - padding);
+				ctx.fillText(cycleLabel.text, cycleLabel.x, cycleLabel.y);
 			}
 			
 			counter++;
 		}
-
-		ctx.strokeStyle = 'rgb(50, 50, 70)';
 
 		ctx.beginPath();
 		ctx.moveTo(0, this.getPoint(canvas, 0));
@@ -228,8 +234,18 @@ class GraphManager
 		ctx.stroke();
 
 		ctx.beginPath();
+		ctx.moveTo(0, this.getPoint(canvas, -15));
+		ctx.lineTo(width, this.getPoint(canvas, -15))
+		ctx.stroke();
+
+		ctx.beginPath();
 		ctx.moveTo(0, this.getPoint(canvas, 100));
 		ctx.lineTo(width, this.getPoint(canvas, 100))
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(0, this.getPoint(canvas, 115));
+		ctx.lineTo(width, this.getPoint(canvas, 115))
 		ctx.stroke();
 	}
 
