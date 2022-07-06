@@ -1174,6 +1174,11 @@
 
 								text = min + ' - ' + max + ' ' + preset.text;
 
+								if(max == 100)
+								{
+									text = min + preset.text + ' - ' + preset.active.text;
+								}
+
 								if(serviceState != null && serviceState.color != null)
 								{
 									color = serviceState.color;
