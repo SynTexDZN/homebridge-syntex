@@ -1130,7 +1130,9 @@
 						{
 							if(graphData[letters].sectors[i][j].automation != null)
 							{
-								a = { percent : (graphData[letters].sectors[i][j].automation - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : graphData[letters].sectors[i][j].automation };
+								console.log('QQQ', graphData[letters].sectors[i][j]);
+								
+								a = { time : graphData[letters].sectors[i][j].time, percent : (graphData[letters].sectors[i][j].automation - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : graphData[letters].sectors[i][j].automation };
 							}
 						}
 

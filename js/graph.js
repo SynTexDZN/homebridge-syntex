@@ -251,7 +251,16 @@ class GraphManager
 
 	drawEvents(canvas, data, gradients, type)
 	{
-		var drawn = [];
+		var drawn = [], lastTimeLabelX = null;
+
+		const getTime = (time) => {
+
+			var hour = new Date(time).getHours(),
+				minute = ('0' + new Date(time).getMinutes()).slice(-2),
+				text = (hour + ':' + minute + ' Uhr').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202));
+		
+			return text;
+		};
 
 		if(data.length > 0)
 		{
@@ -263,54 +272,106 @@ class GraphManager
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
-			ctx.fillStyle = grd;
 			ctx.lineCap = 'butt';
-			ctx.lineWidth = 1.5;
-			ctx.setLineDash([]);
+			ctx.lineWidth = 2;
+
+			ctx.setLineDash([5, 10]);
+
+			ctx.font = '300 14px Rubik';
+			ctx.textBaseline = 'center';
 
 			for(var i = data.length - 1; i >= 0; i--)
 			{
 				if(data[i] != null && data[i].percent != null)
 				{
+					var padding = 10;
+
+					ctx.textAlign = 'center';
+
+					var valueLabel = {
+						text : (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
+						x : i * width / (data.length - 1),
+						y : this.getPoint(canvas, data[i].percent) - padding - 2,
+						width : ctx.measureText((data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202))).width
+					};
+
+					var timeLabel = {
+						text : getTime(parseInt(data[i].time + '000')),
+						x : valueLabel.x,
+						y : this.getPoint(canvas, 100) - padding,
+						width : ctx.measureText(getTime(parseInt(data[i].time + '000'))).width
+					};
+
+					ctx.fillStyle = grd;
+
 					ctx.beginPath();
 					ctx.arc(i * width / (data.length - 1), this.getPoint(canvas, data[i].percent), 4, 0, 360);
 					ctx.fill();
 					ctx.closePath();
-					
+
+					if(timeLabel.x + (timeLabel.width / 2) + padding > width)
+					{
+						timeLabel.x = width - (timeLabel.width / 2) - padding;
+					}
+
+					if(timeLabel.x - (timeLabel.width / 2) - padding < 0)
+					{
+						timeLabel.x = (timeLabel.width / 2) + padding;
+					}
+
+					if(lastTimeLabelX == null || timeLabel.x + (timeLabel.width / 2) + padding < lastTimeLabelX)
+					{
+						ctx.fillStyle = 'rgb(150, 150, 170)';
+
+						ctx.fillText(timeLabel.text, timeLabel.x, timeLabel.y);
+
+						ctx.strokeStyle = 'rgb(60, 60, 80)';
+
+						ctx.beginPath();
+
+						if(data[i].value != null && !drawn.includes(data[i].value) && valueLabel.y > this.padding + 14 + padding && valueLabel.y - 16 - padding + 4 > this.padding)
+						{
+							ctx.moveTo(i * width / (data.length - 1), valueLabel.y - 16 - padding + 4);
+							ctx.lineTo(i * width / (data.length - 1), this.getPoint(canvas, 100))
+						}
+						else if(this.getPoint(canvas, data[i].percent) - padding - 4 > this.padding)
+						{
+							ctx.moveTo(i * width / (data.length - 1), this.getPoint(canvas, data[i].percent) - padding - 4);
+							ctx.lineTo(i * width / (data.length - 1), this.getPoint(canvas, 100))
+						}
+
+						ctx.stroke();
+
+						lastTimeLabelX = timeLabel.x - (timeLabel.width / 2);
+					}
+
 					if(data[i].value != null && !drawn.includes(data[i].value))
 					{
-						var padding = 8,
-							textValue = (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
-							textWidth = ctx.measureText(textValue).width,
-							textX = i * width / (data.length - 1),
-							textY = this.getPoint(canvas, data[i].percent) - padding - 2;
+						padding = 10;
 
-						ctx.font = '300 14px Rubik';
-						ctx.textBaseline = 'center';
-						ctx.textAlign = 'center';
-						ctx.lineWidth = 2;
 						ctx.strokeStyle = 'rgba(20, 20, 30, 0.6)';
+						ctx.fillStyle = grd;
 
-						if(textX - (textWidth / 2) < padding)
+						if(valueLabel.x - (valueLabel.width / 2) < padding)
 						{
-							textX = padding;
+							valueLabel.x = padding;
 
 							ctx.textAlign = 'left';
 						}
-						else if(textX + (textWidth / 2) >= width - padding)
+						else if(valueLabel.x + (valueLabel.width / 2) >= width - padding)
 						{
-							textX = width - padding;
+							valueLabel.x = width - padding;
 
 							ctx.textAlign = 'right';
 						}
 
-						if(textY < this.padding + 14 + padding)
+						if(valueLabel.y < this.padding + 14 + padding)
 						{
-							textY += 21 + padding + 2;
+							valueLabel.y += 21 + padding + 2;
 						}
 
-						ctx.strokeText(textValue, textX, textY);
-						ctx.fillText(textValue, textX, textY);
+						ctx.strokeText(valueLabel.text, valueLabel.x, valueLabel.y);
+						ctx.fillText(valueLabel.text, valueLabel.x, valueLabel.y);
 
 						drawn.push(data[i].value);
 					}
@@ -321,32 +382,71 @@ class GraphManager
 
 	drawAutomation(canvas, data)
 	{
+		var drawn = [];
+
+		const hasMultiple = (value) => {
+
+			var found = false;
+
+			for(const i in data)
+			{
+				if(data[i].value == value)
+				{
+					if(!found)
+					{
+						found = true;
+					}
+					else
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		};
+
 		if(data.length > 0)
 		{
 			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
 
 			ctx.lineCap = 'butt';
-			ctx.lineWidth = 1.5;
-			ctx.setLineDash([10, 15]);
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = 'rgb(60, 60, 80)';
+
+			ctx.setLineDash([5, 10]);
+
+			ctx.font = '200 12px Rubik';
+			ctx.fillStyle = 'rgba(245, 245, 255, 0.5)';
+			ctx.globalCompositeOperation = 'source-over';
+			ctx.textAlign = 'left';
+			ctx.textBaseline = 'center';
 
 			for(const i in data)
 			{
-				ctx.strokeStyle = 'rgb(40, 40, 55)';
-
-				ctx.beginPath();
-				ctx.moveTo(0, this.getPoint(canvas, data[i].percent));
-				ctx.lineTo(width, this.getPoint(canvas, data[i].percent))
-				ctx.stroke();
 				/*
+				var automationLabel = {
+					text : data[i].value.split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
+					x : 5,
+					y : this.getPoint(canvas, data[i].percent) + 4,
+					width : ctx.measureText(data[i].value.split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202))).width
+				};
+				*/
+				if(data[i].percent > 1 && !drawn.includes(data[i].percent) && hasMultiple(data[i].value))
+				{
+					ctx.beginPath();
+					//ctx.moveTo((automationLabel.x * 2) + automationLabel.width, this.getPoint(canvas, data[i].percent));
+					ctx.moveTo(0, this.getPoint(canvas, data[i].percent));
+					ctx.lineTo(width, this.getPoint(canvas, data[i].percent))
+					ctx.stroke();
+
+					drawn.push(data[i].percent);
+				}
+				
 				if(i == 0 || data[i - 1].percent > data[i].percent + 5 || data[i - 1].percent < data[i].percent - 5)
 				{
-					ctx.font = '200 12px Rubik';
-					ctx.fillStyle = 'rgba(245, 245, 255, 0.5)';
-					ctx.globalCompositeOperation = 'source-over';
-					//ctx.textAlign = 'center';
-					ctx.fillText(data[i].value, 5, height - data[i].percent * height / 100 + this.padding - 7);
+					//ctx.fillText(automationLabel.text, automationLabel.x, automationLabel.y);
 				}
-				*/
 			}
 		}
 	}
