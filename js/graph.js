@@ -195,7 +195,7 @@ class GraphManager
 
 		for(let i = width - time; i > 0; i -= space)
 		{
-			var padding = 5,
+			var padding = 10,
 				hour = new Date(this.getHourCycle(6) - (counter * 60 * 60 * 1000)).getHours();
 
 			if(hour == 0)
@@ -206,7 +206,7 @@ class GraphManager
 			var cycleLabel = {
 				text : (hour + ' Uhr').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202)),
 				x : i + 2,
-				y : this.getPoint(canvas, -15 + padding),
+				y : this.getPoint(canvas, 0) - padding + 30,
 				width : ctx.measureText((hour + ' Uhr').split('').join(String.fromCharCode(8202) + String.fromCharCode(8202))).width
 			};
 
