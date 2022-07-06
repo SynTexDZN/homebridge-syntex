@@ -191,7 +191,7 @@ class GraphManager
 		ctx.textBaseline = 'center';
 		ctx.textAlign = 'center';
 		ctx.fillStyle = 'rgb(150, 150, 170)';
-		ctx.strokeStyle = 'rgb(50, 50, 70)';
+		ctx.strokeStyle = 'rgb(60, 60, 80)';
 
 		for(let i = width - time; i > 0; i -= space)
 		{
