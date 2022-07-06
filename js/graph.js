@@ -529,9 +529,11 @@ function getAutomations(data, automation, events)
 		{
 			for(const a in visibleAutomation)
 			{
-				if(visibleAutomation[a].time == data.sectors[i][j].time)
+				if(data.sectors[i][j].time > visibleAutomation[a].time)
 				{
 					data.sectors[i][j].automation = JSON.parse(visibleAutomation[a].value);
+
+					visibleAutomation.splice(a, 1);
 				}
 			}
 		}
