@@ -29,31 +29,31 @@ module.exports = class OfflineManager
 		return this.offline;
 	}
 
-	checkConnection(ip)
+	checkConnection(device)
 	{
-		if(this.connections[ip] == null)
+		if(this.connections[device.ip] == null)
 		{
-			this.connections[ip] = 0;
+			this.connections[device.ip] = 0;
 		}
 
-		axios.get('http://' + ip + '/', { timeout : 25000 }).then(() => {
+		axios.get('http://' + device.ip + '/', { timeout : 25000 }).then(() => {
 
-			this.connections[ip] = 0;
+			this.connections[device.ip] = 0;
 
-			if(this.offline.includes(ip))
+			if(this.offline.includes(device.ip))
 			{
-				this.offline.splice(this.offline.indexOf(ip), 1);
+				this.offline.splice(this.offline.indexOf(device.ip), 1);
 			}
 
 		}).catch(() => {
 
-			if(this.connections[ip] < 2)
+			if(this.connections[device.ip] < 2)
 			{
-				this.connections[ip]++;
+				this.connections[device.ip]++;
 			}
-			else if(!this.offline.includes(ip))
+			else if(!this.offline.includes(device.ip))
 			{
-				this.offline.push(ip);
+				this.offline.push(device.ip);
 			}
 		});
 	}
@@ -64,7 +64,7 @@ module.exports = class OfflineManager
 		{
 			if(this.devices[i].ip != null)
 			{
-				this.checkConnection(this.devices[i].ip);
+				this.checkConnection(this.devices[i]);
 			}
 		}
 	}
