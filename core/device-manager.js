@@ -678,6 +678,10 @@ module.exports = class DeviceManager
 									accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
 								}
 							}
+							else if(characteristic.type == '62')
+							{
+								service.online = characteristic.value != 0;
+							}
 							else if(characteristics[accessoryJSON[i].services[j].type] != null)
 							{
 								if(characteristics[accessoryJSON[i].services[j].type].name == 'led')

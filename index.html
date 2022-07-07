@@ -537,7 +537,7 @@
 						{
 							deviceCount++;
 
-							if(data.devices[i].online == false)
+							if(hasOfflineService(data.devices[i]))
 							{
 								offlineCount++;
 							}
@@ -692,7 +692,7 @@
 
 						for(var i = 0; i < data.devices.length; i++)
 						{
-							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && data.devices[i].online == true && real.includes(data.devices[i].ip) && hasGroup(data.devices[i].aid, selectedGroup))
+							if(Presets.getPreset(data.devices[i].plugin.alias) != null && Presets.getPreset(data.devices[i].plugin.alias).getRestartURL(data.devices[i]) != null && !hasOfflineService(data.devices[i]) && real.includes(data.devices[i].ip) && hasGroup(data.devices[i].aid, selectedGroup))
 							{
 								if(!restarting.includes(data.devices[i].ip))
 								{
@@ -786,7 +786,7 @@
 					{
 						var updateDevice = getDevice(updateDevices[i].getAttribute('id'));
 
-						if(updateDevice != null && updateDevice.online == true && hasGroup(updateDevices[i].getAttribute('id'), selectedGroup))
+						if(updateDevice != null && !hasOfflineService(updateDevice) && hasGroup(updateDevices[i].getAttribute('id'), selectedGroup))
 						{
 							updateDevice(updateDevices[i]).then(async function(update) {
 
@@ -947,7 +947,7 @@
 
 							if(await Query.complexFetch('/serverside/save-config', 5000, 2, {}, false, JSON.stringify(settings)) == 'Success')
 							{
-								if(data.devices[i].online == true)
+								if(!hasOfflineService(data.devices[i]))
 								{
 									Query.complexFetch('http://' + data.devices[i].ip + '/refresh', 20000, 1, {}, false).then(function (refresh) {
 
@@ -1064,7 +1064,7 @@
 
 					if(device != null)
 					{
-						if(device.ip != null && device.online == false)
+						if(hasOfflineService(device))
 						{
 							text = '%general.offline%';
 							color = 'hsl(350, 95%, 60%)';
@@ -1188,6 +1188,19 @@
 					}
 
 					return { text, color };
+				}
+
+				function hasOfflineService(device)
+				{
+					for(const i in device.services)
+					{
+						if(device.services[i].online == false)
+						{
+							return true;
+						}
+					}
+
+					return false;
 				}
 
 				window.tempGroups = [];

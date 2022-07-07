@@ -754,9 +754,12 @@ class SynTexPlatform
 					{
 						var accessory = { ...accessories[i] };
 
-						if(accessories[i].ip != null)
+						if(accessory.ip != null)
 						{
-							accessory.online = !offline.includes(accessories[i].ip);
+							for(const j in accessory.services)
+							{
+								accessory.services[j].online = !offline.includes(accessory.ip);
+							}
 						}
 
 						devices.push(accessory);
