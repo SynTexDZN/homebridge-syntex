@@ -439,12 +439,12 @@ class GraphManager
 					{
 						padding = 10;
 
-						ctx.strokeStyle = 'rgba(20, 20, 30, 0.4)';
+						ctx.strokeStyle = 'rgba(20, 20, 30, 0.5)';
 						ctx.fillStyle = grd;
 
 						if(this.lightTheme)
 						{
-							ctx.strokeStyle = 'rgba(220, 220, 230, 1)';
+							ctx.strokeStyle = 'rgb(220, 220, 230)';
 						}
 
 						ctx.setLineDash([]);
@@ -467,7 +467,7 @@ class GraphManager
 							valueLabel.y += 21 + padding + 2;
 						}
 
-						ctx.shadowColor = 'rgba(20, 20, 30, 0.4)';
+						ctx.shadowColor = 'rgb(20, 20, 30)';
 						ctx.shadowBlur = 4;
 
 						if(this.lightTheme)
