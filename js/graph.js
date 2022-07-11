@@ -126,6 +126,8 @@ class GraphManager
 
 	drawGrid(canvas, data)
 	{
+		this.increaseCanvasQuality(canvas, canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
+
 		var ctx = canvas.getContext('2d'), height = canvas.offsetHeight - this.padding * 2 - 2, width = canvas.offsetWidth;
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -519,6 +521,25 @@ class GraphManager
 		var height = canvas.offsetHeight - this.padding * 2 - 2;
 		
 		return height - percent * height / 100 + this.padding;
+	}
+
+	increaseCanvasQuality(canvas, width, height, ratio)
+	{
+		if(ratio == null)
+		{
+			var ctx = document.createElement('canvas').getContext('2d'),
+				dpr = window.devicePixelRatio || 1,
+				bsr = ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
+
+			ratio = dpr / bsr;
+		}
+
+		canvas.width = width * ratio;
+		canvas.height = height * ratio;
+		canvas.style.width = width + 'px';
+		canvas.style.height = height + 'px';
+
+		canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
 	}
 }
 
