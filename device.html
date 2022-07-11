@@ -606,7 +606,7 @@
 
 								var infoMin = document.createElement('div');
 
-								infoMin.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: 25px; margin-top: -19.2px; letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+								infoMin.setAttribute('style', 'bottom: calc(100% + 17px); left: 25px');
 								infoMin.setAttribute('class', 'min');
 								infoMin.innerHTML = '%device.min%';
 
@@ -614,15 +614,16 @@
 
 								var infoMax = document.createElement('div');
 
-								infoMax.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px; margin-top: -19.2; letter-spacing: 3px; font-weight: 300; opacity: 0; transition: 1s');
+								infoMax.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px');
 								infoMax.setAttribute('class', 'max');
 								infoMax.innerHTML = '%device.max%';
 
 								frame.appendChild(infoMax);
 
 								var infoType = document.createElement('div');
-
-								infoType.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); margin-top: -19.2; letter-spacing: 3px; text-align: center; font-weight: 300');
+								
+								infoType.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); text-align: center');
+								infoType.setAttribute('class', 'name');
 
 								var typeName = type;
 
@@ -646,7 +647,7 @@
 									//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
 								}
 
-								for(var k = 0; k < device.services.length; k++)
+								for(const k in device.services)
 								{
 									if(device.services[k].name != null && device.services[k].type == type)
 									{
@@ -659,9 +660,9 @@
 									name = n[j];
 								}
 
-								if(name.includes(device.name))
+								if(name.includes(device.name + ' '))
 								{
-									name = name.replace(device.name, '');
+									name = name.replace(device.name + ' ', '');
 								}
 
 								name = name.toUpperCase();
@@ -672,7 +673,7 @@
 								
 								var infoUpdates = document.createElement('div');
 
-								infoUpdates.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; margin-top: -19.2; letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+								infoUpdates.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; text-align: right');
 								infoUpdates.setAttribute('class', 'updates');
 								infoUpdates.innerHTML = '%device.data%';
 
@@ -680,7 +681,7 @@
 
 								var infoUpdate = document.createElement('div');
 
-								infoUpdate.setAttribute('style', 'position: relative; z-index: 1; bottom: calc(100% + 17px); left: -25px; margin-top: -19.2; letter-spacing: 3px; text-align: right; font-weight: 300; opacity: 0; transition: 1s');
+								infoUpdate.setAttribute('style', 'bottom: calc(100% + 17px); left: -25px; text-align: right');
 								infoUpdate.setAttribute('class', 'update');
 								infoUpdate.innerHTML = '%device.activity%';
 
@@ -1111,12 +1112,14 @@
 				{
 					var convertedAutomation = [], automationTriggers = [];
 					var letters = Essentials.typeToLetter(type) + c;
-					var canvas = document.getElementById('canvas-' + letters);
+					var canvas = document.getElementById('canvas-' + letters),
+						grid = document.getElementById('canvas-' + type + '-' + c);
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
 					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
+					Graph.drawGrid(grid, [], 10);
 					Graph.drawGrid(canvas, graphData[letters], 10);
 
 					// NOTE: Convert GraphData Values
@@ -1210,7 +1213,6 @@
 
 						reloadButton.innerHTML = '↻ %general.reload%';
 						reloadButton.className = 'reload-button';
-						reloadButton.setAttribute('style', 'margin-top: -570px');
 						reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '"))');
 
 						canvas.parentElement.appendChild(reloadButton);
