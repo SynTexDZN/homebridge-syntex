@@ -2,13 +2,45 @@ let self;
 
 class GraphManager
 {
-	constructor() {}
+	constructor()
+	{
+		self = this;
+
+		this.setColorTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+
+		window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => this.setColorTheme(event.matches, true));
+	}
 
 	setPadding(padding)
 	{
 		this.padding = padding;
+	}
 
-		self = this;
+	setColorTheme(light, refresh)
+	{
+		this.colors = {
+			label : 'rgb(150, 150, 170)',
+			main : 'rgb(60, 60, 80)',
+			second : 'rgb(40, 40, 55)',
+			third : 'rgb(25, 25, 40)'
+		};
+
+		if(light)
+		{
+			this.colors = {
+				label : 'rgb(60, 60, 80)',
+				main : 'rgb(245, 245, 255)',
+				second : 'rgb(200, 200, 210)',
+				third : 'rgb(210, 210, 220)'
+			};
+		}
+
+		this.lightTheme = light;
+
+		if(refresh)
+		{
+			window.repaintGraphs();
+		}
 	}
 
 	drawGraph(canvas, data, gradients, points)
@@ -20,6 +52,25 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				if(this.lightTheme)
+				{
+					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
+
+					if(prefix.startsWith('hsl'))
+					{
+						values[2] = Math.min(parseInt(values[2]), 60) + '%';
+					}
+
+					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
+
+					if(values.length > 3)
+					{
+						values[3] = parseFloat(values[3]) + 0.2;
+
+						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+					}
+				}
+
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
@@ -89,6 +140,25 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				if(this.lightTheme)
+				{
+					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
+
+					if(prefix.startsWith('hsl'))
+					{
+						//values[2] = Math.min(parseInt(values[2]), 60) + '%';
+					}
+
+					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
+
+					if(values.length > 3)
+					{
+						values[3] = parseFloat(values[3]) + 0.2;
+
+						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+					}
+				}
+
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
@@ -137,7 +207,7 @@ class GraphManager
 		
 		ctx.setLineDash([]);
 
-		ctx.strokeStyle = 'rgb(25, 25, 40)';
+		ctx.strokeStyle = this.colors.third;
 
 		var pattern = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000];
 		var lines, space, counter = 0;
@@ -172,11 +242,11 @@ class GraphManager
 
 		for(let i = 0; i < 30; i++)
 		{
-			ctx.strokeStyle = 'rgb(25, 25, 40)';
+			ctx.strokeStyle = this.colors.third;
 			
 			if(counter == 0 || counter == 6 || counter == 12 || counter == 18 || counter == 24)
 			{
-				ctx.strokeStyle = 'rgb(40, 40, 55)';
+				ctx.strokeStyle = this.colors.second;
 			}
 			
 			ctx.beginPath();
@@ -192,8 +262,8 @@ class GraphManager
 		ctx.font = '300 14px Rubik';
 		ctx.textBaseline = 'center';
 		ctx.textAlign = 'center';
-		ctx.fillStyle = 'rgb(150, 150, 170)';
-		ctx.strokeStyle = 'rgb(60, 60, 80)';
+		ctx.fillStyle = this.colors.label;
+		ctx.strokeStyle = this.colors.main;
 
 		for(let i = width - time; i > 0; i -= space)
 		{
@@ -271,13 +341,30 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				if(this.lightTheme)
+				{
+					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
+
+					if(prefix.startsWith('hsl'))
+					{
+						values[2] = Math.min(parseInt(values[2]), 60) + '%';
+					}
+
+					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
+
+					if(values.length > 3)
+					{
+						values[3] = parseFloat(values[3]) + 0.2;
+
+						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+					}
+				}
+
 				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
 			}
 
 			ctx.lineCap = 'butt';
 			ctx.lineWidth = 2;
-
-			ctx.setLineDash([5, 10]);
 
 			ctx.font = '300 14px Rubik';
 			ctx.textBaseline = 'center';
@@ -323,11 +410,12 @@ class GraphManager
 
 					if(lastTimeLabelX == null || timeLabel.x + (timeLabel.width / 2) + padding < lastTimeLabelX)
 					{
-						ctx.fillStyle = 'rgb(150, 150, 170)';
+						ctx.strokeStyle = this.colors.main;
+						ctx.fillStyle = this.colors.label;
 
 						ctx.fillText(timeLabel.text, timeLabel.x, timeLabel.y);
 
-						ctx.strokeStyle = 'rgb(60, 60, 80)';
+						ctx.setLineDash([5, 10]);
 
 						ctx.beginPath();
 
@@ -351,8 +439,15 @@ class GraphManager
 					{
 						padding = 10;
 
-						ctx.strokeStyle = 'rgba(20, 20, 30, 0.6)';
+						ctx.strokeStyle = 'rgba(20, 20, 30, 0.4)';
 						ctx.fillStyle = grd;
+
+						if(this.lightTheme)
+						{
+							ctx.strokeStyle = 'rgba(220, 220, 230, 1)';
+						}
+
+						ctx.setLineDash([]);
 
 						if(valueLabel.x - (valueLabel.width / 2) < padding)
 						{
@@ -372,8 +467,18 @@ class GraphManager
 							valueLabel.y += 21 + padding + 2;
 						}
 
+						ctx.shadowColor = 'rgba(20, 20, 30, 0.4)';
+						ctx.shadowBlur = 4;
+
+						if(this.lightTheme)
+						{
+							ctx.shadowColor = 'rgb(220, 220, 230)';
+						}
+
 						ctx.strokeText(valueLabel.text, valueLabel.x, valueLabel.y);
 						ctx.fillText(valueLabel.text, valueLabel.x, valueLabel.y);
+
+						ctx.shadowBlur = 0;
 
 						drawn.push(data[i].value);
 					}
@@ -414,7 +519,7 @@ class GraphManager
 
 			ctx.lineCap = 'butt';
 			ctx.lineWidth = 2;
-			ctx.strokeStyle = 'rgb(60, 60, 80)';
+			ctx.strokeStyle = this.colors.main;
 
 			ctx.setLineDash([5, 10]);
 
