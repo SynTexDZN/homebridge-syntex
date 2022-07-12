@@ -404,18 +404,6 @@ class SynTexPlatform
 			{
 				DeviceManager.initDevice(urlParams.id, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then((res) => {
 
-					if(res[0] != 'Error')
-					{
-						try
-						{
-							this.logger.log('success', urlParams.id, JSON.parse(res[1]).name, '[' + JSON.parse(res[1]).name + '] %accessory_connected%! ( ' + urlParams.id + ' | ' +  urlParams.ip + ' )');
-						}
-						catch(e)
-						{
-							this.logger.log('error', 'bridge', 'Bridge', 'Name %json_parse_error%! ( ' + res[1] + ')', e);
-						}
-					}
-
 					response.write(res[1]);
 					response.end();
 
