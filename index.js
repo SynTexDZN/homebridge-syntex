@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), OfflineManager = require('./core/offline-manager'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
@@ -73,8 +73,7 @@ class SynTexPlatform
 			HTMLQuery = new HTMLQuery(this.logger);
 			Automation = new Automation(this.logger, this.files);
 			PluginManager = new PluginManager(this, 600);
-			OfflineManager = new OfflineManager(this.logger);
-			DeviceManager = new DeviceManager(this, PluginManager, OfflineManager);
+			DeviceManager = new DeviceManager(this, PluginManager);
 			UpdateManager = new UpdateManager(this.logger, 600);
 
 			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
@@ -743,8 +742,7 @@ class SynTexPlatform
 
 				var bridgeData = await this.files.readFile('info.json'),
 					accessories = DeviceManager.getAccessories(),
-					updates = UpdateManager.getLatestVersions(),
-					offline = OfflineManager.getOfflineDevices();
+					updates = UpdateManager.getLatestVersions();
 
 				var devices = [];
 
@@ -752,24 +750,11 @@ class SynTexPlatform
 				{
 					if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
 					{
-						var accessory = { ...accessories[i] };
-
-						if(accessory.ip != null)
-						{
-							for(const j in accessory.services)
-							{
-								accessory.services[j].online = !offline.includes(accessory.ip);
-							}
-						}
-
-						devices.push(accessory);
+						devices.push({ ...accessories[i] });
 					}
 				}
 				
-				var obj = {
-					devices : devices,
-					updates : updates
-				};
+				var obj = { devices, updates };
 
 				if(bridgeData != null && bridgeData.restart != null)
 				{

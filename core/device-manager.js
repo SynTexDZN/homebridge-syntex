@@ -4,17 +4,16 @@ var accessories = [];
 
 module.exports = class DeviceManager
 {
-	constructor(platform, PluginManager, OfflineManager)
+	constructor(platform, PluginManager)
 	{
+		this.reloading = false;
+		
 		this.platform = platform;
 
 		this.logger = platform.logger;
 		this.files = platform.files;
 
 		this.PluginManager = PluginManager;
-		this.OfflineManager = OfflineManager;
-
-		this.reloading = false;
 
 		this.files.readFile('storage.json').then((storage) => {
 
@@ -598,8 +597,6 @@ module.exports = class DeviceManager
 							}
 						}
 					}
-
-					this.OfflineManager.setDevices(accessories);
 
 					this.reloading = false;
 
