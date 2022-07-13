@@ -17,7 +17,7 @@ module.exports = class UpdateManager
 	{
 		return new Promise((resolve) => {
 
-			axios.get('http://syntex.sytes.net/smarthome/check-version.php', { timeout }).then((response) => {
+			axios.get('http://syntex.sytes.net:8800/check-version', { timeout }).then((response) => {
 
 				var updates = response.data;
 
