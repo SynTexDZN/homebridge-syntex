@@ -564,8 +564,8 @@ class GraphManager
 		data.sectors = this.renderMinutesCycle(data.interval);
 		data.values = [];
 
-		data.min = 100000;
-		data.max = -100000;
+		data.min = data.min || 100000;
+		data.max = data.max || -100000;
 
 		data = addValues(data, values);
 		data = getAutomations(data, automation, events);
