@@ -54,18 +54,19 @@
                     {
                         for(const letters in values[id])
                         {
-                            for(const i in values[id][letters])
+                            var type = Essentials.letterToType(letters[0]);
+                            var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[id][letters], [], []);
+                            
+                            if(type != 'blind' && type != 'statelessswitch' && getDataType(type) != 'boolean')
                             {
-                                values[id][letters][i].value = JSON.parse(values[id][letters][i].value);
-
-                                if(values[id][letters][i].value < min)
+                                if(data.min < min)
                                 {
-                                    min = values[id][letters][i].value;
+                                    min = data.min;
                                 }
 
-                                if(values[id][letters][i].value > max)
+                                if(data.max > max)
                                 {
-                                    max = values[id][letters][i].value;
+                                    max = data.max;
                                 }
                             }
                         }
