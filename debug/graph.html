@@ -1,0 +1,178 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>Basic: Demo</title>
+			<script type="module">
+
+				PageManager.setHeader('Basic', 'Demo');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<div id="graph-container"></div>
+			</div>
+			<script type="module">
+
+				import { Graph } from '/js/graph.js';
+
+				Graph.setPadding(80);
+
+				window.Graph = Graph;
+
+                loadActivity('knx51', 'C0').then(() => /*loadActivity('knx49', 'C0').then(() => */loadActivity('knx59', 'C0').then(() => loadActivity('knx59', 'C1').then(() => loadActivity('knx59', 'C2').then(() => renderGUI()))));
+
+				Preloader.finish();
+
+			</script>
+			<script>
+
+				function renderGUI()
+                {
+                    var frame = document.createElement('div'), grid = document.createElement('canvas');
+                    var height = 400;
+
+                    frame.className = 'graph';
+                    frame.setAttribute('style', 'height: ' + height + 'px');
+
+                    document.getElementById('graph-container').appendChild(frame);
+
+                    grid.setAttribute('class', 'canvas');
+
+                    frame.appendChild(grid);
+
+                    var min = 100000, max = -100000;
+
+                    for(const id in values)
+                    {
+                        for(const letters in values[id])
+                        {
+                            for(const i in values[id][letters])
+                            {
+                                values[id][letters][i].value = JSON.parse(values[id][letters][i].value);
+
+                                if(values[id][letters][i].value < min)
+                                {
+                                    min = values[id][letters][i].value;
+                                }
+
+                                if(values[id][letters][i].value > max)
+                                {
+                                    max = values[id][letters][i].value;
+                                }
+                            }
+                        }
+                    }
+
+                    var graph = document.createElement('canvas');
+
+                    graph.setAttribute('class', 'canvas');
+
+                    frame.appendChild(graph);
+
+                    Graph.drawGrid(graph, [], 10);
+
+                    for(const id in values)
+                    {
+                        for(const letters in values[id])
+                        {
+                            var data = Graph.convertActivity({ id, letters, type : 'temperature', canvas : graph, format : 'numeric', interval : 10, min, max }, values[id][letters], [], []);
+                        
+                            Graph.drawGraph(graph, data.values, ['rgb(60, 60, 80)','rgb(60, 60, 80)'], false);
+                        }
+                    }
+                }
+
+                var values = {};
+
+                function loadActivity(id, letters)
+				{
+					return new Promise(async (resolve) => {
+
+						window.activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + id, 10000, 2, {}, false));
+
+                        if(values[id] == null)
+                        {
+                            values[id] = {};
+                        }
+
+                        if(values[id][letters] == null)
+                        {
+                            values[id][letters] = [];
+                        }
+
+                        for(const lettersA in activity)
+                        {
+                            if(lettersA == letters)
+                            {
+                                if(activity[lettersA].update.length > 0)
+                                {
+                                    if(Essentials.letterToType(letters[0]) == 'statelessswitch')
+                                    {
+                                        for(const u in activity[lettersA].update)
+                                        {
+                                            values[id][letters].push({ time : activity[lettersA].update[u].t, value : true });
+                                            values[id][letters].push({ time : activity[lettersA].update[u].t, value : false });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for(const u in activity[lettersA].update)
+                                        {
+                                            var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
+                                            var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+
+                                            obj['value'] = orginalValues;
+
+                                            for(const c in characteristics)
+                                            {
+                                                if(orginalValues.includes(characteristics[c] + ': '))
+                                                {
+                                                    obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+                                                }
+                                            }
+
+                                            for(const c in obj)
+                                            {
+                                                if(obj[c].includes(', '))
+                                                {
+                                                    obj[c] = obj[c].split(', ')[0];
+                                                }
+                                            }
+
+                                            values[id][letters].push(obj);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+						resolve();
+					});
+				}
+
+			</script>
+            <style>
+
+                .graph
+                {
+                    position: relative;
+                }
+
+                .graph canvas
+                {
+                    position: absolute;
+                    top: 0;
+                }
+
+            </style>
+		</div>
+	</body>
+</html>
