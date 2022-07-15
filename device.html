@@ -1117,7 +1117,7 @@
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
 					Graph.drawGrid(grid, [], 10);
 					Graph.drawGrid(canvas, graphData[letters], 10);
@@ -1224,7 +1224,7 @@
 
 					var service = getService(Essentials.typeToLetter(type) + c), colorFill = [], colorGraph = [];
 
-					if(getDataType(type) == 'numeric' && type != 'blind')
+					if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
 					{
 						var serviceState0 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].min } });
 						var serviceState1 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].min + graphData[letters].max) / 3 } });
@@ -1284,18 +1284,6 @@
 					Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
 
 					canvas.style.opacity = 1;
-				}
-
-				function getDataType(type)
-				{
-					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'blind' || type == 'statelessswitch')
-					{
-						return 'numeric';
-					}
-					else
-					{
-						return 'boolean';
-					}
 				}
 
 			</script>

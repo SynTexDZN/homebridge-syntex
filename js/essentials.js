@@ -861,6 +861,18 @@ class EssentialFeatures
 
 		return result;
 	}
+
+	getDataType(type)
+	{
+		if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'blind' || type == 'statelessswitch')
+		{
+			return 'numeric';
+		}
+		else
+		{
+			return 'boolean';
+		}
+	}
 }
 
 var idCounter = new Date().getTime();

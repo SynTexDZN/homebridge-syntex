@@ -59,9 +59,9 @@
                         for(const letters in values[id])
                         {
                             var type = Essentials.letterToType(letters[0]);
-                            var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? getDataType(type) : 'boolean', interval : (getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[id][letters], [], []);
+                            var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[id][letters], [], []);
                             
-                            if(type != 'blind' && type != 'statelessswitch' && getDataType(type) != 'boolean')
+                            if(type != 'blind' && type != 'statelessswitch' && Essentials.getDataType(type) != 'boolean')
                             {
                                 if(data.min < min)
                                 {
