@@ -27,142 +27,231 @@
 
 				window.Graph = Graph;
 
-                //loadActivity('knx51', 'C0').then(() => /*loadActivity('knx49', 'C0').then(() => */loadActivity('knx59', 'C0').then(() => loadActivity('knx59', 'C1').then(() => loadActivity('knx59', 'C2').then(() => renderGUI()))));
-                //loadActivity('knx51', 'C0').then(() => loadActivity('knx49', 'C0').then(() => loadActivity('knx49', 'C1').then(() => renderGUI())));
-                //loadActivity('knx49', 'C0').then(() => loadActivity('knx49', 'C1').then(() => renderGUI()));
-                //loadActivity('knx6', 'A1').then(() => loadActivity('knx51', 'C0').then(() => renderGUI()));
-                //loadActivity('EC:FA:BC:58:AF:5B', 'C0').then(() => loadActivity('knx60', 'G0').then(() => renderGUI()));
-                loadActivity('CC:50:E3:E8:3C:52', 'B0').then(() => loadActivity('knx30', '80').then(() => renderGUI()));
+                renderGUI();
 
 				Preloader.finish();
 
 			</script>
 			<script>
 
-				function renderGUI()
+                function renderGUI()
                 {
-                    var frame = document.createElement('div'), grid = document.createElement('canvas');
-                    var height = 400;
+                    createGraph([
+                        { id : 'knx51', letters : 'C0' },
+                        { id : 'knx59', letters : 'C0' },
+                        { id : 'knx59', letters : 'C1' },
+                        { id : 'knx59', letters : 'C2' }
+                    ]);
 
-                    frame.className = 'graph';
-                    frame.setAttribute('style', 'height: ' + height + 'px');
+                    createGraph([
+                        { id : 'knx51', letters : 'C0' },
+                        { id : 'knx49', letters : 'C0' },
+                        { id : 'knx49', letters : 'C1' }
+                    ]);
 
-                    document.getElementById('graph-container').appendChild(frame);
+                    createGraph([
+                        { id : 'knx49', letters : 'C0' },
+                        { id : 'knx49', letters : 'C1' }
+                    ]);
 
-                    grid.setAttribute('class', 'canvas');
+                    createGraph([
+                        { id : 'knx6', letters : 'A1' },
+                        { id : 'knx51', letters : 'C0' }
+                    ]);
 
-                    frame.appendChild(grid);
-
-                    var min = 100000, max = -100000;
-
-                    for(const id in values)
-                    {
-                        for(const letters in values[id])
-                        {
-                            var type = Essentials.letterToType(letters[0]);
-                            var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[id][letters], [], []);
-                            
-                            if(type != 'blind' && type != 'statelessswitch' && Essentials.getDataType(type) != 'boolean')
-                            {
-                                if(data.min < min)
-                                {
-                                    min = data.min;
-                                }
-
-                                if(data.max > max)
-                                {
-                                    max = data.max;
-                                }
-                            }
-                        }
-                    }
-
-                    var graph = document.createElement('canvas');
-
-                    graph.setAttribute('class', 'canvas');
-
-                    frame.appendChild(graph);
-
-                    Graph.drawGrid(graph, [], 10);
-
-                    for(const id in values)
-                    {
-                        for(const letters in values[id])
-                        {
-                            var data = Graph.convertActivity({ id, letters, type : 'temperature', canvas : graph, format : 'numeric', interval : 10, min, max }, values[id][letters], [], []);
-                        
-                            Graph.drawGraph(graph, data.values, ['rgb(60, 60, 80)','rgb(60, 60, 80)'], false);
-                        }
-                    }
+                    createGraph([
+                        { id : 'EC:FA:BC:58:AF:5B', letters : 'C0' },
+                        { id : 'knx60', letters : 'G0' }
+                    ]);
+                    
+                    createGraph([
+                        { id : 'CC:50:E3:E8:3C:52', letters : 'B0' },
+                        { id : 'knx30', letters : '80' }
+                    ]);
                 }
 
-                var values = {};
+				function createGraph(source)
+                {
+                    var values = {}, promiseArray = [];
 
-                function loadActivity(id, letters)
-				{
-					return new Promise(async (resolve) => {
-
-						window.activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + id, 10000, 2, {}, false));
-
-                        if(values[id] == null)
+                    for(const i in source)
+                    {
+                        if(values[source[i].id] == null)
                         {
-                            values[id] = {};
+                            values[source[i].id] = {};
                         }
 
-                        if(values[id][letters] == null)
+                        if(values[source[i].id][source[i].letters] == null)
                         {
-                            values[id][letters] = [];
+                            values[source[i].id][source[i].letters] = [];
                         }
 
-                        for(const lettersA in activity)
-                        {
-                            if(lettersA == letters)
+                        promiseArray.push(new Promise((resolve) => Query.complexFetch('/serverside/activity?id=' + source[i].id, 10000, 2, {}, false).then((activity) => {
+
+                            activity = JSON.parse(activity);
+
+                            for(const letters in activity)
                             {
-                                if(activity[lettersA].update.length > 0)
+                                if(letters == source[i].letters)
                                 {
-                                    if(Essentials.letterToType(letters[0]) == 'statelessswitch')
+                                    if(activity[letters].update.length > 0)
                                     {
-                                        for(const u in activity[lettersA].update)
+                                        if(Essentials.letterToType(source[i].letters[0]) == 'statelessswitch')
                                         {
-                                            values[id][letters].push({ time : activity[lettersA].update[u].t, value : true });
-                                            values[id][letters].push({ time : activity[lettersA].update[u].t, value : false });
+                                            for(const u in activity[letters].update)
+                                            {
+                                                values[source[i].id][source[i].letters].push({ time : activity[letters].update[u].t, value : true });
+                                                values[source[i].id][source[i].letters].push({ time : activity[letters].update[u].t, value : false });
+                                            }
+                                        }
+                                        else
+                                        {
+                                            for(const u in activity[letters].update)
+                                            {
+                                                var obj = { time : activity[letters].update[u].t }, orginalValues = activity[letters].update[u].v;
+                                                var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+
+                                                obj['value'] = orginalValues;
+
+                                                for(const c in characteristics)
+                                                {
+                                                    if(orginalValues.includes(characteristics[c] + ': '))
+                                                    {
+                                                        obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+                                                    }
+                                                }
+
+                                                for(const c in obj)
+                                                {
+                                                    if(obj[c].includes(', '))
+                                                    {
+                                                        obj[c] = obj[c].split(', ')[0];
+                                                    }
+                                                }
+
+                                                values[source[i].id][source[i].letters].push(obj);
+                                            }
                                         }
                                     }
-                                    else
+                                }
+                            }
+
+                            resolve();
+                        })));
+                    }
+
+                    Promise.all(promiseArray).then((activity) => {
+
+                        var frame = document.createElement('div'), grid = document.createElement('canvas');
+                        var height = 400;
+
+                        frame.className = 'graph';
+                        frame.setAttribute('style', 'height: ' + height + 'px');
+
+                        document.getElementById('graph-container').appendChild(frame);
+
+                        grid.setAttribute('class', 'canvas');
+
+                        frame.appendChild(grid);
+
+                        var min = 100000, max = -100000;
+
+                        for(const id in values)
+                        {
+                            for(const letters in values[id])
+                            {
+                                var type = Essentials.letterToType(letters[0]);
+                                var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[id][letters], [], []);
+                                
+                                if(type != 'blind' && type != 'statelessswitch' && Essentials.getDataType(type) != 'boolean')
+                                {
+                                    if(data.min < min)
                                     {
-                                        for(const u in activity[lettersA].update)
-                                        {
-                                            var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-                                            var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+                                        min = data.min;
+                                    }
 
-                                            obj['value'] = orginalValues;
-
-                                            for(const c in characteristics)
-                                            {
-                                                if(orginalValues.includes(characteristics[c] + ': '))
-                                                {
-                                                    obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
-                                                }
-                                            }
-
-                                            for(const c in obj)
-                                            {
-                                                if(obj[c].includes(', '))
-                                                {
-                                                    obj[c] = obj[c].split(', ')[0];
-                                                }
-                                            }
-
-                                            values[id][letters].push(obj);
-                                        }
+                                    if(data.max > max)
+                                    {
+                                        max = data.max;
                                     }
                                 }
                             }
                         }
 
-						resolve();
-					});
-				}
+                        var graph = document.createElement('canvas');
+
+                        graph.setAttribute('class', 'canvas');
+
+                        frame.appendChild(graph);
+
+                        Graph.drawGrid(graph, [], 10);
+
+                        for(const id in values)
+                        {
+                            for(const letters in values[id])
+                            {
+                                var type = Essentials.letterToType(letters[0]);
+                                var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10, min, max }, values[id][letters], [], []);
+                            
+                                var colorFill = [], colorGraph = [];
+
+                                if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+                                {
+                                    var serviceState0 = Essentials.getServiceColor({ id, letters, format : { value : 'int' }, state : { value : min } });
+                                    var serviceState1 = Essentials.getServiceColor({ id, letters, format : { value : 'int' }, state : { value : (min + min + max) / 3 } });
+                                    var serviceState2 = Essentials.getServiceColor({ id, letters, format : { value : 'int' }, state : { value : (min + max) / 2 } });
+                                    var serviceState3 = Essentials.getServiceColor({ id, letters, format : { value : 'int' }, state : { value : (min + max + max) / 3 } });
+                                    var serviceState4 = Essentials.getServiceColor({ id, letters, format : { value : 'int' }, state : { value : max } });
+                                    
+                                    if(serviceState4 != null && serviceState4.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState4.color.split(')')[0].split('hsl(')[1] + ', .3)');
+                                        colorGraph.push(serviceState4.color);
+                                    }
+
+                                    if(serviceState3 != null && serviceState3.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState3.color.split(')')[0].split('hsl(')[1] + ', .25)');
+                                        colorGraph.push(serviceState3.color);
+                                    }
+
+                                    if(serviceState2 != null && serviceState2.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState2.color.split(')')[0].split('hsl(')[1] + ', .175)');
+                                        colorGraph.push(serviceState2.color);
+                                    }
+
+                                    if(serviceState1 != null && serviceState1.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState1.color.split(')')[0].split('hsl(')[1] + ', .1)');
+                                        colorGraph.push(serviceState1.color);
+                                    }
+
+                                    if(serviceState0 != null && serviceState0.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState0.color.split(')')[0].split('hsl(')[1] + ', .05)');
+                                        colorGraph.push(serviceState0.color);
+                                    }
+                                }
+                                else
+                                {
+                                    var serviceState = Essentials.getServiceColor({ id, letters, format : { value : 'bool' }, state : { value : type == 'blind' ? 100 : true } });
+
+                                    if(serviceState != null && serviceState.color != null)
+                                    {
+                                        colorFill.push('hsla(' + serviceState.color.split(')')[0].split('hsl(')[1] + ', .3)');
+                                        colorGraph.push(serviceState.color);
+                                    }
+                                    
+                                    colorFill.push('rgba(60, 60, 80, .1)');
+                                    colorGraph.push('rgb(60, 60, 80');
+                                }
+
+                                Graph.drawGraph(graph, data.values, colorGraph, false);
+                            }
+                        }
+                    });
+                }
 
 			</script>
             <style>
