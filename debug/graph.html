@@ -98,7 +98,7 @@
                             values[source[i].id][source[i].letters] = [];
                         }
 
-                        promiseArray.push(new Promise((resolve) => Query.complexFetch('/serverside/activity?id=' + source[i].id, 10000, 2, {}, false).then((activity) => {
+                        promiseArray.push(new Promise((resolve) => Query.complexFetch('/serverside/activity?id=' + source[i].id, 30000, 2, {}, false).then((activity) => {
 
                             activity = JSON.parse(activity);
 
