@@ -3,8 +3,7 @@
 		<div id="content">
 			<script>
 
-				var resizeTimerOne, resizeTimerTwo;
-				var lastWidth = window.innerWidth, lastHeight = window.innerHeight, windowResized = false;
+				var lastWidth = window.innerWidth, lastHeight = window.innerHeight, resizeTimer = null, windowResized = false;
 
 				setInterval(() => {
 
@@ -36,11 +35,9 @@
 						windowResized = true;
 					}
 
-					clearTimeout(resizeTimerOne);
-					clearTimeout(resizeTimerTwo);
+					clearTimeout(resizeTimer);
 
-					resizeTimerOne = setTimeout(() => repaintGraphs(), 250);
-					resizeTimerTwo = setTimeout(() => {
+					resizeTimer = setTimeout(() => {
 						
 						if(windowResized)
 						{
@@ -595,18 +592,18 @@
 
 								grid.setAttribute('class', 'canvas');
 								grid.setAttribute('id', 'canvas-' + type + '-' + j);
-								grid.setAttribute('style', 'top: -100%');
 
 								grid.width = document.getElementById('infos').offsetWidth - 4;
 								grid.height = height;
 
 								frame.appendChild(grid);
 
+								Graph.clearCanvas(grid);
 								Graph.drawGrid(grid, [], 10);
 
 								var infoMin = document.createElement('div');
 
-								infoMin.setAttribute('style', 'bottom: calc(100% + 17px); left: 25px');
+								infoMin.setAttribute('style', 'bottom: calc(-100% + 17px); left: 25px');
 								infoMin.setAttribute('class', 'min');
 								infoMin.innerHTML = '%device.min%';
 
@@ -614,66 +611,69 @@
 
 								var infoMax = document.createElement('div');
 
-								infoMax.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); left: 25px');
+								infoMax.setAttribute('style', 'top: 34.5px; left: 25px');
 								infoMax.setAttribute('class', 'max');
 								infoMax.innerHTML = '%device.max%';
 
 								frame.appendChild(infoMax);
 
-								var infoType = document.createElement('div');
+								if(services.length > 1)
+								{
+									var infoType = document.createElement('div');
 								
-								infoType.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); text-align: center');
-								infoType.setAttribute('class', 'name');
+									infoType.setAttribute('style', 'top: 34.5px; text-align: center');
+									infoType.setAttribute('class', 'name');
 
-								var typeName = type;
+									var typeName = type;
 
-								if(type == 'rgb' || type == 'rgbw' || type == 'rgbcw' || type == 'rgbww')
-								{
-									typeName = type.toUpperCase();
-								}
-								else if(type == 'statelessswitch')
-								{
-									typeName = 'Stateless Switch';
-								}
-
-								var name = typeName[0].toUpperCase() + typeName.substring(1), n = [];
-
-								if(typeCounter[type] > 1)
-								{
-									name = device.name + ' ' + typeName[0].toUpperCase() + typeName.substring(1) + ' ' + j;
-								}
-								else if(counter > 1)
-								{
-									//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
-								}
-
-								for(const k in device.services)
-								{
-									if(device.services[k].name != null && device.services[k].type == type)
+									if(type == 'rgb' || type == 'rgbw' || type == 'rgbcw' || type == 'rgbww')
 									{
-										n.push(device.services[k].name);
+										typeName = type.toUpperCase();
 									}
+									else if(type == 'statelessswitch')
+									{
+										typeName = 'Stateless Switch';
+									}
+
+									var name = typeName[0].toUpperCase() + typeName.substring(1), n = [];
+
+									if(typeCounter[type] > 1)
+									{
+										name = device.name + ' ' + typeName[0].toUpperCase() + typeName.substring(1) + ' ' + j;
+									}
+									else if(counter > 1)
+									{
+										//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
+									}
+
+									for(const k in device.services)
+									{
+										if(device.services[k].name != null && device.services[k].type == type)
+										{
+											n.push(device.services[k].name);
+										}
+									}
+
+									if(n.length > 0)
+									{
+										name = n[j];
+									}
+
+									if(name.includes(device.name + ' '))
+									{
+										name = name.replace(device.name + ' ', '');
+									}
+
+									name = name.toUpperCase();
+									
+									infoType.innerHTML = name;
+
+									frame.appendChild(infoType);
 								}
 
-								if(n.length > 0)
-								{
-									name = n[j];
-								}
-
-								if(name.includes(device.name + ' '))
-								{
-									name = name.replace(device.name + ' ', '');
-								}
-
-								name = name.toUpperCase();
-
-								infoType.innerHTML = name;
-
-								frame.appendChild(infoType);
-								
 								var infoUpdates = document.createElement('div');
 
-								infoUpdates.setAttribute('style', 'bottom: calc(100% + ' + (height - 34.5) + 'px); left: -25px; text-align: right');
+								infoUpdates.setAttribute('style', 'top: 34.5px; left: -25px; text-align: right');
 								infoUpdates.setAttribute('class', 'updates');
 								infoUpdates.innerHTML = '%device.data%';
 
@@ -681,7 +681,7 @@
 
 								var infoUpdate = document.createElement('div');
 
-								infoUpdate.setAttribute('style', 'bottom: calc(100% + 17px); left: -25px; text-align: right');
+								infoUpdate.setAttribute('style', 'bottom: calc(-100% + 17px); left: -25px; text-align: right');
 								infoUpdate.setAttribute('class', 'update');
 								infoUpdate.innerHTML = '%device.activity%';
 
@@ -718,7 +718,7 @@
 
 				Preloader.finish();
 
-				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
+				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then((a) => {
 
 					automation = JSON.parse(a);
 
@@ -844,8 +844,6 @@
 				{
 					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––', service = getService(letters);
 
-					console.log(service, letters);
-					
 					if(service != null && service.iid != null)
 					{
 						var serviceState = Essentials.getServiceColor({ ...service, state });
@@ -859,8 +857,6 @@
 						{
 							color = serviceState.color;
 						}
-
-						console.log(serviceState);
 					}
 
 					if(typeCounter[type] > 1)
@@ -942,9 +938,9 @@
 
 				function loadServices()
 				{
-					for(var j = 0; j < device.services.length; j++)
+					for(const i in device.services)
 					{
-						services.push(device.services[j].type);
+						services.push(device.services[i].type);
 					}
 
 					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
@@ -992,8 +988,6 @@
 						if(new Date().getTime() > graphData[letters].nextRefresh)
 						{
 							graphData[letters].nextRefresh = Graph.getMinuteCycle(graphData[letters].interval) + 60000 * graphData[letters].interval;
-
-							//repaintGraphs();
 
 							calcValues(Essentials.letterToType(letters[0]), letters[1]);
 
@@ -1103,6 +1097,7 @@
 						{
 							graphs[i].width = document.getElementById('infos').offsetWidth - 4;
 
+							Graph.clearCanvas(graphs[i]);
 							Graph.drawGrid(graphs[i], [], 10);
 						}
 					}
@@ -1119,8 +1114,8 @@
 
 					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
 
-					Graph.drawGrid(grid, [], 10);
-					Graph.drawGrid(canvas, graphData[letters], 10);
+					Graph.clearCanvas(grid);
+					Graph.drawGrid(grid, graphData[letters], 10);
 
 					// NOTE: Convert GraphData Values
 					
@@ -1132,8 +1127,6 @@
 						{
 							if(graphData[letters].sectors[i][j].automation != null)
 							{
-								console.log('QQQ', graphData[letters].sectors[i][j]);
-								
 								a = { time : graphData[letters].sectors[i][j].time, percent : (graphData[letters].sectors[i][j].automation - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : graphData[letters].sectors[i][j].automation };
 							}
 						}
@@ -1278,6 +1271,7 @@
 
 					// NOTE: Draw Graph
 
+					Graph.clearCanvas(canvas);
 					Graph.drawAutomation(canvas, automationTriggers);
 					Graph.drawFill(canvas, graphData[letters].values, colorFill, 0);
 					Graph.drawGraph(canvas, graphData[letters].values, colorGraph, false);
@@ -1391,7 +1385,7 @@
 						resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
 					}
 
-					repaintGraphs();
+					Graph.repaintGraphs();
 				}
 
 				function getService(letters)

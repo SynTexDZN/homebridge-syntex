@@ -6,9 +6,69 @@ class GraphManager
 	{
 		self = this;
 
+		this.canvas = [];
+		this.grids = [];
+		this.graphs = [];
+		this.fills = [];
+		this.events = [];
+		this.automations = [];
+
 		this.setColorTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
 
 		window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => this.setColorTheme(event.matches, true));
+
+		window.addEventListener('resize', () => {
+
+			clearTimeout(this.resizeTimer);
+
+			this.resizeTimerOne = setTimeout(() => this.repaintGraphs(), 250);
+		});
+	}
+
+	repaintGraphs()
+	{
+		for(const i in this.canvas)
+		{
+			this.clearCanvas(this.canvas[i]);
+		}
+
+		for(const i in this.grids)
+		{
+			this.drawGrid(this.grids[i].canvas, this.grids[i].data, 10);
+		}
+
+		for(const i in this.automations)
+		{
+			this.drawAutomation(this.automations[i].canvas, this.automations[i].data);
+		}
+
+		for(const i in this.fills)
+		{
+			this.drawFill(this.fills[i].canvas, this.fills[i].data, this.fills[i].gradients, this.fills[i].smoothing);
+		}
+
+		for(const i in this.graphs)
+		{
+			this.drawGraph(this.graphs[i].canvas, this.graphs[i].data, this.graphs[i].gradients, this.graphs[i].points);
+		}
+
+		for(const i in this.events)
+		{
+			this.drawEvents(this.events[i].canvas, this.events[i].data, this.events[i].gradients, this.events[i].type);
+		}
+	}
+
+	containsCanvas(array, canvas)
+	{
+		for(const i in array)
+		{
+			if(array[i].canvas == canvas)
+			{
+				return array[i];
+			}
+		}
+
+		return null;
 	}
 
 	setPadding(padding)
@@ -39,12 +99,39 @@ class GraphManager
 
 		if(refresh)
 		{
-			window.repaintGraphs();
+			this.repaintGraphs();
+		}
+	}
+
+	clearCanvas(canvas)
+	{
+		this.increaseCanvasQuality(canvas, canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
+
+		var ctx = canvas.getContext('2d');
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		if(!this.canvas.includes(canvas))
+		{
+			this.canvas.push(canvas);
 		}
 	}
 
 	drawGraph(canvas, data, gradients, points)
 	{
+		var element = this.containsCanvas(this.graphs, canvas);
+
+		if(element == null)
+		{
+			this.graphs.push({ canvas, data, gradients, points });
+		}
+		else
+		{
+			element.data = data;
+			element.gradients = gradients;
+			element.points = points;
+		}
+		
 		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
@@ -52,26 +139,28 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				var gradient = gradients[i], 
+					prefix = gradient.split('(')[0],
+					values = gradient.split('(')[1].split(')')[0].split(', ');
+
 				if(this.lightTheme)
 				{
-					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
-
 					if(prefix.startsWith('hsl'))
 					{
 						values[2] = Math.min(parseInt(values[2]), 60) + '%';
 					}
 
-					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
+					gradient = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
 
 					if(values.length > 3)
 					{
 						values[3] = parseFloat(values[3]) + 0.2;
 
-						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+						gradient = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
 					}
 				}
 
-				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+				grd.addColorStop(i / (gradients.length - 1), gradient);
 			}
 
 			ctx.lineWidth = 2;
@@ -133,6 +222,19 @@ class GraphManager
 
 	drawFill(canvas, data, gradients, smoothing)
 	{
+		var element = this.containsCanvas(this.fills, canvas);
+
+		if(element == null)
+		{
+			this.fills.push({ canvas, data, gradients, smoothing });
+		}
+		else
+		{
+			element.data = data;
+			element.gradients = gradients;
+			element.smoothing = smoothing;
+		}
+		
 		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
@@ -140,26 +242,21 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				var gradient = gradients[i], 
+					prefix = gradient.split('(')[0],
+					values = gradient.split('(')[1].split(')')[0].split(', ');
+
 				if(this.lightTheme)
 				{
-					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
-
-					if(prefix.startsWith('hsl'))
-					{
-						//values[2] = Math.min(parseInt(values[2]), 60) + '%';
-					}
-
-					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
-
 					if(values.length > 3)
 					{
 						values[3] = parseFloat(values[3]) + 0.2;
 
-						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+						gradient = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
 					}
 				}
 
-				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+				grd.addColorStop(i / (gradients.length - 1), gradient);
 			}
 
 			ctx.fillStyle = grd;
@@ -196,11 +293,20 @@ class GraphManager
 
 	drawGrid(canvas, data)
 	{
-		this.increaseCanvasQuality(canvas, canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
+		var element = this.containsCanvas(this.grids, canvas);
+
+		if(element == null)
+		{
+			this.grids.push({ canvas, data });
+		}
+		else
+		{
+			element.data = data;
+
+			console.log('DRAW GRID X', element.data, this.grids);
+		}
 
 		var ctx = canvas.getContext('2d'), height = canvas.offsetHeight - this.padding * 2 - 2, width = canvas.offsetWidth;
-
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		ctx.lineCap = 'butt';
 		ctx.lineWidth = 2;
@@ -323,6 +429,19 @@ class GraphManager
 
 	drawEvents(canvas, data, gradients, type)
 	{
+		var element = this.containsCanvas(this.events, canvas);
+
+		if(element == null)
+		{
+			this.events.push({ canvas, data, gradients, type });
+		}
+		else
+		{
+			element.data = data;
+			element.gradients = gradients;
+			element.type = type;
+		}
+
 		var drawn = [], lastTimeLabelX = null;
 
 		const getTime = (time) => {
@@ -341,26 +460,28 @@ class GraphManager
 
 			for(const i in gradients)
 			{
+				var gradient = gradients[i], 
+					prefix = gradient.split('(')[0],
+					values = gradient.split('(')[1].split(')')[0].split(', ');
+
 				if(this.lightTheme)
 				{
-					var prefix = gradients[i].split('(')[0], values = gradients[i].split('(')[1].split(')')[0].split(', ');
-
 					if(prefix.startsWith('hsl'))
 					{
 						values[2] = Math.min(parseInt(values[2]), 60) + '%';
 					}
 
-					gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
+					gradient = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ')';
 
 					if(values.length > 3)
 					{
 						values[3] = parseFloat(values[3]) + 0.2;
 
-						gradients[i] = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
+						gradient = prefix + '(' + values[0] + ', ' + values[1] + ', ' + values[2] + ', ' + values[3] + ')';
 					}
 				}
 
-				grd.addColorStop(i / (gradients.length - 1), gradients[i]);
+				grd.addColorStop(i / (gradients.length - 1), gradient);
 			}
 
 			ctx.lineCap = 'butt';
@@ -489,6 +610,17 @@ class GraphManager
 
 	drawAutomation(canvas, data)
 	{
+		var element = this.containsCanvas(this.automations, canvas);
+
+		if(element == null)
+		{
+			this.automations.push({ canvas, data });
+		}
+		else
+		{
+			element.data = data;
+		}
+
 		var drawn = [];
 
 		const hasMultiple = (value) => {

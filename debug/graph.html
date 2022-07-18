@@ -56,18 +56,28 @@
 
                     createGraph([
                         { id : 'knx6', letters : 'A1' },
-                        { id : 'knx51', letters : 'C0' }
+                        { id : 'knx49', letters : 'C0' }
                     ]);
 
                     createGraph([
-                        { id : 'EC:FA:BC:58:AF:5B', letters : 'C0' },
-                        { id : 'knx60', letters : 'G0' }
+                        { id : 'knx60', letters : 'G0' },
+                        { id : 'EC:FA:BC:58:AF:5B', letters : 'C0' }
                     ]);
                     
                     createGraph([
                         { id : 'CC:50:E3:E8:3C:52', letters : 'B0' },
                         { id : 'knx30', letters : '80' }
                     ]);
+                }
+
+                function repaintGraphs()
+                {
+                    var canvas = document.getElementsByTagName('canvas');
+
+                    for(var i = 0; i < canvas.length; i++)
+                    {
+
+                    }
                 }
 
 				function createGraph(source)
@@ -154,6 +164,9 @@
 
                         frame.appendChild(grid);
 
+                        Graph.clearCanvas(grid);
+                        Graph.drawGrid(grid, [], 10);
+
                         var min = 100000, max = -100000;
 
                         for(const id in values)
@@ -178,18 +191,16 @@
                             }
                         }
 
-                        var graph = document.createElement('canvas');
-
-                        graph.setAttribute('class', 'canvas');
-
-                        frame.appendChild(graph);
-
-                        Graph.drawGrid(graph, [], 10);
-
                         for(const id in values)
                         {
                             for(const letters in values[id])
                             {
+                                var graph = document.createElement('canvas');
+
+                                graph.setAttribute('class', 'canvas');
+
+                                frame.appendChild(graph);
+                                
                                 var type = Essentials.letterToType(letters[0]);
                                 var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10, min, max }, values[id][letters], [], []);
                             
@@ -247,27 +258,15 @@
                                     colorGraph.push('rgb(60, 60, 80');
                                 }
 
-                                Graph.drawGraph(graph, data.values, colorGraph, false);
+                                Graph.clearCanvas(graph);
+                                Graph.drawFill(graph, data.values, colorFill, false);
+                                Graph.drawGraph(graph, data.values, colorGraph, 0);
                             }
                         }
                     });
                 }
 
 			</script>
-            <style>
-
-                .graph
-                {
-                    position: relative;
-                }
-
-                .graph canvas
-                {
-                    position: absolute;
-                    top: 0;
-                }
-
-            </style>
 		</div>
 	</body>
 </html>
