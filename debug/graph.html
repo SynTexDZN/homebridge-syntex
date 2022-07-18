@@ -203,6 +203,8 @@
                             }
                         }
 
+                        var fillMax = {};
+
                         for(const id in values)
                         {
                             for(const letters in values[id])
@@ -271,11 +273,79 @@
                                 }
 
                                 Graph.clearCanvas(graph);
-                                Graph.drawFill(graph, data.values, colorFill, false);
+
+                                if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+                                {
+                                    for(const i in data.values)
+                                    {
+                                        if(fillMax[type] == null)
+                                        {
+                                            fillMax[type] = [];
+                                        }
+
+                                        if(data.values[i] != null)
+                                        {
+                                            if(fillMax[type][parseInt(i)] == null || data.values[i] > fillMax[type][parseInt(i)])
+                                            {
+                                                fillMax[type][parseInt(i)] = data.values[i];
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var last = getLastValue(data.values, parseInt(i) - 1), next = getNextValue(data.values, parseInt(i) + 1);
+                                            
+                                            if(last != null && next != null)
+                                            {
+                                                var calc = (next.value - last.value) / (next.i - last.i) * (i - last.i) + last.value;
+
+                                                if(fillMax[type][parseInt(i)] == null || calc > fillMax[type][parseInt(i)])
+                                                {
+                                                    fillMax[type][parseInt(i)] = calc;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Graph.drawFill(graph, data.values, colorFill, false);
+                                }
+
                                 Graph.drawGraph(graph, data.values, colorGraph, 0);
                             }
                         }
+
+                        for(const type in fillMax)
+                        {
+                            Graph.drawFill(grid, fillMax[type], colorFill, false);
+                        }
                     });
+                }
+
+                function getNextValue(values, start)
+                {
+                    for(var i = start; i < values.length; i++)
+                    {
+                        if(values[i] != null)
+                        {
+                            return { i, value : values[i] };
+                        }
+                    }
+
+                    return null;
+                }
+
+                function getLastValue(values, start)
+                {
+                    for(var i = start; i >= 0; i--)
+                    {
+                        if(values[i] != null)
+                        {
+                            return { i, value : values[i] };
+                        }
+                    }
+
+                    return null;
                 }
 
 			</script>
