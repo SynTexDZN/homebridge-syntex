@@ -864,9 +864,7 @@
 
 								/* TODO: Get Version From data.devices */
 								
-								var version = await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 20, {}, false);
-
-								if(version == newestVersion)
+								if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 20, {}, false) == newestVersion)
 								{
 									button.style.backgroundColor = 'hsl(165, 85%, 50%)';
 									button.getElementsByClassName('connection')[0].innerHTML = '%devices.success%';
@@ -875,15 +873,10 @@
 
 									response = true;
 								}
-								else if(version != null)
-								{
-									button.style.backgroundColor = 'hsl(350, 95%, 60%)';
-									button.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
-								}
 								else
 								{
 									button.style.backgroundColor = 'hsl(350, 95%, 60%)';
-									button.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
+									button.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
 								}
 
 								setTimeout(() => {
@@ -1055,7 +1048,25 @@
 					{
 						if(hasOfflineService(device))
 						{
+							var counter = { all : 0, offline : 0 };
+
+							for(const i in device.services)
+							{
+								if(device.services[i].online == false)
+								{
+									counter.offline++;
+								}
+
+								counter.all++;
+							}
+
 							text = '%general.offline%';
+
+							if(counter.offline != counter.all)
+							{
+								text = counter.offline + ' / ' + counter.all + ' %general.offline%';
+							}
+							
 							color = 'hsl(350, 95%, 60%)';
 						}
 						else if(hasUpdate(device))
