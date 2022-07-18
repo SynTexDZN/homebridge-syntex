@@ -333,15 +333,13 @@
 
 							checkUpdates(button);
 						}
-						else
+						else if(!updating.includes(data.devices[i].ip))
 						{
 							document.getElementById(data.devices[i].aid).style.backgroundColor = result.color;
 
 							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text;
 						}
 					}
-
-					document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML = updateCount;
 				}
 
 			</script>
@@ -542,9 +540,14 @@
 								offlineCount++;
 							}
 
-							if(update.includes(data.devices[i].ip))
+							if(hasUpdate(data.devices[i]))
 							{
 								updateCount++;
+
+								if(!update.includes(data.devices[i].ip))
+								{
+									update.push(data.devices[i].ip);
+								}
 							}
 
 							if(data.devices[i].plugin != null && data.devices[i].plugin.alias == 'SynTex')
@@ -751,12 +754,6 @@
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(device.getAttribute('version')))
 					{  
-						device.getElementsByClassName('connection')[0].innerHTML = 'V' + newestVersion;
-						device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-
-						device.setAttribute('class', 'device update');
-						device.setAttribute('newest-version', newestVersion);
-
 						if(document.getElementById('update-all') == null)
 						{
 							var updateButton = document.createElement('input');
@@ -768,159 +765,154 @@
 
 							document.getElementsByClassName('main')[0].insertBefore(updateButton, document.getElementById('toolbar'));
 						}
-
-						update.push(device.getAttribute('ip'));
-
-						updateCount++;
 					}
 				}
 				
 				function installAllUpdates(btn)
 				{
-					var updateDevices = document.getElementsByClassName('update'),
-						updateCounter = { success : 0, error : 0 };
+					var updateCounter = { success : 0, error : 0 }, promiseArray = [];
 
 					Essentials.showOverlay(btn, Essentials.createOverlay(1, 'updating-all', '%devices.updating_all% ..', 'purple'));
 
-					for(var i = 0; i < updateDevices.length; i++)
+					for(const i in data.devices)
 					{
-						var updateDevice = getDevice(updateDevices[i].getAttribute('id'));
+						var device = data.devices[i];
 
-						if(updateDevice != null && !hasOfflineService(updateDevice) && hasGroup(updateDevices[i].getAttribute('id'), selectedGroup))
+						if(hasUpdate(device))
 						{
-							updateDevice(updateDevices[i]).then(async function(update) {
+							if(!hasOfflineService(device) && hasGroup(device.id, selectedGroup))
+							{
+								promiseArray.push(new Promise((resolve) => updateDevice(device).then((success) => {
 
-								updateCounter[update == true ? 'success' : 'error']++;
+									updateCounter[success == true ? 'success' : 'error']++;
 
-								if(updateCounter['success'] + updateCounter['error'] >= updateCount)
-								{
-									var responseText = updateCounter['success'] + ' / ' + updateCount + ' %devices.devices_updated%!';
-									var color = 'yellow';
-
-									if(updateCounter['success'] >= updateCount)
-									{
-										responseText = '%devices.all_devices_updated%!';
-										color = 'green';
-									}
-									else if(updateCounter['success'] == 0)
-									{
-										responseText = '%devices.no_devices_updated%!';
-										color = 'red';
-									}
-									
-									Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', responseText, color));
-
-									await Essentials.newTimeout(4000);
-
-									updateCount -= updateCounter['success'];
-
-									console.log('UPDATE COUNT', updateCount);
-
-									Essentials.removeOverlays(btn, updateCount == 0 ? false : true);
-
-									if(updateCount == 0)
-									{
-										await Essentials.newTimeout(300);
-
-										document.getElementById('device-controls').style.marginBottom = 0;
-									}
-								}
-							});
-						}
-						else
-						{
-							updateCounter['error']++;
+									resolve();
+								})));
+							}
+							else
+							{
+								updateCounter['error']++;
+							}
 						}
 					}
 
+					Promise.all(promiseArray).then(async () => {
+
+						if(updateCounter['success'] + updateCounter['error'] >= updateCount)
+						{
+							var responseText = updateCounter['success'] + ' / ' + updateCount + ' %devices.devices_updated%!';
+							var color = 'yellow';
+
+							if(updateCounter['success'] >= updateCount)
+							{
+								responseText = '%devices.all_devices_updated%!';
+								color = 'green';
+							}
+							else if(updateCounter['success'] == 0)
+							{
+								responseText = '%devices.no_devices_updated%!';
+								color = 'red';
+							}
+							
+							Essentials.showOverlay(btn, Essentials.createOverlay(2, 'update-result-all', responseText, color));
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, updateCount - updateCounter['success'] <= 0 ? false : true);
+
+							if(updateCount - updateCounter['success'] <= 0)
+							{
+								await Essentials.newTimeout(300);
+
+								document.getElementById('device-controls').style.marginBottom = 0;
+							}
+						}
+					});;
+
+					// TODO: FIX
+
+					/*
 					if(updating.length == 0)
 					{
 						Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-all', '%devices.no_devices_update%!'));
 
 						Essentials.removeOverlaysDelay(btn, 4000, true);
 					}
+					*/
 				}
 
 				function updateDevice(device)
 				{
 					return new Promise(async function(resolve) {
 
-						var response = false;
+						var response = false, button = document.getElementById(device.aid);
+						var newestVersion = data.updates[Essentials.getType(device.services)];
 
-						if(!updating.includes(device.getAttribute('ip')))
+						if(button != null && !updating.includes(device.ip))
 						{
-							updating.push(device.getAttribute('ip'));
+							updating.push(device.ip);
 
-							device.getElementsByClassName('connection')[0].style.color = 'hsl(200, 85%, 55%)';
-							device.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
+							button.style.backgroundColor = 'hsl(200, 85%, 55%)';
+							button.getElementsByClassName('connection')[0].innerHTML = '%general.waiting%';
 
-							var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('id')).plugin.alias).getUpdateURL(getDevice(device.getAttribute('id')), { type : Essentials.getType(getDevice(device.getAttribute('id')).services) }), 20000, 1, {}, false);
-
-							if(update == null)
+							if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getUpdateURL(device, { type : Essentials.getType(device.services) }), 20000, 1, {}, false) == 'Success')
 							{
-								device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
-
-								setTimeout(function() {
-
-									device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.newestVersion;
-									device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-
-								}.bind({ newestVersion : device.getAttribute('newest-version') }), 4000);
-							}
-							else if(update == 'Success')
-							{
-								device.getElementsByClassName('connection')[0].style.color = 'hsl(280, 95%, 60%)';
-								device.getElementsByClassName('connection')[0].innerHTML = '%devices.updating%';
+								button.style.backgroundColor = 'hsl(280, 95%, 60%)';
+								button.getElementsByClassName('connection')[0].innerHTML = '%devices.updating%';
 
 								await Essentials.newTimeout(3000);
+
+								/* TODO: Get Version From data.devices */
 								
-								var update = await Query.complexFetch(Presets.getPreset(getDevice(device.getAttribute('id')).plugin.alias).getVersionURL(getDevice(device.getAttribute('id'))), 3000, 20, {}, false);
+								var version = await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 20, {}, false);
 
-								if(update == device.getAttribute('newest-version'))
+								if(version == newestVersion)
 								{
-									device.getElementsByClassName('connection')[0].style.color = '';
-									device.getElementsByClassName('connection')[0].innerHTML = '%devices.success%';
+									button.style.backgroundColor = 'hsl(165, 85%, 50%)';
+									button.getElementsByClassName('connection')[0].innerHTML = '%devices.success%';
 
-									device.className = 'device';
-
-									document.getElementById('widgets').children[1].getElementsByClassName('widget-right')[0].innerHTML--;
-
-									window.update.splice(window.update.indexOf(device.getAttribute('ip')), 1);
+									update.splice(update.indexOf(device.ip), 1);
 
 									response = true;
 								}
-								else if(update != null)
+								else if(version != null)
 								{
-									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
+									button.style.backgroundColor = 'hsl(350, 95%, 60%)';
+									button.getElementsByClassName('connection')[0].innerHTML = '%devices.error%';
 								}
 								else
 								{
-									device.getElementsByClassName('connection')[0].style.color = 'hsl(350, 95%, 60%)';
-									device.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
+									button.style.backgroundColor = 'hsl(350, 95%, 60%)';
+									button.getElementsByClassName('connection')[0].innerHTML = '%general.offline%';
 								}
 
-								setTimeout(function() {
+								setTimeout(() => {
 
-									if(this.device.className.includes('update'))
-									{
-										this.device.getElementsByClassName('connection')[0].innerHTML = 'V' + this.device.getAttribute('newest-version');
-										this.device.getElementsByClassName('connection')[0].style.color = 'rgb(130, 130, 150)';
-									}
-									else
-									{
-										var result = getServiceState(getDevice(device.getAttribute('id')));
+									var result = getServiceState(device);
 
-										this.device.style.backgroundColor = result.color;
+									button.style.backgroundColor = result.color;
+									button.getElementsByClassName('connection')[0].innerHTML = result.text;
 
-										this.device.getElementsByClassName('connection')[0].innerHTML = result.text;
-									}
+									updating.splice(updating.indexOf(device.ip), 1);
 
-								}.bind({ device }), 4000);
+								}, 4000);
 							}
+							else
+							{
+								button.style.backgroundColor = 'hsl(350, 95%, 60%)';
+								button.getElementsByClassName('connection')[0].innerHTML = '%general.error%';
 
-							updating.splice(updating.indexOf(device.getAttribute('ip')), 1);
+								setTimeout(() => {
+
+									var result = getServiceState(device);
+
+									button.style.backgroundColor = result.color;
+									button.getElementsByClassName('connection')[0].innerHTML = result.text;
+
+									updating.splice(updating.indexOf(device.ip), 1);
+
+								}, 4000);
+							}
 						}
 						
 						resolve(response);
@@ -957,14 +949,11 @@
 
 										this.device.active = btn.getAttribute('switch') == 1 ? 0 : 1;
 
-										if(!d.className.includes('update'))
-										{
-											var result = getServiceState(data.devices[i]);
+										var result = getServiceState(data.devices[i]);
 
-											d.style.backgroundColor = result.color;
+										d.style.backgroundColor = result.color;
 
-											d.getElementsByClassName('connection')[0].innerHTML = result.text;
-										}
+										d.getElementsByClassName('connection')[0].innerHTML = result.text;
 
 										if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 										{
@@ -1068,6 +1057,11 @@
 						{
 							text = '%general.offline%';
 							color = 'hsl(350, 95%, 60%)';
+						}
+						else if(hasUpdate(device))
+						{
+							text = 'V' + data.updates[Essentials.getType(device.services)];
+							color = 'rgb(130, 130, 150)';
 						}
 						else if(device.ip != null && device.active == 0)
 						{
@@ -1198,6 +1192,19 @@
 						{
 							return true;
 						}
+					}
+
+					return false;
+				}
+
+				function hasUpdate(device)
+				{
+					var currentVersion = device.version,
+						newestVersion = data.updates[Essentials.getType(device.services)];
+
+					if(currentVersion != null && newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(currentVersion))
+					{
+						return true;
 					}
 
 					return false;
