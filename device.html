@@ -1728,7 +1728,7 @@
 
 				async function checkUpdates()
 				{
-					var newestVersion = await Query.complexFetch('https://syntex.sytes.net/smarthome/check-version?device=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
+					var newestVersion = await Query.complexFetch('http://syntex.sytes.net:8800/check-version?type=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
 					{
