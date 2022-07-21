@@ -39,13 +39,20 @@
                     createGraph([
                         { id : 'CC:50:E3:E8:43:E6', letters : 'C0' },
                         { id : 'EC:FA:BC:58:A0:DE', letters : 'C0' },
-                        { id : 'BC:DD:C2:B6:71:25', letters : 'C0' },
                         { id : 'EC:FA:BC:58:AF:5B', letters : 'C0' },
                         { id : 'knx59', letters : 'C0' },
                         { id : 'knx59', letters : 'C1' },
                         { id : 'knx59', letters : 'C2' },
                         { id : 'knx49', letters : 'C0' },
-                        { id : 'knx49', letters : 'C1' }
+                        { id : 'knx49', letters : 'C1' },
+                        { id : 'knx71', letters : 'C0' },
+                        { id : 'knx72', letters : 'C0' },
+                        { id : 'knx73', letters : 'C0' },
+                        { id : 'knx74', letters : 'C0' },
+                        { id : 'knx75', letters : 'C0' },
+                        { id : 'knx76', letters : 'C0' },
+                        { id : 'knx77', letters : 'C0' },
+                        { id : 'knx78', letters : 'C0' }
                     ]);
 
                     createGraph([
@@ -98,7 +105,7 @@
                             values[source[i].id][source[i].letters] = [];
                         }
 
-                        promiseArray.push(new Promise((resolve) => Query.complexFetch('/serverside/activity?id=' + source[i].id, 30000, 2, {}, false).then((activity) => {
+                        promiseArray.push(new Promise((resolve) => Query.complexFetch('/serverside/activity?id=' + source[i].id, 60000, 2, {}, false).then((activity) => {
 
                             activity = JSON.parse(activity);
 
