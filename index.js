@@ -711,7 +711,7 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/device', async (request, response, urlParams, content) => {
+		this.WebServer.addPage(['/device', '/debug/workaround/device'], async (request, response, urlParams, content) => {
 
 			response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
 			response.end();

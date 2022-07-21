@@ -722,7 +722,7 @@
 
 					automation = JSON.parse(a);
 
-					loadActivity().then(() => repaintGraphs());
+					loadActivity();
 				});
 
 				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getVersionURL(device) != null)
@@ -1001,66 +1001,56 @@
 				{
 					return new Promise(async (resolve) => {
 
-						activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
-
 						for(const type in typeCounter)
 						{
 							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
 							{
 								for(var j = 0; j < typeCounter[type]; j++)
 								{
-									var letters = Essentials.typeToLetter(type) + j;
+									const letters = Essentials.typeToLetter(type) + j;
 
 									if(values[letters] == null)
 									{
 										values[letters] = [];
 									}
 
-									for(const lettersA in activity)
-									{
-										if(lettersA == letters)
-										{
-											if(activity[lettersA].update.length > 0)
+									var DeviceViewer = {
+										url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/activity',
+										message : {
+											line : 'getActivity',
+											params : {
+												id : device.id,
+												letters
+											}
+										},
+										callback : (activity) => {
+
+											if(activity.length > 0)
 											{
 												if(type == 'statelessswitch')
 												{
-													for(const u in activity[lettersA].update)
+													for(const u in activity)
 													{
-														values[letters].push({ time : activity[lettersA].update[u].t, value : true });
-														values[letters].push({ time : activity[lettersA].update[u].t, value : false });
+														values[letters].push({ time : activity[u].time, value : true });
+														values[letters].push({ time : activity[u].time, value : false });
 													}
 												}
 												else
 												{
-													for(const u in activity[lettersA].update)
+													for(const u in activity)
 													{
-														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-														var characteristics = ['value', 'hue', 'saturation', 'brightness'];
-
-														obj['value'] = orginalValues;
-
-														for(const c in characteristics)
-														{
-															if(orginalValues.includes(characteristics[c] + ': '))
-															{
-																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
-															}
-														}
-
-														for(const c in obj)
-														{
-															if(obj[c].includes(', '))
-															{
-																obj[c] = obj[c].split(', ')[0];
-															}
-														}
+														var obj = { ...activity[u].state, time : activity[u].time / 1000 };
 
 														values[letters].push(obj);
 													}
 												}
 											}
+
+											repaintGraphs();
 										}
-									}
+									};
+									
+									Query.connectSocket(DeviceViewer);
 								}
 							}
 						}
@@ -1206,7 +1196,7 @@
 
 						reloadButton.innerHTML = '↻ %general.reload%';
 						reloadButton.className = 'reload-button';
-						reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '"))');
+						//reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '"))');
 
 						canvas.parentElement.appendChild(reloadButton);
 
