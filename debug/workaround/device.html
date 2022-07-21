@@ -1,0 +1,2080 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<script>
+
+				var lastWidth = window.innerWidth, lastHeight = window.innerHeight, resizeTimer = null, windowResized = false;
+
+				setInterval(() => {
+
+					if(windowResized)
+					{
+						windowResized = false;
+
+						for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+						{
+							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+						}
+					}
+
+				}, 100);
+
+				window.addEventListener('resize', (e) => {
+
+					if(lastWidth < window.innerWidth || lastWidth > window.innerWidth)
+					{
+						lastWidth = window.innerWidth;
+
+						windowResized = true;
+					}
+
+					if(lastHeight < window.innerHeight || lastHeight > window.innerHeight)
+					{
+						lastHeight = window.innerHeight;
+						
+						windowResized = true;
+					}
+
+					clearTimeout(resizeTimer);
+
+					resizeTimer = setTimeout(() => {
+						
+						if(windowResized)
+						{
+							windowResized = false;
+
+							for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+							{
+								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+							}
+						}
+
+					}, 100);
+				});
+				
+			</script>
+			<title class="loading-loop">%general.loading% ..</title>
+			<script type="module">
+
+				window.device = JSON.parse('<%device%>');
+
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					PageManager.setHeader('%general.settings%', '( ' + device.name + ' )');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form-main" value="%general.save%"></div>';
+
+					PageManager.setFooter(main);
+
+					if(device.plugin.alias.startsWith('SynTex'))
+					{
+						var reset = document.createElement('input');
+
+						reset.setAttribute('id', 'reset-btn');
+						reset.setAttribute('type', 'button');
+						reset.setAttribute('value', '%device.reset_device%');
+						reset.setAttribute('onclick', 'resetDevice(this)');
+						reset.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reset);
+					}
+
+					if(device.plugin.alias == 'SynTex')
+					{
+						var reconnect = document.createElement('input');
+
+						reconnect.setAttribute('id', 'reconnect-btn');
+						reconnect.setAttribute('type', 'button');
+						reconnect.setAttribute('value', '%device.reconnect%');
+						reconnect.setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
+						reconnect.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reconnect);
+					}
+					
+					PageManager.showFooter();
+
+					PageManager.switchPage('infos', 'settings', true);
+				}
+				else
+				{
+					PageManager.hideHeader();
+
+					var main = document.createElement('div');
+
+					if(device.plugin.alias == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="%device.restart%" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%device.modify%</div></button></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+				}
+
+			</script>
+			<div class="main" id="infos" style="transition: .2s opacity ease-in-out">
+				<div id="head"></div>
+				<div class="control-container"></div>
+				<h1 class="loading-loop" style="margin-top: 70px">%general.loading% ..</h1>
+				<div id="info" class="main" style="margin-top: 50px; margin-bottom: 100px"></div>
+				<div id="activity"></div>
+			</div>
+			<div id="settings" style="display: none; transition: .2s opacity ease-in-out">
+				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
+					<div class="type-container">
+						<h2 class="title-container" style="margin-bottom: 40px">%device.general%</h2>
+						<div id="general-settings">
+							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						</div>
+					</div>
+					<div id="service-form" style="margin-bottom: 20px"></div>
+				</form>
+			</div>
+			<script type="module">
+
+				import { Presets } from '/js/presets.js';
+				import { Graph } from '/js/graph.js';
+
+				Graph.setPadding(80);
+
+				window.Presets = Presets;
+				window.Graph = Graph;
+
+				window.values = {};
+				window.typeCounter = {};
+				window.counter = device.services.length;
+				window.automation = []
+				window.busy = [];
+				window.restarting = false
+				window.resetting = false
+				window.updating = false
+				window.saving = false;
+				window.settings = [];
+				window.activity = [];
+				window.services = [];
+				window.temp = {};
+				window.graphData = {};
+
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					blind : '%accessories.blind%',
+					dimmer : '%accessories.dimmer%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
+				loadServices();
+
+				if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
+				{
+					if(device.active != null)
+					{
+						settings.push({
+							index: 'active',
+							name: '%device.active%'
+						});
+					}
+				}
+
+				if(services.includes('contact') || services.includes('motion') || services.includes('relais') || services.includes('statelessswitch') || services.includes('lcd'))
+				{
+					if(device.led != null)
+					{
+						settings.push({
+							index: 'led',
+							name: '%device.led%'
+						});
+					}
+				}
+
+				if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
+				{
+					if(device.interval != null)
+					{
+						settings.push({
+							index: 'interval',
+							name: services.includes('motion') ? '%device.delay%' : '%device.interval%'
+						});
+					}
+				}
+
+				document.getElementsByTagName('title')[0].innerHTML = device.name;
+				document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = device.name;
+
+				var infos = document.getElementById('info');
+
+				infos.innerHTML += '<p style="user-select: text"><b>%general.id%: </b>' + device.id + '</p>';
+
+				if(device.ip != null)
+				{
+					infos.innerHTML += '<p style="user-select: text"><b>%general.ip%: </b>' + device.ip + '</p>';
+				}
+
+				infos.innerHTML += '<p><b>%general.plugin%: </b>' + device.plugin[device.plugin.name != null ? 'name' : 'alias'] + '</p>';
+				
+				infos.innerHTML += '<p><b>%device.type%: </b>' + (serviceNames[Essentials.getType(services)] || Essentials.getType(services)) + '</p>';
+
+				if(device.version != null && device.version != '0.0.0')
+				{
+					infos.innerHTML += '<p id="version-info"><b>%device.version%: </b>' + device.version + '</p>';
+				}
+
+				if(device.group != null && device.group != '')
+				{
+					infos.innerHTML += '<p><b>%general.group%: </b>' + (Array.isArray(device.group) ? device.group.join(', ') : device.group) + '</p>';
+				}
+
+				for(const i in settings)
+				{
+					if(settings[i].index == 'interval' && !services.includes('motion'))
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] / 1000 + ' sek' + '</p>';
+					}
+					else if(settings[i].index == 'interval' && services.includes('motion'))
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + (device[settings[i].index] / 1000 + 1.5) + ' sek' + '</p>';
+					}
+					else if(settings[i].index == 'led' || settings[i].index == 'active')
+					{
+						if(device[settings[i].index] == 1)
+						{
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>%characteristics.boolean.active%</p>';
+						}
+						else
+						{
+							infos.innerHTML += '<p><b>' + settings[i].name + ': </b>%characteristics.boolean.inactive%</p>';
+						}
+					}
+					else
+					{
+						infos.innerHTML += '<p><b>' + settings[i].name + ': </b>' + device[settings[i].index] + '</p>';
+					}
+				}
+
+				document.getElementById('footer-content').setAttribute('type', Essentials.getType(services));
+				document.getElementById('footer-content').setAttribute('version', device.version);
+
+				var settingsForm = document.getElementById('general-settings');
+
+				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
+
+				if(device.group != null)
+				{
+					settingsForm.getElementsByTagName('input')[1].setAttribute('value', Array.isArray(device.group) ? device.group.join(', ') : device.group);
+				}
+
+				for(const i in settings)
+				{
+					if(settings[i].index == 'interval' && !services.includes('motion'))
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" pattern="[0-9]+" title="%pattern.numbers%" required value="' + device[settings[i].index] / 1000 + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+					}
+					else if(settings[i].index == 'interval' && services.includes('motion'))
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" pattern="[0-9]+" title="%pattern.numbers%" required value="' + (device[settings[i].index] / 1000 + 1.5) + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"> sek</b></p>';
+					}
+					else if(settings[i].index == 'led' || settings[i].index == 'active')
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px"></b></p>';
+					}
+					else
+					{
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" required value="' + device[settings[i].index] + '" name="' + settings[i].index + '" type="text" style="max-width: 150px"></b></p>';
+					}
+				}
+
+				settingsForm.setAttribute('device_id', device.id);
+				settingsForm.setAttribute('ip', device.ip);
+				settingsForm.setAttribute('type', Essentials.getType(services));
+
+				var serviceForm = document.getElementById('service-form');
+
+				for(const i in device.services)
+				{
+					var container = document.createElement('div'), title = document.createElement('h2'), serviceConfig = document.createElement('div');
+
+					container.className = 'type-container';
+
+					title.className = 'title-container';
+
+					if(device.services[i].letters != null)
+					{
+						title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters[1];
+					}
+					else
+					{
+						title.innerHTML = device.services[i].type + ' ' + i;
+					}
+
+					title.style.marginBottom = '40px';
+
+					serviceConfig.className = 'service-settings';
+					serviceConfig.setAttribute('letters', device.services[i].letters);
+
+					var configService = getConfigService(device.services[i].letters);
+
+					if(configService != null)
+					{
+						for(const j in device.services[i])
+						{
+							if(j != 'iid' && j != 'format' && j != 'state' && j != 'letters' && j != 'type' && j != 'function' && j != 'online' && !(device.services[i][j] instanceof Object) && !Array.isArray(device.services[i][j]))
+							{
+								var p = document.createElement('p'), b = document.createElement('b'), input = document.createElement('input');
+
+								b.innerHTML = j + ': ';
+
+								input.setAttribute('name', j);
+								input.setAttribute('placeholder', configService.name || device.services[i].name);
+								input.setAttribute('value', device.services[i][j]);
+								input.setAttribute('type', 'text');
+								input.setAttribute('required', '');
+								input.setAttribute('style', 'max-width: 325px');
+								input.setAttribute('oninput', 'Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')');
+
+								if(j == 'name')
+								{
+									input.removeAttribute('required');
+
+									if(configService.name == null)
+									{
+										input.removeAttribute('value');
+									}
+									else
+									{
+										input.setAttribute('value', configService.name);
+									}
+								}
+
+								b.appendChild(input);
+								p.appendChild(b);
+
+								serviceConfig.appendChild(p);
+							}
+						}
+					}
+
+					if(serviceConfig.childElementCount > 0)
+					{
+						container.appendChild(title);
+						container.appendChild(serviceConfig);
+
+						document.getElementById('service-form').appendChild(container);
+					}
+				}
+
+				for(var i = 0; i < counter; i++)
+				{
+					var service = device.services[i];
+
+					typeCounter[service.type] = typeCounter[service.type] ? typeCounter[service.type] + 1 : 1;
+				}
+
+				var c = counter;
+
+				for(var i = 0; i < Object.keys(typeCounter).length; i++)
+				{
+					var type = Object.keys(typeCounter)[i];
+
+					if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+					{
+						for(var j = 0; j < typeCounter[type]; j++)
+						{
+							var letters = Essentials.typeToLetter(type) + j;
+							var statusField = document.createElement('button');
+						
+							statusField.setAttribute('id', 'status-' + letters);
+							statusField.setAttribute('class', 'control-panel loading-loop');
+							statusField.setAttribute('type', 'button');
+
+							statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
+
+							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer' || type == 'led' || type == 'blind')
+							{
+								statusField.style.cursor = 'pointer';
+							}
+							
+							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
+							{
+								statusField.setAttribute('onclick', 'controlSwitch(this)');
+							}
+
+							if(counter > 1)
+							{
+								statusField.style.height = '100px';
+							}
+
+							if(i == counter - 1) // UGLY: Handle Statusfield Margin
+							{
+								statusField.style.setProperty('margin-bottom', '0', 'important');
+							}
+
+							if(type == 'dimmer' || type == 'blind')
+							{
+								const mouseDownHandler = function(e)
+								{
+									controlActive = true;
+
+									if(!busy.includes(this.letters))
+									{
+										controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
+
+										document.addEventListener('mousemove', mouseMoveHandler);
+										document.addEventListener('mouseup', mouseUpHandler);
+									}
+
+								}.bind({ field : statusField, letters });
+
+								const mouseMoveHandler = function(e)
+								{
+									this.field.style.pointerEvents = 'none';
+									this.field.parentElement.style.cursor = 'w-resize';
+									this.field.style.setProperty('transition-property', 'none', 'important');
+
+									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
+
+								}.bind({ field : statusField, letters });
+
+								const mouseUpHandler = function(e)
+								{
+									this.field.style.pointerEvents = 'all';
+									this.field.parentElement.style.cursor = 'pointer';
+									this.field.style.removeProperty('transition-property');
+
+									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()));
+
+									Promise.all(promiseArraySlide).then(() => {
+
+										setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = false }, 300);
+									});
+
+									document.removeEventListener('mousemove', mouseMoveHandler);
+									document.removeEventListener('mouseup', mouseUpHandler);
+
+								}.bind({ field : statusField, letters });
+
+								statusField.addEventListener('mousedown', mouseDownHandler);
+
+								statusField.addEventListener('touchstart', function(e)
+								{
+									controlActive = true;
+
+									if(!busy.includes(letters))
+									{
+										getTouchPosition(this.field, this.letters, e, true);
+									}
+
+								}.bind({ field : statusField, letters }));
+
+								statusField.addEventListener('touchmove', function(e)
+								{
+									if(!busy.includes(letters))
+									{
+										this.field.style.setProperty('transition-property', 'none', 'important');
+
+										getTouchPosition(this.field, this.letters, e, true);
+									}
+
+								}.bind({ field : statusField, letters }));
+
+								statusField.addEventListener('touchend', function(e)
+								{
+									if(!busy.includes(letters))
+									{
+										getTouchPosition(this.field, this.letters, e);
+
+										this.field.style.removeProperty('transition-property');
+
+										Promise.all(promiseArraySlide).then(() => {
+											
+											setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = true; }, 300);
+										});
+									}
+
+								}.bind({ field : statusField, letters }));
+							}
+
+							document.getElementsByClassName('control-container')[0].appendChild(statusField);
+
+							if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+							{
+								var colorPicker = document.createElement('input');
+
+								colorPicker.className = 'color-picker';
+
+								colorPicker.setAttribute('type', 'color');
+
+								colorPicker.onchange = function()
+								{
+									var hsl = hexToHSL(colorPicker.value);
+
+									setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
+								
+								}.bind({ colorPicker, letters });
+
+								colorPicker.oninput = function()
+								{
+									var hsl = hexToHSL(this.colorPicker.value);
+
+									setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
+
+								}.bind({ colorPicker, letters });
+
+								setInterval(function()
+								{
+									var hsl = hexToHSL(this.colorPicker.value);
+
+									if(this.colorPicker['hsl'] == null || this.colorPicker['hsl'].hue != hsl.hue || this.colorPicker['hsl'].saturation != hsl.saturation || this.colorPicker['hsl'].brightness != hsl.brightness)
+									{
+										controlActive = true;
+
+										if(this.colorPicker['hsl'] != null)
+										{
+											controlColor(this.letters, hsl.hue, hsl.saturation, Math.min(hsl.brightness * 2, 100));
+										}
+									
+										this.colorPicker['hsl'] = hsl;
+
+										setTimeout(() => {
+
+											controlActive = false;
+
+										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
+									}
+
+								}.bind({ colorPicker, letters }), device.plugin.alias.startsWith('SynTex') ? 300 : 3000);
+
+								statusField.appendChild(colorPicker);
+							}
+
+							if(type != 'removed')
+							{
+								var height = 360;
+								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
+
+								frame.className = 'graph';
+								frame.setAttribute('style', 'height: ' + height + 'px');
+
+								document.getElementById('activity').appendChild(frame);
+
+								console.debug('SET HEIGHT', height, frame);
+
+								canvas.setAttribute('class', 'canvas');
+								canvas.setAttribute('id', 'canvas-' + Essentials.typeToLetter(type) + j);
+								canvas.setAttribute('style', 'z-index: 1; opacity: 0');
+
+								canvas.width = document.getElementById('infos').offsetWidth - 4;
+								canvas.height = height;
+
+								frame.appendChild(canvas);
+
+								grid.setAttribute('class', 'canvas');
+								grid.setAttribute('id', 'canvas-' + type + '-' + j);
+
+								grid.width = document.getElementById('infos').offsetWidth - 4;
+								grid.height = height;
+
+								frame.appendChild(grid);
+
+								Graph.clearCanvas(grid);
+								Graph.drawGrid(grid, [], 10);
+
+								var infoMin = document.createElement('div');
+
+								infoMin.setAttribute('style', 'bottom: calc(-100% + 17px); left: 25px');
+								infoMin.setAttribute('class', 'min');
+								infoMin.innerHTML = '%device.min%';
+
+								frame.appendChild(infoMin);
+
+								var infoMax = document.createElement('div');
+
+								infoMax.setAttribute('style', 'top: 34.5px; left: 25px');
+								infoMax.setAttribute('class', 'max');
+								infoMax.innerHTML = '%device.max%';
+
+								frame.appendChild(infoMax);
+
+								if(services.length > 1)
+								{
+									var infoType = document.createElement('div');
+								
+									infoType.setAttribute('style', 'top: 34.5px; text-align: center');
+									infoType.setAttribute('class', 'name');
+
+									var typeName = type;
+
+									if(type == 'rgb' || type == 'rgbw' || type == 'rgbcw' || type == 'rgbww')
+									{
+										typeName = type.toUpperCase();
+									}
+									else if(type == 'statelessswitch')
+									{
+										typeName = 'Stateless Switch';
+									}
+
+									var name = typeName[0].toUpperCase() + typeName.substring(1), n = [];
+
+									if(typeCounter[type] > 1)
+									{
+										name = device.name + ' ' + typeName[0].toUpperCase() + typeName.substring(1) + ' ' + j;
+									}
+									else if(counter > 1)
+									{
+										//name = device.name + ' ' + type[0].toUpperCase() + type.substring(1);
+									}
+
+									for(const k in device.services)
+									{
+										if(device.services[k].name != null && device.services[k].type == type)
+										{
+											n.push(device.services[k].name);
+										}
+									}
+
+									if(n.length > 0)
+									{
+										name = n[j];
+									}
+
+									if(name.includes(device.name + ' '))
+									{
+										name = name.replace(device.name + ' ', '');
+									}
+
+									name = name.toUpperCase();
+									
+									infoType.innerHTML = name;
+
+									frame.appendChild(infoType);
+								}
+
+								var infoUpdates = document.createElement('div');
+
+								infoUpdates.setAttribute('style', 'top: 34.5px; left: -25px; text-align: right');
+								infoUpdates.setAttribute('class', 'updates');
+								infoUpdates.innerHTML = '%device.data%';
+
+								frame.appendChild(infoUpdates);
+
+								var infoUpdate = document.createElement('div');
+
+								infoUpdate.setAttribute('style', 'bottom: calc(-100% + 17px); left: -25px; text-align: right');
+								infoUpdate.setAttribute('class', 'update');
+								infoUpdate.innerHTML = '%device.activity%';
+
+								frame.appendChild(infoUpdate);
+
+								if(!device.plugin.alias.startsWith('SynTex'))
+								{
+									var notSupportedButton = document.createElement('h2');
+
+									notSupportedButton.innerHTML = '%device.no_data%';
+									notSupportedButton.className = 'reload-button';
+
+									canvas.parentElement.appendChild(notSupportedButton);
+
+									setTimeout(function()
+									{
+										this.notSupportedButton.style.opacity = 1;
+
+									}.bind({ notSupportedButton }), 0);
+								}
+							}
+						}
+					}
+					else
+					{
+						c -= typeCounter[type];
+					}
+				}
+
+				if(c > 3)
+				{
+					document.getElementsByClassName('control-container')[0].classList.add('grid');
+				}
+
+				Preloader.finish();
+
+				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then((a) => {
+
+					automation = JSON.parse(a);
+
+					loadActivity().then(() => repaintGraphs());
+				});
+
+				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getVersionURL(device) != null)
+				{
+					checkUpdates();
+				}
+
+				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null && window.location.protocol != 'https:')
+				{
+					pingESP();
+				}
+
+				if(device.plugin.alias.startsWith('SynTex'))
+				{
+					setupViewer();
+					setupController();
+				}
+				else
+				{
+					fetchState();
+
+					setInterval(() => {
+
+						if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+						{
+							fetchState();
+						}
+
+					}, 3000);
+				}
+
+			</script>
+			<script>
+
+				function getPercent(field, x, groupBar)
+				{
+					var groupBar = field.getBoundingClientRect(),
+						padding = 50;
+
+
+					return Math.min(Math.max((x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
+				}
+
+				function getTouchPosition(statusField, letters, e, send)
+				{
+					controlDimmer(letters, getPercent(statusField, e.changedTouches[0].clientX, statusField.getBoundingClientRect()), send);
+
+					e.preventDefault();
+				}
+
+				window.promiseArraySlide = [];
+
+				function controlDimmer(letters, percent, send)
+				{
+					if(!send && !busy.includes(letters))
+					{
+						busy.push(letters);
+					}
+
+					percent = Math.round(percent);
+
+					var state = { value : (percent > 0 ? true : false), brightness : percent };
+
+					if(Essentials.letterToType(letters[0]) == 'blind')
+					{
+						state = { value : percent };
+					}
+
+					if(device.plugin.alias.startsWith('SynTex'))
+					{
+						if(!send)
+						{
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, ...state  } }));
+						}
+						else
+						{
+							setControlPanel(letters, state);
+						}
+					}
+					else if(getService(letters) != null && getService(letters).iid != null)
+					{
+						setControlPanel(letters, state);
+
+						if(!send)
+						{
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + (percent > 0 ? true : false) + '&brightness=' + percent;
+					
+							promiseArraySlide.push(Query.complexFetch(url, 10000, 1, {}, false));
+						}
+					}
+				}
+
+				window.controllerReady = false;
+
+				function controlColor(letters, hue, saturation, percent, send)
+				{
+					if(controllerReady)
+					{
+						percent = Math.round(percent);
+
+						var state = { value : (percent > 0 ? true : false), hue, saturation, brightness : percent };
+
+						if(device.plugin.alias.startsWith('SynTex'))
+						{
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value : (percent > 0 ? true : false), hue, saturation, brightness : percent  } }));
+						
+							setControlPanel(letters, state);
+						}
+						else if(getService(letters) != null && getService(letters).iid != null)
+						{
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + (percent > 0 ? true : false) + '&hue=' + hue + '&saturation=' + saturation + '&brightness=' + percent;
+
+							Query.complexFetch(url, 10000, 1, {}, false).then(() => setControlPanel(letters, state));
+						}
+					}
+				}
+
+				function setControlPanel(letters, state)
+				{
+					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––', service = getService(letters);
+
+					if(service != null && service.iid != null)
+					{
+						var serviceState = Essentials.getServiceColor({ ...service, state });
+
+						if(serviceState.text != null)
+						{
+							value = serviceState.text;
+						}
+
+						if(serviceState.color != null)
+						{
+							color = serviceState.color;
+						}
+					}
+
+					if(typeCounter[type] > 1)
+					{
+						var name = device.name + ' ' + type + ' ' + c;
+						var n = [];
+
+						for(var k = 0; k < device.services.length; k++)
+						{
+							if(device.services[k].type == type)
+							{
+								n.push(device.services[k].name);
+							}
+						}
+
+						if(n.length > 0 && n[c] != null)
+						{
+							name = n[c];
+						}
+
+						if(name.includes(device.name + ' '))
+						{
+							name = name.replace(device.name + ' ', '');
+						}
+
+						document.getElementById('status-' + letters).children[0].innerHTML = name.toUpperCase() + ' [' + value + ']';
+					}
+					else
+					{
+						document.getElementById('status-' + letters).children[0].innerHTML = value;
+					}
+
+					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
+					document.getElementById('status-' + letters).style.setProperty('--background-color', color);
+
+					if(color.includes('rgb'))
+					{
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2]) - 20) + ')');
+					}
+					else if(color.includes('hsl'))
+					{
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+					}
+					else
+					{
+						document.getElementById('status-' + letters).style.setProperty('--box-shadow', color);
+					}
+
+					resizeFontSizeToFit(document.getElementById('status-' + letters).children[0]);
+				}
+
+			</script>
+			<script>
+
+				function resizeFontSizeToFit(element)
+				{
+					var steps = [{ fontSize : 46, letterSpacing : 20 }, { fontSize : 30, letterSpacing : 15 }, { fontSize : 22, letterSpacing : 10 }];
+					var padding = parseInt(getComputedStyle(element.parentElement).paddingLeft) + parseInt(getComputedStyle(element.parentElement).paddingRight);
+
+					element.style.setProperty('padding-left', steps[0].letterSpacing + 'px', 'important');
+
+					element.parentElement.style.setProperty('font-size', steps[0].fontSize + 'px', 'important');
+					element.parentElement.style.setProperty('letter-spacing', steps[0].letterSpacing + 'px', 'important');
+
+					for(const i in steps)
+					{
+						if(element.offsetHeight > element.parentElement.offsetHeight || element.offsetWidth > element.parentElement.offsetWidth - padding - steps[i].letterSpacing / 2)
+						{
+							element.style.setProperty('padding-left', steps[i].letterSpacing + 'px', 'important');
+
+							element.parentElement.style.setProperty('font-size', steps[i].fontSize + 'px', 'important');
+							element.parentElement.style.setProperty('letter-spacing', steps[i].letterSpacing + 'px', 'important');
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				function loadServices()
+				{
+					for(const i in device.services)
+					{
+						services.push(device.services[i].type);
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				async function controlSwitch(button)
+				{
+					var letters = button.getAttribute('id').split('-')[1];
+
+					if(!busy.includes(letters))
+					{
+						var value = 'true';
+
+						busy.push(letters);
+
+						if(temp[letters] != null)
+						{
+							value = temp[letters].value == true ? 'false' : 'true';
+						}
+
+						//setControlPanel(letters, { value : (value == 'true') });
+
+						if(device.plugin.alias.startsWith('SynTex'))
+						{
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value  } }));
+						}
+						else if(getService(letters) != null && getService(letters).iid != null)
+						{
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + value;
+						
+							Query.complexFetch(url, 10000, 1, {}, false).then((result) => busy.splice(busy.indexOf(letters), 1));
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				window.repaintInterval = setInterval(() => {
+
+					for(const letters in graphData)
+					{
+						if(new Date().getTime() > graphData[letters].nextRefresh)
+						{
+							graphData[letters].nextRefresh = Graph.getMinuteCycle(graphData[letters].interval) + 60000 * graphData[letters].interval;
+
+							calcValues(Essentials.letterToType(letters[0]), letters[1]);
+
+							console.warn(new Date(graphData[letters].nextRefresh));
+						}
+					}
+
+				}, 1000);
+
+				function loadActivity()
+				{
+					return new Promise(async (resolve) => {
+
+						activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
+
+						for(const type in typeCounter)
+						{
+							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								for(var j = 0; j < typeCounter[type]; j++)
+								{
+									var letters = Essentials.typeToLetter(type) + j;
+
+									if(values[letters] == null)
+									{
+										values[letters] = [];
+									}
+
+									for(const lettersA in activity)
+									{
+										if(lettersA == letters)
+										{
+											if(activity[lettersA].update.length > 0)
+											{
+												if(type == 'statelessswitch')
+												{
+													for(const u in activity[lettersA].update)
+													{
+														values[letters].push({ time : activity[lettersA].update[u].t, value : true });
+														values[letters].push({ time : activity[lettersA].update[u].t, value : false });
+													}
+												}
+												else
+												{
+													for(const u in activity[lettersA].update)
+													{
+														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
+														var characteristics = ['value', 'hue', 'saturation', 'brightness'];
+
+														obj['value'] = orginalValues;
+
+														for(const c in characteristics)
+														{
+															if(orginalValues.includes(characteristics[c] + ': '))
+															{
+																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
+															}
+														}
+
+														for(const c in obj)
+														{
+															if(obj[c].includes(', '))
+															{
+																obj[c] = obj[c].split(', ')[0];
+															}
+														}
+
+														values[letters].push(obj);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						resolve();
+					});
+				}
+
+				function repaintGraphs(letters)
+				{
+					if(device.plugin.alias.startsWith('SynTex'))
+					{
+						for(const type in typeCounter)
+						{
+							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								for(var c = 0; c < typeCounter[type]; c++)
+								{
+									if(letters == null || letters == Essentials.typeToLetter(type) + c)
+									{
+										calcValues(type, c);
+									}
+								}
+							}
+						}
+
+						console.debug('GRAPH DATA', graphData);
+					}
+					else
+					{
+						var graphs = document.getElementsByClassName('canvas');
+
+						for(var i = 0; i < graphs.length; i++)
+						{
+							graphs[i].width = document.getElementById('infos').offsetWidth - 4;
+
+							Graph.clearCanvas(graphs[i]);
+							Graph.drawGrid(graphs[i], [], 10);
+						}
+					}
+				}
+
+				function calcValues(type, c)
+				{
+					var convertedAutomation = [], automationTriggers = [];
+					var letters = Essentials.typeToLetter(type) + c;
+					var canvas = document.getElementById('canvas-' + letters),
+						grid = document.getElementById('canvas-' + type + '-' + c);
+
+					canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+
+					Graph.clearCanvas(grid);
+					Graph.drawGrid(grid, graphData[letters], 10);
+
+					// NOTE: Convert GraphData Values
+					
+					for(const i in graphData[letters].sectors)
+					{
+						var a = null;
+
+						for(const j in graphData[letters].sectors[i])
+						{
+							if(graphData[letters].sectors[i][j].automation != null)
+							{
+								a = { time : graphData[letters].sectors[i][j].time, percent : (graphData[letters].sectors[i][j].automation - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : graphData[letters].sectors[i][j].automation };
+							}
+						}
+
+						convertedAutomation.push(a || null);
+					}
+
+					for(const i in automation)
+					{
+						for(const j in automation[i].trigger)
+						{
+							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == letters && (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100 && (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+							{
+								if(!automationTriggers.includes({ percent : (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[i].trigger[j].value }))
+								{
+									automationTriggers.push({ percent : (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[i].trigger[j].value });
+								}
+							}
+						}
+					}
+
+					automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
+
+					// NOTE: Draw Min, Max, Type, Update and Reload Labels
+
+					if(graphData[letters] != null && graphData[letters].values.length > 0 && values[letters] != null && values[letters].length > 0)
+					{
+						var min = null, max = null;
+
+						if(servicePresets[type].text != null)
+						{
+							min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+							max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+
+							if(graphData[letters].values.includes(graphData[letters].min) && servicePresets[type].inactive != null && servicePresets[type].inactive.text != null)
+							{
+								min = servicePresets[type].inactive.text.toUpperCase();
+							}
+							
+							if(graphData[letters].values.includes(graphData[letters].max) && servicePresets[type].active != null && servicePresets[type].active.text != null)
+							{
+								max = servicePresets[type].active.text.toUpperCase();
+							}
+						}
+						else
+						{
+							if(servicePresets[type].inactive != null)
+							{
+								min = servicePresets[type].inactive.text.toUpperCase();
+							}
+
+							if(servicePresets[type].active != null)
+							{
+								max = servicePresets[type].active.text.toUpperCase();
+							}
+						}
+
+						canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
+						canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+
+						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
+						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
+					
+						if(canvas.parentElement.getElementsByTagName('h2').length > 0)
+						{
+							canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
+						}
+
+						canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
+						canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
+						canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
+						canvas.parentElement.getElementsByClassName('updates')[0].style.opacity = 1;
+					}
+					else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
+					{
+						var reloadButton = document.createElement('h2');
+
+						reloadButton.innerHTML = '↻ %general.reload%';
+						reloadButton.className = 'reload-button';
+						reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '"))');
+
+						canvas.parentElement.appendChild(reloadButton);
+
+						setTimeout(() => { reloadButton.style.opacity = 1 }, 0);
+					}
+
+					// NOTE: Set Graph Colors
+
+					var service = getService(Essentials.typeToLetter(type) + c), colorFill = [], colorGraph = [];
+
+					if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+					{
+						var serviceState0 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].min } });
+						var serviceState1 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].min + graphData[letters].max) / 3 } });
+						var serviceState2 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max) / 2 } });
+						var serviceState3 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max + graphData[letters].max) / 3 } });
+						var serviceState4 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].max } });
+						
+						if(serviceState4 != null && serviceState4.color != null)
+						{
+							colorFill.push('hsla(' + serviceState4.color.split(')')[0].split('hsl(')[1] + ', .3)');
+							colorGraph.push(serviceState4.color);
+						}
+
+						if(serviceState3 != null && serviceState3.color != null)
+						{
+							colorFill.push('hsla(' + serviceState3.color.split(')')[0].split('hsl(')[1] + ', .25)');
+							colorGraph.push(serviceState3.color);
+						}
+
+						if(serviceState2 != null && serviceState2.color != null)
+						{
+							colorFill.push('hsla(' + serviceState2.color.split(')')[0].split('hsl(')[1] + ', .175)');
+							colorGraph.push(serviceState2.color);
+						}
+
+						if(serviceState1 != null && serviceState1.color != null)
+						{
+							colorFill.push('hsla(' + serviceState1.color.split(')')[0].split('hsl(')[1] + ', .1)');
+							colorGraph.push(serviceState1.color);
+						}
+
+						if(serviceState0 != null && serviceState0.color != null)
+						{
+							colorFill.push('hsla(' + serviceState0.color.split(')')[0].split('hsl(')[1] + ', .05)');
+							colorGraph.push(serviceState0.color);
+						}
+					}
+					else
+					{
+						var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, value : type == 'blind' ? 100 : true } });
+
+						if(serviceState != null && serviceState.color != null)
+						{
+							colorFill.push('hsla(' + serviceState.color.split(')')[0].split('hsl(')[1] + ', .3)');
+							colorGraph.push(serviceState.color);
+						}
+						
+						colorFill.push('rgba(60, 60, 80, .1)');
+						colorGraph.push('rgb(60, 60, 80');
+					}
+
+					// NOTE: Draw Graph
+
+					Graph.clearCanvas(canvas);
+					Graph.drawAutomation(canvas, automationTriggers);
+					Graph.drawFill(canvas, graphData[letters].values, colorFill, 0);
+					Graph.drawGraph(canvas, graphData[letters].values, colorGraph, false);
+					Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
+
+					canvas.style.opacity = 1;
+				}
+
+			</script>
+			<script>
+
+				function switchFormButton(btn)
+				{
+					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+					{
+						btn.setAttribute('class', 'outline');
+						btn.setAttribute('value', '%characteristics.boolean.inactive%');
+					}
+					else
+					{
+						btn.setAttribute('class', 'white');
+						btn.setAttribute('value', '%characteristics.boolean.active%');
+					}
+				}
+
+				async function openSettings(previous)
+				{
+					PageManager.setHeader('%general.settings%', '( ' + device.name + ' )', true);
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form-main" value="%device.save%"></div>';
+
+					PageManager.setFooter(main);
+
+					if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getResetURL(device, { type : Essentials.getType(services) }) != null)
+					{
+						var reset = document.createElement('input');
+
+						reset.setAttribute('id', 'reset-btn');
+						reset.setAttribute('type', 'button');
+						reset.setAttribute('value', '%device.reset_device%');
+						reset.setAttribute('onclick', 'resetDevice(this)');
+						reset.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reset);
+					}
+
+					if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getReconnectURL(device) != null)
+					{
+						var reconnect = document.createElement('input');
+
+						reconnect.setAttribute('id', 'reconnect-btn');
+						reconnect.setAttribute('type', 'button');
+						reconnect.setAttribute('value', '%device.reconnect%');
+						reconnect.setAttribute('onclick', "Essentials.leavePage('/connect?id=" + device.id + '&ip=' + device.ip + "')");
+						reconnect.setAttribute('style', 'margin-bottom: 20px');
+
+						PageManager.addFooter(reconnect);
+					}
+
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'settings', false);
+
+					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (%general.settings%)';
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&settings&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&settings');
+					}
+				}
+				
+				async function closeSettings(previous)
+				{
+					PageManager.hideHeader(true);
+
+					var main = document.createElement('div');
+
+					if(device.plugin.alias == 'SynTex')
+					{
+						main.innerHTML = '<input id="restart-btn" style="margin-bottom: 20px;" type="button" value="%device.restart%" onclick="restartDevice(this)">';
+					}
+
+					main.innerHTML += '<div style="display: flex"><input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%device.modify%</div></button></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'infos', false);
+
+					document.getElementsByTagName('title')[0].innerHTML = device.name;
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id);
+					}
+
+					for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
+					{
+						resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+					}
+
+					Graph.repaintGraphs();
+				}
+
+				function getService(letters)
+				{
+					var c = 0;
+
+					for(const i in device['services'])
+					{
+						if(device['services'][i].type == Essentials.letterToType(letters[0]))
+						{
+							if(c == letters[1])
+							{
+								return device['services'][i];
+							}
+							else
+							{
+								c++;
+							}
+						}
+					}
+
+					return null;
+				}
+
+				window.DeviceController = null;
+
+				function setupController()
+				{
+					DeviceController = {
+						url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						callback : (data) => {
+						
+							if(data instanceof Object)
+							{
+								var letters = Object.keys(data)[0];
+
+								busy.splice(busy.indexOf(letters), 1);
+							}
+						}
+					};
+
+					Query.connectSocket(DeviceController);
+				}
+
+				window.DeviceViewer = null;
+
+				function setupViewer()
+				{
+					DeviceViewer = {
+						url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						message : {
+							line : 'getState',
+							params : {
+								id : device.id
+							}
+						},
+						callback : (data) => renderNewData(data)
+					};
+					
+					Query.connectSocket(DeviceViewer);
+				}
+				
+				function fetchState()
+				{
+					Query.fetchURL('/serverside/characteristics?id=' + device.id, 10000).then((state) => renderNewData(JSON.parse(state)));
+				}
+
+				window.controlActive = false;
+
+				function renderNewData(data)
+				{
+					if(!controlActive && data != null)
+					{
+						for(var i = 0; i < Object.keys(typeCounter).length; i++)
+						{
+							var type = Object.keys(typeCounter)[i];
+
+							for(var j = 0; j < typeCounter[type]; j++)
+							{
+								var letters = Essentials.typeToLetter(type) + j;
+
+								if(temp[letters] == null)
+								{
+									temp[letters] = {};
+								}
+
+								if(data[letters] != null)
+								{
+									for(const j in data[letters])
+									{
+										if(temp == null || temp[letters][j] != data[letters][j])
+										{
+											console.log('UPDATE', letters, data[letters]);
+
+											updateValues(letters, data[letters]);
+
+											temp[letters][j] = data[letters][j];
+										}
+									}
+
+									if(!controllerReady && (type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw'))
+									{
+										if(data[letters].value)
+										{
+											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
+										}
+										else
+										{
+											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = '#000000';
+										}
+
+										setTimeout(() => {
+											
+											controllerReady = true;
+
+										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
+									}
+								}
+								else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+								{
+									setControlPanel(letters, data[letters]);
+								}
+							}
+						}
+					}
+				}
+
+				function updateValues(letters, state)
+				{
+					var type = Essentials.letterToType(letters[0]), j = letters[1];
+					
+					if(state != null)
+					{
+						if(values[letters] != null)
+						{
+							var obj = { time : Math.round(new Date().getTime() / 1000) };
+
+							if(state.value != null)
+							{
+								obj.value = state.value.toString();
+							}
+							
+							if(state.hue != null)
+							{
+								obj.hue = state.hue.toString();
+							}
+
+							if(state.saturation != null)
+							{
+								obj.saturation = state.saturation.toString();
+							}
+
+							if(state.brightness != null)
+							{
+								obj.brightness = state.brightness.toString();
+							}
+
+							values[letters].push(obj);
+
+							if(device.plugin.alias.startsWith('SynTex'))
+							{
+								setTimeout(() => calcValues(type, j), 300);
+							}
+						}
+					}
+
+					setControlPanel(letters, state);
+				}
+				
+				async function restartDevice(btn)
+				{
+					if(!restarting && !updating && !saving && !resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'restart',
+							pending : { value : '%general.restarting% ..' },
+							connectionError : { value : '%device.device_connection_error%!' }
+						};
+
+						restarting = true;
+
+						if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getRestartURL(device), 20000, 1, overlays, false) == null)
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%device.device_connection_error%!'));
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, true);
+
+							await Essentials.newTimeout(300);
+						}
+					}
+				}
+
+				var updatedAfterOffline = true;
+
+				async function pingESP()
+				{
+					if(document.getElementById('updating') == null && !saving && document.getElementById('settings') != null && document.getElementById('settings').hasAttribute('style'))
+					{
+						if(await Query.fetchURL(Presets.getPreset(device.plugin.alias).getPingURL(device), 10000) != null)
+						{
+							console.log('ESP Gefunden');
+
+							if(!updatedAfterOffline)
+							{
+								for(const type in typeCounter)
+								{
+									if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+									{
+										for(var j = 0; j < typeCounter[type]; j++)
+										{
+											var letters = Essentials.typeToLetter(type) + j;
+
+											if(temp[letters] != null)
+											{
+												setControlPanel(letters, temp[letters]);
+											}
+										}
+									}
+								}
+
+								updatedAfterOffline = true;
+							}
+
+							if(restarting == true)
+							{
+								Essentials.showOverlay(document.getElementById('restart-btn'), Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
+								
+								await Essentials.newTimeout(4000);
+								
+								Essentials.removeOverlays(document.getElementById('restart-btn'), true);
+
+								setTimeout(() => { restarting = false }, 300);
+							}
+
+							setTimeout(function()
+							{
+								pingESP();
+
+							}, 5000);
+						}
+						else
+						{
+							document.getElementsByClassName('control-panel')[0].style.setProperty('--background-color', 'hsl(350, 75%, 55%)');
+							document.getElementsByClassName('control-panel')[0].style.setProperty('--box-shadow', 'hsl(350, 75%, 45%)');
+							document.getElementsByClassName('control-panel')[0].children[0].innerHTML = '%general.offline%';
+
+							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[0].children[0]);
+
+							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
+							{
+								document.getElementsByClassName('control-panel')[i].style.removeProperty('--background-color');
+								document.getElementsByClassName('control-panel')[i].style.removeProperty('--box-shadow');
+								document.getElementsByClassName('control-panel')[i].children[0].innerHTML = '–––';
+
+								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
+							}
+
+							updatedAfterOffline = false;
+
+							await Essentials.newTimeout(1000);
+							
+							pingESP();
+						}
+					}
+					else
+					{
+						await Essentials.newTimeout(1000);
+							
+						pingESP();
+					}
+				}    
+
+				function updateDevice(btn)
+				{
+					return new Promise(async function(resolve) {
+
+						var response = false;
+
+						if(!updating && !restarting && !saving && !resetting)
+						{
+							var overlays = {
+								root : btn,
+								id : 'update',
+								pending : { value : '%general.please_wait% ..' },
+								success : { value : '%general.updating% ..', color : 'purple', remove : false },
+								executeError : { value : '%general.update_failed%!' },
+								connectionError : { value : '%device.device_connection_error%!' }
+							};
+
+							updating = true;
+
+							if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getUpdateURL(device, { type : Essentials.getType(services) }), 20000, 1, overlays, true) == 'Success')
+							{
+								await Essentials.newTimeout(3000);
+
+								var overlays = {
+									root : btn,
+									id : 'update-installation',
+									connectionError : { value : '%device.device_connection_error%!' }
+								};
+
+								var update = await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 20, overlays, false);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{  
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_success%!', 'green'));
+
+									response = true;
+								}
+								else
+								{
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_failed%!', 'red'));
+								}
+
+								document.getElementById('version-info').innerHTML = '<b>%device.version%: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 3, {}, false);
+
+								await Essentials.newTimeout(4000);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{
+									Essentials.removeOverlays(btn, false);
+
+									PageManager.removeFooter('update-btn', true);
+								}
+								else
+								{
+									Essentials.removeOverlays(btn, true);
+								}
+							}
+
+							updating = false;
+						}
+
+						resolve(response);
+					});
+				}
+
+				async function checkUpdates()
+				{
+					var newestVersion = await Query.complexFetch('http://syntex.sytes.net:8800/check-version?type=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
+
+					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
+					{
+						var update = document.createElement('input');
+
+						update.setAttribute('type', 'button');
+						update.setAttribute('value', '%device.install_update% ( v' + newestVersion + ' )');
+						update.setAttribute('style', 'margin-bottom: 20px;');
+						update.setAttribute('onclick', 'updateDevice(this)');
+						update.setAttribute('id', 'update-btn');
+
+						PageManager.addFooter(update);
+						PageManager.showFooter();
+					}
+				}
+
+				function resetDevice(btn)
+				{
+					var dialogue = {
+                        title : '%general.warning%',
+                        subtitle : '%device.reset_confirm%?',
+                        buttons : [
+                            {
+                                text : '%general.cancel%',
+                                close : true
+                            },
+                            {
+                                text : '%device.reset%',
+                                color : 'red',
+                                close : true,
+                                action : () => resetConfirm(btn)
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+				}
+				
+				async function resetConfirm(btn)
+				{
+					if(!resetting && !updating && !restarting && !saving)
+					{
+						var overlays = {
+							root : btn,
+							id : 'reset',
+							pending : { value : '%device.resetting% ..', z : 2 },
+							executeError : { value : '%device.reset_error%!', z : 3 },
+							connectionError : { value : (device.ip == null ? '%general.bridge_connection_error%!' : '%device.device_connection_error%!'), z : 3 }
+						};
+
+						var url = Presets.getPreset(device.plugin.alias).getResetURL(device, { type : Essentials.getType(services), url : window.location.protocol + '//' + window.location.hostname + ':' + device.plugin.port });
+
+						resetting = true;
+
+						if(await Query.complexFetch(url, 20000, 1, overlays, true) == 'Success')
+						{
+							await Query.fetchURL('/serverside/reload-accessories', 20000);
+
+							Essentials.showOverlay(btn, Essentials.createOverlay(3, 'reset-result', '%device.reset_success%!', 'green'));
+
+							await Essentials.newTimeout(3000);
+
+							Essentials.leavePage('/');
+						}
+						else
+						{
+							await Essentials.newTimeout(4010);
+
+							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+						}
+
+						resetting = false;
+					}
+				}
+
+				async function saveConfig()
+				{
+					if(!saving && !updating && !restarting && !resetting)
+					{
+						var settings = {
+							id : device.id,
+							plugin : device.plugin.alias
+						};
+
+						var form = document.getElementById('general-settings').getElementsByTagName('input');
+
+						for(var i = 0; i < form.length; i++)
+						{
+							if(form[i].getAttribute('name') == 'interval')
+							{
+								if(!services.includes('motion'))
+								{
+									settings['interval'] = form[i].value * 1000;
+								}
+								else if(services.includes('motion'))
+								{
+									settings['interval'] = (form[i].value - 1.5) * 1000;
+								}
+								else
+								{
+									settings['interval'] = form[i].value;
+								}
+							}
+							else if(form[i].getAttribute('name') == 'group' && form[i].value.includes(','))
+							{
+								var array = form[i].value.split(',');
+
+								for(const i in array)
+								{
+									array[i] = array[i].trim();
+								}
+								
+								settings[form[i].getAttribute('name')] = array;
+							}
+							else if(form[i].getAttribute('type') == 'button')
+							{
+								settings[form[i].getAttribute('name')] = (form[i].value == '%characteristics.boolean.active%' ? 1 : 0);
+							}
+							else if(form[i].getAttribute('type') == 'text' && (form[i].value != '' || !form[i].hasAttribute('required')))
+							{
+								settings[form[i].getAttribute('name')] = form[i].value;
+							}
+						}
+
+						settings.services = [];
+
+						var serviceSettings = document.getElementsByClassName('service-settings');
+
+						for(var i = 0; i < serviceSettings.length; i++)
+						{
+							var form = serviceSettings[i].getElementsByTagName('input'), serviceConfig = {};
+
+							serviceConfig.letters = serviceSettings[i].getAttribute('letters');
+
+							for(var j = 0; j < form.length; j++)
+							{
+								if(form[j].getAttribute('type') == 'button')
+								{
+									serviceConfig[form[j].getAttribute('name')] = (form[j].value == '%characteristics.boolean.active%' ? 1 : 0);
+								}
+								else if(form[j].getAttribute('type') == 'text' && (form[j].value != '' || !form[j].hasAttribute('required')))
+								{
+									serviceConfig[form[j].getAttribute('name')] = form[j].value;
+								}
+							}
+
+							settings.services.push(serviceConfig);
+						}
+
+						console.log('SAVE DEVIE CONFIG', settings);
+
+						var overlays = {
+							root : document.getElementById('save-btn'),
+							id : 'saving',
+							pending : { value : '%general.uploading% ..', remove : false },
+							executeError : { value : '%device.save_error%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
+						};
+
+						saving = true;
+
+						if(await Query.complexFetch('/serverside/save-config', 5000, 2, overlays, true, JSON.stringify(settings)) == 'Success')
+						{
+							await Essentials.newTimeout(200);
+							
+							if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getRestartURL(device) != null)
+							{
+								var overlays = {
+									root : document.getElementById('save-btn'),
+									id : 'refresh',
+									executeError : { value : '%device.save_error%!' },
+									connectionError : { value : '%device.saved%!', color : 'yellow' }
+								};
+								
+								if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getRestartURL(device), 20000, 1, overlays, true) == null)
+								{
+									await Essentials.newTimeout(1800);
+								}
+							}
+
+							redirect();
+						}
+						else if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getPingURL(device) != null && window.location.protocol != 'https:')
+						{
+							saving = false;
+
+							await Essentials.newTimeout(500);
+
+							pingESP();
+						}
+
+						saving = false;
+					}
+				}
+				
+				function redirect()
+				{
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id);
+					}
+					
+					Essentials.leavePage('/device?id=' + device.id)
+				}
+
+				function hexToHSL(H)
+				{
+					let r = 0, g = 0, b = 0;
+
+					if(H.length == 4)
+					{
+						r = '0x' + H[1] + H[1];
+						g = '0x' + H[2] + H[2];
+						b = '0x' + H[3] + H[3];
+					}
+					else if(H.length == 7)
+					{
+						r = '0x' + H[1] + H[2];
+						g = '0x' + H[3] + H[4];
+						b = '0x' + H[5] + H[6];
+					}
+
+					r /= 255;
+					g /= 255;
+					b /= 255;
+
+					let cmin = Math.min(r, g, b), cmax = Math.max(r, g, b), delta = cmax - cmin, h = 0, s = 0, l = 0;
+
+					if(delta == 0)
+					{
+						h = 0;
+					}
+					else if(cmax == r)
+					{
+						h = ((g - b) / delta) % 6;
+					}
+					else if(cmax == g)
+					{
+						h = (b - r) / delta + 2;
+					}
+					else
+					{
+						h = (r - g) / delta + 4;
+					}
+
+					h = Math.round(h * 60);
+
+					if(h < 0)
+					{
+						h += 360;
+					}
+
+					l = (cmax + cmin) / 2;
+					s = (delta == 0) ? 0 : delta / (1 - Math.abs(2 * l - 1));
+					s = +(s * 100).toFixed(1);
+					l = +(l * 100).toFixed(1);
+
+					return { hue : Math.round(h), saturation : Math.round(s), brightness : Math.round(l) };
+				}
+
+				function HSLToHex(h, s, l)
+				{
+					s /= 100;
+					l /= 100;
+
+					let c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r = 0, g = 0, b = 0; 
+
+					if(0 <= h && h < 60)
+					{
+						r = c; g = x; b = 0;
+					}
+					else if(60 <= h && h < 120)
+					{
+						r = x; g = c; b = 0;
+					}
+					else if(120 <= h && h < 180)
+					{
+						r = 0; g = c; b = x;
+					}
+					else if (180 <= h && h < 240)
+					{
+						r = 0; g = x; b = c;
+					}
+					else if (240 <= h && h < 300)
+					{
+						r = x; g = 0; b = c;
+					}
+					else if (300 <= h && h < 360)
+					{
+						r = c; g = 0; b = x;
+					}
+					
+					r = Math.round((r + m) * 255).toString(16);
+					g = Math.round((g + m) * 255).toString(16);
+					b = Math.round((b + m) * 255).toString(16);
+
+					if(r.length == 1)
+					{
+						r = '0' + r;
+					}
+					if(g.length == 1)
+					{
+						g = '0' + g;
+					}
+					if(b.length == 1)
+					{
+						b = '0' + b;
+					}
+
+					return '#' + r + g + b;
+				}
+
+				// TODO: Need To Add Counter From Letters
+
+				function getConfigService(letters)
+				{
+					var typeCounter = {};
+
+					if(letters != null && device.config != null)
+					{
+						for(const i in device.config.services)
+						{
+							if(typeCounter[device.config.services[i].type] != null)
+							{
+								typeCounter[device.config.services[i].type]++;
+							}
+							else
+							{
+								typeCounter[device.config.services[i].type] = 0;
+							}
+
+							if(Essentials.typeToLetter(device.config.services[i].type) + '' + typeCounter[device.config.services[i].type] == letters)
+							{
+								return device.config.services[i];
+							}
+						}
+					}
+
+					return null;
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
