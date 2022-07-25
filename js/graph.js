@@ -302,8 +302,6 @@ class GraphManager
 		else
 		{
 			element.data = data;
-
-			console.log('DRAW GRID X', element.data, this.grids);
 		}
 
 		var ctx = canvas.getContext('2d'), height = canvas.offsetHeight - this.padding * 2 - 2, width = canvas.offsetWidth;
@@ -506,10 +504,10 @@ class GraphManager
 					};
 
 					var timeLabel = {
-						text : getTime(parseInt(data[i].time + '000')),
+						text : getTime(parseInt(data[i].time)),
 						x : valueLabel.x,
 						y : this.getPoint(canvas, 100) - padding,
-						width : ctx.measureText(getTime(parseInt(data[i].time + '000'))).width
+						width : ctx.measureText(getTime(parseInt(data[i].time))).width
 					};
 
 					ctx.fillStyle = grd;
@@ -690,17 +688,18 @@ class GraphManager
 		}
 	}
 
-	convertActivity(data, values, automation, events)
+	convertActivity(data, values, automation)
 	{
 		data.nextRefresh = this.getMinuteCycle(data.interval) + 60000 * data.interval;
 		data.sectors = this.renderMinutesCycle(data.interval);
+
 		data.values = [];
 
 		data.min = data.min || 100000;
 		data.max = data.max || -100000;
 
 		data = addValues(data, values);
-		data = getAutomations(data, automation, events);
+		data = getAutomations(data, automation);
 		data = getPercents(data);
 		data = selectValues(data);
 		data = startEndPoints(data);
@@ -786,7 +785,7 @@ function addValues(data, values)
 	
 	for(const v in values)
 	{
-		var cycleTime = self.getMinuteCycle(data.interval, parseInt(values[v].time) * 1000);
+		var cycleTime = self.getMinuteCycle(data.interval, parseInt(values[v].time));
 
 		if(data.sectors[cycleTime] != null)
 		{
@@ -860,7 +859,7 @@ function getPercents(data)
 	return data;
 }
 
-function getAutomations(data, automation, events)
+function getAutomations(data, automation)
 {
 	var visibleAutomation = [];
 
@@ -870,13 +869,7 @@ function getAutomations(data, automation, events)
 		{
 			if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
 			{
-				for(const e in events)
-				{
-					if(automation[a].name == events[e].v)
-					{
-						visibleAutomation.push({ time : events[e].t, value : automation[a].trigger[b].value });
-					}
-				}
+				visibleAutomation.push({ time : automation[a].time, value : automation[a].trigger[b].value });
 			}
 		}
 	}
@@ -958,7 +951,7 @@ function selectValues(data)
 			{
 				if(min != max)
 				{
-					data.values[data.values.length - 1] = first;
+					data.values[data.values.length - 1] = max;
 				}
 				
 				data.values.push(last);

@@ -147,10 +147,11 @@
 				window.Presets = Presets;
 				window.Graph = Graph;
 
+				window.state = {};
 				window.values = {};
+                window.automation = {};
 				window.typeCounter = {};
 				window.counter = device.services.length;
-				window.automation = []
 				window.busy = [];
 				window.restarting = false
 				window.resetting = false
@@ -718,13 +719,6 @@
 
 				Preloader.finish();
 
-				Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then((a) => {
-
-					automation = JSON.parse(a);
-
-					loadActivity().then(() => repaintGraphs());
-				});
-
 				if(Presets.getPreset(device.plugin.alias) != null && Presets.getPreset(device.plugin.alias).getVersionURL(device) != null)
 				{
 					checkUpdates();
@@ -997,78 +991,6 @@
 
 				}, 1000);
 
-				function loadActivity()
-				{
-					return new Promise(async (resolve) => {
-
-						activity = JSON.parse(await Query.complexFetch('/serverside/activity?id=' + device.id, 10000, 2, {}, false));
-
-						for(const type in typeCounter)
-						{
-							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
-							{
-								for(var j = 0; j < typeCounter[type]; j++)
-								{
-									var letters = Essentials.typeToLetter(type) + j;
-
-									if(values[letters] == null)
-									{
-										values[letters] = [];
-									}
-
-									for(const lettersA in activity)
-									{
-										if(lettersA == letters)
-										{
-											if(activity[lettersA].update.length > 0)
-											{
-												if(type == 'statelessswitch')
-												{
-													for(const u in activity[lettersA].update)
-													{
-														values[letters].push({ time : activity[lettersA].update[u].t, value : true });
-														values[letters].push({ time : activity[lettersA].update[u].t, value : false });
-													}
-												}
-												else
-												{
-													for(const u in activity[lettersA].update)
-													{
-														var obj = { time : activity[lettersA].update[u].t }, orginalValues = activity[lettersA].update[u].v;
-														var characteristics = ['value', 'hue', 'saturation', 'brightness'];
-
-														obj['value'] = orginalValues;
-
-														for(const c in characteristics)
-														{
-															if(orginalValues.includes(characteristics[c] + ': '))
-															{
-																obj[characteristics[c]] = orginalValues.split(characteristics[c] + ': ')[1];
-															}
-														}
-
-														for(const c in obj)
-														{
-															if(obj[c].includes(', '))
-															{
-																obj[c] = obj[c].split(', ')[0];
-															}
-														}
-
-														values[letters].push(obj);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-
-						resolve();
-					});
-				}
-
 				function repaintGraphs(letters)
 				{
 					if(device.plugin.alias.startsWith('SynTex'))
@@ -1112,7 +1034,11 @@
 
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[letters], automation, activity[letters] != null ? activity[letters].success : []);
+					var valuesClone = [ ...values[letters] ];
+
+					valuesClone.push({ ...state[letters].state, time : state[letters].time });
+
+					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, valuesClone, automation[letters]);
 
 					Graph.clearCanvas(grid);
 					Graph.drawGrid(grid, graphData[letters], 10);
@@ -1127,22 +1053,28 @@
 						{
 							if(graphData[letters].sectors[i][j].automation != null)
 							{
-								a = { time : graphData[letters].sectors[i][j].time, percent : (graphData[letters].sectors[i][j].automation - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : graphData[letters].sectors[i][j].automation };
+								for(const x in automation[letters])
+								{
+									if(graphData[letters].sectors[i][j].time > automation[letters][x].time)
+									{
+										a = { time : automation[letters][x].time, percent : graphData[letters].sectors[i][j].percents, value : graphData[letters].sectors[i][j].automation };
+									}
+								}
 							}
 						}
 
 						convertedAutomation.push(a || null);
 					}
 
-					for(const i in automation)
+					for(const i in automation[letters])
 					{
-						for(const j in automation[i].trigger)
+						for(const j in automation[letters][i].trigger)
 						{
-							if(automation[i].trigger[j].id == device.id && automation[i].trigger[j].letters == letters && (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100 && (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+							if(automation[letters][i].trigger[j].id == device.id && automation[letters][i].trigger[j].letters == letters && (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100 && (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
 							{
-								if(!automationTriggers.includes({ percent : (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[i].trigger[j].value }))
+								if(!automationTriggers.includes({ percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value }))
 								{
-									automationTriggers.push({ percent : (automation[i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[i].trigger[j].value });
+									automationTriggers.push({ percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
 								}
 							}
 						}
@@ -1187,30 +1119,13 @@
 						canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
 						canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
 
-						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(values[letters][values[letters].length - 1].time * 1000).getMinutes()).slice(-2) + ' • %device.activity%';
+						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';
 						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
-					
-						if(canvas.parentElement.getElementsByTagName('h2').length > 0)
-						{
-							canvas.parentElement.removeChild(canvas.parentElement.getElementsByTagName('h2')[0]);
-						}
 
 						canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
 						canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
 						canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
 						canvas.parentElement.getElementsByClassName('updates')[0].style.opacity = 1;
-					}
-					else if(canvas.parentElement.getElementsByTagName('h2').length == 0)
-					{
-						var reloadButton = document.createElement('h2');
-
-						reloadButton.innerHTML = '↻ %general.reload%';
-						reloadButton.className = 'reload-button';
-						reloadButton.setAttribute('onclick', 'loadActivity().then(() => repaintGraphs("' + letters + '"))');
-
-						canvas.parentElement.appendChild(reloadButton);
-
-						setTimeout(() => { reloadButton.style.opacity = 1 }, 0);
 					}
 
 					// NOTE: Set Graph Colors
@@ -1430,22 +1345,85 @@
 					Query.connectSocket(DeviceController);
 				}
 
-				window.DeviceViewer = null;
-
 				function setupViewer()
 				{
-					DeviceViewer = {
-						url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
-						message : {
-							line : 'getState',
-							params : {
-								id : device.id
-							}
-						},
-						callback : (data) => renderNewData(data)
-					};
-					
-					Query.connectSocket(DeviceViewer);
+                    for(var i = 0; i < Object.keys(typeCounter).length; i++)
+                    {
+                        var type = Object.keys(typeCounter)[i];
+
+                        if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+                        {
+                            for(var j = 0; j < typeCounter[type]; j++)
+                            {
+                                const letters = Essentials.typeToLetter(type) + j;
+
+                                var ActivityViewer = {
+                                    url : 'ws://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+                                    message : {
+                                        line : 'getActivity',
+                                        params : {
+                                            id : device.id,
+                                            letters
+                                        }
+                                    },
+                                    callback : (data) => {
+
+                                        if(data.state != null)
+                                        {
+											if(data.state.time != null)
+											{
+												state[letters] = data.state;
+											}
+											else
+											{
+												state[letters] = data;
+											}
+
+                                            renderNewData(state);
+                                        }
+
+                                        if(data.history != null)
+                                        {
+                                            if(Array.isArray(data.history))
+                                            {
+												values[letters] = [];
+
+                                                for(const i in data.history)
+												{
+													values[letters].push({ ...data.history[i].state, time : data.history[i].time });
+												}
+                                            }
+                                            else
+                                            {
+                                                values[letters].push({ ...data.history, time : data.time });
+                                            }
+                                        }
+
+                                        if(data.automation != null)
+                                        {
+                                            if(Array.isArray(data.automation))
+                                            {
+												automation[letters] = [];
+
+                                                for(const i in data.automation)
+												{
+													automation[letters].push({ ...data.automation[i].automation, time : data.automation[i].time });
+												}
+                                            }
+                                            else
+                                            {
+                                                automation[letters].push({ ...data.automation, time : data.time });
+                                            }
+                                        }
+
+                                        repaintGraphs();
+                                    }
+                                };
+                                
+                                Query.connectSocket(ActivityViewer);
+                            }
+                        }
+                    }
 				}
 				
 				function fetchState()
@@ -1455,106 +1433,62 @@
 
 				window.controlActive = false;
 
-				function renderNewData(data)
+				function renderNewData()
 				{
-					if(!controlActive && data != null)
+					if(!controlActive)
 					{
-						for(var i = 0; i < Object.keys(typeCounter).length; i++)
+						for(const letters in state)
 						{
-							var type = Object.keys(typeCounter)[i];
+							var type = Essentials.letterToType(letters[0]);
 
-							for(var j = 0; j < typeCounter[type]; j++)
+							if(temp[letters] == null)
 							{
-								var letters = Essentials.typeToLetter(type) + j;
+								temp[letters] = {};
+							}
 
-								if(temp[letters] == null)
+							if(state[letters] != null && state[letters].state != null)
+							{
+								for(const x in state[letters].state)
 								{
-									temp[letters] = {};
-								}
-
-								if(data[letters] != null)
-								{
-									for(const j in data[letters])
+									if(temp == null || temp[letters][x] != state[letters].state[x])
 									{
-										if(temp == null || temp[letters][j] != data[letters][j])
+										if(device.plugin.alias.startsWith('SynTex'))
 										{
-											console.log('UPDATE', letters, data[letters]);
-
-											updateValues(letters, data[letters]);
-
-											temp[letters][j] = data[letters][j];
-										}
-									}
-
-									if(!controllerReady && (type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw'))
-									{
-										if(data[letters].value)
-										{
-											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = HSLToHex(data[letters].hue, data[letters].saturation, data[letters].brightness / 2);
-										}
-										else
-										{
-											document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = '#000000';
+											setTimeout(() => calcValues(type, letters[1]), 300);
 										}
 
-										setTimeout(() => {
-											
-											controllerReady = true;
+										setControlPanel(letters, state[letters].state);
 
-										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
+										temp[letters][x] = state[letters].state[x];
 									}
 								}
-								else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+
+								if(!controllerReady && (type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw'))
 								{
-									setControlPanel(letters, data[letters]);
+									if(state[letters].state.value)
+									{
+										document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = HSLToHex(state[letters].state.hue, state[letters].state.saturation, state[letters].state.brightness / 2);
+									}
+									else
+									{
+										document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = '#000000';
+									}
+
+									setTimeout(() => {
+										
+										controllerReady = true;
+
+									}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
 								}
+							}
+							else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								setControlPanel(letters, state[letters].state);
 							}
 						}
 					}
 				}
 
-				function updateValues(letters, state)
-				{
-					var type = Essentials.letterToType(letters[0]), j = letters[1];
-					
-					if(state != null)
-					{
-						if(values[letters] != null)
-						{
-							var obj = { time : Math.round(new Date().getTime() / 1000) };
-
-							if(state.value != null)
-							{
-								obj.value = state.value.toString();
-							}
-							
-							if(state.hue != null)
-							{
-								obj.hue = state.hue.toString();
-							}
-
-							if(state.saturation != null)
-							{
-								obj.saturation = state.saturation.toString();
-							}
-
-							if(state.brightness != null)
-							{
-								obj.brightness = state.brightness.toString();
-							}
-
-							values[letters].push(obj);
-
-							if(device.plugin.alias.startsWith('SynTex'))
-							{
-								setTimeout(() => calcValues(type, j), 300);
-							}
-						}
-					}
-
-					setControlPanel(letters, state);
-				}
-				
 				async function restartDevice(btn)
 				{
 					if(!restarting && !updating && !saving && !resetting)
