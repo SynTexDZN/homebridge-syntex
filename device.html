@@ -1172,7 +1172,19 @@
 					}
 					else
 					{
-						var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, value : type == 'blind' ? 100 : true } });
+						var additions = { value : true };
+						
+						if(service.state.brightness != null)
+						{
+							additions.brightness = graphData[letters].max;
+						}
+
+						if(type == 'blind')
+						{
+							additions.value = graphData[letters].max;
+						}
+
+						var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, ...additions } });
 
 						if(serviceState != null && serviceState.color != null)
 						{
