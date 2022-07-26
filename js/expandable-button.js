@@ -57,7 +57,7 @@ class ExpandableButton
 
 				btn.opened = true;
 
-				for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 				{
 					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
 				}
@@ -68,7 +68,7 @@ class ExpandableButton
 
 				btn.opened = false;
 
-				for(var i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 				{
 					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
 				}

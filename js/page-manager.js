@@ -278,7 +278,7 @@ class PageManagerModule
 	{
 		if(this.footerTemp != null && this.footerFade != null)
 		{
-			for(var i = 0; i < this.footerTemp.children.length; i++)
+			for(let i = 0; i < this.footerTemp.children.length; i++)
 			{
 				if(this.footerTemp.children[i].getAttribute('oid') == id)
 				{
@@ -304,7 +304,7 @@ class PageManagerModule
 
 			if(!tempOnly)
 			{
-				for(var i = 0; i < this.footerFade.children.length; i++)
+				for(let i = 0; i < this.footerFade.children.length; i++)
 				{
 					if(this.footerFade.children[i].getAttribute('id') == id)
 					{
@@ -366,7 +366,7 @@ class PageManagerModule
 			document.getElementById(previous).style.display = 'none';
 			document.getElementById(next).style.display = '';
 
-			Replacer.refreshPositions();
+			window.Replacer.refreshPositions();
 
 			if(!init)
 			{

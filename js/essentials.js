@@ -9,10 +9,13 @@ class EssentialFeatures
 		try
 		{
 			window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
-				get : () => { supportsPassive = true } 
+				get : () => { return supportsPassive = true } 
 			}));
 		}
-		catch(e) {}
+		catch(e)
+		{
+			//console.log(e);
+		}
 
 		this.wheelOpt = supportsPassive ? { passive: false } : false;
 		this.wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
@@ -523,7 +526,7 @@ class EssentialFeatures
 
 	leavePage(url)
 	{
-		return new Promise(async (resolve) => {
+		return new Promise((resolve) => {
 
 			if(!this.pageLoading)
 			{
@@ -545,46 +548,47 @@ class EssentialFeatures
 
 				setTimeout(() => { this.pageTimer = true }, 200);
 
-				var response = await loadPageData(url);
+				loadPageData(url).then((response) => {
 
-				if(response != 200 && !navigator.onLine)
-				{
-					var dialogue = {
-						title : '%general.connection_error%',
-						buttons : [
-							{
-								text : '%general.reload%',
-								action : () => {
+					if(response != 200 && !navigator.onLine)
+					{
+						var dialogue = {
+							title : '%general.connection_error%',
+							buttons : [
+								{
+									text : '%general.reload%',
+									action : () => {
 
-									var button = document.getElementById('dialogue').getElementsByTagName('button')[0];
+										var button = document.getElementById('dialogue').getElementsByTagName('button')[0];
 
-									this.showOverlay(button, this.createPendingOverlay('reload', '%general.loading% ..'));
-									
-									this.leavePage(url).then((status) => {
-									
-										if(status == 200)
-										{
-											Essentials.closeDialogue();
-										}
-										else
-										{
-											this.showOverlay(button, this.createErrorOverlay('reload', '%general.connection_error%'));
+										this.showOverlay(button, this.createPendingOverlay('reload', '%general.loading% ..'));
+										
+										this.leavePage(url).then((status) => {
+										
+											if(status == 200)
+											{
+												Essentials.closeDialogue();
+											}
+											else
+											{
+												this.showOverlay(button, this.createErrorOverlay('reload', '%general.connection_error%'));
 
-											this.removeOverlaysDelay(button, 2000, true);
-										}
-									})
+												this.removeOverlaysDelay(button, 2000, true);
+											}
+										})
+									}
 								}
-							}
-						]
-					};
+							]
+						};
 
-					this.openOfflineDialogue(dialogue);
-				}
+						this.openOfflineDialogue(dialogue);
+					}
 
-				resolve(response);
+					resolve(response);
 
-				this.changeCounter = [];
-				this.pageLoading = false;
+					this.changeCounter = [];
+					this.pageLoading = false;
+				});
 			}
 			else
 			{

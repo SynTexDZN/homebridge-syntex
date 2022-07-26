@@ -104,14 +104,14 @@ class URLQuery
 			{
 				if(overlays.root && overlays.pending)
 				{
-					var color = 'blue', z = 1;
+					let color = 'blue', z = 1;
 
 					if(overlays.pending.z)
 					{
 						z = overlays.pending.z;
 					}
 
-					var style = 'z-index: ' + z;
+					let style = 'z-index: ' + z;
 
 					if(overlays.pending.style)
 					{
@@ -123,7 +123,7 @@ class URLQuery
 						color = overlays.pending.color;
 					}
 
-					var overlay = this.Essentials.createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
+					let overlay = this.Essentials.createOverlay(z, overlays.id + '-pending', overlays.pending.value, color);
 
 					overlay.setAttribute('style', style);
 
@@ -140,14 +140,14 @@ class URLQuery
 
 				if(fetch == null && overlays.root && overlays.connectionError)
 				{
-					var color = 'red', z = 2;
+					let color = 'red', z = 2;
 
 					if(overlays.connectionError.z)
 					{
 						z = overlays.connectionError.z;
 					}
 
-					var style = 'z-index: ' + z;
+					let style = 'z-index: ' + z;
 
 					if(overlays.pending && overlays.pending.style)
 					{
@@ -159,7 +159,7 @@ class URLQuery
 						color = overlays.connectionError.color;
 					}
 
-					var overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
+					let overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.connectionError.value, color);
 
 					overlay.setAttribute('style', style);
 
@@ -172,14 +172,14 @@ class URLQuery
 				}
 				else if(fetch != 'Success' && overlays.root && overlays.executeError)
 				{
-					var color = 'red', z = 2;
+					let color = 'red', z = 2;
 
 					if(overlays.executeError.z)
 					{
 						z = overlays.executeError.z;
 					}
 
-					var style = 'z-index: ' + z;
+					let style = 'z-index: ' + z;
 
 					if(overlays.pending && overlays.pending.style)
 					{
@@ -191,7 +191,7 @@ class URLQuery
 						color = overlays.executeError.color;
 					}
 
-					var overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
+					let overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.executeError.value, color);
 
 					overlay.setAttribute('style', style);
 
@@ -204,14 +204,14 @@ class URLQuery
 				}
 				else if(overlays.root && overlays.success)
 				{
-					var color = 'green', z = 2;
+					let color = 'green', z = 2;
 
 					if(overlays.success.z)
 					{
 						z = overlays.success.z;
 					}
 
-					var style = 'z-index: ' + z;
+					let style = 'z-index: ' + z;
 
 					if(overlays.pending && overlays.pending.style)
 					{
@@ -223,7 +223,7 @@ class URLQuery
 						color = overlays.success.color;
 					}
 
-					var overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.success.value, color);
+					let overlay = this.Essentials.createOverlay(z, overlays.id + '-result', overlays.success.value, color);
 
 					overlay.setAttribute('style', style);
 

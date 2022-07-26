@@ -6,13 +6,13 @@ class CustomSelect
 	{
 		var moved = false;
 
-		window.addEventListener('mousedown', (event) => {
+		window.addEventListener('mousedown', () => {
 
 			moved = false;
 			
 		}, 'KEEP');
 
-		window.addEventListener('mousemove', (event) => {
+		window.addEventListener('mousemove', () => {
 
 			moved = true;
 			
@@ -27,13 +27,13 @@ class CustomSelect
 			
 		}, 'KEEP');
 
-		window.addEventListener('touchstart', (event) => {
+		window.addEventListener('touchstart', () => {
 
 			moved = false;
 
 		}, 'KEEP');
 
-		window.addEventListener('touchmove', (event) => {
+		window.addEventListener('touchmove', () => {
 
 			moved = true;
 
@@ -201,7 +201,7 @@ class CustomSelect
 
 				selectText.innerHTML = '';
 
-				Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
+				window.Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
 			}
 
 			this._checkDirection(select);
