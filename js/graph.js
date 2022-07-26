@@ -234,7 +234,7 @@ class GraphManager
 			element.gradients = gradients;
 			element.smoothing = smoothing;
 		}
-		
+
 		if(data.join().replace(/,/g, '').length > 0)
 		{
 			var ctx = canvas.getContext('2d'), width = canvas.offsetWidth;
@@ -878,7 +878,7 @@ function getAutomations(data, automation)
 	{
 		for(const j in data.sectors[i])
 		{
-			for(const a in visibleAutomation)
+			for(var a = visibleAutomation.length - 1; a >= 0; a--)
 			{
 				if(data.sectors[i][j].time > visibleAutomation[a].time)
 				{
@@ -899,7 +899,7 @@ function selectValues(data)
 	{
 		if(data.sectors[i].length > 0)
 		{
-			var avg = 0, max = -100000, min = 100000, automation = null, last = data.sectors[i][data.sectors[i].length - 1].percents, first = data.sectors[i][0].percents;
+			var avg = 0, max = -100000, min = 100000, automation = null, last = data.sectors[i][data.sectors[i].length - 1].percents;
 
 			for(const j in data.sectors[i])
 			{
