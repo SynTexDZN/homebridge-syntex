@@ -468,7 +468,7 @@
 
 									Promise.all(promiseArraySlide).then(() => {
 
-										setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = false }, 300);
+										setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = false }, 300);
 									});
 
 									document.removeEventListener('mousemove', mouseMoveHandler);
@@ -482,7 +482,7 @@
 								{
 									controlActive = true;
 
-									if(!busy.includes(letters))
+									if(!busy.includes(this.letters))
 									{
 										getTouchPosition(this.field, this.letters, e, true);
 									}
@@ -491,7 +491,7 @@
 
 								statusField.addEventListener('touchmove', function(e)
 								{
-									if(!busy.includes(letters))
+									if(!busy.includes(this.letters))
 									{
 										this.field.style.setProperty('transition-property', 'none', 'important');
 
@@ -502,7 +502,7 @@
 
 								statusField.addEventListener('touchend', function(e)
 								{
-									if(!busy.includes(letters))
+									if(!busy.includes(this.letters))
 									{
 										getTouchPosition(this.field, this.letters, e);
 
@@ -510,7 +510,7 @@
 
 										Promise.all(promiseArraySlide).then(() => {
 											
-											setTimeout(() => { busy.splice(busy.indexOf(letters), 1); controlActive = true; }, 300);
+											setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = true; }, 300);
 										});
 									}
 
@@ -529,7 +529,7 @@
 
 								colorPicker.onchange = function()
 								{
-									var hsl = hexToHSL(colorPicker.value);
+									var hsl = hexToHSL(this.colorPicker.value);
 
 									setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
 								
