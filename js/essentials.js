@@ -796,10 +796,14 @@ class EssentialFeatures
 
 					if(service.state.value > 50)
 					{	
-						cRange = [280, 0];
+						cRange = [260, 0];
 					}	
 
-					if(service.state.value < 45 || service.state.value > 55)	
+					if(service.state.value < vRange[0] || service.state.value > vRange[1])
+					{
+						result.color = 'hsl(' + cRange[0] + ', 65%, 55%)';
+					}
+					else if(service.state.value < 40 || service.state.value > 60)	
 					{	
 						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
 					}	
