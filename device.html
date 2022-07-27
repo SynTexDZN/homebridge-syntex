@@ -1055,7 +1055,7 @@
 							{
 								for(const x in automation[letters])
 								{
-									if(graphData[letters].sectors[i][j].time > automation[letters][x].time)
+									if(automation[letters][x].time < graphData[letters].sectors[i][j].time && automation[letters][x].time > graphData[letters].sectors[i][j].time - graphData[letters].interval * 60000)
 									{
 										a = { time : automation[letters][x].time, percent : graphData[letters].sectors[i][j].percents, value : graphData[letters].sectors[i][j].automation };
 									}
@@ -1066,15 +1066,31 @@
 						convertedAutomation.push(a || null);
 					}
 
+					const includesTrigger = (time) => {
+
+						for(const i in automationTriggers)
+						{
+							if(parseInt(automationTriggers[i].time / (graphData[letters].interval * 60000)) == parseInt(time / (graphData[letters].interval * 60000)))
+							{
+								return true;
+							}
+						}
+
+						return false;
+					};
+
 					for(const i in automation[letters])
 					{
-						for(const j in automation[letters][i].trigger)
+						if(automation[letters][i].time > parseInt(Object.keys(graphData[letters].sectors)[0]) && !includesTrigger(automation[letters][i].time))
 						{
-							if(automation[letters][i].trigger[j].id == device.id && automation[letters][i].trigger[j].letters == letters && (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100 && (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+							for(const j in automation[letters][i].trigger)
 							{
-								if(!automationTriggers.includes({ percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value }))
+								if(automation[letters][i].trigger[j].id == device.id
+								&& automation[letters][i].trigger[j].letters == letters
+								&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100
+								&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
 								{
-									automationTriggers.push({ percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
+									automationTriggers.push({ time : automation[letters][i].time, percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
 								}
 							}
 						}
