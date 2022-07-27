@@ -880,7 +880,7 @@ function getAutomations(data, automation)
 		{
 			for(var a = visibleAutomation.length - 1; a >= 0; a--)
 			{
-				if(data.sectors[i][j].time > visibleAutomation[a].time)
+				if(visibleAutomation[a].time >= data.sectors[i][j].time && visibleAutomation[a].time < data.sectors[i][j].time + data.interval * 60000)
 				{
 					data.sectors[i][j].automation = JSON.parse(visibleAutomation[a].value);
 
