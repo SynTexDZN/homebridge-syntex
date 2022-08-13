@@ -44,6 +44,7 @@
 					</div>
 				</div>
 				<div id="toolbar" class="main" style="margin: 100px auto">
+					<div id="status"></div>
 					<div id="groups" style="display: flex; width: 100%">
 						<input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">
 					</div>
@@ -219,6 +220,8 @@
 			</script>
 			<script>
 
+				window.typeGroups = {};
+
 				function createDevicePanels()
 				{
 					var temp = '';
@@ -245,6 +248,7 @@
 						{
 							var typeContainer = document.createElement('div');
 
+							typeContainer.setAttribute('id', 'type-container-' + Essentials.getType(data.devices[i].services));
 							typeContainer.setAttribute('class', 'type-container');
 
 							if(data.devices[i].services == 'removed')
@@ -339,6 +343,170 @@
 
 							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text;
 						}
+					}
+
+					typeGroups = {};
+
+					for(const i in data.devices)
+					{
+						for(const j in data.devices[i].services)
+						{
+							var type = data.devices[i].services[j].type;
+
+							if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null)
+							{
+								if(type == 'relais')
+								{
+									type = 'outlet';
+								}
+
+								if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+								{
+									type = 'led';
+								}
+
+								if(typeGroups[type] == null)
+								{
+									typeGroups[type] = [];
+								}
+
+								typeGroups[type].push(data.devices[i].services[j].state);
+							}
+						}
+					}
+
+					for(const type in typeGroups)
+					{
+						var active = 0, text = '', color = '', button = null, image = null, state = null;
+
+						for(const i in typeGroups[type])
+						{
+							if(typeGroups[type][i].value == true || (type == 'blind' && typeGroups[type][i].value > 0))
+							{
+								active++;
+							}
+						}
+
+						if(document.getElementById('status-' + type) == null)
+						{
+							button = document.createElement('button');
+
+							button.id = 'status-' + type;
+
+							button.onclick = () => {
+
+								var containerType = type;
+
+								if(document.getElementById('type-container-' + containerType) == null)
+								{
+									if(containerType == 'light')
+									{
+										containerType = 'weather';
+									}
+
+									if(containerType == 'humidity')
+									{
+										containerType = 'climate';
+									}
+								}
+
+								var top = document.getElementById('type-container-' + containerType).offsetTop - 20;
+
+								if(getComputedStyle(document.getElementById('head-content')).position == 'fixed')
+								{
+									top -= document.getElementById('head-content').offsetHeight + 30;
+								}
+
+								window.scrollTo({ top, behavior : 'smooth' });
+							};
+
+							image = document.createElement('img');
+
+							image.src = '/img/accessory/' + type + '.png';
+
+							state = document.createElement('div');
+
+							state.className = 'state';
+
+							button.appendChild(image);
+							button.appendChild(state);
+
+							document.getElementById('status').appendChild(button);
+						}
+						else
+						{
+							button = document.getElementById('status-' + type);
+
+							state = button.getElementsByClassName('state')[0];
+						}
+
+						if(Essentials.getDataType(type) == 'boolean' || type == 'blind')
+						{
+							if(servicePresets[type].active != null)
+							{
+								if(servicePresets[type].active.color != null)
+								{
+									color = servicePresets[type].active.color;
+								}
+								
+								if(servicePresets[type].active.text)
+								{
+									text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
+								}
+							}
+
+							if(active > 0)
+							{
+								button.style.removeProperty('display');
+							}
+							else
+							{
+								button.style.display = 'none';
+							}
+						}
+						else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+						{
+							var min = 100000, max = -100000;
+
+							for(const i in typeGroups[type])
+							{
+								if(typeGroups[type][i].value != null)
+								{
+									if(typeGroups[type][i].value < min)
+									{
+										min = typeGroups[type][i].value;
+									}
+
+									if(typeGroups[type][i].value > max)
+									{
+										max = typeGroups[type][i].value;
+									}
+								}
+							}
+
+							min = Math.round(min * 100) / 100;
+							max = Math.round(max * 100) / 100;
+
+							if(min != max)
+							{
+								text = min + ' - ' + max + ' ' + servicePresets[type].text;
+							}
+							else
+							{
+								text = max + ' ' + servicePresets[type].text;
+							}
+
+							var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
+
+							if(serviceState != null && serviceState.color != null)
+							{
+								color = serviceState.color;
+							}
+						}
+
+						button.style.backgroundColor = color;
+
+						state.innerHTML = text;
 					}
 				}
 

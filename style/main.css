@@ -1938,6 +1938,45 @@ button img
 	display: none;
 }
 
+#status
+{
+	height: 100px;
+	display: flex;
+	gap: 20px;
+	overflow-x: auto;
+	overflow-y: visible;
+	margin-bottom: 20px;
+	border-radius: 16px;
+}
+
+#status::-webkit-scrollbar-track, #status::-webkit-scrollbar
+{
+	display: none;
+}
+
+#status button
+{
+	display: flex;
+	align-items: center;
+	height: 100%;
+	width: fit-content!important;
+	flex-shrink: 0;
+	flex-grow: 1;
+	box-shadow: none;
+}
+
+#status img
+{
+	filter: invert(8%) sepia(100%) hue-rotate(205deg);
+	height: calc(100% - 50px);
+	margin-right: 20px;
+}
+
+#status .state
+{
+	text-transform: uppercase;
+}
+
 @media only screen and (min-width: 1177px)
 {
 	#content
