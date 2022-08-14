@@ -349,35 +349,42 @@
 
 					for(const i in data.devices)
 					{
-						for(const j in data.devices[i].services)
+						if(data.devices[i].active != 0)
 						{
-							var type = data.devices[i].services[j].type;
-
-							if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null)
+							for(const j in data.devices[i].services)
 							{
-								if(type == 'relais')
-								{
-									type = 'outlet';
-								}
+								var type = data.devices[i].services[j].type;
 
-								if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+								if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null && data.devices[i].services[j].online == true)
 								{
-									type = 'led';
-								}
+									if(type == 'relais')
+									{
+										type = 'outlet';
+									}
 
-								if(typeGroups[type] == null)
-								{
-									typeGroups[type] = [];
-								}
+									if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+									{
+										type = 'led';
+									}
 
-								typeGroups[type].push(data.devices[i].services[j].state);
+									if(typeGroups[type] == null)
+									{
+										typeGroups[type] = [];
+									}
+
+									typeGroups[type].push(data.devices[i].services[j].state);
+								}
 							}
 						}
 					}
 
-					for(const type in typeGroups)
+					var array = Object.keys(typeGroups), order = ['smoke', 'rain', 'temperature', 'humidity', 'airquality', 'light', 'motion', 'occupancy', 'contact', 'blind', 'led', 'outlet', 'switch'];
+
+					array.sort((a, b) => (order.indexOf(a) < order.indexOf(b)) ? -1 : (order.indexOf(a) > order.indexOf(b)) ? 1 : 0);
+
+					for(const x in array)
 					{
-						var active = 0, text = '', color = '', button = null, image = null, state = null;
+						var type = array[x], active = 0, text = '', color = '', button = null, image = null, state = null;
 
 						for(const i in typeGroups[type])
 						{
