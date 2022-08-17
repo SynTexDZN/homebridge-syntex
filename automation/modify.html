@@ -15,7 +15,7 @@
 					PageManager.setFooter(main);
 					PageManager.showFooter();
 
-					PageManager.switchPage('infos', 'settings', true);
+					PageManager.switchPage('automation-infos', 'settings', true);
 				}
 				else
 				{
@@ -25,14 +25,14 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
 				}
 			
 			</script>
-			<div id="infos" class="main" style="transition: .2s opacity ease-in-out">
+			<div id="automation-infos" class="main" style="transition: .2s opacity ease-in-out">
 				<div class="type-container" style="margin-top: 0">
 					<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
 				</div>
@@ -204,12 +204,12 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
 
-					await PageManager.switchPage(previous, 'infos', false);
+					await PageManager.switchPage(previous, 'automation-infos', false);
 
 					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
 					{
@@ -228,16 +228,16 @@
 						if(automation[i].id == id)
 						{
 							document.getElementsByTagName('title')[0].innerHTML = '%menu.automation%: ' + automation[i].name;
-							document.getElementById('infos').children[0].innerHTML = '<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>'
-							document.getElementById('infos').children[0].innerHTML += '<p><b>%general.id%: </b>' + automation[i].id + '</p>';
-							document.getElementById('infos').children[0].innerHTML += '<p><b>%general.name%: </b>' + automation[i].name + '</p>';
+							document.getElementById('automation-infos').children[0].innerHTML = '<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>'
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.id%: </b>' + automation[i].id + '</p>';
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.name%: </b>' + automation[i].name + '</p>';
 
 							if(automation[i].group != null && automation[i].group != '')
 							{
-								document.getElementById('infos').children[0].innerHTML += '<p><b>%general.group%: </b>' + automation[i].group + '</p>';
+								document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.group%: </b>' + automation[i].group + '</p>';
 							}
 
-							document.getElementById('infos').children[0].innerHTML += '<p><b>%automation.active%: </b>' + (automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '</p>';
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%automation.active%: </b>' + (automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '</p>';
 
 							PageManager.setHeader(null, automation[i].name);
 
@@ -1082,8 +1082,6 @@
 								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 								{
 									result.operation = '=';
-
-									console.log(operation.value);
 
 									if(operation.value == 'switch')
 									{
