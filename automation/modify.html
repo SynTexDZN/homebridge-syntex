@@ -36,15 +36,15 @@
 				<div class="type-container" style="margin-top: 0">
 					<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
 				</div>
-				<div style="margin-top: 20px" class="type-container">
+				<div class="type-container">
 					<h2 class="title-container">%automation.trigger%</h2>
 					<div id="trigger" style="text-align: center"></div>
 				</div>
-				<div style="margin-top: 20px" class="type-container">
+				<div class="type-container">
 					<h2 class="title-container">%automation.condition%</h2>
 					<div id="condition" style="text-align: center"></div>
 				</div>
-				<div style="margin-top: 20px" class="type-container">
+				<div class="type-container">
 					<h2 class="title-container">%automation.result%</h2>
 					<div id="result" style="text-align: center"></div>
 				</div>
@@ -58,15 +58,15 @@
 						<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 						<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
 					</div>
-					<div style="margin-top: 20px" class="type-container">
+					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.trigger%</h2>
 						<div id="edit-trigger" style="text-align: center"></div>
 					</div>
-					<div style="margin-top: 20px" class="type-container">
+					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.condition%</h2>
 						<div id="edit-condition" style="text-align: center"></div>
 					</div>
-					<div style="margin-top: 20px" class="type-container">
+					<div class="type-container">
 						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
 						<div id="edit-result" style="text-align: center"></div>
 					</div>
@@ -79,8 +79,6 @@
 				window.services = [];
 				window.id = (new URL(window.location.href)).searchParams.get('id');
 				window.resetting = false;
-
-				
 
 				if(id != null)
 				{
