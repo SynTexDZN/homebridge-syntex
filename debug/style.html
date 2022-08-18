@@ -87,11 +87,44 @@
 					{
 						margin-left: 13px;
 					}
+
+					.type-container.expand
+					{
+						border-radius: 0;
+						padding: 20px;
+						width: calc(100% + 50px)!important;
+						margin-left: -25px!important;
+					}
 				}
 
 				.gradient-overlay:hover::before
 				{
 					opacity: 1!important;
+				}
+
+				.type-container.neumorphic-flat, .type-container.neumorphic
+				{
+					background: rgb(220, 220, 230);
+					box-shadow: -5px -5px 5px rgba(245, 245, 255, 0.5), 5px 5px 5px rgb(70, 70, 80, 0.12);
+				}
+
+				.type-container.neumorphic-flat, .type-container.neumorphic-flat .title-container, .type-container.neumorphic, .type-container.neumorphic .title-container
+				{
+					border: 1px solid rgba(245, 245, 255, 0.2);
+					
+					border: none;
+				}
+				
+				.type-container.neumorphic-flat .title-container
+				{
+					box-shadow: none;
+					background: rgb(60, 60, 80);
+					color: rgb(245, 245, 255);
+				}
+
+				.type-container.neumorphic .title-container
+				{
+					box-shadow: inset -5px -5px 7.5px rgba(245, 245, 255, 0.5), inset 5px 5px 7.5px rgb(70, 70, 80, 0.12);
 				}
 
 			</style>
@@ -108,7 +141,7 @@
 					<input class="white" type="button" value="%menu.backup%" onclick="Essentials.leavePage('/debug/backup')" style="text-transform: uppercase; margin-right: 20px">
 					<input class="white" type="button" value="%menu.syslog%" onclick="Essentials.leavePage('/debug/syslog')" style="text-transform: uppercase">
 				</div>
-				<div style="margin: 100px 0">
+				<div style="margin-top: 100px">
 					<h2>• %debug.style.basic% •</h2>
 					<input type="button" value="%debug.style.button% 1">
 					<input type="text" style="margin-top: 20px">
@@ -226,6 +259,55 @@
 					<input type="button" value="%debug.style.purple%" style="margin-top: 20px" class="gradient-purple pulse">
 					<input type="button" value="%debug.style.blue%" style="margin-top: 20px" class="gradient-blue pulse">
 					<input type="button" value="%debug.style.cyan%" style="margin-top: 20px" class="gradient-cyan pulse">
+					<h2>• %debug.style.container% •</h2>
+					<div style="margin-top: 50px" class="type-container expand">
+						<h2 class="title-container">%debug.style.container%</h2>
+						<div class="device-container">
+							<button class="device" style="text-align: left; padding-left: 18px; position: relative">
+								<img class="accessory-img" src="/img/accessory/special.png">
+								<div class="name-connection">
+									<div class="connection">%debug.style.example% 1</div>
+									<div class="device-name">%debug.style.button%</div>
+								</div>
+							</button>
+						</div>
+					</div>
+					<div style="margin-top: 50px" class="type-container">
+						<h2 class="title-container">%debug.style.container%</h2>
+						<div class="device-container">
+							<button class="device" style="text-align: left; padding-left: 18px; position: relative">
+								<img class="accessory-img" src="/img/accessory/special.png">
+								<div class="name-connection">
+									<div class="connection">%debug.style.example% 2</div>
+									<div class="device-name">%debug.style.button%</div>
+								</div>
+							</button>
+						</div>
+					</div>
+					<div style="margin-top: 50px" class="type-container neumorphic">
+						<h2 class="title-container">%debug.style.container%</h2>
+						<div class="device-container">
+							<button class="device" style="text-align: left; padding-left: 18px; position: relative">
+								<img class="accessory-img" src="/img/accessory/special.png">
+								<div class="name-connection">
+									<div class="connection">%debug.style.example% 3</div>
+									<div class="device-name">%debug.style.button%</div>
+								</div>
+							</button>
+						</div>
+					</div>
+					<div style="margin-top: 50px" class="type-container neumorphic-flat">
+						<h2 class="title-container">%debug.style.container%</h2>
+						<div class="device-container">
+							<button class="device" style="text-align: left; padding-left: 18px; position: relative">
+								<img class="accessory-img" src="/img/accessory/special.png">
+								<div class="name-connection">
+									<div class="connection">%debug.style.example% 4</div>
+									<div class="device-name">%debug.style.button%</div>
+								</div>
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
 			<script type="module">
