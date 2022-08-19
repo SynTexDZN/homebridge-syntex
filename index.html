@@ -44,7 +44,7 @@
 					</div>
 				</div>
 				<div id="toolbar" class="main" style="margin: 100px auto">
-					<div id="status"></div>
+					<div id="status" style="transition: none"></div>
 					<div id="groups" style="display: flex; width: 100%">
 						<input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">
 					</div>
@@ -517,6 +517,8 @@
 
 						state.innerHTML = text;
 					}
+
+					setTimeout(() => document.getElementById('status').style.removeProperty('transition'), 0);
 				}
 
 			</script>

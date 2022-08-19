@@ -1951,6 +1951,20 @@ button img
 	overflow-y: visible;
 	margin-bottom: 20px;
 	border-radius: 16px;
+
+	opacity: 1;
+	max-height: 100px;
+
+	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out var(--transition-normal), var(--transition-normal) max-height ease-in-out, var(--transition-normal) margin-bottom ease-in-out;
+}
+
+#status:empty, #status.x
+{
+	opacity: 0;
+	max-height: 0;
+	margin-bottom: 0;
+
+	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out, var(--transition-normal) max-height ease-in-out var(--transition-normal), var(--transition-normal) margin-bottom ease-in-out var(--transition-normal);
 }
 
 #status::-webkit-scrollbar-track, #status::-webkit-scrollbar
