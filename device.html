@@ -1032,6 +1032,8 @@
 					var canvas = document.getElementById('canvas-' + letters),
 						grid = document.getElementById('canvas-' + type + '-' + c);
 
+					if(canvas != null && grid != null && values[letters] != null)
+					{
 					canvas.width = document.getElementById('infos').offsetWidth - 4;
 
 					var valuesClone = [ ...values[letters] ];
@@ -1221,6 +1223,7 @@
 					Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
 
 					canvas.style.opacity = 1;
+					}
 				}
 
 			</script>
