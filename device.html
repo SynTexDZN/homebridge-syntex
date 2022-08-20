@@ -132,6 +132,7 @@
 						<div id="general-settings">
 							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+							<p><b>%general.status%: <input value="%characteristics.boolean.active%" orginal-value="%characteristics.boolean.active%" name="status" type="button" class="white" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, 'save-btn')" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div id="service-form"></div>
@@ -243,10 +244,12 @@
 					infos.innerHTML += '<p id="version-info"><b>%device.version%: </b>' + device.version + '</p>';
 				}
 
-				if(device.group != null && device.group != '')
+				if(device.options != null && device.options.group != null)
 				{
-					infos.innerHTML += '<p><b>%general.group%: </b>' + (Array.isArray(device.group) ? device.group.join(', ') : device.group) + '</p>';
+					infos.innerHTML += '<p><b>%general.group%: </b>' + (Array.isArray(device.options.group) ? device.options.group.join(', ') : device.options.group) + '</p>';
 				}
+
+				infos.innerHTML += '<p><b>%general.status%: </b>' + (device.options != null && device.options.status == false ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%') + '</p>';
 
 				for(const i in settings)
 				{
@@ -282,10 +285,13 @@
 
 				settingsForm.getElementsByTagName('input')[0].setAttribute('value', device.name);
 
-				if(device.group != null)
+				if(device.options != null && device.options.group != null)
 				{
-					settingsForm.getElementsByTagName('input')[1].setAttribute('value', Array.isArray(device.group) ? device.group.join(', ') : device.group);
+					settingsForm.getElementsByTagName('input')[1].setAttribute('value', Array.isArray(device.options.group) ? device.options.group.join(', ') : device.options.group);
 				}
+
+				settingsForm.getElementsByTagName('input')[2].setAttribute('value', device.options != null && device.options.status == false ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%');
+				settingsForm.getElementsByTagName('input')[2].setAttribute('class', device.options != null && device.options.status == false ? 'outline' : 'white');
 
 				for(const i in settings)
 				{
@@ -1034,195 +1040,195 @@
 
 					if(canvas != null && grid != null && values[letters] != null)
 					{
-					canvas.width = document.getElementById('infos').offsetWidth - 4;
+						canvas.width = document.getElementById('infos').offsetWidth - 4;
 
-					var valuesClone = [ ...values[letters] ];
+						var valuesClone = [ ...values[letters] ];
 
-					valuesClone.push({ ...state[letters].state, time : state[letters].time });
+						valuesClone.push({ ...state[letters].state, time : state[letters].time });
 
-					graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, valuesClone, (Essentials.getDataType(type) != 'boolean' && type != 'statelessswitch' && type != 'blind') ? automation[letters] : []);
+						graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, valuesClone, (Essentials.getDataType(type) != 'boolean' && type != 'statelessswitch' && type != 'blind') ? automation[letters] : []);
 
-					Graph.clearCanvas(grid);
-					Graph.drawGrid(grid, graphData[letters], 10);
+						Graph.clearCanvas(grid);
+						Graph.drawGrid(grid, graphData[letters], 10);
 
-					// NOTE: Convert GraphData Values
-					
-					for(const i in graphData[letters].sectors)
-					{
-						var a = null;
-
-						for(const j in graphData[letters].sectors[i])
+						// NOTE: Convert GraphData Values
+						
+						for(const i in graphData[letters].sectors)
 						{
-							if(graphData[letters].sectors[i][j].automation != null)
+							var a = null;
+
+							for(const j in graphData[letters].sectors[i])
 							{
-								for(const x in automation[letters])
+								if(graphData[letters].sectors[i][j].automation != null)
 								{
-									if(automation[letters][x].time < graphData[letters].sectors[i][j].time && automation[letters][x].time > graphData[letters].sectors[i][j].time - graphData[letters].interval * 60000)
+									for(const x in automation[letters])
 									{
-										a = { time : automation[letters][x].time, percent : graphData[letters].sectors[i][j].percents, value : graphData[letters].sectors[i][j].automation };
+										if(automation[letters][x].time < graphData[letters].sectors[i][j].time && automation[letters][x].time > graphData[letters].sectors[i][j].time - graphData[letters].interval * 60000)
+										{
+											a = { time : automation[letters][x].time, percent : graphData[letters].sectors[i][j].percents, value : graphData[letters].sectors[i][j].automation };
+										}
+									}
+								}
+							}
+
+							convertedAutomation.push(a || null);
+						}
+
+						const includesTrigger = (time) => {
+
+							for(const i in automationTriggers)
+							{
+								if(parseInt(automationTriggers[i].time / (graphData[letters].interval * 60000)) == parseInt(time / (graphData[letters].interval * 60000)))
+								{
+									return true;
+								}
+							}
+
+							return false;
+						};
+
+						for(const i in automation[letters])
+						{
+							if(automation[letters][i].time > parseInt(Object.keys(graphData[letters].sectors)[0]) && !includesTrigger(automation[letters][i].time))
+							{
+								for(const j in automation[letters][i].trigger)
+								{
+									if(automation[letters][i].trigger[j].id == device.id
+									&& automation[letters][i].trigger[j].letters == letters
+									&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100
+									&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+									{
+										automationTriggers.push({ time : automation[letters][i].time, percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
 									}
 								}
 							}
 						}
 
-						convertedAutomation.push(a || null);
-					}
+						automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
 
-					const includesTrigger = (time) => {
+						// NOTE: Draw Min, Max, Type, Update and Reload Labels
 
-						for(const i in automationTriggers)
+						if(graphData[letters] != null && graphData[letters].values.length > 0 && values[letters] != null && values[letters].length > 0)
 						{
-							if(parseInt(automationTriggers[i].time / (graphData[letters].interval * 60000)) == parseInt(time / (graphData[letters].interval * 60000)))
-							{
-								return true;
-							}
-						}
+							var min = null, max = null;
 
-						return false;
-					};
-
-					for(const i in automation[letters])
-					{
-						if(automation[letters][i].time > parseInt(Object.keys(graphData[letters].sectors)[0]) && !includesTrigger(automation[letters][i].time))
-						{
-							for(const j in automation[letters][i].trigger)
+							if(servicePresets[type].text != null)
 							{
-								if(automation[letters][i].trigger[j].id == device.id
-								&& automation[letters][i].trigger[j].letters == letters
-								&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100
-								&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+								min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+								max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+
+								if(graphData[letters].values.includes(graphData[letters].min) && servicePresets[type].inactive != null && servicePresets[type].inactive.text != null)
 								{
-									automationTriggers.push({ time : automation[letters][i].time, percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
+									min = servicePresets[type].inactive.text.toUpperCase();
+								}
+								
+								if(graphData[letters].values.includes(graphData[letters].max) && servicePresets[type].active != null && servicePresets[type].active.text != null)
+								{
+									max = servicePresets[type].active.text.toUpperCase();
 								}
 							}
-						}
-					}
-
-					automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
-
-					// NOTE: Draw Min, Max, Type, Update and Reload Labels
-
-					if(graphData[letters] != null && graphData[letters].values.length > 0 && values[letters] != null && values[letters].length > 0)
-					{
-						var min = null, max = null;
-
-						if(servicePresets[type].text != null)
-						{
-							min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
-							max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
-
-							if(graphData[letters].values.includes(graphData[letters].min) && servicePresets[type].inactive != null && servicePresets[type].inactive.text != null)
+							else
 							{
-								min = servicePresets[type].inactive.text.toUpperCase();
+								if(servicePresets[type].inactive != null)
+								{
+									min = servicePresets[type].inactive.text.toUpperCase();
+								}
+
+								if(servicePresets[type].active != null)
+								{
+									max = servicePresets[type].active.text.toUpperCase();
+								}
 							}
+
+							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
+							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+
+							canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';
+							canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
+
+							canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
+							canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
+							canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
+							canvas.parentElement.getElementsByClassName('updates')[0].style.opacity = 1;
+						}
+
+						// NOTE: Set Graph Colors
+
+						var service = getService(Essentials.typeToLetter(type) + c), colorFill = [], colorGraph = [];
+
+						if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+						{
+							var serviceState0 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].min } });
+							var serviceState1 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].min + graphData[letters].max) / 3 } });
+							var serviceState2 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max) / 2 } });
+							var serviceState3 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max + graphData[letters].max) / 3 } });
+							var serviceState4 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].max } });
 							
-							if(graphData[letters].values.includes(graphData[letters].max) && servicePresets[type].active != null && servicePresets[type].active.text != null)
+							if(serviceState4 != null && serviceState4.color != null)
 							{
-								max = servicePresets[type].active.text.toUpperCase();
+								colorFill.push('hsla(' + serviceState4.color.split(')')[0].split('hsl(')[1] + ', .3)');
+								colorGraph.push(serviceState4.color);
+							}
+
+							if(serviceState3 != null && serviceState3.color != null)
+							{
+								colorFill.push('hsla(' + serviceState3.color.split(')')[0].split('hsl(')[1] + ', .25)');
+								colorGraph.push(serviceState3.color);
+							}
+
+							if(serviceState2 != null && serviceState2.color != null)
+							{
+								colorFill.push('hsla(' + serviceState2.color.split(')')[0].split('hsl(')[1] + ', .175)');
+								colorGraph.push(serviceState2.color);
+							}
+
+							if(serviceState1 != null && serviceState1.color != null)
+							{
+								colorFill.push('hsla(' + serviceState1.color.split(')')[0].split('hsl(')[1] + ', .1)');
+								colorGraph.push(serviceState1.color);
+							}
+
+							if(serviceState0 != null && serviceState0.color != null)
+							{
+								colorFill.push('hsla(' + serviceState0.color.split(')')[0].split('hsl(')[1] + ', .05)');
+								colorGraph.push(serviceState0.color);
 							}
 						}
 						else
 						{
-							if(servicePresets[type].inactive != null)
+							var additions = { value : true };
+							
+							if(service.state.brightness != null)
 							{
-								min = servicePresets[type].inactive.text.toUpperCase();
+								additions.brightness = graphData[letters].max;
 							}
 
-							if(servicePresets[type].active != null)
+							if(type == 'blind')
 							{
-								max = servicePresets[type].active.text.toUpperCase();
+								additions.value = graphData[letters].max;
 							}
+
+							var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, ...additions } });
+
+							if(serviceState != null && serviceState.color != null)
+							{
+								colorFill.push('hsla(' + serviceState.color.split(')')[0].split('hsl(')[1] + ', .3)');
+								colorGraph.push(serviceState.color);
+							}
+							
+							colorFill.push('rgba(60, 60, 80, .1)');
+							colorGraph.push('rgb(60, 60, 80');
 						}
 
-						canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
-						canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+						// NOTE: Draw Graph
 
-						canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';
-						canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
+						Graph.clearCanvas(canvas);
+						Graph.drawAutomation(canvas, automationTriggers);
+						Graph.drawFill(canvas, graphData[letters].values, colorFill, 0);
+						Graph.drawGraph(canvas, graphData[letters].values, colorGraph, false);
+						Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
 
-						canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
-						canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
-						canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
-						canvas.parentElement.getElementsByClassName('updates')[0].style.opacity = 1;
-					}
-
-					// NOTE: Set Graph Colors
-
-					var service = getService(Essentials.typeToLetter(type) + c), colorFill = [], colorGraph = [];
-
-					if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
-					{
-						var serviceState0 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].min } });
-						var serviceState1 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].min + graphData[letters].max) / 3 } });
-						var serviceState2 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max) / 2 } });
-						var serviceState3 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max + graphData[letters].max) / 3 } });
-						var serviceState4 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].max } });
-						
-						if(serviceState4 != null && serviceState4.color != null)
-						{
-							colorFill.push('hsla(' + serviceState4.color.split(')')[0].split('hsl(')[1] + ', .3)');
-							colorGraph.push(serviceState4.color);
-						}
-
-						if(serviceState3 != null && serviceState3.color != null)
-						{
-							colorFill.push('hsla(' + serviceState3.color.split(')')[0].split('hsl(')[1] + ', .25)');
-							colorGraph.push(serviceState3.color);
-						}
-
-						if(serviceState2 != null && serviceState2.color != null)
-						{
-							colorFill.push('hsla(' + serviceState2.color.split(')')[0].split('hsl(')[1] + ', .175)');
-							colorGraph.push(serviceState2.color);
-						}
-
-						if(serviceState1 != null && serviceState1.color != null)
-						{
-							colorFill.push('hsla(' + serviceState1.color.split(')')[0].split('hsl(')[1] + ', .1)');
-							colorGraph.push(serviceState1.color);
-						}
-
-						if(serviceState0 != null && serviceState0.color != null)
-						{
-							colorFill.push('hsla(' + serviceState0.color.split(')')[0].split('hsl(')[1] + ', .05)');
-							colorGraph.push(serviceState0.color);
-						}
-					}
-					else
-					{
-						var additions = { value : true };
-						
-						if(service.state.brightness != null)
-						{
-							additions.brightness = graphData[letters].max;
-						}
-
-						if(type == 'blind')
-						{
-							additions.value = graphData[letters].max;
-						}
-
-						var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, ...additions } });
-
-						if(serviceState != null && serviceState.color != null)
-						{
-							colorFill.push('hsla(' + serviceState.color.split(')')[0].split('hsl(')[1] + ', .3)');
-							colorGraph.push(serviceState.color);
-						}
-						
-						colorFill.push('rgba(60, 60, 80, .1)');
-						colorGraph.push('rgb(60, 60, 80');
-					}
-
-					// NOTE: Draw Graph
-
-					Graph.clearCanvas(canvas);
-					Graph.drawAutomation(canvas, automationTriggers);
-					Graph.drawFill(canvas, graphData[letters].values, colorFill, 0);
-					Graph.drawGraph(canvas, graphData[letters].values, colorGraph, false);
-					Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
-
-					canvas.style.opacity = 1;
+						canvas.style.opacity = 1;
 					}
 				}
 
@@ -1807,6 +1813,10 @@
 								}
 								
 								settings[form[i].getAttribute('name')] = array;
+							}
+							else if(form[i].getAttribute('name') == 'status')
+							{
+								settings[form[i].getAttribute('name')] = (form[i].value == '%characteristics.boolean.active%' ? true : false);
 							}
 							else if(form[i].getAttribute('type') == 'button')
 							{

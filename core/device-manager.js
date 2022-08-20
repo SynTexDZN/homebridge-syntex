@@ -373,21 +373,57 @@ module.exports = class DeviceManager
 	{
 		var needToSave = false, accessory = this.getConfigAccessory(id);
 
+		var options = ['group', 'status'];
+
 		if(accessory != null)
 		{
 			for(const x in values)
 			{
-				if(accessory[x] != values[x] && x != 'id' && x != 'plugin' && x != 'services')
+				if(x != 'id' && x != 'plugin' && x != 'services')
 				{
-					accessory[x] = values[x];
+					if(!options.includes(x))
+					{
+						if(accessory[x] != values[x])
+						{
+							needToSave = true;
+						}
 
-					needToSave = true;
+						accessory[x] = values[x];
+					}
+					else
+					{
+						if(accessory.options == null)
+						{
+							accessory.options = {};
+						}
+
+						if(accessory.options[x] != values[x])
+						{
+							needToSave = true;
+						}
+
+						accessory.options[x] = values[x];
+					}
 				}
 			}
 
-			if(values.group == '' && accessory.group != null)
+			if(values.group == '' && accessory.options != null && accessory.options.group != null)
 			{
-				delete accessory.group;
+				delete accessory.options.group;
+
+				needToSave = true;
+			}
+
+			if(values.status == true && accessory.options != null && accessory.options.status != null)
+			{
+				delete accessory.options.status;
+
+				needToSave = true;
+			}
+
+			if(accessory.options != null && Object.keys(accessory.options) == 0)
+			{
+				delete accessory.options;
 
 				needToSave = true;
 			}

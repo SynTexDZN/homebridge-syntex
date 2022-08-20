@@ -355,7 +355,7 @@
 							{
 								var type = data.devices[i].services[j].type;
 
-								if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null && data.devices[i].services[j].online == true)
+								if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null && data.devices[i].services[j].online == true && (data.devices[i].options == null || data.devices[i].options.status != false))
 								{
 									if(type == 'relais')
 									{
@@ -1409,9 +1409,9 @@
 
 					for(const i in data.devices)
 					{
-						if(data.devices[i].group != null && data.devices[i].group != '')
+						if(data.devices[i].options != null && data.devices[i].options.group != null)
 						{
-							var groupArray = Array.isArray(data.devices[i].group) ? data.devices[i].group : [ data.devices[i].group ];
+							var groupArray = Array.isArray(data.devices[i].options.group) ? data.devices[i].options.group : [ data.devices[i].options.group ];
 
 							for(const j in groupArray)
 							{
@@ -1508,19 +1508,19 @@
 						return true;
 					}
 
-					if(device != null && device.group != null)
+					if(device != null && device.options != null && device.options.group != null)
 					{
-						if(Array.isArray(device.group))
+						if(Array.isArray(device.options.group))
 						{
-							for(const i in device.group)
+							for(const i in device.options.group)
 							{
-								if(device.group[i].toLowerCase() == group.toLowerCase())
+								if(device.options.group[i].toLowerCase() == group.toLowerCase())
 								{
 									return true;
 								}
 							}
 						}
-						else if(device.group.toLowerCase() == group.toLowerCase())
+						else if(device.options.group.toLowerCase() == group.toLowerCase())
 						{
 							return true;
 						}
