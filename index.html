@@ -466,11 +466,11 @@
 
 							if(active > 0)
 							{
-								button.style.removeProperty('display');
+								button.classList.remove('hidden');
 							}
 							else
 							{
-								button.style.display = 'none';
+								button.classList.add('hidden');
 							}
 						}
 						else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
