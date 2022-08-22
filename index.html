@@ -518,6 +518,11 @@
 						state.innerHTML = text;
 					}
 
+					if(document.getElementById('status').getElementsByClassName('hidden').length == document.getElementById('status').children.length)
+					{
+						document.getElementById('status').classList.add('hidden');
+					}
+
 					setTimeout(() => document.getElementById('status').style.removeProperty('transition'), 0);
 				}
 
