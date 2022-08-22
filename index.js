@@ -711,6 +711,21 @@ class SynTexPlatform
 			}
 		});
 
+		this.WebServer.addPage('/serverside/update-automation', async (request, response, urlParams, content, postJSON) => {
+
+			if(postJSON != null)
+			{
+				this.files.writeFile('automation/automation.json', postJSON).then((write) => {
+
+					response.end(write.success ? 'Success' : 'Error')
+				});
+			}
+			else
+			{
+				response.end('Error');
+			}
+		});
+
 		this.WebServer.addPage(['/device'], async (request, response, urlParams, content) => {
 
 			response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));

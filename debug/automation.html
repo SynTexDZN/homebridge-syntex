@@ -1,10 +1,10 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<title>%menu.debug%: %menu.config%</title>
+			<title>%menu.debug%: %menu.automation%</title>
 			<script type="module">
 
-				PageManager.setHeader('%menu.debug%', '%menu.config%');
+				PageManager.setHeader('%menu.debug%', '%menu.automation%');
 
 				var main = document.createElement('div');
 
@@ -32,13 +32,13 @@
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
 					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase" disabled>
+					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
 				</div>
 				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/debug/automation')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/debug/automation')" style="text-transform: uppercase; margin-right: 20px" disabled>
 					<input class="white" type="button" value="%menu.syslog%" onclick="Essentials.leavePage('/debug/syslog')" style="text-transform: uppercase">
 				</div>
-				<p style="margin: 100px 0">%debug.config.description%</p>
+				<p style="margin: 100px 0">%debug.automation.description%</p>
 				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" oninput="validateJSON(this)">%general.loading% ..</textarea>
 			</div>
 			<script type="module">
@@ -46,9 +46,36 @@
 				window.configJSON = '<%configJSON%>';
 				window.restarting = false;
 
-				document.getElementById('config-container').value = JSON.stringify(JSON.parse(configJSON), null, '\t');
+				loadData('/serverside/automation', 'automation').then(() => {
 
-				Preloader.finish();
+					configJSON = JSON.stringify(automation);
+
+					document.getElementById('config-container').value = JSON.stringify(automation, null, '\t');
+
+					Preloader.finish();
+				});
+
+				function loadData(url, key)
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch(url, 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								window[key] = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
 			
 			</script>
 			<script>
@@ -85,7 +112,7 @@
 
 						document.getElementById('config-container').value = JSON.stringify(JSON.parse(document.getElementById('config-container').value), null, '\t');
 
-						if(await Query.complexFetch('/serverside/update-config', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
+						if(await Query.complexFetch('/serverside/update-automation', 5000, 6, overlays, true, document.getElementById('config-container').value) == 'Success')
 						{
 							document.getElementById('config-save').classList.remove('pulse');
 
