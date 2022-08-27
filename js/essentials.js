@@ -183,7 +183,7 @@ class EssentialFeatures
 
 		if(dialogue != null)
 		{
-			var panel = dialogue.getElementsByClassName('panel')[0];
+			var panel = dialogue.getElementsByClassName('content')[0];
 			var title = dialogue.getElementsByClassName('title-container')[0];
 			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
 			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
@@ -256,7 +256,7 @@ class EssentialFeatures
 
 		if(dialogue != null)
 		{
-			var panel = dialogue.getElementsByClassName('panel')[0];
+			var panel = dialogue.getElementsByClassName('content')[0];
 			var title = dialogue.getElementsByClassName('title-container')[0];
 			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
 			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
@@ -359,7 +359,7 @@ class EssentialFeatures
 
 	closeDialogue()
 	{
-		var dialogue = document.getElementById('dialogue'), panel = dialogue.getElementsByClassName('panel')[0];
+		var dialogue = document.getElementById('dialogue'), panel = dialogue.getElementsByClassName('content')[0];
 
 		enableScroll();
 
