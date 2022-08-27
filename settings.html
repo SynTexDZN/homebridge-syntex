@@ -96,15 +96,16 @@
 
 				function createFormInputs(title, template, settings)
 				{
-					var group = document.createElement('div'), groupName = document.createElement('h2'), formObject = {};
+					var group = document.createElement('div'), content = document.createElement('div'), groupName = document.createElement('h2'), formObject = {};
 
-					group.className = 'type-container';
+					group.className = 'panel';
 
 					groupName.className = 'title-container';
 					groupName.innerHTML = title;
-					groupName.style.marginBottom = '40px';
 
 					group.appendChild(groupName);
+
+					content.className = 'panel-content padding';
 
 					for(const i in template)
 					{
@@ -112,7 +113,7 @@
 						{
 							if(template[i].local == null || window.location.protocol != 'https:')
 							{
-								var container = document.createElement('div'), html = '<p><b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
+								var p = document.createElement('p'), html = '<b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
 
 								if(template[i].type == 'button')
 								{
@@ -123,16 +124,19 @@
 									html += 'value="' + (settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
 								}
 
-								html += '</b></p>';
+								html += '</b>';
 
 								formObject[i] = settings != null && settings[i] != null ? settings[i] : template[i].default;
 
-								container.innerHTML = html;
+								p.innerHTML = html;
+								p.style.margin = '0px';
 
-								group.appendChild(container);
+								content.appendChild(p);
 							}
 						}
 					}
+
+					group.appendChild(content);
 
 					document.getElementById('config-editor').appendChild(group);
 
@@ -141,7 +145,7 @@
 
 				function saveConfig()
 				{
-					var appSettingsForm = document.getElementsByClassName('type-container')[2].children;
+					var appSettingsForm = document.getElementsByClassName('panel-content')[2].children;
 
 					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save% ..'));
 
@@ -159,7 +163,7 @@
 
 					realTimeUpdate();
 
-					var bridgeOptionForm = document.getElementsByClassName('type-container')[0].children, configObject = { options : {}, log : {} };
+					var bridgeOptionForm = document.getElementsByClassName('panel-content')[0].children, configObject = { options : {}, log : {} };
 
 					for(var i = 1; i < bridgeOptionForm.length; i++)
 					{
@@ -173,7 +177,7 @@
 						}
 					}
 
-					var bridgeLogForm = document.getElementsByClassName('type-container')[1].children;
+					var bridgeLogForm = document.getElementsByClassName('panel-content')[1].children;
 
 					for(var i = 1; i < bridgeLogForm.length; i++)
 					{

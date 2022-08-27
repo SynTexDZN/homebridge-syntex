@@ -30,7 +30,7 @@
 	-webkit-touch-callout: none;
 }
 
-html, body, #content, #groups, .control-panel::before, .type-container, .custom-select > .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
+html, body, #content, #groups, .control-panel::before, .panel, .custom-select > .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
 {
 	transition: var(--transition-color);
 }
@@ -918,7 +918,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	display: flex;
 }
 
-.type-container
+.panel
 {
 	border: 1px solid rgba(128, 128, 128, 0.1);
 	background: rgb(40, 40, 55);
@@ -927,7 +927,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	transition: var(--transition-color), 0s color;
 }
 
-.type-container, #footer-content
+.panel, #footer-content
 {
 	border: 1px solid rgba(245, 245, 255, .015);
 }
@@ -984,13 +984,6 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	font-size: 14px;
 	transition: .3s color;
 	text-transform: uppercase;
-}
-
-.device-container
-{
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
 }
 
 #devices.grid-view input[type='button'], #devices.grid-view button
@@ -1998,6 +1991,19 @@ button img
 #status .state
 {
 	text-transform: uppercase;
+}
+
+
+.panel .panel-content
+{
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.panel .panel-content.padding
+{
+	padding: 20px;
 }
 
 @media only screen and (min-width: 1177px)

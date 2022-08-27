@@ -29,9 +29,9 @@
 					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/debug/automation')" style="text-transform: uppercase; margin-right: 20px">
 					<input class="white" type="button" value="%menu.syslog%" onclick="Essentials.leavePage('/debug/syslog')" style="text-transform: uppercase">
 				</div>
-				<div class="type-container" style="margin-top: 100px">
+				<div class="panel" style="margin-top: 100px">
 					<h2 class="title-container">%debug.workaround.pages%</h2>
-					<div id="workaround"></div>
+					<div class="panel-content" id="workaround"></div>
 					<p style="margin: 40px 0 20px 0">%debug.workaround.description%!</p>
 				</div>
 			</div>
@@ -50,11 +50,6 @@
 							var page = document.createElement('button');
 
 							page.innerHTML = workaround[i].split('.')[0].toUpperCase();
-
-							if(i != 0)
-							{
-								page.setAttribute('style', 'margin-top: 20px');
-							}
 
 							page.setAttribute('onclick', 'Essentials.leavePage("/debug/workaround/' + workaround[i] + '")');
 

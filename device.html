@@ -127,12 +127,12 @@
 			</div>
 			<div id="settings" style="display: none; transition: .2s opacity ease-in-out">
 				<form id="settings-form-main" onsubmit="event.preventDefault(); saveConfig();" class="main">
-					<div class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">%device.general%</h2>
-						<div id="general-settings">
-							<p style="margin-top: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-							<p><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
-							<p><b>%general.status%: <input value="%characteristics.boolean.active%" orginal-value="%characteristics.boolean.active%" name="status" type="button" class="white" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, 'save-btn')" style="max-width: 150px; border-width: 3px"></b></p>
+					<div class="panel">
+						<h2 class="title-container">%device.general%</h2>
+						<div class="panel-content padding" id="general-settings">
+							<p style="margin: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.status%: <input value="%characteristics.boolean.active%" orginal-value="%characteristics.boolean.active%" name="status" type="button" class="white" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, 'save-btn')" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div id="service-form"></div>
@@ -323,7 +323,7 @@
 				{
 					var container = document.createElement('div'), title = document.createElement('h2'), serviceConfig = document.createElement('div');
 
-					container.className = 'type-container';
+					container.className = 'panel';
 
 					title.className = 'title-container';
 
@@ -336,9 +336,8 @@
 						title.innerHTML = device.services[i].type + ' ' + i;
 					}
 
-					title.style.marginBottom = '40px';
+					serviceConfig.className = 'service-settings panel-content padding';
 
-					serviceConfig.className = 'service-settings';
 					serviceConfig.setAttribute('letters', device.services[i].letters);
 
 					var configService = getConfigService(device.services[i].letters);
@@ -350,6 +349,8 @@
 							if(j != 'iid' && j != 'format' && j != 'state' && j != 'letters' && j != 'type' && j != 'function' && j != 'online' && !(device.services[i][j] instanceof Object) && !Array.isArray(device.services[i][j]))
 							{
 								var p = document.createElement('p'), b = document.createElement('b'), input = document.createElement('input');
+
+								p.style.margin = '0px';
 
 								b.innerHTML = j + ': ';
 

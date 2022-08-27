@@ -38,13 +38,13 @@
 					<button class="widget-right gradient-blue" style="user-select: text">-<br>-</button>
 				</div>
 				<div id="plugin-container">
-					<div class="type-container" style="margin-top: 100px">
+					<div class="panel" style="margin-top: 100px">
 						<h2 class="title-container">%bridge.core_plugins%</h2>
-						<div id="core-plugins"></div>
+						<div class="panel-content" id="core-plugins"></div>
 					</div>
-					<div class="type-container" style="margin-bottom: 100px">
+					<div class="panel" style="margin-bottom: 100px">
 						<h2 class="title-container">%bridge.plugins%</h2>
-						<div id="plugins"></div>
+						<div class="panel-content" id="plugins"></div>
 					</div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 100px; width: 100%; max-width: 400px">
@@ -165,7 +165,7 @@
 
 							var innerHTML = '';
 
-							innerHTML += '<button class="plugin-container" style="display: flex; margin-top: ' + (counter == 0 ? '0' : '20px') + '">'
+							innerHTML += '<button class="plugin-container" style="display: flex">'
 							innerHTML += '<div style="width: calc(100% - 150px)">' + title;
 							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>%bridge.version%: </b>' + versions[id] + '</div>';
 							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>%bridge.latest_version%: </b>' + latestVersions[id] + '</div>';

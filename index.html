@@ -248,12 +248,12 @@
 						{
 							var typeContainer = document.createElement('div');
 
-							typeContainer.setAttribute('id', 'type-container-' + Essentials.getType(data.devices[i].services));
-							typeContainer.setAttribute('class', 'type-container');
+							typeContainer.setAttribute('id', 'panel-' + Essentials.getType(data.devices[i].services));
+							typeContainer.setAttribute('class', 'panel');
 
 							if(data.devices[i].services == 'removed')
 							{
-								typeContainer.setAttribute('class', 'type-container striped');
+								typeContainer.setAttribute('class', 'panel striped');
 							}
 
 							var title = document.createElement('h2');
@@ -269,7 +269,7 @@
 							var typeDevices = document.createElement('div');
 
 							typeDevices.setAttribute('id', pattern.toLowerCase());
-							typeDevices.setAttribute('class', 'device-container');
+							typeDevices.setAttribute('class', 'device-container panel-content');
 							/*
 							if(numOfType == 1)
 							{
@@ -406,7 +406,7 @@
 
 								var containerType = type;
 
-								if(document.getElementById('type-container-' + containerType) == null)
+								if(document.getElementById('panel-' + containerType) == null)
 								{
 									if(containerType == 'light')
 									{
@@ -419,7 +419,7 @@
 									}
 								}
 
-								var top = document.getElementById('type-container-' + containerType).offsetTop - 20;
+								var top = document.getElementById('panel-' + containerType).offsetTop - 20;
 
 								if(getComputedStyle(document.getElementById('head-content')).position == 'fixed')
 								{
