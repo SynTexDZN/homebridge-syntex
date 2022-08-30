@@ -1,0 +1,1279 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%general.dashboard%: %menu.automation%</title>
+			<script type="module">
+
+				if((new URL(window.location.href)).searchParams.get('create') == '')
+				{
+					PageManager.setHeader('%menu.automation%', '%automation.create%');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="automation-create-form" value="%automation.create%"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					PageManager.switchPage('view', 'create', true);
+				}
+				else
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%');
+					PageManager.hideFooter();
+				}
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<div class="main" style="margin-bottom: 20px; display: flex">
+					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px">
+					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase">
+				</div>
+				<div class="main" style="margin-top: 10px; display: flex">
+					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px" disabled>
+					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
+				</div>
+			</div>
+			<div id="view" style="transition: .2s opacity ease-in-out">
+				<div class="main" style="margin-bottom: 100px">
+					<div id="toolbar" class="main" style="margin: 100px auto">
+						<div id="groups" style="display: flex; width: 100%"></div>
+						<div style="display: flex; margin-top: 20px">
+							<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="horizontal"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png"></button>
+							<div class="custom-select" style="width: 100%">
+								<select id="sort" onchange="sortAutomation()">
+									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
+									<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
+									<option img="/img/sort-asc.png" value="id-asc">%sort.id%</option>
+									<option img="/img/sort-desc.png" value="id-desc">%sort.id%</option>
+									<option img="/img/sort-asc.png" value="activation-asc">%sort.activation%</option>
+									<option img="/img/sort-desc.png" value="activation-desc">%sort.activation%</option>
+								</select>
+								<script>
+
+									var sort = 'id-asc';
+
+									if(Storage.getItem('automation-sort') != null)
+									{
+										sort = Storage.getItem('automation-sort');
+									}
+
+									var select = document.getElementById('sort');
+
+									for(var i = 0; i < select.children.length; i++)
+									{
+										if(select.children[i].getAttribute('value') == sort)
+										{
+											select.children[i].setAttribute('selected', '');
+										}
+									}
+
+								</script>
+							</div>
+							<button style="margin-left: 20px" class="image-button" id="add-button" onclick="openAddPage()" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
+						</div>
+					</div>
+					<p id="no-automation" style="display: none; margin-top: 100px">%automation.no_automation%</p>
+					<p id="no-devices" style="display: none; margin-top: 100px">%automation.no_devices%</p>
+					<div id="automation" style="transition: .2s opacity ease-in-out"></div>
+				</div>
+				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
+					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openAddPage()">
+				</div>
+			</div>
+			<div id="create" style="display: none; transition: .2s opacity ease-in-out">
+				<form id="automation-create-form" class="main" onsubmit="event.preventDefault(); createAutomation();">
+					<div class="panel">
+						<h2 class="title-container">%automation.infos%</h2>
+						<div class="panel-content padding">
+							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
+							<p autofocus style="margin: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.trigger%</h2>
+						<div class="panel-content" id="trigger" style="text-align: center"></div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.result%</h2>
+						<div class="panel-content" id="result" style="text-align: center"></div>
+					</div>
+				</form>
+			</div>
+			<script type="module">
+
+				Replacer.SETUP();
+
+				window.automation = [];
+				window.accessories = JSON.parse('<%accessories%>');
+				window.services = [];
+				window.plugins = {};
+				
+				if(Storage.getItem('automation-view') == 'vertical')
+				{
+					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
+					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
+					document.getElementById('toolbar').children[1].children[0].setAttribute('view', 'vertical');
+					document.getElementById('automation').className = 'vertical-view';
+				}
+
+				loadServices();
+
+				Promise.all([loadData('/serverside/plugins', 'plugins'), loadData('/serverside/automation', 'automation')]).then(() => renderGUI(true));
+
+			</script>
+			<script>
+
+				// NOTE: Fetch Data
+
+				function loadData(url, key)
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch(url, 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								window[key] = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
+
+				function renderGUI(renderAutomation)
+				{
+					createGroupPanel();
+
+					if(automation.length > 0)
+					{
+						if(renderAutomation)
+						{
+							sortAutomation(true);
+						}
+					}
+					else if(services.length > 0)
+					{
+						document.getElementById('no-automation').style.display = '';
+
+						Preloader.finish();
+					}
+					else
+					{
+						document.getElementById('no-devices').style.display = '';
+						document.getElementById('add-button-big').style.display = 'none';
+						document.getElementById('devices-button-big').style.display = '';
+						document.getElementById('add-button').setAttribute('disabled', '');
+
+						Preloader.finish();
+					}
+					
+					document.getElementById('create').getElementsByTagName('input')[0].value = getNextID();
+					document.getElementById('create').getElementsByTagName('input')[1].value = '';
+					document.getElementById('create').getElementsByTagName('input')[2].value = '';
+
+					document.getElementById('trigger').innerHTML = '';
+					document.getElementById('result').innerHTML = '';
+
+					if(services.length > 0)
+					{
+						var bottom = document.createElement('div'),
+							add = document.createElement('button'), 
+							logic = document.createElement('input'),
+							options = document.createElement('button');
+
+						bottom.className = 'bottom';
+
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_group%</div>';
+							
+						add.setAttribute('type', 'button');
+						add.setAttribute('class', 'gradient-blue-green add-group-button icon-button left split layer');
+
+						add.onclick = () => addGroup();
+
+						logic.setAttribute('value', window.logic[0].toUpperCase());
+						logic.setAttribute('type', 'button');
+						logic.setAttribute('class', 'block-logic white');
+
+						logic.onclick = () => {
+
+							logic.value = (logic.value == window.logic[0].toUpperCase() ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase());
+						};
+
+						options.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%general.options%</div>';
+
+						options.setAttribute('type', 'button');
+						options.setAttribute('class', 'icon-button right split layer');
+
+						options.onclick = () => {};
+
+						bottom.appendChild(add);
+						bottom.appendChild(logic);
+						bottom.appendChild(options);
+
+						document.getElementById('trigger').appendChild(bottom);
+
+						var add = document.createElement('button');
+
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+
+						add.setAttribute('value', '+ %automation.add_block%');
+						add.setAttribute('type', 'button');
+						add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+
+						add.onclick = () => addBlock('result', document.getElementById('result'));
+
+						document.getElementById('result').appendChild(add);
+					}
+				}
+
+			</script>
+			<script>
+
+				function switchView(btn)
+				{
+					if(btn.getAttribute('view') == 'vertical')
+					{
+						btn.children[0].style.display = '';
+						btn.children[1].style.display = 'none';
+
+						document.getElementById('automation').className = '';
+
+						Storage.setItem('automation-view', 'horizontal');
+						btn.setAttribute('view', 'horizontal');
+					}
+					else if(btn.getAttribute('view') == 'horizontal')
+					{
+						btn.children[0].style.display = 'none';
+						btn.children[1].style.display = '';
+
+						document.getElementById('automation').className = 'vertical-view';
+
+						Storage.setItem('automation-view', 'vertical');
+						btn.setAttribute('view', 'vertical');
+					}
+				}
+
+				function sortAutomation(init)
+				{
+					var select = document.getElementById('sort');
+					var sort = 'id-asc';
+
+					if(init && Storage.getItem('automation-sort') != null)
+					{
+						sort = Storage.getItem('automation-sort');
+					}
+
+					if(!init)
+					{
+						sort = select.children[select.selectedIndex].getAttribute('value');
+
+						Storage.setItem('automation-sort', sort);
+
+						document.getElementById('automation').style.opacity = 0;
+					}
+
+					if(sort == 'alphabetical-asc')
+					{
+						automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+					}
+					else if(sort == 'alphabetical-desc')
+					{
+						automation.sort((a, b) => (a.name < b.name) ? 1 : (b.name < a.name) ? -1 : 0);
+					}
+					else if(sort == 'id-asc')
+					{
+						automation.sort((a, b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
+					}
+					else if(sort == 'id-desc')
+					{
+						automation.sort((a, b) => (a.id < b.id) ? 1 : (b.id < a.id) ? -1 : 0);
+					}
+					else if(sort == 'activation-asc')
+					{
+						automation.sort((a, b) => (a.active == true) ? -1 : 1);
+					}
+					else if(sort == 'activation-desc')
+					{
+						automation.sort((a, b) => (a.active == false) ? -1 : 1);
+					}
+
+					setTimeout(() => {
+
+						createAutomationPanels();
+
+						setTimeout(() => {
+
+							switchGroup(Storage.getItem('automation-group') || 'all', true);
+
+							document.getElementById('automation').style.opacity = 1;
+
+						}, 0);
+
+					}, init ? 0 : 300);
+				}
+
+			</script>
+			<script>
+
+				function createGroupPanel()
+				{
+					var tmpGroup = [], groups = [];
+
+					for(const i in automation)
+					{
+						if(automation[i].group && !tmpGroup.includes(automation[i].group.toLowerCase()))
+						{
+							groups.push(automation[i].group);
+							tmpGroup.push(automation[i].group.toLowerCase());
+						}
+					}
+
+					groups.sort();
+
+					document.getElementById('groups').innerHTML = '';
+
+					var allAutomations = document.createElement('input');
+
+					allAutomations.setAttribute('type', 'button');
+					allAutomations.setAttribute('group', 'all');
+					allAutomations.setAttribute('value', '%automation.all_automations%');
+					allAutomations.setAttribute('class', 'white');
+					allAutomations.setAttribute('style', 'border-left: none; cursor: grab');
+
+					allAutomations.onclick = () => switchGroup('all', false);
+
+					document.getElementById('groups').appendChild(allAutomations);
+
+					for(const i in groups)
+					{
+						var group = document.createElement('input');
+
+						group.setAttribute('type', 'button');
+						group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
+						group.setAttribute('group', groups[i].toLowerCase());
+						group.setAttribute('value', groups[i]);
+						group.setAttribute('class', 'white');
+						group.setAttribute('style', 'margin-left: 20px; cursor: grab');
+						
+						document.getElementById('groups').appendChild(group);
+					}
+
+					const groupBar = document.getElementById('groups');
+
+					let pos = { top: 0, left: 0, x: 0, y: 0 };
+
+					const mouseDownHandler = function(e)
+					{
+						groupBar.style.cursor = 'grabbing';
+						groupBar.style.userSelect = 'none';
+
+						pos = {
+							left: groupBar.scrollLeft,
+							top: groupBar.scrollTop,
+							x: e.clientX,
+							y: e.clientY,
+						};
+
+						document.addEventListener('mousemove', mouseMoveHandler);
+						document.addEventListener('mouseup', mouseUpHandler);
+					};
+
+					const mouseMoveHandler = function(e)
+					{
+						const dx = e.clientX - pos.x;
+						const dy = e.clientY - pos.y;
+
+						groupBar.scrollTop = pos.top - dy;
+						groupBar.scrollLeft = pos.left - dx;
+						
+						for(var i = 0; i < groupBar.children.length; i++)
+						{
+							groupBar.children[i].style.pointerEvents = 'none';
+						}
+					};
+
+					const mouseUpHandler = function()
+					{
+						groupBar.style.cursor = 'grab';
+						groupBar.style.removeProperty('user-select');
+
+						for(var i = 0; i < groupBar.children.length; i++)
+						{
+							groupBar.children[i].style.pointerEvents = 'all';
+						}
+
+						document.removeEventListener('mousemove', mouseMoveHandler);
+						document.removeEventListener('mouseup', mouseUpHandler);
+					};
+
+					groupBar.addEventListener('mousedown', mouseDownHandler);
+				}
+
+				async function switchGroup(group, init)
+				{
+					if(init || Storage.getItem('automation-group') != group)
+					{
+						Storage.setItem('automation-group', group);
+
+						if(!init)
+						{
+							document.getElementById('automation').style.opacity = 0;
+
+							await Essentials.newTimeout(300);
+						}
+
+						var automationPanels = document.getElementById('automation').children;
+
+						for(var i = 0; i < automationPanels.length; i++)
+						{
+							automationPanels[i].style.display = 'none';
+
+							if(group == 'all' || automationPanels[i].getAttribute('group') == group)
+							{
+								automationPanels[i].style.display = '';
+							}
+						}
+
+						var groupButtons = document.getElementById('groups').children;
+
+						for(var i = 0; i < groupButtons.length; i++)
+						{
+							if(groupButtons[i].getAttribute('group') == group)
+							{
+								groupButtons[i].className = 'white group-active';
+
+								Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
+							}
+							else
+							{
+								groupButtons[i].className = 'white';
+							}
+						}
+
+						document.getElementById('automation').style.opacity = 1;
+					}
+				}
+			
+			</script>
+			<script>
+
+				async function openAddPage()
+				{
+					PageManager.setHeader('%menu.automation%', '%automation.create%', true);
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'create'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="automation-create-form" value="%automation.create%"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage('view', 'create', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation/?create');
+					}
+				}
+
+				async function openViewPage()
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%', true);
+					PageManager.hideFooter(true);
+
+					await PageManager.switchPage('create', 'view', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation?desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation/');
+					}
+				}
+
+				function createAutomationPanels()
+				{
+					document.getElementById('automation').innerHTML = '';
+
+					for(var i = 0; i < automation.length; i++)
+					{
+						var typeContainer = document.createElement('div');
+
+						typeContainer.className = 'panel hoverable';
+
+						if(!automation[i].active)
+						{
+							typeContainer.classList.add('striped');
+						}
+
+						typeContainer.setAttribute('style', 'height: auto; box-shadow: none; cursor: pointer');
+						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation/modify?id=" + automation[i].id + "')");
+
+						if(i == 0)
+						{
+							typeContainer.style.marginTop = '0';
+						}
+
+						if(automation[i].group != null && automation[i].group != '')
+						{
+							typeContainer.setAttribute('group', automation[i].group.toLowerCase());
+						}
+
+						var title = document.createElement('h2');
+
+						title.setAttribute('class', 'title-container');
+
+						title.innerHTML = automation[i].name;
+
+						typeContainer.appendChild(title);
+
+						var panel = document.createElement('div');
+
+						if(automation[i].trigger != null)
+						{
+							var column = document.createElement('div');
+							var category = document.createElement('div');
+
+							column.className = 'column';
+
+							category.innerHTML = '%automation.trigger%';
+							category.className = 'primary';
+
+							column.appendChild(category);
+
+							var container = document.createElement('div');
+
+							container.className = 'secondary';
+
+							for(const j in automation[i].trigger.groups)
+							{
+								for(const k in automation[i].trigger.groups[j].blocks)
+								{
+									var row = document.createElement('div');
+
+									row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+									if(!automation[i].trigger.groups[j].blocks[k].url && automation[i].trigger.groups[j].blocks[k].name && automation[i].trigger.groups[j].blocks[k].letters)
+									{
+										var src = Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]);
+
+										if(Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]) == 'temperature')
+										{
+											src = 'climate';
+										}
+
+										row.innerHTML += '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger.groups[j].blocks[k].name/* + ' ' + automation[i].trigger.groups[j].blocks[k].operation + ' ' + val*/;
+									}
+									else if(automation[i].trigger.groups[j].blocks[k].url)
+									{
+										row.innerHTML += '<img class="icon" src="/img/link.png">%automation.open_link%';
+									}
+
+									container.appendChild(row);
+								}
+
+								column.appendChild(container);
+							}
+
+							panel.className = 'table';
+							panel.appendChild(column);
+						}
+						
+						var column = document.createElement('div');
+						var category = document.createElement('div');
+
+						column.className = 'column';
+
+						category.innerHTML = '%automation.result%';
+						category.className = 'primary';
+
+						column.appendChild(category);
+
+						var container = document.createElement('div');
+
+						container.className = 'secondary';
+
+						for(var j = 0; j < automation[i].result.length; j++)
+						{
+							var row = document.createElement('div');
+
+							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+							if(!automation[i].result[j].url && automation[i].result[j].name && automation[i].result[j].letters)
+							{
+								var src = Essentials.letterToType(automation[i].result[j].letters[0]);
+
+								if(Essentials.letterToType(automation[i].result[j].letters[0]) == 'temperature')
+								{
+									src = 'climate';
+								}
+
+								row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name/* + ' ' + automation[i].result[j].operation + ' ' + val*/;
+							}
+							else if(automation[i].result[j].url)
+							{
+								row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%';
+							}
+
+							container.appendChild(row);
+
+							column.appendChild(container);
+						}
+
+						panel.className = 'table';
+						panel.appendChild(column);
+
+						typeContainer.appendChild(panel);
+
+						document.getElementById('automation').appendChild(typeContainer);
+					}
+
+					Preloader.finish();
+				}
+
+				function updateOperation(select)
+				{
+					var availableOptions = [],
+						customSelect = Replacer.getSelect(select.parentElement.children[1]),
+						selectOptions = select.getElementsByTagName('select')[0].children[select.getElementsByTagName('select')[0].selectedIndex];
+
+					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+					}
+					else if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '9')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%'];
+					}
+					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
+					{
+						availableOptions = ['='];
+					}
+					else if(selectOptions.getAttribute('type') == 'numeric')
+					{
+						availableOptions = ['=', '&gt;', '&lt;'];
+					}
+
+					for(const i in customSelect.items)
+					{
+						if(availableOptions.includes(customSelect.items[i].text))
+						{
+							customSelect.items[i].element.style.display = '';
+						}
+						else
+						{
+							customSelect.items[i].element.style.display = 'none';
+						}
+					}
+
+					if(!availableOptions.includes(customSelect.selected.text))
+					{
+						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
+						{
+							if(select.parentElement.parentElement.id != 'result')
+							{
+								customSelect.updateSelected(3);
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
+						}
+						else
+						{
+							customSelect.updateSelected(0);
+						}
+					}
+				}
+
+				function updateValueInput(select)
+				{
+					updateOperation(select.parentElement.children[0]);
+
+					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
+					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
+
+					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3' && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.color%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = '';
+					}
+					else if(option.hasAttribute('letters') && (option.getAttribute('letters')[0] == '3' || option.getAttribute('letters')[0] == '9') && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+					}
+					else if(option.getAttribute('type') == 'boolean')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].setAttribute('required', '');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+						valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
+
+						var options = select.parentElement.children[4].getElementsByClassName('select-items')[0].children;
+
+						for(var i = 0; i < options.length; i++)
+						{
+							options[select.parentElement.children[4].getElementsByTagName('select')[0].selectedIndex].click();
+						}
+					}
+					else if(option.getAttribute('type') == 'numeric' || option.getAttribute('type') == 'url')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						if(option.getAttribute('type') == 'numeric')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.number%');
+							select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+						}
+						else if(option.getAttribute('type') == 'url')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.link%');
+							select.parentElement.children[2].removeAttribute('pattern');
+						}
+					}
+				}
+
+				function updateLightInputs(select)
+				{
+					var o = select.getElementsByTagName('select')[0].selectedIndex;
+					var option = select.getElementsByTagName('select')[0].children[o];
+
+					if(option.innerHTML == '%automation.switch%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[4].setAttribute('required', '');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						if(option.hasAttribute('letters'))
+						{
+							var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+							valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+							valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+							valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
+						}
+					}
+					else if(option.innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+					}
+					else if(option.innerHTML == '%automation.color%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('required');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'grid';
+					}
+				}
+
+				window.logic = ['%automation.and%', '%automation.or%'];
+				window.groupLogic = logic[0].toUpperCase();
+
+				// NOTE: Add Group
+
+				function addGroup()
+				{
+					const group = document.createElement('div'),
+						bottom = document.createElement('div'),
+						add = document.createElement('button'),
+						logic = document.createElement('input'),
+						remove = document.createElement('button');
+
+					group.className = 'group';
+
+					bottom.className = 'bottom';
+
+					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+
+					add.setAttribute('type', 'button');
+					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+
+					add.onclick = () => addBlock('trigger', group);
+
+					bottom.appendChild(add);
+
+					logic.setAttribute('value', window.logic[0].toUpperCase());
+					logic.setAttribute('type', 'button');
+					logic.setAttribute('class', 'block-logic white');
+
+					logic.onclick = () => {
+
+						logic.value = (logic.value == window.logic[0].toUpperCase() ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase());
+					};
+
+					bottom.appendChild(logic);
+
+					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.remove_group%</div>';
+
+					remove.setAttribute('type', 'button');
+					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right split layer');
+
+					remove.onclick = () => document.getElementById('trigger').removeChild(group);
+					
+					bottom.appendChild(remove);
+
+					group.appendChild(bottom);
+
+					document.getElementById('trigger').insertBefore(group, document.getElementById('trigger').getElementsByClassName('bottom')[document.getElementById('trigger').getElementsByClassName('bottom').length - 1]);
+				}
+
+				function addBlock(type, root)
+				{
+					var element = document.createElement('div');
+					var p = document.createElement('p');
+					var b = document.createElement('b');
+					var select = document.createElement('div');
+
+					b.innerHTML = '%automation.device%: ';
+
+					select.className = 'custom-select';
+					select.style.width = '100%';
+
+					element.className = 'block';
+
+					var html = '<select name="service" onchange="updateValueInput(this)">';
+
+					if(type == 'result')
+					{
+						html += '<option img="/img/link.png" type="url">%automation.open_link%</option>';
+					}
+
+					for(var i = 0; i < services.length; i++)
+					{
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || services[i].type != 'statelessswitch'))
+						{
+							html += '<option name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+						}
+					}
+
+					html += '</select>';
+
+					select.innerHTML = html;
+			   
+					var operations = document.createElement('div');
+
+					operations.className = 'custom-select';
+					operations.style.width = '100%';
+					operations.style.marginRight = '20px';
+					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
+
+					if(type == 'trigger')
+					{
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
+					}
+
+					console.log(root);
+
+					root.insertBefore(element, root.children[root.children.length - 1]);
+				
+					element.appendChild(Replacer.createSelectMenu(select, true));
+					element.appendChild(Replacer.createSelectMenu(operations));
+
+					element.innerHTML += '<input placeholder="' + (type == 'result' ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
+					element.innerHTML += '<div class="automation-color-container"><input placeholder="%automation.hue%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input placeholder="%automation.saturation%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input placeholder="%automation.brightness%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"></div>';
+
+					var value = document.createElement('div');
+
+					value.className = 'custom-select';
+					value.style.width = '100%';
+					value.style.marginRight = '20px';
+					value.innerHTML = '<select name="value"><option selected value="false">false</option><option value="true">true</select>';
+
+					element.appendChild(Replacer.createSelectMenu(value));
+
+					updateValueInput(value);
+
+					element.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+				}
+
+				async function createAutomation()
+				{
+					var automationOBJ = {};
+
+					automationOBJ.id = parseInt(document.getElementById('create').getElementsByTagName('input')[0].value);
+					automationOBJ.name = document.getElementById('create').getElementsByTagName('input')[1].value;
+
+					if(document.getElementById('create').getElementsByTagName('input')[2].value != '')
+					{
+						automationOBJ.group = document.getElementById('create').getElementsByTagName('input')[2].value;
+					}
+
+					automationOBJ.active = true;
+					automationOBJ.trigger = { logic : document.getElementById('trigger').getElementsByClassName('block-logic')[0].value, groups : [] };
+
+					for(var i = 0; i < document.getElementById('trigger').getElementsByClassName('group').length; i++)
+					{
+						var group = document.getElementById('trigger').getElementsByClassName('group')[i], groupOBJ = { logic : group.getElementsByClassName('block-logic')[0].value, blocks : [] };
+
+						for(var j = 0; j < group.getElementsByClassName('block').length; j++)
+						{
+							var block = {};
+							var device = group.getElementsByClassName('block')[j].children[0].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = group.getElementsByClassName('block')[j].children[1].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = group.getElementsByClassName('block')[j].children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								block.url = value.value;
+							}
+							else
+							{
+								block.id = device.getAttribute('id');
+								block.name = device.getAttribute('name');
+								block.letters = device.getAttribute('letters');
+								block.plugin = device.getAttribute('plugin');
+								block.state = {};
+								
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
+								{
+									block.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										block.state.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										block.state.value = 'true';
+										block.state.brightness = value.value;
+									}
+									else if(operation.value == 'color')
+									{
+										block.state.value = 'true';
+
+										if(group.getElementsByClassName('block')[j].children[3].children[0].value != '')
+										{
+											block.state.hue = group.getElementsByClassName('block')[j].children[3].children[0].value;
+										}
+
+										if(group.getElementsByClassName('block')[j].children[3].children[1].value != '')
+										{
+											block.state.saturation = group.getElementsByClassName('block')[j].children[3].children[1].value;
+										}
+
+										if(group.getElementsByClassName('block')[j].children[3].children[2].value != '')
+										{
+											block.state.brightness = group.getElementsByClassName('block')[j].children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									block.operation = operation.value;
+									block.state.value = group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									block.operation = operation.value;
+									block.state.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									block.operation = operation.value;
+									block.state.value = group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
+
+								for(const x in block.state)
+								{
+									try
+									{
+										block.state[x] = JSON.parse(block.state[x]);
+									}
+									catch(e)
+									{
+										console.error(e);
+									}
+								}
+							}
+
+							groupOBJ.blocks.push(block);
+						}
+
+						automationOBJ.trigger.groups.push(groupOBJ);
+					}
+
+					automationOBJ.result = [];
+
+					for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
+					{
+						var r = document.getElementById('result').children[i], block = {};
+
+						for(var j = 0; j < r.children.length; j++)
+						{
+							var device = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = r.children[1].getElementsByTagName('select')[0].children[r.children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = r.children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								block.url = value.value;
+							}
+							else
+							{
+								block.id = device.getAttribute('id');
+								block.name = device.getAttribute('name');
+								block.letters = device.getAttribute('letters');
+								block.plugin = device.getAttribute('plugin');
+								block.state = {};
+								
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
+								{
+									block.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										block.state.value = 'true';
+										block.state.brightness = value.value;
+									}
+									else if(operation.value == 'color')
+									{
+										block.state.value = 'true';
+
+										if(r.children[3].children[0].value != '')
+										{
+											block.state.hue = r.children[3].children[0].value;
+										}
+
+										if(r.children[3].children[1].value != '')
+										{
+											block.state.saturation = r.children[3].children[1].value;
+										}
+
+										if(r.children[3].children[2].value != '')
+										{
+											block.state.brightness = r.children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									block.operation = operation.value;
+									block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									block.operation = operation.value;
+									block.state.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									block.operation = operation.value;
+									block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
+
+								for(const x in block.state)
+								{
+									try
+									{
+										block.state[x] = JSON.parse(block.state[x]);
+									}
+									catch(e)
+									{
+										console.error(e);
+									}
+								}
+							}
+						}
+
+						automationOBJ.result.push(block);
+					}
+
+					console.log('SAVE AUTOMATION', automationOBJ);
+
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'save',
+						pending : { value : '%automation.creating% ..' },
+						executeError : { value : '%automation.create_failed%!' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
+					};
+
+					var created = await Query.complexFetch('/serverside/create-automation', 5000, 2, overlays, false, JSON.stringify(automationOBJ));
+
+					if(created == 'Success')
+					{
+						for(const id in plugins)
+						{
+							if(id != 'homebridge-syntex' && plugins[id].config != null && plugins[id].config.options != null && plugins[id].config.options.port != null)
+							{
+								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + plugins[id].config.options.port + '/reload-automation', 5000, 2, {}, true);
+							}
+						}
+						
+						automation.push(automationOBJ);
+
+						document.getElementById('no-automation').style.display = 'none';
+
+						sortAutomation(true);
+
+						await Essentials.newTimeout(200);
+
+						openViewPage('create');
+
+						await Essentials.newTimeout(600);
+						
+						renderGUI();
+
+						Essentials.removeOverlays(document.getElementById('save-btn'), true);
+					}
+				}
+
+				function getNextID()
+				{
+					var lastID = -1;
+
+					for(const a in automation)
+					{
+						if(automation[a].id > lastID)
+						{
+							lastID = automation[a].id;
+						}
+					}
+
+					return lastID + 1;
+				}
+
+				function loadServices()
+				{
+					for(var i = 0; i < accessories.length; i++)
+					{
+						if(accessories[i].plugin.alias == 'SynTex')
+						{
+							accessories[i].plugin.alias = 'SynTexWebHooks';
+						}
+
+						if(accessories[i].services == 'rgbw' || accessories[i].services == 'rgbww' || accessories[i].services == 'rgbcw')
+						{
+							accessories[i].services = 'rgb';
+						}
+
+						if(Array.isArray(accessories[i].services))
+						{
+							var counter = { type : '', count : 0 };
+
+							for(var j = 0; j < accessories[i].services.length; j++)
+							{
+								if(accessories[i].services[j] instanceof Object)
+								{
+									if(counter.type != accessories[i].services[j].type)
+									{
+										counter.count = 0;
+									}
+
+									counter.type = accessories[i].services[j].type;
+									
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin.alias });
+								}
+								else
+								{
+									if(counter.type != accessories[i].services[j])
+									{
+										counter.count = 0;
+									}
+
+									counter.type = accessories[i].services[j];
+
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin.alias });
+								}
+
+								counter.count++;
+							}
+						}
+						else if(accessories[i].services instanceof Object)
+						{
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin.alias });
+						}
+						else
+						{
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin.alias });
+						}
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				function getDataType(type)
+				{
+					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'statelessswitch')
+					{
+						return 'numeric';
+					}
+					else
+					{
+						return 'boolean';
+					}
+				}
+
+				function removeEntry(btn)
+				{
+					btn.parentElement.parentElement.removeChild(btn.parentElement);
+				}
+
+			</script>
+		</div>
+	</body>
+</html>

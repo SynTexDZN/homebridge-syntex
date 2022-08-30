@@ -1,0 +1,1051 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%menu.automation%: %general.loading% ..</title>
+			<script type="module">
+
+				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				{
+					PageManager.setHeader('%general.settings%');
+
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form" value="%general.save%"></div></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					PageManager.switchPage('automation-infos', 'settings', true);
+				}
+				else
+				{
+					PageManager.setHeader('%menu.automation%', '%general.loading% ..');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+				}
+			
+			</script>
+			<div id="automation-infos" class="main" style="transition: .2s opacity ease-in-out">
+				<div class="panel" style="margin-top: 0">
+					<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
+					<div class="panel-content"></div>
+				</div>
+				<div class="panel">
+					<h2 class="title-container">%automation.trigger%</h2>
+					<div class="panel-content" id="trigger" style="text-align: center"></div>
+				</div>
+				<div class="panel">
+					<h2 class="title-container">%automation.result%</h2>
+					<div class="panel-content" id="result" style="text-align: center"></div>
+				</div>
+			</div>
+			<div class="main" id="settings" style="display: none; transition: .2s opacity ease-in-out">
+				<form id="settings-form" style="margin-bottom: 0" onsubmit="event.preventDefault(); modifyAutomation();">
+					<div class="panel" style="margin-top: 0">
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
+						<div class="panel-content">
+							<p><b>%general.id%: <input type="button" style="max-width: 150px" disabled></b></p>
+							<p autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+							<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.trigger%</h2>
+						<div class="panel-content" id="edit-trigger" style="text-align: center"></div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
+						<div class="panel-content" id="edit-result" style="text-align: center"></div>
+					</div>
+				</form>
+			</div>
+			<script type="module">
+
+				window.automation = [];
+				window.accessories = JSON.parse('<%accessories%>');
+				window.services = [];
+				window.id = (new URL(window.location.href)).searchParams.get('id');
+				window.resetting = false;
+
+				if(id != null)
+				{
+					Query.complexFetch('/serverside/automation', 5000, 2, {}, false).then(function(a) {
+
+						automation = JSON.parse(a);
+						
+						setupViewPage();
+						setupSettingsPage();
+
+						var a = ['trigger', 'result'];
+
+						for(var i = 0; i < a.length; i++)
+						{
+							var addBtn = document.createElement('input');
+							
+							addBtn.setAttribute('value', '+');
+							addBtn.setAttribute('onclick', 'addElement(' + "'" + a[i] + "'" + ')');
+							addBtn.setAttribute('type', 'button');
+							addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
+							addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+
+							document.getElementById('edit-' + a[i]).appendChild(addBtn);
+						}
+
+						loadServices();
+
+						for(var i = 0; i < automation.length; i++)
+						{
+							if(automation[i].id == id)
+							{
+								var x = ['trigger', 'result'];
+
+								for(const y in x)
+								{
+									if(automation[i][x[y]] != null && automation[i][x[y]].length > 0)
+									{
+										for(var j = 0; j < automation[i][x[y]].length; j++)
+										{
+											addElement(x[y], automation[i][x[y]][j]);
+										}
+									}
+								}
+							}
+						}
+
+						Preloader.finish();
+					});
+				}
+				else
+				{
+					Preloader.finish();
+				}
+
+				loadPluginData();
+
+			</script>
+			<script>
+
+				// NOTE: Reload Plugin Data
+
+				window.plugins = {};
+
+				function loadPluginData()
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+
+							try
+							{
+								plugins = JSON.parse(p);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
+
+			</script>
+			<script>
+
+				async function openSettings(previous)
+				{
+					PageManager.setHeader('%general.settings%', null, true);
+
+					var main = document.createElement('div');
+
+					main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeSettings(' + "'settings'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="settings-form" value="%general.save%"></div></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'settings', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings');
+					}
+				}
+
+				async function closeSettings(previous)
+				{
+					PageManager.setHeader('%menu.automation%', null, true);
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					await PageManager.switchPage(previous, 'automation-infos', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/automation/modify?id=' + id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/automation/modify?id=' + id);
+					}
+				}
+
+				function setupViewPage()
+				{
+					for(var i = 0; i < automation.length; i++)
+					{
+						if(automation[i].id == id)
+						{
+							document.getElementsByTagName('title')[0].innerHTML = '%menu.automation%: ' + automation[i].name;
+							document.getElementById('automation-infos').children[0].innerHTML = '<h2 class="title-container" style="margin-bottom: 40px">Informationen</h2>'
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.id%: </b>' + automation[i].id + '</p>';
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.name%: </b>' + automation[i].name + '</p>';
+
+							if(automation[i].group != null && automation[i].group != '')
+							{
+								document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%general.group%: </b>' + automation[i].group + '</p>';
+							}
+
+							document.getElementById('automation-infos').children[0].innerHTML += '<p><b>%automation.active%: </b>' + (automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '</p>';
+
+							PageManager.setHeader(null, automation[i].name);
+
+							var panel = document.createElement('div');
+
+							if(automation[i].trigger != null)
+							{
+								for(const j in automation[i].trigger.groups)
+								{
+									for(const k in automation[i].trigger.groups[j].blocks)
+									{
+										var column = document.createElement('div');
+										var category = document.createElement('div');
+										var row = document.createElement('div');
+
+										column.className = 'column';
+
+										category.innerHTML = k == 0 ? '%automation.if%' : automation[i].trigger.groups[j].logic == 'AND' ? '%automation.and%' : '%automation.or%';
+										category.className = 'primary';
+
+										column.appendChild(category);
+
+										row.className = 'secondary';
+
+										row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+										if(automation[i].trigger.groups[j].blocks[k].url == null && automation[i].trigger.groups[j].blocks[k].name != null && automation[i].trigger.groups[j].blocks[k].letters != null && automation[i].trigger.groups[j].blocks[k].operation != null && automation[i].trigger.groups[j].blocks[k].state.value != null)
+										{
+											var src = Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]);
+											var val = automation[i].trigger.groups[j].blocks[k].state.value == true ? servicePresets[Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0])].active.text : automation[i].trigger.groups[j].blocks[k].state.value == false ? servicePresets[Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0])].inactive.text : automation[i].trigger.groups[j].blocks[k].state.value;
+
+											if(Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]) == 'temperature')
+											{
+												src = 'climate';
+											}
+
+											if(Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]) == 'blind')
+											{
+												if(automation[i].trigger.groups[j].blocks[k].state.value == 100)
+												{
+													val = servicePresets[Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0])].active.text;
+												}
+												else if(automation[i].trigger.groups[j].blocks[k].state.value == 0)
+												{
+													val = servicePresets[Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0])].inactive.text;
+												}
+											}
+
+											var dev = '<div><img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger.groups[j].blocks[k].name + ' ' + automation[i].trigger.groups[j].blocks[k].operation + ' ' + val;
+										
+											if(automation[i].trigger.groups[j].blocks[k].hue != null)
+											{
+												dev += ' | %automation.hue% = ' + automation[i].trigger.groups[j].blocks[k].hue;
+											}
+
+											if(automation[i].trigger.groups[j].blocks[k].saturation != null)
+											{
+												dev += ' | %automation.saturation% = ' + automation[i].trigger.groups[j].blocks[k].saturation;
+											}
+
+											if(automation[i].trigger.groups[j].blocks[k].brightness != null)
+											{
+												dev += ' | %automation.brightness% = ' + automation[i].trigger.groups[j].blocks[k].brightness;
+											}
+
+											dev += '</div>';
+
+											row.innerHTML = dev;
+										}
+										else if(automation[i].trigger.groups[j].blocks[k].url)
+										{
+											row.innerHTML = '<div><img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].trigger.groups[j].blocks[k].url + '"</div>';
+										}
+									
+										column.appendChild(row);
+										panel.appendChild(column);
+									}
+
+									var logic = document.createElement('h2');
+
+									logic.innerHTML = automation[i].trigger.logic == 'AND' ? '%automation.and%' : '%automation.or%';
+									logic.className = 'title-container';
+
+									if(j != automation[i].trigger.groups.length - 1)
+									{
+										panel.appendChild(logic);
+									}
+								}
+
+								panel.className = 'table';
+
+								document.getElementById('trigger').innerHTML = '';
+								document.getElementById('trigger').appendChild(panel);
+							}
+
+							var panel = document.createElement('div');
+
+							for(const j in automation[i].result)
+							{
+								var column = document.createElement('div');
+								var category = document.createElement('div');
+								var row = document.createElement('div');
+
+								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+								row.className = 'secondary';
+
+								column.className = 'column';
+
+								category.innerHTML = j == 0 ? '%automation.then%' : '%automation.and%';
+								category.className = 'primary';
+
+								column.appendChild(category);
+
+								if(automation[i].result[j].url == null && automation[i].result[j].name != null && automation[i].result[j].letters != null && automation[i].result[j].operation != null && automation[i].result[j].state.value != null)
+								{
+									var src = Essentials.letterToType(automation[i].result[j].letters[0]);
+									var val = automation[i].result[j].state.value == true ? servicePresets[Essentials.letterToType(automation[i].result[j].letters[0])].active.text : automation[i].result[j].state.value == false ? servicePresets[Essentials.letterToType(automation[i].result[j].letters[0])].inactive.text : automation[i].result[j].state.value;
+
+									if(Essentials.letterToType(automation[i].result[j].letters[0]) == 'temperature')
+									{
+										src = 'climate';
+									}
+
+									if(Essentials.letterToType(automation[i].result[j].letters[0]) == 'blind')
+									{
+										if(automation[i].result[j].state.value == 100)
+										{
+											val = servicePresets[Essentials.letterToType(automation[i].result[j].letters[0])].active.text;
+										}
+										else if(automation[i].result[j].state.value == 0)
+										{
+											val = servicePresets[Essentials.letterToType(automation[i].result[j].letters[0])].inactive.text;
+										}
+									}
+
+									var dev = '<div><img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].result[j].name + ' ' + automation[i].result[j].operation + ' ' + val;
+
+									if(automation[i].result[j].state.hue != null)
+									{
+										dev += ' | %automation.hue% = ' + automation[i].result[j].state.hue;
+									}
+
+									if(automation[i].result[j].state.saturation != null)
+									{
+										dev += ' | %automation.saturation% = ' + automation[i].result[j].state.saturation;
+									}
+
+									if(automation[i].result[j].state.brightness != null)
+									{
+										dev += ' | %automation.brightness% = ' + automation[i].result[j].state.brightness;
+									}
+
+									dev += '</div>';
+
+									row.innerHTML = dev;
+								}
+								else if(automation[i].result[j].url)
+								{
+									row.innerHTML = '<div><img class="icon" src="/img/link.png">%automation.open_link%: "' + automation[i].result[j].url + '"</div>';
+								}
+
+								column.appendChild(row);
+								panel.appendChild(column);
+							}
+
+							panel.className = 'table';
+
+							document.getElementById('result').innerHTML = '';
+							document.getElementById('result').appendChild(panel);
+						}
+					}
+				}
+
+				function setupSettingsPage()
+				{
+					for(var i = 0; i < automation.length; i++)
+					{
+						if(automation[i].id == id)
+						{
+							document.getElementById('settings').getElementsByTagName('input')[0].value = automation[i].id;
+							document.getElementById('settings').getElementsByTagName('input')[1].value = automation[i].name;
+							document.getElementById('settings').getElementsByTagName('input')[2].value = automation[i].group || '';
+							document.getElementById('settings').getElementsByTagName('input')[3].value = automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%';
+							document.getElementById('settings').getElementsByTagName('input')[3].className = automation[i].active ? 'white' : 'outline';
+						}
+					}
+				}
+
+				function switchFormButton(btn)
+				{
+					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
+					{
+						btn.setAttribute('class', 'outline');
+						btn.setAttribute('value', '%characteristics.boolean.inactive%');
+					}
+					else
+					{
+						btn.setAttribute('class', 'white');
+						btn.setAttribute('value', '%characteristics.boolean.active%');
+					}
+				}
+
+				function getDataType(type)
+				{
+					if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'statelessswitch')
+					{
+						return 'numeric';
+					}
+					else
+					{
+						return 'boolean';
+					}
+				}
+
+				function updateOperation(select)
+				{
+					var availableOptions = [],
+						customSelect = Replacer.getSelect(select.parentElement.children[1]),
+						selectOptions = select.getElementsByTagName('select')[0].children[select.getElementsByTagName('select')[0].selectedIndex];
+
+					if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '3')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+					}
+					else if(selectOptions.hasAttribute('letters') && selectOptions.getAttribute('letters')[0] == '9')
+					{
+						availableOptions = ['%automation.switch%', '%automation.dimming%'];
+					}
+					else if(selectOptions.getAttribute('type') == 'boolean' || selectOptions.getAttribute('type') == 'url')
+					{
+						availableOptions = ['='];
+					}
+					else if(selectOptions.getAttribute('type') == 'numeric')
+					{
+						availableOptions = ['=', '&gt;', '&lt;'];
+					}
+
+					for(const i in customSelect.items)
+					{
+						if(availableOptions.includes(customSelect.items[i].text))
+						{
+							customSelect.items[i].element.style.display = '';
+						}
+						else
+						{
+							customSelect.items[i].element.style.display = 'none';
+						}
+					}
+
+					if(!availableOptions.includes(customSelect.selected.text))
+					{
+						if(selectOptions.hasAttribute('letters') && (selectOptions.getAttribute('letters')[0] == '3' || selectOptions.getAttribute('letters')[0] == '9'))
+						{
+							if(select.parentElement.parentElement.id != 'edit-result')
+							{
+								customSelect.updateSelected(3);
+							}
+							else
+							{
+								customSelect.updateSelected(1);
+							}
+						}
+						else
+						{
+							customSelect.updateSelected(0);
+						}
+					}
+				}
+
+				function updateValueInput(select)
+				{
+					updateOperation(select.parentElement.children[0]);
+
+					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
+					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
+
+					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3' && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.color%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = '';
+					}
+					else if(option.hasAttribute('letters') && (option.getAttribute('letters')[0] == '3' || option.getAttribute('letters')[0] == '9') && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+					}
+					else if(option.getAttribute('type') == 'boolean')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[2].removeAttribute('required');
+						select.parentElement.children[4].setAttribute('required', '');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+						valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+						valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+						valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
+
+						var options = select.parentElement.children[4].getElementsByClassName('select-items')[0].children;
+
+						for(var i = 0; i < options.length; i++)
+						{
+							options[select.parentElement.children[4].getElementsByTagName('select')[0].selectedIndex].click();
+						}
+					}
+					else if(option.getAttribute('type') == 'numeric' || option.getAttribute('type') == 'url')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						if(option.getAttribute('type') == 'numeric')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.number%');
+							select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+						}
+						else if(option.getAttribute('type') == 'url')
+						{
+							select.parentElement.children[2].setAttribute('placeholder', '%automation.link%');
+							select.parentElement.children[2].removeAttribute('pattern');
+						}
+					}
+				}
+
+				function updateLightInputs(select)
+				{
+					var o = select.getElementsByTagName('select')[0].selectedIndex;
+					var option = select.getElementsByTagName('select')[0].children[o];
+
+					if(option.innerHTML == '%automation.switch%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('hidden');
+						select.parentElement.children[4].setAttribute('required', '');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						if(option.hasAttribute('letters'))
+						{
+							var valueSelect = Replacer.getSelect(select.parentElement.children[4]);
+
+							valueSelect.items[0].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].inactive.text;
+							valueSelect.items[1].element.getElementsByClassName('select-text')[0].innerHTML = servicePresets[Essentials.letterToType(option.getAttribute('letters')[0])].active.text;
+							valueSelect.selected.display.innerHTML = valueSelect.selected.element.innerHTML;
+						}
+					}
+					else if(option.innerHTML == '%automation.dimming%')
+					{
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[2].removeAttribute('hidden');
+						select.parentElement.children[2].setAttribute('required', '');
+						select.parentElement.children[4].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'none';
+
+						select.parentElement.children[2].setAttribute('placeholder', '%automation.brightness%');
+						select.parentElement.children[2].setAttribute('pattern', '[0-9-]+');
+					}
+					else if(option.innerHTML == '%automation.color%')
+					{
+						select.parentElement.children[2].setAttribute('hidden', '');
+						select.parentElement.children[4].setAttribute('hidden', '');
+						select.parentElement.children[4].removeAttribute('required');
+						select.parentElement.children[2].removeAttribute('required');
+
+						select.parentElement.children[3].style.display = 'grid';
+					}
+				}
+
+				function addElement(type, e)
+				{
+					var element = document.createElement('div');
+					var p = document.createElement('p');
+					var b = document.createElement('b');
+					var select = document.createElement('div');
+
+					b.innerHTML = '%automation.device%: ';
+
+					select.className = 'custom-select';
+					select.style.marginRight = '20px';
+					select.style.width = '100%';
+
+					element.className = 'block';
+
+					var html = '<select name="service" onchange="updateValueInput(this)">';
+
+					if(type == 'result')
+					{
+						html += '<option ' + (e && e.url ? 'selected' : '') + ' img="/img/link.png" type="url">%automation.open_link%</option>';
+					}
+
+					for(var i = 0; i < services.length; i++)
+					{
+						if(services[i].type != 'lcd' && services[i].type != 'bridge' && services[i].type != 'unsupported' && services[i].type != 'removed' && (type == 'result' || services[i].type != 'statelessswitch'))
+						{
+							html += '<option ' + (e && services[i].id == e.id && services[i].letters == e.letters ? 'selected' : '') + ' name="' + services[i].name + '" letters="' + services[i].letters + '" id="' + services[i].id + '" plugin="' + services[i].plugin + '" img="/img/accessory/' + services[i].type + '.png" type="' + getDataType(services[i].type) + '">' + services[i].name + '</option>';
+						}
+					}
+
+					html += '</select>';
+
+					select.innerHTML = html;
+			   
+					var operations = document.createElement('div');
+
+					operations.className = 'custom-select';
+					operations.style.width = '100%';
+					operations.style.marginRight = '20px';
+
+					var isSelected = (operation) => {
+
+						if(e != null && e.letters != null)
+						{
+							if(e.letters[0] == '3' && operation == 'color' && e.state.hue != null && e.state.saturation != null && e.state.brightness != null)
+							{
+								return true;
+							}
+							else if((e.letters[0] == '3' || e.letters[0] == '9') && operation == 'switch' && e.state.hue == null && e.state.saturation == null && e.state.brightness == null)
+							{
+								return true;
+							}
+							else if((e.letters[0] == '3' || e.letters[0] == '9') && operation == 'dimming' && e.state.brightness != null && e.state.saturation == null && e.state.hue == null)
+							{
+								return true;
+							}
+							else if(e.operation == '=' && operation == '=' || e.operation == '>' && operation == '>' || e.operation == '<'  && operation == '<')
+							{
+								return true;
+							}
+						}
+
+						return false;
+					};
+
+					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option ' + (isSelected('=') ? 'selected' : '') + ' value="=">=</option><option ' + (isSelected('switch') ? 'selected' : '') + ' value="switch">%automation.switch%</option><option ' + (isSelected('dimming') ? 'selected' : '') + ' value="brightness">%automation.dimming%</option><option ' + (isSelected('color') ? 'selected' : '') + ' value="color">%automation.color%</option></select>';
+
+					if(type != 'result')
+					{
+						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option ' + (isSelected('=') ? 'selected' : '') + ' value="=">=</option><option ' + (isSelected('>') ? 'selected' : '') + ' value=">">></option><option ' + (isSelected('<') ? 'selected' : '') + ' value="<"><</option><option ' + (isSelected('switch') ? 'selected' : '') + ' value="switch">%automation.switch%</option><option ' + (isSelected('dimming') ? 'selected' : '') + ' value="brightness">%automation.dimming%</option><option ' + (isSelected('color') ? 'selected' : '') + ' value="color">%automation.color%</option></select>';
+					}
+
+					document.getElementById('edit-' + type).insertBefore(element, document.getElementById('edit-' + type).getElementsByClassName('add-entry-button')[0]);
+				
+					element.appendChild(Replacer.createSelectMenu(select, true));
+					element.appendChild(Replacer.createSelectMenu(operations));
+
+					var letters = e != null ? e.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');
+
+					element.innerHTML += '<input value="' + (e ? e.url ? e.url : isSelected('dimming') ? e.state.brightness : getDataType(Essentials.letterToType(letters[0])) == 'numeric' ? e.state.value : '' : '') + '" placeholder="' + (!e || e.url ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
+					element.innerHTML += '<div class="automation-color-container"><input ' + (e && e.state.hue != null ? 'value="' + e.state.hue + '"' : '') + ' placeholder="%automation.hue%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input ' + (e && e.state.saturation != null ? 'value="' + e.state.saturation + '"' : '') + ' placeholder="%automation.saturation%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"><input ' + (e && e.state.brightness != null ? 'value="' + e.state.brightness + '"' : '') + ' placeholder="%automation.brightness%" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important"></div>';
+
+					var value = document.createElement('div');
+
+					value.className = 'custom-select';
+					value.style.width = '100%';
+					value.style.marginRight = '20px';
+					value.innerHTML = '<select name="value"><option ' + (!e || e.state.value != true ? 'selected' : '') + ' value="false">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? servicePresets[Essentials.letterToType(e.letters[0])].inactive.text : 'false') + '</option><option ' + (e && e.state.value == true ? 'selected' : '') + ' value="true">' + (e != null && e.letters != null && getDataType(Essentials.letterToType(e.letters[0])) == 'boolean' ? servicePresets[Essentials.letterToType(e.letters[0])].active.text : 'true') + '</select>';
+
+					element.appendChild(Replacer.createSelectMenu(value));
+
+					updateValueInput(value);
+
+					element.innerHTML += '<button onclick="removeEntry(this)" class="image-button white" style="width: auto!important"><img class="icon-inverted" style="height: 100%" src="/img/delete.png"></button>';
+				}
+
+				function loadServices()
+				{
+					for(var i = 0; i < accessories.length; i++)
+					{
+						if(accessories[i].plugin.alias == 'SynTex')
+						{
+							accessories[i].plugin.alias = 'SynTexWebHooks';
+						}
+
+						if(accessories[i].services == 'rgbw' || accessories[i].services == 'rgbww' || accessories[i].services == 'rgbcw')
+						{
+							accessories[i].services = 'rgb';
+						}
+
+						if(Array.isArray(accessories[i].services))
+						{
+							var counter = { type : '', count : 0 };
+
+							for(var j = 0; j < accessories[i].services.length; j++)
+							{
+								if(accessories[i].services[j] instanceof Object)
+								{
+									if(counter.type != accessories[i].services[j].type)
+									{
+										counter.count = 0;
+									}
+
+									counter.type = accessories[i].services[j].type;
+									
+									services.push({ type : accessories[i].services[j].type, name : (accessories[i].services[j].name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j].type) + counter.count, plugin : accessories[i].plugin.alias });
+								}
+								else
+								{
+									if(counter.type != accessories[i].services[j])
+									{
+										counter.count = 0;
+									}
+
+									counter.type = accessories[i].services[j];
+
+									services.push({ type : accessories[i].services[j], name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services[j]) + counter.count, plugin : accessories[i].plugin.alias });
+								}
+
+								counter.count++;
+							}
+						}
+						else if(accessories[i].services instanceof Object)
+						{
+							services.push({ type : accessories[i].services.type, name : (accessories[i].services.name || accessories[i].name), id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services.type) + '0', plugin : accessories[i].plugin.alias });
+						}
+						else
+						{
+							services.push({ type : accessories[i].services, name : accessories[i].name, id : accessories[i].id, letters : Essentials.typeToLetter(accessories[i].services) + '0', plugin : accessories[i].plugin.alias });
+						}
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				function removeAutomation(btn)
+				{
+					var dialogue = {
+                        title : '%general.attention%',
+                        subtitle : '%automation.remove_confirm%?',
+                        buttons : [
+                            {
+                                text : '%general.cancel%',
+                                close : true
+                            },
+                            {
+                                text : '%general.remove%',
+                                color : 'red',
+                                close : true,
+                                action : () => removeConfirm(btn)
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+				}
+				
+				async function removeConfirm(btn)
+				{
+					if(!resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'update',
+							pending : { value : '%automation.removing% ..', z : 2 },
+							executeError : { value : '%automation.remove_failed%!', z : 3 },
+							connectionError : { value : '%general.bridge_connection_error%', z : 3 }
+						};
+
+						resetting = true;
+
+						if(await Query.complexFetch('/serverside/remove-automation?id=' + id, 5000, 2, overlays, true) == 'Success')
+						{
+							for(const id in plugins)
+							{
+								if(id != 'homebridge-syntex' && plugins[id].config != null && plugins[id].config.options != null && plugins[id].config.options.port != null)
+								{
+									await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + plugins[id].config.options.port + '/reload-automation', 5000, 2, {}, true);
+								}
+							}
+
+							await Essentials.newTimeout(200);
+
+							Essentials.leavePage('/automation');
+						}
+						else
+						{
+							await Essentials.newTimeout(4010);
+
+							Essentials.removeOverlays(document.getElementById('reset-btn'), true);
+						}
+
+						resetting = false;
+					}
+				}
+
+				function removeEntry(btn)
+				{
+					btn.parentElement.parentElement.removeChild(btn.parentElement);
+				}
+			
+				async function modifyAutomation()
+				{
+					var form = document.getElementsByTagName('form')[0];
+					var automationOBJ = {};
+
+					automationOBJ.id = parseInt(document.getElementById('settings').getElementsByTagName('input')[0].value);
+					automationOBJ.name = document.getElementById('settings').getElementsByTagName('input')[1].value;
+					
+					if(document.getElementById('settings').getElementsByTagName('input')[2].value != '')
+					{
+						automationOBJ.group = document.getElementById('settings').getElementsByTagName('input')[2].value;
+					}
+
+					automationOBJ.active = document.getElementById('settings').getElementsByTagName('input')[3].value == '%characteristics.boolean.active%';
+
+					automationOBJ.trigger = [];
+
+					for(var i = 0; i < document.getElementById('edit-trigger').children.length - 1; i++)
+					{
+						var t = document.getElementById('edit-trigger').children[i], trigger = {};
+
+						for(var j = 0; j < t.children.length; j++)
+						{
+							var device = t.children[0].getElementsByTagName('select')[0].children[t.children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = t.children[1].getElementsByTagName('select')[0].children[t.children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = t.children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								trigger.url = value.value;
+							}
+							else
+							{
+								trigger.id = device.getAttribute('id');
+								trigger.name = device.getAttribute('name');
+								trigger.letters = device.getAttribute('letters');
+								trigger.plugin = device.getAttribute('plugin');
+								
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
+								{
+									trigger.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										trigger.value = true;
+										trigger.brightness = value.value;
+									}
+									else if(operation.value == 'color')
+									{
+										trigger.value = true;
+
+										if(t.children[3].children[0].value != '')
+										{
+											trigger.hue = t.children[3].children[0].value;
+										}
+
+										if(t.children[3].children[1].value != '')
+										{
+											trigger.saturation = t.children[3].children[1].value;
+										}
+
+										if(t.children[3].children[2].value != '')
+										{
+											trigger.brightness = t.children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									//TODO: TEST
+
+									trigger.operation = operation.value;
+									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									trigger.operation = operation.value;
+									trigger.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									trigger.operation = operation.value;
+									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
+							}
+						}
+						
+						automationOBJ.trigger.push(trigger);
+					}
+
+					automationOBJ.result = [];
+
+					for(var i = 0; i < document.getElementById('edit-result').children.length - 1; i++)
+					{
+						var r = document.getElementById('edit-result').children[i], result = {};
+
+						for(var j = 0; j < r.children.length; j++)
+						{
+							var device = r.children[0].getElementsByTagName('select')[0].children[r.children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = r.children[1].getElementsByTagName('select')[0].children[r.children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = r.children[2];
+
+							if(device.getAttribute('type') == 'url')
+							{
+								result.url = value.value;
+							}
+							else
+							{
+								result.id = device.getAttribute('id');
+								result.name = device.getAttribute('name');
+								result.letters = device.getAttribute('letters');
+								result.plugin = device.getAttribute('plugin');
+								
+								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
+								{
+									result.operation = '=';
+
+									if(operation.value == 'switch')
+									{
+										result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									}
+									else if(operation.value == 'brightness')
+									{
+										result.value = true;
+										result.brightness = value.value;
+									}
+									else if(operation.value == 'color')
+									{
+										result.value = true;
+
+										if(r.children[3].children[0].value != '')
+										{
+											result.hue = r.children[3].children[0].value;
+										}
+
+										if(r.children[3].children[1].value != '')
+										{
+											result.saturation = r.children[3].children[1].value;
+										}
+
+										if(r.children[3].children[2].value != '')
+										{
+											result.brightness = r.children[3].children[2].value;
+										}
+									}
+								}
+								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+								{
+									//TODO: TEST
+
+									result.operation = operation.value;
+									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+								}
+								else if(device.getAttribute('type') == 'numeric')
+								{
+									result.operation = operation.value;
+									result.value = value.value;
+								}
+								else if(device.getAttribute('type') == 'boolean')
+								{
+									result.operation = operation.value;
+									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
+							}
+						}
+
+						automationOBJ.result.push(result);
+					}
+
+					console.log('SAVE AUTOMATION', automationOBJ);
+
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'save',
+						pending : { value : '%automation.reloading% ..' },
+						executeError : { value : '%automation.reload_failed%!' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
+					};
+
+					var created = await Query.complexFetch('/serverside/modify-automation', 5000, 2, overlays, false, JSON.stringify(automationOBJ));
+
+					if(created == 'Success')
+					{
+						for(const id in plugins)
+						{
+							if(id != 'homebridge-syntex' && plugins[id].config != null && plugins[id].config.options != null && plugins[id].config.options.port != null)
+							{
+								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + plugins[id].config.options.port + '/reload-automation', 5000, 2, {}, true);
+							}
+						}
+
+						automation = JSON.parse(await Query.complexFetch('/serverside/automation', 5000, 2, {}, false));
+
+						setupViewPage();
+
+						await Essentials.newTimeout(200);
+
+						Essentials.removeOverlays(document.getElementById('save-btn'), true);
+
+						closeSettings('settings');
+					}
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
