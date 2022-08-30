@@ -932,7 +932,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	border: 1px solid rgba(245, 245, 255, .015);
 }
 
-#devices, #plugin-container, #automation-infos, #settings-form, #automation, #automation-create-form, #config-editor, #service-form, #settings-form-main, #bridge-container
+#devices, #plugin-container, #automation-infos, #settings-form, #automation, #automation-create-form, #config-editor, #service-form, #settings-form-main, #bridge-container, #editor-form
 {
 	display: flex;
 	flex-direction: column;
@@ -1332,14 +1332,6 @@ button img
 {
 	background: var(--light-layer-two)!important;
 	cursor: default!important;
-}
-
-.automation-device-entry
-{
-	display: grid;
-	gap: 20px;
-	grid-template-columns: calc(50% - 10px) calc(20% - 50px) calc(30% - 50px) 50px;
-	margin-bottom: 20px;
 }
 
 .automation-color-container
@@ -2041,6 +2033,47 @@ button img
 	text-transform: uppercase;
 }
 
+#trigger, #result, #trigger .group
+{
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+#trigger .group
+{
+	background-color: rgb(60, 60, 80);
+	border-radius: 36px;
+	padding: 20px;
+}
+
+#trigger .group-logic
+{
+	margin: 0 auto;
+	height: 30px;
+	box-shadow: none;
+}
+
+#trigger .group-logic, #trigger .block-logic
+{
+	flex-shrink: 0;
+	width: 130px!important;
+	max-width: 130px;
+	padding-right: 17px;
+}
+
+#trigger .block, #result .block
+{
+	display: grid;
+	gap: 20px;
+	grid-template-columns: calc(50% - 10px) calc(20% - 50px) calc(30% - 50px) 50px;
+}
+
+#trigger .bottom
+{
+	display: flex;
+	gap: 20px;
+}
 
 .panel .panel-content
 {
