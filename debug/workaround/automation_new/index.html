@@ -1,0 +1,362 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%general.dashboard%: %menu.automation%</title>
+			<script type="module">
+
+				if(Essentials.getURLParams('edit') != null)
+				{
+					PageManager.setHeader('%menu.automation%', '%automation.create%');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="openViewPage(' + "'overview'" + ')"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+
+					PageManager.switchPage('overview', 'editor', true);
+				}
+				else
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%');
+					PageManager.hideFooter();
+				}
+
+			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/bridge')">%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')" disabled>%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
+			</div>
+			<div id="overview" class="page">
+				<div class="main" style="margin-bottom: 100px">
+					<div id="toolbar">
+						<div id="groups"></div>
+						<div style="display: flex; gap: 20px">
+							<button id="view-button" class="image-button" onclick="switchView(this)" view="horizontal">
+								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png">
+								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png">
+							</button>
+							<div class="custom-select" style="width: 100%">
+								<select id="sort" onchange="sortAutomation()">
+									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
+									<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
+									<option img="/img/sort-asc.png" value="id-asc">%sort.id%</option>
+									<option img="/img/sort-desc.png" value="id-desc">%sort.id%</option>
+									<option img="/img/sort-asc.png" value="activation-asc">%sort.activation%</option>
+									<option img="/img/sort-desc.png" value="activation-desc">%sort.activation%</option>
+								</select>
+								<script>
+	
+									var sort = 'id-asc', select = document.getElementById('sort');
+	
+									if(Storage.getItem('automation-sort') != null)
+									{
+										sort = Storage.getItem('automation-sort');
+									}
+	
+									for(var i = 0; i < select.children.length; i++)
+									{
+										if(select.children[i].getAttribute('value') == sort)
+										{
+											select.children[i].setAttribute('selected', '');
+										}
+									}
+	
+								</script>
+							</div>
+							<button id="add-button" class="image-button" onclick="openEditor()" view="list">
+								<img src="/img/add.png" style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)">
+							</button>
+						</div>
+					</div>
+					<p id="no-accessories" style="display: none">%automation.no_accessories%</p>
+					<p id="no-services" style="display: none">%automation.no_services%</p>
+					<p id="no-automation" style="display: none">%automation.no_automation%</p>
+					<div id="automation"></div>
+				</div>
+				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
+					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openAddPage()">
+				</div>
+			</div>
+			<div id="editor" class="page hidden">
+				<form id="editor-form" class="main" onsubmit="event.preventDefault(); editAutomation()">
+					<div class="panel">
+						<h2 class="title-container">%automation.infos%</h2>
+						<div class="panel-content padding">
+							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
+							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.trigger%</h2>
+						<div id="trigger" class="panel-content">
+							<div class="bottom">
+								<button type="button" class="gradient-blue-green add-group-button icon-button left split layer" onclick="addGroup()">
+									<div class="button-icon">
+										<img class="icon-inverted" src="/img/add.png">
+									</div>
+									<div class="button-text">Gruppe</div>
+								</button>
+								<input value="UND" type="button" class="block-logic white" onclick="switchLogic(this)">
+								<button type="button" class="icon-button right split layer">
+									<div class="button-icon">
+										<img class="icon-inverted" src="/img/settings.png">
+									</div>
+									<div class="button-text">Optionen</div>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.result%</h2>
+						<div id="result" class="panel-content">
+							<button value="+ Block" type="button" class="gradient-blue-green add-block-button icon-button left split layer" onclick="addBlock('result', document.getElementById('result'))">
+								<div class="button-icon">
+									<img class="icon-inverted" src="/img/add.png">
+								</div>
+								<div class="button-text">Block</div>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<script type="module">
+
+				Replacer.SETUP();
+
+				window.automation = [];
+				window.accessories = [];
+				window.services = [];
+				window.plugins = {};
+				
+				if(Storage.getItem('automation-view') == 'vertical')
+				{
+					/*
+					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
+					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
+					document.getElementById('toolbar').children[1].children[0].setAttribute('view', 'vertical');
+					*/
+					document.getElementById('automation').classList.add('vertical-view');
+				}
+
+				Promise.all([loadData('/serverside/plugins', 'plugins'), loadData('/serverside/automation', 'automation'), loadData('/serverside/devices', 'accessories')]).then(() => renderGUI());
+
+			</script>
+			<script>
+
+				function loadData(url, key)
+				{
+					return new Promise((resolve) => {
+
+						Query.complexFetch(url, 5000, 2, {}, false).then((data) => {
+
+							try
+							{
+								window[key] = JSON.parse(data);
+
+								resolve(true);
+							}
+							catch(e)
+							{
+								console.error(e);
+
+								resolve(false);
+							}
+						});
+					});
+				}
+
+				function renderGUI()
+				{
+					loadServices();
+
+					if(accessories.devices.length == 0)
+					{
+						if(automation.length == 0)
+						{
+							document.getElementById('no-accessories').style.removeProperty('display');
+						}
+						
+						document.getElementById('add-button').setAttribute('disabled', '');
+					}
+					
+					if(automation.length == 0)
+					{
+						if(accessories.devices.length > 0)
+						{
+							document.getElementById('no-automation').style.removeProperty('display');
+						}
+
+						document.getElementById('view-button').setAttribute('disabled', '');
+					}
+					
+					Preloader.finish();
+				}
+
+			</script>
+			<script>
+
+				function loadServices()
+				{
+					for(const i in accessories.devices)
+					{
+						var plugin = accessories.devices[i].plugin.alias;
+
+						if(plugin == 'SynTex')
+						{
+							plugin = 'SynTexWebHooks';
+						}
+
+						for(const j in accessories.devices[i].services)
+						{
+							var service = accessories.devices[i].services[j];
+
+							if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
+							{
+								service.type = 'rgb';
+							}
+
+							services.push({ ...service, plugin });
+						}
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				/*
+				function renderGUI(renderAutomation)
+				{
+					accessories = accessories.devices;
+
+					loadServices();
+
+					createGroupPanel();
+
+					if(automation.length > 0)
+					{
+						if(renderAutomation)
+						{
+							sortAutomation(true);
+						}
+					}
+					else if(services.length > 0)
+					{
+						document.getElementById('no-automation').style.display = '';
+
+						Preloader.finish();
+					}
+					else
+					{
+						document.getElementById('no-accessories').style.display = '';
+						document.getElementById('add-button-big').style.display = 'none';
+						document.getElementById('devices-button-big').style.display = '';
+						document.getElementById('add-button').setAttribute('disabled', '');
+
+						Preloader.finish();
+					}
+				}
+				*/
+			</script>
+			<script>
+
+				window.activeAutomation = null;
+
+				function openEditor(id)
+				{
+					PageManager.setHeader('%menu.automation%', '%automation.create%');
+
+					var main = document.createElement('div');
+
+					main.style.display = 'flex';
+
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (id == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(true);
+
+					PageManager.switchPage('overview', 'editor', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/debug/workaround/automation_new/?editor&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/debug/workaround/automation_new/?editor');
+					}
+
+					activeAutomation = id != null ? getAutomation(id) : null;
+
+					document.getElementById('editor').getElementsByTagName('input')[0].value = activeAutomation != null ? activeAutomation.id : getNextID();
+					document.getElementById('editor').getElementsByTagName('input')[1].value = activeAutomation != null ? activeAutomation.name : '';
+					document.getElementById('editor').getElementsByTagName('input')[2].value = activeAutomation != null ? activeAutomation.group : '';
+				
+					document.getElementById('trigger').getElementsByClassName('block-logic')[0].value = activeAutomation != null && activeAutomation.trigger != null && activeAutomation.trigger.logic == 'OR' ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase();
+
+					if(activeAutomation != null)
+					{
+						for(const i in activeAutomation.trigger.groups)
+						{
+							var group = addGroup(activeAutomation.trigger.groups[i]);
+
+							for(const j in activeAutomation.trigger.groups[i].blocks)
+							{
+								addBlock('trigger', group, activeAutomation.trigger.groups[i].blocks[j]);
+							}
+						}
+
+						for(const i in activeAutomation.result)
+						{
+							addBlock('result', document.getElementById('result'), activeAutomation.result[i]);
+						}
+					}
+				}
+
+				function closeEditor()
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%', true);
+					PageManager.hideFooter(true);
+
+					PageManager.switchPage('editor', 'overview', false);
+
+					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					{
+						window.history.pushState(null, null, '/debug/workaround/automation_new?desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '/debug/workaround/automation_new/');
+					}
+				}
+
+				function getAutomation(id)
+				{
+					for(const i in automation)
+					{
+						if(automation[i].id == id)
+						{
+							return automation[i];
+						}
+					}
+
+					return null;
+				}
+
+				function switchLogic(button)
+				{
+					button.value = (button.value == logic[0].toUpperCase() ? logic[1].toUpperCase() : logic[0].toUpperCase());
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
