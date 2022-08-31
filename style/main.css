@@ -326,14 +326,14 @@ input[type='button'].white, button.white, .white
 	background: var(--light-layer-two);
 }
 
-input[type='button']:disabled, .outline
+input[type='button']:disabled, #main-menu button:disabled, .outline
 {
 	background: transparent!important;
 	color: var(--light-layer-two)!important;
 	border: 3px solid var(--light-layer-two)!important;
 }
 
-input:disabled
+input:disabled, #main-menu button:disabled
 {
 	opacity: 1!important;
 }
@@ -2087,6 +2087,31 @@ button img
 	padding: 20px;
 }
 
+.page
+{
+	transition: .2s opacity ease-in-out;
+}
+
+.page.hidden
+{
+	display: none;
+}
+
+#main-menu
+{
+	width: 49%;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	margin: 0 auto;
+	margin-bottom: 100px;
+}
+
+#main-menu button
+{
+	text-transform: uppercase;
+}
+
 #toolbar
 {
 	display: flex;
@@ -2099,6 +2124,11 @@ button img
 {
 	display: flex;
 	width: 100%;
+}
+
+#automation
+{
+	transition: .2s opacity ease-in-out;
 }
 
 #no-automation, #no-accessories
