@@ -183,8 +183,6 @@
 					});
 				}
 
-				var init = true;
-
 				function renderGUI()
 				{
 					console.log('DATA', data);
@@ -208,9 +206,7 @@
 
 					setupGroupBar();
 
-					sortDevices(true, init);
-
-					init = false;
+					sortDevices(true);
 				}
 
 				loadPluginData().then(() => {
@@ -541,7 +537,7 @@
 
 				window.sort = 'type-asc';
 
-				function sortDevices(init, startup)
+				function sortDevices(init)
 				{
 					var select = document.getElementById('sort');
 
@@ -674,7 +670,7 @@
 
 						setTimeout(() => {
 
-							switchGroup(selectedGroup, startup);
+							switchGroup(selectedGroup, true);
 
 							document.getElementById('devices').style.opacity = 1;
 
@@ -838,10 +834,7 @@
 							{
 								groupButtons[i].className = 'white group-active';
 
-								if(init)
-								{
 									Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
-								}
 							}
 							else
 							{
