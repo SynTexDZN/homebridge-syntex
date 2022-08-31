@@ -881,6 +881,18 @@ class EssentialFeatures
 			return 'boolean';
 		}
 	}
+
+	getURLParams(key)
+	{
+		var url = new URL(window.location.href);
+
+		if(url != null)
+		{
+			return url.searchParams.get(key);
+		}
+
+		return null;
+	}
 }
 
 var idCounter = new Date().getTime();
