@@ -865,11 +865,25 @@ function getAutomations(data, automation)
 
 	for(const a in automation)
 	{
-		for(const b in automation[a].trigger)
+		if(automation[a].trigger != null
+		&& automation[a].trigger.groups != null)
 		{
-			if(automation[a].trigger[b].id == data.id && automation[a].trigger[b].letters == data.letters && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 < 100 && (automation[a].trigger[b].value - data.min) / (data.max - data.min) * 100 > 0)
+			for(const b in automation[a].trigger.groups)
 			{
-				visibleAutomation.push({ time : automation[a].time, value : automation[a].trigger[b].value });
+				if(automation[a].trigger.groups[b].blocks != null)
+				{
+					for(const c in automation[a].trigger.groups[b].blocks)
+					{
+						if(automation[a].trigger.groups[b].blocks[c].id == data.id
+						&& automation[a].trigger.groups[b].blocks[c].letters == data.letters
+						&& automation[a].trigger.groups[b].blocks[c].state != null
+						&& (automation[a].trigger.groups[b].blocks[c].state.value - data.min) / (data.max - data.min) * 100 < 100
+						&& (automation[a].trigger.groups[b].blocks[c].state.value - data.min) / (data.max - data.min) * 100 > 0)
+						{
+							visibleAutomation.push({ time : automation[a].time, value : automation[a].trigger.groups[b].blocks[c].state.value });
+						}
+					}
+				}
 			}
 		}
 	}
