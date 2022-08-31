@@ -35,7 +35,7 @@
 						<button class="widget-right gradient-green" id="toolbar-online">-</button>
 					</div>
 				</div>
-				<div id="device-controls" style="margin: 20px 0; display: grid; grid-template-columns: calc(50% - 10px) calc(50% - 10px); grid-gap: 20px; transition: margin-bottom .2s ease-out;">
+				<div id="device-controls">
 					<div>
 						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%devices.active%: %general.loading% ..</button>
 					</div>
@@ -48,8 +48,8 @@
 					<div id="groups" style="display: flex; width: 100%">
 						<input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">
 					</div>
-					<div style="display: flex; margin-top: 20px">
-						<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
+					<div style="display: flex; gap: 20px">
+						<button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
 						<div class="custom-select" style="width: 100%">
 							<select id="sort" onchange="sortDevices()">
 								<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
@@ -80,10 +80,10 @@
 
 							</script>
 						</div>
-						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
+						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
 					</div>
 				</div>
-					<p id="no-accessories" style="display: none">%devices.no_accessories%</p>
+				<p id="no-accessories" style="display: none">%devices.no_accessories%</p>
 				<div id="devices" style="transition: .2s opacity ease-in-out; margin-top: 100px"></div>
 			</div>
 			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
@@ -183,6 +183,8 @@
 					});
 				}
 
+				var init = true;
+
 				function renderGUI()
 				{
 					console.log('DATA', data);
@@ -206,7 +208,9 @@
 
 					setupGroupBar();
 
-					sortDevices(true);
+					sortDevices(true, init);
+
+					init = false;
 				}
 
 				loadPluginData().then(() => {
@@ -537,7 +541,7 @@
 
 				window.sort = 'type-asc';
 
-				function sortDevices(init)
+				function sortDevices(init, startup)
 				{
 					var select = document.getElementById('sort');
 
@@ -670,7 +674,7 @@
 
 						setTimeout(() => {
 
-							switchGroup(selectedGroup, true);
+							switchGroup(selectedGroup, startup);
 
 							document.getElementById('devices').style.opacity = 1;
 
@@ -834,7 +838,10 @@
 							{
 								groupButtons[i].className = 'white group-active';
 
-								Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
+								if(init)
+								{
+									Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
+								}
 							}
 							else
 							{
