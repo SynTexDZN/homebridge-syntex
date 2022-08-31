@@ -83,10 +83,8 @@
 						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')" style="margin-left: 20px"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
 					</div>
 				</div>
-				<div style="margin-top: 100px">
-					<p id="no-devices" style="display: none">%devices.no_accessories%</p>
-					<div id="devices" style="transition: .2s opacity ease-in-out"></div>
-				</div>
+					<p id="no-accessories" style="display: none">%devices.no_accessories%</p>
+				<div id="devices" style="transition: .2s opacity ease-in-out; margin-top: 100px"></div>
 			</div>
 			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.multi_edit%" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
@@ -193,7 +191,15 @@
 					{
 						document.getElementById('device-controls').style.display = 'none';
 						document.getElementById('view-button').style.display = 'none';
-						document.getElementById('no-devices').style.display = '';
+						document.getElementById('devices').style.display = 'none';
+						document.getElementById('no-accessories').style.removeProperty('display');
+					}
+					else
+					{
+						document.getElementById('device-controls').style.removeProperty('display');
+						document.getElementById('view-button').style.removeProperty('display');
+						document.getElementById('devices').style.removeProperty('display');
+						document.getElementById('no-accessories').style.display = 'none';
 					}
 
 					setupToolBar();
