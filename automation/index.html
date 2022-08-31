@@ -76,7 +76,7 @@
 						</div>
 					</div>
 					<p id="no-automation" style="display: none; margin-top: 100px">%automation.no_automation%</p>
-					<p id="no-devices" style="display: none; margin-top: 100px">%automation.no_devices%</p>
+					<p id="no-accessories" style="display: none; margin-top: 100px">%automation.no_accessories%</p>
 					<div id="automation" style="transition: .2s opacity ease-in-out"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
@@ -86,23 +86,21 @@
 			</div>
 			<div id="create" style="display: none; transition: .2s opacity ease-in-out">
 				<form id="automation-create-form" class="main" onsubmit="event.preventDefault(); createAutomation();">
-					<div class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">%automation.infos%</h2>
-						<p><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
-						<p autofocus style="margin-bottom: 20px"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-						<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+					<div class="panel">
+						<h2 class="title-container">%automation.infos%</h2>
+						<div class="panel-content padding">
+							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
+							<p autofocus style="margin: 0"><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+						</div>
 					</div>
-					<div class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">%automation.trigger%</h2>
-						<div id="trigger" style="text-align: center"></div>
+					<div class="panel">
+						<h2 class="title-container">%automation.trigger%</h2>
+						<div class="panel-content" id="trigger" style="text-align: center"></div>
 					</div>
-					<div class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">%automation.condition%</h2>
-						<div id="condition" style="text-align: center"></div>
-					</div>
-					<div class="type-container">
-						<h2 class="title-container" style="margin-bottom: 40px">%automation.result%</h2>
-						<div id="result" style="text-align: center"></div>
+					<div class="panel">
+						<h2 class="title-container">%automation.result%</h2>
+						<div class="panel-content" id="result" style="text-align: center"></div>
 					</div>
 				</form>
 			</div>
@@ -173,7 +171,7 @@
 					}
 					else
 					{
-						document.getElementById('no-devices').style.display = '';
+						document.getElementById('no-accessories').style.display = '';
 						document.getElementById('add-button-big').style.display = 'none';
 						document.getElementById('devices-button-big').style.display = '';
 						document.getElementById('add-button').setAttribute('disabled', '');
@@ -186,25 +184,57 @@
 					document.getElementById('create').getElementsByTagName('input')[2].value = '';
 
 					document.getElementById('trigger').innerHTML = '';
-					document.getElementById('condition').innerHTML = '';
 					document.getElementById('result').innerHTML = '';
 
 					if(services.length > 0)
 					{
-						var a = ['trigger', 'condition', 'result'];
+						var bottom = document.createElement('div'),
+							add = document.createElement('button'), 
+							logic = document.createElement('input'),
+							options = document.createElement('button');
 
-						for(var i = 0; i < a.length; i++)
-						{
-							var addBtn = document.createElement('input');
+						bottom.className = 'bottom';
+
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_group%</div>';
 							
-							addBtn.setAttribute('value', '+');
-							addBtn.setAttribute('onclick', 'addElement(' + "'" + a[i] + "'" + ')');
-							addBtn.setAttribute('type', 'button');
-							addBtn.setAttribute('class', 'gradient-blue-green add-entry-button');
-							addBtn.setAttribute('style', 'max-width: 150px; margin-bottom: 20px');
+						add.setAttribute('type', 'button');
+						add.setAttribute('class', 'gradient-blue-green add-group-button icon-button left split layer');
 
-							document.getElementById(a[i]).appendChild(addBtn);
-						}
+						add.onclick = () => addGroup();
+
+						logic.setAttribute('value', window.logic[0].toUpperCase());
+						logic.setAttribute('type', 'button');
+						logic.setAttribute('class', 'block-logic white');
+
+						logic.onclick = () => {
+
+							logic.value = (logic.value == window.logic[0].toUpperCase() ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase());
+						};
+
+						options.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%general.options%</div>';
+
+						options.setAttribute('type', 'button');
+						options.setAttribute('class', 'icon-button right split layer');
+
+						options.onclick = () => {};
+
+						bottom.appendChild(add);
+						bottom.appendChild(logic);
+						bottom.appendChild(options);
+
+						document.getElementById('trigger').appendChild(bottom);
+
+						var add = document.createElement('button');
+
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+
+						add.setAttribute('value', '+ %automation.add_block%');
+						add.setAttribute('type', 'button');
+						add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+
+						add.onclick = () => addBlock('result', document.getElementById('result'));
+
+						document.getElementById('result').appendChild(add);
 					}
 				}
 
@@ -489,7 +519,7 @@
 					{
 						var typeContainer = document.createElement('div');
 
-						typeContainer.className = 'type-container hoverable';
+						typeContainer.className = 'panel hoverable';
 
 						if(!automation[i].active)
 						{
@@ -518,58 +548,15 @@
 						typeContainer.appendChild(title);
 
 						var panel = document.createElement('div');
-						var column = document.createElement('div');
-						var category = document.createElement('div');
 
-						column.className = 'column';
-
-						category.innerHTML = '%automation.trigger%';
-						category.className = 'primary';
-
-						column.appendChild(category);
-
-						var container = document.createElement('div');
-
-						container.className = 'secondary';
-
-						for(var j = 0; j < automation[i].trigger.length; j++)
-						{
-							var row = document.createElement('div');
-
-							row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-							if(!automation[i].trigger[j].url && automation[i].trigger[j].name && automation[i].trigger[j].letters)
-							{
-								var src = Essentials.letterToType(automation[i].trigger[j].letters[0]);
-
-								if(Essentials.letterToType(automation[i].trigger[j].letters[0]) == 'temperature')
-								{
-									src = 'climate';
-								}
-
-								row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger[j].name/* + ' ' + automation[i].trigger[j].operation + ' ' + val*/;
-							}
-							else if(automation[i].trigger[j].url)
-							{
-								row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%';
-							}
-
-							container.appendChild(row);
-
-							column.appendChild(container);
-						}
-
-						panel.className = 'table';
-						panel.appendChild(column);
-
-						if(automation[i].condition && automation[i].condition.length > 0)
+						if(automation[i].trigger != null && automation[i].trigger.groups != null)
 						{
 							var column = document.createElement('div');
 							var category = document.createElement('div');
 
 							column.className = 'column';
 
-							category.innerHTML = '%automation.condition%';
+							category.innerHTML = '%automation.trigger%';
 							category.className = 'primary';
 
 							column.appendChild(category);
@@ -578,29 +565,35 @@
 
 							container.className = 'secondary';
 
-							for(var j = 0; j < automation[i].condition.length; j++)
+							for(const j in automation[i].trigger.groups)
 							{
-								var row = document.createElement('div');
-
-								row.setAttribute('style', 'word-break: break-all; word-break: break-word');
-
-								if(!automation[i].condition[j].url && automation[i].condition[j].name && automation[i].condition[j].letters)
+								if(automation[i].trigger.groups[j].blocks != null)
 								{
-									var src = Essentials.letterToType(automation[i].condition[j].letters[0]);
-
-									if(Essentials.letterToType(automation[i].condition[j].letters[0]) == 'temperature')
+									for(const k in automation[i].trigger.groups[j].blocks)
 									{
-										src = 'climate';
+										var row = document.createElement('div');
+
+										row.setAttribute('style', 'word-break: break-all; word-break: break-word');
+
+										if(!automation[i].trigger.groups[j].blocks[k].url && automation[i].trigger.groups[j].blocks[k].name && automation[i].trigger.groups[j].blocks[k].letters)
+										{
+											var src = Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]);
+
+											if(Essentials.letterToType(automation[i].trigger.groups[j].blocks[k].letters[0]) == 'temperature')
+											{
+												src = 'climate';
+											}
+
+											row.innerHTML += '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].trigger.groups[j].blocks[k].name/* + ' ' + automation[i].trigger.groups[j].blocks[k].operation + ' ' + val*/;
+										}
+										else if(automation[i].trigger.groups[j].blocks[k].url)
+										{
+											row.innerHTML += '<img class="icon" src="/img/link.png">%automation.open_link%';
+										}
+
+										container.appendChild(row);
 									}
-
-									row.innerHTML = '<img class="icon" src="/img/accessory/' + src + '.png">' + automation[i].condition[j].name/* + ' ' + automation[i].condition[j].operation + ' ' + val*/;
 								}
-								else if(automation[i].condition[j].url)
-								{
-									row.innerHTML = '<img class="icon" src="/img/link.png">%automation.open_link%';
-								}
-
-								container.appendChild(row);
 
 								column.appendChild(container);
 							}
@@ -608,7 +601,7 @@
 							panel.className = 'table';
 							panel.appendChild(column);
 						}
-
+						
 						var column = document.createElement('div');
 						var category = document.createElement('div');
 
@@ -723,7 +716,6 @@
 					var o = select.parentElement.children[0].getElementsByTagName('select')[0].selectedIndex;
 					var option = select.parentElement.children[0].getElementsByTagName('select')[0].children[o];
 
-
 					if(option.hasAttribute('letters') && option.getAttribute('letters')[0] == '3' && select.parentElement.children[1].getElementsByTagName('select')[0].children[select.parentElement.children[1].getElementsByTagName('select')[0].selectedIndex].innerHTML == '%automation.color%')
 					{
 						select.parentElement.children[2].setAttribute('hidden', '');
@@ -835,7 +827,58 @@
 					}
 				}
 
-				function addElement(type)
+				window.logic = ['%automation.and%', '%automation.or%'];
+				window.groupLogic = logic[0].toUpperCase();
+
+				// NOTE: Add Group
+
+				function addGroup()
+				{
+					const group = document.createElement('div'),
+						bottom = document.createElement('div'),
+						add = document.createElement('button'),
+						logic = document.createElement('input'),
+						remove = document.createElement('button');
+
+					group.className = 'group';
+
+					bottom.className = 'bottom';
+
+					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+
+					add.setAttribute('type', 'button');
+					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+
+					add.onclick = () => addBlock('trigger', group);
+
+					bottom.appendChild(add);
+
+					logic.setAttribute('value', window.logic[0].toUpperCase());
+					logic.setAttribute('type', 'button');
+					logic.setAttribute('class', 'block-logic white');
+
+					logic.onclick = () => {
+
+						logic.value = (logic.value == window.logic[0].toUpperCase() ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase());
+					};
+
+					bottom.appendChild(logic);
+
+					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.remove_group%</div>';
+
+					remove.setAttribute('type', 'button');
+					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right split layer');
+
+					remove.onclick = () => document.getElementById('trigger').removeChild(group);
+					
+					bottom.appendChild(remove);
+
+					group.appendChild(bottom);
+
+					document.getElementById('trigger').insertBefore(group, document.getElementById('trigger').getElementsByClassName('bottom')[document.getElementById('trigger').getElementsByClassName('bottom').length - 1]);
+				}
+
+				function addBlock(type, root)
 				{
 					var element = document.createElement('div');
 					var p = document.createElement('p');
@@ -845,10 +888,9 @@
 					b.innerHTML = '%automation.device%: ';
 
 					select.className = 'custom-select';
-					select.style.marginRight = '20px';
 					select.style.width = '100%';
 
-					element.className = 'automation-device-entry';
+					element.className = 'block';
 
 					var html = '<select name="service" onchange="updateValueInput(this)">';
 
@@ -876,12 +918,12 @@
 					operations.style.marginRight = '20px';
 					operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
 
-					if(type != 'result')
+					if(type == 'trigger')
 					{
 						operations.innerHTML = '<select onchange="updateLightInputs(this)" name="operation"><option value="=">=</option><option value=">">></option><option value="<"><</option><option value="switch">%automation.switch%</option><option value="brightness">%automation.dimming%</option><option value="color">%automation.color%</option></select>';
 					}
 
-					document.getElementById(type).insertBefore(element, document.getElementById(type).getElementsByClassName('add-entry-button')[0]);
+					root.insertBefore(element, root.children[root.children.length - 1]);
 				
 					element.appendChild(Replacer.createSelectMenu(select, true));
 					element.appendChild(Replacer.createSelectMenu(operations));
@@ -916,168 +958,104 @@
 					}
 
 					automationOBJ.active = true;
-					automationOBJ.trigger = [];
+					automationOBJ.trigger = { logic : document.getElementById('trigger').getElementsByClassName('block-logic')[0].value, groups : [] };
 
-					for(var i = 0; i < document.getElementById('trigger').children.length - 1; i++)
+					for(var i = 0; i < document.getElementById('trigger').getElementsByClassName('group').length; i++)
 					{
-						var t = document.getElementById('trigger').children[i], trigger = {};
+						var group = document.getElementById('trigger').getElementsByClassName('group')[i], groupOBJ = { logic : group.getElementsByClassName('block-logic')[0].value, blocks : [] };
 
-						for(var j = 0; j < t.children.length; j++)
+						for(var j = 0; j < group.getElementsByClassName('block').length; j++)
 						{
-							var device = t.children[0].getElementsByTagName('select')[0].children[t.children[0].getElementsByTagName('select')[0].selectedIndex];
-							var operation = t.children[1].getElementsByTagName('select')[0].children[t.children[1].getElementsByTagName('select')[0].selectedIndex];
-							var value = t.children[2];
+							var block = {};
+							var device = group.getElementsByClassName('block')[j].children[0].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[0].getElementsByTagName('select')[0].selectedIndex];
+							var operation = group.getElementsByClassName('block')[j].children[1].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[1].getElementsByTagName('select')[0].selectedIndex];
+							var value = group.getElementsByClassName('block')[j].children[2];
 
 							if(device.getAttribute('type') == 'url')
 							{
-								trigger.url = value.value;
+								block.url = value.value;
 							}
 							else
 							{
-								trigger.id = device.getAttribute('id');
-								trigger.name = device.getAttribute('name');
-								trigger.letters = device.getAttribute('letters');
-								trigger.plugin = device.getAttribute('plugin');
+								block.id = device.getAttribute('id');
+								block.name = device.getAttribute('name');
+								block.letters = device.getAttribute('letters');
+								block.plugin = device.getAttribute('plugin');
+								block.state = {};
 								
 								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 								{
-									trigger.operation = '=';
+									block.operation = '=';
 
 									if(operation.value == 'switch')
 									{
-										trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+										block.state.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
 									}
 									else if(operation.value == 'brightness')
 									{
-										trigger.value = 'true';
-										trigger.brightness = value.value;
+										block.state.value = 'true';
+										block.state.brightness = value.value;
 									}
 									else if(operation.value == 'color')
 									{
-										trigger.value = 'true';
+										block.state.value = 'true';
 
-										if(t.children[3].children[0].value != '')
+										if(group.getElementsByClassName('block')[j].children[3].children[0].value != '')
 										{
-											trigger.hue = t.children[3].children[0].value;
+											block.state.hue = group.getElementsByClassName('block')[j].children[3].children[0].value;
 										}
 
-										if(t.children[3].children[1].value != '')
+										if(group.getElementsByClassName('block')[j].children[3].children[1].value != '')
 										{
-											trigger.saturation = t.children[3].children[1].value;
+											block.state.saturation = group.getElementsByClassName('block')[j].children[3].children[1].value;
 										}
 
-										if(t.children[3].children[2].value != '')
+										if(group.getElementsByClassName('block')[j].children[3].children[2].value != '')
 										{
-											trigger.brightness = t.children[3].children[2].value;
+											block.state.brightness = group.getElementsByClassName('block')[j].children[3].children[2].value;
 										}
 									}
 								}
 								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
 								{
-									trigger.operation = operation.value;
-									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+									block.operation = operation.value;
+									block.state.value = group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
 								}
 								else if(device.getAttribute('type') == 'numeric')
 								{
-									trigger.operation = operation.value;
-									trigger.value = value.value;
+									block.operation = operation.value;
+									block.state.value = value.value;
 								}
 								else if(device.getAttribute('type') == 'boolean')
 								{
-									trigger.operation = operation.value;
-									trigger.value = t.children[4].getElementsByTagName('select')[0].children[t.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									block.operation = operation.value;
+									block.state.value = group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].children[group.getElementsByClassName('block')[j].children[4].getElementsByTagName('select')[0].selectedIndex].value;
 								}
-							}
-						}
-						
-						automationOBJ.trigger.push(trigger);
-					}
 
-					if(document.getElementById('condition').childElementCount > 1)
-					{
-						automationOBJ.condition = [];
-
-						for(var i = 0; i < document.getElementById('condition').children.length - 1; i++)
-						{
-							var c = document.getElementById('condition').children[i], condition = {};
-
-							for(var j = 0; j < c.children.length; j++)
-							{
-								var device = c.children[0].getElementsByTagName('select')[0].children[c.children[0].getElementsByTagName('select')[0].selectedIndex];
-								var operation = c.children[1].getElementsByTagName('select')[0].children[c.children[1].getElementsByTagName('select')[0].selectedIndex];
-								var value = c.children[2];
-
-								if(device.getAttribute('type') == 'url')
+								for(const x in block.state)
 								{
-									condition.url = value.value;
-								}
-								else
-								{
-									condition.id = device.getAttribute('id');
-									condition.name = device.getAttribute('name');
-									condition.letters = device.getAttribute('letters');
-									condition.plugin = device.getAttribute('plugin');
-									
-									if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
+									try
 									{
-										condition.operation = '=';
-
-										if(operation.value == 'switch')
-										{
-											condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value;
-										}
-										else if(operation.value == 'brightness')
-										{
-											condition.value = 'true';
-											condition.brightness = value.value;
-										}
-										else if(operation.value == 'color')
-										{
-											condition.value = 'true';
-
-											if(c.children[3].children[0].value != '')
-											{
-												condition.hue = c.children[3].children[0].value;
-											}
-
-											if(c.children[3].children[1].value != '')
-											{
-												condition.saturation = c.children[3].children[1].value;
-											}
-
-											if(c.children[3].children[2].value != '')
-											{
-												condition.brightness = c.children[3].children[2].value;
-											}
-										}
+										block.state[x] = JSON.parse(block.state[x]);
 									}
-									else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
+									catch(e)
 									{
-										condition.operation = operation.value;
-										condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
-									}
-									else if(device.getAttribute('type') == 'numeric')
-									{
-										condition.operation = operation.value;
-										condition.value = value.value;
-									}
-									else if(device.getAttribute('type') == 'boolean')
-									{
-										condition.operation = operation.value;
-										condition.value = c.children[4].getElementsByTagName('select')[0].children[c.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+										console.error(e);
 									}
 								}
 							}
 
-							automationOBJ.condition.push(condition);
+							groupOBJ.blocks.push(block);
 						}
+
+						automationOBJ.trigger.groups.push(groupOBJ);
 					}
 
 					automationOBJ.result = [];
 
 					for(var i = 0; i < document.getElementById('result').children.length - 1; i++)
 					{
-						var r = document.getElementById('result').children[i], result = {};
+						var r = document.getElementById('result').children[i], block = {};
 
 						for(var j = 0; j < r.children.length; j++)
 						{
@@ -1087,67 +1065,80 @@
 
 							if(device.getAttribute('type') == 'url')
 							{
-								result.url = value.value;
+								block.url = value.value;
 							}
 							else
 							{
-								result.id = device.getAttribute('id');
-								result.name = device.getAttribute('name');
-								result.letters = device.getAttribute('letters');
-								result.plugin = device.getAttribute('plugin');
+								block.id = device.getAttribute('id');
+								block.name = device.getAttribute('name');
+								block.letters = device.getAttribute('letters');
+								block.plugin = device.getAttribute('plugin');
+								block.state = {};
 								
 								if(device.hasAttribute('letters') && (device.getAttribute('letters')[0] == '3' || device.getAttribute('letters')[0] == '9'))
 								{
-									result.operation = '=';
+									block.operation = '=';
 
 									if(operation.value == 'switch')
 									{
-										result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+										block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
 									}
 									else if(operation.value == 'brightness')
 									{
-										result.value = 'true';
-										result.brightness = value.value;
+										block.state.value = 'true';
+										block.state.brightness = value.value;
 									}
 									else if(operation.value == 'color')
 									{
-										result.value = 'true';
+										block.state.value = 'true';
 
 										if(r.children[3].children[0].value != '')
 										{
-											result.hue = r.children[3].children[0].value;
+											block.state.hue = r.children[3].children[0].value;
 										}
 
 										if(r.children[3].children[1].value != '')
 										{
-											result.saturation = r.children[3].children[1].value;
+											block.state.saturation = r.children[3].children[1].value;
 										}
 
 										if(r.children[3].children[2].value != '')
 										{
-											result.brightness = r.children[3].children[2].value;
+											block.state.brightness = r.children[3].children[2].value;
 										}
 									}
 								}
 								else if(device.hasAttribute('letters') && device.getAttribute('letters')[0] == 'G')
 								{
-									result.operation = operation.value;
-									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
+									block.operation = operation.value;
+									block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value == 'true' ? 0 : 100;
 								}
 								else if(device.getAttribute('type') == 'numeric')
 								{
-									result.operation = operation.value;
-									result.value = value.value;
+									block.operation = operation.value;
+									block.state.value = value.value;
 								}
 								else if(device.getAttribute('type') == 'boolean')
 								{
-									result.operation = operation.value;
-									result.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+									block.operation = operation.value;
+									block.state.value = r.children[4].getElementsByTagName('select')[0].children[r.children[4].getElementsByTagName('select')[0].selectedIndex].value;
+								}
+
+								for(const x in block.state)
+								{
+									try
+									{
+										block.state[x] = JSON.parse(block.state[x]);
+									}
+									catch(e)
+									{
+										console.error(e);
+									}
 								}
 							}
 						}
 
-						automationOBJ.result.push(result);
+						automationOBJ.result.push(block);
 					}
 
 					console.log('SAVE AUTOMATION', automationOBJ);
