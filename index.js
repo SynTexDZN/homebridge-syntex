@@ -908,7 +908,7 @@ class SynTexPlatform
 
 					if(stderr || error)
 					{
-						response.write(stderr || error);
+						response.write(stderr || error.message);
 					}
 					else
 					{
