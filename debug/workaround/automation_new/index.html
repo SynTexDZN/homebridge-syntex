@@ -35,7 +35,9 @@
 			<div id="overview" class="page">
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar">
-						<div id="groups"></div>
+						<div id="groups">
+							<input type="button" value="%automation.all_automations%" class="white" style="pointer-events: none">
+						</div>
 						<div style="display: flex; gap: 20px">
 							<button id="view-button" class="image-button" onclick="switchView(this)" view="horizontal">
 								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png">
@@ -81,7 +83,7 @@
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
-					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openAddPage()">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openEditor()">
 				</div>
 			</div>
 			<div id="editor" class="page hidden">
@@ -129,57 +131,48 @@
 			</div>
 			<script type="module">
 
-				Replacer.SETUP();
-
 				window.automation = [];
 				window.accessories = [];
 				window.services = [];
 				window.plugins = {};
-				
-				if(Storage.getItem('automation-view') == 'vertical')
-				{
-					/*
-					document.getElementById('toolbar').children[1].children[0].children[0].style.display = 'none';
-					document.getElementById('toolbar').children[1].children[0].children[1].style.display = '';
-					document.getElementById('toolbar').children[1].children[0].setAttribute('view', 'vertical');
-					*/
-					document.getElementById('automation').classList.add('vertical-view');
-				}
 
-				Promise.all([loadData('/serverside/plugins', 'plugins'), loadData('/serverside/automation', 'automation'), loadData('/serverside/devices', 'accessories')]).then(() => renderGUI());
+				loadData().then(() => renderGUI());
 
 			</script>
 			<script>
 
-				function loadData(url, key)
+				function loadData()
 				{
 					return new Promise((resolve) => {
 
-						Query.complexFetch(url, 5000, 2, {}, false).then((data) => {
+						Query.fetchURL('/serverside/automation_new', 3000).then((data) => {
 
-							try
+							if(data != null)
 							{
-								window[key] = JSON.parse(data);
+								try
+								{
+									window.data = JSON.parse(data);
 
-								resolve(true);
+									loadServices();
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
 							}
-							catch(e)
-							{
-								console.error(e);
 
-								resolve(false);
-							}
+							resolve();
 						});
 					});
 				}
 
 				function renderGUI()
 				{
-					loadServices();
+					Replacer.SETUP();
 
-					if(accessories.devices.length == 0)
+					if(data.accessories.length == 0)
 					{
-						if(automation.length == 0)
+						if(data.automation.length == 0)
 						{
 							document.getElementById('no-accessories').style.removeProperty('display');
 						}
@@ -187,9 +180,9 @@
 						document.getElementById('add-button').setAttribute('disabled', '');
 					}
 					
-					if(automation.length == 0)
+					if(data.automation.length == 0)
 					{
-						if(accessories.devices.length > 0)
+						if(data.accessories.length > 0)
 						{
 							document.getElementById('no-automation').style.removeProperty('display');
 						}
@@ -197,6 +190,15 @@
 						document.getElementById('view-button').setAttribute('disabled', '');
 					}
 					
+					if(Storage.getItem('automation-view') == 'vertical')
+					{
+						document.getElementById('automation').classList.add('vertical-view');
+
+						document.getElementById('view-button').children[0].style.display = 'none';
+						document.getElementById('view-button').children[1].style.removeProperty('display');
+						document.getElementById('view-button').setAttribute('view', 'vertical');
+					}
+
 					Preloader.finish();
 				}
 
@@ -205,18 +207,18 @@
 
 				function loadServices()
 				{
-					for(const i in accessories.devices)
+					for(const i in data.accessories)
 					{
-						var plugin = accessories.devices[i].plugin.alias;
+						var plugin = data.accessories[i].plugin.alias;
 
 						if(plugin == 'SynTex')
 						{
 							plugin = 'SynTexWebHooks';
 						}
 
-						for(const j in accessories.devices[i].services)
+						for(const j in data.accessories[i].services)
 						{
-							var service = accessories.devices[i].services[j];
+							var service = data.accessories[i].services[j];
 
 							if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
 							{
@@ -231,14 +233,9 @@
 
 					console.log('SERVICES', services);
 				}
-
 				/*
 				function renderGUI(renderAutomation)
 				{
-					accessories = accessories.devices;
-
-					loadServices();
-
 					createGroupPanel();
 
 					if(automation.length > 0)
@@ -247,12 +244,6 @@
 						{
 							sortAutomation(true);
 						}
-					}
-					else if(services.length > 0)
-					{
-						document.getElementById('no-automation').style.display = '';
-
-						Preloader.finish();
 					}
 					else
 					{
@@ -268,6 +259,7 @@
 			</script>
 			<script>
 
+				window.logic = ['%automation.and%', '%automation.or%'];
 				window.activeAutomation = null;
 
 				function openEditor(id)
@@ -349,6 +341,21 @@
 					}
 
 					return null;
+				}
+
+				function getNextID()
+				{
+					var lastID = -1;
+
+					for(const i in data.automation)
+					{
+						if(data.automation[i].id > lastID)
+						{
+							lastID = data.automation[i].id;
+						}
+					}
+
+					return lastID + 1;
 				}
 
 				function switchLogic(button)
