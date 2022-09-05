@@ -363,8 +363,8 @@ class PageManagerModule
 
 			window.scrollTo(window.scrollX, 0);
 
-			document.getElementById(previous).style.display = 'none';
-			document.getElementById(next).style.display = '';
+			document.getElementById(previous).classList.add('hidden');
+			document.getElementById(next).classList.remove('hidden');
 
 			window.Replacer.refreshPositions();
 

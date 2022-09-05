@@ -36,7 +36,7 @@
 					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
 				</div>
 			</div>
-			<div id="view" style="transition: .2s opacity ease-in-out">
+			<div id="view" class="page">
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar" class="main" style="margin: 100px auto">
 						<div id="groups" style="display: flex; width: 100%"></div>
@@ -77,14 +77,14 @@
 					</div>
 					<p id="no-automation" style="display: none; margin-top: 100px">%automation.no_automation%</p>
 					<p id="no-accessories" style="display: none; margin-top: 100px">%automation.no_accessories%</p>
-					<div id="automation" style="transition: .2s opacity ease-in-out"></div>
+					<div id="automation"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
 					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openAddPage()">
 				</div>
 			</div>
-			<div id="create" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="create" class="page hidden">
 				<form id="automation-create-form" class="main" onsubmit="event.preventDefault(); createAutomation();">
 					<div class="panel">
 						<h2 class="title-container">%automation.infos%</h2>

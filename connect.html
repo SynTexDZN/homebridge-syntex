@@ -41,20 +41,20 @@
 				Preloader.finish();
 
 			</script>
-			<div id="check-name" style="transition: .2s opacity ease-in-out">
+			<div id="check-name" class="page">
 				<form id="name-form" class="main" onsubmit="event.preventDefault(); setName();">
 					<p style="margin-top: 0"><b>%general.name%: <input id="device-name" autofocus pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 					<p style="margin: 100px 0">%connect.name_choise%</p>
 				</form>
 			</div>
-			<div id="connect" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="connect" class="page hidden">
 				<div class="main" style="margin-bottom: 132px">
 					<img src="/img/wifi.png" class="setup-png">
 					<input class="gradient-blue loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="%connect.searching_for_device% ..">
 					<p>%connect.connect_to_ap%</p>
 				</div>
 			</div>
-			<div id="wifi" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="wifi" class="page hidden">
 				<div class="main">
 					<form onsubmit="event.preventDefault(); sendWiFiSettings();">
 						<div id="networks">
@@ -66,7 +66,7 @@
 					</form>
 				</div>
 			</div>
-			<div id="connecting" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="connecting" class="page hidden">
 				<div class="main">
 					<img src="/img/connecting.png" class="setup-png">
 					<div style="background: rgb(15, 15, 25); width: calc(100% - 100px); margin-top: 0px; margin-bottom: 100px; margin-right: 50px; margin-left: 50px; border-radius: 5px">
@@ -75,7 +75,7 @@
 					<p>%connect.trying_to_connect%</p>
 				</div>
 			</div>
-			<div id="success" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="success" class="page hidden">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-green loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="%general.waiting_for_bridge% ..">
@@ -83,7 +83,7 @@
 					<p>%connect.automated_redirect%.</p>
 				</div>
 			</div>
-			<div id="error" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="error" class="page hidden">
 				<div class="main">
 					<img src="/img/error.png" class="setup-png">
 					<input class="gradient-red loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="%general.waiting_for_bridge% ..">
@@ -91,7 +91,7 @@
 					<p>%connect.incorrect%</p>
 				</div>
 			</div>
-			<div id="check-connection" style="display: none; transition: .2s opacity ease-in-out">
+			<div id="check-connection" class="page hidden">
 				<div class="main">
 					<img src="/img/success.png" class="setup-png">
 					<input class="gradient-yellow loading-loop" style="margin: 100px auto 100px auto; max-width: 400px!important; display: block; pointer-events: none" type="button" value="%general.waiting_for_bridge% ..">

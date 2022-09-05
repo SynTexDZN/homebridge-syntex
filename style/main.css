@@ -1990,6 +1990,11 @@ button img
 	transition: var(--transition-color), var(--transition-normal) opacity ease-in-out var(--transition-normal), var(--transition-normal) max-height ease-in-out, var(--transition-normal) margin-bottom ease-in-out;
 }
 
+.hidden:not(#status)
+{
+	display: none!important;
+}
+
 #status:empty, #status.hidden
 {
 	opacity: 0;
@@ -2013,11 +2018,6 @@ button img
 	flex-shrink: 0;
 	flex-grow: 1;
 	box-shadow: none;
-}
-
-#status button.hidden
-{
-	display: none;
 }
 
 #status img
@@ -2091,11 +2091,6 @@ button img
 	transition: .2s opacity ease-in-out;
 }
 
-.page.hidden
-{
-	display: none;
-}
-
 #main-menu
 {
 	width: 49%;
@@ -2156,11 +2151,6 @@ button img
 	{
 		min-height: auto!important;
 		max-height: none!important;
-	}
-
-	#head-content.hidden, #footer-content.hidden, #top-menu.hidden
-	{
-		display: none!important;
 	}
 
 	#head-content.fade-out, #footer-content.fade-out
