@@ -654,6 +654,37 @@ class SynTexPlatform
 			response.end();
 		});
 
+		this.WebServer.addPage('/serverside/automation_new', async (request, response) => {
+
+			var obj = {
+				automation : await Automation.loadAutomation(),
+				accessories : [],
+				plugins : {}
+			};
+
+			var accessories = DeviceManager.getAccessories();
+
+			for(const i in accessories)
+			{
+				if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
+				{
+					obj.accessories.push({ ...accessories[i] });
+				}
+			}
+
+			var plugins = PluginManager.getPlugins();
+
+			for(const i in plugins)
+			{
+				if(plugins[i].alias != 'SynTex' && plugins[i].config != null && plugins[i].config.options != null && plugins[i].config.options.port != null)
+				{
+					obj.plugins[plugins[i].alias] = plugins[i].config.options.port;
+				}
+			}
+
+			response.end(JSON.stringify(obj));
+		});
+
 		this.WebServer.addPage('/serverside/create-automation', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)

@@ -131,10 +131,8 @@
 			</div>
 			<script type="module">
 
-				window.automation = [];
-				window.accessories = [];
+				window.data = {};
 				window.services = [];
-				window.plugins = {};
 
 				loadData().then(() => renderGUI());
 
@@ -170,9 +168,9 @@
 				{
 					Replacer.SETUP();
 
-					if(data.accessories.length == 0)
+					if(data.accessories == null || data.accessories.length == 0)
 					{
-						if(data.automation.length == 0)
+						if(data.automation == null || data.automation.length == 0)
 						{
 							document.getElementById('no-accessories').style.removeProperty('display');
 						}
@@ -180,9 +178,9 @@
 						document.getElementById('add-button').setAttribute('disabled', '');
 					}
 					
-					if(data.automation.length == 0)
+					if(data.automation == null || data.automation.length == 0)
 					{
-						if(data.accessories.length > 0)
+						if(data.accessories != null && data.accessories.length > 0)
 						{
 							document.getElementById('no-automation').style.removeProperty('display');
 						}
