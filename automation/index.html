@@ -195,10 +195,10 @@
 
 						bottom.className = 'bottom';
 
-						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_group%</div>';
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.group%</div>';
 							
 						add.setAttribute('type', 'button');
-						add.setAttribute('class', 'gradient-blue-green add-group-button icon-button left split layer');
+						add.setAttribute('class', 'gradient-blue-green add-group-button icon-button left center compact');
 
 						add.onclick = () => addGroup();
 
@@ -214,7 +214,7 @@
 						options.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/settings.png"></div><div class="button-text">%general.options%</div>';
 
 						options.setAttribute('type', 'button');
-						options.setAttribute('class', 'icon-button right split layer');
+						options.setAttribute('class', 'icon-button right center compact');
 
 						options.onclick = () => {};
 
@@ -226,11 +226,11 @@
 
 						var add = document.createElement('button');
 
-						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+						add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.block%</div>';
 
-						add.setAttribute('value', '+ %automation.add_block%');
+						add.setAttribute('value', '+ %automation.block%');
 						add.setAttribute('type', 'button');
-						add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+						add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left center compact');
 
 						add.onclick = () => addBlock('result', document.getElementById('result'));
 
@@ -844,10 +844,10 @@
 
 					bottom.className = 'bottom';
 
-					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add.png"></div><div class="button-text">%automation.add_block%</div>';
+					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.block%</div>';
 
 					add.setAttribute('type', 'button');
-					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left split layer');
+					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left center compact');
 
 					add.onclick = () => addBlock('trigger', group);
 
@@ -864,10 +864,10 @@
 
 					bottom.appendChild(logic);
 
-					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.remove_group%</div>';
+					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.group%</div>';
 
 					remove.setAttribute('type', 'button');
-					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right split layer');
+					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right center compact');
 
 					remove.onclick = () => document.getElementById('trigger').removeChild(group);
 					
