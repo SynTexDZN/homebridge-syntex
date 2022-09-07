@@ -25,19 +25,15 @@
 				PageManager.showFooter();
 
 			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/debug')">%menu.workaround%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/style')">%menu.style%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/terminal')">%menu.command%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/config')" disabled>%menu.config%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/automation')">%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/syslog')">%menu.syslog%</button>
+			</div>
 			<div id="config" class="main">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase" disabled>
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/debug/automation')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.syslog%" onclick="Essentials.leavePage('/debug/syslog')" style="text-transform: uppercase">
-				</div>
 				<p style="margin: 100px 0">%debug.config.description%</p>
 				<textarea spellcheck="false" autocapitalize="false" autocomplete="false" style="white-space: break-spaces; max-height: 600px; height: 600px" id="config-container" oninput="validateJSON(this)">%general.loading% ..</textarea>
 			</div>

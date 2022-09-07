@@ -26,20 +26,18 @@
 				}
 
 			</script>
-			<div class="main" style="margin-bottom: 100px">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; display: flex">
-					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px" disabled>
-					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
-				</div>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/bridge')">%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')" disabled>%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
 			</div>
 			<div id="view" class="page">
 				<div class="main" style="margin-bottom: 100px">
-					<div id="toolbar" class="main" style="margin: 100px auto">
-						<div id="groups" style="display: flex; width: 100%"></div>
+					<div id="toolbar">
+						<div id="groups">
+							<input type="button" value="%automation.all_automations%" class="white" style="pointer-events: none">
+						</div>
 						<div style="display: flex; margin-top: 20px">
 							<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="horizontal"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png"></button>
 							<div class="custom-select" style="width: 100%">

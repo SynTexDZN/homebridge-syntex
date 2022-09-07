@@ -8,15 +8,13 @@
 				PageManager.hideFooter();
 
 			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')" disabled>%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/bridge')">%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')">%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
+			</div>
 			<div class="main" style="margin-bottom: 100px">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.devices%" onclick="Essentials.leavePage('/')" style="text-transform: uppercase; margin-right: 20px" disabled>
-					<input class="white" type="button" value="%menu.bridge%" onclick="Essentials.leavePage('/bridge')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 100px; display: flex">
-					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/automation/')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.log%" onclick="Essentials.leavePage('/log')" style="text-transform: uppercase">
-				</div>
 				<div id="widgets" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-gap: 20px">
 					<div class="widget">
 						<button class="widget-left">%devices.devices%</button>

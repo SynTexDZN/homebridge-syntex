@@ -16,19 +16,15 @@
 				PageManager.showFooter();
 
 			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/debug')" disabled>%menu.workaround%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/style')">%menu.style%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/terminal')">%menu.command%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/config')">%menu.config%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/automation')">%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/debug/syslog')">%menu.syslog%</button>
+			</div>
 			<div id="config" class="main">
-				<div class="main" style="margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.workaround%" onclick="Essentials.leavePage('/debug')" style="text-transform: uppercase; margin-right: 20px" disabled>
-					<input class="white" type="button" value="%menu.style%" onclick="Essentials.leavePage('/debug/style')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.command%" onclick="Essentials.leavePage('/debug/terminal')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.config%" onclick="Essentials.leavePage('/debug/config')" style="text-transform: uppercase">
-				</div>
-				<div class="main" style="margin-top: 10px; margin-bottom: 20px; display: flex">
-					<input class="white" type="button" value="%menu.automation%" onclick="Essentials.leavePage('/debug/automation')" style="text-transform: uppercase; margin-right: 20px">
-					<input class="white" type="button" value="%menu.syslog%" onclick="Essentials.leavePage('/debug/syslog')" style="text-transform: uppercase">
-				</div>
 				<div class="panel" style="margin-top: 100px">
 					<h2 class="title-container">%debug.workaround.pages%</h2>
 					<div class="panel-content" id="workaround"></div>
