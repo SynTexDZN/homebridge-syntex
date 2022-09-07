@@ -4,7 +4,7 @@
 			<title>%general.dashboard%: %menu.automation%</title>
 			<script type="module">
 
-				if((new URL(window.location.href)).searchParams.get('create') == '')
+				if(Essentials.getURLParams('create') != null)
 				{
 					PageManager.setHeader('%menu.automation%', '%automation.create%');
 
@@ -482,7 +482,7 @@
 
 					await PageManager.switchPage('view', 'create', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
 					}
@@ -499,7 +499,7 @@
 
 					await PageManager.switchPage('create', 'view', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation?desktopApp=true');
 					}

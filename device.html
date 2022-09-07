@@ -58,7 +58,7 @@
 
 				window.device = JSON.parse('<%device%>');
 
-				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				if(Essentials.getURLParams('settings') != null)
 				{
 					PageManager.setHeader('%general.settings%', '( ' + device.name + ' )');
 
@@ -1294,7 +1294,7 @@
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name + ' (%general.settings%)';
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '?id=' + device.id + '&settings&desktopApp=true');
 					}
@@ -1324,7 +1324,7 @@
 
 					document.getElementsByTagName('title')[0].innerHTML = device.name;
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
 					}
@@ -1902,7 +1902,7 @@
 				
 				function redirect()
 				{
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
 					}

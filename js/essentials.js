@@ -888,7 +888,14 @@ class EssentialFeatures
 
 		if(url != null)
 		{
-			return url.searchParams.get(key);
+			try
+			{
+				return JSON.parse(url.searchParams.get(key));
+			}
+			catch(e)
+			{
+				return url.searchParams.get(key);
+			}
 		}
 
 		return null;
@@ -980,7 +987,7 @@ function loadPageData(url)
 				{
 					if(url.includes('syntex.local'))
 					{
-						if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+						if(self.getURLParams('desktopApp') == true)
 						{
 							window.history.pushState(null, null, url.split('syntex.local')[1] + (url.split('syntex.local')[1].includes('?') ? '&' : '?') + 'desktopApp=true');
 						}
@@ -991,7 +998,7 @@ function loadPageData(url)
 					}
 					else
 					{
-						if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+						if(self.getURLParams('desktopApp') == true)
 						{
 							window.history.pushState(null, null, url + (url.includes('?') ? '&' : '?') + 'desktopApp=true');
 						}

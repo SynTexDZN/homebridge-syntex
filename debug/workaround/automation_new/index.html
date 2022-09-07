@@ -344,7 +344,7 @@
 
 					PageManager.switchPage('overview', 'editor', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/debug/workaround/automation_new/?editor&desktopApp=true');
 					}
@@ -387,7 +387,7 @@
 
 					PageManager.switchPage('editor', 'overview', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/debug/workaround/automation_new?desktopApp=true');
 					}

@@ -4,7 +4,7 @@
 			<title>%general.dashboard%: %menu.automation%</title>
 			<script type="module">
 
-				if((new URL(window.location.href)).searchParams.get('edit') == '')
+				if(Essentials.getURLParams('edit') != null)
 				{
 					PageManager.setHeader('%menu.automation%', '%automation.create%');
 
@@ -19,7 +19,7 @@
 
 					PageManager.switchPage('overview', 'editor', true);
 				}
-				else if((new URL(window.location.href)).searchParams.get('details') == '')
+				else if(Essentials.getURLParams('details') != null)
 				{
 
 				}
@@ -449,7 +449,7 @@
 
 					await PageManager.switchPage('view', 'create', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
 					}
@@ -466,7 +466,7 @@
 
 					await PageManager.switchPage('create', 'view', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation?desktopApp=true');
 					}
@@ -1264,7 +1264,7 @@
 
 					PageManager.switchPage('overview', 'editor', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/debug/workaround/automation/?editor&desktopApp=true');
 					}
@@ -1307,7 +1307,7 @@
 
 					PageManager.switchPage('editor', 'overview', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/debug/workaround/automation?desktopApp=true');
 					}

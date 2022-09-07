@@ -4,8 +4,8 @@
 			<title>%menu.connect%</title>
 			<script type="module">
 
-				window.deviceID = (new URL(window.location.href)).searchParams.get('id');
-				window.deviceIP = (new URL(window.location.href)).searchParams.get('ip');
+				window.deviceID = Essentials.getURLParams('id');
+				window.deviceIP = Essentials.getURLParams('ip');
 
 				if(deviceID != null && deviceIP != null)
 				{

@@ -4,7 +4,7 @@
 			<title>%menu.automation%: %general.loading% ..</title>
 			<script type="module">
 
-				if((new URL(window.location.href)).searchParams.get('settings') == '')
+				if(Essentials.getURLParams('settings') != null)
 				{
 					PageManager.setHeader('%general.settings%');
 
@@ -72,7 +72,7 @@
 				window.automation = [];
 				window.accessories = JSON.parse('<%accessories%>');
 				window.services = [];
-				window.id = (new URL(window.location.href)).searchParams.get('id');
+				window.id = Essentials.getURLParams('id');
 				window.resetting = false;
 
 				if(id != null)
@@ -175,7 +175,7 @@
 
 					await PageManager.switchPage(previous, 'settings', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings&desktopApp=true');
 					}
@@ -200,7 +200,7 @@
 
 					await PageManager.switchPage(previous, 'automation-infos', false);
 
-					if((new URL(window.location.href)).searchParams.get('desktopApp') == 'true')
+					if(Essentials.getURLParams('desktopApp') == true)
 					{
 						window.history.pushState(null, null, '/automation/modify?id=' + id + '&desktopApp=true');
 					}
