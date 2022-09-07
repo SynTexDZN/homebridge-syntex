@@ -44,7 +44,7 @@
 								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png">
 							</button>
 							<div class="custom-select" style="width: 100%">
-								<select id="sort" onchange="sortAutomation()">
+								<select id="sort" onchange="renderAutomation(false)">
 									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
 									<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
 									<option img="/img/sort-asc.png" value="id-asc">%sort.id%</option>
@@ -54,7 +54,7 @@
 								</select>
 								<script>
 	
-									var sort = 'id-asc', select = document.getElementById('sort');
+									var sort = 'alphabetical-asc', select = document.getElementById('sort');
 	
 									if(Storage.getItem('automation-sort') != null)
 									{
@@ -100,14 +100,14 @@
 						<h2 class="title-container">%automation.trigger%</h2>
 						<div id="trigger" class="panel-content">
 							<div class="bottom">
-								<button type="button" class="gradient-blue-green add-group-button icon-button left split layer" onclick="addGroup()">
+								<button type="button" class="gradient-blue-green add-group-button icon-button left center compact" onclick="addGroup()">
 									<div class="button-icon">
-										<img class="icon-inverted" src="/img/add.png">
+										<img class="icon-inverted" src="/img/add_small.png">
 									</div>
 									<div class="button-text">Gruppe</div>
 								</button>
 								<input value="UND" type="button" class="block-logic white" onclick="switchLogic(this)">
-								<button type="button" class="icon-button right split layer">
+								<button type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
 									</div>
@@ -119,9 +119,9 @@
 					<div class="panel">
 						<h2 class="title-container">%automation.result%</h2>
 						<div id="result" class="panel-content">
-							<button value="+ Block" type="button" class="gradient-blue-green add-block-button icon-button left split layer" onclick="addBlock('result', document.getElementById('result'))">
+							<button value="+ Block" type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result'))">
 								<div class="button-icon">
-									<img class="icon-inverted" src="/img/add.png">
+									<img class="icon-inverted" src="/img/add_small.png">
 								</div>
 								<div class="button-text">Block</div>
 							</button>
@@ -192,9 +192,16 @@
 					{
 						document.getElementById('automation').classList.add('vertical-view');
 
+						document.getElementById('view-button').setAttribute('view', 'vertical');
+						
 						document.getElementById('view-button').children[0].style.display = 'none';
 						document.getElementById('view-button').children[1].style.removeProperty('display');
-						document.getElementById('view-button').setAttribute('view', 'vertical');
+					}
+
+					if(data.automation != null && data.automation.length > 0
+					&& data.accessories != null && data.accessories.length > 0)
+					{
+						renderAutomation(true);
 					}
 
 					Preloader.finish();
@@ -230,6 +237,68 @@
 					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
 
 					console.log('SERVICES', services);
+				}
+
+				async function renderAutomation(init)
+				{
+					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
+
+					sortAutomation(sort);
+
+					if(!init)
+					{
+						Storage.setItem('automation-sort', sort);
+
+						document.getElementById('automation').style.opacity = 0;
+
+						await Essentials.newTimeout(200);
+
+						document.getElementById('automation').innerHTML = '';	
+					}
+
+					for(const i in data.automation)
+					{
+						var button = document.createElement('button');
+
+						button.innerHTML = data.automation[i].name;
+
+						document.getElementById('automation').appendChild(button);
+					}
+
+					if(!init)
+					{
+						document.getElementById('automation').style.opacity = 1;
+					}
+				}
+
+				function sortAutomation(sort)
+				{
+					data.automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+					
+					if(sort == 'alphabetical-desc')
+					{
+						data.automation.sort((a, b) => (a.name < b.name) ? 1 : (b.name < a.name) ? -1 : 0);
+					}
+					
+					if(sort == 'activation-asc')
+					{
+						data.automation.sort((a, b) => (a.active == false && b.active == true) ? 1 : (a.active == true && b.active == false) ? -1 : 0);
+					}
+					
+					if(sort == 'activation-desc')
+					{
+						data.automation.sort((a, b) => (a.active == true && b.active == false) ? 1 : (a.active == false && b.active == true) ? -1 : 0);
+					}
+
+					if(sort == 'id-asc')
+					{
+						data.automation.sort((a, b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
+					}
+					
+					if(sort == 'id-desc')
+					{
+						data.automation.sort((a, b) => (a.id < b.id) ? 1 : (b.id < a.id) ? -1 : 0);
+					}
 				}
 				/*
 				function renderGUI(renderAutomation)
