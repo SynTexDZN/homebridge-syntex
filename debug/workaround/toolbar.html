@@ -23,7 +23,9 @@
 			</script>
 			<div class="main" style="margin-bottom: 100px">
 				<div id="toolbar" class="main" style="margin-top: 100px">
-                    <div id="groups" style="display: flex; width: 100%"><input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab"></div>
+                    <div id="groups">
+                        <button class="white" style="pointer-events: none">%devices.all_devices%</button>
+                    </div>
                     <div style="display: flex; margin-top: 20px">
                         <button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
                         <div class="custom-select" style="width: 100%; pointer-events: none">

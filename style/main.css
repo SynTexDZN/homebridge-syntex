@@ -386,7 +386,7 @@ h1, h2, p, a, label
 	white-space: normal;
 }
 
-#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #groups input, .log-message, .log-title
+#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #groups button, .log-message, .log-title
 {
 	word-break: break-all;
 	word-break: break-word;
@@ -968,7 +968,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	color: var(--dark-layer-two);
 }
 
-.device, #groups input, #status button
+.device, #groups button, #status button
 {
 	letter-spacing: 3px!important;
 }
@@ -1165,21 +1165,8 @@ canvas
 
 #groups
 {
-	/*overflow-x: auto;*/
 	overflow: hidden;
 	overflow-x: overlay;
-	/*padding-bottom: 10px;*/
-}
-
-#groups::-webkit-scrollbar-track, #groups::-webkit-scrollbar
-{
-	display: none;
-}
-
-#groups
-{
-	/*border-radius: 16px;*/
-	/*-webkit-mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, .75) 3%, rgba(0, 0, 0, 1) 5%, rgba(0, 0, 0, 1) 95%, rgba(0, 0, 0, .75) 97%, transparent);*/
 	background: var(--light-layer-two);
 	border-radius: 16px;
 	height: 50px;
@@ -1187,7 +1174,12 @@ canvas
 	border: 2px solid var(--light-layer-two);
 }
 
-#groups input
+#groups::-webkit-scrollbar-track, #groups::-webkit-scrollbar
+{
+	display: none;
+}
+
+#groups button
 {
 	box-shadow: none;
 	opacity: 1!important;
@@ -1199,21 +1191,22 @@ canvas
 	border-radius: 0;
 	padding: 5px 10px 5px 13px;
 	height: auto;
+	cursor: grab;
 }
 
-#groups input:last-child
+#groups button:last-child
 {
 	border-radius: 0 14px 14px 0;
 	border-right-width: 0;
 }
 
-#groups input:first-child
+#groups button:first-child
 {
 	border-radius: 14px 0 0 14px;
 	border-left-width: 0;
 }
 
-.group-active
+#groups .active
 {
 	background: rgb(160, 160, 180)!important;
 	border-style: solid;

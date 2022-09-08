@@ -36,7 +36,7 @@
 				<div class="main" style="margin-bottom: 100px">
 					<div id="toolbar">
 						<div id="groups">
-							<input type="button" value="%automation.all_automations%" class="white" style="pointer-events: none">
+							<button class="white" style="pointer-events: none">%automation.all_automations%</button>
 						</div>
 						<div style="display: flex; margin-top: 20px">
 							<button style="margin-right: 20px" class="image-button" id="view-button" onclick="switchView(this)" view="horizontal"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png"></button>
@@ -342,13 +342,12 @@
 
 					document.getElementById('groups').innerHTML = '';
 
-					var allAutomations = document.createElement('input');
+					var allAutomations = document.createElement('button');
 
-					allAutomations.setAttribute('type', 'button');
+					allAutomations.innerHTML = '%automation.all_automations%';
+					allAutomations.className = 'white';
+
 					allAutomations.setAttribute('group', 'all');
-					allAutomations.setAttribute('value', '%automation.all_automations%');
-					allAutomations.setAttribute('class', 'white');
-					allAutomations.setAttribute('style', 'border-left: none; cursor: grab');
 
 					allAutomations.onclick = () => switchGroup('all', false);
 
@@ -356,14 +355,13 @@
 
 					for(const i in groups)
 					{
-						var group = document.createElement('input');
+						var group = document.createElement('button');
 
-						group.setAttribute('type', 'button');
+						group.innerHTML = groups[i];
+						group.className = 'white';
+
 						group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
 						group.setAttribute('group', groups[i].toLowerCase());
-						group.setAttribute('value', groups[i]);
-						group.setAttribute('class', 'white');
-						group.setAttribute('style', 'margin-left: 20px; cursor: grab');
 						
 						document.getElementById('groups').appendChild(group);
 					}
@@ -450,7 +448,7 @@
 						{
 							if(groupButtons[i].getAttribute('group') == group)
 							{
-								groupButtons[i].className = 'white group-active';
+								groupButtons[i].className = 'white active';
 
 								Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
 							}
