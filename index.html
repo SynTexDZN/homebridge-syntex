@@ -43,8 +43,8 @@
 				</div>
 				<div id="toolbar">
 					<div id="status" style="transition: none"></div>
-					<div id="groups" style="display: flex; width: 100%">
-						<input type="button" onclick="switchGroup('all', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">
+					<div id="groups">
+						<button class="white" style="pointer-events: none">%devices.all_devices%</button>
 					</div>
 					<div style="display: flex; gap: 20px">
 						<button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
@@ -830,7 +830,7 @@
 						{
 							if(groupButtons[i].getAttribute('group') == group)
 							{
-								groupButtons[i].className = 'white group-active';
+								groupButtons[i].className = 'white active';
 
 									Essentials.scrollParentToChild(groupButtons[i].parentElement, groupButtons[i]);
 							}
@@ -1440,18 +1440,17 @@
 					{
 						groups.sort();
 
-						document.getElementById('groups').innerHTML = '<input type="button" onclick="switchGroup(' + "'all'" + ', false)" group="all" value="%devices.all_devices%" class="white" style="border-left: none; cursor: grab">';
+						document.getElementById('groups').innerHTML = '<button onclick="switchGroup(' + "'all'" + ', false)" group="all" class="white" style="border-left: none">%devices.all_devices%</button>';
 
 						for(const i in groups)
 						{
-							var group = document.createElement('input');
+							var group = document.createElement('button');
 
-							group.setAttribute('type', 'button');
+							group.innerHTML = groups[i];
+							group.className = 'white';
+
 							group.setAttribute('onclick', 'switchGroup("' + groups[i].toLowerCase() + '", false)');
 							group.setAttribute('group', groups[i].toLowerCase());
-							group.setAttribute('value', groups[i]);
-							group.setAttribute('class', 'white');
-							group.setAttribute('style', 'margin-left: 20px; cursor: grab');
 							
 							document.getElementById('groups').appendChild(group);
 						}
