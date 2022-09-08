@@ -34,6 +34,20 @@
 			</div>
 			<div id="overview" class="page">
 				<div class="main" style="margin-bottom: 100px">
+					<div id="widgets" class="two">
+						<div class="widget">
+							<button class="widget-left">%general.count%</button>
+							<button class="widget-right gradient-blue" id="widget-counter">0</button>
+						</div>
+						<div class="widget">
+							<button class="widget-left">%automation.active%</button>
+							<button class="widget-right gradient-green" id="widget-active">-</button>
+						</div>
+						<div class="widget hidden">
+							<button class="widget-left">%automation.network%</button>
+							<button class="widget-right gradient-orange" id="widget-network">-</button>
+						</div>
+					</div>
 					<div id="toolbar">
 						<div id="groups">
 							<input type="button" value="%automation.all_automations%" class="white" style="pointer-events: none">
@@ -204,6 +218,11 @@
 						renderAutomation(true);
 					}
 
+					if(data.automation != null && data.automation.length > 0)
+					{
+						renderWidgets();
+					}
+
 					Preloader.finish();
 				}
 
@@ -271,6 +290,26 @@
 					}
 				}
 
+				function renderWidgets()
+				{
+					var count = 0, active = 0;
+
+					for(const i in data.automation)
+					{
+						if(hasGroup(data.automation[i].id, activeGroup))
+						{
+							if(data.automation[i].active == true)
+							{
+								active++;
+							}
+
+							count++;
+						}
+					}
+
+					document.getElementById('widget-counter').innerHTML = count;
+					document.getElementById('widget-active').innerHTML = active;
+				}
 				function sortAutomation(sort)
 				{
 					data.automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
