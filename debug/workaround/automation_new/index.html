@@ -53,7 +53,7 @@
 							<button class="white" style="pointer-events: none">%automation.all_automations%</button>
 						</div>
 						<div style="display: flex; gap: 20px">
-							<button id="view-button" class="image-button" onclick="switchView(this)" view="horizontal">
+							<button id="view-button" class="image-button" onclick="switchView(this.getAttribute('view'), true)" view="horizontal">
 								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png">
 								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png">
 							</button>
@@ -204,7 +204,8 @@
 					
 					if(Storage.getItem('automation-view') == 'vertical')
 					{
-						document.getElementById('automation').classList.add('vertical-view');
+						switchView(Storage.getItem('automation-view'));
+					}
 
 						document.getElementById('view-button').setAttribute('view', 'vertical');
 						
@@ -475,6 +476,34 @@
 					button.value = (button.value == logic[0].toUpperCase() ? logic[1].toUpperCase() : logic[0].toUpperCase());
 				}
 
+				function switchView(view, toggle)
+				{
+					var button = document.getElementById('view-button');
+
+					if(toggle)
+					{
+						view = view == 'vertical' ? 'horizontal' : 'vertical';
+
+						Storage.setItem('automation-view', view);
+					}
+
+					button.setAttribute('view', view);
+
+					if(view == 'vertical')
+					{
+						document.getElementById('automation').classList.add('vertical-view');
+
+						button.children[0].style.display = 'none';
+						button.children[1].style.removeProperty('display');
+					}
+					else if(view == 'horizontal')
+					{
+						document.getElementById('automation').classList.remove('vertical-view');
+
+						button.children[0].style.removeProperty('display');
+						button.children[1].style.display = 'none';
+					}
+				}
 			</script>
 		</div>
 	</body>
