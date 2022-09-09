@@ -165,6 +165,7 @@
 								{
 									window.data = JSON.parse(data);
 
+									loadGroups();
 									loadServices();
 								}
 								catch(e)
@@ -207,10 +208,9 @@
 						switchView(Storage.getItem('automation-view'));
 					}
 
-						document.getElementById('view-button').setAttribute('view', 'vertical');
-						
-						document.getElementById('view-button').children[0].style.display = 'none';
-						document.getElementById('view-button').children[1].style.removeProperty('display');
+					if(groups.length > 0)
+					{
+						renderGroups();
 					}
 
 					if(data.automation != null && data.automation.length > 0
@@ -259,6 +259,35 @@
 					console.log('SERVICES', services);
 				}
 
+				window.tempGroups = [];
+				window.groups = [];
+
+				function loadGroups()
+				{
+					var changed = false;
+
+					for(const i in data.automation)
+					{
+						var groupArray = Array.isArray(data.automation[i].group) ? data.automation[i].group : [ data.automation[i].group ];
+
+						for(const j in groupArray)
+						{
+							if(!tempGroups.includes(groupArray[j].toLowerCase()))
+							{
+								groups.push(groupArray[j]);
+
+								tempGroups.push(groupArray[j].toLowerCase());
+
+								changed = true;
+							}
+						}
+					}
+
+					groups.sort();
+
+					return changed;
+				}
+
 				async function renderAutomation(init)
 				{
 					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
@@ -286,6 +315,8 @@
 						document.getElementById('automation').appendChild(button);
 					}
 
+					switchGroup(true);
+
 					if(!init)
 					{
 						document.getElementById('automation').style.opacity = 1;
@@ -312,6 +343,57 @@
 					document.getElementById('widget-counter').innerHTML = count;
 					document.getElementById('widget-active').innerHTML = active;
 				}
+
+				window.activeGroup = null;
+
+				function renderGroups()
+				{
+					var allGroups = document.createElement('button');
+
+					allGroups.innerHTML = '%automation.all_automations%';
+					allGroups.className = 'white';
+
+					if(activeGroup == null)
+					{
+						allGroups.classList.add('active');							
+					}
+
+					allGroups.setAttribute('type', 'button');
+
+					allGroups.onclick = () => {
+						
+						activeGroup = null;
+
+						switchGroup();
+					};
+
+					document.getElementById('groups').innerHTML = '';
+
+					document.getElementById('groups').appendChild(allGroups);
+
+					for(const i in groups)
+					{
+						var group = document.createElement('button');
+
+						group.innerHTML = groups[i];
+						group.className = 'white';
+
+						if(activeGroup != null && activeGroup == groups[i])
+						{
+							allGroups.classList.add('active');							
+						}
+
+						group.onclick = () => {
+							
+							activeGroup = groups[i].toLowerCase();
+
+							switchGroup();
+						};
+
+						document.getElementById('groups').appendChild(group);
+					}
+				}
+
 				function sortAutomation(sort)
 				{
 					data.automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
@@ -469,6 +551,36 @@
 					return lastID + 1;
 				}
 
+				function hasGroup(id, group)
+				{
+					var automation = getAutomation(id);
+
+					if(group == null)
+					{
+						return true;
+					}
+
+					if(automation != null && automation.group != null)
+					{
+						if(Array.isArray(automation.group))
+						{
+							for(const i in automation.group)
+							{
+								if(automation.group[i].toLowerCase() == group.toLowerCase())
+								{
+									return true;
+								}
+							}
+						}
+						else if(automation.group.toLowerCase() == group.toLowerCase())
+						{
+							return true;
+						}
+					}
+
+					return false;
+				}
+
 			</script>
 			<script>
 
@@ -505,6 +617,56 @@
 						button.children[1].style.display = 'none';
 					}
 				}
+
+				async function switchGroup(init)
+				{
+					var automation = document.getElementById('automation').children, groups = document.getElementById('groups').children;
+
+					if(!init)
+					{
+						Storage.setItem('automation-group', activeGroup);
+
+						document.getElementById('automation').style.opacity = 0;
+
+						await Essentials.newTimeout(200);
+					}
+					else // TODO: What if Storage has no Item?
+					{
+						activeGroup = Storage.getItem('automation-group');
+					}
+
+					for(var i = 0; i < automation.length; i++)
+					{
+						if(hasGroup(automation[i].id, activeGroup))
+						{
+							automation[i].classList.remove('hidden');
+						}
+						else
+						{
+							automation[i].classList.add('hidden');
+						}
+					}
+
+					for(var i = 0; i < groups.length; i++)
+					{
+						if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
+						{
+							groups[i].classList.add('active');
+						}
+						else
+						{
+							groups[i].classList.remove('active');
+						}
+					}
+
+					if(!init)
+					{
+						renderWidgets();
+
+						document.getElementById('automation').style.opacity = 1;
+					}
+				}
+
 			</script>
 		</div>
 	</body>
