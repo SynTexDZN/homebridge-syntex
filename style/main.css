@@ -2049,11 +2049,16 @@ button img
 	text-transform: uppercase;
 }
 
-#trigger, #result, #trigger .group
+#trigger .groups, #result, #trigger .group
 {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+}
+
+#trigger .groups:empty, #trigger .blocks:empty, #result .blocks:empty
+{
+	display: none;
 }
 
 #trigger .group
@@ -2061,13 +2066,6 @@ button img
 	background-color: rgb(60, 60, 80);
 	border-radius: 36px;
 	padding: 20px;
-}
-
-#trigger .group-logic
-{
-	margin: 0 auto;
-	height: 30px;
-	box-shadow: none;
 }
 
 #trigger .group-logic, #trigger .block-logic

@@ -272,20 +272,20 @@
 					{
 						if(data.automation[i].group != null)
 						{
-						var groupArray = Array.isArray(data.automation[i].group) ? data.automation[i].group : [ data.automation[i].group ];
+							var groupArray = Array.isArray(data.automation[i].group) ? data.automation[i].group : [ data.automation[i].group ];
 
-						for(const j in groupArray)
-						{
-							if(!tempGroups.includes(groupArray[j].toLowerCase()))
+							for(const j in groupArray)
 							{
-								groups.push(groupArray[j]);
+								if(!tempGroups.includes(groupArray[j].toLowerCase()))
+								{
+									groups.push(groupArray[j]);
 
-								tempGroups.push(groupArray[j].toLowerCase());
+									tempGroups.push(groupArray[j].toLowerCase());
 
-								changed = true;
+									changed = true;
+								}
 							}
 						}
-					}
 					}
 
 					groups.sort();
@@ -677,7 +677,7 @@
 			</script>
 			<script>
 
-				function addGroup()
+				function addGroup(entry)
 				{
 					var group = document.createElement('div'),
 						blocks = document.createElement('div'),
@@ -693,22 +693,20 @@
 					bottom.className = 'bottom';
 
 					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.block%</div>';
-
-					add.setAttribute('type', 'button');
-					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left center compact');
+					add.className = 'gradient-blue-green add-block-button icon-button left center compact';
+					add.type = 'button';
 
 					//add.onclick = () => addBlock('trigger', group);
 
-					logic.setAttribute('value', window.logic[0].toUpperCase());
-					logic.setAttribute('type', 'button');
-					logic.setAttribute('class', 'block-logic white');
+					logic.innerHTML = entry != null && entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					logic.className = 'block-logic white';
+					logic.type = 'button';
 
 					logic.onclick = () => switchLogic(logic);
 
 					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.group%</div>';
-
-					remove.setAttribute('type', 'button');
-					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right center compact');
+					remove.className = 'gradient-red remove-group-button icon-button right center compact';
+					remove.type = 'button';
 
 					remove.onclick = () => document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
 					
@@ -720,6 +718,8 @@
 					group.appendChild(bottom);
 
 					document.getElementById('trigger').getElementsByClassName('groups')[0].appendChild(group);
+				
+					return group;
 				}
 
 			</script>
