@@ -118,14 +118,14 @@
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/add_small.png">
 									</div>
-									<div class="button-text">Gruppe</div>
+									<div class="button-text">%automation.group%</div>
 								</button>
-								<input value="UND" type="button" class="block-logic white" onclick="switchLogic(this)">
+								<button type="button" class="block-logic white" onclick="switchLogic(this)">%automation.and%</button>
 								<button type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
 									</div>
-									<div class="button-text">Optionen</div>
+									<div class="button-text">%general.options%</div>
 								</button>
 							</div>
 						</div>
@@ -133,11 +133,11 @@
 					<div class="panel">
 						<h2 class="title-container">%automation.result%</h2>
 						<div id="result" class="panel-content">
-							<button value="+ Block" type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result'))">
+							<button type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result'))">
 								<div class="button-icon">
 									<img class="icon-inverted" src="/img/add_small.png">
 								</div>
-								<div class="button-text">Block</div>
+								<div class="button-text">%automation.block%</div>
 							</button>
 						</div>
 					</div>
@@ -586,7 +586,7 @@
 
 				function switchLogic(button)
 				{
-					button.value = (button.value == logic[0].toUpperCase() ? logic[1].toUpperCase() : logic[0].toUpperCase());
+					button.innerHTML = (button.innerHTML.toUpperCase() == logic[0].toUpperCase() ? logic[1].toUpperCase() : logic[0].toUpperCase());
 				}
 
 				function switchView(view, toggle)
@@ -665,6 +665,50 @@
 
 						document.getElementById('automation').style.opacity = 1;
 					}
+				}
+
+			</script>
+			<script>
+
+				function addGroup()
+				{
+					var group = document.createElement('div'),
+						bottom = document.createElement('div'),
+						add = document.createElement('button'),
+						logic = document.createElement('button'),
+						remove = document.createElement('button');
+
+					group.className = 'group';
+
+					bottom.className = 'bottom';
+
+					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.block%</div>';
+
+					add.setAttribute('type', 'button');
+					add.setAttribute('class', 'gradient-blue-green add-block-button icon-button left center compact');
+
+					//add.onclick = () => addBlock('trigger', group);
+
+					logic.setAttribute('value', window.logic[0].toUpperCase());
+					logic.setAttribute('type', 'button');
+					logic.setAttribute('class', 'block-logic white');
+
+					logic.onclick = () => switchLogic(logic);
+
+					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.group%</div>';
+
+					remove.setAttribute('type', 'button');
+					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right center compact');
+
+					remove.onclick = () => document.getElementById('trigger').removeChild(group);
+					
+					bottom.appendChild(add);
+					bottom.appendChild(logic);
+					bottom.appendChild(remove);
+
+					group.appendChild(bottom);
+
+					document.getElementById('trigger').insertBefore(group, document.getElementById('trigger').getElementsByClassName('bottom')[document.getElementById('trigger').getElementsByClassName('bottom').length - 1]);
 				}
 
 			</script>
