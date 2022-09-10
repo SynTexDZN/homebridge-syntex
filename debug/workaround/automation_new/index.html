@@ -640,7 +640,7 @@
 
 						await Essentials.newTimeout(200);
 					}
-					else // TODO: What if Storage has no Item?
+					else
 					{
 						activeGroup = Storage.getItem('automation-group');
 					}
@@ -685,9 +685,9 @@
 					var group = document.createElement('div'),
 						blocks = document.createElement('div'),
 						bottom = document.createElement('div'),
-						add = document.createElement('button'),
+						add = PageBuilder.createIconButton({ text : '%automation.block%', src : '/img/add_small.png', align : 'left' }),
 						logic = document.createElement('button'),
-						remove = document.createElement('button');
+						remove = PageBuilder.createIconButton({ text : '%automation.group%', src : '/img/delete.png', align : 'right' });
 
 					group.className = 'group';
 
@@ -695,9 +695,7 @@
 
 					bottom.className = 'bottom';
 
-					add.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/add_small.png"></div><div class="button-text">%automation.block%</div>';
-					add.className = 'gradient-blue-green add-block-button icon-button left center compact';
-					add.type = 'button';
+					add.classList.add('gradient-blue-green', 'add-block-button');
 
 					//add.onclick = () => addBlock('trigger', group);
 
@@ -707,9 +705,7 @@
 
 					logic.onclick = () => switchLogic(logic);
 
-					remove.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/delete.png"></div><div class="button-text">%automation.group%</div>';
-					remove.className = 'gradient-red remove-group-button icon-button right center compact';
-					remove.type = 'button';
+					remove.classList.add('gradient-red', 'remove-group-button');
 
 					remove.onclick = () => document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
 					
