@@ -268,6 +268,8 @@
 
 					for(const i in data.automation)
 					{
+						if(data.automation[i].group != null)
+						{
 						var groupArray = Array.isArray(data.automation[i].group) ? data.automation[i].group : [ data.automation[i].group ];
 
 						for(const j in groupArray)
@@ -281,6 +283,7 @@
 								changed = true;
 							}
 						}
+					}
 					}
 
 					groups.sort();
