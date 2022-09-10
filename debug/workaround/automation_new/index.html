@@ -113,6 +113,7 @@
 					<div class="panel">
 						<h2 class="title-container">%automation.trigger%</h2>
 						<div id="trigger" class="panel-content">
+							<div class="groups"></div>
 							<div class="bottom">
 								<button type="button" class="gradient-blue-green add-group-button icon-button left center compact" onclick="addGroup()">
 									<div class="button-icon">
@@ -133,6 +134,7 @@
 					<div class="panel">
 						<h2 class="title-container">%automation.result%</h2>
 						<div id="result" class="panel-content">
+							<div class="blocks"></div>
 							<button type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result'))">
 								<div class="button-icon">
 									<img class="icon-inverted" src="/img/add_small.png">
@@ -678,12 +680,15 @@
 				function addGroup()
 				{
 					var group = document.createElement('div'),
+						blocks = document.createElement('div'),
 						bottom = document.createElement('div'),
 						add = document.createElement('button'),
 						logic = document.createElement('button'),
 						remove = document.createElement('button');
 
 					group.className = 'group';
+
+					blocks.className = 'blocks';
 
 					bottom.className = 'bottom';
 
@@ -705,15 +710,16 @@
 					remove.setAttribute('type', 'button');
 					remove.setAttribute('class', 'gradient-red remove-group-button icon-button right center compact');
 
-					remove.onclick = () => document.getElementById('trigger').removeChild(group);
+					remove.onclick = () => document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
 					
 					bottom.appendChild(add);
 					bottom.appendChild(logic);
 					bottom.appendChild(remove);
 
+					group.appendChild(blocks);
 					group.appendChild(bottom);
 
-					document.getElementById('trigger').insertBefore(group, document.getElementById('trigger').getElementsByClassName('bottom')[document.getElementById('trigger').getElementsByClassName('bottom').length - 1]);
+					document.getElementById('trigger').getElementsByClassName('groups')[0].appendChild(group);
 				}
 
 			</script>
