@@ -315,6 +315,8 @@
 						button.innerHTML = data.automation[i].name;
 						button.id = data.automation[i].id;
 
+						button.onclick = () => openEditor(data.automation[i].id);
+
 						document.getElementById('automation').appendChild(button);
 					}
 
@@ -472,18 +474,18 @@
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new/?editor&desktopApp=true');
+						window.history.pushState(null, null, '/debug/workaround/automation_new/?edit&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new/?editor');
+						window.history.pushState(null, null, '/debug/workaround/automation_new/?edit');
 					}
 
 					activeAutomation = id != null ? getAutomation(id) : null;
 
-					document.getElementById('editor').getElementsByTagName('input')[0].value = activeAutomation != null ? activeAutomation.id : getNextID();
-					document.getElementById('editor').getElementsByTagName('input')[1].value = activeAutomation != null ? activeAutomation.name : '';
-					document.getElementById('editor').getElementsByTagName('input')[2].value = activeAutomation != null ? activeAutomation.group : '';
+					document.getElementById('editor').getElementsByTagName('input')[0].value = activeAutomation != null && activeAutomation.id != null ? activeAutomation.id : getNextID();
+					document.getElementById('editor').getElementsByTagName('input')[1].value = activeAutomation != null && activeAutomation.name != null  ? activeAutomation.name : '';
+					document.getElementById('editor').getElementsByTagName('input')[2].value = activeAutomation != null && activeAutomation.group != null  ? activeAutomation.group : '';
 				
 					document.getElementById('trigger').getElementsByClassName('block-logic')[0].value = activeAutomation != null && activeAutomation.trigger != null && activeAutomation.trigger.logic == 'OR' ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase();
 
@@ -495,13 +497,13 @@
 
 							for(const j in activeAutomation.trigger.groups[i].blocks)
 							{
-								addBlock('trigger', group, activeAutomation.trigger.groups[i].blocks[j]);
+								//addBlock('trigger', group, activeAutomation.trigger.groups[i].blocks[j]);
 							}
 						}
 
 						for(const i in activeAutomation.result)
 						{
-							addBlock('result', document.getElementById('result'), activeAutomation.result[i]);
+							//addBlock('result', document.getElementById('result'), activeAutomation.result[i]);
 						}
 					}
 				}
