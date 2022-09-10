@@ -104,7 +104,7 @@
 				<form id="editor-form" class="main" onsubmit="event.preventDefault(); editAutomation()">
 					<div class="panel">
 						<h2 class="title-container">%automation.infos%</h2>
-						<div class="panel-content padding">
+						<div id="general" class="panel-content padding">
 							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
 							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
@@ -485,11 +485,14 @@
 
 					activeAutomation = id != null ? getAutomation(id) : null;
 
-					document.getElementById('editor').getElementsByTagName('input')[0].value = activeAutomation != null && activeAutomation.id != null ? activeAutomation.id : getNextID();
-					document.getElementById('editor').getElementsByTagName('input')[1].value = activeAutomation != null && activeAutomation.name != null  ? activeAutomation.name : '';
-					document.getElementById('editor').getElementsByTagName('input')[2].value = activeAutomation != null && activeAutomation.group != null  ? activeAutomation.group : '';
+					document.getElementById('general').getElementsByTagName('input')[0].value = activeAutomation != null && activeAutomation.id != null ? activeAutomation.id : getNextID();
+					document.getElementById('general').getElementsByTagName('input')[1].value = activeAutomation != null && activeAutomation.name != null  ? activeAutomation.name : '';
+					document.getElementById('general').getElementsByTagName('input')[2].value = activeAutomation != null && activeAutomation.group != null  ? activeAutomation.group : '';
 				
-					document.getElementById('trigger').getElementsByClassName('block-logic')[0].value = activeAutomation != null && activeAutomation.trigger != null && activeAutomation.trigger.logic == 'OR' ? window.logic[1].toUpperCase() : window.logic[0].toUpperCase();
+					document.getElementById('trigger').getElementsByClassName('block-logic')[0].innerHTML = activeAutomation == null || activeAutomation.trigger == null || activeAutomation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+
+					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
+					document.getElementById('result').getElementsByClassName('blocks')[0].innerHTML = '';
 
 					if(activeAutomation != null)
 					{
@@ -698,7 +701,7 @@
 
 					//add.onclick = () => addBlock('trigger', group);
 
-					logic.innerHTML = entry != null && entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					logic.innerHTML = entry == null || entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
 					logic.className = 'block-logic white';
 					logic.type = 'button';
 
