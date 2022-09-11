@@ -58,7 +58,7 @@
 								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png">
 							</button>
 							<div class="custom-select" style="width: 100%">
-								<select id="sort" onchange="renderAutomation(false)">
+								<select id="sort" onchange="switchSort()">
 									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
 									<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
 									<option img="/img/sort-asc.png" value="id-asc">%sort.id%</option>
@@ -121,7 +121,7 @@
 									</div>
 									<div class="button-text">%automation.group%</div>
 								</button>
-								<button type="button" class="block-logic white" onclick="switchLogic(this)">%automation.and%</button>
+								<button type="button" class="group-logic white" onclick="switchLogic(this)">%automation.and%</button>
 								<button type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
@@ -293,23 +293,11 @@
 					return changed;
 				}
 
-				async function renderAutomation(init)
+				function renderAutomation()
 				{
 					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
 
 					sortAutomation(sort);
-
-					if(!init)
-					{
-						Storage.setItem('automation-sort', sort);
-
-						document.getElementById('automation').style.opacity = 0;
-
-						await Essentials.newTimeout(200);
-
-						document.getElementById('automation').innerHTML = '';	
-					}
-
 					for(const i in data.automation)
 					{
 						var button = document.createElement('button');
@@ -317,17 +305,17 @@
 						button.innerHTML = data.automation[i].name;
 						button.id = data.automation[i].id;
 
-						button.onclick = () => openEditor(data.automation[i].id);
+						button.onclick = () => {
+							
+							activeAutomation = data.automation[i];
+
+							openEditor();
+						};
 
 						document.getElementById('automation').appendChild(button);
 					}
 
 					switchGroup(true);
-
-					if(!init)
-					{
-						document.getElementById('automation').style.opacity = 1;
-					}
 				}
 
 				function renderWidgets()
@@ -371,7 +359,7 @@
 						
 						activeGroup = null;
 
-						switchGroup();
+						switchGroup(false);
 					};
 
 					document.getElementById('groups').innerHTML = '';
@@ -394,7 +382,7 @@
 							
 							activeGroup = groups[i].toLowerCase();
 
-							switchGroup();
+							switchGroup(false);
 						};
 
 						document.getElementById('groups').appendChild(group);
@@ -457,9 +445,9 @@
 			<script>
 
 				window.logic = ['%automation.and%', '%automation.or%'];
-				window.activeAutomation = null;
+				window.activeAutomation = {};
 
-				function openEditor(id)
+				function openEditor()
 				{
 					PageManager.setHeader('%menu.automation%', '%automation.create%');
 
@@ -467,7 +455,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (id == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (Object.keys(activeAutomation).length == 0 ? '%automation.create%' : '%automation.modify%') + '"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
@@ -483,18 +471,17 @@
 						window.history.pushState(null, null, '/debug/workaround/automation_new/?edit');
 					}
 
-					activeAutomation = id != null ? getAutomation(id) : null;
-
-					document.getElementById('general').getElementsByTagName('input')[0].value = activeAutomation != null && activeAutomation.id != null ? activeAutomation.id : getNextID();
-					document.getElementById('general').getElementsByTagName('input')[1].value = activeAutomation != null && activeAutomation.name != null  ? activeAutomation.name : '';
-					document.getElementById('general').getElementsByTagName('input')[2].value = activeAutomation != null && activeAutomation.group != null  ? activeAutomation.group : '';
+					document.getElementById('general').getElementsByTagName('input')[0].value = activeAutomation.id || getNextID();
+					document.getElementById('general').getElementsByTagName('input')[1].value = activeAutomation.name || '';
+					document.getElementById('general').getElementsByTagName('input')[2].value = activeAutomation.group || '';
 				
-					document.getElementById('trigger').getElementsByClassName('block-logic')[0].innerHTML = activeAutomation == null || activeAutomation.trigger == null || activeAutomation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = activeAutomation.trigger == null || activeAutomation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
 
 					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
+
 					document.getElementById('result').getElementsByClassName('blocks')[0].innerHTML = '';
 
-					if(activeAutomation != null)
+					if(Object.keys(activeAutomation).length > 0)
 					{
 						for(const i in activeAutomation.trigger.groups)
 						{
@@ -528,6 +515,8 @@
 					{
 						window.history.pushState(null, null, '/debug/workaround/automation_new/');
 					}
+
+					activeAutomation = {};
 				}
 
 			</script>
@@ -628,7 +617,29 @@
 					}
 				}
 
-				async function switchGroup(init)
+				function switchSort()
+				{
+					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
+
+					sortAutomation(sort);
+
+					Storage.setItem('automation-sort', sort);
+
+					document.getElementById('automation').style.opacity = 0;
+
+					setTimeout(() => {
+						
+						for(const i in data.automation)
+						{
+							document.getElementById('automation').appendChild(document.getElementById(data.automation[i].id));
+						}
+
+						setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
+
+					}, 200);
+				}
+
+				function switchGroup(init)
 				{
 					var automation = document.getElementById('automation').children, groups = document.getElementById('groups').children;
 
@@ -637,44 +648,46 @@
 						Storage.setItem('automation-group', activeGroup);
 
 						document.getElementById('automation').style.opacity = 0;
-
-						await Essentials.newTimeout(200);
 					}
 					else
 					{
 						activeGroup = Storage.getItem('automation-group');
 					}
 
-					for(var i = 0; i < automation.length; i++)
-					{
-						if(hasGroup(automation[i].id, activeGroup))
+					setTimeout(() => {
+						
+						for(var i = 0; i < automation.length; i++)
 						{
-							automation[i].classList.remove('hidden');
+							if(hasGroup(automation[i].id, activeGroup))
+							{
+								automation[i].classList.remove('hidden');
+							}
+							else
+							{
+								automation[i].classList.add('hidden');
+							}
 						}
-						else
-						{
-							automation[i].classList.add('hidden');
-						}
-					}
 
-					for(var i = 0; i < groups.length; i++)
-					{
-						if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
+						for(var i = 0; i < groups.length; i++)
 						{
-							groups[i].classList.add('active');
+							if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
+							{
+								groups[i].classList.add('active');
+							}
+							else
+							{
+								groups[i].classList.remove('active');
+							}
 						}
-						else
+
+						if(!init)
 						{
-							groups[i].classList.remove('active');
+							renderWidgets();
+
+							setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
 						}
-					}
-
-					if(!init)
-					{
-						renderWidgets();
-
-						document.getElementById('automation').style.opacity = 1;
-					}
+						
+					}, init ? 0 : 200);
 				}
 
 			</script>
