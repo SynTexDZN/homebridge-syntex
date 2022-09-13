@@ -6,18 +6,16 @@
 
 				if(Essentials.getURLParams('edit') != null)
 				{
-					PageManager.setHeader('%menu.automation%', '%automation.create%');
+					PageManager.setHeader('%menu.automation%', Essentials.getURLParams('id') == null ? '%automation.create%' : '%general.loading% ..');
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (Essentials.getURLParams('id') == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
-
-					PageManager.switchPage('overview', 'editor', true);
 				}
 				else
 				{
@@ -85,7 +83,7 @@
 	
 								</script>
 							</div>
-							<button id="add-button" class="image-button" onclick="openEditor()" view="list">
+							<button id="add-button" class="image-button" onclick="openEditor(false)" view="list">
 								<img src="/img/add.png" style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)">
 							</button>
 						</div>
@@ -97,7 +95,7 @@
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
 					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
-					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openEditor()">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openEditor(false)">
 				</div>
 			</div>
 			<div id="editor" class="page hidden">
@@ -226,6 +224,18 @@
 						renderWidgets();
 					}
 
+					if(Essentials.getURLParams('edit') != null)
+					{
+						var automation = undefined;
+
+						if(Essentials.getURLParams('id') != null)
+						{
+							automation = getAutomation(Essentials.getURLParams('id') || undefined);
+						}
+
+						openEditor(true, automation);
+					}
+
 					Preloader.finish();
 				}
 
@@ -298,6 +308,7 @@
 					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
 
 					sortAutomation(sort);
+
 					for(const i in data.automation)
 					{
 						var button = document.createElement('button');
@@ -305,12 +316,7 @@
 						button.innerHTML = data.automation[i].name;
 						button.id = data.automation[i].id;
 
-						button.onclick = () => {
-							
-							activeAutomation = data.automation[i];
-
-							openEditor();
-						};
+						button.onclick = () => openEditor(false, data.automation[i]);
 
 						document.getElementById('automation').appendChild(button);
 					}
@@ -445,57 +451,61 @@
 			<script>
 
 				window.logic = ['%automation.and%', '%automation.or%'];
-				window.activeAutomation = {};
 
-				function openEditor()
+				function openEditor(init, automation = {})
 				{
-					PageManager.setHeader('%menu.automation%', '%automation.create%');
+					PageManager.setHeader('%menu.automation%', automation.id == null ? '%automation.create%' : automation.name, !init);
 
 					var main = document.createElement('div');
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (Object.keys(activeAutomation).length == 0 ? '%automation.create%' : '%automation.modify%') + '"></div>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (automation.id == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
 
 					PageManager.setFooter(main);
-					PageManager.showFooter(true);
+					PageManager.showFooter(!init);
 
-					PageManager.switchPage('overview', 'editor', false);
+					PageManager.switchPage('overview', 'editor', init);
+
+					var url = '/debug/workaround/automation_new/?edit';
+
+					if(automation.id != null)
+					{
+						url += '&id=' + automation.id;
+					}
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new/?edit&desktopApp=true');
-					}
-					else
-					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new/?edit');
+						url += '&desktopApp=true';
 					}
 
-					document.getElementById('general').getElementsByTagName('input')[0].value = activeAutomation.id || getNextID();
-					document.getElementById('general').getElementsByTagName('input')[1].value = activeAutomation.name || '';
-					document.getElementById('general').getElementsByTagName('input')[2].value = activeAutomation.group || '';
+					window.history.pushState(null, null, url);
+
+					document.getElementById('general').getElementsByTagName('input')[0].value = automation.id || getNextID();
+					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
+					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
 				
-					document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = activeAutomation.trigger == null || activeAutomation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = automation.trigger == null || automation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
 
 					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
 
 					document.getElementById('result').getElementsByClassName('blocks')[0].innerHTML = '';
 
-					if(Object.keys(activeAutomation).length > 0)
+					if(automation.id != null)
 					{
-						for(const i in activeAutomation.trigger.groups)
+						for(const i in automation.trigger.groups)
 						{
-							var group = addGroup(activeAutomation.trigger.groups[i]);
+							var group = addGroup(automation.trigger.groups[i]);
 
-							for(const j in activeAutomation.trigger.groups[i].blocks)
+							for(const j in automation.trigger.groups[i].blocks)
 							{
-								//addBlock('trigger', group, activeAutomation.trigger.groups[i].blocks[j]);
+								//addBlock('trigger', group, automation.trigger.groups[i].blocks[j]);
 							}
 						}
 
-						for(const i in activeAutomation.result)
+						for(const i in automation.result)
 						{
-							//addBlock('result', document.getElementById('result'), activeAutomation.result[i]);
+							//addBlock('result', document.getElementById('result'), automation.result[i]);
 						}
 					}
 				}
@@ -507,16 +517,14 @@
 
 					PageManager.switchPage('editor', 'overview', false);
 
+					var url = '/debug/workaround/automation_new/';
+
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new?desktopApp=true');
+						url += '?desktopApp=true';
 					}
-					else
-					{
-						window.history.pushState(null, null, '/debug/workaround/automation_new/');
-					}
-
-					activeAutomation = {};
+					
+					window.history.pushState(null, null, url);
 				}
 
 			</script>
