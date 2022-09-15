@@ -32,7 +32,7 @@ class PageBuilderModule
 
 				if(options.options[i].selected)
 				{
-					option.selected = true;
+					option.setAttribute('selected', '');
 				}
 
 				for(const x in options.options[i])

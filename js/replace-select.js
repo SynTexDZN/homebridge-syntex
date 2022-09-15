@@ -136,6 +136,11 @@ class CustomSelect
 			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 			selectItem.setAttribute('counter', i);
 
+			if(nativeSelect.options[i].hasAttribute('hidden'))
+			{
+				selectItem.classList.add('hidden');
+			}
+
 			if(nativeSelect.options[i].hasAttribute('img'))
 			{
 				selectItem.style.paddingLeft = '15px';
@@ -144,7 +149,7 @@ class CustomSelect
 
 			selectItem.innerHTML += '<div class="select-text">' + nativeSelect.options[i].innerHTML + '</div>';
 
-			if(selectItem.innerHTML.split('</div>')[0] == selectedElement.innerHTML.split('</div>')[0])
+			if(nativeSelect.options[i].hasAttribute('selected'))
 			{
 				selectItem.classList.add('same-as-selected');
 			}
