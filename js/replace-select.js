@@ -200,9 +200,9 @@ class CustomSelect
 				}
 
 				selectText.innerHTML = '';
-
-				window.Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
 			}
+
+			window.Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
 
 			this._checkDirection(select);
 			this._checkOversized(select);
