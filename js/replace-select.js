@@ -122,7 +122,7 @@ class CustomSelect
 			selectedElement.appendChild(searchElement);
 		}
 
-		container.appendChild(selectedElement);
+		selectedElement.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
 
 		var selectItems = document.createElement('div');
 
@@ -152,10 +152,9 @@ class CustomSelect
 			selectItems.appendChild(selectItem);
 		}
 
+		container.appendChild(selectedElement);
 		container.appendChild(selectItems);
 
-		selectedElement.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
-		
 		selects.push(container);
 
 		setTimeout(() => {
