@@ -257,12 +257,15 @@
 						{
 							var service = data.accessories[i].services[j];
 
-							if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
+							if(service.type != 'lcd' && service.type != 'bridge' && service.type != 'unsupported' && service.type != 'removed')
 							{
-								service.type = 'rgb';
-							}
+								if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
+								{
+									service.type = 'rgb';
+								}
 
-							services.push({ ...service, plugin });
+								services.push({ ...service, plugin, id : data.accessories[i].id });
+							}
 						}
 					}
 
