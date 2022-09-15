@@ -921,7 +921,7 @@
 
 					root.insertBefore(element, root.children[root.children.length - 1]);
 				
-					element.appendChild(Replacer.createSelectMenu(select, true));
+					element.appendChild(Replacer.createSelectMenu(select, { search : true }));
 					element.appendChild(Replacer.createSelectMenu(operations));
 
 					element.innerHTML += '<input placeholder="' + (type == 'result' ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';

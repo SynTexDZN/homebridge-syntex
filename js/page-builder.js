@@ -49,7 +49,7 @@ class PageBuilderModule
 
 		element.appendChild(select);
 
-		window.Replacer.createSelectMenu(element, true);
+		window.Replacer.createSelectMenu(element, options);
 
 		return element;
 	}

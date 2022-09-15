@@ -689,7 +689,7 @@
 
 					document.getElementById('edit-' + type).insertBefore(element, document.getElementById('edit-' + type).getElementsByClassName('add-entry-button')[0]);
 				
-					element.appendChild(Replacer.createSelectMenu(select, true));
+					element.appendChild(Replacer.createSelectMenu(select, { search : true }));
 					element.appendChild(Replacer.createSelectMenu(operations));
 
 					var letters = e != null ? e.letters : select.getElementsByTagName('select')[0].children[0].getAttribute('letters');

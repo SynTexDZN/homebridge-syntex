@@ -86,7 +86,7 @@ class CustomSelect
 		}
 	}
 
-	createSelectMenu(container, search)
+	createSelectMenu(container, options = {})
 	{
 		var nativeSelect = container.getElementsByTagName('select')[0];
 
@@ -117,7 +117,7 @@ class CustomSelect
 
 		selectedElement.setAttribute('name', nativeSelect.getAttribute('name'));
 
-		if(search)
+		if(options.search)
 		{
 			selectedElement.appendChild(searchElement);
 		}

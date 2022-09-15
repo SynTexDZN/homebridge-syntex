@@ -893,7 +893,7 @@
 
 					root.insertBefore(element, root.children[root.children.length - 1]);
 				
-					element.appendChild(Replacer.createSelectMenu(select, true));
+					element.appendChild(Replacer.createSelectMenu(select, { search : true }));
 					element.appendChild(Replacer.createSelectMenu(operations));
 
 					element.innerHTML += '<input value="' + (entry.state != null && entry.state.value != null ? entry.state.value : '') + '" placeholder="' + (entry.url != null ? '%automation.link%' : '%automation.number%') + '" title="%pattern.numbers_special%: -" name="value" type="text" style="width: 100%!important">';
