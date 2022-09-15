@@ -5,6 +5,55 @@ class PageBuilderModule
 		
 	}
 
+	createSelect(options = {})
+	{
+		var element = document.createElement('div'),
+			select = document.createElement('select');
+
+		element.className = 'custom-select';
+
+		if(options.name != null)
+		{
+			select.name = options.name;
+		}
+
+		if(options.onchange != null)
+		{
+			select.onchange = options.onchange;
+		}
+
+		if(options.options != null)
+		{
+			for(const i in options.options)
+			{
+				var option = document.createElement('option');
+
+				option.innerHTML = options.options[i].text;
+
+				if(options.options[i].selected)
+				{
+					option.selected = true;
+				}
+
+				for(const x in options.options[i])
+				{
+					if(x != 'text' && x != 'selected')
+					{
+						option.setAttribute(x, options.options[i][x]);
+					}
+				}
+
+				select.appendChild(option);
+			}
+		}
+
+		element.appendChild(select);
+
+		window.Replacer.createSelectMenu(element, true);
+
+		return element;
+	}
+
 	createIconButton(options = {})
 	{
 		var element = document.createElement('button'),
