@@ -17,11 +17,6 @@ class PageBuilderModule
 			select.name = options.name;
 		}
 
-		if(options.onchange != null)
-		{
-			select.onchange = options.onchange;
-		}
-
 		if(options.options != null)
 		{
 			for(const i in options.options)

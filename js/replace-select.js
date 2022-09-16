@@ -122,6 +122,11 @@ class CustomSelect
 			selectedElement.appendChild(searchElement);
 		}
 
+		if(options.onchange != null)
+		{
+			nativeSelect.onchange = options.onchange;
+		}
+
 		selectedElement.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
 
 		var selectItems = document.createElement('div');
@@ -149,7 +154,7 @@ class CustomSelect
 
 			selectItem.innerHTML += '<div class="select-text">' + nativeSelect.options[i].innerHTML + '</div>';
 
-			if(nativeSelect.options[i].hasAttribute('selected'))
+			if(nativeSelect.options[i].selected)
 			{
 				selectItem.classList.add('same-as-selected');
 			}
@@ -298,25 +303,9 @@ class CustomSelect
 
 			h.click();
 
-			if(s.getAttribute('onchange') != null)
+			if(s.onchange != null)
 			{
-				var functionName = s.getAttribute('onchange').split('(')[0];
-				var params = s.getAttribute('onchange').split('(')[1].split(')')[0].split(', ');
-				var args = [];
-
-				for(const i in params)
-				{
-					if(params[i] == 'this')
-					{
-						args[i] = element.parentElement.parentElement;
-					}
-					else
-					{
-						args[i] = eval(params[i]);
-					}
-				}
-
-				window[functionName](...args);
+				s.onchange();
 			}
 		}
 	}
@@ -351,7 +340,10 @@ class CustomSelect
 
 		for(var i = 0; i < selectItems.length; i++)
 		{
-			var item = { element : selectItems[i], text : selectItems[i].getElementsByClassName('select-text')[0].innerHTML }
+			var item = {
+				element : selectItems[i],
+				text : selectItems[i].getElementsByClassName('select-text')[0].innerHTML
+			};
 
 			if(selectItems[i].getElementsByClassName('select-image')[0] != null)
 			{
@@ -385,9 +377,13 @@ class CustomSelect
 			}
 		};
 
-		var selected = { index : select.getElementsByTagName('select')[0].selectedIndex, display : selectedItem };
+		var selected = {
+			index : select.getElementsByTagName('select')[0].selectedIndex,
+			display : selectedItem
+		};
 
 		selected.element = selectItems[selected.index];
+		selected.option = select.getElementsByTagName('select')[0].children[selected.index];
 
 		selected.text = selectItems[selected.index].getElementsByClassName('select-text')[0].innerHTML;
 
