@@ -467,10 +467,22 @@ function closeOtherSelectMenus(element)
 		{
 			var select = document.getElementById(selects[i].id),
 				selectedItems = select.getElementsByClassName('select-items')[0],
-				selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0].getElementsByClassName('select-text')[0],
+				selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0],
 				selectedElement = select.getElementsByClassName('select-selected')[0];
 
-			selectedElement.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
+			if(selectedItem.getElementsByClassName('select-text')[0] != null)
+			{
+				selectedItem = selectedItem.getElementsByClassName('select-text')[0];
+			}
+
+			if(selectedElement.getElementsByClassName('select-text')[0] != null)
+			{
+				selectedElement.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
+			}
+			else
+			{
+				selectedElement.innerHTML = selectedItem.innerHTML;
+			}
 
 			selectedElement.className = 'select-selected';
 			selectedItems.classList.add('select-hide');
