@@ -370,11 +370,11 @@ class EssentialFeatures
 		setTimeout(() => { panel.style.transform = '' }, 300);
 	}
 
-	letterToType(letter)
+	letterToType(letters)
 	{
-		if(typeof letter == 'string')
+		if(letters != null)
 		{
-			return this.types[this.letters.indexOf(letter.toUpperCase())];
+			return this.types[this.letters.indexOf(letters[0].toUpperCase())];
 		}
 		
 		return null;
@@ -382,7 +382,7 @@ class EssentialFeatures
 
 	typeToLetter(type)
 	{
-		if(typeof type == 'string')
+		if(type != null)
 		{
 			if(type.startsWith('rgb'))
 			{
