@@ -355,24 +355,38 @@ class CustomSelect
 
 		obj.updateSelected = (index) => {
 
-			for(const i in obj.items)
+			if(index != null)
 			{
-				if(i == index)
+				for(const i in obj.items)
 				{
-					select.getElementsByTagName('select')[0].selectedIndex = index;
-
-					selectedItemText.innerHTML = obj.items[index].text;
-					
-					if(selectedItemImage != null)
+					if(i == index)
 					{
-						selectedItemImage.src = obj.items[index].image;
+						select.getElementsByTagName('select')[0].selectedIndex = index;
+
+						selectedItemText.innerHTML = obj.items[index].text;
+						
+						if(selectedItemImage != null)
+						{
+							selectedItemImage.src = obj.items[index].image;
+						}
+						
+						obj.items[i].element.classList.add('same-as-selected');
 					}
-					
-					obj.items[i].element.classList.add('same-as-selected');
+					else
+					{
+						obj.items[i].element.classList.remove('same-as-selected');
+					}
 				}
-				else
+			}
+			else
+			{
+				index = select.getElementsByTagName('select')[0].selectedIndex;
+				
+				selectedItemText.innerHTML = obj.items[index].text;
+						
+				if(selectedItemImage != null)
 				{
-					obj.items[i].element.classList.remove('same-as-selected');
+					selectedItemImage.src = obj.items[index].image;
 				}
 			}
 		};
