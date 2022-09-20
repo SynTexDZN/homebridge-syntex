@@ -355,25 +355,35 @@ class CustomSelect
 
 		obj.updateSelected = (index) => {
 
-			select.getElementsByTagName('select')[0].selectedIndex = index;
-
-			selectedItemText.innerHTML = obj.items[index].text;
-			
-			if(selectedItemImage != null)
-			{
-				selectedItemImage.src = obj.items[index].image;
-			}
-
 			for(const i in obj.items)
 			{
 				if(i == index)
 				{
+					select.getElementsByTagName('select')[0].selectedIndex = index;
+
+					selectedItemText.innerHTML = obj.items[index].text;
+					
+					if(selectedItemImage != null)
+					{
+						selectedItemImage.src = obj.items[index].image;
+					}
+					
 					obj.items[i].element.classList.add('same-as-selected');
 				}
 				else
 				{
 					obj.items[i].element.classList.remove('same-as-selected');
 				}
+			}
+		};
+
+		obj.updateOption = (index, text) => {
+
+			if(obj.items[index] != null)
+			{
+				obj.items[index].text = text;
+
+				obj.items[index].element.getElementsByClassName('select-text')[0].innerHTML = text;
 			}
 		};
 
