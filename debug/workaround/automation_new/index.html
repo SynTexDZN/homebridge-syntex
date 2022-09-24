@@ -455,7 +455,7 @@
 
 				window.logic = ['%automation.and%', '%automation.or%'];
 
-				function openEditor(init, automation = {})
+				async function openEditor(init, automation = {})
 				{
 					PageManager.setHeader('%menu.automation%', automation.id == null ? '%automation.create%' : automation.name, !init);
 
@@ -468,7 +468,7 @@
 					PageManager.setFooter(main);
 					PageManager.showFooter(!init);
 
-					PageManager.switchPage('overview', 'editor', init);
+					await PageManager.switchPage('overview', 'editor', init);
 
 					var url = '/debug/workaround/automation_new/?edit';
 
@@ -513,12 +513,12 @@
 					}
 				}
 
-				function closeEditor()
+				async function closeEditor()
 				{
 					PageManager.setHeader('%general.dashboard%', '%menu.automation%', true);
 					PageManager.hideFooter(true);
 
-					PageManager.switchPage('editor', 'overview', false);
+					await PageManager.switchPage('editor', 'overview', false);
 
 					var url = '/debug/workaround/automation_new/';
 
