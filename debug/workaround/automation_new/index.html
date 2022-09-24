@@ -133,7 +133,7 @@
 						<h2 class="title-container">%automation.result%</h2>
 						<div id="result" class="panel-content">
 							<div class="blocks"></div>
-							<button type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result'))">
+							<button type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0])">
 								<div class="button-icon">
 									<img class="icon-inverted" src="/img/add_light.png">
 								</div>
@@ -502,13 +502,28 @@
 
 							for(const j in automation.trigger.groups[i].blocks)
 							{
-								//addBlock('trigger', group, automation.trigger.groups[i].blocks[j]);
+								if(automation.trigger.groups[i].blocks[j].time != null)
+								{
+									if(automation.trigger.groups[i].blocks[j].time.begin != null)
+									{
+										addBlock('trigger', group.getElementsByClassName('blocks')[0], { ...automation.trigger.groups[i].blocks[j], time : automation.trigger.groups[i].blocks[j].time.begin, operation : '>' });
+									}
+
+									if(automation.trigger.groups[i].blocks[j].time.end != null)
+									{
+										addBlock('trigger', group.getElementsByClassName('blocks')[0], { ...automation.trigger.groups[i].blocks[j], time : automation.trigger.groups[i].blocks[j].time.end, operation : '<' });
+									}
+								}
+								else
+								{
+									addBlock('trigger', group.getElementsByClassName('blocks')[0], automation.trigger.groups[i].blocks[j]);
+								}
 							}
 						}
 
 						for(const i in automation.result)
 						{
-							//addBlock('result', document.getElementById('result'), automation.result[i]);
+							addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0], automation.result[i]);
 						}
 					}
 				}
@@ -721,7 +736,7 @@
 
 					add.classList.add('gradient-blue-green', 'add-block-button');
 
-					//add.onclick = () => addBlock('trigger', group);
+					add.onclick = () => addBlock('trigger', blocks);
 
 					logic.innerHTML = entry == null || entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
 					logic.className = 'block-logic white';
@@ -743,6 +758,423 @@
 					document.getElementById('trigger').getElementsByClassName('groups')[0].appendChild(group);
 				
 					return group;
+				}
+
+				function addBlock(type, parent, entry)
+				{
+					var block = document.createElement('div');
+
+					block.className = 'block';
+
+					const createService = () => {
+
+						var options = [], found = false;
+
+						var placeholder = {
+							text : '%automation.choose_service%',
+							type : 'hidden',
+							img : '/img/search.png',
+							hidden : true
+						};
+
+						if(entry == null)
+						{
+							placeholder.selected = true;
+						}
+						
+						options.push(placeholder);
+
+						if(type == 'trigger')
+						{
+							var time = {
+								text : '%automation.time%',
+								type : 'time',
+								img : '/img/clock.png'
+							};
+
+							if(entry != null && entry.time != null)
+							{
+								time.selected = true;
+
+								found = true;
+							}
+
+							options.push(time);
+						}
+
+						if(type == 'result')
+						{
+							var link = {
+								text : '%automation.open_link%',
+								type : 'url',
+								img : '/img/link.png'
+							};
+
+							if(entry != null && entry.url != null)
+							{
+								link.selected = true;
+
+								found = true;
+							}
+
+							options.push(link);
+						}
+
+						for(const i in services)
+						{
+							if(type == 'result' || services[i].type != 'statelessswitch')
+							{
+								var option = {
+									text : services[i].name,
+									id : services[i].id,
+									letters : services[i].letters,
+									type : Essentials.getDataType(services[i].type),
+									name : services[i].name,
+									plugin : services[i].plugin,
+									img : '/img/accessory/' + services[i].type + '.png'
+								};
+
+								if(entry != null && services[i].id == entry.id && services[i].letters == entry.letters)
+								{
+									option.selected = true;
+
+									found = true;
+								}
+
+								options.push(option);
+							}
+						}
+
+						if(!found && entry != null && entry.id != null && entry.letters != null && entry.name != null)
+						{
+							var placeholder = {
+								text : '%automation.deleted_service% (' + entry.name + ')',
+								type : 'hidden',
+								img : '/img/delete.png',
+								id : entry.id,
+								name : entry.name,
+								letters : entry.letters,
+								type : Essentials.getDataType(Essentials.letterToType(entry.letters)),
+								selected : true,
+								hidden : true
+							};
+
+							if(entry.plugin != null)
+							{
+								placeholder.plugin = entry.plugin;
+							}
+
+							options.push(placeholder);
+						}
+
+						return PageBuilder.createSelect({ name : 'service', search : true, onchange : () => { updateOperation(); updateComparison() }, options });
+					};
+
+					const createOperation = () => {
+
+						var options = [
+							{ text : '=', value : '=', name : 'equal' },
+							{ text : '%automation.switch%', value : '=', name : 'switch' },
+							{ text : '%automation.dimming%', value : '=', name : 'dimming' },
+							{ text : '%automation.color%', value : '=', name : 'color' }
+						];
+
+						if(type == 'trigger')
+						{
+							options.push({ text : '<', value : '<', name : 'lower' });
+							options.push({ text : '>', value : '>', name : 'greater' });
+						}
+
+						return PageBuilder.createSelect({ name : 'operation', onchange : () => updateComparison(), options });
+					};
+
+					const createComparison = () => {
+
+						var element = document.createElement('div'), options = [];
+
+						options.push({ text : '%characteristics.boolean.inactive%', value : false });
+						options.push({ text : '%characteristics.boolean.active%', value : true });
+
+						var boolean = PageBuilder.createSelect({ name : 'value', options }),
+							numeric = document.createElement('input'),
+							color = document.createElement('input'),
+							time = document.createElement('input');
+
+						numeric.setAttribute('title', '%pattern.numbers_special%: -');
+						numeric.setAttribute('name', 'value');
+						numeric.setAttribute('type', 'text');
+
+						color.setAttribute('name', 'value');
+						color.setAttribute('type', 'color');
+						color.setAttribute('value', '#FFFFFF');
+
+						time.setAttribute('name', 'begin');
+						time.setAttribute('type', 'time');
+						time.setAttribute('value', '00:00');
+
+						element.appendChild(boolean);
+						element.appendChild(numeric);
+						element.appendChild(color);
+						element.appendChild(time);
+						
+						return element;
+					};
+
+					var serviceElement = block.appendChild(createService()),
+						operationElement = block.appendChild(createOperation()),
+						comparisonElement = block.appendChild(createComparison()),
+						controlElement = document.createElement('div'),
+						optionButton = document.createElement('button'),
+						removeButton = document.createElement('button');
+
+					controlElement.className = 'control';
+
+					optionButton.className = 'image-button white';
+
+					var optionImage = document.createElement('img');
+
+					optionImage.className = 'icon-inverted';
+					optionImage.src = '/img/settings.png';
+					optionImage.style.height = '100%';
+
+					//optionImage.onclick = () => parent.removeChild(block);
+
+					optionButton.appendChild(optionImage);
+
+					removeButton.className = 'image-button white';
+
+					var removeImage = document.createElement('img');
+
+					removeImage.className = 'icon-inverted';
+					removeImage.src = '/img/delete.png';
+					removeImage.style.height = '100%';
+
+					removeButton.onclick = () => parent.removeChild(block);
+
+					removeButton.appendChild(removeImage);
+
+					controlElement.appendChild(optionButton);
+					controlElement.appendChild(removeButton);
+
+					block.appendChild(controlElement);
+
+					parent.appendChild(block);
+
+					const updateOperation = (entry) => {
+
+						var service = Replacer.getSelect(serviceElement),
+							operation = Replacer.getSelect(operationElement),
+							selected = service.selected.option, operations = [], index = null;
+
+						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb')
+						{
+							operations = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+						}
+						else if(Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
+						{
+							operations = ['%automation.switch%', '%automation.dimming%'];
+						}
+						else if(selected.getAttribute('type') == 'boolean' || type == 'result')
+						{
+							operations = ['='];
+						}
+						else if(selected.getAttribute('type') == 'numeric' || selected.getAttribute('type') == 'time')
+						{
+							operations = ['=', '&lt;', '&gt;'];
+						}
+
+						for(const i in operation.items)
+						{
+							if(operations.includes(operation.items[i].text))
+							{
+								operation.items[i].element.classList.remove('hidden');
+
+								if(index == null)
+								{
+									index = parseInt(i);
+								}
+							}
+							else
+							{
+								operation.items[i].element.classList.add('hidden');
+							}
+						}
+
+						if(entry != null && entry.operation != null)
+						{
+							if(entry.operation == '=')
+							{
+								if(entry.state != null && entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
+								{
+									operation.updateSelected(3);
+								}
+								else if(entry.state != null && entry.state.brightness != null)
+								{
+									operation.updateSelected(2);
+								}
+								else if(Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer'
+								|| Essentials.letterToType(selected.getAttribute('letters')) == 'rgb')
+								{
+									operation.updateSelected(1);
+								}
+								else
+								{
+									operation.updateSelected(0);
+								}
+							}
+							else if(entry.operation == '<')
+							{
+								operation.updateSelected(4);
+							}
+							else if(entry.operation == '>')
+							{
+								operation.updateSelected(5);
+							}
+						}
+						else if(index != null && !operations.includes(operation.selected.text))
+						{
+							operation.updateSelected(index);
+						}
+					};
+
+					const updateComparison = (entry) => {
+
+						var service = Replacer.getSelect(serviceElement),
+							operation = Replacer.getSelect(operationElement),
+							comparison = Replacer.getSelect(comparisonElement),
+							selected = service.selected.option;
+
+						var preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))];
+
+						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb'
+						|| Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
+						{
+							comparison.updateOption(0, preset.inactive.text);
+							comparison.updateOption(1, preset.active.text);
+
+							comparison.updateSelected();
+							
+							if(entry != null && entry.state != null)
+							{
+								if(entry.state.value == true)
+								{
+									comparison.updateSelected(1);
+								}
+								else
+								{
+									comparison.updateSelected(0);
+								}
+
+								if(entry.state.brightness != null)
+								{
+									comparisonElement.children[1].value = entry.state.brightness;
+								}
+
+								if(entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
+								{
+									comparisonElement.children[2].value = Essentials.hslToHex(entry.state.hue, entry.state.saturation, entry.state.brightness / 2);
+								}
+							}
+
+							if(operation.selected.option.getAttribute('name') == 'switch')
+							{
+								comparisonElement.children[0].classList.remove('hidden');
+								comparisonElement.children[1].classList.add('hidden');
+								comparisonElement.children[2].classList.add('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+							}
+							else if(operation.selected.option.getAttribute('name') == 'dimming')
+							{
+								comparisonElement.children[1].setAttribute('placeholder', '%automation.brightness% (' + preset.text + ')');
+
+								comparisonElement.children[0].classList.add('hidden');
+								comparisonElement.children[1].classList.remove('hidden');
+								comparisonElement.children[2].classList.add('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+							}
+							else if(operation.selected.option.getAttribute('name') == 'color')
+							{
+								comparisonElement.children[0].classList.add('hidden');
+								comparisonElement.children[1].classList.add('hidden');
+								comparisonElement.children[2].classList.remove('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+							}
+						}
+						else if(selected.getAttribute('type') == 'boolean')
+						{
+							comparison.updateOption(0, preset.inactive.text);
+							comparison.updateOption(1, preset.active.text);
+
+							comparison.updateSelected();
+
+							if(entry != null && entry.state != null)
+							{
+								if(entry.state.value == true)
+								{
+									comparison.updateSelected(1);
+								}
+								else
+								{
+									comparison.updateSelected(0);
+								}
+							}
+
+							comparisonElement.children[0].classList.remove('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'numeric')
+						{
+							if(entry != null && entry.state != null && entry.state.value != null)
+							{
+								comparisonElement.children[1].value = entry.state.value;
+							}
+							
+							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + preset.text + ')');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'time')
+						{
+							if(entry != null && entry.time != null && entry.time != null)
+							{
+								comparisonElement.children[3].value = entry.time;
+							}
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.remove('hidden');
+						}
+						else if(selected.getAttribute('type') == 'url')
+						{
+							if(entry != null && entry.url != null)
+							{
+								comparisonElement.children[1].value = entry.url;
+							}
+
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.link%');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'hidden')
+						{
+							comparisonElement.children[0].classList.remove('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+						}
+					};
+
+					updateOperation(entry);
+					updateComparison(entry);
 				}
 
 			</script>
