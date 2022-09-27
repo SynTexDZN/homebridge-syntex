@@ -901,7 +901,7 @@ class EssentialFeatures
 		return null;
 	}
 
-	hexToHsl(H)
+	hexToHSL(H)
 	{
 		let r = 0, g = 0, b = 0;
 
@@ -953,10 +953,10 @@ class EssentialFeatures
 		s = +(s * 100).toFixed(1);
 		l = +(l * 100).toFixed(1);
 
-		return 'hsl(' + Math.round(h) + ', ' + Math.round(s) + '%, ' + Math.round(l) + '%)';
+		return { hue : Math.round(h), saturation : Math.round(s), brightness : Math.round(l) };
 	}
 
-	hslToHex(h, s, l)
+	hslToHEX(h, s, l)
 	{
 		s /= 100;
 		l /= 100;
