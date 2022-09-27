@@ -117,7 +117,7 @@
 
 								if(template[i].type == 'button')
 								{
-									html += 'value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+									html += 'value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="Essentials.switchBooleanButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
 								}
 								else
 								{
@@ -222,20 +222,6 @@
 						{
 							document.getElementById('top-menu').classList.remove('hidden');
 						}
-					}
-				}
-
-				function switchFormButton(btn)
-				{
-					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
-					{
-						btn.setAttribute('class', 'outline');
-						btn.setAttribute('value', '%characteristics.boolean.inactive%');
-					}
-					else
-					{
-						btn.setAttribute('class', 'white');
-						btn.setAttribute('value', '%characteristics.boolean.active%');
 					}
 				}
 

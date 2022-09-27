@@ -132,7 +132,7 @@
 						<div class="panel-content padding" id="general-settings">
 							<p style="margin: 0"><b>%general.name%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: - & # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 							<p style="margin: 0"><b>%general.group%: <input oninput="Essentials.promoteSubmitButton(this, 'save-btn')" pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
-							<p style="margin: 0"><b>%general.status%: <input value="%characteristics.boolean.active%" orginal-value="%characteristics.boolean.active%" name="status" type="button" class="white" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, 'save-btn')" style="max-width: 150px; border-width: 3px"></b></p>
+							<p style="margin: 0"><b>%general.status%: <input value="%characteristics.boolean.active%" orginal-value="%characteristics.boolean.active%" name="status" type="button" class="white" onclick="Essentials.switchBooleanButton(this); Essentials.promoteSubmitButton(this, 'save-btn')" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div id="service-form"></div>
@@ -305,7 +305,7 @@
 					}
 					else if(settings[i].index == 'led' || settings[i].index == 'active')
 					{
-						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="switchFormButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px"></b></p>';
+						settingsForm.innerHTML += '<p><b>' + settings[i].name + ': <input value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + (device[settings[i].index] == 1 ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" name="' + settings[i].index + '" type="button" class="' + (device[settings[i].index] == 1 ? 'white' : 'outline') + '" onclick="Essentials.switchBooleanButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px"></b></p>';
 					}
 					else
 					{
@@ -1235,20 +1235,6 @@
 
 			</script>
 			<script>
-
-				function switchFormButton(btn)
-				{
-					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
-					{
-						btn.setAttribute('class', 'outline');
-						btn.setAttribute('value', '%characteristics.boolean.inactive%');
-					}
-					else
-					{
-						btn.setAttribute('class', 'white');
-						btn.setAttribute('value', '%characteristics.boolean.active%');
-					}
-				}
 
 				async function openSettings(previous)
 				{

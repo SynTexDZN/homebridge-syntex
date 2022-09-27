@@ -54,7 +54,7 @@
 							<p><b>%general.id%: <input type="button" style="max-width: 150px" disabled></b></p>
 							<p autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
 							<p><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
-							<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="switchFormButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+							<p style="margin-bottom: 20px"><b>%automation.active%: <input value="%general.loading% .." name="active" type="button" class="outline" onclick="Essentials.switchBooleanButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div class="panel">
@@ -413,20 +413,6 @@
 							document.getElementById('settings').getElementsByTagName('input')[3].value = automation[i].active ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%';
 							document.getElementById('settings').getElementsByTagName('input')[3].className = automation[i].active ? 'white' : 'outline';
 						}
-					}
-				}
-
-				function switchFormButton(btn)
-				{
-					if(btn.hasAttribute('class') && btn.getAttribute('class') == 'white')
-					{
-						btn.setAttribute('class', 'outline');
-						btn.setAttribute('value', '%characteristics.boolean.inactive%');
-					}
-					else
-					{
-						btn.setAttribute('class', 'white');
-						btn.setAttribute('value', '%characteristics.boolean.active%');
 					}
 				}
 

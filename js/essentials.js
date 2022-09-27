@@ -1007,6 +1007,24 @@ class EssentialFeatures
 
 		return '#' + r + g + b;
 	}
+
+	switchBooleanButton(btn)
+	{
+		if(btn.classList.contains('white'))
+		{
+			btn.classList.add('outline');
+			btn.classList.remove('white');
+
+			btn.value = '%characteristics.boolean.inactive%';
+		}
+		else
+		{
+			btn.classList.remove('outline');
+			btn.classList.add('white');
+			
+			btn.value = '%characteristics.boolean.active%';
+		}
+	}
 }
 
 var idCounter = new Date().getTime();
