@@ -198,8 +198,13 @@ class EssentialFeatures
 				}
 			};
 
-			title.innerHTML = data.title;
-			subtitle.innerHTML = data.subtitle;
+			title.innerHTML = data.title || '';
+			subtitle.innerHTML = data.subtitle || '';
+
+			if(data.form != null)
+			{
+				subtitle.appendChild(data.form);
+			}
 
 			buttonArea.innerHTML = '';
 
