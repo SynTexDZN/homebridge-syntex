@@ -120,7 +120,7 @@
 									</div>
 									<div class="button-text">%automation.group%</div>
 								</button>
-								<button type="button" class="group-logic white" onclick="switchLogic(this)">%automation.and%</button>
+								<button type="button" class="group-logic white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
 								<button type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
@@ -489,7 +489,16 @@
 					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
 					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
 				
-					document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = automation.trigger == null || automation.trigger.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					if(automation.trigger == null || automation.trigger.logic == 'AND')
+					{
+						document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = window.logic[0].toUpperCase();
+						document.getElementById('trigger').getElementsByClassName('group-logic')[0].setAttribute('value', 'AND');
+					}
+					else
+					{
+						document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = window.logic[1].toUpperCase();
+						document.getElementById('trigger').getElementsByClassName('group-logic')[0].setAttribute('value', 'OR');
+					}
 
 					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
 
@@ -612,7 +621,9 @@
 
 				function switchLogic(button)
 				{
-					button.innerHTML = (button.innerHTML.toUpperCase() == logic[0].toUpperCase() ? logic[1].toUpperCase() : logic[0].toUpperCase());
+					button.innerHTML = button.getAttribute('value') == 'AND' ? logic[1].toUpperCase() : logic[0].toUpperCase();
+
+					button.setAttribute('value', button.getAttribute('value') == 'AND' ? 'OR' : 'AND');
 				}
 
 				function switchView(view, toggle)
@@ -742,6 +753,8 @@
 					logic.innerHTML = entry == null || entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
 					logic.className = 'block-logic white';
 					logic.type = 'button';
+
+					logic.setAttribute('value', entry == null || entry.logic == 'AND' ? 'AND' : 'OR');
 
 					logic.onclick = () => switchLogic(logic);
 
