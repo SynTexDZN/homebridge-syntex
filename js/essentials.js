@@ -1013,21 +1013,26 @@ class EssentialFeatures
 		return '#' + r + g + b;
 	}
 
-	switchBooleanButton(btn)
+	switchBooleanButton(btn, value)
 	{
-		if(btn.classList.contains('white'))
+		if(value == null)
 		{
-			btn.classList.add('outline');
-			btn.classList.remove('white');
+			value = !(btn.value == '%characteristics.boolean.active%');
+		}
 
-			btn.value = '%characteristics.boolean.inactive%';
+		if(value)
+		{
+			btn.classList.add('white');
+			btn.classList.remove('outline');
+
+			btn.value = '%characteristics.boolean.active%';
 		}
 		else
 		{
-			btn.classList.remove('outline');
-			btn.classList.add('white');
-			
-			btn.value = '%characteristics.boolean.active%';
+			btn.classList.remove('white');
+			btn.classList.add('outline');
+
+			btn.value = '%characteristics.boolean.inactive%';
 		}
 	}
 }
