@@ -121,7 +121,7 @@
 									<div class="button-text">%automation.group%</div>
 								</button>
 								<button type="button" class="group-logic white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
-								<button type="button" class="icon-button right center compact">
+								<button id="group-options" type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
 									</div>
@@ -500,6 +500,15 @@
 						document.getElementById('trigger').getElementsByClassName('group-logic')[0].setAttribute('value', 'OR');
 					}
 
+					if(automation.options != null)
+					{
+						document.getElementById('group-options').setAttribute('options', JSON.stringify(automation.options));
+					}
+					else
+					{
+						document.getElementById('group-options').removeAttribute('options');
+					}
+
 					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
 
 					document.getElementById('result').getElementsByClassName('blocks')[0].innerHTML = '';
@@ -779,6 +788,11 @@
 					var block = document.createElement('div');
 
 					block.className = 'block';
+
+					if(entry != null && entry.options != null)
+					{
+						block.setAttribute('options', JSON.stringify(entry.options));
+					}
 
 					const createService = () => {
 
