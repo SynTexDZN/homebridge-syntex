@@ -120,7 +120,7 @@
 									</div>
 									<div class="button-text">%automation.group%</div>
 								</button>
-								<button type="button" class="group-logic white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
+								<button id="group-logic" type="button" class="white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
 								<button id="group-options" type="button" class="icon-button right center compact">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
@@ -491,13 +491,13 @@
 				
 					if(automation.trigger == null || automation.trigger.logic == 'AND')
 					{
-						document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = window.logic[0].toUpperCase();
-						document.getElementById('trigger').getElementsByClassName('group-logic')[0].setAttribute('value', 'AND');
+						document.getElementById('group-logic').innerHTML = window.logic[0].toUpperCase();
+						document.getElementById('group-logic').setAttribute('value', 'AND');
 					}
 					else
 					{
-						document.getElementById('trigger').getElementsByClassName('group-logic')[0].innerHTML = window.logic[1].toUpperCase();
-						document.getElementById('trigger').getElementsByClassName('group-logic')[0].setAttribute('value', 'OR');
+						document.getElementById('group-logic').innerHTML = window.logic[1].toUpperCase();
+						document.getElementById('group-logic').setAttribute('value', 'OR');
 					}
 
 					if(automation.options != null)
