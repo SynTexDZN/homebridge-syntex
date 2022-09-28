@@ -489,6 +489,8 @@
 					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
 					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
 				
+					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active);
+
 					if(automation.trigger == null || automation.trigger.logic == 'AND')
 					{
 						document.getElementById('group-logic').innerHTML = window.logic[0].toUpperCase();
