@@ -121,7 +121,7 @@
 									<div class="button-text">%automation.group%</div>
 								</button>
 								<button id="group-logic" type="button" class="white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
-								<button id="group-options" type="button" class="icon-button right center compact">
+								<button id="group-options" type="button" class="icon-button right center compact" onclick="openOptions('automation', this)">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
 									</div>
@@ -566,6 +566,139 @@
 					window.history.pushState(null, null, url);
 				}
 
+				function openOptions(type, block)
+				{
+					var form = document.createElement('form'), options = {};
+
+					if(block.hasAttribute('options'))
+					{
+						options = JSON.parse(block.getAttribute('options'));
+					}
+
+					const createStateLock = () => {
+
+						var label = document.createElement('label'),
+							checkbox = document.createElement('input'),
+							suffix = document.createElement('div');
+
+						label.className = 'label-input';
+
+						label.setAttribute('for', 'state-lock');
+
+						checkbox.setAttribute('id', 'state-lock');
+						checkbox.setAttribute('type', 'checkbox');
+						checkbox.setAttribute('name', 'stateLock');
+
+						if((type == 'automation' && options.stateLock != false)
+						|| (type == 'block' && options.stateLock == true))
+						{
+							checkbox.checked = true;
+						}
+
+						suffix.innerHTML = '%automation.state_lock_description%';
+
+						label.appendChild(checkbox);
+						label.appendChild(suffix);
+
+						return label;
+					};
+
+					const createTimeLock = () => {
+
+						var label = document.createElement('label'),
+							checkbox = document.createElement('input'),
+							timelock = document.createElement('input'),
+							suffix = document.createElement('div');
+
+						label.className = 'label-input';
+
+						label.setAttribute('for', 'time-lock');
+
+						checkbox.setAttribute('id', 'time-lock');
+						checkbox.setAttribute('type', 'checkbox');
+						checkbox.setAttribute('name', 'timeLock');
+
+						timelock.setAttribute('type', 'text');
+						timelock.setAttribute('value', '0');
+
+						timelock.style.maxWidth = '150px';
+
+						timelock.oninput = () => {
+
+							checkbox.checked = parseInt(timelock.value) > 0;
+						};
+
+						if(options.timeLock != null)
+						{
+							timelock.setAttribute('value', parseInt(options.timeLock / 1000));
+
+							checkbox.checked = true;
+						}
+
+						suffix.innerHTML = '%automation.time_lock_description%';
+
+						label.appendChild(checkbox);
+						label.appendChild(timelock);
+						label.appendChild(suffix);
+
+						return label;
+					};
+					
+					form.appendChild(createStateLock());
+					form.appendChild(createTimeLock());
+
+					var dialogue = {
+						title : '%general.options%',
+						form, buttons : [
+							{
+								text : '%general.cancel%',
+								close : true
+							},
+							{
+								text : '%general.ok%',
+								color : 'green',
+								action : () => {
+
+									var options = {};
+
+									for(var i = 0; i < form.children.length; i++)
+									{
+										var active = form.children[i].getElementsByTagName('input')[0]
+											input = form.children[i].getElementsByTagName('input')[1],
+											name = active.getAttribute('name');
+
+										if(name == 'timeLock' && active.checked)
+										{
+											options[name] = parseInt(input.value) * 1000;
+										}
+										else if(name == 'stateLock')
+										{
+											if((type == 'automation' && !active.checked)
+											|| (type == 'block' && active.checked))
+											{
+												options[name] = active.checked;
+											}
+										}
+									}
+
+									if(Object.keys(options).length > 0)
+									{
+										block.setAttribute('options', JSON.stringify(options));
+									}
+									else
+									{
+										block.removeAttribute('options');
+									}
+
+									Essentials.closeDialogue();
+								}
+							}
+						]
+					};
+
+					Essentials.openDialogue(dialogue);
+				}
+
 			</script>
 			<script>
 
@@ -968,7 +1101,7 @@
 					optionImage.src = '/img/settings.png';
 					optionImage.style.height = '100%';
 
-					//optionImage.onclick = () => parent.removeChild(block);
+					optionButton.onclick = () => openOptions('block', block);
 
 					optionButton.appendChild(optionImage);
 
