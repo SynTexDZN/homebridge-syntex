@@ -654,43 +654,49 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/automation_new', async (request, response) => {
+		this.WebServer.addPage('/serverside/automation_new', async (request, response, urlParams, content, postJSON) => {
 
-			var obj = {
-				automation : await Automation.loadAutomation(),
-				accessories : [],
-				plugins : {}
-			};
-
-			var accessories = DeviceManager.getAccessories();
-
-			for(const i in accessories)
+			if(postJSON != null)
 			{
-				if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
-				{
-					obj.accessories.push({ ...accessories[i] });
-				}
+				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
 			}
-
-			var plugins = PluginManager.getPlugins();
-
-			for(const i in plugins)
+			else
 			{
-				if(plugins[i].alias != 'SynTex' && plugins[i].config != null && plugins[i].config.options != null && plugins[i].config.options.port != null)
+				var obj = {
+					automation : await Automation.loadAutomation(),
+					accessories : [],
+					plugins : {}
+				};
+	
+				var accessories = DeviceManager.getAccessories();
+	
+				for(const i in accessories)
 				{
-					obj.plugins[plugins[i].alias] = plugins[i].config.options.port;
+					if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
+					{
+						obj.accessories.push({ ...accessories[i] });
+					}
 				}
+	
+				var plugins = PluginManager.getPlugins();
+	
+				for(const i in plugins)
+				{
+					if(plugins[i].alias != 'SynTex' && plugins[i].config != null && plugins[i].config.options != null && plugins[i].config.options.port != null)
+					{
+						obj.plugins[plugins[i].alias] = plugins[i].config.options.port;
+					}
+				}
+	
+				response.end(JSON.stringify(obj));
 			}
-
-			response.end(JSON.stringify(obj));
 		});
 
 		this.WebServer.addPage('/serverside/create-automation', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
-				response.write(await Automation.createAutomation(postJSON) ? 'Success' : 'Error');
-				response.end();
+				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
 			}
 		});
 
@@ -698,8 +704,7 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.write(await Automation.modifyAutomation(postJSON) ? 'Success' : 'Error');
-				response.end();
+				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
 			}
 		});
 

@@ -17,7 +17,7 @@ module.exports = class Automation
 		});
 	}
 
-	createAutomation(automation)
+	setAutomation(automation)
 	{
 		return new Promise(resolve => {
 
@@ -25,65 +25,45 @@ module.exports = class Automation
 			{
 				this.files.readFile('automation/automation.json').then((data) => {
 
+					var created = false;
+
 					if(data != null)
 					{
-						data[data.length] = automation;
+						var found = false;
+
+						for(const i in data)
+						{
+							if(data[i].id == automation.id)
+							{
+								data[i] = automation;
+
+								found = true;
+							}
+						}
+
+						if(!found)
+						{
+							data.push(automation);
+
+							created = true;
+						}
 					}
 					else
 					{
 						data = [ automation ];
+
+						created = true;
 					}
 
 					this.files.writeFile('automation/automation.json', data).then((response) => {
 
 						if(response.success)
 						{
-							this.logger.log('success', 'bridge', 'Bridge', '%automation_created[0]% [' + automation.id + '] %automation_created[1]%!');
+							this.logger.log('success', 'bridge', 'Bridge', (created ? '%automation_created[0]%' : '%automation_updated[0]%') + ' [' + automation.id + '] ' + (created ? '%automation_created[1]%' : '%automation_updated[1]%') + '!');
 						}
 
 						resolve(response.success);
 					});
-				});
-			}
-			else
-			{
-				resolve(false);
-			}
-		});
-	}
-
-	modifyAutomation(automation)
-	{
-		return new Promise(resolve => {
-
-			if(this.isValid(automation))
-			{
-				this.files.readFile('automation/automation.json').then((data) => {
-
-					if(data != null)
-					{
-						for(var i = 0; i < data.length; i++)
-						{
-							if(data[i].id == automation.id)
-							{
-								data[i] = automation;
-							}
-						}
-
-						this.files.writeFile('automation/automation.json', data).then((response) => {
-
-							if(response.success)
-							{
-								this.logger.log('success', 'bridge', 'Bridge', '%automation_updated[0]% [' + automation.id + '] %automation_updated[1]%!');
-							}
-
-							resolve(response.success);
-						});
-					}
-					else
-					{
-						resolve(false);
-					}
 				});
 			}
 			else
@@ -133,29 +113,66 @@ module.exports = class Automation
 
 	isValid(automation)
 	{
-		if(automation.id != null && automation.name != null && automation.active != null && automation.trigger != null && automation.result != null)
-		{
-			var valid = { trigger : false, condition : false, result : false };
+		const validateBlock = (block) => {
 
-			for(let i = 0; i < automation.trigger.length; i++)
+			if(block != null
+			&& block instanceof Object)
 			{
-				if(automation.trigger[i].id != null && automation.trigger[i].name != null && automation.trigger[i].letters != null && automation.trigger[i].value != null && automation.trigger[i].operation != null)
+				if(block.id != null
+				&& block.name != null
+				&& block.letters != null
+				&& block.operation != null
+				&& block.state != null
+				&& block.state instanceof Object)
 				{
-					valid.trigger = true;
+					return true;
 				}
-				else
+				
+				if(block.time != null
+				&& block.time instanceof Object
+				&& block.time.begin != null)
 				{
-					return false;
+					return true;
+				}
+				
+				if(block.url != null)
+				{
+					return true;
 				}
 			}
 
-			if(automation.condition != null)
+			return false;
+		};
+
+		if(automation != null
+		&& automation instanceof Object
+		&& automation.id != null
+		&& automation.name != null
+		&& automation.active != null
+		&& automation.trigger != null
+		&& automation.result != null)
+		{
+			if(automation.trigger instanceof Object
+			&& automation.trigger.logic != null
+			&& automation.trigger.groups != null
+			&& Array.isArray(automation.trigger.groups)
+			&& automation.trigger.groups.length > 0)
 			{
-				for(let i = 0; i < automation.condition.length; i++)
+				for(const i in automation.trigger.groups)
 				{
-					if(automation.condition[i].id != null && automation.condition[i].name != null && automation.condition[i].letters != null && automation.condition[i].value != null && automation.condition[i].operation != null)
+					if(automation.trigger.groups[i] instanceof Object
+					&& automation.trigger.groups[i].logic != null
+					&& automation.trigger.groups[i].blocks != null
+					&& Array.isArray(automation.trigger.groups[i].blocks)
+					&& automation.trigger.groups[i].blocks.length > 0)
 					{
-						valid.condition = true;
+						for(const j in automation.trigger.groups[i].blocks)
+						{
+							if(!validateBlock(automation.trigger.groups[i].blocks[j]))
+							{
+								return false;
+							}
+						}
 					}
 					else
 					{
@@ -163,28 +180,32 @@ module.exports = class Automation
 					}
 				}
 			}
-
-			for(let i = 0; i < automation.result.length; i++)
+			else
 			{
-				if(automation.result[i].id != null && automation.result[i].name != null && automation.result[i].letters != null && automation.result[i].value != null && automation.result[i].operation != null)
-				{
-					valid.result = true;
-				}
-				else if(automation.result[i].url)
-				{
-					valid.result = true;
-				}
-				else
-				{
-					return false;
-				}
+				return false;
 			}
 
-			return valid.trigger && valid.result ? true : false;
+			if(Array.isArray(automation.result)
+			&& automation.result.length > 0)
+			{
+				for(const i in automation.result)
+				{
+					if(!validateBlock(automation.result[i]))
+					{
+						return false;
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
 			return false;
 		}
+
+		return true;
 	}
 }
