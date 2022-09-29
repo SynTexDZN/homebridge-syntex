@@ -2226,6 +2226,48 @@ input[type="time"]::-webkit-date-and-time-value
 	gap: 20px;
 }
 
+input[type="checkbox"]
+{
+	position: relative;
+	cursor: pointer;
+	width: 50px!important;
+	height: 50px!important;
+	margin: 0;
+	padding: 0;
+	flex-shrink: 0;
+
+	will-change: background-color;
+}
+
+input[type="checkbox"]::before
+{
+	position: absolute;
+    content: '';
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: url('/img/confirm.png');
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: calc(100% - 20px);
+
+	filter: invert(8%) sepia(100%) hue-rotate(205deg);
+	opacity: 0;
+	transition: .2s opacity ease-in-out;
+	will-change: opacity;
+}
+
+input[type="checkbox"]:checked
+{
+	background: var(--light-layer-two);
+}
+
+input[type="checkbox"]:checked::before
+{
+	opacity: 1;
+}
+
 #dialogue form
 {
 	display: flex;
