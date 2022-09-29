@@ -275,12 +275,13 @@
 					console.log('SERVICES', services);
 				}
 
-				window.tempGroups = [];
 				window.groups = [];
+				window.tempGroups = [];
 
 				function loadGroups()
 				{
-					var changed = false;
+					groups = [];
+					tempGroups = [];
 
 					for(const i in data.automation)
 					{
@@ -295,16 +296,12 @@
 									groups.push(groupArray[j]);
 
 									tempGroups.push(groupArray[j].toLowerCase());
-
-									changed = true;
 								}
 							}
 						}
 					}
 
 					groups.sort();
-
-					return changed;
 				}
 
 				function renderAutomation()
@@ -312,6 +309,8 @@
 					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
 
 					sortAutomation(sort);
+
+					document.getElementById('automation').innerHTML = '';
 
 					for(const i in data.automation)
 					{
@@ -1055,6 +1054,8 @@
 
 						var element = document.createElement('div'), options = [];
 
+						element.className = 'comparison';
+
 						options.push({ text : '%characteristics.boolean.inactive%', value : false });
 						options.push({ text : '%characteristics.boolean.active%', value : true });
 
@@ -1347,7 +1348,227 @@
 
 				function sendAutomation()
 				{
+					var automation = {};
 
+					automation.id = parseInt(document.getElementById('general').getElementsByTagName('input')[0].value);
+					automation.name = document.getElementById('general').getElementsByTagName('input')[1].value;
+
+					if(document.getElementById('general').getElementsByTagName('input')[2].value != '')
+					{
+						automation.group = document.getElementById('general').getElementsByTagName('input')[2].value;
+					}
+
+					automation.active = document.getElementById('general').getElementsByTagName('input')[3].value == '%characteristics.boolean.active%';
+
+					if(document.getElementById('group-options').hasAttribute('options'))
+					{
+						automation.options = JSON.parse(document.getElementById('group-options').getAttribute('options'));
+					}
+
+					automation.trigger = {};
+					automation.result = [];
+
+					automation.trigger.logic = document.getElementById('group-logic').getAttribute('value');
+					automation.trigger.groups = [];
+
+					var triggerGroups = document.getElementById('trigger').getElementsByClassName('group');
+
+					for(var i = 0; i < triggerGroups.length; i++)
+					{
+						var triggerBlocks = triggerGroups[i].getElementsByClassName('block'), group = {};
+
+						group.logic = triggerGroups[i].getElementsByClassName('block-logic')[0].getAttribute('value');
+						group.blocks = [];
+
+						for(var j = 0; j < triggerBlocks.length; j++)
+						{
+							var block = getBlock(triggerBlocks[j]);
+
+							group.blocks.push(block);
+						}
+
+						timeBypass(group.blocks);
+
+						automation.trigger.groups.push(group);
+					}
+
+					var resultBlocks = document.getElementById('result').getElementsByClassName('block');
+
+					for(var i = 0; i < resultBlocks.length; i++)
+					{
+						var block = getBlock(resultBlocks[i]);
+
+						automation.result.push(block);
+					}
+
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'save',
+						pending : { value : '%automation.creating% ..' },
+						executeError : { value : '%automation.create_failed%!' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
+					};
+
+					Query.complexFetch('/serverside/automation_new', 5000, 2, overlays, false, JSON.stringify(automation)).then(async (response) => {
+
+						if(response == 'Success')
+						{
+							for(const id in data.plugins)
+							{
+								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + data.plugins[id] + '/reload-automation', 5000, 2, {}, true);
+							}
+
+							for(const i in data.automation)
+							{
+								if(data.automation[i].id == automation.id)
+								{
+									data.automation[i] = automation;
+								}
+							}
+
+							loadGroups();
+
+							renderGroups();
+							renderAutomation();
+							renderWidgets();
+							
+							document.getElementById('no-automation').style.display = 'none';
+
+							await Essentials.newTimeout(200);
+
+							closeEditor();
+						}
+					});
+				}
+
+				function getBlock(triggerBlock)
+				{
+					var block = {};
+
+					var triggerService = triggerBlock.getElementsByTagName('select')[0].selectedOptions[0],
+						triggerOperation = triggerBlock.getElementsByTagName('select')[1].selectedOptions[0],
+						triggerComparison = triggerBlock.getElementsByTagName('select')[2].selectedOptions[0];
+
+					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'url' || triggerOperation.getAttribute('name') == 'dimming')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[1];
+					}
+
+					if(triggerOperation.getAttribute('name') == 'color')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[2];
+					}
+
+					if(triggerService.getAttribute('type') == 'time')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[3];
+					}
+
+					if(triggerService.hasAttribute('id'))
+					{
+						block.id = triggerService.getAttribute('id');
+					}
+
+					if(triggerService.hasAttribute('name'))
+					{
+						block.name = triggerService.getAttribute('name');
+					}
+
+					if(triggerService.hasAttribute('letters'))
+					{
+						block.letters = triggerService.getAttribute('letters');
+					}
+
+					if(triggerService.hasAttribute('plugin'))
+					{
+						block.plugin = triggerService.getAttribute('plugin');
+					}
+					
+					if(triggerOperation.hasAttribute('value') && triggerService.getAttribute('type') != 'url')
+					{
+						block.operation = triggerOperation.getAttribute('value');
+					}
+
+					if(triggerOperation.hasAttribute('name') && triggerService.hasAttribute('id') && triggerService.hasAttribute('letters'))
+					{
+						block.state = {};
+
+						try
+						{
+							if(triggerOperation.getAttribute('name') == 'dimming')
+							{
+								block.state.value = true;
+
+								block.state.brightness = JSON.parse(triggerComparison.value);
+							}
+							else if(triggerOperation.getAttribute('name') == 'color')
+							{
+								var hsl = Essentials.hexToHSL(triggerComparison.value);
+
+								block.state.value = true;
+
+								block.state.hue = hsl.hue;
+								block.state.saturation = hsl.saturation;
+								block.state.brightness = hsl.brightness * 2;
+							}
+							else
+							{
+								block.state.value = JSON.parse(triggerComparison.value);
+							}
+						}
+						catch(e)
+						{
+							console.error(e);
+						}
+					}
+					
+					if(triggerService.getAttribute('type') == 'time')
+					{
+						block.time = triggerComparison.value;
+					}
+
+					if(triggerService.getAttribute('type') == 'url')
+					{
+						block.url = triggerComparison.value;
+					}
+
+					if(triggerBlock.hasAttribute('options'))
+					{
+						block.options = JSON.parse(triggerBlock.getAttribute('options'));
+					}
+
+					return block;
+				}
+
+				function timeBypass(blocks)
+				{
+					var time = { time : {} };
+
+					for(const i in blocks)
+					{
+						if(blocks[i].time != null)
+						{
+							time.time[blocks[i].operation == '<' ? 'end' : 'begin'] = blocks[i].time;
+
+							if(blocks[i].options != null)
+							{
+								time.options = blocks[i].options;
+							}
+						}
+					}
+
+					for(var i = blocks.length - 1; i >= 0; i--)
+					{
+						if(blocks[i].time != null)
+						{
+							blocks.splice(i, 1);
+						}
+					}
+
+					if(Object.keys(time.time).length > 0)
+					{
+						blocks.push(time);
+					}
 				}
 
 			</script>
