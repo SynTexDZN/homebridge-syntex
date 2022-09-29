@@ -238,7 +238,7 @@
 
 						if(Essentials.getURLParams('id') != null)
 						{
-							automation = getAutomation(Essentials.getURLParams('id') || undefined);
+							automation = getAutomation(Essentials.getURLParams('id')) || undefined;
 						}
 
 						openEditor(true, automation);
@@ -498,7 +498,7 @@
 
 					window.history.pushState(null, null, url);
 
-					document.getElementById('general').getElementsByTagName('input')[0].value = automation.id || getNextID();
+					document.getElementById('general').getElementsByTagName('input')[0].value = automation.id != null ? automation.id : getNextID();
 					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
 					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
 
