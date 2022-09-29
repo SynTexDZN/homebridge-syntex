@@ -1413,6 +1413,7 @@
 
 						if(response == 'Success')
 						{
+
 							for(const id in data.plugins)
 							{
 								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + data.plugins[id] + '/reload-automation', 5000, 2, {}, true);
@@ -1423,7 +1424,14 @@
 								if(data.automation[i].id == automation.id)
 								{
 									data.automation[i] = automation;
+
+									found = true;
 								}
+							}
+
+							if(!found)
+							{
+								data.automation.push(automation);
 							}
 
 							loadGroups();
