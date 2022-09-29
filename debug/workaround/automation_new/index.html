@@ -10,9 +10,16 @@
 
 					var main = document.createElement('div');
 
-					main.style.display = 'flex';
+					if(Essentials.getURLParams('id') != null)
+					{
+						main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.modify%"></div></div>';
+					}
+					else
+					{
+						main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (Essentials.getURLParams('id') == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
+						main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+					}
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -461,9 +468,16 @@
 
 					var main = document.createElement('div');
 
-					main.style.display = 'flex';
+					if(automation.id != null)
+					{
+						main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.modify%"></div></div>';
+					}
+					else
+					{
+						main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="' + (automation.id == null ? '%automation.create%' : '%automation.modify%') + '"></div>';
+						main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+					}
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(!init);
@@ -1576,6 +1590,80 @@
 					if(Object.keys(time.time).length > 0)
 					{
 						blocks.push(time);
+					}
+				}
+
+			</script>
+			<script>
+
+				function removeAutomation(btn)
+				{
+					var automation = getAutomation(Essentials.getURLParams('id'));
+
+					var dialogue = {
+                        title : '%general.attention%',
+                        subtitle : '%automation.remove_confirm_0% ' + "'" + automation.name + "'" + ' %automation.remove_confirm_1%?',
+                        buttons : [
+                            {
+                                text : '%general.cancel%',
+                                close : true
+                            },
+                            {
+                                text : '%general.remove%',
+                                color : 'red',
+                                close : true,
+                                action : () => removeConfirm(btn)
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+				}
+
+				window.resetting = false;
+				
+				async function removeConfirm(btn)
+				{
+					if(!resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'remove',
+							pending : { value : '%automation.removing% ..' },
+							executeError : { value : '%automation.remove_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
+						};
+
+						resetting = true;
+
+						if(await Query.complexFetch('/serverside/remove-automation?id=' + Essentials.getURLParams('id'), 5000, 2, overlays, true) == 'Success')
+						{
+							for(const id in data.plugins)
+							{
+								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + data.plugins[id] + '/reload-automation', 5000, 2, {}, true);
+							}
+
+							data.automation.splice(data.automation.indexOf(getAutomation(Essentials.getURLParams('id'))), 1);
+
+							loadGroups();
+
+							renderGroups();
+							renderAutomation();
+							renderWidgets();
+							
+							if(data.automation.length == 0)
+							{
+								document.getElementById('no-automation').style.removeProperty('display');
+
+								document.getElementById('view-button').setAttribute('disabled', '');
+							}
+
+							await Essentials.newTimeout(200);
+
+							closeEditor();
+						}
+
+						resetting = false;
 					}
 				}
 
