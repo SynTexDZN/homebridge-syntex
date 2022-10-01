@@ -522,7 +522,7 @@
 					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
 					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
 
-					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active);
+					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active != false);
 
 					if(automation.trigger == null || automation.trigger.logic == 'AND')
 					{
