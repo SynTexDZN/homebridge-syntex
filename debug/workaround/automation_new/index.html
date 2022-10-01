@@ -95,13 +95,13 @@
 							</button>
 						</div>
 					</div>
+					<div id="automation"></div>
 					<p id="no-accessories" style="display: none">%automation.no_accessories%</p>
 					<p id="no-services" style="display: none">%automation.no_services%</p>
 					<p id="no-automation" style="display: none">%automation.no_automation%</p>
-					<div id="automation"></div>
 				</div>
 				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
-					<input id="devices-button-big" class="gradient-orange" type="button" value="%automation.to_devices% >" style="display: none" onclick="Essentials.leavePage('/')">
+					<input id="devices-button-big" class="gradient-blue-green" type="button" value="» %automation.to_devices% «" style="display: none" onclick="Essentials.leavePage('/')">
 					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openEditor(false)">
 				</div>
 			</div>
@@ -200,12 +200,13 @@
 
 					if(data.accessories == null || data.accessories.length == 0)
 					{
-						if(data.automation == null || data.automation.length == 0)
-						{
-							document.getElementById('no-accessories').style.removeProperty('display');
-						}
+						document.getElementById('no-accessories').style.removeProperty('display');
 						
 						document.getElementById('add-button').setAttribute('disabled', '');
+
+						document.getElementById('add-button-big').style.display = 'none';
+						
+						document.getElementById('devices-button-big').style.removeProperty('display');
 					}
 					
 					if(data.automation == null || data.automation.length == 0)
@@ -228,8 +229,7 @@
 						renderGroups();
 					}
 
-					if(data.automation != null && data.automation.length > 0
-					&& data.accessories != null && data.accessories.length > 0)
+					if(data.automation != null && data.automation.length > 0)
 					{
 						renderAutomation();
 					}
@@ -476,15 +476,7 @@
 						data.automation.sort((a, b) => (a.id < b.id) ? 1 : (b.id < a.id) ? -1 : 0);
 					}
 				}
-				/*
-				function renderGUI(renderAutomation)
-				{
-					document.getElementById('no-accessories').style.display = '';
-					document.getElementById('add-button-big').style.display = 'none';
-					document.getElementById('devices-button-big').style.display = '';
-					document.getElementById('add-button').setAttribute('disabled', '');
-				}
-				*/
+
 			</script>
 			<script>
 
