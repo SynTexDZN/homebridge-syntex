@@ -156,6 +156,13 @@
 				window.data = {};
 				window.services = [];
 
+				// TODO: Remove When Replaced Original
+
+				if(Storage.getItem('automation-group') == 'all')
+				{
+					Storage.removeItem('automation-group');
+				}
+
 				loadData().then(() => renderGUI());
 
 			</script>
