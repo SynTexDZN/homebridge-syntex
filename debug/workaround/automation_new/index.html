@@ -1438,8 +1438,8 @@
 					var overlays = {
 						root : document.getElementById('save-btn'),
 						id : 'save',
-						pending : { value : '%automation.creating% ..' },
-						executeError : { value : '%automation.create_failed%!' },
+						pending : { value : getAutomation(automation.id) == null ? '%automation.creating% ..' : '%automation.modifying% ..' },
+						executeError : { value : getAutomation(automation.id) == null ? '%automation.create_failed%!' : '%automation.modify_failed%!' },
 						connectionError : { value : '%general.bridge_connection_error%!' }
 					};
 
