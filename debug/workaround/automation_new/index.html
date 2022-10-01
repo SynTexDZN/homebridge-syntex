@@ -437,10 +437,10 @@
 				/*
 				function renderGUI(renderAutomation)
 				{
-						document.getElementById('no-accessories').style.display = '';
-						document.getElementById('add-button-big').style.display = 'none';
-						document.getElementById('devices-button-big').style.display = '';
-						document.getElementById('add-button').setAttribute('disabled', '');
+					document.getElementById('no-accessories').style.display = '';
+					document.getElementById('add-button-big').style.display = 'none';
+					document.getElementById('devices-button-big').style.display = '';
+					document.getElementById('add-button').setAttribute('disabled', '');
 				}
 				*/
 			</script>
@@ -1443,6 +1443,14 @@
 
 						document.getElementById('view-button').removeAttribute('disabled');
 
+						if(Storage.getItem('automation-group') != null
+						&& !tempGroups.includes(Storage.getItem('automation-group')))
+						{
+							Storage.setItem('automation-group', automation.group.toLowerCase());
+
+							switchGroup(true);
+						}
+
 						await Essentials.newTimeout(200);
 
 						closeEditor();
@@ -1642,6 +1650,14 @@
 								document.getElementById('no-automation').style.removeProperty('display');
 
 								document.getElementById('view-button').setAttribute('disabled', '');
+							}
+
+							if(Storage.getItem('automation-group') != null
+							&& !tempGroups.includes(Storage.getItem('automation-group')))
+							{
+								Storage.removeItem('automation-group');
+
+								switchGroup(true);
 							}
 
 							await Essentials.newTimeout(200);
