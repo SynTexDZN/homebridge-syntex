@@ -328,14 +328,49 @@
 
 					for(const i in data.automation)
 					{
-						var button = document.createElement('button');
+						var panel = document.createElement('div'),
+							title = document.createElement('h2'),
+							content = document.createElement('div');
+
+						panel.id = data.automation[i].id;
+						panel.className = 'panel';
+						panel.style.cursor = 'pointer';
+
+						panel.onclick = () => openEditor(false, data.automation[i]);
+
+						if(!data.automation[i].active)
+						{
+							//panel.classList.add('striped');
+						}
+
+						title.className = 'title-container';
+
+						title.innerHTML = data.automation[i].name;
+
+						content.className = 'panel-content';
+						//content.innerHTML = data.automation[i].active ? '%automation.active%' : '%automation.inactive%';
+
+						content.innerHTML = '<div class="widget"><button class="widget-left">%automation.activated%</button><button class="widget-right gradient-' + (data.automation[i].active ? 'green' : 'red') + '" id="toolbar-devices">' + (data.automation[i].active ? '%general.yes%' : '%general.no%') + '</button></div>';
+
+						panel.appendChild(title);
+						panel.appendChild(content);
+
+						document.getElementById('automation').appendChild(panel);
+						/*
+						var button = document.createElement('button'),
+							active = document.createElement('div');
 
 						button.innerHTML = data.automation[i].name;
 						button.id = data.automation[i].id;
 
+						active.innerHTML = data.automation[i].active ? '%automation.active%' : '%automation.inactive%';
+
+						button.appendChild(active);
+
 						button.onclick = () => openEditor(false, data.automation[i]);
 
 						document.getElementById('automation').appendChild(button);
+						*/
 					}
 
 					switchGroup(true);
