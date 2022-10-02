@@ -328,7 +328,8 @@
 					{
 						var panel = document.createElement('div'),
 							title = document.createElement('h2'),
-							content = document.createElement('div');
+							content = document.createElement('div'),
+							widgets = document.createElement('div');
 
 						panel.id = automation.id;
 						panel.className = 'panel';
@@ -342,24 +343,54 @@
 
 						content.className = 'panel-content';
 
-						var widget = document.createElement('div')
-							widgetLeft = document.createElement('button'),
-							widgetRight = document.createElement('button');
+						widgets.className = 'widgets two';
 
-						widget.className = 'widget';
+						const createActiveWidget = () => {
 
-						widgetLeft.className = 'widget-left';
-						widgetLeft.innerHTML = '%automation.activated%';
+							var widget = document.createElement('div')
+								widgetLeft = document.createElement('button'),
+								widgetRight = document.createElement('button');
 
-						widgetRight.className = 'widget-right';
-						widgetRight.innerHTML = automation.active ? '%general.yes%' : '%general.no%';
+							widget.className = 'widget';
 
-						widgetRight.classList.add((automation.active ? 'gradient-green' : 'gradient-red'));
+							widgetLeft.className = 'widget-left';
+							widgetLeft.innerHTML = '%automation.activated%';
 
-						widget.appendChild(widgetLeft);
-						widget.appendChild(widgetRight);
+							widgetRight.className = 'widget-right';
+							widgetRight.innerHTML = automation.active ? '%general.yes%' : '%general.no%';
 
-						content.appendChild(widget);
+							widgetRight.classList.add((automation.active ? 'gradient-green' : 'gradient-red'));
+
+							widget.appendChild(widgetLeft);
+							widget.appendChild(widgetRight);
+
+							return widget;
+						};
+
+						const createErrorWidget = () => {
+
+							var widget = document.createElement('div')
+								widgetLeft = document.createElement('button'),
+								widgetRight = document.createElement('button');
+
+							widget.className = 'widget';
+
+							widgetLeft.className = 'widget-left';
+							widgetLeft.innerHTML = '%general.error%';
+
+							widgetRight.className = 'widget-right gradient-red';
+							widgetRight.innerHTML = getAutomationErrors(automation);
+
+							widget.appendChild(widgetLeft);
+							widget.appendChild(widgetRight);
+
+							return widget;
+						};
+
+						widgets.appendChild(createActiveWidget());
+						widgets.appendChild(createErrorWidget());
+
+						content.appendChild(widgets);
 
 						panel.appendChild(title);
 						panel.appendChild(content);
@@ -740,6 +771,96 @@
 					}
 
 					return null;
+				}
+
+				function getAutomationErrors(automation)
+				{
+					var errors = 0;
+
+					if(automation != null
+					&& automation instanceof Object
+					&& automation.trigger != null
+					&& automation.result != null)
+					{
+						if(automation.trigger instanceof Object
+						&& automation.trigger.groups != null
+						&& Array.isArray(automation.trigger.groups)
+						&& automation.trigger.groups.length > 0)
+						{
+							for(const group of automation.trigger.groups)
+							{
+								if(group instanceof Object
+								&& group.blocks != null
+								&& Array.isArray(group.blocks)
+								&& group.blocks.length > 0)
+								{
+									for(const block of group.blocks)
+									{
+										if(block.time == null)
+										{
+											var found = false;
+
+											for(const service of services)
+											{
+												if(service.id == block.id && service.letters == block.letters)
+												{
+													found = true;
+												}
+											}
+
+											if(!found)
+											{
+												errors++;
+											}
+										}
+									}
+								}
+								else
+								{
+									errors++;
+								}
+							}
+						}
+						else
+						{
+							errors++;
+						}
+
+						if(Array.isArray(automation.result)
+						&& automation.result.length > 0)
+						{
+							for(const block of automation.result)
+							{
+								if(block.url == null)
+								{
+									var found = false;
+
+									for(const service of services)
+									{
+										if(service.id == block.id && service.letters == block.letters)
+										{
+											found = true;
+										}
+									}
+
+									if(!found)
+									{
+										errors++;
+									}
+								}
+							}
+						}
+						else
+						{
+							errors++;
+						}
+					}
+					else
+					{
+						errors++;
+					}
+
+					return errors;
 				}
 
 				function getNextID()
