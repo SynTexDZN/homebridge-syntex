@@ -342,27 +342,29 @@
 
 						content.className = 'panel-content';
 
-						content.innerHTML = '<div class="widget"><button class="widget-left">%automation.activated%</button><button class="widget-right gradient-' + (automation.active ? 'green' : 'red') + '" id="toolbar-devices">' + (automation.active ? '%general.yes%' : '%general.no%') + '</button></div>';
+						var widget = document.createElement('div')
+							widgetLeft = document.createElement('button'),
+							widgetRight = document.createElement('button');
+
+						widget.className = 'widget';
+
+						widgetLeft.className = 'widget-left';
+						widgetLeft.innerHTML = '%automation.activated%';
+
+						widgetRight.className = 'widget-right';
+						widgetRight.innerHTML = automation.active ? '%general.yes%' : '%general.no%';
+
+						widgetRight.classList.add((automation.active ? 'gradient-green' : 'gradient-red'));
+
+						widget.appendChild(widgetLeft);
+						widget.appendChild(widgetRight);
+
+						content.appendChild(widget);
 
 						panel.appendChild(title);
 						panel.appendChild(content);
 
 						document.getElementById('automation').appendChild(panel);
-						/*
-						var button = document.createElement('button'),
-							active = document.createElement('div');
-
-						button.innerHTML = automation.name;
-						button.id = automation.id;
-
-						active.innerHTML = automation.active ? '%automation.active%' : '%automation.inactive%';
-
-						button.appendChild(active);
-
-						button.onclick = () => openEditor(false, automation);
-
-						document.getElementById('automation').appendChild(button);
-						*/
 					}
 
 					switchGroup(true);
