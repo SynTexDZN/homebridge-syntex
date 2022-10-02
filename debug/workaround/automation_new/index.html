@@ -389,7 +389,7 @@
 					document.getElementById('widget-active').innerHTML = active;
 				}
 
-				window.activeGroup = null;
+				window.activeGroup = Storage.getItem('automation-group');
 
 				function renderGroups()
 				{
@@ -848,53 +848,52 @@
 
 				function switchGroup(init)
 				{
-					var automation = document.getElementById('automation').children, groups = document.getElementById('groups').children;
-
-					if(!init)
+					if(init || Storage.getItem('automation-group') != activeGroup)
 					{
-						Storage.setItem('automation-group', activeGroup);
-
-						document.getElementById('automation').style.opacity = 0;
-					}
-					else
-					{
-						activeGroup = Storage.getItem('automation-group');
-					}
-
-					setTimeout(() => {
-						
-						for(var i = 0; i < automation.length; i++)
-						{
-							if(hasGroup(automation[i].id, activeGroup))
-							{
-								automation[i].classList.remove('hidden');
-							}
-							else
-							{
-								automation[i].classList.add('hidden');
-							}
-						}
-
-						for(var i = 0; i < groups.length; i++)
-						{
-							if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
-							{
-								groups[i].classList.add('active');
-							}
-							else
-							{
-								groups[i].classList.remove('active');
-							}
-						}
+						var automation = document.getElementById('automation').children, groups = document.getElementById('groups').children;
 
 						if(!init)
 						{
-							renderWidgets();
+							Storage.setItem('automation-group', activeGroup);
 
-							setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
+							document.getElementById('automation').style.opacity = 0;
 						}
 						
-					}, init ? 0 : 200);
+						setTimeout(() => {
+							
+							for(var i = 0; i < automation.length; i++)
+							{
+								if(hasGroup(automation[i].id, activeGroup))
+								{
+									automation[i].classList.remove('hidden');
+								}
+								else
+								{
+									automation[i].classList.add('hidden');
+								}
+							}
+
+							for(var i = 0; i < groups.length; i++)
+							{
+								if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
+								{
+									groups[i].classList.add('active');
+								}
+								else
+								{
+									groups[i].classList.remove('active');
+								}
+							}
+
+							if(!init)
+							{
+								renderWidgets();
+
+								setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
+							}
+							
+						}, init ? 0 : 200);
+					}
 				}
 
 			</script>
