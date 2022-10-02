@@ -259,19 +259,17 @@
 
 				function loadServices()
 				{
-					for(const i in data.accessories)
+					for(const accessory of data.accessories)
 					{
-						var plugin = data.accessories[i].plugin.alias;
+						var plugin = accessory.plugin.alias;
 
 						if(plugin == 'SynTex')
 						{
 							plugin = 'SynTexWebHooks';
 						}
 
-						for(const j in data.accessories[i].services)
+						for(const service of accessory.services)
 						{
-							var service = data.accessories[i].services[j];
-
 							if(service.type != 'lcd' && service.type != 'bridge' && service.type != 'unsupported' && service.type != 'removed')
 							{
 								if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
@@ -279,7 +277,7 @@
 									service.type = 'rgb';
 								}
 
-								services.push({ ...service, plugin, id : data.accessories[i].id });
+								services.push({ ...service, plugin, id : accessory.id });
 							}
 						}
 					}
@@ -297,19 +295,19 @@
 					groups = [];
 					tempGroups = [];
 
-					for(const i in data.automation)
+					for(const automation of data.automation)
 					{
-						if(data.automation[i].group != null)
+						if(automation.group != null)
 						{
-							var groupArray = Array.isArray(data.automation[i].group) ? data.automation[i].group : [ data.automation[i].group ];
+							var groupArray = Array.isArray(automation.group) ? automation.group : [ automation.group ];
 
-							for(const j in groupArray)
+							for(const group of groupArray)
 							{
-								if(!tempGroups.includes(groupArray[j].toLowerCase()))
+								if(!tempGroups.includes(group.toLowerCase()))
 								{
-									groups.push(groupArray[j]);
+									groups.push(group);
 
-									tempGroups.push(groupArray[j].toLowerCase());
+									tempGroups.push(group.toLowerCase());
 								}
 							}
 						}
@@ -332,7 +330,7 @@
 							title = document.createElement('h2'),
 							content = document.createElement('div');
 
-						panel.id = data.automation[i].id;
+						panel.id = automation.id;
 						panel.className = 'panel';
 						panel.style.cursor = 'pointer';
 
@@ -340,11 +338,11 @@
 
 						title.className = 'title-container';
 
-						title.innerHTML = data.automation[i].name;
+						title.innerHTML = automation.name;
 
 						content.className = 'panel-content';
 
-						content.innerHTML = '<div class="widget"><button class="widget-left">%automation.activated%</button><button class="widget-right gradient-' + (data.automation[i].active ? 'green' : 'red') + '" id="toolbar-devices">' + (data.automation[i].active ? '%general.yes%' : '%general.no%') + '</button></div>';
+						content.innerHTML = '<div class="widget"><button class="widget-left">%automation.activated%</button><button class="widget-right gradient-' + (automation.active ? 'green' : 'red') + '" id="toolbar-devices">' + (automation.active ? '%general.yes%' : '%general.no%') + '</button></div>';
 
 						panel.appendChild(title);
 						panel.appendChild(content);
@@ -354,14 +352,14 @@
 						var button = document.createElement('button'),
 							active = document.createElement('div');
 
-						button.innerHTML = data.automation[i].name;
-						button.id = data.automation[i].id;
+						button.innerHTML = automation.name;
+						button.id = automation.id;
 
-						active.innerHTML = data.automation[i].active ? '%automation.active%' : '%automation.inactive%';
+						active.innerHTML = automation.active ? '%automation.active%' : '%automation.inactive%';
 
 						button.appendChild(active);
 
-						button.onclick = () => openEditor(false, data.automation[i]);
+						button.onclick = () => openEditor(false, automation);
 
 						document.getElementById('automation').appendChild(button);
 						*/
@@ -374,11 +372,11 @@
 				{
 					var count = 0, active = 0;
 
-					for(const i in data.automation)
+					for(const automation of data.automation)
 					{
-						if(hasGroup(data.automation[i].id, activeGroup))
+						if(hasGroup(automation.id, activeGroup))
 						{
-							if(data.automation[i].active == true)
+							if(automation.active == true)
 							{
 								active++;
 							}
@@ -544,34 +542,34 @@
 
 					if(automation.id != null)
 					{
-						for(const i in automation.trigger.groups)
+						for(const group of automation.trigger.groups)
 						{
-							var group = addGroup(automation.trigger.groups[i]);
+							var groupElement = addGroup(group);
 
-							for(const j in automation.trigger.groups[i].blocks)
+							for(const block of group.blocks)
 							{
-								if(automation.trigger.groups[i].blocks[j].time != null)
+								if(block.time != null)
 								{
-									if(automation.trigger.groups[i].blocks[j].time.begin != null)
+									if(block.time.begin != null)
 									{
-										addBlock('trigger', group.getElementsByClassName('blocks')[0], { ...automation.trigger.groups[i].blocks[j], time : automation.trigger.groups[i].blocks[j].time.begin, operation : '>' });
+										addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], { ...block, time : block.time.begin, operation : '>' });
 									}
 
-									if(automation.trigger.groups[i].blocks[j].time.end != null)
+									if(block.time.end != null)
 									{
-										addBlock('trigger', group.getElementsByClassName('blocks')[0], { ...automation.trigger.groups[i].blocks[j], time : automation.trigger.groups[i].blocks[j].time.end, operation : '<' });
+										addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], { ...block, time : block.time.end, operation : '<' });
 									}
 								}
 								else
 								{
-									addBlock('trigger', group.getElementsByClassName('blocks')[0], automation.trigger.groups[i].blocks[j]);
+									addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], block);
 								}
 							}
 						}
 
-						for(const i in automation.result)
+						for(const block of automation.result)
 						{
-							addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0], automation.result[i]);
+							addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0], block);
 						}
 					}
 				}
@@ -731,11 +729,11 @@
 
 				function getAutomation(id)
 				{
-					for(const i in data.automation)
+					for(const automation of data.automation)
 					{
-						if(data.automation[i].id == id)
+						if(automation.id == id)
 						{
-							return data.automation[i];
+							return automation;
 						}
 					}
 
@@ -746,11 +744,11 @@
 				{
 					var lastID = -1;
 
-					for(const i in data.automation)
+					for(const automation of data.automation)
 					{
-						if(data.automation[i].id > lastID)
+						if(automation.id > lastID)
 						{
-							lastID = data.automation[i].id;
+							lastID = automation.id;
 						}
 					}
 
@@ -838,9 +836,9 @@
 
 					setTimeout(() => {
 
-						for(const i in data.automation)
+						for(const automation of data.automation)
 						{
-							document.getElementById('automation').appendChild(document.getElementById(data.automation[i].id));
+							document.getElementById('automation').appendChild(document.getElementById(automation.id));
 						}
 
 						setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
@@ -1010,21 +1008,21 @@
 							options.push(link);
 						}
 
-						for(const i in services)
+						for(const service of services)
 						{
-							if(type == 'result' || services[i].type != 'statelessswitch')
+							if(type == 'result' || service.type != 'statelessswitch')
 							{
 								var option = {
-									text : services[i].name,
-									id : services[i].id,
-									letters : services[i].letters,
-									type : Essentials.getDataType(services[i].type),
-									name : services[i].name,
-									plugin : services[i].plugin,
-									img : '/img/accessory/' + services[i].type + '.png'
+									text : service.name,
+									id : service.id,
+									letters : service.letters,
+									type : Essentials.getDataType(service.type),
+									name : service.name,
+									plugin : service.plugin,
+									img : '/img/accessory/' + service.type + '.png'
 								};
 
-								if(entry != null && services[i].id == entry.id && services[i].letters == entry.letters)
+								if(entry != null && service.id == entry.id && service.letters == entry.letters)
 								{
 									option.selected = true;
 
@@ -1588,15 +1586,15 @@
 				{
 					var time = { time : {} };
 
-					for(const i in blocks)
+					for(const block of blocks)
 					{
-						if(blocks[i].time != null)
+						if(block.time != null)
 						{
-							time.time[blocks[i].operation == '<' ? 'end' : 'begin'] = blocks[i].time;
+							time.time[block.operation == '<' ? 'end' : 'begin'] = block.time;
 
-							if(blocks[i].options != null)
+							if(block.options != null)
 							{
-								time.options = blocks[i].options;
+								time.options = block.options;
 							}
 						}
 					}
