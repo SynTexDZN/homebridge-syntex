@@ -326,7 +326,7 @@
 
 					document.getElementById('automation').innerHTML = '';
 
-					for(const i in data.automation)
+					for(const automation of data.automation)
 					{
 						var panel = document.createElement('div'),
 							title = document.createElement('h2'),
@@ -336,19 +336,13 @@
 						panel.className = 'panel';
 						panel.style.cursor = 'pointer';
 
-						panel.onclick = () => openEditor(false, data.automation[i]);
-
-						if(!data.automation[i].active)
-						{
-							//panel.classList.add('striped');
-						}
+						panel.onclick = () => openEditor(false, automation);
 
 						title.className = 'title-container';
 
 						title.innerHTML = data.automation[i].name;
 
 						content.className = 'panel-content';
-						//content.innerHTML = data.automation[i].active ? '%automation.active%' : '%automation.inactive%';
 
 						content.innerHTML = '<div class="widget"><button class="widget-left">%automation.activated%</button><button class="widget-right gradient-' + (data.automation[i].active ? 'green' : 'red') + '" id="toolbar-devices">' + (data.automation[i].active ? '%general.yes%' : '%general.no%') + '</button></div>';
 
@@ -843,7 +837,7 @@
 					document.getElementById('automation').style.opacity = 0;
 
 					setTimeout(() => {
-						
+
 						for(const i in data.automation)
 						{
 							document.getElementById('automation').appendChild(document.getElementById(data.automation[i].id));
