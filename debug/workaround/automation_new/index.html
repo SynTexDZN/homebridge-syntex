@@ -55,7 +55,7 @@
 					</div>
 					<div id="toolbar">
 						<div id="groups">
-							<button class="white" style="pointer-events: none">%automation.all_automations%</button>
+							<button class="white" onclick="activeGroup = null; switchGroup(false)">%automation.all_automations%</button>
 						</div>
 						<div style="display: flex; gap: 20px">
 							<button id="view-button" class="image-button" onclick="switchView(this.getAttribute('view'), true)" view="horizontal">
@@ -1586,6 +1586,8 @@
 						if(Storage.getItem('automation-group') != null
 						&& !tempGroups.includes(Storage.getItem('automation-group')))
 						{
+							activeGroup = automation.group != null ? automation.group.toLowerCase() : null;
+
 							if(automation.group != null)
 							{
 								Storage.setItem('automation-group', automation.group.toLowerCase());
@@ -1797,6 +1799,8 @@
 							if(Storage.getItem('automation-group') != null
 							&& !tempGroups.includes(Storage.getItem('automation-group')))
 							{
+								activeGroup = null;
+
 								Storage.removeItem('automation-group');
 							}
 
