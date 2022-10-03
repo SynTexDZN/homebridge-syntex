@@ -44,6 +44,11 @@
 
 				loadData('/serverside/automation', 'automation').then(() => {
 
+					if(automation != null && automation instanceof Object)
+					{
+						automation = automation.automation;
+					}
+
 					configJSON = JSON.stringify(automation);
 
 					document.getElementById('config-container').value = JSON.stringify(automation, null, '\t');

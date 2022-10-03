@@ -176,7 +176,7 @@
 				{
 					return new Promise((resolve) => {
 
-						Query.fetchURL('/serverside/automation_new', 3000).then((data) => {
+						Query.fetchURL('/serverside/automation', 3000).then((data) => {
 
 							if(data != null)
 							{
@@ -665,7 +665,7 @@
 
 					await PageManager.switchPage('overview', 'editor', init);
 
-					var url = '/debug/workaround/automation_new/?edit';
+					var url = '/debug/workaround/automation/?edit';
 
 					if(automation.id != null)
 					{
@@ -750,7 +750,7 @@
 
 					await PageManager.switchPage('editor', 'overview', false);
 
-					var url = '/debug/workaround/automation_new/';
+					var url = '/debug/workaround/automation/';
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
@@ -1693,7 +1693,7 @@
 						connectionError : { value : '%general.bridge_connection_error%!' }
 					};
 
-					if(await Query.complexFetch('/serverside/automation_new', 5000, 2, overlays, false, JSON.stringify(automation)) == 'Success')
+					if(await Query.complexFetch('/serverside/automation', 5000, 2, overlays, false, JSON.stringify(automation)) == 'Success')
 					{
 						var found = false;
 

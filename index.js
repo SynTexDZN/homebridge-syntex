@@ -648,13 +648,12 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/automation', async (request, response) => {
+		this.WebServer.addPage('/serverside/automation_old', async (request, response) => {
 
-			response.write(JSON.stringify(await Automation.loadAutomation())); 
-			response.end();
+			response.end(JSON.stringify(await Automation.loadAutomation())); 
 		});
 
-		this.WebServer.addPage('/serverside/automation_new', async (request, response, urlParams, content, postJSON) => {
+		this.WebServer.addPage('/serverside/automation', async (request, response, urlParams, content, postJSON) => {
 
 			if(postJSON != null)
 			{
@@ -692,28 +691,26 @@ class SynTexPlatform
 			}
 		});
 
-		this.WebServer.addPage('/serverside/create-automation', async (request, response, urlParams, content, postJSON) => {
-
-			if(postJSON != null)
-			{
-				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
-			}
-		});
-
-		this.WebServer.addPage('/serverside/modify-automation', async (request, response, urlParams, content, postJSON) => {
-
-			if(postJSON != null)
-			{
-				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
-			}
-		});
-
 		this.WebServer.addPage('/serverside/remove-automation', async (request, response, urlParams) => {
 
 			if(urlParams.id != null)
 			{
-				response.write(urlParams.id ? await Automation.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
-				response.end();
+				response.end(urlParams.id ? await Automation.removeAutomation(urlParams.id) ? 'Success' : 'Error' : 'Error');
+			}
+		});
+
+		this.WebServer.addPage('/serverside/update-automation', async (request, response, urlParams, content, postJSON) => {
+
+			if(postJSON != null)
+			{
+				this.files.writeFile('automation/automation.json', postJSON).then((write) => {
+
+					response.end(write.success ? 'Success' : 'Error');
+				});
+			}
+			else
+			{
+				response.end('Error');
 			}
 		});
 
@@ -740,21 +737,6 @@ class SynTexPlatform
 				DeviceManager.config = postJSON;
 
 				DeviceManager.writeConfig().then((success) => response.end(success ? 'Success' : 'Error'));
-			}
-			else
-			{
-				response.end('Error');
-			}
-		});
-
-		this.WebServer.addPage('/serverside/update-automation', async (request, response, urlParams, content, postJSON) => {
-
-			if(postJSON != null)
-			{
-				this.files.writeFile('automation/automation.json', postJSON).then((write) => {
-
-					response.end(write.success ? 'Success' : 'Error')
-				});
 			}
 			else
 			{
