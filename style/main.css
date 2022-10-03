@@ -1359,12 +1359,14 @@ button img
 
 .table
 {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 	text-align: left;
 	line-height: 24px;
 	padding: 0;
 	pointer-events: none;
 	height: auto;
-	color: var(--light-layer-one);
 	background: transparent;
 	box-shadow: none;
 	display: flex;
@@ -1376,11 +1378,10 @@ button img
 .table .column
 {
 	display: flex;
-	background: rgb(55, 55, 75);
+	background: rgb(60, 60, 80);
 	width: 100%;
 	overflow: hidden;
     border-radius: 16px;
-	margin-bottom: 20px;	
 }
 
 .table .column:last-of-type
@@ -1390,10 +1391,10 @@ button img
 
 .table .primary
 {
-	min-width: 130px;
-	max-width: 130px;
-	background: rgb(70, 70, 90);
-	padding: 11px 18px 11px 18px;
+	flex-shrink: 0;
+	min-width: calc(100% / 4 - 33.75px);
+	background: rgb(75, 75, 100);
+	padding: 13px 17px 13px 20px;
 	text-align: center;
 	text-transform: uppercase;
 	display: flex;
@@ -1421,6 +1422,7 @@ button img
 	height: 24px;
 	margin-right: 12px;
 	position: relative;
+	filter: invert(8%) sepia(100%) hue-rotate(205deg);
 }
 
 .vertical-view .table
@@ -1432,8 +1434,6 @@ button img
 .vertical-view .table .column
 {
 	flex-direction: column;
-	margin-right: 20px;
-	margin-bottom: 0;
 }
 
 .vertical-view .table .column:last-of-type
@@ -1443,8 +1443,9 @@ button img
 
 .vertical-view .table .primary
 {
-	box-sizing: border-box;
 	width: 100%;
+	height: 50px;
+	box-sizing: border-box;
 	max-width: none;
 }
 
@@ -2181,6 +2182,11 @@ button img
 #automation:empty, #devices:empty
 {
 	margin: 0;
+}
+
+#automation .widget
+{
+	box-shadow: none;
 }
 
 #no-automation, #no-accessories
