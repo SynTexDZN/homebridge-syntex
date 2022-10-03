@@ -333,10 +333,11 @@
 						var panel = document.createElement('div'),
 							title = document.createElement('h2'),
 							content = document.createElement('div'),
-							widgets = document.createElement('div');
+							widgets = document.createElement('div'),
+							table = document.createElement('div');
 
 						panel.id = automation.id;
-						panel.className = 'panel';
+						panel.className = 'panel hoverable';
 						panel.style.cursor = 'pointer';
 
 						panel.onclick = () => openEditor(false, automation);
@@ -348,6 +349,8 @@
 						content.className = 'panel-content';
 
 						widgets.className = 'widgets two';
+
+						table.classList = 'table';
 
 						const createActiveWidget = () => {
 
@@ -391,10 +394,136 @@
 							return widget;
 						};
 
+						const createBlock = (block) => {
+
+							var row = document.createElement('div'),
+								image = document.createElement('img'),
+								content = document.createElement('div'),
+								icon = null, text = null;
+
+							if(block.url != null)
+							{
+								icon = '/img/link.png';
+								text = '%automation.open_link%';
+							}
+							else if(block.time != null)
+							{
+								icon = '/img/clock.png';
+								text = block.time.begin;
+								
+								if(block.time.end != null)
+								{
+									text += ' - ' + block.time.end;
+								}
+
+								text += ' %automation.clock%';
+							}
+							else if(block.id != null && block.letters != null && block.name != null && block.state != null)
+							{
+								var type = Essentials.letterToType(block.letters), preset = servicePresets[type];
+
+								icon = '/img/accessory/' + type + '.png';
+								text = block.name + ' ' + block.operation + ' ';
+
+								if(type == 'blind')
+								{
+									text += block.state.value == 100 ? preset.active.text : block.state.value == 0 ? preset.inactive.text : block.state.value;
+								}
+								else if(preset.active != null && preset.inactive != null)
+								{
+									text += block.state.value ? preset.active.text : preset.inactive.text;
+								}
+								else if(preset.text != null)
+								{
+									text += block.state.value + ' ' + preset.text;
+								}
+
+								if(block.state.hue != null)
+								{
+									text += ' | %automation.hue% = ' + block.state.hue;
+								}
+
+								if(block.state.saturation != null)
+								{
+									text += ' | %automation.saturation% = ' + block.state.saturation;
+								}
+
+								if(block.state.brightness != null)
+								{
+									text += ' | %automation.brightness% = ' + block.state.brightness;
+								}
+							}
+
+							image.className = 'icon';
+							image.src = icon;
+
+							content.innerHTML = text;
+
+							row.appendChild(image);
+							row.appendChild(content);
+
+							return row;
+						};
+
+						const createTrigger = () => {
+
+							var column = document.createElement('div'),
+								category = document.createElement('div'),
+								container = document.createElement('div');
+
+							column.className = 'column';
+
+							category.innerHTML = '%automation.trigger%';
+							category.className = 'primary';
+
+							container.className = 'secondary';
+
+							for(const group of automation.trigger.groups)
+							{
+								for(const block of group.blocks)
+								{
+									container.appendChild(createBlock(block));
+								}
+							}
+
+							column.appendChild(category);
+							column.appendChild(container);
+
+							return column;
+						};
+
+						const createResult = () => {
+
+							var column = document.createElement('div'),
+								category = document.createElement('div'),
+								container = document.createElement('div');
+
+							column.className = 'column';
+
+							category.innerHTML = '%automation.result%';
+							category.className = 'primary';
+
+							container.className = 'secondary';
+
+							for(const block of automation.result)
+							{
+								container.appendChild(createBlock(block));
+							}
+
+							column.appendChild(category);
+							column.appendChild(container);
+
+							return column;
+						};
+
 						widgets.appendChild(createActiveWidget());
 						widgets.appendChild(createErrorWidget());
 
+						table.appendChild(createTrigger());
+						table.appendChild(createResult());
+
 						content.appendChild(widgets);
+						content.appendChild(table);
 
 						panel.appendChild(title);
 						panel.appendChild(content);
