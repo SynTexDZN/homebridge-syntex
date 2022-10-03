@@ -39,7 +39,7 @@
 			</div>
 			<div id="overview" class="page">
 				<div class="main" style="margin-bottom: 100px">
-					<div id="widgets" class="two">
+					<div id="widgets" class="three">
 						<div class="widget">
 							<button class="widget-left">%general.count%</button>
 							<button class="widget-right gradient-blue" id="widget-counter">0</button>
@@ -47,6 +47,10 @@
 						<div class="widget">
 							<button class="widget-left">%automation.active%</button>
 							<button class="widget-right gradient-green" id="widget-active">-</button>
+						</div>
+						<div class="widget">
+							<button class="widget-left">%general.error%</button>
+							<button class="widget-right gradient-orange" id="widget-errors">-</button>
 						</div>
 						<div class="widget hidden">
 							<button class="widget-left">%automation.network%</button>
@@ -403,7 +407,7 @@
 
 				function renderWidgets()
 				{
-					var count = 0, active = 0;
+					var count = 0, active = 0, errors = 0;
 
 					for(const automation of data.automation)
 					{
@@ -414,12 +418,15 @@
 								active++;
 							}
 
+							errors += getAutomationErrors(automation);
+
 							count++;
 						}
 					}
 
 					document.getElementById('widget-counter').innerHTML = count;
 					document.getElementById('widget-active').innerHTML = active;
+					document.getElementById('widget-errors').innerHTML = errors;
 				}
 
 				window.activeGroup = Storage.getItem('automation-group');
