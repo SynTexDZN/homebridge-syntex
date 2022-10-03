@@ -482,11 +482,11 @@
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/automation/?create&desktopApp=true');
+						window.history.pushState(null, null, '/debug/workaround/automation/?create&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation/?create');
+						window.history.pushState(null, null, '/debug/workaround/automation/?create');
 					}
 				}
 
@@ -499,11 +499,11 @@
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/automation?desktopApp=true');
+						window.history.pushState(null, null, '/debug/workaround/automation?desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation/');
+						window.history.pushState(null, null, '/debug/workaround/automation/');
 					}
 				}
 
@@ -523,7 +523,7 @@
 						}
 
 						typeContainer.setAttribute('style', 'height: auto; box-shadow: none; cursor: pointer');
-						typeContainer.setAttribute('onclick', "Essentials.leavePage('/automation/modify?id=" + automation[i].id + "')");
+						typeContainer.setAttribute('onclick', "Essentials.leavePage('/debug/workaround/automation/modify?id=" + automation[i].id + "')");
 
 						if(i == 0)
 						{

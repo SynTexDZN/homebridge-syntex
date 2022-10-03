@@ -25,7 +25,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/debug/workaround/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter();
@@ -177,11 +177,11 @@
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings&desktopApp=true');
+						window.history.pushState(null, null, '/debug/workaround/automation/modify?id=' + id + '&settings&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation/modify?id=' + id + '&settings');
+						window.history.pushState(null, null, '/debug/workaround/automation/modify?id=' + id + '&settings');
 					}
 				}
 
@@ -193,7 +193,7 @@
 
 					main.style.display = 'flex';
 
-					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
+					main.innerHTML = '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/debug/workaround/automation'" + ')"><button onclick="openSettings(' + "'automation-infos'" + ')" class="icon-button right split separated gradient-red" style="margin-left: 20px"><div class="button-icon"><img class="icon-inverted" src="/img/edit.png"></div><div class="button-text">%automation.modify%</div></button>';
 
 					PageManager.setFooter(main);
 					PageManager.showFooter(true);
@@ -202,11 +202,11 @@
 
 					if(Essentials.getURLParams('desktopApp') == true)
 					{
-						window.history.pushState(null, null, '/automation/modify?id=' + id + '&desktopApp=true');
+						window.history.pushState(null, null, '/debug/workaround/automation/modify?id=' + id + '&desktopApp=true');
 					}
 					else
 					{
-						window.history.pushState(null, null, '/automation/modify?id=' + id);
+						window.history.pushState(null, null, '/debug/workaround/automation/modify?id=' + id);
 					}
 				}
 
@@ -806,7 +806,7 @@
 
 							await Essentials.newTimeout(200);
 
-							Essentials.leavePage('/automation');
+							Essentials.leavePage('/debug/workaround/automation');
 						}
 						else
 						{

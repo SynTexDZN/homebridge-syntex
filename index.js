@@ -881,7 +881,7 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage(['/automation/', '/automation/modify'], async (request, response, urlParams, content) => {
+		this.WebServer.addPage(['/debug/workaround/automation/', '/debug/workaround/automation/modify'], async (request, response, urlParams, content) => {
 
 			response.write(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
 			response.end();
