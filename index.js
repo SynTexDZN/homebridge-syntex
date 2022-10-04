@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), EventManager = require('./core/event-manager'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
@@ -49,6 +49,8 @@ class SynTexPlatform
 		this.refresh = this.options['refresh'] || 0;
 
 		this.logger = new Logger(this);
+
+		EventManager = new EventManager(this);
 
 		if(config['baseDirectory'] != null)
 		{
@@ -658,13 +660,14 @@ class SynTexPlatform
 			if(postJSON != null)
 			{
 				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
+
+				EventManager.setOutputStream('updateAutomation', { sender : this }, {});
 			}
 			else
 			{
 				var obj = {
 					automation : await Automation.loadAutomation(),
-					accessories : [],
-					plugins : {}
+					accessories : []
 				};
 	
 				var accessories = DeviceManager.getAccessories();
@@ -674,16 +677,6 @@ class SynTexPlatform
 					if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
 					{
 						obj.accessories.push({ ...accessories[i] });
-					}
-				}
-	
-				var plugins = PluginManager.getPlugins();
-	
-				for(const i in plugins)
-				{
-					if(plugins[i].alias != 'SynTex' && plugins[i].config != null && plugins[i].config.options != null && plugins[i].config.options.port != null)
-					{
-						obj.plugins[plugins[i].alias] = plugins[i].config.options.port;
 					}
 				}
 	

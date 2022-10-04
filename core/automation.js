@@ -128,9 +128,7 @@ module.exports = class Automation
 					return true;
 				}
 				
-				if(block.time != null
-				&& block.time instanceof Object
-				&& block.time.begin != null)
+				if(block.time != null)
 				{
 					return true;
 				}
