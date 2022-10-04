@@ -11,15 +11,15 @@ class DialogueManager
 	showRestartPanel(text)
 	{
 		var dialogue = {
-			title : 'Bridge Neustarten',
+			title : '%bridge.restart%',
 			subtitle : text,
 			buttons : [
 				{
-					text : 'Zurück',
+					text : '%menu.back%',
 					close : true
 				},
 				{
-					text : 'Neustart',
+					text : '%general.restart%',
 					action : async () => {
 
 						var btn = document.getElementById('dialogue').getElementsByClassName('button-area')[0].children[1].children[0];
