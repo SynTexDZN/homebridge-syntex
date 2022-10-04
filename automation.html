@@ -409,14 +409,7 @@
 							else if(block.time != null)
 							{
 								icon = '/img/clock.png';
-								text = block.time.begin;
-								
-								if(block.time.end != null)
-								{
-									text += ' - ' + block.time.end;
-								}
-
-								text += ' %automation.clock%';
+								text = '%automation.time% ' + block.operation + ' ' + block.time + ' %automation.clock%';
 							}
 							else if(block.id != null && block.letters != null && block.name != null && block.state != null)
 							{
@@ -717,22 +710,7 @@
 
 							for(const block of group.blocks)
 							{
-								if(block.time != null)
-								{
-									if(block.time.begin != null)
-									{
-										addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], { ...block, time : block.time.begin, operation : '>' });
-									}
-
-									if(block.time.end != null)
-									{
-										addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], { ...block, time : block.time.end, operation : '<' });
-									}
-								}
-								else
-								{
 									addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], block);
-								}
 							}
 						}
 
@@ -1589,7 +1567,7 @@
 						}
 						else if(selected.getAttribute('type') == 'time')
 						{
-							if(entry != null && entry.time != null && entry.time != null)
+							if(entry != null && entry.time != null)
 							{
 								comparisonElement.children[3].value = entry.time;
 							}
