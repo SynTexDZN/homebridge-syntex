@@ -851,6 +851,7 @@
 							{
 								text : '%general.ok%',
 								color : 'green',
+								close : true,
 								action : () => {
 
 									var options = {};
@@ -883,8 +884,6 @@
 									{
 										block.removeAttribute('options');
 									}
-
-									Essentials.closeDialogue();
 								}
 							}
 						]
@@ -1909,7 +1908,9 @@
 				
 				async function removeConfirm(btn)
 				{
-					if(!resetting)
+					var automation = getAutomation(Essentials.getURLParams('id'));
+
+					if(!resetting && automation != null)
 					{
 						var overlays = {
 							root : btn,
@@ -1921,14 +1922,14 @@
 
 						resetting = true;
 
-						if(await Query.complexFetch('/serverside/remove-automation?id=' + Essentials.getURLParams('id'), 5000, 2, overlays, true) == 'Success')
+						if(await Query.complexFetch('/serverside/remove-automation?id=' + automation.id, 5000, 2, overlays, true) == 'Success')
 						{
 							for(const id in data.plugins)
 							{
 								await Query.complexFetch(window.location.protocol +  '//' + window.location.hostname + ':' + data.plugins[id] + '/reload-automation', 5000, 2, {}, true);
 							}
 
-							data.automation.splice(data.automation.indexOf(getAutomation(Essentials.getURLParams('id'))), 1);
+							data.automation.splice(data.automation.indexOf(automation.id), 1);
 
 							loadGroups();
 
