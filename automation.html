@@ -116,7 +116,7 @@
 						<div id="general" class="panel-content padding">
 							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
 							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
 							<p style="margin: 0"><b>%automation.active%: <input value="%characteristics.boolean.active%" name="active" type="button" class="white" onclick="Essentials.switchBooleanButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
@@ -674,7 +674,7 @@
 
 					document.getElementById('general').getElementsByTagName('input')[0].value = automation.id != null ? automation.id : getNextID();
 					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
-					document.getElementById('general').getElementsByTagName('input')[2].value = automation.group || '';
+					document.getElementById('general').getElementsByTagName('input')[2].value = (Array.isArray(automation.group) ? automation.group.join(', ') : automation.group) || '';
 
 					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active != false);
 
@@ -1617,6 +1617,18 @@
 					if(document.getElementById('general').getElementsByTagName('input')[2].value != '')
 					{
 						automation.group = document.getElementById('general').getElementsByTagName('input')[2].value;
+
+						if(automation.group.includes(','))
+						{
+							var array = automation.group.split(',');
+
+							for(const i in array)
+							{
+								array[i] = array[i].trim();
+							}
+							
+							automation.group = array;
+						}
 					}
 
 					automation.active = document.getElementById('general').getElementsByTagName('input')[3].value == '%characteristics.boolean.active%';
@@ -1692,11 +1704,23 @@
 						if(Storage.getItem('automation-group') != null
 						&& !tempGroups.includes(Storage.getItem('automation-group')))
 						{
-							activeGroup = automation.group != null ? automation.group.toLowerCase() : null;
+							activeGroup = null;
 
 							if(automation.group != null)
 							{
-								Storage.setItem('automation-group', automation.group.toLowerCase());
+								if(Array.isArray(automation.group))
+								{
+									activeGroup = automation.group[0].toLowerCase();
+								}
+								else
+								{
+									activeGroup = automation.group.toLowerCase();
+								}
+							}
+
+							if(activeGroup != null)
+							{
+								Storage.setItem('automation-group', activeGroup);
 							}
 							else
 							{
