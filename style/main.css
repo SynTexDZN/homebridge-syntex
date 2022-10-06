@@ -625,6 +625,7 @@ input[type='submit']
 	color: var(--dark-layer-one)!important;
 	background: transparent;
 	background-image: var(--element-gradient)!important;
+	background-origin: border-box;
 }
 
 .gradient-red.striped, .gradient-green.striped, .gradient-blue.striped, .gradient-cyan.striped, .gradient-blue-green.striped, .gradient-blue-purple.striped, .gradient-purple.striped, .gradient-yellow.striped, input[type='submit'].striped
@@ -956,7 +957,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	transition: var(--transition-color), 0s color;
 }
 
-.panel, #footer-content
+#footer-content
 {
 	border: 1px solid rgba(245, 245, 255, .015);
 }
@@ -978,7 +979,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	letter-spacing: 3px!important;
 }
 
-#devices button
+#devices button, #status button
 {
 	border: 1px solid rgba(128, 128, 128, 0.1);
 	box-shadow: none;
@@ -1166,6 +1167,7 @@ canvas
 .striped, #footer-content
 {
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px);
+	background-origin: border-box;
 }
 
 #groups
@@ -2229,6 +2231,7 @@ input[type="color"]::-webkit-color-swatch
 {
 	border: none;
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px), linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(255, 255, 255, .2) 100%);
+	background-origin: border-box;
 }
 
 input[type="time"]::-webkit-calendar-picker-indicator
