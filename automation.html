@@ -132,7 +132,7 @@
 									<div class="button-text">%automation.group%</div>
 								</button>
 								<button id="group-logic" type="button" class="white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
-								<button id="group-options" type="button" class="icon-button right center compact" onclick="openOptions('automation', this)">
+								<button id="group-options" type="button" class="icon-button right center compact" onclick="openOptions(this)">
 									<div class="button-icon">
 										<img class="icon-inverted" src="/img/settings.png">
 									</div>
@@ -738,7 +738,7 @@
 					window.history.pushState(null, null, url);
 				}
 
-				function openOptions(type, block)
+				function openOptions(block)
 				{
 					var form = document.createElement('form'), options = {};
 
@@ -746,34 +746,6 @@
 					{
 						options = JSON.parse(block.getAttribute('options'));
 					}
-
-					const createStateLock = () => {
-
-						var label = document.createElement('label'),
-							checkbox = document.createElement('input'),
-							suffix = document.createElement('div');
-
-						label.className = 'label-input';
-
-						label.setAttribute('for', 'state-lock');
-
-						checkbox.setAttribute('id', 'state-lock');
-						checkbox.setAttribute('type', 'checkbox');
-						checkbox.setAttribute('name', 'stateLock');
-
-						if((type == 'automation' && options.stateLock != false)
-						|| (type == 'block' && options.stateLock == true))
-						{
-							checkbox.checked = true;
-						}
-
-						suffix.innerHTML = '%automation.state_lock_description%';
-
-						label.appendChild(checkbox);
-						label.appendChild(suffix);
-
-						return label;
-					};
 
 					const createTimeLock = () => {
 
@@ -816,7 +788,6 @@
 						return label;
 					};
 					
-					form.appendChild(createStateLock());
 					form.appendChild(createTimeLock());
 
 					var dialogue = {
@@ -843,14 +814,6 @@
 										if(name == 'timeLock' && active.checked)
 										{
 											options[name] = parseInt(input.value) * 1000;
-										}
-										else if(name == 'stateLock')
-										{
-											if((type == 'automation' && !active.checked)
-											|| (type == 'block' && active.checked))
-											{
-												options[name] = active.checked;
-											}
 										}
 									}
 
@@ -1029,6 +992,26 @@
 					button.innerHTML = button.getAttribute('value') == 'AND' ? logic[1].toUpperCase() : logic[0].toUpperCase();
 
 					button.setAttribute('value', button.getAttribute('value') == 'AND' ? 'OR' : 'AND');
+				}
+
+				function switchLock(button, block, type)
+				{
+					var locked = button.classList.toggle('locked'), options = {};
+
+					if((type == 'trigger' && locked)
+					|| (type == 'result' && !locked))
+					{
+						options.stateLock = locked;
+					}
+
+					if(Object.keys(options).length > 0)
+					{
+						block.setAttribute('options', JSON.stringify(options));
+					}
+					else
+					{
+						block.removeAttribute('options');
+					}
 				}
 
 				function switchView(view, toggle)
@@ -1360,10 +1343,16 @@
 					var optionImage = document.createElement('img');
 
 					optionImage.className = 'icon-inverted';
-					optionImage.src = '/img/settings.png';
+					optionImage.src = '/img/locked.png';
 					optionImage.style.height = '100%';
 
-					optionButton.onclick = () => openOptions('block', block);
+					if((type == 'trigger' && (entry != null && entry.options != null && entry.options.stateLock == true))
+					|| (type == 'result' && (entry == null || entry.options == null || entry.options.stateLock != false)))
+					{
+						optionButton.classList.add('locked');
+					}
+
+					optionButton.onclick = () => switchLock(optionButton, block, type);
 
 					optionButton.appendChild(optionImage);
 
