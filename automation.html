@@ -115,9 +115,9 @@
 						<h2 class="title-container">%automation.infos%</h2>
 						<div id="general" class="panel-content padding">
 							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
-							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px"></b></p>
-							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px"></b></p>
-							<p style="margin: 0"><b>%automation.active%: <input value="%characteristics.boolean.active%" name="active" type="button" class="white" onclick="Essentials.switchBooleanButton(this)" style="max-width: 150px; border-width: 3px"></b></p>
+							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
+							<p style="margin: 0"><b>%automation.active%: <input value="%characteristics.boolean.active%" name="active" type="button" class="white" onclick="Essentials.switchBooleanButton(this); hasChanged()" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div class="panel">
@@ -825,6 +825,8 @@
 									{
 										block.removeAttribute('options');
 									}
+
+									hasChanged();
 								}
 							}
 						]
@@ -992,6 +994,8 @@
 					button.innerHTML = button.getAttribute('value') == 'AND' ? logic[1].toUpperCase() : logic[0].toUpperCase();
 
 					button.setAttribute('value', button.getAttribute('value') == 'AND' ? 'OR' : 'AND');
+
+					hasChanged();
 				}
 
 				function switchLock(button, block, type)
@@ -1012,6 +1016,8 @@
 					{
 						block.removeAttribute('options');
 					}
+
+					hasChanged();
 				}
 
 				function switchView(view, toggle)
@@ -1147,7 +1153,12 @@
 
 					remove.classList.add('gradient-red', 'remove-group-button');
 
-					remove.onclick = () => document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
+					remove.onclick = () => {
+						
+						document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
+
+						hasChanged();
+					};
 					
 					bottom.appendChild(add);
 					bottom.appendChild(logic);
@@ -1157,6 +1168,8 @@
 					group.appendChild(bottom);
 
 					document.getElementById('trigger').getElementsByClassName('groups')[0].appendChild(group);
+				
+					hasChanged();
 				
 					return group;
 				}
@@ -1273,7 +1286,7 @@
 							options.push(placeholder);
 						}
 
-						return PageBuilder.createSelect({ name : 'service', search : true, onchange : () => { updateOperation(); updateComparison() }, options });
+						return PageBuilder.createSelect({ name : 'service', search : true, onchange : () => { updateOperation(); updateComparison(); hasChanged() }, options });
 					};
 
 					const createOperation = () => {
@@ -1291,7 +1304,7 @@
 							options.push({ text : '>', value : '>', name : 'greater' });
 						}
 
-						return PageBuilder.createSelect({ name : 'operation', onchange : () => updateComparison(), options });
+						return PageBuilder.createSelect({ name : 'operation', onchange : () => { updateComparison(); hasChanged() }, options });
 					};
 
 					const createComparison = () => {
@@ -1303,7 +1316,7 @@
 						options.push({ text : '%characteristics.boolean.inactive%', value : false });
 						options.push({ text : '%characteristics.boolean.active%', value : true });
 
-						var boolean = PageBuilder.createSelect({ name : 'value', options }),
+						var boolean = PageBuilder.createSelect({ name : 'value', onchange : () => hasChanged(), options }),
 							numeric = document.createElement('input'),
 							color = document.createElement('input'),
 							time = document.createElement('input');
@@ -1312,13 +1325,19 @@
 						numeric.setAttribute('name', 'value');
 						numeric.setAttribute('type', 'text');
 
+						numeric.oninput = () => hasChanged();
+
 						color.setAttribute('name', 'value');
 						color.setAttribute('type', 'color');
 						color.setAttribute('value', '#FFFFFF');
 
+						color.onchange = () => hasChanged();
+
 						time.setAttribute('name', 'begin');
 						time.setAttribute('type', 'time');
 						time.setAttribute('value', '00:00');
+
+						time.oninput = () => hasChanged();
 
 						element.appendChild(boolean);
 						element.appendChild(numeric);
@@ -1365,7 +1384,12 @@
 					removeImage.src = '/img/delete.png';
 					removeImage.style.height = '100%';
 
-					removeButton.onclick = () => parent.removeChild(block);
+					removeButton.onclick = () => {
+						
+						parent.removeChild(block);
+
+						hasChanged();
+					};
 
 					removeButton.appendChild(removeImage);
 
@@ -1591,12 +1615,28 @@
 
 					updateOperation(entry);
 					updateComparison(entry);
+
+					hasChanged();
 				}
 
 			</script>
 			<script>
 
-				async function sendAutomation()
+				function hasChanged()
+				{
+					var automation = createAutomation();
+
+					if(getAutomation(automation.id) != null && JSON.stringify(getAutomation(automation.id)) != JSON.stringify(automation))
+					{
+						document.getElementById('save-btn').classList.add('pulse');
+					}
+					else
+					{
+						document.getElementById('save-btn').classList.remove('pulse');
+					}
+				}
+
+				function createAutomation()
 				{
 					var automation = {};
 
@@ -1660,6 +1700,13 @@
 
 						automation.result.push(block);
 					}
+
+					return automation;
+				}
+
+				async function sendAutomation()
+				{
+					var automation = createAutomation();
 
 					var overlays = {
 						root : document.getElementById('save-btn'),
