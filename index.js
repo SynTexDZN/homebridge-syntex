@@ -659,9 +659,14 @@ class SynTexPlatform
 
 			if(postJSON != null)
 			{
-				response.end(await Automation.setAutomation(postJSON) ? 'Success' : 'Error');
+				var success = await Automation.setAutomation(postJSON);
 
-				EventManager.setOutputStream('updateAutomation', { sender : this }, {});
+				if(success)
+				{
+					EventManager.setOutputStream('updateAutomation', { sender : this }, {});
+				}
+				
+				response.end(success ? 'Success' : 'Error');
 			}
 			else
 			{
