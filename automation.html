@@ -1484,7 +1484,7 @@
 							comparison = Replacer.getSelect(comparisonElement),
 							selected = service.selected.option;
 
-						var preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))];
+						var preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))] || {};
 
 						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb'
 						|| Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
