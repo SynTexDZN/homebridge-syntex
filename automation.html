@@ -401,15 +401,20 @@
 								content = document.createElement('div'),
 								icon = null, text = null;
 
-							if(block.url != null)
+							if(block.delay != null)
 							{
-								icon = '/img/link.png';
-								text = '%automation.open_link%';
+								icon = '/img/clock.png';
+								text = '%automation.delay% = ' + Essentials.formatTimestamp(block.delay);
 							}
 							else if(block.time != null)
 							{
 								icon = '/img/clock.png';
-								text = '%automation.time% ' + block.operation + ' ' + block.time + ' %automation.clock%';
+								text = '%automation.current_time% ' + block.operation + ' ' + block.time + ' %automation.clock%';
+							}
+							else if(block.url != null)
+							{
+								icon = '/img/link.png';
+								text = '%automation.open_link%';
 							}
 							else if(block.id != null && block.letters != null && block.name != null && block.state != null)
 							{
@@ -874,7 +879,7 @@
 								{
 									for(const block of group.blocks)
 									{
-										if(block.time == null)
+										if(block.delay == null && block.time == null && block.url == null)
 										{
 											var found = false;
 
@@ -1206,7 +1211,7 @@
 						if(type == 'trigger')
 						{
 							var time = {
-								text : '%automation.time%',
+								text : '%automation.current_time%',
 								type : 'time',
 								img : '/img/clock.png'
 							};
@@ -1223,6 +1228,21 @@
 
 						if(type == 'result')
 						{
+							var delay = {
+								text : '%automation.delay%',
+								type : 'delay',
+								img : '/img/clock.png'
+							};
+
+							if(entry != null && entry.delay != null)
+							{
+								delay.selected = true;
+
+								found = true;
+							}
+
+							options.push(delay);
+
 							var link = {
 								text : '%automation.open_link%',
 								type : 'url',
@@ -1571,7 +1591,21 @@
 								comparisonElement.children[1].value = entry.state.value;
 							}
 							
-							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + preset.text + ')');
+							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + (preset.text || '?') + ')');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'delay')
+						{
+							if(entry != null && entry.delay != null)
+							{
+								comparisonElement.children[1].value = entry.delay / 1000;
+							}
+							
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.time% (%devices.time.seconds%)');
 
 							comparisonElement.children[0].classList.add('hidden');
 							comparisonElement.children[1].classList.remove('hidden');
@@ -1786,7 +1820,7 @@
 						triggerOperation = triggerBlock.getElementsByTagName('select')[1].selectedOptions[0],
 						triggerComparison = triggerBlock.getElementsByTagName('select')[2].selectedOptions[0];
 
-					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'url' || triggerOperation.getAttribute('name') == 'dimming')
+					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'delay' || triggerOperation.getAttribute('name') == 'dimming' || triggerService.getAttribute('type') == 'url')
 					{
 						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[1];
 					}
@@ -1857,6 +1891,11 @@
 						{
 							console.error(e);
 						}
+					}
+					
+					if(triggerService.getAttribute('type') == 'delay')
+					{
+						block.delay = triggerComparison.value * 1000;
 					}
 					
 					if(triggerService.getAttribute('type') == 'time')
