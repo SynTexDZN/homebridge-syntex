@@ -1035,6 +1035,40 @@ class EssentialFeatures
 			btn.value = '%characteristics.boolean.inactive%';
 		}
 	}
+
+	formatTimestamp(timestamp)
+	{
+		timestamp /= 1000;
+
+		if(timestamp < 60)
+		{
+			return Math.round(timestamp) + ' ' + '%devices.time.seconds%'[0];
+		}
+		else if(timestamp < 60 * 60)
+		{
+			return Math.round(timestamp / 60) + ' ' + '%devices.time.minutes%'[0];
+		}
+		else if(timestamp < 60 * 60 * 24)
+		{
+			return Math.round(timestamp / 60 / 60) + ' ' + '%devices.time.hours%'[0];
+		}
+		else if(timestamp < 60 * 60 * 24 * 7)
+		{
+			return Math.round(timestamp / 60 / 60 / 24) + ' ' + '%devices.time.days%'[0];
+		}
+		else if(timestamp < 60 * 60 * 24 * 30.5)
+		{
+			return Math.round(timestamp / 60 / 60 / 24 / 7) + ' ' + '%devices.time.weeks%'[0];
+		}
+		else if(timestamp < 60 * 60 * 24 * 365)
+		{
+			return Math.round(timestamp / 60 / 60 / 24 / 30.5) + ' ' + '%devices.time.months%'[0];
+		}
+		else
+		{
+			return '> 1 ' + '%devices.time.years%'[0];
+		}
+	}
 }
 
 var idCounter = new Date().getTime();
