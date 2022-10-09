@@ -127,6 +127,16 @@ module.exports = class Automation
 				{
 					return true;
 				}
+
+				if(block.days != null && Array.isArray(block.days))
+				{
+					return true;
+				}
+
+				if(block.delay != null)
+				{
+					return true;
+				}
 				
 				if(block.time != null)
 				{
