@@ -94,7 +94,7 @@ class CustomSelect
 			selectText = document.createElement('div');
 
 		container.id = 'select-' + selects.length;
-
+		
 		container.classList.add('on-top');
 
 		if(options.onchange != null)
