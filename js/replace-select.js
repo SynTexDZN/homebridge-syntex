@@ -60,9 +60,9 @@ class CustomSelect
 
 				setTimeout(() => {
 					
-					for(const i in selects)
+					for(const select of selects)
 					{
-						var element = document.getElementById(selects[i].id);
+						var element = document.getElementById(select.id);
 
 						if(element != null)
 						{
@@ -88,81 +88,103 @@ class CustomSelect
 
 	createSelectMenu(container, options = {})
 	{
-		var nativeSelect = container.getElementsByTagName('select')[0];
+		let select = container.getElementsByTagName('select')[0],
+			selectSelected = document.createElement('div'),
+			selectItems = document.createElement('div'),
+			selectText = document.createElement('div');
 
-		container.setAttribute('id', 'select-' + selects.length);
-		
+		container.id = 'select-' + selects.length;
+
 		container.classList.add('on-top');
-
-		var searchElement = document.createElement('input');
-
-		searchElement.setAttribute('class', 'select-search');
-		searchElement.setAttribute('type', 'text');
-		searchElement.setAttribute('placeholder', 'Suchen');
-		searchElement.setAttribute('style', 'display: none');
-		searchElement.setAttribute('oninput', 'Replacer.filterSelectMenu(this)');
-		searchElement.setAttribute('value', nativeSelect.options[nativeSelect.selectedIndex].innerHTML);
-
-		var selectedElement = document.createElement('div');
-
-		selectedElement.setAttribute('class', 'select-selected');
-
-		if(nativeSelect.options[nativeSelect.selectedIndex].hasAttribute('img'))
-		{
-			selectedElement.style.paddingLeft = '12px';
-			selectedElement.innerHTML = '<img class="select-image" src="' + nativeSelect.options[nativeSelect.selectedIndex].getAttribute('img') + '">';
-		}
-
-		selectedElement.innerHTML += '<div class="select-text">' + nativeSelect.options[nativeSelect.selectedIndex].innerHTML + '</div>';
-
-		selectedElement.setAttribute('name', nativeSelect.getAttribute('name'));
-
-		if(options.search)
-		{
-			selectedElement.appendChild(searchElement);
-		}
 
 		if(options.onchange != null)
 		{
-			nativeSelect.onchange = options.onchange;
+			select.onchange = options.onchange;
 		}
 
-		selectedElement.setAttribute('onclick', 'Replacer.openSelectMenu(this)');
+		selectSelected.className = 'select-selected';
 
-		var selectItems = document.createElement('div');
-
-		selectItems.setAttribute('class', 'select-items select-hide');
-		
-		for(var i = 0; i < nativeSelect.options.length; i++)
+		if(select.options[select.selectedIndex].hasAttribute('img'))
 		{
-			var selectItem = document.createElement('div');
+			let selectImage = document.createElement('img');
 
-			selectItem.setAttribute('class', 'select-item');
-			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
-			selectItem.setAttribute('counter', i);
+			selectImage.className = 'select-image';
+			selectImage.src = select.options[select.selectedIndex].getAttribute('img');
 
-			if(nativeSelect.options[i].hasAttribute('hidden'))
+			selectSelected.appendChild(selectImage);
+		
+			selectSelected.style.paddingLeft = '12px';
+		}
+
+		selectText.className = 'select-text';
+		selectText.innerHTML = select.options[select.selectedIndex].innerHTML;
+
+		selectSelected.appendChild(selectText);
+
+		selectSelected.setAttribute('name', select.getAttribute('name'));
+
+		selectSelected.onclick = () => Replacer.openSelectMenu(selectSelected);
+
+		if(options.search)
+		{
+			let selectSearch = document.createElement('input');
+
+			selectSearch.className = 'select-search';
+
+			selectSearch.setAttribute('value', select.options[select.selectedIndex].innerHTML);
+			selectSearch.setAttribute('type', 'text');
+			selectSearch.setAttribute('placeholder', '%general.search%');
+
+			selectSearch.oninput = () => Replacer.filterSelectMenu(selectSearch);
+
+			selectSearch.style.display = 'none';
+
+			selectSelected.appendChild(selectSearch);
+		}
+
+		selectItems.className = 'select-items select-hide';
+
+		for(var i = 0; i < select.options.length; i++)
+		{
+			let selectItem = document.createElement('div'),
+				selectText = document.createElement('div');
+
+			selectItem.className = 'select-item';
+
+			if(select.options[i].hasAttribute('hidden'))
 			{
 				selectItem.classList.add('hidden');
 			}
 
-			if(nativeSelect.options[i].hasAttribute('img'))
-			{
-				selectItem.style.paddingLeft = '15px';
-				selectItem.innerHTML = '<img class="select-image" src="' + nativeSelect.options[i].getAttribute('img') + '">';
-			}
-
-			selectItem.innerHTML += '<div class="select-text">' + nativeSelect.options[i].innerHTML + '</div>';
-
-			if(nativeSelect.options[i].selected)
+			if(select.options[i].selected)
 			{
 				selectItem.classList.add('same-as-selected');
 			}
 
+			selectItem.setAttribute('counter', i);
+			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
+
+			if(select.options[i].hasAttribute('img'))
+			{
+				let selectImage = document.createElement('img');
+
+				selectImage.className = 'select-image';
+				selectImage.src = select.options[i].getAttribute('img');
+
+				selectItem.appendChild(selectImage);
+				
+				selectItem.style.paddingLeft = '15px';
+			}
+
+			selectText.className = 'select-text';
+			selectText.innerHTML = select.options[i].innerHTML;
+
+			selectItem.appendChild(selectText);
+
 			selectItems.appendChild(selectItem);
 		}
 
-		container.appendChild(selectedElement);
+		container.appendChild(selectSelected);
 		container.appendChild(selectItems);
 
 		selects.push(container);
@@ -177,53 +199,51 @@ class CustomSelect
 		return container;
 	}
 
-	openSelectMenu(btn)
+	openSelectMenu(button)
 	{
-		var select = btn.parentElement,
-			selectedItems = select.getElementsByClassName('select-items')[0],
-			selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0].getElementsByClassName('select-text')[0];
+		var container = button.parentElement,
+			selectItems = container.getElementsByClassName('select-items')[0],
+			selectedItem = selectItems.getElementsByClassName('same-as-selected')[0],
+			selectSearch = button.getElementsByClassName('select-search')[0],
+			selectText = button.getElementsByClassName('select-text')[0];
 
-		var searchElement = btn.getElementsByClassName('select-search')[0],
-			selectText = btn.getElementsByClassName('select-text')[0];
+		button.classList.toggle('select-active');
 
-		var selectItems = btn.parentElement.getElementsByClassName('select-item');
+		selectItems.classList.toggle('select-hide');
 
-		btn.nextSibling.classList.toggle('select-hide');
-		btn.classList.toggle('select-active');
-
-		if(btn.classList.contains('select-active'))
+		if(button.classList.contains('select-active'))
 		{
-			selectedItems.style.removeProperty('max-height');
+			selectItems.style.removeProperty('max-height');
 
-			if(searchElement != null)
+			if(selectSearch != null)
 			{
-				searchElement.style.display = '';
-				searchElement.value = selectText.innerHTML;
+				selectSearch.style.removeProperty('display');
+				selectSearch.value = selectText.innerHTML;
 				
-				searchElement.setSelectionRange(0, searchElement.value.length);
-				searchElement.focus();
+				selectSearch.setSelectionRange(0, selectSearch.value.length);
+				selectSearch.focus();
 
-				for(var i = 0; i < selectItems.length; i++)
+				for(var i = 0; i < selectItems.children.length; i++)
 				{
-					selectItems[i].style.display = '';
+					selectItems.children[i].style.removeProperty('display');
 				}
 
 				selectText.innerHTML = '';
 			}
 
-			window.Essentials.scrollParentToChild(btn.parentElement.getElementsByClassName('same-as-selected')[0].parentElement, btn.parentElement.getElementsByClassName('same-as-selected')[0]);
+			window.Essentials.scrollParentToChild(selectItems, selectedItem);
 
-			this._checkDirection(select);
-			this._checkOversized(select);
+			this._checkDirection(container);
+			this._checkOversized(container);
 		}
-		else if(searchElement != null)
+		else if(selectSearch != null)
 		{
-			selectText.innerHTML = selectedItem.innerHTML;
+			selectText.innerHTML = selectedItem.getElementsByClassName('select-text')[0].innerHTML;
 
-			searchElement.style.display = 'none';
+			selectSearch.style.display = 'none';
 		}
 
-		closeOtherSelectMenus(btn);
+		closeOtherSelectMenus(button);
 	}
 	/*
 	setMenuDimensions(select, selectedItems)
@@ -268,86 +288,80 @@ class CustomSelect
 	*/
 	selectMenuItem(element)
 	{
+		var container = element.parentElement.parentElement,
+			select = container.getElementsByTagName('select')[0],
+			selectSelected = container.getElementsByClassName('select-selected')[0],
+			selectItems = container.getElementsByClassName('select-items')[0];
+
 		if(!element.classList.contains('same-as-selected'))
 		{
-			var y, i, k, s, h;
-			
-			s = element.parentNode.parentNode.getElementsByTagName('select')[0];
-			h = element.parentNode.previousSibling;
+			selectSelected.getElementsByClassName('select-text')[0].innerHTML = element.getElementsByClassName('select-text')[0].innerHTML;
 
-			for(i = 0; i < s.length; i++)
+			if(element.getElementsByClassName('select-image')[0] != null && selectSelected.getElementsByClassName('select-image')[0] != null)
 			{
-				if(element.getAttribute('counter') == i)
-				{
-					h.getElementsByClassName('select-text')[0].innerHTML = element.getElementsByClassName('select-text')[0].innerHTML;
-
-					if(element.getElementsByClassName('select-image')[0] != null && h.getElementsByClassName('select-image')[0] != null)
-					{
-						h.getElementsByClassName('select-image')[0].src = element.getElementsByClassName('select-image')[0].src;
-					}
-
-					y = element.parentNode.getElementsByClassName('same-as-selected');
-
-					for(k = 0; k < y.length; k++)
-					{
-						y[k].classList.remove('same-as-selected');
-					}
-
-					element.classList.add('same-as-selected');
-
-					s.selectedIndex = i;
-
-					break;
-				}
+				selectSelected.getElementsByClassName('select-image')[0].src = element.getElementsByClassName('select-image')[0].src;
 			}
 
-			h.click();
-
-			if(s.onchange != null)
+			for(let i = 0; i < selectItems.children.length; i++)
 			{
-				s.onchange();
+				selectItems.children[i].classList.remove('same-as-selected');
+			}
+
+			element.classList.toggle('same-as-selected');
+
+			select.selectedIndex = parseInt(element.getAttribute('counter'));
+
+			selectSelected.click();
+
+			if(select.onchange != null)
+			{
+				select.onchange();
 			}
 		}
 	}
 
 	filterSelectMenu(search)
 	{
-		var selectItems = search.parentElement.parentElement.getElementsByClassName('select-item');
+		var container = search.parentElement.parentElement,
+			select = container.getElementsByTagName('select')[0],
+			selectItems = container.getElementsByClassName('select-items')[0];
 
-		for(var i = 0; i < selectItems.length; i++)
+		for(var i = 0; i < selectItems.children.length; i++)
 		{
-			var selectText = selectItems[i].getElementsByClassName('select-text')[0], selectOption = search.parentElement.parentElement.getElementsByTagName('option')[i];
+			var selectText = selectItems.children[i].getElementsByClassName('select-text')[0],
+				selectOption = select.getElementsByTagName('option')[i];
 
 			if(search.value != null && !selectText.innerHTML.toLowerCase().includes(search.value.toLowerCase()) && selectOption != null && selectOption.id != null && !selectOption.id.toLowerCase().includes(search.value.toLowerCase()))
 			{
-				selectItems[i].style.display = 'none';
+				selectItems.children[i].style.display = 'none';
 			}
 			else
 			{
-				selectItems[i].style.display = '';
+				selectItems.children[i].style.removeProperty('display');
 			}
 		}
 	}
 
-	getSelect(select)
+	getSelect(container)
 	{
 		var obj = { items : [] };
 
-		var selectItems = select.getElementsByClassName('select-items')[0].children;
-		var selectedItem = select.getElementsByClassName('select-selected')[0],
-			selectedItemText = selectedItem.getElementsByClassName('select-text')[0],
-			selectedItemImage = selectedItem.getElementsByClassName('select-image')[0];
+		var select = container.getElementsByTagName('select')[0],
+			selectItems = container.getElementsByClassName('select-items')[0],
+			selectSelected = container.getElementsByClassName('select-selected')[0],
+			selectText = selectSelected.getElementsByClassName('select-text')[0],
+			selectImage = selectSelected.getElementsByClassName('select-image')[0];
 
-		for(var i = 0; i < selectItems.length; i++)
+		for(var i = 0; i < selectItems.children.length; i++)
 		{
 			var item = {
-				element : selectItems[i],
-				text : selectItems[i].getElementsByClassName('select-text')[0].innerHTML
+				element : selectItems.children[i],
+				text : selectItems.children[i].getElementsByClassName('select-text')[0].innerHTML
 			};
 
-			if(selectItems[i].getElementsByClassName('select-image')[0] != null)
+			if(selectItems.children[i].getElementsByClassName('select-image')[0] != null)
 			{
-				item.image = selectItems[i].getElementsByClassName('select-image')[0].src;
+				item.image = selectItems.children[i].getElementsByClassName('select-image')[0].src;
 			}
 
 			obj.items.push(item);
@@ -361,13 +375,13 @@ class CustomSelect
 				{
 					if(i == index)
 					{
-						select.getElementsByTagName('select')[0].selectedIndex = index;
+						select.selectedIndex = index;
 
-						selectedItemText.innerHTML = obj.items[index].text;
+						selectText.innerHTML = obj.items[index].text;
 						
-						if(selectedItemImage != null)
+						if(selectImage != null)
 						{
-							selectedItemImage.src = obj.items[index].image;
+							selectImage.src = obj.items[index].image;
 						}
 						
 						obj.items[i].element.classList.add('same-as-selected');
@@ -380,13 +394,13 @@ class CustomSelect
 			}
 			else
 			{
-				index = select.getElementsByTagName('select')[0].selectedIndex;
+				index = select.selectedIndex;
 				
-				selectedItemText.innerHTML = obj.items[index].text;
+				selectText.innerHTML = obj.items[index].text;
 						
-				if(selectedItemImage != null)
+				if(selectImage != null)
 				{
-					selectedItemImage.src = obj.items[index].image;
+					selectImage.src = obj.items[index].image;
 				}
 			}
 		};
@@ -402,18 +416,18 @@ class CustomSelect
 		};
 
 		var selected = {
-			index : select.getElementsByTagName('select')[0].selectedIndex,
-			display : selectedItem
+			index : select.selectedIndex,
+			display : selectSelected
 		};
 
-		selected.element = selectItems[selected.index];
-		selected.option = select.getElementsByTagName('select')[0].children[selected.index];
+		selected.element = selectItems.children[selected.index];
+		selected.option = select.children[selected.index];
 
-		selected.text = selectItems[selected.index].getElementsByClassName('select-text')[0].innerHTML;
+		selected.text = selectItems.children[selected.index].getElementsByClassName('select-text')[0].innerHTML;
 
-		if(selectItems[selected.index].getElementsByClassName('select-image')[0] != null)
+		if(selectItems.children[selected.index].getElementsByClassName('select-image')[0] != null)
 		{
-			selected.image = selectItems[selected.index].getElementsByClassName('select-image')[0].src;
+			selected.image = selectItems.children[selected.index].getElementsByClassName('select-image')[0].src;
 		}
 
 		obj.selected = selected;
@@ -423,9 +437,9 @@ class CustomSelect
 
 	refreshPositions()
 	{
-		for(const i in selects)
+		for(const select of selects)
 		{
-			var element = document.getElementById(selects[i].id);
+			var element = document.getElementById(select.id);
 
 			if(element != null)
 			{
@@ -485,35 +499,36 @@ class CustomSelect
 
 function closeOtherSelectMenus(element)
 {
-	for(var i = 0; i < selects.length; i++)
+	for(const select of selects)
 	{
-		if((element.parentElement == null || selects[i].id != element.parentElement.id) && document.getElementById(selects[i].id) != null)
+		if((element.parentElement == null || select.id != element.parentElement.id) && document.getElementById(select.id) != null)
 		{
-			var select = document.getElementById(selects[i].id),
-				selectedItems = select.getElementsByClassName('select-items')[0],
-				selectedItem = selectedItems.getElementsByClassName('same-as-selected')[0],
-				selectedElement = select.getElementsByClassName('select-selected')[0];
+			var container = document.getElementById(select.id),
+				selectItems = container.getElementsByClassName('select-items')[0],
+				selectedItem = selectItems.getElementsByClassName('same-as-selected')[0],
+				selectSelected = container.getElementsByClassName('select-selected')[0];
 
 			if(selectedItem.getElementsByClassName('select-text')[0] != null)
 			{
 				selectedItem = selectedItem.getElementsByClassName('select-text')[0];
 			}
 
-			if(selectedElement.getElementsByClassName('select-text')[0] != null)
+			if(selectSelected.getElementsByClassName('select-text')[0] != null)
 			{
-				selectedElement.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
+				selectSelected.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
 			}
 			else
 			{
-				selectedElement.innerHTML = selectedItem.innerHTML;
+				selectSelected.innerHTML = selectedItem.innerHTML;
 			}
 
-			selectedElement.className = 'select-selected';
-			selectedItems.classList.add('select-hide');
+			selectSelected.className = 'select-selected';
+
+			selectItems.classList.add('select-hide');
 		
-			if(selectedElement.children[2] != null)
+			if(selectSelected.children[2] != null)
 			{
-				selectedElement.children[2].style.display = 'none';
+				selectSelected.children[2].style.display = 'none';
 			}
 		}
 	}
@@ -521,7 +536,7 @@ function closeOtherSelectMenus(element)
 
 function isChildOfSelect(child)
 {
-	var node = child.parentNode;
+	var node = child.parentElement;
 
 	while(node != null)
 	{
@@ -530,7 +545,7 @@ function isChildOfSelect(child)
 			return true;
 		}
 
-		node = node.parentNode;
+		node = node.parentElement;
 	}
 
 	return false;
