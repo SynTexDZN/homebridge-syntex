@@ -128,7 +128,9 @@ module.exports = class Automation
 					return true;
 				}
 
-				if(block.days != null && Array.isArray(block.days))
+				if(block.days != null
+				&& Array.isArray(block.days)
+				&& block.days.length > 0)
 				{
 					return true;
 				}
