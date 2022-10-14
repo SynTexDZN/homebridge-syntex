@@ -320,6 +320,8 @@
 					groups.sort();
 				}
 
+				window.weekDays = ['%log.weekdays.sunday%', '%log.weekdays.monday%', '%log.weekdays.tuesday%', '%log.weekdays.wednesday%', '%log.weekdays.thursday%', '%log.weekdays.friday%', '%log.weekdays.saturday%'];
+
 				function renderAutomation()
 				{
 					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
@@ -401,7 +403,22 @@
 								content = document.createElement('div'),
 								icon = null, text = null;
 
-							if(block.delay != null)
+							if(block.days != null)
+							{
+								block.days.sort();
+
+								icon = '/img/calendar.png';
+								text = '%automation.weekday% = ' + weekDays[block.days[0]];
+
+								for(const day of block.days)
+								{
+									if(day != block.days[0])
+									{
+										text += ' | ' + weekDays[day];
+									}
+								}
+							}
+							else if(block.delay != null)
 							{
 								icon = '/img/clock.png';
 								text = '%automation.delay% = ' + Essentials.formatTimestamp(block.delay);
@@ -879,7 +896,7 @@
 								{
 									for(const block of group.blocks)
 									{
-										if(block.delay == null && block.time == null && block.url == null)
+										if(block.days == null && block.delay == null && block.time == null && block.url == null)
 										{
 											var found = false;
 
@@ -1224,6 +1241,21 @@
 							}
 
 							options.push(time);
+
+							var days = {
+								text : '%automation.weekday%',
+								type : 'days',
+								img : '/img/calendar.png'
+							};
+
+							if(entry != null && entry.days != null)
+							{
+								days.selected = true;
+
+								found = true;
+							}
+
+							options.push(days);
 						}
 
 						if(type == 'result')
@@ -1329,17 +1361,32 @@
 
 					const createComparison = () => {
 
-						var element = document.createElement('div'), options = [];
+						var element = document.createElement('div'), booleanOptions = [], dayOptions = [];
 
 						element.className = 'comparison';
 
-						options.push({ text : '%characteristics.boolean.inactive%', value : false });
-						options.push({ text : '%characteristics.boolean.active%', value : true });
+						booleanOptions.push({ text : '%characteristics.boolean.inactive%', value : false });
+						booleanOptions.push({ text : '%characteristics.boolean.active%', value : true });
 
-						var boolean = PageBuilder.createSelect({ name : 'value', onchange : () => hasChanged(), options }),
+						var placeholder = {
+							text : '%automation.choose_days%',
+							type : 'hidden',
+							selected : true,
+							hidden : true
+						};
+
+						dayOptions.push(placeholder);
+
+						for(const i in weekDays)
+						{
+							dayOptions.push({ text : weekDays[i], value : parseInt(i) });
+						}
+
+						var boolean = PageBuilder.createSelect({ name : 'value', onchange : () => hasChanged(), options : booleanOptions }),
 							numeric = document.createElement('input'),
 							color = document.createElement('input'),
-							time = document.createElement('input');
+							time = document.createElement('input'),
+							days = PageBuilder.createSelect({ name : 'days', onchange : () => hasChanged(), options : dayOptions, multiple : true });
 
 						numeric.setAttribute('title', '%pattern.numbers_special%: -');
 						numeric.setAttribute('name', 'value');
@@ -1363,6 +1410,7 @@
 						element.appendChild(numeric);
 						element.appendChild(color);
 						element.appendChild(time);
+						element.appendChild(days);
 						
 						return element;
 					};
@@ -1434,7 +1482,7 @@
 						{
 							operations = ['%automation.switch%', '%automation.dimming%'];
 						}
-						else if(selected.getAttribute('type') == 'boolean' || type == 'result')
+						else if(selected.getAttribute('type') == 'boolean' || selected.getAttribute('type') == 'days' || type == 'result')
 						{
 							operations = ['='];
 						}
@@ -1542,6 +1590,7 @@
 								comparisonElement.children[1].classList.add('hidden');
 								comparisonElement.children[2].classList.add('hidden');
 								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
 							}
 							else if(operation.selected.option.getAttribute('name') == 'dimming')
 							{
@@ -1551,6 +1600,7 @@
 								comparisonElement.children[1].classList.remove('hidden');
 								comparisonElement.children[2].classList.add('hidden');
 								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
 							}
 							else if(operation.selected.option.getAttribute('name') == 'color')
 							{
@@ -1558,6 +1608,7 @@
 								comparisonElement.children[1].classList.add('hidden');
 								comparisonElement.children[2].classList.remove('hidden');
 								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
 							}
 						}
 						else if(selected.getAttribute('type') == 'boolean')
@@ -1583,6 +1634,7 @@
 							comparisonElement.children[1].classList.add('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
 						}
 						else if(selected.getAttribute('type') == 'numeric')
 						{
@@ -1597,6 +1649,25 @@
 							comparisonElement.children[1].classList.remove('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'days')
+						{
+							comparison = Replacer.getSelect(comparisonElement.getElementsByClassName('custom-select')[1]);
+
+							if(entry != null && entry.days != null)
+							{
+								for(const day of entry.days)
+								{
+									comparison.updateSelected(day + 1);
+								}
+							}
+							
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.remove('hidden');
 						}
 						else if(selected.getAttribute('type') == 'delay')
 						{
@@ -1611,6 +1682,7 @@
 							comparisonElement.children[1].classList.remove('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
 						}
 						else if(selected.getAttribute('type') == 'time')
 						{
@@ -1623,6 +1695,7 @@
 							comparisonElement.children[1].classList.add('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.remove('hidden');
+							comparisonElement.children[4].classList.add('hidden');
 						}
 						else if(selected.getAttribute('type') == 'url')
 						{
@@ -1637,6 +1710,7 @@
 							comparisonElement.children[1].classList.remove('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
 						}
 						else if(selected.getAttribute('type') == 'hidden')
 						{
@@ -1644,6 +1718,7 @@
 							comparisonElement.children[1].classList.add('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
 						}
 					};
 
@@ -1835,6 +1910,11 @@
 						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[3];
 					}
 
+					if(triggerService.getAttribute('type') == 'days')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[4].children[0];
+					}
+
 					if(triggerService.hasAttribute('id'))
 					{
 						block.id = triggerService.getAttribute('id');
@@ -1893,6 +1973,11 @@
 						}
 					}
 					
+					if(triggerService.getAttribute('type') == 'days')
+					{
+						block.days = triggerComparison.selectedItems;
+					}
+
 					if(triggerService.getAttribute('type') == 'delay')
 					{
 						block.delay = triggerComparison.value * 1000;
