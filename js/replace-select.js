@@ -171,7 +171,7 @@ class CustomSelect
 			selectItem.setAttribute('counter', i);
 			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 
-			optionImage.className = 'select-image';
+			optionImage.className = 'select-image hidden';
 
 			if(select.options[i].hasAttribute('img'))
 			{
