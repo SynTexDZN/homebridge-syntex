@@ -88,10 +88,11 @@ class CustomSelect
 
 	createSelectMenu(container, options = {})
 	{
-		let select = container.getElementsByTagName('select')[0],
+		var select = container.getElementsByTagName('select')[0],
 			selectSelected = document.createElement('div'),
-			selectItems = document.createElement('div'),
-			selectText = document.createElement('div');
+			selectImage = document.createElement('img'),
+			selectText = document.createElement('div'),
+			selectItems = document.createElement('div');
 
 		container.id = 'select-' + selects.length;
 		
@@ -102,16 +103,24 @@ class CustomSelect
 			select.onchange = options.onchange;
 		}
 
+		if(options.multiple)
+		{
+			select.selectedItems = [];
+		}
+
 		selectSelected.className = 'select-selected';
+
+		selectSelected.setAttribute('name', select.getAttribute('name'));
+
+		selectSelected.onclick = () => Replacer.openSelectMenu(selectSelected);
+
+		selectImage.className = 'select-image hidden';
 
 		if(select.options[select.selectedIndex].hasAttribute('img'))
 		{
-			let selectImage = document.createElement('img');
-
-			selectImage.className = 'select-image';
+			selectImage.classList.remove('hidden');
+			
 			selectImage.src = select.options[select.selectedIndex].getAttribute('img');
-
-			selectSelected.appendChild(selectImage);
 		
 			selectSelected.style.paddingLeft = '12px';
 		}
@@ -119,15 +128,12 @@ class CustomSelect
 		selectText.className = 'select-text';
 		selectText.innerHTML = select.options[select.selectedIndex].innerHTML;
 
+		selectSelected.appendChild(selectImage);
 		selectSelected.appendChild(selectText);
-
-		selectSelected.setAttribute('name', select.getAttribute('name'));
-
-		selectSelected.onclick = () => Replacer.openSelectMenu(selectSelected);
 
 		if(options.search)
 		{
-			let selectSearch = document.createElement('input');
+			var selectSearch = document.createElement('input');
 
 			selectSearch.className = 'select-search';
 
@@ -146,8 +152,9 @@ class CustomSelect
 
 		for(var i = 0; i < select.options.length; i++)
 		{
-			let selectItem = document.createElement('div'),
-				selectText = document.createElement('div');
+			var selectItem = document.createElement('div'),
+				optionImage = document.createElement('img'),
+				optionText = document.createElement('div');
 
 			selectItem.className = 'select-item';
 
@@ -164,22 +171,22 @@ class CustomSelect
 			selectItem.setAttribute('counter', i);
 			selectItem.setAttribute('onclick', 'Replacer.selectMenuItem(this)');
 
+			optionImage.className = 'select-image';
+
 			if(select.options[i].hasAttribute('img'))
 			{
-				let selectImage = document.createElement('img');
+				optionImage.classList.remove('hidden');
 
-				selectImage.className = 'select-image';
-				selectImage.src = select.options[i].getAttribute('img');
-
-				selectItem.appendChild(selectImage);
+				optionImage.src = select.options[i].getAttribute('img');
 				
 				selectItem.style.paddingLeft = '15px';
 			}
 
-			selectText.className = 'select-text';
-			selectText.innerHTML = select.options[i].innerHTML;
+			optionText.className = 'select-text';
+			optionText.innerHTML = select.options[i].innerHTML;
 
-			selectItem.appendChild(selectText);
+			selectItem.appendChild(optionImage);
+			selectItem.appendChild(optionText);
 
 			selectItems.appendChild(selectItem);
 		}
@@ -199,19 +206,19 @@ class CustomSelect
 		return container;
 	}
 
-	openSelectMenu(button)
+	openSelectMenu(selectSelected)
 	{
-		var container = button.parentElement,
+		var container = selectSelected.parentElement,
 			selectItems = container.getElementsByClassName('select-items')[0],
 			selectedItem = selectItems.getElementsByClassName('same-as-selected')[0],
-			selectSearch = button.getElementsByClassName('select-search')[0],
-			selectText = button.getElementsByClassName('select-text')[0];
+			selectSearch = selectSelected.getElementsByClassName('select-search')[0],
+			selectText = selectSelected.getElementsByClassName('select-text')[0];
 
-		button.classList.toggle('select-active');
+		selectSelected.classList.toggle('select-active');
 
 		selectItems.classList.toggle('select-hide');
 
-		if(button.classList.contains('select-active'))
+		if(selectSelected.classList.contains('select-active'))
 		{
 			selectItems.style.removeProperty('max-height');
 
@@ -243,7 +250,7 @@ class CustomSelect
 			selectSearch.style.display = 'none';
 		}
 
-		closeOtherSelectMenus(button);
+		closeOtherSelectMenus(selectSelected);
 	}
 	/*
 	setMenuDimensions(select, selectedItems)
@@ -293,25 +300,55 @@ class CustomSelect
 			selectSelected = container.getElementsByClassName('select-selected')[0],
 			selectItems = container.getElementsByClassName('select-items')[0];
 
-		if(!element.classList.contains('same-as-selected'))
+		if(!element.classList.contains('same-as-selected') || select.hasAttribute('multiple'))
 		{
-			selectSelected.getElementsByClassName('select-text')[0].innerHTML = element.getElementsByClassName('select-text')[0].innerHTML;
+			select.selectedIndex = parseInt(element.getAttribute('counter'));
 
-			if(element.getElementsByClassName('select-image')[0] != null && selectSelected.getElementsByClassName('select-image')[0] != null)
+			if(!select.hasAttribute('multiple'))
 			{
-				selectSelected.getElementsByClassName('select-image')[0].src = element.getElementsByClassName('select-image')[0].src;
-			}
-
-			for(let i = 0; i < selectItems.children.length; i++)
-			{
-				selectItems.children[i].classList.remove('same-as-selected');
+				for(var i = 0; i < selectItems.children.length; i++)
+				{
+					selectItems.children[i].classList.remove('same-as-selected');
+				}
 			}
 
 			element.classList.toggle('same-as-selected');
 
-			select.selectedIndex = parseInt(element.getAttribute('counter'));
+			if(select.hasAttribute('multiple'))
+			{
+				var value = null;
 
-			selectSelected.click();
+				try
+				{
+					value = JSON.parse(select.options[element.getAttribute('counter')].value);
+				}
+				catch(e)
+				{
+					value = select.options[element.getAttribute('counter')].value;
+				}
+
+				if(!select.selectedItems.includes(value) && element.classList.contains('same-as-selected'))
+				{
+					select.selectedItems.push(value);
+				}
+				else if(select.selectedItems.includes(value) && !element.classList.contains('same-as-selected'))
+				{
+					select.selectedItems.splice(select.selectedItems.indexOf(value), 1);
+				}
+			}
+			else
+			{
+				selectSelected.click();
+			}
+
+			var result = getSelectionCount(container);
+
+			selectSelected.getElementsByClassName('select-text')[0].innerHTML = result.text;
+
+			if(selectSelected.getElementsByClassName('select-image')[0] != null && result.icon != null)
+			{
+				selectSelected.getElementsByClassName('select-image')[0].src = result.icon;
+			}
 
 			if(select.onchange != null)
 			{
@@ -371,37 +408,47 @@ class CustomSelect
 
 			if(index != null)
 			{
+				select.selectedIndex = index;
+
+				if(select.hasAttribute('multiple'))
+				{
+					var value = null;
+
+					try
+					{
+						value = JSON.parse(select.options[index].value);
+					}
+					catch(e)
+					{
+						value = select.options[index].value;
+					}
+
+					if(!select.selectedItems.includes(value))
+					{
+						select.selectedItems.push(value);
+					}
+				}
+
 				for(const i in obj.items)
 				{
 					if(i == index)
 					{
-						select.selectedIndex = index;
-
-						selectText.innerHTML = obj.items[index].text;
-						
-						if(selectImage != null)
-						{
-							selectImage.src = obj.items[index].image;
-						}
-						
 						obj.items[i].element.classList.add('same-as-selected');
 					}
-					else
+					else if(!select.hasAttribute('multiple'))
 					{
 						obj.items[i].element.classList.remove('same-as-selected');
 					}
 				}
 			}
-			else
+
+			var result = getSelectionCount(container);
+
+			selectText.innerHTML = result.text;
+
+			if(selectImage != null && result.icon != null)
 			{
-				index = select.selectedIndex;
-				
-				selectText.innerHTML = obj.items[index].text;
-						
-				if(selectImage != null)
-				{
-					selectImage.src = obj.items[index].image;
-				}
+				selectImage.src = result.icon;
 			}
 		};
 
@@ -505,33 +552,60 @@ function closeOtherSelectMenus(element)
 		{
 			var container = document.getElementById(select.id),
 				selectItems = container.getElementsByClassName('select-items')[0],
-				selectedItem = selectItems.getElementsByClassName('same-as-selected')[0],
-				selectSelected = container.getElementsByClassName('select-selected')[0];
-
-			if(selectedItem.getElementsByClassName('select-text')[0] != null)
-			{
-				selectedItem = selectedItem.getElementsByClassName('select-text')[0];
-			}
-
-			if(selectSelected.getElementsByClassName('select-text')[0] != null)
-			{
-				selectSelected.getElementsByClassName('select-text')[0].innerHTML = selectedItem.innerHTML;
-			}
-			else
-			{
-				selectSelected.innerHTML = selectedItem.innerHTML;
-			}
-
-			selectSelected.className = 'select-selected';
+				selectSelected = container.getElementsByClassName('select-selected')[0],
+				selectSearch = selectSelected.getElementsByClassName('select-search')[0];
 
 			selectItems.classList.add('select-hide');
+
+			selectSelected.classList.remove('select-active');
 		
-			if(selectSelected.children[2] != null)
+			if(selectSearch != null)
 			{
-				selectSelected.children[2].style.display = 'none';
+				selectSearch.style.display = 'none';
+			}
+
+			var result = getSelectionCount(container);
+
+			selectSelected.getElementsByClassName('select-text')[0].innerHTML = result.text;
+
+			if(selectSelected.getElementsByClassName('select-image')[0] != null && result.icon != null)
+			{
+				selectSelected.getElementsByClassName('select-image')[0].src = result.icon;
 			}
 		}
 	}
+}
+
+function getSelectionCount(container)
+{
+	var select = container.getElementsByTagName('select')[0],
+		selectItems = container.getElementsByClassName('select-items')[0],
+		selectedItems = selectItems.getElementsByClassName('same-as-selected'),
+		selectedItem = selectedItems[0], counter = 0;
+
+	var obj = {
+		text : selectedItem.getElementsByClassName('select-text')[0].innerHTML
+	};
+
+	if(selectedItem.getElementsByClassName('select-image')[0] != null)
+	{
+		obj.icon = selectedItem.getElementsByClassName('select-image')[0].src;
+	}
+
+	for(var i = 0; i < selectedItems.length; i++)
+	{
+		if(!selectedItems[i].classList.contains('hidden'))
+		{
+			counter++;
+		}
+	}
+
+	if(select.hasAttribute('multiple') && counter > 0)
+	{
+		obj.text = '(' + counter + ') %general.chosen%';
+	}
+
+	return obj;
 }
 
 function isChildOfSelect(child)

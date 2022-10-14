@@ -42,6 +42,11 @@ class PageBuilderModule
 			}
 		}
 
+		if(options.multiple)
+		{
+			select.setAttribute('multiple', '');
+		}
+
 		element.appendChild(select);
 
 		window.Replacer.createSelectMenu(element, options);
