@@ -444,6 +444,10 @@
 								{
 									text += block.state.value == 100 ? preset.active.text : block.state.value == 0 ? preset.inactive.text : block.state.value;
 								}
+								else if(type == 'statelessswitch')
+								{
+									text += block.state.value;
+								}
 								else if(preset.active != null && preset.inactive != null)
 								{
 									text += block.state.value ? preset.active.text : preset.inactive.text;
