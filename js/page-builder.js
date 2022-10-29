@@ -27,7 +27,7 @@ class PageBuilderModule
 
 				if(options.options[i].selected)
 				{
-					option.setAttribute('selected', '');
+					option.selected = true;
 				}
 
 				for(const x in options.options[i])
