@@ -1109,7 +1109,7 @@
 
 						// NOTE: Draw Min, Max, Type, Update and Reload Labels
 
-						if(graphData[letters] != null && graphData[letters].values.length > 0 && values[letters] != null && values[letters].length > 0)
+						if(graphData[letters] != null && graphData[letters].counter > 0)
 						{
 							var min = null, max = null;
 
@@ -1145,7 +1145,7 @@
 							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
 
 							canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';
-							canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = values[letters].length + ' • %device.data%';
+							canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = graphData[letters].counter + ' • %device.data%';
 
 							canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
 							canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;

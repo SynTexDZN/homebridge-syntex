@@ -693,6 +693,7 @@ class GraphManager
 		data.nextRefresh = this.getMinuteCycle(data.interval) + 60000 * data.interval;
 		data.sectors = this.renderMinutesCycle(data.interval);
 
+		data.counter = 0;
 		data.values = [];
 
 		data.min = data.min || 100000;
@@ -829,6 +830,8 @@ function addValues(data, values)
 			}
 
 			data.sectors[cycleTime].push({ time : values[v].time, value });
+
+			data.counter++;
 		}
 	}
 	
