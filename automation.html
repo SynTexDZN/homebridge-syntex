@@ -83,7 +83,7 @@
 									{
 										sort = Storage.getItem('automation-sort');
 									}
-	
+
 									for(var i = 0; i < select.children.length; i++)
 									{
 										select.children[i].selected = select.children[i].getAttribute('value') == sort;
@@ -1973,7 +1973,7 @@
 							console.error(e);
 						}
 					}
-					
+
 					if(triggerService.getAttribute('type') == 'days')
 					{
 						block.days = triggerComparison.selectedItems;
@@ -2049,7 +2049,7 @@
 
 						if(await Query.complexFetch('/serverside/remove-automation?id=' + automation.id, 5000, 2, overlays, true) == 'Success')
 						{
-							data.automation.splice(data.automation.indexOf(automation.id), 1);
+							data.automation.splice(data.automation.indexOf(automation), 1);
 
 							loadGroups();
 
