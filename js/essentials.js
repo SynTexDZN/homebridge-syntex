@@ -183,10 +183,9 @@ class EssentialFeatures
 
 		if(dialogue != null)
 		{
-			var panel = dialogue.getElementsByClassName('content')[0];
-			var title = dialogue.getElementsByClassName('title-container')[0];
-			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
-			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
+			var title = dialogue.getElementsByClassName('title-container')[0],
+				subtitle = dialogue.getElementsByClassName('subtitle-container')[0],
+				buttonArea = dialogue.getElementsByClassName('button-area')[0];
 
 			disableScroll();
 
@@ -212,7 +211,8 @@ class EssentialFeatures
 			{
 				for(const i in data.buttons)
 				{
-					var container = document.createElement('div'), button = document.createElement('button');
+					var container = document.createElement('div'),
+						button = document.createElement('button');
 
 					container.style.width = '100%';
 
@@ -245,11 +245,8 @@ class EssentialFeatures
 					buttonArea.appendChild(container);
 				}
 			}
-
-			dialogue.style.opacity = 1;
-			dialogue.style.pointerEvents = 'all';
-			panel.style.opacity = 1;
-			panel.style.transform = 'scale(1)';
+			
+			dialogue.classList.remove('hidden');
 		}
 	}
 
@@ -261,10 +258,9 @@ class EssentialFeatures
 
 		if(dialogue != null)
 		{
-			var panel = dialogue.getElementsByClassName('content')[0];
-			var title = dialogue.getElementsByClassName('title-container')[0];
-			var subtitle = dialogue.getElementsByClassName('subtitle-container')[0];
-			var buttonArea = dialogue.getElementsByClassName('button-area')[0];
+			var title = dialogue.getElementsByClassName('title-container')[0],
+				subtitle = dialogue.getElementsByClassName('subtitle-container')[0],
+				buttonArea = dialogue.getElementsByClassName('button-area')[0];
 
 			if(title.innerHTML != data.title)
 			{
@@ -306,7 +302,8 @@ class EssentialFeatures
 				{
 					for(const i in data.buttons)
 					{
-						var container = document.createElement('div'), button = document.createElement('button');
+						var container = document.createElement('div'),
+							button = document.createElement('button');
 
 						container.style.width = '100%';
 
@@ -354,25 +351,18 @@ class EssentialFeatures
 					}
 				}
 
-				dialogue.style.opacity = 1;
-				dialogue.style.pointerEvents = 'all';
-				panel.style.opacity = 1;
-				panel.style.transform = 'scale(1)';
+				dialogue.classList.remove('hidden');
 			}
 		}
 	}
 
 	closeDialogue()
 	{
-		var dialogue = document.getElementById('dialogue'), panel = dialogue.getElementsByClassName('content')[0];
+		var dialogue = document.getElementById('dialogue');
 
 		enableScroll();
 
-		dialogue.style.opacity = 0;
-		dialogue.style.pointerEvents = 'none';
-		panel.style.opacity = 0;
-
-		setTimeout(() => { panel.style.transform = '' }, 300);
+		dialogue.classList.add('hidden');
 	}
 
 	letterToType(letters)
@@ -604,7 +594,9 @@ class EssentialFeatures
 
 	promoteSubmitButton(input, id)
 	{
-		var submit = document.getElementById(id), orginalValue = input.getAttribute('value'), inputID = getID(input);
+		var submit = document.getElementById(id),
+			orginalValue = input.getAttribute('value'),
+			inputID = getID(input);
 
 		if(input.hasAttribute('orginal-value'))
 		{
@@ -693,7 +685,8 @@ class EssentialFeatures
 
 	scrollParentToChild(parent, child)
 	{
-		var parentRect = parent.getBoundingClientRect(), childRect = child.getBoundingClientRect();
+		var parentRect = parent.getBoundingClientRect(),
+			childRect = child.getBoundingClientRect();
 
 		if(!(childRect.top >= parentRect.top && childRect.bottom <= parentRect.top + parent.clientHeight))
 		{
@@ -774,7 +767,8 @@ class EssentialFeatures
 			}
 			else if(service.format.value.includes('int') || service.format.value.includes('float'))
 			{
-				var cRange = window.servicePresets[type].colorRange, vRange = window.servicePresets[type].valueRange;
+				var cRange = window.servicePresets[type].colorRange,
+					vRange = window.servicePresets[type].valueRange;
 
 				result.text = service.state.value;
 
