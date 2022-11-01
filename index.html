@@ -489,8 +489,8 @@
 								}
 							}
 
-							min = Math.round(min * 100) / 100;
-							max = Math.round(max * 100) / 100;
+							min = Math.round(min * 10) / 10;
+							max = Math.round(max * 10) / 10;
 
 							if(min != max)
 							{
@@ -1230,7 +1230,7 @@
 							var primaryState = Essentials.getServiceColor(device.services[0]),
 								type = device.services[0].type, format = 'boolean',
 								counter = { all : 0, active : 0 },
-								min = 100000, max = 0;
+								min = 100000, max = -100000;
 
 							if(device.services[0].format != null && device.services[0].format.value != null && !device.services[0].format.value.includes('bool'))
 							{
@@ -1301,6 +1301,9 @@
 									counter.all++;
 								}
 							}
+
+							min = (Math.round(min * 10) / 10);
+							max = (Math.round(max * 10) / 10);
 
 							if(format == 'numeric' && type != 'blind' && min != max && counter.all > 1)
 							{
