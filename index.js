@@ -70,7 +70,7 @@ class SynTexPlatform
 
 		if(this.logger != null && this.baseDirectory != null)
 		{
-			this.files = new FileManager(this.baseDirectory, this.logger, ['automation', 'log']);
+			this.files = new FileManager(this, { initDirectories : ['automation', 'log'] });
 
 			HTMLQuery = new HTMLQuery(this.logger);
 			Automation = new Automation(this.logger, this.files);
