@@ -994,8 +994,6 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	width: calc(100% - 34px);
 	height: 100%;
 
-	text-align: right;
-
 	order: 0;
 }
 
@@ -1014,10 +1012,15 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 {
 	margin: auto 0;
 	margin-left: 10px;
-	order: 1;
+	
 	font-size: 14px;
-	transition: .3s color;
+	
 	text-transform: uppercase;
+	text-align: right;
+
+	order: 1;
+
+	transition: .3s color;
 }
 
 #devices.grid-view input[type='button'], #devices.grid-view button
@@ -1048,17 +1051,19 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	width: calc(100% - 62px);
 
 	flex-direction: column;
-	text-align: left;
 	
 	order: 1;
 }
 
 #devices.grid-view .connection
 {
-	order: 0;
 	margin: 0;
 	margin-top: auto;
 	margin-bottom: 5px;
+
+	text-align: left;
+
+	order: 0;
 }
 
 #devices.grid-view .device-name
