@@ -1394,7 +1394,20 @@
 
                                         if(data.state != null)
                                         {
-											state[letters] = data.state;
+											if(state[letters] == null)
+											{
+												state[letters] = {};
+											}
+
+											if(data.time != null)
+											{
+												state[letters].time = data.time;
+												state[letters].state = data.state;
+											}
+											else
+											{
+												state[letters] = data.state;
+											}
 
                                             renderNewData(state);
                                         }
