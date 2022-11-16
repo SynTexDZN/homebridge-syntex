@@ -368,12 +368,7 @@ class PageManagerModule
 
 			window.Replacer.refreshPositions();
 
-			if(!init)
-			{
-				await newTimeout(50);
-			}
-
-			document.getElementById('preloader').style.opacity = 0;
+			setTimeout(() => { document.getElementById('preloader').style.opacity = 0 }, 0);
 
 			resolve();
 		});
