@@ -1,0 +1,2119 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%general.dashboard%: %menu.automation%</title>
+			<script type="module">
+
+				if(Essentials.getURLParams('edit') != null)
+				{
+					PageManager.setHeader('%menu.automation%', Essentials.getURLParams('id') == null ? '%automation.create%' : '%general.loading% ..');
+
+					var main = document.createElement('div');
+
+					if(Essentials.getURLParams('id') != null)
+					{
+						main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.modify%"></div></div>';
+					}
+					else
+					{
+						main.style.display = 'flex';
+
+						main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+					}
+
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+				}
+				else
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%');
+					PageManager.hideFooter();
+				}
+
+			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/bridge')">%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')" disabled>%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
+			</div>
+			<div id="overview" class="page">
+				<div class="main" style="margin-bottom: 100px">
+					<div id="widgets" class="three">
+						<div class="widget">
+							<button class="widget-left">%general.count%</button>
+							<button class="widget-right gradient-blue" id="widget-counter">0</button>
+						</div>
+						<div class="widget">
+							<button class="widget-left">%automation.active%</button>
+							<button class="widget-right gradient-green" id="widget-active">-</button>
+						</div>
+						<div class="widget">
+							<button class="widget-left">%general.error%</button>
+							<button class="widget-right gradient-orange" id="widget-errors">-</button>
+						</div>
+						<div class="widget hidden">
+							<button class="widget-left">%automation.network%</button>
+							<button class="widget-right gradient-purple" id="widget-network">-</button>
+						</div>
+					</div>
+					<div id="toolbar">
+						<div id="groups">
+							<button class="white" onclick="activeGroup = null; switchGroup(false)">%automation.all_automations%</button>
+						</div>
+						<div style="display: flex; gap: 20px">
+							<button id="view-button" class="image-button" onclick="switchView(this.getAttribute('view'), true)" view="horizontal">
+								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png">
+								<img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none; transform: scale(.8) rotate(90deg);" src="/img/list.png">
+							</button>
+							<div class="custom-select" style="width: 100%">
+								<select id="sort" onchange="switchSort()">
+									<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
+									<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
+									<option img="/img/sort-asc.png" value="id-asc">%sort.id%</option>
+									<option img="/img/sort-desc.png" value="id-desc">%sort.id%</option>
+									<option img="/img/sort-asc.png" value="activation-asc">%sort.activation%</option>
+									<option img="/img/sort-desc.png" value="activation-desc">%sort.activation%</option>
+								</select>
+								<script>
+	
+									var sort = 'alphabetical-asc', select = document.getElementById('sort');
+	
+									if(Storage.getItem('automation-sort') != null)
+									{
+										sort = Storage.getItem('automation-sort');
+									}
+
+									for(var i = 0; i < select.children.length; i++)
+									{
+										select.children[i].selected = select.children[i].getAttribute('value') == sort;
+									}
+	
+								</script>
+							</div>
+							<button id="add-button" class="image-button" onclick="openEditor(false)" view="list">
+								<img src="/img/add.png" style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)">
+							</button>
+						</div>
+					</div>
+					<div id="automation"></div>
+					<p id="no-accessories" style="display: none">%automation.no_accessories%</p>
+					<p id="no-services" style="display: none">%automation.no_services%</p>
+					<p id="no-automation" style="display: none">%automation.no_automation%</p>
+				</div>
+				<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
+					<input id="devices-button-big" class="gradient-blue-green" type="button" value="» %automation.to_devices% «" style="display: none" onclick="Essentials.leavePage('/')">
+					<input id="add-button-big" class="gradient-orange" type="button" value="+ %automation.add_automation%" onclick="openEditor(false)">
+				</div>
+			</div>
+			<div id="editor" class="page hidden">
+				<form id="editor-form" class="main" onsubmit="event.preventDefault(); sendAutomation()">
+					<div class="panel">
+						<h2 class="title-container">%automation.infos%</h2>
+						<div id="general" class="panel-content padding">
+							<p style="margin: 0"><b>%general.id%: <input type="text" style="max-width: 150px; text-align: center" disabled></b></p>
+							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
+							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
+							<p style="margin: 0"><b>%automation.active%: <input value="%characteristics.boolean.active%" name="active" type="button" class="white" onclick="Essentials.switchBooleanButton(this); hasChanged()" style="max-width: 150px; border-width: 3px"></b></p>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.trigger%</h2>
+						<div id="trigger" class="panel-content">
+							<div class="groups"></div>
+							<div class="bottom">
+								<button type="button" class="gradient-blue-green add-group-button icon-button left center compact" onclick="addGroup()">
+									<div class="button-icon">
+										<img class="icon-inverted" src="/img/add_light.png">
+									</div>
+									<div class="button-text">%automation.group%</div>
+								</button>
+								<button id="group-logic" type="button" class="white" onclick="switchLogic(this)" value="AND">%automation.and%</button>
+								<button id="group-options" type="button" class="icon-button right center compact" onclick="openOptions(this)">
+									<div class="button-icon">
+										<img class="icon-inverted" src="/img/settings.png">
+									</div>
+									<div class="button-text">%general.options%</div>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="panel">
+						<h2 class="title-container">%automation.result%</h2>
+						<div id="result" class="panel-content">
+							<div class="blocks"></div>
+							<button type="button" class="gradient-blue-green add-block-button icon-button left center compact" onclick="addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0])">
+								<div class="button-icon">
+									<img class="icon-inverted" src="/img/add_light.png">
+								</div>
+								<div class="button-text">%automation.block%</div>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<script type="module">
+
+				window.data = {};
+				window.services = [];
+
+				// TODO: Remove When Replaced Original
+
+				if(Storage.getItem('automation-group') == 'all')
+				{
+					Storage.removeItem('automation-group');
+				}
+
+				loadData().then(() => renderGUI());
+
+			</script>
+			<script>
+
+				function loadData()
+				{
+					return new Promise((resolve) => {
+
+						Query.fetchURL('/serverside/automation', 3000).then((data) => {
+
+							if(data != null && data != 'Error')
+							{
+								try
+								{
+									window.data = JSON.parse(data);
+
+									loadGroups();
+									loadServices();
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
+							}
+
+							resolve();
+						});
+					});
+				}
+
+				function renderGUI()
+				{
+					Replacer.SETUP();
+
+					if(data.accessories == null || data.accessories.length == 0)
+					{
+						document.getElementById('no-accessories').style.removeProperty('display');
+						
+						document.getElementById('add-button').setAttribute('disabled', '');
+
+						document.getElementById('add-button-big').style.display = 'none';
+						
+						document.getElementById('devices-button-big').style.removeProperty('display');
+					}
+					
+					if(data.automation == null || data.automation.length == 0)
+					{
+						if(data.accessories != null && data.accessories.length > 0)
+						{
+							document.getElementById('no-automation').style.removeProperty('display');
+						}
+
+						document.getElementById('view-button').setAttribute('disabled', '');
+					}
+					
+					if(Storage.getItem('automation-view') == 'vertical')
+					{
+						switchView(Storage.getItem('automation-view'));
+					}
+
+					if(groups.length > 0)
+					{
+						renderGroups();
+					}
+
+					if(data.automation != null && data.automation.length > 0)
+					{
+						renderAutomation();
+					}
+
+					if(data.automation != null && data.automation.length > 0)
+					{
+						renderWidgets();
+					}
+
+					if(Essentials.getURLParams('edit') != null)
+					{
+						var automation = undefined;
+
+						if(Essentials.getURLParams('id') != null)
+						{
+							automation = getAutomation(Essentials.getURLParams('id')) || undefined;
+						}
+
+						openEditor(true, automation);
+					}
+
+					Preloader.finish();
+				}
+
+			</script>
+			<script>
+
+				function loadServices()
+				{
+					for(const accessory of data.accessories)
+					{
+						var plugin = accessory.plugin.alias;
+
+						if(plugin == 'SynTex')
+						{
+							plugin = 'SynTexWebHooks';
+						}
+
+						for(const service of accessory.services)
+						{
+							if(service.type != 'lcd' && service.type != 'bridge' && service.type != 'unsupported' && service.type != 'removed')
+							{
+								if(service.type == 'rgbw' || service.type == 'rgbww' || service.type == 'rgbcw')
+								{
+									service.type = 'rgb';
+								}
+
+								services.push({ ...service, plugin, id : accessory.id });
+							}
+						}
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				window.groups = [];
+				window.tempGroups = [];
+
+				function loadGroups()
+				{
+					groups = [];
+					tempGroups = [];
+
+					for(const automation of data.automation)
+					{
+						if(automation.group != null)
+						{
+							var groupArray = Array.isArray(automation.group) ? automation.group : [ automation.group ];
+
+							for(const group of groupArray)
+							{
+								if(!tempGroups.includes(group.toLowerCase()))
+								{
+									groups.push(group);
+
+									tempGroups.push(group.toLowerCase());
+								}
+							}
+						}
+					}
+
+					groups.sort();
+				}
+
+				window.weekDays = ['%log.weekdays.sunday%', '%log.weekdays.monday%', '%log.weekdays.tuesday%', '%log.weekdays.wednesday%', '%log.weekdays.thursday%', '%log.weekdays.friday%', '%log.weekdays.saturday%'];
+
+				function renderAutomation()
+				{
+					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
+
+					sortAutomation(sort);
+
+					document.getElementById('automation').innerHTML = '';
+
+					for(const automation of data.automation)
+					{
+						var panel = document.createElement('div'),
+							title = document.createElement('h2'),
+							content = document.createElement('div'),
+							widgets = document.createElement('div'),
+							table = document.createElement('div');
+
+						panel.id = automation.id;
+						panel.className = 'panel hoverable';
+						panel.style.cursor = 'pointer';
+
+						panel.onclick = () => openEditor(false, automation);
+
+						title.className = 'title-container';
+
+						title.innerHTML = automation.name;
+
+						content.className = 'panel-content';
+
+						widgets.className = 'widgets two';
+
+						table.classList = 'table';
+
+						const createActiveWidget = () => {
+
+							var widget = document.createElement('div')
+								widgetLeft = document.createElement('button'),
+								widgetRight = document.createElement('button');
+
+							widget.className = 'widget';
+
+							widgetLeft.className = 'widget-left';
+							widgetLeft.innerHTML = '%automation.activated%';
+
+							widgetRight.className = 'widget-right';
+							widgetRight.innerHTML = automation.active ? '%general.yes%' : '%general.no%';
+
+							widgetRight.classList.add((automation.active ? 'gradient-green' : 'gradient-red'));
+
+							widget.appendChild(widgetLeft);
+							widget.appendChild(widgetRight);
+
+							return widget;
+						};
+
+						const createErrorWidget = () => {
+
+							var widget = document.createElement('div')
+								widgetLeft = document.createElement('button'),
+								widgetRight = document.createElement('button');
+
+							widget.className = 'widget';
+
+							widgetLeft.className = 'widget-left';
+							widgetLeft.innerHTML = '%general.error%';
+
+							widgetRight.className = 'widget-right gradient-orange';
+							widgetRight.innerHTML = getAutomationErrors(automation);
+
+							widget.appendChild(widgetLeft);
+							widget.appendChild(widgetRight);
+
+							return widget;
+						};
+
+						const createBlock = (block) => {
+
+							var row = document.createElement('div'),
+								image = document.createElement('img'),
+								content = document.createElement('div'),
+								icon = null, text = null;
+
+							if(block.days != null)
+							{
+								block.days.sort();
+
+								icon = '/img/calendar.png';
+								text = '%automation.weekday% = ' + weekDays[block.days[0]];
+
+								for(const day of block.days)
+								{
+									if(day != block.days[0])
+									{
+										text += ' | ' + weekDays[day];
+									}
+								}
+							}
+							else if(block.delay != null)
+							{
+								icon = '/img/clock.png';
+								text = '%automation.delay% = ' + Essentials.formatTimestamp(block.delay);
+							}
+							else if(block.time != null)
+							{
+								icon = '/img/clock.png';
+								text = '%automation.current_time% ' + block.operation + ' ' + block.time + ' %automation.clock%';
+							}
+							else if(block.url != null)
+							{
+								icon = '/img/link.png';
+								text = '%automation.open_link%';
+							}
+							else if(block.id != null && block.letters != null && block.name != null && block.state != null)
+							{
+								var type = Essentials.letterToType(block.letters), preset = servicePresets[type];
+
+								icon = '/img/accessory/' + type + '.png';
+								text = block.name + ' ' + block.operation + ' ';
+
+								if(type == 'blind')
+								{
+									text += block.state.value == 100 ? preset.active.text : block.state.value == 0 ? preset.inactive.text : block.state.value;
+								}
+								else if(type == 'statelessswitch')
+								{
+									text += block.state.value;
+								}
+								else if(preset.active != null && preset.inactive != null)
+								{
+									text += block.state.value ? preset.active.text : preset.inactive.text;
+								}
+								else if(preset.text != null)
+								{
+									text += block.state.value + ' ' + preset.text;
+								}
+
+								if(block.state.hue != null)
+								{
+									text += ' | %automation.hue% = ' + block.state.hue;
+								}
+
+								if(block.state.saturation != null)
+								{
+									text += ' | %automation.saturation% = ' + block.state.saturation;
+								}
+
+								if(block.state.brightness != null)
+								{
+									text += ' | %automation.brightness% = ' + block.state.brightness;
+								}
+							}
+
+							image.className = 'icon';
+							image.src = icon;
+
+							content.innerHTML = text;
+
+							row.appendChild(image);
+							row.appendChild(content);
+
+							return row;
+						};
+
+						const createTrigger = () => {
+
+							var column = document.createElement('div'),
+								category = document.createElement('div'),
+								container = document.createElement('div');
+
+							column.className = 'column';
+
+							category.innerHTML = '%automation.trigger%';
+							category.className = 'primary';
+
+							container.className = 'secondary';
+
+							for(const group of automation.trigger.groups)
+							{
+								for(const block of group.blocks)
+								{
+									container.appendChild(createBlock(block));
+								}
+							}
+
+							column.appendChild(category);
+							column.appendChild(container);
+
+							return column;
+						};
+
+						const createResult = () => {
+
+							var column = document.createElement('div'),
+								category = document.createElement('div'),
+								container = document.createElement('div');
+
+							column.className = 'column';
+
+							category.innerHTML = '%automation.result%';
+							category.className = 'primary';
+
+							container.className = 'secondary';
+
+							for(const block of automation.result)
+							{
+								container.appendChild(createBlock(block));
+							}
+
+							column.appendChild(category);
+							column.appendChild(container);
+
+							return column;
+						};
+
+						widgets.appendChild(createActiveWidget());
+						widgets.appendChild(createErrorWidget());
+
+						table.appendChild(createTrigger());
+						table.appendChild(createResult());
+
+						content.appendChild(widgets);
+						content.appendChild(table);
+
+						panel.appendChild(title);
+						panel.appendChild(content);
+
+						document.getElementById('automation').appendChild(panel);
+					}
+
+					switchGroup(true);
+				}
+
+				function renderWidgets()
+				{
+					var count = 0, active = 0, errors = 0;
+
+					for(const automation of data.automation)
+					{
+						if(hasGroup(automation.id, activeGroup))
+						{
+							if(automation.active == true)
+							{
+								active++;
+							}
+
+							errors += getAutomationErrors(automation);
+
+							count++;
+						}
+					}
+
+					document.getElementById('widget-counter').innerHTML = count;
+					document.getElementById('widget-active').innerHTML = active;
+					document.getElementById('widget-errors').innerHTML = errors;
+				}
+
+				window.activeGroup = Storage.getItem('automation-group');
+
+				function renderGroups()
+				{
+					var allGroups = document.createElement('button');
+
+					allGroups.innerHTML = '%automation.all_automations%';
+					allGroups.className = 'white';
+
+					if(activeGroup == null)
+					{
+						allGroups.classList.add('active');							
+					}
+
+					allGroups.setAttribute('type', 'button');
+
+					allGroups.onclick = () => {
+						
+						activeGroup = null;
+
+						switchGroup(false);
+					};
+
+					document.getElementById('groups').innerHTML = '';
+
+					document.getElementById('groups').appendChild(allGroups);
+
+					for(const i in groups)
+					{
+						var group = document.createElement('button');
+
+						group.innerHTML = groups[i];
+						group.className = 'white';
+
+						if(activeGroup != null && activeGroup == groups[i])
+						{
+							allGroups.classList.add('active');							
+						}
+
+						group.onclick = () => {
+							
+							activeGroup = groups[i].toLowerCase();
+
+							switchGroup(false);
+						};
+
+						document.getElementById('groups').appendChild(group);
+					}
+				}
+
+				function sortAutomation(sort)
+				{
+					data.automation.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+					
+					if(sort == 'alphabetical-desc')
+					{
+						data.automation.sort((a, b) => (a.name < b.name) ? 1 : (b.name < a.name) ? -1 : 0);
+					}
+					
+					if(sort == 'activation-asc')
+					{
+						data.automation.sort((a, b) => (a.active == false && b.active == true) ? 1 : (a.active == true && b.active == false) ? -1 : 0);
+					}
+					
+					if(sort == 'activation-desc')
+					{
+						data.automation.sort((a, b) => (a.active == true && b.active == false) ? 1 : (a.active == false && b.active == true) ? -1 : 0);
+					}
+
+					if(sort == 'id-asc')
+					{
+						data.automation.sort((a, b) => (a.id > b.id) ? 1 : (b.id > a.id) ? -1 : 0);
+					}
+					
+					if(sort == 'id-desc')
+					{
+						data.automation.sort((a, b) => (a.id < b.id) ? 1 : (b.id < a.id) ? -1 : 0);
+					}
+				}
+
+			</script>
+			<script>
+
+				window.logic = ['%automation.and%', '%automation.or%'];
+
+				async function openEditor(init, automation = {})
+				{
+					PageManager.setHeader('%menu.automation%', automation.id == null ? '%automation.create%' : automation.name, !init);
+
+					var main = document.createElement('div');
+
+					if(automation.id != null)
+					{
+						main.innerHTML = '<input id="reset-btn" type="button" value="%automation.remove_automation%" onclick="removeAutomation(this)"><div style="display: flex; margin-top: 20px"><input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.modify%"></div></div>';
+					}
+					else
+					{
+						main.style.display = 'flex';
+
+						main.innerHTML = '<input type="button" value="%menu.back%" onclick="closeEditor()"><div style="display: block; width: 100%; margin-left: 20px"><input id="save-btn" type="submit" form="editor-form" value="%automation.create%"></div>';
+					}
+
+					PageManager.setFooter(main);
+					PageManager.showFooter(!init);
+
+					await PageManager.switchPage('overview', 'editor', init);
+
+					var url = '/automation?edit';
+
+					if(automation.id != null)
+					{
+						url += '&id=' + automation.id;
+					}
+
+					if(Essentials.getURLParams('desktopApp') == true)
+					{
+						url += '&desktopApp=true';
+					}
+
+					window.history.pushState(null, null, url);
+
+					document.getElementById('general').getElementsByTagName('input')[0].value = automation.id != null ? automation.id : getNextID();
+					document.getElementById('general').getElementsByTagName('input')[1].value = automation.name || '';
+					document.getElementById('general').getElementsByTagName('input')[2].value = (Array.isArray(automation.group) ? automation.group.join(', ') : automation.group) || '';
+
+					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active != false);
+
+					if(automation.trigger == null || automation.trigger.logic == 'AND')
+					{
+						document.getElementById('group-logic').innerHTML = window.logic[0].toUpperCase();
+						document.getElementById('group-logic').setAttribute('value', 'AND');
+					}
+					else
+					{
+						document.getElementById('group-logic').innerHTML = window.logic[1].toUpperCase();
+						document.getElementById('group-logic').setAttribute('value', 'OR');
+					}
+					
+					if(automation.options != null)
+					{
+						document.getElementById('group-options').setAttribute('options', JSON.stringify(automation.options));
+					}
+					else
+					{
+						document.getElementById('group-options').removeAttribute('options');
+					}
+
+					document.getElementById('trigger').getElementsByClassName('groups')[0].innerHTML = '';
+
+					document.getElementById('result').getElementsByClassName('blocks')[0].innerHTML = '';
+
+					if(automation.id != null)
+					{
+						for(const group of automation.trigger.groups)
+						{
+							var groupElement = addGroup(group);
+
+							for(const block of group.blocks)
+							{
+								addBlock('trigger', groupElement.getElementsByClassName('blocks')[0], block);
+							}
+						}
+
+						for(const block of automation.result)
+						{
+							addBlock('result', document.getElementById('result').getElementsByClassName('blocks')[0], block);
+						}
+					}
+				}
+
+				async function closeEditor()
+				{
+					PageManager.setHeader('%general.dashboard%', '%menu.automation%', true);
+					PageManager.hideFooter(true);
+
+					await PageManager.switchPage('editor', 'overview', false);
+
+					var url = '/automation';
+
+					if(Essentials.getURLParams('desktopApp') == true)
+					{
+						url += '?desktopApp=true';
+					}
+					
+					window.history.pushState(null, null, url);
+				}
+
+				function openOptions(block)
+				{
+					var form = document.createElement('form'), options = {};
+
+					if(block.hasAttribute('options'))
+					{
+						options = JSON.parse(block.getAttribute('options'));
+					}
+
+					const createTimeLock = () => {
+
+						var label = document.createElement('label'),
+							checkbox = document.createElement('input'),
+							timelock = document.createElement('input'),
+							suffix = document.createElement('div');
+
+						label.className = 'label-input';
+
+						label.setAttribute('for', 'time-lock');
+
+						checkbox.setAttribute('id', 'time-lock');
+						checkbox.setAttribute('type', 'checkbox');
+						checkbox.setAttribute('name', 'timeLock');
+
+						timelock.setAttribute('type', 'text');
+						timelock.setAttribute('value', '0');
+
+						timelock.style.maxWidth = '150px';
+
+						timelock.oninput = () => {
+
+							checkbox.checked = parseInt(timelock.value) > 0;
+						};
+
+						if(options.timeLock != null)
+						{
+							timelock.setAttribute('value', parseInt(options.timeLock / 1000));
+
+							checkbox.checked = true;
+						}
+
+						suffix.innerHTML = '%automation.time_lock_description%';
+
+						label.appendChild(checkbox);
+						label.appendChild(timelock);
+						label.appendChild(suffix);
+
+						return label;
+					};
+					
+					form.appendChild(createTimeLock());
+
+					var dialogue = {
+						title : '%general.options%',
+						form, buttons : [
+							{
+								text : '%general.cancel%',
+								close : true
+							},
+							{
+								text : '%general.ok%',
+								color : 'green',
+								close : true,
+								action : () => {
+
+									var options = {};
+
+									for(var i = 0; i < form.children.length; i++)
+									{
+										var active = form.children[i].getElementsByTagName('input')[0]
+											input = form.children[i].getElementsByTagName('input')[1],
+											name = active.getAttribute('name');
+
+										if(name == 'timeLock' && active.checked)
+										{
+											options[name] = parseInt(input.value) * 1000;
+										}
+									}
+
+									if(Object.keys(options).length > 0)
+									{
+										block.setAttribute('options', JSON.stringify(options));
+									}
+									else
+									{
+										block.removeAttribute('options');
+									}
+
+									hasChanged();
+								}
+							}
+						]
+					};
+
+					Essentials.openDialogue(dialogue);
+				}
+
+			</script>
+			<script>
+
+				function getAutomation(id)
+				{
+					for(const automation of data.automation)
+					{
+						if(automation.id == id)
+						{
+							return automation;
+						}
+					}
+
+					return null;
+				}
+
+				function getAutomationErrors(automation)
+				{
+					var errors = 0;
+
+					if(automation != null
+					&& automation instanceof Object
+					&& automation.trigger != null
+					&& automation.result != null)
+					{
+						if(automation.trigger instanceof Object
+						&& automation.trigger.groups != null
+						&& Array.isArray(automation.trigger.groups)
+						&& automation.trigger.groups.length > 0)
+						{
+							for(const group of automation.trigger.groups)
+							{
+								if(group instanceof Object
+								&& group.blocks != null
+								&& Array.isArray(group.blocks)
+								&& group.blocks.length > 0)
+								{
+									for(const block of group.blocks)
+									{
+										if(block.days == null && block.delay == null && block.time == null && block.url == null)
+										{
+											var found = false;
+
+											for(const service of services)
+											{
+												if(service.id == block.id && service.letters == block.letters)
+												{
+													found = true;
+												}
+											}
+
+											if(!found)
+											{
+												errors++;
+											}
+										}
+									}
+								}
+								else
+								{
+									errors++;
+								}
+							}
+						}
+						else
+						{
+							errors++;
+						}
+
+						if(Array.isArray(automation.result)
+						&& automation.result.length > 0)
+						{
+							for(const block of automation.result)
+							{
+								if(block.days == null && block.delay == null && block.time == null && block.url == null)
+								{
+									var found = false;
+
+									for(const service of services)
+									{
+										if(service.id == block.id && service.letters == block.letters)
+										{
+											found = true;
+										}
+									}
+
+									if(!found)
+									{
+										errors++;
+									}
+								}
+							}
+						}
+						else
+						{
+							errors++;
+						}
+					}
+					else
+					{
+						errors++;
+					}
+
+					return errors;
+				}
+
+				function getNextID()
+				{
+					var lastID = -1;
+
+					for(const automation of data.automation)
+					{
+						if(automation.id > lastID)
+						{
+							lastID = automation.id;
+						}
+					}
+
+					return lastID + 1;
+				}
+
+				function hasGroup(id, group)
+				{
+					var automation = getAutomation(id);
+
+					if(group == null)
+					{
+						return true;
+					}
+
+					if(automation != null && automation.group != null)
+					{
+						if(Array.isArray(automation.group))
+						{
+							for(const i in automation.group)
+							{
+								if(automation.group[i].toLowerCase() == group.toLowerCase())
+								{
+									return true;
+								}
+							}
+						}
+						else if(automation.group.toLowerCase() == group.toLowerCase())
+						{
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+			</script>
+			<script>
+
+				function switchLogic(button)
+				{
+					button.innerHTML = button.getAttribute('value') == 'AND' ? logic[1].toUpperCase() : logic[0].toUpperCase();
+
+					button.setAttribute('value', button.getAttribute('value') == 'AND' ? 'OR' : 'AND');
+
+					hasChanged();
+				}
+
+				function switchLock(button, block, type)
+				{
+					var locked = button.classList.toggle('locked'), options = {};
+
+					if((type == 'trigger' && locked)
+					|| (type == 'result' && !locked))
+					{
+						options.stateLock = locked;
+					}
+
+					if(Object.keys(options).length > 0)
+					{
+						block.setAttribute('options', JSON.stringify(options));
+					}
+					else
+					{
+						block.removeAttribute('options');
+					}
+
+					hasChanged();
+				}
+
+				function switchView(view, toggle)
+				{
+					var button = document.getElementById('view-button');
+
+					if(toggle)
+					{
+						view = view == 'vertical' ? 'horizontal' : 'vertical';
+
+						Storage.setItem('automation-view', view);
+					}
+
+					button.setAttribute('view', view);
+
+					if(view == 'vertical')
+					{
+						document.getElementById('automation').classList.add('vertical-view');
+
+						button.children[0].style.display = 'none';
+						button.children[1].style.removeProperty('display');
+					}
+					else if(view == 'horizontal')
+					{
+						document.getElementById('automation').classList.remove('vertical-view');
+
+						button.children[0].style.removeProperty('display');
+						button.children[1].style.display = 'none';
+					}
+				}
+
+				function switchSort()
+				{
+					var select = document.getElementById('sort'), sort = select.children[select.selectedIndex].getAttribute('value');
+
+					sortAutomation(sort);
+
+					Storage.setItem('automation-sort', sort);
+
+					document.getElementById('automation').style.opacity = 0;
+
+					setTimeout(() => {
+
+						for(const automation of data.automation)
+						{
+							document.getElementById('automation').appendChild(document.getElementById(automation.id));
+						}
+
+						setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
+
+					}, 200);
+				}
+
+				function switchGroup(init)
+				{
+					if(init || Storage.getItem('automation-group') != activeGroup)
+					{
+						var automation = document.getElementById('automation').children, groups = document.getElementById('groups').children;
+
+						if(!init)
+						{
+							Storage.setItem('automation-group', activeGroup);
+
+							document.getElementById('automation').style.opacity = 0;
+						}
+						
+						setTimeout(() => {
+							
+							for(var i = 0; i < automation.length; i++)
+							{
+								if(hasGroup(automation[i].id, activeGroup))
+								{
+									automation[i].classList.remove('hidden');
+								}
+								else
+								{
+									automation[i].classList.add('hidden');
+								}
+							}
+
+							for(var i = 0; i < groups.length; i++)
+							{
+								if(groups[i].innerHTML.toLowerCase() == activeGroup || (i == 0 && activeGroup == null))
+								{
+									groups[i].classList.add('active');
+								}
+								else
+								{
+									groups[i].classList.remove('active');
+								}
+							}
+
+							if(!init)
+							{
+								renderWidgets();
+
+								setTimeout(() => { document.getElementById('automation').style.opacity = 1 }, 0);
+							}
+							
+						}, init ? 0 : 200);
+					}
+				}
+
+			</script>
+			<script>
+
+				function addGroup(entry)
+				{
+					var group = document.createElement('div'),
+						blocks = document.createElement('div'),
+						bottom = document.createElement('div'),
+						add = PageBuilder.createIconButton({ text : '%automation.block%', src : '/img/add_light.png', align : 'left' }),
+						logic = document.createElement('button'),
+						remove = PageBuilder.createIconButton({ text : '%automation.group%', src : '/img/delete.png', align : 'right' });
+
+					group.className = 'group';
+
+					blocks.className = 'blocks';
+
+					bottom.className = 'bottom';
+
+					add.classList.add('gradient-blue-green', 'add-block-button');
+
+					add.onclick = () => addBlock('trigger', blocks);
+
+					logic.innerHTML = entry == null || entry.logic == 'AND' ? window.logic[0].toUpperCase() : window.logic[1].toUpperCase();
+					logic.className = 'block-logic white';
+					logic.type = 'button';
+
+					logic.setAttribute('value', entry == null || entry.logic == 'AND' ? 'AND' : 'OR');
+
+					logic.onclick = () => switchLogic(logic);
+
+					remove.classList.add('gradient-red', 'remove-group-button');
+
+					remove.onclick = () => {
+						
+						document.getElementById('trigger').getElementsByClassName('groups')[0].removeChild(group);
+
+						hasChanged();
+					};
+					
+					bottom.appendChild(add);
+					bottom.appendChild(logic);
+					bottom.appendChild(remove);
+
+					group.appendChild(blocks);
+					group.appendChild(bottom);
+
+					document.getElementById('trigger').getElementsByClassName('groups')[0].appendChild(group);
+
+					hasChanged();
+				
+					return group;
+				}
+
+				function addBlock(type, parent, entry)
+				{
+					var block = document.createElement('div');
+
+					block.className = 'block';
+
+					if(entry != null && entry.options != null)
+					{
+						block.setAttribute('options', JSON.stringify(entry.options));
+					}
+
+					const createService = () => {
+
+						var options = [], found = false;
+
+						var placeholder = {
+							text : '%automation.choose_service%',
+							type : 'hidden',
+							img : '/img/search.png',
+							hidden : true
+						};
+
+						if(entry == null)
+						{
+							placeholder.selected = true;
+						}
+						
+						options.push(placeholder);
+
+						if(type == 'trigger')
+						{
+							var time = {
+								text : '%automation.current_time%',
+								type : 'time',
+								img : '/img/clock.png'
+							};
+
+							if(entry != null && entry.time != null)
+							{
+								time.selected = true;
+
+								found = true;
+							}
+
+							options.push(time);
+
+							var days = {
+								text : '%automation.weekday%',
+								type : 'days',
+								img : '/img/calendar.png'
+							};
+
+							if(entry != null && entry.days != null)
+							{
+								days.selected = true;
+
+								found = true;
+							}
+
+							options.push(days);
+						}
+
+						if(type == 'result')
+						{
+							var delay = {
+								text : '%automation.delay%',
+								type : 'delay',
+								img : '/img/clock.png'
+							};
+
+							if(entry != null && entry.delay != null)
+							{
+								delay.selected = true;
+
+								found = true;
+							}
+
+							options.push(delay);
+
+							var link = {
+								text : '%automation.open_link%',
+								type : 'url',
+								img : '/img/link.png'
+							};
+
+							if(entry != null && entry.url != null)
+							{
+								link.selected = true;
+
+								found = true;
+							}
+
+							options.push(link);
+						}
+
+						for(const service of services)
+						{
+							if(type == 'result' || service.type != 'statelessswitch')
+							{
+								var option = {
+									text : service.name,
+									id : service.id,
+									letters : service.letters,
+									type : Essentials.getDataType(service.type),
+									name : service.name,
+									plugin : service.plugin,
+									img : '/img/accessory/' + service.type + '.png'
+								};
+
+								if(entry != null && service.id == entry.id && service.letters == entry.letters)
+								{
+									option.selected = true;
+
+									found = true;
+								}
+
+								options.push(option);
+							}
+						}
+
+						if(!found && entry != null && entry.id != null && entry.letters != null && entry.name != null)
+						{
+							var placeholder = {
+								text : '%automation.deleted_service% (' + entry.name + ')',
+								type : 'hidden',
+								img : '/img/delete.png',
+								id : entry.id,
+								name : entry.name,
+								letters : entry.letters,
+								type : Essentials.getDataType(Essentials.letterToType(entry.letters)),
+								selected : true,
+								hidden : true
+							};
+
+							if(entry.plugin != null)
+							{
+								placeholder.plugin = entry.plugin;
+							}
+
+							options.push(placeholder);
+						}
+
+						return PageBuilder.createSelect({ name : 'service', search : true, onchange : () => { updateOperation(); updateComparison(); hasChanged() }, options });
+					};
+
+					const createOperation = () => {
+
+						var options = [
+							{ text : '=', value : '=', name : 'equal' },
+							{ text : '%automation.switch%', value : '=', name : 'switch' },
+							{ text : '%automation.dimming%', value : '=', name : 'dimming' },
+							{ text : '%automation.color%', value : '=', name : 'color' }
+						];
+
+						if(type == 'trigger')
+						{
+							options.push({ text : '<', value : '<', name : 'lower' });
+							options.push({ text : '>', value : '>', name : 'greater' });
+						}
+
+						return PageBuilder.createSelect({ name : 'operation', onchange : () => { updateComparison(); hasChanged() }, options });
+					};
+
+					const createComparison = () => {
+
+						var element = document.createElement('div'), booleanOptions = [], dayOptions = [];
+
+						element.className = 'comparison';
+
+						booleanOptions.push({ text : '%characteristics.boolean.inactive%', value : false });
+						booleanOptions.push({ text : '%characteristics.boolean.active%', value : true });
+
+						var placeholder = {
+							text : '%automation.choose_days%',
+							type : 'hidden',
+							selected : true,
+							hidden : true
+						};
+
+						dayOptions.push(placeholder);
+
+						for(const i in weekDays)
+						{
+							dayOptions.push({ text : weekDays[i], value : parseInt(i) });
+						}
+
+						var boolean = PageBuilder.createSelect({ name : 'value', onchange : () => hasChanged(), options : booleanOptions }),
+							numeric = document.createElement('input'),
+							color = document.createElement('input'),
+							time = document.createElement('input'),
+							days = PageBuilder.createSelect({ name : 'days', onchange : () => hasChanged(), options : dayOptions, multiple : true });
+
+						numeric.setAttribute('title', '%pattern.numbers_special%: -');
+						numeric.setAttribute('name', 'value');
+						numeric.setAttribute('type', 'text');
+
+						numeric.oninput = () => hasChanged();
+
+						color.setAttribute('name', 'value');
+						color.setAttribute('type', 'color');
+						color.setAttribute('value', '#FFFFFF');
+
+						color.onchange = () => hasChanged();
+
+						time.setAttribute('name', 'begin');
+						time.setAttribute('type', 'time');
+						time.setAttribute('value', '00:00');
+
+						time.oninput = () => hasChanged();
+
+						element.appendChild(boolean);
+						element.appendChild(numeric);
+						element.appendChild(color);
+						element.appendChild(time);
+						element.appendChild(days);
+						
+						return element;
+					};
+
+					var serviceElement = block.appendChild(createService()),
+						operationElement = block.appendChild(createOperation()),
+						comparisonElement = block.appendChild(createComparison()),
+						controlElement = document.createElement('div'),
+						optionButton = document.createElement('button'),
+						removeButton = document.createElement('button');
+
+					controlElement.className = 'control';
+
+					optionButton.className = 'image-button white';
+					optionButton.type = 'button';
+
+					var optionImage = document.createElement('img');
+
+					optionImage.className = 'icon-inverted';
+					optionImage.src = '/img/locked.png';
+					optionImage.style.height = '100%';
+
+					if((type == 'trigger' && (entry != null && entry.options != null && entry.options.stateLock == true))
+					|| (type == 'result' && (entry == null || entry.options == null || entry.options.stateLock != false)))
+					{
+						optionButton.classList.add('locked');
+					}
+
+					optionButton.onclick = () => switchLock(optionButton, block, type);
+
+					optionButton.appendChild(optionImage);
+
+					removeButton.className = 'image-button white';
+					removeButton.type = 'button';
+
+					var removeImage = document.createElement('img');
+
+					removeImage.className = 'icon-inverted';
+					removeImage.src = '/img/delete.png';
+					removeImage.style.height = '100%';
+
+					removeButton.onclick = () => {
+						
+						parent.removeChild(block);
+
+						hasChanged();
+					};
+
+					removeButton.appendChild(removeImage);
+
+					controlElement.appendChild(optionButton);
+					controlElement.appendChild(removeButton);
+
+					block.appendChild(controlElement);
+
+					parent.appendChild(block);
+
+					const updateOperation = (entry) => {
+
+						var service = Replacer.getSelect(serviceElement),
+							operation = Replacer.getSelect(operationElement),
+							selected = service.selected.option, operations = [], index = null;
+
+						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb')
+						{
+							operations = ['%automation.switch%', '%automation.dimming%', '%automation.color%'];
+						}
+						else if(Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
+						{
+							operations = ['%automation.switch%', '%automation.dimming%'];
+						}
+						else if(selected.getAttribute('type') == 'boolean' || selected.getAttribute('type') == 'days' || type == 'result')
+						{
+							operations = ['='];
+						}
+						else if(selected.getAttribute('type') == 'numeric' || selected.getAttribute('type') == 'time')
+						{
+							operations = ['=', '&lt;', '&gt;'];
+						}
+
+						for(const i in operation.items)
+						{
+							if(operations.includes(operation.items[i].text))
+							{
+								operation.items[i].element.classList.remove('hidden');
+
+								if(index == null)
+								{
+									index = parseInt(i);
+								}
+							}
+							else
+							{
+								operation.items[i].element.classList.add('hidden');
+							}
+						}
+
+						if(entry != null && entry.operation != null)
+						{
+							if(entry.operation == '=')
+							{
+								if(entry.state != null && entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
+								{
+									operation.updateSelected(3);
+								}
+								else if(entry.state != null && entry.state.brightness != null)
+								{
+									operation.updateSelected(2);
+								}
+								else if(Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer'
+								|| Essentials.letterToType(selected.getAttribute('letters')) == 'rgb')
+								{
+									operation.updateSelected(1);
+								}
+								else
+								{
+									operation.updateSelected(0);
+								}
+							}
+							else if(entry.operation == '<')
+							{
+								operation.updateSelected(4);
+							}
+							else if(entry.operation == '>')
+							{
+								operation.updateSelected(5);
+							}
+						}
+						else if(index != null && !operations.includes(operation.selected.text))
+						{
+							operation.updateSelected(index);
+						}
+					};
+
+					const updateComparison = (entry) => {
+
+						var service = Replacer.getSelect(serviceElement),
+							operation = Replacer.getSelect(operationElement),
+							comparison = Replacer.getSelect(comparisonElement),
+							selected = service.selected.option;
+
+						var preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))] || {};
+
+						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb'
+						|| Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
+						{
+							comparison.updateOption(0, preset.inactive.text);
+							comparison.updateOption(1, preset.active.text);
+
+							comparison.updateSelected();
+							
+							if(entry != null && entry.state != null)
+							{
+								if(entry.state.value == true)
+								{
+									comparison.updateSelected(1);
+								}
+								else
+								{
+									comparison.updateSelected(0);
+								}
+
+								if(entry.state.brightness != null)
+								{
+									comparisonElement.children[1].value = entry.state.brightness;
+								}
+
+								if(entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
+								{
+									comparisonElement.children[2].value = Essentials.hslToHEX(entry.state.hue, entry.state.saturation, entry.state.brightness / 2);
+								}
+							}
+
+							if(operation.selected.option.getAttribute('name') == 'switch')
+							{
+								comparisonElement.children[0].classList.remove('hidden');
+								comparisonElement.children[1].classList.add('hidden');
+								comparisonElement.children[2].classList.add('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
+							}
+							else if(operation.selected.option.getAttribute('name') == 'dimming')
+							{
+								comparisonElement.children[1].setAttribute('placeholder', '%automation.brightness% (' + preset.text + ')');
+
+								comparisonElement.children[0].classList.add('hidden');
+								comparisonElement.children[1].classList.remove('hidden');
+								comparisonElement.children[2].classList.add('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
+							}
+							else if(operation.selected.option.getAttribute('name') == 'color')
+							{
+								comparisonElement.children[0].classList.add('hidden');
+								comparisonElement.children[1].classList.add('hidden');
+								comparisonElement.children[2].classList.remove('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
+							}
+						}
+						else if(selected.getAttribute('type') == 'boolean')
+						{
+							comparison.updateOption(0, preset.inactive.text);
+							comparison.updateOption(1, preset.active.text);
+
+							comparison.updateSelected();
+
+							if(entry != null && entry.state != null)
+							{
+								if(entry.state.value == true)
+								{
+									comparison.updateSelected(1);
+								}
+								else
+								{
+									comparison.updateSelected(0);
+								}
+							}
+
+							comparisonElement.children[0].classList.remove('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'numeric')
+						{
+							if(entry != null && entry.state != null && entry.state.value != null)
+							{
+								comparisonElement.children[1].value = entry.state.value;
+							}
+							
+							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + (preset.text || '?') + ')');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'days')
+						{
+							comparison = Replacer.getSelect(comparisonElement.getElementsByClassName('custom-select')[1]);
+
+							if(entry != null && entry.days != null)
+							{
+								for(const day of entry.days)
+								{
+									comparison.updateSelected(day + 1);
+								}
+							}
+							
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.remove('hidden');
+						}
+						else if(selected.getAttribute('type') == 'delay')
+						{
+							if(entry != null && entry.delay != null)
+							{
+								comparisonElement.children[1].value = entry.delay / 1000;
+							}
+							
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.time% (%devices.time.seconds%)');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'time')
+						{
+							if(entry != null && entry.time != null)
+							{
+								comparisonElement.children[3].value = entry.time;
+							}
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.remove('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'url')
+						{
+							if(entry != null && entry.url != null)
+							{
+								comparisonElement.children[1].value = entry.url;
+							}
+
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.link%');
+
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'hidden')
+						{
+							comparisonElement.children[0].classList.remove('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+					};
+
+					updateOperation(entry);
+					updateComparison(entry);
+
+					hasChanged();
+				}
+
+			</script>
+			<script>
+
+				function hasChanged()
+				{
+					var automation = createAutomation();
+
+					if(getAutomation(automation.id) != null && JSON.stringify(getAutomation(automation.id)) != JSON.stringify(automation))
+					{
+						document.getElementById('save-btn').classList.add('pulse');
+					}
+					else
+					{
+						document.getElementById('save-btn').classList.remove('pulse');
+					}
+				}
+
+				function createAutomation()
+				{
+					var automation = {};
+
+					automation.id = parseInt(document.getElementById('general').getElementsByTagName('input')[0].value);
+					automation.name = document.getElementById('general').getElementsByTagName('input')[1].value;
+
+					if(document.getElementById('general').getElementsByTagName('input')[2].value != '')
+					{
+						automation.group = document.getElementById('general').getElementsByTagName('input')[2].value;
+
+						if(automation.group.includes(','))
+						{
+							var array = automation.group.split(',');
+
+							for(const i in array)
+							{
+								array[i] = array[i].trim();
+							}
+							
+							automation.group = array;
+						}
+					}
+
+					automation.active = document.getElementById('general').getElementsByTagName('input')[3].value == '%characteristics.boolean.active%';
+
+					if(document.getElementById('group-options').hasAttribute('options'))
+					{
+						automation.options = JSON.parse(document.getElementById('group-options').getAttribute('options'));
+					}
+
+					automation.trigger = {};
+					automation.result = [];
+
+					automation.trigger.logic = document.getElementById('group-logic').getAttribute('value');
+					automation.trigger.groups = [];
+
+					var triggerGroups = document.getElementById('trigger').getElementsByClassName('group');
+
+					for(var i = 0; i < triggerGroups.length; i++)
+					{
+						var triggerBlocks = triggerGroups[i].getElementsByClassName('block'), group = {};
+
+						group.logic = triggerGroups[i].getElementsByClassName('block-logic')[0].getAttribute('value');
+						group.blocks = [];
+
+						for(var j = 0; j < triggerBlocks.length; j++)
+						{
+							var block = getBlock(triggerBlocks[j]);
+
+							group.blocks.push(block);
+						}
+
+						automation.trigger.groups.push(group);
+					}
+
+					var resultBlocks = document.getElementById('result').getElementsByClassName('block');
+
+					for(var i = 0; i < resultBlocks.length; i++)
+					{
+						var block = getBlock(resultBlocks[i]);
+
+						automation.result.push(block);
+					}
+
+					return automation;
+				}
+
+				async function sendAutomation()
+				{
+					var automation = createAutomation();
+
+					var overlays = {
+						root : document.getElementById('save-btn'),
+						id : 'save',
+						pending : { value : getAutomation(automation.id) == null ? '%automation.creating% ..' : '%automation.modifying% ..' },
+						executeError : { value : getAutomation(automation.id) == null ? '%automation.create_failed%!' : '%automation.modify_failed%!' },
+						connectionError : { value : '%general.bridge_connection_error%!' }
+					};
+
+					if(await Query.complexFetch('/serverside/automation', 5000, 2, overlays, false, JSON.stringify(automation)) == 'Success')
+					{
+						var found = false;
+
+						for(const i in data.automation)
+						{
+							if(data.automation[i].id == automation.id)
+							{
+								data.automation[i] = automation;
+
+								found = true;
+							}
+						}
+
+						if(!found)
+						{
+							data.automation.push(automation);
+						}
+
+						loadGroups();
+
+						if(Storage.getItem('automation-group') != null
+						&& !tempGroups.includes(Storage.getItem('automation-group')))
+						{
+							activeGroup = null;
+
+							if(automation.group != null)
+							{
+								if(Array.isArray(automation.group))
+								{
+									activeGroup = automation.group[0].toLowerCase();
+								}
+								else
+								{
+									activeGroup = automation.group.toLowerCase();
+								}
+							}
+
+							if(activeGroup != null)
+							{
+								Storage.setItem('automation-group', activeGroup);
+							}
+							else
+							{
+								Storage.removeItem('automation-group');
+							}
+						}
+
+						renderGroups();
+						renderAutomation();
+						renderWidgets();
+						
+						document.getElementById('no-automation').style.display = 'none';
+
+						document.getElementById('view-button').removeAttribute('disabled');
+
+						await Essentials.newTimeout(200);
+
+						Essentials.removeOverlays(document.getElementById('save-btn'), true);
+
+						// TODO: Translate
+
+						var dialogue = {
+							title : '%general.saved%',
+							subtitle : 'Die Automation ' + "'" + automation.name + "'" + ' wurde ' + (!found ? 'erstellt' : 'aktualisiert') + '!',
+							buttons : [
+								{
+									text : '%general.ok%',
+									close : true,
+									action : () => closeEditor()
+								}
+							]
+						};
+
+						Essentials.openDialogue(dialogue);
+					}
+				}
+
+				function getBlock(triggerBlock)
+				{
+					var block = {};
+
+					var triggerService = triggerBlock.getElementsByTagName('select')[0].selectedOptions[0],
+						triggerOperation = triggerBlock.getElementsByTagName('select')[1].selectedOptions[0],
+						triggerComparison = triggerBlock.getElementsByTagName('select')[2].selectedOptions[0];
+
+					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'delay' || triggerOperation.getAttribute('name') == 'dimming' || triggerService.getAttribute('type') == 'url')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[1];
+					}
+
+					if(triggerOperation.getAttribute('name') == 'color')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[2];
+					}
+
+					if(triggerService.getAttribute('type') == 'time')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[3];
+					}
+
+					if(triggerService.getAttribute('type') == 'days')
+					{
+						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[4].children[0];
+					}
+
+					if(triggerService.hasAttribute('id'))
+					{
+						block.id = triggerService.getAttribute('id');
+					}
+
+					if(triggerService.hasAttribute('name'))
+					{
+						block.name = triggerService.getAttribute('name');
+					}
+
+					if(triggerService.hasAttribute('letters'))
+					{
+						block.letters = triggerService.getAttribute('letters');
+					}
+
+					if(triggerService.hasAttribute('plugin'))
+					{
+						block.plugin = triggerService.getAttribute('plugin');
+					}
+					
+					if(triggerOperation.hasAttribute('value') && triggerService.getAttribute('type') != 'url')
+					{
+						block.operation = triggerOperation.getAttribute('value');
+					}
+
+					if(triggerOperation.hasAttribute('name') && triggerService.hasAttribute('id') && triggerService.hasAttribute('letters') && triggerComparison.value != '')
+					{
+						block.state = {};
+
+						try
+						{
+							if(triggerOperation.getAttribute('name') == 'dimming')
+							{
+								block.state.value = true;
+
+								block.state.brightness = JSON.parse(triggerComparison.value);
+							}
+							else if(triggerOperation.getAttribute('name') == 'color')
+							{
+								var hsl = Essentials.hexToHSL(triggerComparison.value);
+
+								block.state.value = true;
+
+								block.state.hue = hsl.hue;
+								block.state.saturation = hsl.saturation;
+								block.state.brightness = hsl.brightness * 2;
+							}
+							else
+							{
+								block.state.value = JSON.parse(triggerComparison.value);
+							}
+						}
+						catch(e)
+						{
+							console.error(e);
+						}
+					}
+
+					if(triggerService.getAttribute('type') == 'days')
+					{
+						block.days = triggerComparison.selectedItems;
+					}
+
+					if(triggerService.getAttribute('type') == 'delay')
+					{
+						block.delay = triggerComparison.value * 1000;
+					}
+					
+					if(triggerService.getAttribute('type') == 'time')
+					{
+						block.time = triggerComparison.value;
+					}
+
+					if(triggerService.getAttribute('type') == 'url')
+					{
+						block.url = triggerComparison.value;
+					}
+
+					if(triggerBlock.hasAttribute('options'))
+					{
+						block.options = JSON.parse(triggerBlock.getAttribute('options'));
+					}
+
+					return block;
+				}
+
+			</script>
+			<script>
+
+				function removeAutomation(btn)
+				{
+					var automation = getAutomation(Essentials.getURLParams('id'));
+
+					var dialogue = {
+                        title : '%general.attention%',
+                        subtitle : '%automation.remove_confirm_0% ' + "'" + automation.name + "'" + ' %automation.remove_confirm_1%?',
+                        buttons : [
+                            {
+                                text : '%general.cancel%',
+                                close : true
+                            },
+                            {
+                                text : '%general.remove%',
+                                color : 'red',
+                                close : true,
+                                action : () => removeConfirm(btn)
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+				}
+
+				window.resetting = false;
+				
+				async function removeConfirm(btn)
+				{
+					var automation = getAutomation(Essentials.getURLParams('id'));
+
+					if(!resetting && automation != null)
+					{
+						var overlays = {
+							root : btn,
+							id : 'remove',
+							pending : { value : '%automation.removing% ..' },
+							executeError : { value : '%automation.remove_failed%!' },
+							connectionError : { value : '%general.bridge_connection_error%!' }
+						};
+
+						resetting = true;
+
+						if(await Query.complexFetch('/serverside/remove-automation?id=' + automation.id, 5000, 2, overlays, true) == 'Success')
+						{
+							data.automation.splice(data.automation.indexOf(automation), 1);
+
+							loadGroups();
+
+							if(Storage.getItem('automation-group') != null
+							&& !tempGroups.includes(Storage.getItem('automation-group')))
+							{
+								activeGroup = null;
+
+								Storage.removeItem('automation-group');
+							}
+
+							renderGroups();
+							renderAutomation();
+							renderWidgets();
+							
+							if(data.automation.length == 0)
+							{
+								document.getElementById('no-automation').style.removeProperty('display');
+
+								document.getElementById('view-button').setAttribute('disabled', '');
+							}
+
+							await Essentials.newTimeout(200);
+
+							Essentials.removeOverlays(btn, true);
+							
+							// TODO: Translate
+
+							var dialogue = {
+								title : '%general.saved%',
+								subtitle : 'Die Automation ' + "'" + automation.name + "'" + ' wurde entfernt!',
+								buttons : [
+									{
+										text : '%general.ok%',
+										close : true,
+										action : () => closeEditor()
+									}
+								]
+							};
+
+							Essentials.openDialogue(dialogue);
+						}
+
+						resetting = false;
+					}
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
