@@ -1063,6 +1063,57 @@ class EssentialFeatures
 			return '> 1 ' + '%devices.time.years%'[0];
 		}
 	}
+
+	addVerticalGrab(element)
+	{
+		let pos = { top : 0, left : 0, x : 0, y : 0 };
+
+		const mouseDownHandler = function(e)
+		{
+			element.style.cursor = 'grabbing';
+			element.style.userSelect = 'none';
+
+			pos = {
+				left : element.scrollLeft,
+				top : element.scrollTop,
+				x : e.clientX,
+				y : e.clientY,
+			};
+
+			document.addEventListener('mousemove', mouseMoveHandler);
+			document.addEventListener('mouseup', mouseUpHandler);
+		};
+
+		const mouseMoveHandler = function(e)
+		{
+			const dx = e.clientX - pos.x;
+			const dy = e.clientY - pos.y;
+
+			element.scrollTop = pos.top - dy;
+			element.scrollLeft = pos.left - dx;
+			
+			for(var i = 0; i < element.children.length; i++)
+			{
+				element.children[i].style.pointerEvents = 'none';
+			}
+		};
+
+		const mouseUpHandler = function()
+		{
+			element.style.cursor = 'grab';
+			element.style.removeProperty('user-select');
+
+			for(var i = 0; i < element.children.length; i++)
+			{
+				element.children[i].style.pointerEvents = 'all';
+			}
+
+			document.removeEventListener('mousemove', mouseMoveHandler);
+			document.removeEventListener('mouseup', mouseUpHandler);
+		};
+
+		element.addEventListener('mousedown', mouseDownHandler);
+	}
 }
 
 var idCounter = new Date().getTime();

@@ -1466,55 +1466,7 @@
 							document.getElementById('groups').appendChild(group);
 						}
 
-						const groupBar = document.getElementById('groups');
-
-						let pos = { top : 0, left : 0, x : 0, y : 0 };
-
-						const mouseDownHandler = function(e)
-						{
-							groupBar.style.cursor = 'grabbing';
-							groupBar.style.userSelect = 'none';
-
-							pos = {
-								left : groupBar.scrollLeft,
-								top : groupBar.scrollTop,
-								x : e.clientX,
-								y : e.clientY,
-							};
-
-							document.addEventListener('mousemove', mouseMoveHandler);
-							document.addEventListener('mouseup', mouseUpHandler);
-						};
-
-						const mouseMoveHandler = function(e)
-						{
-							const dx = e.clientX - pos.x;
-							const dy = e.clientY - pos.y;
-
-							groupBar.scrollTop = pos.top - dy;
-							groupBar.scrollLeft = pos.left - dx;
-							
-							for(var i = 0; i < groupBar.children.length; i++)
-							{
-								groupBar.children[i].style.pointerEvents = 'none';
-							}
-						};
-
-						const mouseUpHandler = function()
-						{
-							groupBar.style.cursor = 'grab';
-							groupBar.style.removeProperty('user-select');
-
-							for(var i = 0; i < groupBar.children.length; i++)
-							{
-								groupBar.children[i].style.pointerEvents = 'all';
-							}
-
-							document.removeEventListener('mousemove', mouseMoveHandler);
-							document.removeEventListener('mouseup', mouseUpHandler);
-						};
-
-						groupBar.addEventListener('mousedown', mouseDownHandler);
+						Essentials.addVerticalGrab(document.getElementById('groups'));
 					}
 				}
 
