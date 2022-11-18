@@ -343,202 +343,6 @@
 			</script>
 			<script>
 
-				function renderStatus()
-				{
-					typeGroups = {};
-
-					for(const i in data.devices)
-					{
-						if(data.devices[i].active != 0 && hasGroup(data.devices[i].aid, activeGroup))
-						{
-							for(const j in data.devices[i].services)
-							{
-								var type = data.devices[i].services[j].type;
-
-								if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null && data.devices[i].services[j].online == true && (data.devices[i].options == null || data.devices[i].options.status != false))
-								{
-									if(type == 'relais')
-									{
-										type = 'outlet';
-									}
-
-									if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-									{
-										type = 'led';
-									}
-
-									if(typeGroups[type] == null)
-									{
-										typeGroups[type] = [];
-									}
-
-									typeGroups[type].push(data.devices[i].services[j].state);
-								}
-							}
-						}
-					}
-
-					var array = Object.keys(typeGroups), order = ['smoke', 'rain', 'temperature', 'humidity', 'airquality', 'light', 'motion', 'occupancy', 'contact', 'blind', 'led', 'outlet', 'switch'];
-
-					array.sort((a, b) => (order.indexOf(a) < order.indexOf(b)) ? -1 : (order.indexOf(a) > order.indexOf(b)) ? 1 : 0);
-
-					for(const type of order)
-					{
-						var text = '', color = '', button = null, state = null;
-
-						if(document.getElementById('status-' + type) == null)
-						{
-							var image = document.createElement('img');
-
-							button = document.createElement('button');
-							state = document.createElement('div');
-
-							button.id = 'status-' + type;
-
-							button.onclick = () => {
-
-								var containerType = type;
-
-								if(document.getElementById('panel-' + containerType) == null)
-								{
-									if(containerType == 'light')
-									{
-										containerType = 'weather';
-									}
-
-									if(containerType == 'humidity')
-									{
-										containerType = 'climate';
-									}
-								}
-
-								var top = document.getElementById('panel-' + containerType).offsetTop - 20;
-
-								if(getComputedStyle(document.getElementById('head-content')).position == 'fixed')
-								{
-									top -= document.getElementById('head-content').offsetHeight - 10;
-								}
-
-								window.scrollTo({ top, behavior : 'smooth' });
-							};
-
-							image.src = '/img/accessory/' + type + '.png';
-
-							state.className = 'state';
-
-							button.appendChild(image);
-							button.appendChild(state);
-
-							document.getElementById('status').appendChild(button);
-						}
-						else
-						{
-							button = document.getElementById('status-' + type);
-
-							state = button.getElementsByClassName('state')[0];
-						}
-
-						var visible = false;
-
-						if(array.includes(type))
-						{
-							if(Essentials.getDataType(type) == 'boolean' || type == 'blind')
-							{
-								var active = 0;
-
-								for(const i in typeGroups[type])
-								{
-									if(typeGroups[type][i].value == true || (type == 'blind' && typeGroups[type][i].value > 0))
-									{
-										active++;
-									}
-								}
-								
-								if(servicePresets[type].active != null)
-								{
-									if(servicePresets[type].active.color != null)
-									{
-										color = servicePresets[type].active.color;
-									}
-									
-									if(servicePresets[type].active.text)
-									{
-										text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
-									}
-								}
-
-								if(active > 0)
-								{
-									visible = true;
-								}
-							}
-							else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
-							{
-								var min = 100000, max = -100000;
-
-								for(const i in typeGroups[type])
-								{
-									if(typeGroups[type][i].value != null)
-									{
-										if(typeGroups[type][i].value < min)
-										{
-											min = typeGroups[type][i].value;
-										}
-
-										if(typeGroups[type][i].value > max)
-										{
-											max = typeGroups[type][i].value;
-										}
-									}
-								}
-
-								min = Math.round(min * 10) / 10;
-								max = Math.round(max * 10) / 10;
-
-								if(min != max)
-								{
-									text = min + ' - ' + max + ' ' + servicePresets[type].text;
-								}
-								else
-								{
-									text = max + ' ' + servicePresets[type].text;
-								}
-
-								var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
-
-								if(serviceState != null && serviceState.color != null)
-								{
-									color = serviceState.color;
-								}
-
-								visible = true;
-							}
-
-							button.style.backgroundColor = color;
-
-							state.innerHTML = text;
-						}
-
-						if(visible)
-						{
-							button.classList.remove('hidden');
-						}
-						else
-						{
-							button.classList.add('hidden');
-						}
-					}
-
-					if(document.getElementById('status').getElementsByClassName('hidden').length == document.getElementById('status').children.length)
-					{
-						document.getElementById('status').classList.add('hidden');
-					}
-					else
-					{
-						document.getElementById('status').classList.remove('hidden');
-					}
-				}
-
 				window.sort = 'type-asc';
 
 				function sortDevices(init)
@@ -787,6 +591,202 @@
 						document.getElementById('activate-all').setAttribute('switch', 0);
 						document.getElementById('activate-all').removeAttribute('class');
 						document.getElementById('activate-all').innerHTML = '%devices.active%: %devices.mixed_active%';
+					}
+				}
+
+				function renderStatus()
+				{
+					typeGroups = {};
+
+					for(const i in data.devices)
+					{
+						if(data.devices[i].active != 0 && hasGroup(data.devices[i].aid, activeGroup))
+						{
+							for(const j in data.devices[i].services)
+							{
+								var type = data.devices[i].services[j].type;
+
+								if(servicePresets[type] != null && type != 'statelessswitch' && data.devices[i].services[j].state != null && data.devices[i].services[j].online == true && (data.devices[i].options == null || data.devices[i].options.status != false))
+								{
+									if(type == 'relais')
+									{
+										type = 'outlet';
+									}
+
+									if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+									{
+										type = 'led';
+									}
+
+									if(typeGroups[type] == null)
+									{
+										typeGroups[type] = [];
+									}
+
+									typeGroups[type].push(data.devices[i].services[j].state);
+								}
+							}
+						}
+					}
+
+					var array = Object.keys(typeGroups), order = ['smoke', 'rain', 'temperature', 'humidity', 'airquality', 'light', 'motion', 'occupancy', 'contact', 'blind', 'led', 'outlet', 'switch'];
+
+					array.sort((a, b) => (order.indexOf(a) < order.indexOf(b)) ? -1 : (order.indexOf(a) > order.indexOf(b)) ? 1 : 0);
+
+					for(const type of order)
+					{
+						var text = '', color = '', button = null, state = null;
+
+						if(document.getElementById('status-' + type) == null)
+						{
+							var image = document.createElement('img');
+
+							button = document.createElement('button');
+							state = document.createElement('div');
+
+							button.id = 'status-' + type;
+
+							button.onclick = () => {
+
+								var containerType = type;
+
+								if(document.getElementById('panel-' + containerType) == null)
+								{
+									if(containerType == 'light')
+									{
+										containerType = 'weather';
+									}
+
+									if(containerType == 'humidity')
+									{
+										containerType = 'climate';
+									}
+								}
+
+								var top = document.getElementById('panel-' + containerType).offsetTop - 20;
+
+								if(getComputedStyle(document.getElementById('head-content')).position == 'fixed')
+								{
+									top -= document.getElementById('head-content').offsetHeight - 10;
+								}
+
+								window.scrollTo({ top, behavior : 'smooth' });
+							};
+
+							image.src = '/img/accessory/' + type + '.png';
+
+							state.className = 'state';
+
+							button.appendChild(image);
+							button.appendChild(state);
+
+							document.getElementById('status').appendChild(button);
+						}
+						else
+						{
+							button = document.getElementById('status-' + type);
+
+							state = button.getElementsByClassName('state')[0];
+						}
+
+						var visible = false;
+
+						if(array.includes(type))
+						{
+							if(Essentials.getDataType(type) == 'boolean' || type == 'blind')
+							{
+								var active = 0;
+
+								for(const i in typeGroups[type])
+								{
+									if(typeGroups[type][i].value == true || (type == 'blind' && typeGroups[type][i].value > 0))
+									{
+										active++;
+									}
+								}
+								
+								if(servicePresets[type].active != null)
+								{
+									if(servicePresets[type].active.color != null)
+									{
+										color = servicePresets[type].active.color;
+									}
+									
+									if(servicePresets[type].active.text)
+									{
+										text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
+									}
+								}
+
+								if(active > 0)
+								{
+									visible = true;
+								}
+							}
+							else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+							{
+								var min = 100000, max = -100000;
+
+								for(const i in typeGroups[type])
+								{
+									if(typeGroups[type][i].value != null)
+									{
+										if(typeGroups[type][i].value < min)
+										{
+											min = typeGroups[type][i].value;
+										}
+
+										if(typeGroups[type][i].value > max)
+										{
+											max = typeGroups[type][i].value;
+										}
+									}
+								}
+
+								min = Math.round(min * 10) / 10;
+								max = Math.round(max * 10) / 10;
+
+								if(min != max)
+								{
+									text = min + ' - ' + max + ' ' + servicePresets[type].text;
+								}
+								else
+								{
+									text = max + ' ' + servicePresets[type].text;
+								}
+
+								var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
+
+								if(serviceState != null && serviceState.color != null)
+								{
+									color = serviceState.color;
+								}
+
+								visible = true;
+							}
+
+							button.style.backgroundColor = color;
+
+							state.innerHTML = text;
+						}
+
+						if(visible)
+						{
+							button.classList.remove('hidden');
+						}
+						else
+						{
+							button.classList.add('hidden');
+						}
+					}
+
+					if(document.getElementById('status').getElementsByClassName('hidden').length == document.getElementById('status').children.length)
+					{
+						document.getElementById('status').classList.add('hidden');
+					}
+					else
+					{
+						document.getElementById('status').classList.remove('hidden');
 					}
 				}
 
