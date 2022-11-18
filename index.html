@@ -195,6 +195,7 @@
 					}
 
 					renderWidgets();
+					renderStatus();
 
 					renderGroups();
 
@@ -337,12 +338,18 @@
 							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text;
 						}
 					}
+				}
 
+			</script>
+			<script>
+
+				function renderStatus()
+				{
 					typeGroups = {};
 
 					for(const i in data.devices)
 					{
-						if(data.devices[i].active != 0)
+						if(data.devices[i].active != 0 && hasGroup(data.devices[i].aid, activeGroup))
 						{
 							for(const j in data.devices[i].services)
 							{
@@ -375,23 +382,16 @@
 
 					array.sort((a, b) => (order.indexOf(a) < order.indexOf(b)) ? -1 : (order.indexOf(a) > order.indexOf(b)) ? 1 : 0);
 
-					for(const x in array)
+					for(const type of order)
 					{
-						const type = array[x];
-
-						var active = 0, text = '', color = '', button = null, image = null, state = null;
-
-						for(const i in typeGroups[type])
-						{
-							if(typeGroups[type][i].value == true || (type == 'blind' && typeGroups[type][i].value > 0))
-							{
-								active++;
-							}
-						}
+						var text = '', color = '', button = null, state = null;
 
 						if(document.getElementById('status-' + type) == null)
 						{
+							var image = document.createElement('img');
+
 							button = document.createElement('button');
+							state = document.createElement('div');
 
 							button.id = 'status-' + type;
 
@@ -422,11 +422,7 @@
 								window.scrollTo({ top, behavior : 'smooth' });
 							};
 
-							image = document.createElement('img');
-
 							image.src = '/img/accessory/' + type + '.png';
-
-							state = document.createElement('div');
 
 							state.className = 'state';
 
@@ -442,85 +438,106 @@
 							state = button.getElementsByClassName('state')[0];
 						}
 
-						if(Essentials.getDataType(type) == 'boolean' || type == 'blind')
+						var visible = false;
+
+						if(array.includes(type))
 						{
-							if(servicePresets[type].active != null)
+							if(Essentials.getDataType(type) == 'boolean' || type == 'blind')
 							{
-								if(servicePresets[type].active.color != null)
+								var active = 0;
+
+								for(const i in typeGroups[type])
 								{
-									color = servicePresets[type].active.color;
+									if(typeGroups[type][i].value == true || (type == 'blind' && typeGroups[type][i].value > 0))
+									{
+										active++;
+									}
 								}
 								
-								if(servicePresets[type].active.text)
+								if(servicePresets[type].active != null)
 								{
-									text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
+									if(servicePresets[type].active.color != null)
+									{
+										color = servicePresets[type].active.color;
+									}
+									
+									if(servicePresets[type].active.text)
+									{
+										text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
+									}
+								}
+
+								if(active > 0)
+								{
+									visible = true;
 								}
 							}
+							else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+							{
+								var min = 100000, max = -100000;
 
-							if(active > 0)
-							{
-								button.classList.remove('hidden');
+								for(const i in typeGroups[type])
+								{
+									if(typeGroups[type][i].value != null)
+									{
+										if(typeGroups[type][i].value < min)
+										{
+											min = typeGroups[type][i].value;
+										}
+
+										if(typeGroups[type][i].value > max)
+										{
+											max = typeGroups[type][i].value;
+										}
+									}
+								}
+
+								min = Math.round(min * 10) / 10;
+								max = Math.round(max * 10) / 10;
+
+								if(min != max)
+								{
+									text = min + ' - ' + max + ' ' + servicePresets[type].text;
+								}
+								else
+								{
+									text = max + ' ' + servicePresets[type].text;
+								}
+
+								var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
+
+								if(serviceState != null && serviceState.color != null)
+								{
+									color = serviceState.color;
+								}
+
+								visible = true;
 							}
-							else
-							{
-								button.classList.add('hidden');
-							}
+
+							button.style.backgroundColor = color;
+
+							state.innerHTML = text;
 						}
-						else if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+
+						if(visible)
 						{
-							var min = 100000, max = -100000;
-
-							for(const i in typeGroups[type])
-							{
-								if(typeGroups[type][i].value != null)
-								{
-									if(typeGroups[type][i].value < min)
-									{
-										min = typeGroups[type][i].value;
-									}
-
-									if(typeGroups[type][i].value > max)
-									{
-										max = typeGroups[type][i].value;
-									}
-								}
-							}
-
-							min = Math.round(min * 10) / 10;
-							max = Math.round(max * 10) / 10;
-
-							if(min != max)
-							{
-								text = min + ' - ' + max + ' ' + servicePresets[type].text;
-							}
-							else
-							{
-								text = max + ' ' + servicePresets[type].text;
-							}
-
-							var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
-
-							if(serviceState != null && serviceState.color != null)
-							{
-								color = serviceState.color;
-							}
+							button.classList.remove('hidden');
 						}
-
-						button.style.backgroundColor = color;
-
-						state.innerHTML = text;
+						else
+						{
+							button.classList.add('hidden');
+						}
 					}
 
 					if(document.getElementById('status').getElementsByClassName('hidden').length == document.getElementById('status').children.length)
 					{
 						document.getElementById('status').classList.add('hidden');
 					}
-
-					setTimeout(() => document.getElementById('status').style.removeProperty('transition'), 0);
+					else
+					{
+						document.getElementById('status').classList.remove('hidden');
+					}
 				}
-
-			</script>
-			<script>
 
 				window.sort = 'type-asc';
 
@@ -830,6 +847,7 @@
 							if(!init)
 							{
 								renderWidgets();
+								renderStatus();
 
 								setTimeout(() => { document.getElementById('devices').style.opacity = 1 }, 0);
 							}
