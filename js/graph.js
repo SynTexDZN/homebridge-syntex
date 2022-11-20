@@ -786,39 +786,38 @@ function addValues(data, values)
 	
 	for(const v in values)
 	{
-		var cycleTime = self.getMinuteCycle(data.interval, parseInt(values[v].time));
+		var cycleTime = self.getMinuteCycle(data.interval, parseInt(values[v].time)),
+			value = values[v].value, brightness = values[v].brightness;
+
+		try
+		{
+			if(value != null)
+			{
+				value = JSON.parse(value);
+			}
+
+			if(brightness != null)
+			{
+				brightness = JSON.parse(brightness);
+			}
+		}
+		catch(e)
+		{
+			console.error(e);
+		}
+
+		if(typeof value == 'boolean')
+		{
+			value = value ? 100 : 0;
+		}
+
+		if(brightness != null && value == 100)
+		{
+			value = brightness;
+		}
 
 		if(data.sectors[cycleTime] != null)
 		{
-			var value = values[v].value, brightness = values[v].brightness;
-
-			try
-			{
-				if(value != null)
-				{
-					value = JSON.parse(value);
-				}
-
-				if(brightness != null)
-				{
-					brightness = JSON.parse(brightness);
-				}
-			}
-			catch(e)
-			{
-				console.error(e);
-			}
-
-			if(typeof value == 'boolean')
-			{
-				value = value ? 100 : 0;
-			}
-
-			if(brightness != null && value == 100)
-			{
-				value = brightness;
-			}
-
 			if(value < data.min)
 			{
 				data.min = value;
@@ -833,6 +832,20 @@ function addValues(data, values)
 
 			data.counter++;
 		}
+		else if(cycleTime < parseInt(Object.keys(data.sectors)[0]) && (data.last == null || values[v].time > data.last.time))
+		{
+			data.last = { time : values[v].time, value };
+		}
+	}
+
+	if(data.last.value < data.min)
+	{
+		data.min = data.last.value;
+	}
+
+	if(data.last.value > data.max)
+	{
+		data.max = data.last.value;
 	}
 	
 	return data;
@@ -854,8 +867,20 @@ function getPercents(data)
 			}
 			else
 			{
-				data.sectors[i][j].percents = data.min;
+				data.sectors[i][j].percents = data.sectors[i][j].value > 0 ? 100 : 0;
 			}
+		}
+	}
+
+	if(data.last != null)
+	{
+		if(data.min != data.max)
+		{
+			data.last.percents = (data.last.value - data.min) / (data.max - data.min) * 100;
+		}
+		else
+		{
+			data.last.percents = data.last.value > 0 ? 100 : 0;
 		}
 	}
 
@@ -982,44 +1007,42 @@ function selectValues(data)
 		}
 	}
 
-	// NOTE: Possible Past Interpretation
-	
-	if(data.format == 'boolean' && data.values[0] == null && data.values.join().replace(/,/g, '').length > 0)
-	{
-		data.values[0] = 0;
-		/*
-		var indexX = getNextValue(data, -1);
-		var indexY = getNextValue(data, parseInt(indexX.index));
-		
-		//console.debug('XXX', indexX, indexY);
-		
-		if(indexX != null && indexY != null)
-		{
-			if(indexX.value == indexY.value)
-			{
-				data.values[0] = indexX.value;
-			}
-			else
-			{
-				data.values[0] = indexY.value;
-				//data.values[0] = getNextValue(data, 0).value;
-			}
-		}
-		*/
-	}
-	
 	return data;
 }
 
 function startEndPoints(data)
 {
-	var last = getLastValue(data, data.values.length - 1);
 	var next = getNextValue(data, 0);
 
-	if(data.values[0] == null && next != null)
+	if(data.values[0] == null)
 	{
-		data.values[0] = next.value;
+		if(data.format == 'boolean')
+		{
+			if(data.last != null)
+			{
+				data.values[0] = data.last.percents;
+			}
+			else
+			{
+				data.values[0] = 0;
+			}
+		}
+		else if(next != null)
+		{
+			if(data.last != null)
+			{
+				var time = parseInt(Object.keys(data.sectors)[0]);
+
+				data.values[0] = ((data.last.percents - next.value) / (data.last.time - next.time)) * (time - data.last.time) + data.last.percents;
+			}
+			else
+			{
+				data.values[0] = next.value;
+			}
+		}
 	}
+
+	var last = getLastValue(data, data.values.length - 1);
 
 	if(data.values[data.values.length - 1] == null && last != null)
 	{
@@ -1028,8 +1051,6 @@ function startEndPoints(data)
 
 	return data;
 }
-
-// NOTE: Smooth Values
 
 function smoothValues(data)
 {
@@ -1052,26 +1073,30 @@ function smoothValues(data)
 	return data;
 }
 
-const getNextValue = (data, index) => {
+const getNextValue = (data, i) => {
 
-	for(var i = index + 1; i < data.values.length; i++)
+	for(var index = i + 1; index < data.values.length; index++)
 	{
-		if(data.values[i] != null)
+		if(data.values[index] != null)
 		{
-			return { index : i, value : data.values[i] };
+			var time = parseInt(Object.keys(data.sectors)[0]) + (index * data.interval * 60000);
+
+			return { index, time, value : data.values[index] };
 		}
 	}
 
 	return null;
 };
 
-const getLastValue = (data, index) => {
+const getLastValue = (data, i) => {
 
-	for(var i = index - 1; i >= 0; i--)
+	for(var index = i - 1; index >= 0; index--)
 	{
-		if(data.values[i] != null)
+		if(data.values[index] != null)
 		{
-			return { index : i, value : data.values[i] };
+			var time = parseInt(Object.keys(data.sectors)[0]) + (index * data.interval * 60000);
+
+			return { index, time, value : data.values[index] };
 		}
 	}
 
