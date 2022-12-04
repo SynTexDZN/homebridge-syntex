@@ -483,20 +483,37 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/update', (request, response, urlParams) => {
 
+			var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
+
+			const { exec } = require('child_process');
+
 			if(urlParams.status != null)
 			{
-				response.write(this.updating.toString());
-				response.end();
+				if(!this.updating)
+				{
+					exec('sudo npm list ' + updateID + ' -g', (error, stdout, stderr) => {
+
+						if(error || (stderr && stderr.includes('ERR!')) || !stdout.includes('@'))
+						{
+							response.end('Error');
+						}
+						else
+						{
+							response.end(stdout.split('@')[1].trim());
+						}
+					});
+				}
+				else
+				{
+					response.end('Pending');
+				}
 			}
 			else
 			{
-				var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
 				var version = urlParams.version != null ? urlParams.version : 'latest';
 
 				this.updating = true;
 
-				const { exec } = require('child_process');
-				
 				exec('sudo npm install ' + updateID + '@' + version + ' -g', (error, stdout, stderr) => {
 
 					if(error || (stderr && stderr.includes('ERR!')))
@@ -506,19 +523,12 @@ class SynTexPlatform
 					else
 					{
 						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
-						
-						this.restart = true;
-
-						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
-						
-						exec('sudo systemctl restart homebridge');
 					}
 
 					this.updating = false;
 				});
 
-				response.write('Success');
-				response.end();
+				response.end('Success');
 			}
 		});
 
