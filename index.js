@@ -25,7 +25,8 @@ class SynTexPlatform
 		this.internalSockets = {};
 
 		this.restart = true;
-		this.updating = false;
+
+		this.updating = [];
 
 		this.lastAccessoryRefresh = new Date().getTime();
 
@@ -489,7 +490,7 @@ class SynTexPlatform
 
 			if(urlParams.status != null)
 			{
-				if(!this.updating)
+				if(!this.updating.includes(updateID))
 				{
 					exec('sudo npm list ' + updateID + ' -g', (error, stdout, stderr) => {
 
@@ -512,7 +513,7 @@ class SynTexPlatform
 			{
 				var version = urlParams.version != null ? urlParams.version : 'latest';
 
-				this.updating = true;
+				this.updating.push(updateID);
 
 				exec('sudo npm install ' + updateID + '@' + version + ' -g', (error, stdout, stderr) => {
 
@@ -525,7 +526,7 @@ class SynTexPlatform
 						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
 					}
 
-					this.updating = false;
+					this.updating.splice(this.updating.indexOf(updateID), 1);
 				});
 
 				response.end('Success');
