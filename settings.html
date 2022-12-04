@@ -149,10 +149,14 @@
 
 					Essentials.showOverlay(document.getElementById('save-btn'), Essentials.createPendingOverlay('saving', '%device.save% ..'));
 
-					for(var i = 1; i < appSettingsForm.length; i++)
+					console.log(appSettingsForm);
+
+					for(var i = 0; i < appSettingsForm.length; i++)
 					{
 						if(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
+							console.log(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
+
 							Storage.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
 						}
 						else
@@ -165,7 +169,7 @@
 
 					var bridgeOptionForm = document.getElementsByClassName('panel-content')[0].children, configObject = { options : {}, log : {} };
 
-					for(var i = 1; i < bridgeOptionForm.length; i++)
+					for(var i = 0; i < bridgeOptionForm.length; i++)
 					{
 						if(bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
@@ -179,7 +183,7 @@
 
 					var bridgeLogForm = document.getElementsByClassName('panel-content')[1].children;
 
-					for(var i = 1; i < bridgeLogForm.length; i++)
+					for(var i = 0; i < bridgeLogForm.length; i++)
 					{
 						if(bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
 						{
@@ -202,6 +206,8 @@
 					Query.complexFetch('/serverside/config', 10000, 1, overlays, true, JSON.stringify(configObject)).then((data) => {
 
 						document.getElementById('save-btn').classList.remove('pulse');
+
+						console.log(configObject, configJSON);
 
 						if(data == 'Success' && JSON.stringify(configObject) != JSON.stringify(configJSON))
 						{
