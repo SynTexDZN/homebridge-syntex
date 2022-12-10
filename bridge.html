@@ -10,7 +10,7 @@
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<div style="width: 100%"><button id="restart-btn" class="gradient-overlay overlay-orange" type="button" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s">%bridge.restart%</button></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+				main.innerHTML = '<div style="width: 100%"><input id="restart-btn" type="button" value="%bridge.restart%" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s"></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -104,7 +104,7 @@
 			<script>
 
 				window.restarting = false;
-				window.updating = 0;
+				window.updating = false;
 
 				// NOTE: Reload Plugin Data
 
@@ -247,7 +247,7 @@
 
 				async function restartBridge(btn)
 				{
-					if(!restarting && updating == 0)
+					if(!restarting && !updating)
 					{
 						var overlays = {
 							root : btn,
@@ -266,8 +266,6 @@
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
-
-								document.getElementById('restart-btn').classList.remove('activated');
 							}
 							else
 							{
@@ -329,13 +327,11 @@
 				}
 
 				// NOTE: Plugin Update
-
+				
 				async function updatePlugin(id, btn)
 				{
-					if(!restarting)
+					if(!restarting && !updating)
 					{
-						var success = false;
-
 						var overlays = {
 							root : btn,
 							id : 'update',
@@ -344,70 +340,63 @@
 							connectionError : { value : '%general.bridge_connection_error%!' }
 						};
 						
-						updating++;
+						updating = true;
 
 						await Query.complexFetch('/serverside/update?plugin=' + id + '&version=' + latestVersions[id], 5000, 2, overlays, false);
 							
 						await Essentials.newTimeout(3000);
 
-						const checkUpdate = () => {
+						var success = false;
+							
+						if(await Essentials.checkRestart('/serverside/update?status')
+						&& await Essentials.checkRestart('/serverside/check-restart'))
+						{
+							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
 
-							Query.fetchURL('/serverside/update?status&plugin=' + id).then(async (data) => {
+							await loadPluginData();
 
-								console.log(data);
+							if(this.plugins[id].versions['current'] != null)
+							{
+								versions[id] = this.plugins[id].versions['current'];
 
-								if(data != 'Pending')
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%bridge.version%: </b>' + versions[id];
+							
+								if(latestVersions[id] == versions[id])
 								{
-									if(data != 'Error')
-									{
-										versions[id] = data;
+									Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', '%general.update_success%!'));
 
-										document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%bridge.version%: </b>' + versions[id];
-									
-										if(latestVersions[id] == versions[id])
-										{
-											Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', '%general.update_success%!'));
+									document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
+									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+									document.getElementById('update-status-' + id).classList.remove('shine');
 
-											document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
-											document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
-											document.getElementById('update-status-' + id).classList.remove('shine');
-
-											success = true;
-										}
-										else
-										{
-											Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
-										}
-									}
-									else
-									{
-										Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
-									}
-
-									await Essentials.newTimeout(4000);
-
-									updating--;
-
-									Essentials.removeOverlays(btn, success ? null : true);
-
-									if(success)
-									{
-										PageManager.removeFooter('update-btn-' + id);
-
-										if(updating == 0)
-										{
-											document.getElementById('restart-btn').classList.add('activated');
-										}
-									}
+									success = true;
 								}
 								else
 								{
-									checkUpdate();
+									Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
 								}
-							});
-						};
+							}
+							else
+							{
+								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%general.version%: </b>%general.connection_error%';
+								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
+							}
+						}
+						else
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.restart_failed%!'));
+						}
 
-						checkUpdate();
+						await Essentials.newTimeout(4000);
+
+						updating = false;
+
+						Essentials.removeOverlays(btn, success ? null : true);
+
+						if(success)
+						{
+							PageManager.removeFooter('update-btn-' + id);
+						}
 					}
 				}
 				

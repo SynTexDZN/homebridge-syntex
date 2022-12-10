@@ -25,8 +25,7 @@ class SynTexPlatform
 		this.internalSockets = {};
 
 		this.restart = true;
-
-		this.updating = [];
+		this.updating = false;
 
 		this.lastAccessoryRefresh = new Date().getTime();
 
@@ -484,37 +483,20 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/update', (request, response, urlParams) => {
 
-			var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
-
-			const { exec } = require('child_process');
-
 			if(urlParams.status != null)
 			{
-				if(!this.updating.includes(updateID))
-				{
-					exec('sudo npm list ' + updateID + ' -g', (error, stdout, stderr) => {
-
-						if(error || (stderr && stderr.includes('ERR!')) || !stdout.includes('@'))
-						{
-							response.end('Error');
-						}
-						else
-						{
-							response.end(stdout.split('@')[1].trim());
-						}
-					});
-				}
-				else
-				{
-					response.end('Pending');
-				}
+				response.write(this.updating.toString());
+				response.end();
 			}
 			else
 			{
+				var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
 				var version = urlParams.version != null ? urlParams.version : 'latest';
 
-				this.updating.push(updateID);
+				this.updating = true;
 
+				const { exec } = require('child_process');
+				
 				exec('sudo npm install ' + updateID + '@' + version + ' -g', (error, stdout, stderr) => {
 
 					if(error || (stderr && stderr.includes('ERR!')))
@@ -524,12 +506,19 @@ class SynTexPlatform
 					else
 					{
 						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
+						
+						this.restart = true;
+
+						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
+						
+						exec('sudo systemctl restart homebridge');
 					}
 
-					this.updating.splice(this.updating.indexOf(updateID), 1);
+					this.updating = false;
 				});
 
-				response.end('Success');
+				response.write('Success');
+				response.end();
 			}
 		});
 
