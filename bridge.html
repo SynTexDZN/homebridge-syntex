@@ -10,7 +10,7 @@
 
 				main.style.display = 'flex';
 
-				main.innerHTML = '<div style="width: 100%"><input id="restart-btn" type="button" value="%bridge.restart%" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s"></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+				main.innerHTML = '<div style="width: 100%"><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s">%bridge.restart%</button></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -106,6 +106,8 @@
 				window.restarting = false;
 				window.updating = false;
 
+				window.updateQuery = [];
+
 				// NOTE: Reload Plugin Data
 
 				function loadPluginData()
@@ -157,20 +159,42 @@
 						
 						if(document.getElementById(id) == null)
 						{
-							var container = document.createElement('div');
+							var container = document.createElement('div'),
+								expandable = document.createElement('button'),
+								head = document.createElement('div'),
+								status = document.createElement('div'),
+								content = document.createElement('div'),
+								version = document.createElement('div'),
+								latest = document.createElement('div');
 
-							container.setAttribute('id', id);
+							container.id = id;
 
-							var innerHTML = '';
+							expandable.className = 'plugin-container';
 
-							innerHTML += '<button class="plugin-container" style="display: flex">'
-							innerHTML += '<div style="width: calc(100% - 150px)">' + title;
-							innerHTML += '<div class="loading-loop expandable-hidden" id="version-' + id + '"><b>%bridge.version%: </b>' + versions[id] + '</div>';
-							innerHTML += '<div class="loading-loop expandable-hidden" id="latest-version-' + id + '" style="margin-bottom: 0"><b>%bridge.latest_version%: </b>' + latestVersions[id] + '</div>';
-							innerHTML += '</div><div id="update-status-' + id + '" class="update-status loading-loop"></div>';
-							innerHTML += '</button>';
+							head.innerHTML = title;
+							head.style.display = 'flex';
+							head.style.justifyContent = 'space-between';
 
-							container.innerHTML = innerHTML;
+							status.id = 'update-status-' + id;
+							status.className = 'update-status loading-loop';
+
+							version.id = 'version-' + id;
+							version.className = 'loading-loop expandable-hidden';
+							version.innerHTML = '%bridge.version%: </b>' + versions[id];
+							
+							latest.id = 'latest-version-' + id;
+							latest.className = 'loading-loop expandable-hidden';
+							latest.innerHTML = '%bridge.latest_version%: </b>' + latestVersions[id];
+
+							content.appendChild(version);
+							content.appendChild(latest);
+
+							head.appendChild(status);
+
+							expandable.appendChild(head);
+							expandable.appendChild(content);
+
+							container.appendChild(expandable);
 
 							document.getElementById(id == 'npm' || id == 'homebridge' ? 'core-plugins' : 'plugins').appendChild(container);
 
@@ -192,9 +216,22 @@
 
 								updateButton.setAttribute('type', 'button');
 								updateButton.setAttribute('value', title + ' %bridge.update% ( v' + latestVersions[id] + ' )');
-								updateButton.setAttribute('onclick', 'updatePlugin("' + id + '", this)');
 								updateButton.setAttribute('id', 'update-btn-' + id);
 								updateButton.setAttribute('style', 'margin-bottom: 20px');
+
+								updateButton.onclick = () => {
+
+									if(!window.updateQuery.includes(id + '@' + latestVersions[id]))
+									{
+										window.updateQuery.push(id + '@' + latestVersions[id]);
+									}
+									else
+									{
+										window.updateQuery.splice(window.updateQuery.indexOf(id + '@' + latestVersions[id]));
+									}
+
+									document.getElementById('update-query-btn').setAttribute('value', window.updateQuery.length + ' %devices.update_all%');
+								};
 
 								PageManager.addFooter(updateButton);
 							}
@@ -206,6 +243,22 @@
 							document.getElementById('update-status-' + id).innerHTML = '%bridge.update_available%';
 							document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
 							document.getElementById('update-status-' + id).classList.add('shine');
+
+							if(document.getElementById('update-query-btn') == null)
+							{
+								var updateQuery = document.createElement('button');
+
+								updateQuery.id = 'update-query-btn';
+								updateQuery.innerHTML = '0 %devices.update_all%';
+
+								updateQuery.style.marginBottom = '20px';
+
+								updateQuery.setAttribute('type', 'button');
+
+								updateQuery.onclick = () => updatePlugins(updateQuery);
+
+								PageManager.addFooter(updateQuery);
+							}
 						}
 						else
 						{
@@ -266,6 +319,8 @@
 							if(await Essentials.checkRestart('/serverside/check-restart'))
 							{
 								Essentials.showOverlay(btn, Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
+
+								document.getElementById('restart-btn').classList.remove('activated');
 							}
 							else
 							{
@@ -327,10 +382,10 @@
 				}
 
 				// NOTE: Plugin Update
-				
-				async function updatePlugin(id, btn)
+
+				function updatePlugins(btn)
 				{
-					if(!restarting && !updating)
+					if(updateQuery.length > 0 && !restarting && !updating)
 					{
 						var overlays = {
 							root : btn,
@@ -342,61 +397,86 @@
 						
 						updating = true;
 
-						await Query.complexFetch('/serverside/update?plugin=' + id + '&version=' + latestVersions[id], 5000, 2, overlays, false);
-							
-						await Essentials.newTimeout(3000);
+						Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : updateQuery })).then((data) => {
 
-						var success = false;
-							
-						if(await Essentials.checkRestart('/serverside/update?status')
-						&& await Essentials.checkRestart('/serverside/check-restart'))
-						{
-							document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
+							const checkUpdate = () => {
 
-							await loadPluginData();
+								Query.fetchURL('/serverside/update').then((data) => {
 
-							if(this.plugins[id].versions['current'] != null)
-							{
-								versions[id] = this.plugins[id].versions['current'];
+									if(data != 'Pending')
+									{
+										var success = false;
 
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%bridge.version%: </b>' + versions[id];
-							
-								if(latestVersions[id] == versions[id])
-								{
-									Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result', '%general.update_success%!'));
+										for(const query of updateQuery)
+										{
+											const id = query.split('@')[0], version = query.split('@')[1];
 
-									document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
-									document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
-									document.getElementById('update-status-' + id).classList.remove('shine');
+											if(data != 'Error')
+											{
+												data = JSON.parse(data);
 
-									success = true;
-								}
-								else
-								{
-									Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
-								}
-							}
-							else
-							{
-								document.getElementById('version-' + id.toLowerCase()).innerHTML = '<b>%general.version%: </b>%general.connection_error%';
-								Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.update_failed%!'));
-							}
-						}
-						else
-						{
-							Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result', '%general.restart_failed%!'));
-						}
+												for(const plugin of data)
+												{
+													if(plugin.id == id)
+													{
+														if(plugin.version == version)
+														{
+															versions[id] = version;
 
-						await Essentials.newTimeout(4000);
+															document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + version;
 
-						updating = false;
+															Essentials.showOverlay(btn, Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
 
-						Essentials.removeOverlays(btn, success ? null : true);
+															document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
+															document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
+															document.getElementById('update-status-' + id).classList.remove('shine');
 
-						if(success)
-						{
-							PageManager.removeFooter('update-btn-' + id);
-						}
+															success = true;
+														}
+														else
+														{
+															Essentials.showOverlay(btn, Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
+														}
+
+														setTimeout(() => {
+															
+															Essentials.removeOverlays(btn, true);
+
+															if(plugin.version == version)
+															{
+																PageManager.removeFooter('update-btn-' + id);
+															}
+															
+														}, 4000);
+													}
+												}
+											}
+											else
+											{
+												Essentials.showOverlay(document.getElementById('update-btn-' + id), Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
+											}
+										}
+
+										setTimeout(() => {
+
+											updating = false;
+
+											if(success)
+											{
+												document.getElementById('restart-btn').classList.add('activated');
+											}
+											
+										}, 4000);
+									}
+									else
+									{
+										checkUpdate();
+									}
+								});
+							};
+
+							setTimeout(() => checkUpdate(), 3000);
+						});
 					}
 				}
 				

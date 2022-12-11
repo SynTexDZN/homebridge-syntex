@@ -481,44 +481,80 @@ class SynTexPlatform
 			response.end();
 		});
 
-		this.WebServer.addPage('/serverside/update', (request, response, urlParams) => {
+		this.WebServer.addPage('/serverside/update', (request, response, urlParams, content, postJSON) => {
 
-			if(urlParams.status != null)
+			const { exec } = require('child_process');
+
+			if(postJSON != null)
 			{
-				response.write(this.updating.toString());
-				response.end();
+				if(postJSON.plugins != null && !this.updating)
+				{
+					this.updating = true;
+
+					exec('sudo npm install ' + postJSON.plugins.join(' ') + ' -g', (error, stdout, stderr) => {
+
+						if(error || (stderr && stderr.includes('ERR!')))
+						{
+							this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%!', (error || stderr));
+						}
+						else
+						{
+							for(const plugin of postJSON.plugins)
+							{
+								this.logger.log('success', 'bridge', 'Bridge', '[' + plugin.id + '] %plugin_update_success[0]% [' + plugin.version + '] %plugin_update_success[1]%!');
+							}
+						}
+	
+						this.updating = false;
+					});
+	
+					response.end('Success');
+				}
+				else
+				{
+					response.end('Error');
+				}
 			}
 			else
 			{
-				var updateID = urlParams.plugin != null ? urlParams.plugin : pluginID;
-				var version = urlParams.version != null ? urlParams.version : 'latest';
+				if(!this.updating)
+				{
+					exec('sudo npm list -g --json', (error, stdout, stderr) => {
 
-				this.updating = true;
+						if(error || (stderr && stderr.includes('ERR!')))
+						{
+							response.end('Error');
+						}
+						else
+						{
+							var plugins = [];
 
-				const { exec } = require('child_process');
-				
-				exec('sudo npm install ' + updateID + '@' + version + ' -g', (error, stdout, stderr) => {
+							try
+							{
+								var output = JSON.parse(stdout);
 
-					if(error || (stderr && stderr.includes('ERR!')))
-					{
-						this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%!', (error || stderr));
-					}
-					else
-					{
-						this.logger.log('success', 'bridge', 'Bridge', '[' + updateID + '] %plugin_update_success[0]% [' + version + '] %plugin_update_success[1]%!');
-						
-						this.restart = true;
+								if(output.dependencies != null)
+								{
+									for(const id in output.dependencies)
+									{
+										plugins.push({ id, version : output.dependencies[id].version });
+									}
+								}
 
-						this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
-						
-						exec('sudo systemctl restart homebridge');
-					}
+							}
+							catch(e)
+							{
+								this.logger.err(e);
+							}
 
-					this.updating = false;
-				});
-
-				response.write('Success');
-				response.end();
+							response.end(JSON.stringify(plugins));
+						}
+					});
+				}
+				else
+				{
+					response.end('Pending');
+				}
 			}
 		});
 
