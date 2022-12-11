@@ -138,7 +138,7 @@
 
 				function renderGUI()
 				{
-					var counter = 0, removedUpdate = false;
+					var counter = 0, removedUpdate = false, hasUpdate = false
 
 					for(const id in plugins)
 					{
@@ -227,10 +227,10 @@
 									}
 									else
 									{
-										window.updateQuery.splice(window.updateQuery.indexOf(id + '@' + latestVersions[id]));
+										window.updateQuery.splice(window.updateQuery.indexOf(id + '@' + latestVersions[id]), 1);
 									}
 
-									document.getElementById('update-query-btn').setAttribute('value', window.updateQuery.length + ' %devices.update_all%');
+									document.getElementById('update-query-btn').innerHTML = window.updateQuery.length + ' %devices.update_all%';
 								};
 
 								PageManager.addFooter(updateButton);
@@ -244,21 +244,7 @@
 							document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
 							document.getElementById('update-status-' + id).classList.add('shine');
 
-							if(document.getElementById('update-query-btn') == null)
-							{
-								var updateQuery = document.createElement('button');
-
-								updateQuery.id = 'update-query-btn';
-								updateQuery.innerHTML = '0 %devices.update_all%';
-
-								updateQuery.style.marginBottom = '20px';
-
-								updateQuery.setAttribute('type', 'button');
-
-								updateQuery.onclick = () => updatePlugins(updateQuery);
-
-								PageManager.addFooter(updateQuery);
-							}
+							hasUpdate = true;
 						}
 						else
 						{
@@ -282,6 +268,22 @@
 
 							document.getElementById('update-status-' + id).classList.remove('shine');
 						}
+					}
+
+					if(hasUpdate)
+					{
+						var updateQuery = document.createElement('button');
+
+						updateQuery.id = 'update-query-btn';
+						updateQuery.innerHTML = '0 %devices.update_all%';
+
+						updateQuery.style.marginBottom = '20px';
+
+						updateQuery.setAttribute('type', 'button');
+
+						updateQuery.onclick = () => updatePlugins(updateQuery);
+
+						PageManager.addFooter(updateQuery);
 					}
 
 					if(removedUpdate)
@@ -399,21 +401,27 @@
 
 						Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : updateQuery })).then((data) => {
 
+							console.log('X1', data);
+
 							const checkUpdate = () => {
 
 								Query.fetchURL('/serverside/update').then((data) => {
+
+									console.log('X2', data);
 
 									if(data != 'Pending')
 									{
 										var success = false;
 
-										for(const query of updateQuery)
+										if(data != 'Error')
 										{
-											const id = query.split('@')[0], version = query.split('@')[1];
+											data = JSON.parse(data);
 
-											if(data != 'Error')
+											console.log('X3', data);
+
+											for(const query of updateQuery)
 											{
-												data = JSON.parse(data);
+												const id = query.split('@')[0], version = query.split('@')[1];
 
 												for(const plugin of data)
 												{
@@ -451,10 +459,6 @@
 													}
 												}
 											}
-											else
-											{
-												Essentials.showOverlay(document.getElementById('update-btn-' + id), Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
-											}
 										}
 
 										setTimeout(() => {
@@ -463,6 +467,10 @@
 
 											if(success)
 											{
+												updateQuery = [];
+
+												document.getElementById('update-query-btn').innerHTML = '0 %devices.update_all%';
+
 												document.getElementById('restart-btn').classList.add('activated');
 											}
 											
@@ -470,12 +478,12 @@
 									}
 									else
 									{
-										checkUpdate();
+										setTimeout(() => checkUpdate(), 1000);
 									}
 								});
 							};
 
-							setTimeout(() => checkUpdate(), 3000);
+							setTimeout(() => checkUpdate(), 1000);
 						});
 					}
 				}

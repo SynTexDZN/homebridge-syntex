@@ -485,6 +485,14 @@ class SynTexPlatform
 
 			const { exec } = require('child_process');
 
+			const setVersion = (id, version) => {
+
+				if(PluginManager.plugins[id] != null)
+				{
+					PluginManager.plugins[id].versions.current = version;
+				}
+			};
+
 			if(postJSON != null)
 			{
 				if(postJSON.plugins != null && !this.updating)
@@ -537,6 +545,8 @@ class SynTexPlatform
 								{
 									for(const id in output.dependencies)
 									{
+										setVersion(id, output.dependencies[id].version);
+
 										plugins.push({ id, version : output.dependencies[id].version });
 									}
 								}
