@@ -500,18 +500,19 @@ class SynTexPlatform
 					this.updating = true;
 
 					exec('sudo npm install ' + postJSON.plugins.join(' ') + ' -g', (error, stdout, stderr) => {
-
+						/*
 						if(error || (stderr && stderr.includes('ERR!')))
 						{
 							this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%!', (error || stderr));
 						}
 						else
 						{
+							*/
 							for(const plugin of postJSON.plugins)
 							{
-								this.logger.log('success', 'bridge', 'Bridge', '[' + plugin.id + '] %plugin_update_success[0]% [' + plugin.version + '] %plugin_update_success[1]%!');
+								this.logger.log('success', 'bridge', 'Bridge', '[' + plugin.split('@')[0] + '] %plugin_update_success[0]% [' + plugin.split('@')[1] + '] %plugin_update_success[1]%!');
 							}
-						}
+						//}
 	
 						this.updating = false;
 					});
