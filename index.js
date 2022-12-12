@@ -396,8 +396,7 @@ class SynTexPlatform
 				name : this.bridgeName
 			};
 
-			response.write(JSON.stringify(infos));
-			response.end();
+			response.end(JSON.stringify(infos));
 		});
 
 		this.WebServer.addPage('/serverside/init', (request, response, urlParams) => {
@@ -406,8 +405,7 @@ class SynTexPlatform
 			{
 				DeviceManager.initDevice(urlParams.id, urlParams.ip, urlParams.name, urlParams.version, urlParams.buttons, urlParams.services != null ? urlParams.services : '[]').then((res) => {
 
-					response.write(res[1]);
-					response.end();
+					response.end(res[1]);
 
 					if(res[0] == 'Init')
 					{
@@ -430,8 +428,7 @@ class SynTexPlatform
 			{
 				DeviceManager.initAccessory(postJSON.id, postJSON.name, postJSON.services).then((res) => {
 
-					response.write(res[1]);
-					response.end();
+					response.end(res[1]);
 
 					if(res[0] == 'Success')
 					{
@@ -448,8 +445,7 @@ class SynTexPlatform
 			}
 			else
 			{
-				response.write('Error');
-				response.end();
+				response.end('Error');
 			}
 		});
 
@@ -459,8 +455,7 @@ class SynTexPlatform
 
 			const { exec } = require('child_process');
 			
-			response.write('Success');
-			response.end();
+			response.end('Success');
 
 			this.logger.log('warn', 'bridge', 'Bridge', '%restart_homebridge% ..');
 
@@ -469,16 +464,14 @@ class SynTexPlatform
 
 		this.WebServer.addPage('/serverside/check-restart', (request, response) => {
 
-			response.write(this.restart.toString());
-			response.end();
+			response.end(this.restart.toString());
 		});
 
 		this.WebServer.addPage('/serverside/version', async (request, response) => {
 
 			const pJSON = require('./package.json');
 
-			response.write(pJSON.version);
-			response.end();
+			response.end(pJSON.version);
 		});
 
 		this.WebServer.addPage('/serverside/update', (request, response, urlParams, content, postJSON) => {
@@ -623,8 +616,7 @@ class SynTexPlatform
 				}
 			}
 
-			response.write(JSON.stringify(result));
-			response.end();
+			response.end(JSON.stringify(result));
 		});
 
 		this.WebServer.addPage('/serverside/log', (request, response) => {
@@ -649,14 +641,12 @@ class SynTexPlatform
 						}
 					}
 	
-					response.write(JSON.stringify(obj));
-					response.end();
+					response.end(JSON.stringify(obj));
 				});
 			}
 			else
 			{
-				response.write('{}');
-				response.end();
+				response.end('{}');
 			}
 		});
 
@@ -669,8 +659,7 @@ class SynTexPlatform
 
 			var date = new Date();
 
-			response.write('' + (date.getTime() / 1000 + -(date.getTimezoneOffset()) * 60 + 1));
-			response.end();
+			response.end('' + (date.getTime() / 1000 + -(date.getTimezoneOffset()) * 60 + 1));
 		});
 
 		this.WebServer.addPage('/serverside/check-device', async (request, response, urlParams) => {
@@ -679,8 +668,7 @@ class SynTexPlatform
 			{
 				var device = await DeviceManager.getConfigAccessory(urlParams.id);
 
-				response.write(device != null ? 'Success' : 'Error');
-				response.end();
+				response.end(device != null ? 'Success' : 'Error');
 			}
 		});
 
@@ -770,8 +758,7 @@ class SynTexPlatform
 				await PluginManager.reloadUpdates();
 			}
 
-			response.write(JSON.stringify(PluginManager.getPlugins()));
-			response.end();
+			response.end(JSON.stringify(PluginManager.getPlugins()));
 		});
 
 		this.WebServer.addPage('/serverside/update-config', async (request, response, urlParams, content, postJSON) => {
@@ -790,8 +777,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/device'], async (request, response, urlParams, content) => {
 
-			response.write(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
-			response.end();
+			response.end(HTMLQuery.sendValue(content, 'device', JSON.stringify(DeviceManager.getAccessory(urlParams.id))));
 		});
 
 		this.WebServer.addPage(['/serverside/devices'], async (request, response) => {
@@ -850,8 +836,7 @@ class SynTexPlatform
 				if(iface.length > 0) address = iface[0].address;
 			}
 
-			response.write(HTMLQuery.sendValue(content, 'bridge-ip', address));
-			response.end();
+			response.end(HTMLQuery.sendValue(content, 'bridge-ip', address));
 		});
 
 		this.WebServer.addPage(['/bridge', '/debug/workaround/bridge'], async (request, response, urlParams, content) => {
@@ -896,8 +881,7 @@ class SynTexPlatform
 						obj.ethernetMac = eMac.replace(/\s/g, '');
 					}
 					
-					response.write(HTMLQuery.sendValues(content, obj));
-					response.end();
+					response.end(HTMLQuery.sendValues(content, obj));
 				});
 			});
 		});
@@ -921,14 +905,12 @@ class SynTexPlatform
 				obj.push({ name : 'SynTex MagicHome' });
 			}
 
-			response.write(HTMLQuery.sendValues(content, { crossoverPlugins : JSON.stringify(obj) }));
-			response.end();
+			response.end(HTMLQuery.sendValues(content, { crossoverPlugins : JSON.stringify(obj) }));
 		});
 
 		this.WebServer.addPage(['/debug/workaround/automation/', '/debug/workaround/automation/modify'], async (request, response, urlParams, content) => {
 
-			response.write(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
-			response.end();
+			response.end(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
 		});
 
 		this.WebServer.addPage('/debug/', (request, response, urlParams, content) => {
@@ -939,8 +921,7 @@ class SynTexPlatform
 					workaround: JSON.stringify(files)
 				};
 	
-				response.write(HTMLQuery.sendValues(content, obj));
-				response.end();
+				response.end(HTMLQuery.sendValues(content, obj));
 			});
 		});
 
@@ -954,8 +935,7 @@ class SynTexPlatform
 						configJSON: JSON.stringify(config)
 					};
 
-					response.write(HTMLQuery.sendValues(content, obj));
-					response.end();
+					response.end(HTMLQuery.sendValues(content, obj));
 				}
 			});
 		});
@@ -970,14 +950,12 @@ class SynTexPlatform
 
 					if(stderr || error)
 					{
-						response.write(stderr || error.message);
+						response.end(stderr || error.message);
 					}
 					else
 					{
-						response.write(stdout != '' ? stdout : 'Success');
+						response.end(stdout != '' ? stdout : 'Success');
 					}
-
-					response.end();
 				});
 			}
 		});
@@ -1028,14 +1006,12 @@ class SynTexPlatform
 
 						Promise.all(promiseArray).then((result) => {
 
-							response.write(result.includes(false) ? 'Error' : 'Success');
-							response.end();
+							response.end(result.includes(false) ? 'Error' : 'Success');
 						});
 					}
 					else
 					{
-						response.write('Error');
-						response.end();
+						response.end('Error');
 					}
 				}
 				else
@@ -1098,22 +1074,19 @@ class SynTexPlatform
 
 					Promise.all(promiseArray).then(() => {
 
-						response.write(JSON.stringify(states));
-						response.end();
+						response.end(JSON.stringify(states));
 					});
 				}
 			}
 			else
 			{
-				response.write('Error');
-				response.end();
+				response.end('Error');
 			}
 		});
 
 		this.WebServer.addPage(['/debug/workaround/qr'], async (request, response, urlParams, content) => {
 
-			response.write(HTMLQuery.sendValue(content, 'pairingCode', this.pairingCode));
-			response.end();
+			response.end(HTMLQuery.sendValue(content, 'pairingCode', this.pairingCode));
 		});
 
 		this.WebServer.addPage(['/serverside/config'], async (request, response, urlParams, content, postJSON) => {
@@ -1122,16 +1095,14 @@ class SynTexPlatform
 			{
 				this.setPluginConfig('SynTex', postJSON).then((success) => {
 
-					response.write(success ? 'Success' : 'Error');
-					response.end();
+					response.end(success ? 'Success' : 'Error');
 				});
 			}
 			else
 			{
 				this.getPluginConfig('SynTex').then((config) => {
 
-					response.write(JSON.stringify(config));
-					response.end();
+					response.end(JSON.stringify(config));
 				});
 			}
 		});
