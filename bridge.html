@@ -401,13 +401,9 @@
 
 						Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : updateQuery })).then((data) => {
 
-							console.log('X1', data);
-
 							const checkUpdate = () => {
 
 								Query.fetchURL('/serverside/update').then((data) => {
-
-									console.log('X2', data);
 
 									if(data != 'Pending')
 									{
@@ -416,8 +412,6 @@
 										if(data != 'Error')
 										{
 											data = JSON.parse(data);
-
-											console.log('X3', data);
 
 											for(const query of updateQuery)
 											{
