@@ -127,7 +127,7 @@ class Running
                                         {
                                             if(plugin.version == version)
                                             {
-                                                window.Init.versions[id] = version;
+                                                window.Init.version.current[id] = version;
 
                                                 document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + version;
 

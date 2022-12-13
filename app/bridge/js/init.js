@@ -6,14 +6,10 @@ class Init
     {
         window.Expandable = Expandable;
 
-        this.bridgeID = '<%bridgeID%>';
-        this.bridgeIP = '<%bridgeIP%>';
-        this.wlanMac = '<%wlanMac%>';
-        this.ethernetMac = '<%ethernetMac%>';
-
         this.plugins = {};
-        this.versions = {};
-        this.latestVersions = {};
+
+        this.bridge = { ip : {}, mac : {} };
+        this.version = { current : {}, latest : {} };
 
         this.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 
@@ -77,38 +73,35 @@ class Init
     {
         var removedUpdate = false, hasUpdate = false;
 
-        if(this.bridge != null)
+        if(this.bridge.id != null)
         {
-            if(this.bridge.id != null)
-            {
-                document.getElementById('bridge-id').innerHTML = this.bridge.id;
-            }
+            document.getElementById('bridge-id').innerHTML = this.bridge.id;
+        }
 
-            if(this.bridge.ip.lan != null && this.bridge.ip.wlan != null)
-            {
-                document.getElementById('bridge-ip').innerHTML = this.bridge.ip.lan + '<br>' + this.bridge.ip.wlan;
-            }
-            else if(this.bridge.ip.lan != null)
-            {
-                document.getElementById('bridge-ip').innerHTML = '-<br>' + this.bridge.ip.lan;
-            }
-            else if(this.bridge.ip.wlan != null)
-            {
-                document.getElementById('bridge-ip').innerHTML = this.bridge.ip.wlan + '<br>-';
-            }
+        if(this.bridge.ip.lan != null && this.bridge.ip.wlan != null)
+        {
+            document.getElementById('bridge-ip').innerHTML = this.bridge.ip.lan + '<br>' + this.bridge.ip.wlan;
+        }
+        else if(this.bridge.ip.lan != null)
+        {
+            document.getElementById('bridge-ip').innerHTML = '-<br>' + this.bridge.ip.lan;
+        }
+        else if(this.bridge.ip.wlan != null)
+        {
+            document.getElementById('bridge-ip').innerHTML = this.bridge.ip.wlan + '<br>-';
+        }
 
-            if(this.bridge.mac.lan != null && this.bridge.mac.wlan != null)
-            {
-                document.getElementById('bridge-mac').innerHTML = this.bridge.mac.lan.toUpperCase() + '<br>' + this.bridge.mac.wlan.toUpperCase();
-            }
-            else if(this.bridge.mac.lan != 'null')
-            {
-                document.getElementById('bridge-mac').innerHTML = '-<br>' + this.bridge.mac.lan.toUpperCase();
-            }
-            else if(this.bridge.mac.wlan != null)
-            {
-                document.getElementById('bridge-mac').innerHTML = this.bridge.mac.wlan.toUpperCase() + '<br>-';
-            }
+        if(this.bridge.mac.lan != null && this.bridge.mac.wlan != null)
+        {
+            document.getElementById('bridge-mac').innerHTML = this.bridge.mac.lan.toUpperCase() + '<br>' + this.bridge.mac.wlan.toUpperCase();
+        }
+        else if(this.bridge.mac.lan != 'null')
+        {
+            document.getElementById('bridge-mac').innerHTML = '-<br>' + this.bridge.mac.lan.toUpperCase();
+        }
+        else if(this.bridge.mac.wlan != null)
+        {
+            document.getElementById('bridge-mac').innerHTML = this.bridge.mac.wlan.toUpperCase() + '<br>-';
         }
 
         for(const id in this.plugins)
@@ -120,12 +113,12 @@ class Init
             {
                 newestVersion = window.Essentials.versionCount(this.plugins[id].versions[this.tag]) > window.Essentials.versionCount(this.plugins[id].versions['latest']) ? this.plugins[id].versions[this.tag] : this.plugins[id].versions['latest'];
 
-                this.latestVersions[id] = newestVersion;
+                this.version.latest[id] = newestVersion;
             }
 
             if(this.plugins[id].versions['current'] != null)
             {
-                this.versions[id] = this.plugins[id].versions['current'];
+                this.version.current[id] = this.plugins[id].versions['current'];
             }
             
             if(document.getElementById(id) == null)
@@ -151,11 +144,11 @@ class Init
 
                 version.id = 'version-' + id;
                 version.className = 'loading-loop expandable-hidden';
-                version.innerHTML = '%bridge.version%: </b>' + this.versions[id];
+                version.innerHTML = '%bridge.version%: </b>' + this.version.current[id];
                 
                 latest.id = 'latest-version-' + id;
                 latest.className = 'loading-loop expandable-hidden';
-                latest.innerHTML = '%bridge.latest_version%: </b>' + this.latestVersions[id];
+                latest.innerHTML = '%bridge.latest_version%: </b>' + this.version.latest[id];
 
                 content.appendChild(version);
                 content.appendChild(latest);
@@ -173,30 +166,30 @@ class Init
             }
             else
             {
-                document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + this.versions[id];
-                document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + this.latestVersions[id];
+                document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + this.version.current[id];
+                document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + this.version.latest[id];
             }
 
-            if(this.versions[id] != null && this.latestVersions[id] != null && window.Essentials.versionCount(this.latestVersions[id]) > window.Essentials.versionCount(this.versions[id]))
+            if(this.version.current[id] != null && this.version.latest[id] != null && window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
             {
                 if(document.getElementById('update-btn-' + id) == null)
                 {
                     var updateButton = document.createElement('input');
 
                     updateButton.setAttribute('type', 'button');
-                    updateButton.setAttribute('value', title + ' %bridge.update% ( v' + this.latestVersions[id] + ' )');
+                    updateButton.setAttribute('value', title + ' %bridge.update% ( v' + this.version.latest[id] + ' )');
                     updateButton.setAttribute('id', 'update-btn-' + id);
                     updateButton.setAttribute('style', 'margin-bottom: 20px');
 
                     updateButton.onclick = () => {
 
-                        if(!window.Running.updateQuery.includes(id + '@' + this.latestVersions[id]))
+                        if(!window.Running.updateQuery.includes(id + '@' + this.version.latest[id]))
                         {
-                            window.Running.updateQuery.push(id + '@' + this.latestVersions[id]);
+                            window.Running.updateQuery.push(id + '@' + this.version.latest[id]);
                         }
                         else
                         {
-                            window.Running.updateQuery.splice(window.Running.updateQuery.indexOf(id + '@' + this.latestVersions[id]), 1);
+                            window.Running.updateQuery.splice(window.Running.updateQuery.indexOf(id + '@' + this.version.latest[id]), 1);
                         }
 
                         document.getElementById('update-query-btn').innerHTML = window.Running.updateQuery.length + ' %devices.update_all%';
@@ -206,7 +199,7 @@ class Init
                 }
                 else
                 {
-                    document.getElementById('update-btn-' + id).value = title + ' %bridge.update% ( v' + this.latestVersions[id] + ' )';
+                    document.getElementById('update-btn-' + id).value = title + ' %bridge.update% ( v' + this.version.latest[id] + ' )';
                 }
 
                 document.getElementById('update-status-' + id).innerHTML = '%bridge.update_available%';
@@ -224,7 +217,7 @@ class Init
                     removedUpdate = true;
                 }
 
-                if(this.versions[id] == null || this.latestVersions[id] == null)
+                if(this.version.current[id] == null || this.version.latest[id] == null)
                 {
                     document.getElementById('update-status-' + id).innerHTML = '%bridge.update_error%';
                     document.getElementById('update-status-' + id).style.background = 'hsl(350, 95%, 60%)';
