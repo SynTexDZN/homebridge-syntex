@@ -8,9 +8,7 @@
 
 				var main = document.createElement('div');
 
-				main.style.display = 'flex';
-
-				main.innerHTML = '<div style="width: 100%"><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="Running.restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s">%bridge.restart%</button></div><div style="width: 100%; margin-left: 20px"><button onclick="Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+				main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
 
 				PageManager.setFooter(main);
 				PageManager.showFooter();
@@ -23,24 +21,26 @@
 				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
 			</div>
 			<div class="main">
-				<div class="widget widget-multi">
-					<button class="widget-left">%bridge.bridge_id%</button>
-					<button class="widget-right gradient-blue" id="bridge-id">-</button>
-				</div>
-				<div class="widget widget-multi">
-					<button class="widget-left">%bridge.ip_ethernet%<br>%bridge.ip_wifi%</button>
-					<button class="widget-right gradient-blue" id="bridge-ip">-<br>-</button>
-				</div>
-				<div class="widget widget-multi">
-					<button class="widget-left">%bridge.mac_ethernet%<br>%bridge.mac_wifi%</button>
-					<button class="widget-right gradient-blue" id="bridge-mac">-<br>-</button>
+				<div id="widgets">
+					<div class="widget widget-multi">
+						<button class="widget-left">%bridge.bridge_id%</button>
+						<button class="widget-right gradient-blue" id="bridge-id">-</button>
+					</div>
+					<div class="widget widget-multi">
+						<button class="widget-left">%bridge.ip_ethernet%<br>%bridge.ip_wifi%</button>
+						<button class="widget-right gradient-blue" id="bridge-ip">-<br>-</button>
+					</div>
+					<div class="widget widget-multi">
+						<button class="widget-left">%bridge.mac_ethernet%<br>%bridge.mac_wifi%</button>
+						<button class="widget-right gradient-blue" id="bridge-mac">-<br>-</button>
+					</div>
 				</div>
 				<div id="plugin-container">
-					<div class="panel" style="margin-top: 100px">
+					<div class="panel">
 						<h2 class="title-container">%bridge.core_plugins%</h2>
 						<div class="panel-content" id="core-plugins"></div>
 					</div>
-					<div class="panel" style="margin-bottom: 100px">
+					<div class="panel">
 						<h2 class="title-container">%bridge.plugins%</h2>
 						<div class="panel-content" id="plugins"></div>
 					</div>
