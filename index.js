@@ -81,11 +81,11 @@ class SynTexPlatform
 			UpdateManager = new UpdateManager(this.logger, 600);
 
 			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
-			
-			this.WebServer.setHead(__dirname + '/includes/head.html');
-			this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
 			this.App = new App(this);
+
+			this.WebServer.setHead(__dirname + '/includes/head.html');
+			this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
