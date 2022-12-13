@@ -6,7 +6,7 @@ module.exports = class Bridge
 
         this.WebServer = platform.WebServer;
 
-        this.infos = { mac : {} };
+        this.infos = { ip : {}, mac : {} };
 
         this.getMac().then(() => this.initWebServer())
     }
@@ -34,9 +34,15 @@ module.exports = class Bridge
                 return details.family == 'IPv4' && details.internal == false;
             });
 
-            if(iface.length > 0)
+            for(const connection of iface)
             {
-                this.infos.ip = iface[0].address;
+                for(const type in this.infos.mac)
+                {
+                    if(this.infos.mac[type] == connection.mac)
+                    {
+                        this.infos.ip[type] = connection.address;
+                    }
+                }
             }
         }
     }

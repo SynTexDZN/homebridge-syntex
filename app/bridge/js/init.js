@@ -84,9 +84,17 @@ class Init
                 document.getElementById('bridge-id').innerHTML = this.bridge.id;
             }
 
-            if(this.bridge.ip != null)
+            if(this.bridge.ip.lan != null && this.bridge.ip.wlan != null)
             {
-                document.getElementById('bridge-ip').innerHTML = this.bridge.ip;
+                document.getElementById('bridge-ip').innerHTML = this.bridge.ip.lan + '<br>' + this.bridge.ip.wlan;
+            }
+            else if(this.bridge.ip.lan != null)
+            {
+                document.getElementById('bridge-ip').innerHTML = '-<br>' + this.bridge.ip.lan;
+            }
+            else if(this.bridge.ip.wlan != null)
+            {
+                document.getElementById('bridge-ip').innerHTML = this.bridge.ip.wlan + '<br>-';
             }
 
             if(this.bridge.mac.lan != null && this.bridge.mac.wlan != null)
