@@ -17,46 +17,47 @@ class Init
 
         this.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 
-        if(this.bridgeID != 'null')
-        {
-            document.getElementById('bridge-id').innerHTML = this.bridgeID;
-        }
-
-        if(this.bridgeIP != 'null')
-        {
-            document.getElementById('bridge-ip').innerHTML = this.bridgeIP;
-        }
-
-        if(this.wlanMac != 'null' && this.ethernetMac != 'null')
-        {
-            document.getElementById('bridge-mac').innerHTML = this.wlanMac.toUpperCase() + '<br>' + this.ethernetMac.toUpperCase();
-        }
-        else if(this.wlanMac != 'null')
-        {
-            document.getElementById('bridge-mac').innerHTML = this.wlanMac.toUpperCase() + '<br>-';
-        }
-        else if(this.ethernetMac != 'null')
-        {
-            document.getElementById('bridge-mac').innerHTML = '-<br>' + this.ethernetMac.toUpperCase();
-        }
-
         if(Storage.getItem('expertMode') == true)
         {
             document.getElementById('expert-mode').style.display = 'initial';
         }
 
-        this.loadPluginData().then(() => this.renderGUI());
+        this.loadBridgeData().then(() => this.loadPluginData().then(() => this.renderGUI()));
+    }
+
+    loadBridgeData()
+    {
+        return new Promise((resolve) => {
+
+            window.Query.complexFetch('/serverside/bridge', 5000, 2, {}, false).then((data) => {
+    
+                try
+                {
+                    this.bridge = JSON.parse(data);
+    
+                    resolve(true);
+                }
+                catch(e)
+                {
+                    console.error(e);
+    
+                    resolve(false);
+                }
+    
+                console.log('BRIDGE', this.bridge);
+            });
+        });
     }
 
     loadPluginData()
     {
         return new Promise((resolve) => {
 
-            window.Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((p) => {
+            window.Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((data) => {
     
                 try
                 {
-                    this.plugins = JSON.parse(p);
+                    this.plugins = JSON.parse(data);
     
                     resolve(true);
                 }
@@ -74,7 +75,33 @@ class Init
 
     renderGUI()
     {
-        var removedUpdate = false, hasUpdate = false
+        var removedUpdate = false, hasUpdate = false;
+
+        if(this.bridge != null)
+        {
+            if(this.bridge.id != null)
+            {
+                document.getElementById('bridge-id').innerHTML = this.bridge.id;
+            }
+
+            if(this.bridge.ip != null)
+            {
+                document.getElementById('bridge-ip').innerHTML = this.bridge.ip;
+            }
+
+            if(this.bridge.mac.lan != null && this.bridge.mac.wlan != null)
+            {
+                document.getElementById('bridge-mac').innerHTML = this.bridge.mac.lan.toUpperCase() + '<br>' + this.bridge.mac.wlan.toUpperCase();
+            }
+            else if(this.bridge.mac.lan != 'null')
+            {
+                document.getElementById('bridge-mac').innerHTML = '-<br>' + this.bridge.mac.lan.toUpperCase();
+            }
+            else if(this.bridge.mac.wlan != null)
+            {
+                document.getElementById('bridge-mac').innerHTML = this.bridge.mac.wlan.toUpperCase() + '<br>-';
+            }
+        }
 
         for(const id in this.plugins)
         {
