@@ -19,30 +19,30 @@ class Init
 
         if(this.bridgeID != 'null')
         {
-            document.getElementsByClassName('widget')[0].getElementsByClassName('widget-right')[0].innerHTML = this.bridgeID;
+            document.getElementById('bridge-id').innerHTML = this.bridgeID;
         }
 
         if(this.bridgeIP != 'null')
         {
-            document.getElementsByClassName('widget')[1].getElementsByClassName('widget-right')[0].innerHTML = this.bridgeIP;
+            document.getElementById('bridge-ip').innerHTML = this.bridgeIP;
         }
 
         if(this.wlanMac != 'null' && this.ethernetMac != 'null')
         {
-            document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = this.wlanMac.toUpperCase() + '<br>' + this.ethernetMac.toUpperCase();
+            document.getElementById('bridge-mac').innerHTML = this.wlanMac.toUpperCase() + '<br>' + this.ethernetMac.toUpperCase();
         }
         else if(this.wlanMac != 'null')
         {
-            document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = this.wlanMac.toUpperCase() + '<br>-';
+            document.getElementById('bridge-mac').innerHTML = this.wlanMac.toUpperCase() + '<br>-';
         }
         else if(this.ethernetMac != 'null')
         {
-            document.getElementsByClassName('widget')[2].getElementsByClassName('widget-right')[0].innerHTML = '-<br>' + this.ethernetMac.toUpperCase();
+            document.getElementById('bridge-mac').innerHTML = '-<br>' + this.ethernetMac.toUpperCase();
         }
 
         if(Storage.getItem('expertMode') == true)
         {
-            document.getElementById('expert-mode').style.display = '';
+            document.getElementById('expert-mode').style.display = 'initial';
         }
 
         this.loadPluginData().then(() => this.renderGUI());
