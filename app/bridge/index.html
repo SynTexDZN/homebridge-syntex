@@ -1,0 +1,57 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%general.dashboard%: %menu.bridge%</title>
+			<script type="module">
+
+				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
+
+				var main = document.createElement('div');
+
+				main.style.display = 'flex';
+
+				main.innerHTML = '<div style="width: 100%"><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="restartBridge(this)" style="transition: all .2s ease-out, margin-bottom 0s">%bridge.restart%</button></div><div style="width: 100%; margin-left: 20px"><button onclick="reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/bridge')" disabled>%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')">%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
+			</div>
+			<div class="main">
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
+					<button class="widget-left">%bridge.bridge_id%</button>
+					<button class="widget-right gradient-blue" style="user-select: text">-</button>
+				</div>
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
+					<button class="widget-left">%bridge.ip_address%</button>
+					<button class="widget-right gradient-blue" style="user-select: text">-</button>
+				</div>
+				<div class="widget widget-multi" style="margin-left: 0; margin-bottom: 20px">
+					<button class="widget-left">%bridge.mac_wifi%<br>%bridge.mac_ethernet%</button>
+					<button class="widget-right gradient-blue" style="user-select: text">-<br>-</button>
+				</div>
+				<div id="plugin-container">
+					<div class="panel" style="margin-top: 100px">
+						<h2 class="title-container">%bridge.core_plugins%</h2>
+						<div class="panel-content" id="core-plugins"></div>
+					</div>
+					<div class="panel" style="margin-bottom: 100px">
+						<h2 class="title-container">%bridge.plugins%</h2>
+						<div class="panel-content" id="plugins"></div>
+					</div>
+				</div>
+				<div class="bottom" style="margin: 0 auto; margin-bottom: 100px; width: 100%; max-width: 400px">
+					<input id="expert-mode" style="margin-bottom: 20px; display: none" type="button" value="%bridge.expert_mode%" onclick="Essentials.leavePage('/debug')">
+					<input class="gradient-red" type="button" value="» %menu.settings% «" onclick="Essentials.leavePage('/settings')">
+				</div>
+			</div>
+			<script type="module" src="./bridge/init.js"></script>
+			<script src="./bridge/running.js"></script>
+		</div>
+	</body>
+</html>
