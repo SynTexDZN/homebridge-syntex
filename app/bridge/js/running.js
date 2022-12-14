@@ -8,7 +8,7 @@ class Running
         this.updateQuery = [];
     }
 
-    async restartBridge(btn)
+    restartBridge(btn)
     {
         if(!this.restarting && !this.updating)
         {
@@ -22,27 +22,33 @@ class Running
 
             this.restarting = true;
 
-            if(await window.Query.complexFetch('/serverside/restart', 5000, 2, overlays, true) == 'Success')
-            {
-                await window.Essentials.newTimeout(3000);
+            window.Query.complexFetch('/serverside/restart', 5000, 2, overlays, true).then((data) => {
 
-                if(await window.Essentials.checkRestart('/serverside/check-restart'))
+                if(data == 'Success')
                 {
-                    window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
+                    setTimeout(() => {
+                        
+                        window.Essentials.checkRestart('/serverside/check-restart').then((success) => {
 
-                    document.getElementById('restart-btn').classList.remove('activated');
+                            if(success)
+                            {
+                                window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('restart-result', '%general.restart_success%!'));
+    
+                                document.getElementById('restart-btn').classList.remove('activated');
+                            }
+                            else
+                            {
+                                window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
+                            }
+                        });
+
+                        setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
+
+                    }, 3000);
                 }
-                else
-                {
-                    window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
-                }
 
-                await window.Essentials.newTimeout(4000);
-
-                window.Essentials.removeOverlays(btn, true);
-            }
-
-            this.restarting = false;
+                this.restarting = false;
+            });
         }
     }
 
@@ -64,11 +70,11 @@ class Running
             }
         }
 
-        window.Query.complexFetch('/serverside/plugins?reload', 5000, 2, overlays, false).then(async (p) => {
+        window.Query.complexFetch('/serverside/plugins?reload', 5000, 2, overlays, false).then((data) => {
 
             try
             {
-                window.Init.plugins = JSON.parse(p);
+                window.Init.plugins = JSON.parse(data);
 
                 window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
 
@@ -83,9 +89,7 @@ class Running
 
             console.log('PLUGINS', window.Init.plugins);
 
-            await window.Essentials.newTimeout(2000);
-
-            window.Essentials.removeOverlays(btn, true);
+            setTimeout(() => window.Essentials.removeOverlays(btn, true), 2000);
         });
     }
 
