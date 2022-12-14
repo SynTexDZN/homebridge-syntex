@@ -98,8 +98,8 @@ class Init
 
         for(const id in this.plugins)
         {
-            var title = this.plugins[id].name != 'SynTex' ? this.plugins[id].name.replace('SynTex', 'SynTex ') : 'SynTex';
-            var newestVersion = '%general.connection_error%';
+            var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim(),
+                newestVersion = '%general.connection_error%';
 
             if(this.plugins[id].versions[this.tag] != null || this.plugins[id].versions['latest'] != null)
             {
@@ -108,9 +108,9 @@ class Init
                 this.version.latest[id] = newestVersion;
             }
 
-            if(this.plugins[id].versions['current'] != null)
+            if(this.plugins[id].versions.current != null)
             {
-                this.version.current[id] = this.plugins[id].versions['current'];
+                this.version.current[id] = this.plugins[id].versions.current;
             }
             
             if(document.getElementById(id) == null)
