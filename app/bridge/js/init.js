@@ -13,12 +13,14 @@ class Init
 
         this.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 
-        if(Storage.getItem('expertMode') == true)
-        {
-            document.getElementById('expert-mode').style.display = 'initial';
-        }
+        Promise.all([this.loadBridgeData(), this.loadPluginData()]).then(() => {
+            
+            this.renderGUI();
+        
+            window.Preloader.finish();
 
-        this.loadBridgeData().then(() => this.loadPluginData().then(() => this.renderGUI()));
+            console.log('DATA', { bridge : this.bridge, plugins : this.plugins });
+        });
     }
 
     loadBridgeData()
@@ -39,8 +41,6 @@ class Init
     
                     resolve(false);
                 }
-    
-                console.log('BRIDGE', this.bridge);
             });
         });
     }
@@ -63,8 +63,6 @@ class Init
     
                     resolve(false);
                 }
-    
-                console.log('PLUGINS', this.plugins);
             });
         });
     }
@@ -102,6 +100,11 @@ class Init
         else if(this.bridge.mac.wlan != null)
         {
             document.getElementById('bridge-mac').innerHTML = this.bridge.mac.wlan.toUpperCase() + '<br>-';
+        }
+
+        if(Storage.getItem('expertMode') == true)
+        {
+            document.getElementById('expert-mode').style.display = 'initial';
         }
 
         for(const id in this.plugins)
@@ -256,8 +259,6 @@ class Init
         {
             window.PageManager.showFooter();
         }
-
-        window.Preloader.finish();
     }
 }
 
