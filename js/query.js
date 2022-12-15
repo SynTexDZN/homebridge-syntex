@@ -299,6 +299,28 @@ class URLQuery
 	
 		window.activeWebSockets.push(reference);
 	}
+
+	loadData(options = {})
+	{
+		return new Promise((resolve) => {
+
+			Query.complexFetch(options.url, options.timeout || 5000, options.tries || 2, options.overlay || {}, options.remove || false).then((data) => {
+
+				try
+				{
+					options.reference[options.key] = JSON.parse(data);
+
+					resolve(true);
+				}
+				catch(e)
+				{
+					console.error(e);
+
+					resolve(false);
+				}
+			});
+		});
+	}
 }
 
 export let Query = new URLQuery();

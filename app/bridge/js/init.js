@@ -13,57 +13,18 @@ class Init
 
         this.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 
-        Promise.all([this.loadBridgeData(), this.loadPluginData()]).then(() => {
+        Promise.all([
+
+            window.Query.loadData({ url : '/serverside/bridge', key : 'bridge', reference : this }),
+            window.Query.loadData({ url : '/serverside/plugins', key : 'plugins', reference : this })
+
+        ]).then(() => {
             
             console.log('DATA', { bridge : this.bridge, plugins : this.plugins });
 
             this.renderGUI();
         
             window.Preloader.finish();
-        });
-    }
-
-    loadBridgeData()
-    {
-        return new Promise((resolve) => {
-
-            window.Query.complexFetch('/serverside/bridge', 5000, 2, {}, false).then((data) => {
-    
-                try
-                {
-                    this.bridge = JSON.parse(data);
-    
-                    resolve(true);
-                }
-                catch(e)
-                {
-                    console.error(e);
-    
-                    resolve(false);
-                }
-            });
-        });
-    }
-
-    loadPluginData()
-    {
-        return new Promise((resolve) => {
-
-            window.Query.complexFetch('/serverside/plugins', 5000, 2, {}, false).then((data) => {
-    
-                try
-                {
-                    this.plugins = JSON.parse(data);
-    
-                    resolve(true);
-                }
-                catch(e)
-                {
-                    console.error(e);
-    
-                    resolve(false);
-                }
-            });
         });
     }
 
