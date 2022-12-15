@@ -84,8 +84,6 @@ class Init
                 expandable.className = 'plugin-container';
 
                 head.innerHTML = title;
-                head.style.display = 'flex';
-                head.style.justifyContent = 'space-between';
 
                 status.id = 'update-status-' + id;
                 status.className = 'update-status loading-loop';
@@ -110,7 +108,7 @@ class Init
 
                 document.getElementById(id == 'npm' || id == 'homebridge' ? 'core-plugins' : 'plugins').appendChild(container);
 
-                Expandable.createExpandableButton(container.children[0]);
+                Expandable.createExpandableButton(expandable);
             }
             else
             {
