@@ -111,16 +111,20 @@ class Init
                 document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + this.version.latest[id];
             }
 
-            if(this.version.current[id] != null && this.version.latest[id] != null && window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
+            if(this.version.current[id] != null 
+            && this.version.latest[id] != null
+            && window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
             {
                 if(document.getElementById('update-btn-' + id) == null)
                 {
-                    var updateButton = document.createElement('input');
+                    var updateButton = document.createElement('button');
+
+                    updateButton.id = 'update-btn-' + id;
+                    updateButton.innerHTML = title + ' %bridge.update% ( v' + this.version.latest[id] + ' )';
+
+                    updateButton.style.marginBottom = '20px';
 
                     updateButton.setAttribute('type', 'button');
-                    updateButton.setAttribute('value', title + ' %bridge.update% ( v' + this.version.latest[id] + ' )');
-                    updateButton.setAttribute('id', 'update-btn-' + id);
-                    updateButton.setAttribute('style', 'margin-bottom: 20px');
 
                     updateButton.onclick = () => {
 
