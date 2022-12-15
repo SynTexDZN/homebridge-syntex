@@ -38,19 +38,7 @@ class Init
         }
 
         document.getElementById('bridge-ip').innerHTML = (this.bridge.ip.lan || '-') + '<br>' + (this.bridge.ip.wlan || '-');
-
-        if(this.bridge.mac.lan != null && this.bridge.mac.wlan != null)
-        {
-            document.getElementById('bridge-mac').innerHTML = this.bridge.mac.lan.toUpperCase() + '<br>' + this.bridge.mac.wlan.toUpperCase();
-        }
-        else if(this.bridge.mac.lan != 'null')
-        {
-            document.getElementById('bridge-mac').innerHTML = '-<br>' + this.bridge.mac.lan.toUpperCase();
-        }
-        else if(this.bridge.mac.wlan != null)
-        {
-            document.getElementById('bridge-mac').innerHTML = this.bridge.mac.wlan.toUpperCase() + '<br>-';
-        }
+        document.getElementById('bridge-mac').innerHTML = (this.bridge.mac.lan || '-').toUpperCase() + '<br>' + (this.bridge.mac.wlan || '-').toUpperCase();
 
         if(Storage.getItem('expertMode') == true)
         {
