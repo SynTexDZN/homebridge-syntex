@@ -40,9 +40,9 @@ class Running
                             {
                                 window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
                             }
-                        });
 
-                        setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
+                            setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
+                        });
 
                     }, 3000);
                 }
