@@ -22,6 +22,26 @@ class Init
             
             console.log('DATA', { bridge : this.bridge, plugins : this.plugins });
 
+            for(const id in this.plugins)
+            {
+                var tag = this.tag;
+
+                if(this.plugins[id].versions[tag] == null)
+                {
+                    tag = 'latest';
+                }
+
+                if(this.plugins[id].versions.current != null)
+                {
+                    this.version.current[id] = this.plugins[id].versions.current;
+                }
+
+                if(this.plugins[id].versions[tag] != null)
+                {
+                    this.version.latest[id] = this.plugins[id].versions[tag];
+                }
+            }
+
             this.renderGUI();
         
             window.Preloader.finish();
@@ -47,22 +67,7 @@ class Init
 
         for(const id in this.plugins)
         {
-            var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim(), tag = this.tag;
-
-            if(this.plugins[id].versions[this.tag] == null)
-            {
-                tag = 'latest';
-            }
-
-            if(this.plugins[id].versions.current != null)
-            {
-                this.version.current[id] = this.plugins[id].versions.current;
-            }
-
-            if(this.plugins[id].versions[tag] != null)
-            {
-                this.version.latest[id] = this.plugins[id].versions[tag];
-            }
+            var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim();
             
             if(document.getElementById(id) == null)
             {
