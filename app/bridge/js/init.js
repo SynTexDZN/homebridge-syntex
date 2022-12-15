@@ -47,19 +47,21 @@ class Init
 
         for(const id in this.plugins)
         {
-            var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim(),
-                newestVersion = '%general.connection_error%';
+            var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim(), tag = this.tag;
 
-            if(this.plugins[id].versions[this.tag] != null || this.plugins[id].versions['latest'] != null)
+            if(this.plugins[id].versions[this.tag] == null)
             {
-                newestVersion = window.Essentials.versionCount(this.plugins[id].versions[this.tag]) > window.Essentials.versionCount(this.plugins[id].versions['latest']) ? this.plugins[id].versions[this.tag] : this.plugins[id].versions['latest'];
-
-                this.version.latest[id] = newestVersion;
+                tag = 'latest';
             }
 
             if(this.plugins[id].versions.current != null)
             {
                 this.version.current[id] = this.plugins[id].versions.current;
+            }
+
+            if(this.plugins[id].versions[tag] != null)
+            {
+                this.version.latest[id] = this.plugins[id].versions[tag];
             }
             
             if(document.getElementById(id) == null)
