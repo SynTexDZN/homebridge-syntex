@@ -65,8 +65,8 @@ class Running
         {
             if(document.getElementById(id) != null)
             {
-                document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
-                document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>%general.loading% ..';
+                document.getElementById(id + '-current').innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
+                document.getElementById(id + '-latest').innerHTML = '<b>%bridge.latest_version%: </b>%general.loading% ..';
             }
         }
 
@@ -133,13 +133,13 @@ class Running
                                             {
                                                 window.Init.version.current[id] = version;
 
-                                                document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + version;
+                                                document.getElementById(id + '-current').innerHTML = '<b>%bridge.version%: </b>' + version;
 
                                                 window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
 
-                                                document.getElementById('update-status-' + id).innerHTML = '%bridge.up_to_date%';
-                                                document.getElementById('update-status-' + id).style.background = 'hsl(165, 85%, 50%)';
-                                                document.getElementById('update-status-' + id).classList.remove('shine');
+                                                document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
+                                                document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
+                                                document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine');
 
                                                 success = true;
                                             }
@@ -148,16 +148,7 @@ class Running
                                                 window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
                                             }
 
-                                            setTimeout(() => {
-                                                
-                                                window.Essentials.removeOverlays(btn, true);
-
-                                                if(plugin.version == version)
-                                                {
-                                                    window.PageManager.removeFooter('update-btn-' + id);
-                                                }
-                                                
-                                            }, 4000);
+                                            setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
                                         }
                                     }
                                 }
@@ -171,7 +162,7 @@ class Running
                                 {
                                     this.updateQuery = [];
 
-                                    document.getElementById('update-query-btn').innerHTML = '0 %devices.update_all%';
+                                    document.getElementById('update-query').innerHTML = '0 %devices.update_all%';
 
                                     document.getElementById('restart-btn').classList.add('activated');
                                 }
