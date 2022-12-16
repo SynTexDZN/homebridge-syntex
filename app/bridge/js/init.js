@@ -42,13 +42,13 @@ class Init
                 }
             }
 
-            this.renderGUINew();
+            this.renderGUI();
         
             window.Preloader.finish();
         });
     }
 
-    renderGUINew()
+    renderGUI()
     {
         const renderWidgets = () => {
 
@@ -198,7 +198,7 @@ class Init
         renderWidgets();
         renderPlugins();
     }
-
+    /*
     renderGUI()
     {
         var removedUpdate = false, hasUpdate = false;
@@ -206,7 +206,7 @@ class Init
         for(const id in this.plugins)
         {
             var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim();
-            /*
+            
             if(document.getElementById(id) == null)
             {
                 var container = document.createElement('div'),
@@ -253,7 +253,7 @@ class Init
                 document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + this.version.current[id];
                 document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + this.version.latest[id];
             }
-            */
+            
             if(this.version.current[id] != null 
             && this.version.latest[id] != null
             && window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
@@ -289,11 +289,11 @@ class Init
                 {
                     document.getElementById('update-btn-' + id).value = title + ' %bridge.update% ( v' + this.version.latest[id] + ' )';
                 }
-                /*
+
                 document.getElementById('update-status-' + id).innerHTML = '%bridge.update_available%';
                 document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
                 document.getElementById('update-status-' + id).classList.add('shine');
-                */
+
                 hasUpdate = true;
             }
             else
@@ -304,7 +304,7 @@ class Init
 
                     removedUpdate = true;
                 }
-                /*
+
                 if(this.version.current[id] == null || this.version.latest[id] == null)
                 {
                     document.getElementById('update-status-' + id).innerHTML = '%bridge.update_error%';
@@ -317,7 +317,6 @@ class Init
                 }
 
                 document.getElementById('update-status-' + id).classList.remove('shine');
-                */
             }
         }
 
@@ -346,6 +345,7 @@ class Init
             window.PageManager.showFooter();
         }
     }
+    */
 }
 
 window.Init = new Init();
