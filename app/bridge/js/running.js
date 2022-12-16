@@ -78,6 +78,26 @@ class Running
 
                 window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
 
+                for(const id in window.Init.plugins)
+                {
+                    var tag = window.Init.tag;
+
+                    if(window.Init.plugins[id].versions[tag] == null)
+                    {
+                        tag = 'latest';
+                    }
+
+                    if(window.Init.plugins[id].versions.current != null)
+                    {
+                        window.Init.version.current[id] = window.Init.plugins[id].versions.current;
+                    }
+
+                    if(window.Init.plugins[id].versions[tag] != null)
+                    {
+                        window.Init.version.latest[id] = window.Init.plugins[id].versions[tag];
+                    }
+                }
+
                 window.Init.renderGUI();
             }
             catch(e)
