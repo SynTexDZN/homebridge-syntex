@@ -47,41 +47,44 @@ class ExpandableButton
 	{
 		btn.opened = false;
 
-		btn.onclick = () => {
+		btn.onclick = (e) => {
 			
-			var height = btn.scrollHeight;
-
-			if(height != btn.offsetHeight)
+			if(e.target == btn || e.target.onclick == null)
 			{
-				btn.style.height = height;
+				var height = btn.scrollHeight;
 
-				btn.opened = true;
-
-				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+				if(height != btn.offsetHeight)
 				{
-					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
-				}
-			}
-			else
-			{
-				btn.style.removeProperty('height');
+					btn.style.height = height;
 
-				btn.opened = false;
+					btn.opened = true;
 
-				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
-				{
-					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
+					for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+					{
+						btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
+					}
 				}
-			}
-			/*
-			for(const i in this.buttons)
-			{
-				if(this.buttons[i] != this)
+				else
 				{
-					this.buttons[i].style.removeProperty('height');
+					btn.style.removeProperty('height');
+
+					btn.opened = false;
+
+					for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+					{
+						btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
+					}
 				}
+				/*
+				for(const i in this.buttons)
+				{
+					if(this.buttons[i] != this)
+					{
+						this.buttons[i].style.removeProperty('height');
+					}
+				}
+				*/
 			}
-			*/
 		};
 
 		this.buttons.push(btn);
