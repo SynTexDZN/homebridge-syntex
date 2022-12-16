@@ -75,7 +75,7 @@ class Init
                 {
                     container = document.getElementById(id);
                     head = container.children[0];
-                    status = head.getElementsByClassName('update-status');
+                    status = head.getElementsByClassName('update-status')[0];
                     content = container.children[1];
                     current = content.children[0];
                     latest = content.children[1];
@@ -140,8 +140,6 @@ class Init
                 {
                     if(window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
                     {
-                        renderInstaller();
-
                         status.innerHTML = '%bridge.update_available%';
 
                         status.style.backgroundColor = 'hsl(280, 95%, 60%)';
@@ -197,6 +195,8 @@ class Init
 
         renderWidgets();
         renderPlugins();
+
+        renderInstaller();
     }
     /*
     renderGUI()
