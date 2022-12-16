@@ -2,9 +2,9 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>%general.dashboard%: %menu.bridge%</title>
+			<div id="header">
 			<link rel="stylesheet" type="text/css" href="./style/main.css" media="screen">
-			<script type="module" src="./js/init.js" defer></script>
-			<script src="./js/running.js" defer></script>
+				<link rel="stylesheet" type="text/css" href="./style/mobile.css" media="screen">
 			<script type="module">
 
 				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
@@ -17,6 +17,9 @@
 				PageManager.showFooter();
 
 			</script>
+				<script type="module" src="./js/init.js" defer></script>
+				<script src="./js/running.js" defer></script>
+			</div>
 			<div id="main-menu">
 				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
 				<button class="white" onclick="Essentials.leavePage('/bridge')" disabled>%menu.bridge%</button>
