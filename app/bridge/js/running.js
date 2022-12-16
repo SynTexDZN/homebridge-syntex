@@ -65,8 +65,8 @@ class Running
         {
             if(document.getElementById(id) != null)
             {
-                document.getElementById(id + '-current').innerHTML = '<b>%bridge.version%: </b>%general.loading% ..';
-                document.getElementById(id + '-latest').innerHTML = '<b>%bridge.latest_version%: </b>%general.loading% ..';
+                document.getElementById(id + '-current').innerHTML = '%bridge.version%: %general.loading% ..';
+                document.getElementById(id + '-latest').innerHTML = '%bridge.latest_version%: %general.loading% ..';
             }
         }
 
@@ -153,7 +153,7 @@ class Running
                                             {
                                                 window.Init.version.current[id] = version;
 
-                                                document.getElementById(id + '-current').innerHTML = '<b>%bridge.version%: </b>' + version;
+                                                document.getElementById(id + '-current').innerHTML = '%bridge.version%: ' + version;
 
                                                 window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
 
