@@ -3,20 +3,20 @@
 		<div id="content">
 			<title>%general.dashboard%: %menu.bridge%</title>
 			<div id="header">
-			<link rel="stylesheet" type="text/css" href="./style/main.css" media="screen">
+				<link rel="stylesheet" type="text/css" href="./style/main.css" media="screen">
 				<link rel="stylesheet" type="text/css" href="./style/mobile.css" media="screen">
-			<script type="module">
+				<script type="module">
 
-				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
-
-				var main = document.createElement('div');
-
-				main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
-
-				PageManager.setFooter(main);
-				PageManager.showFooter();
-
-			</script>
+					PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
+	
+					var main = document.createElement('div');
+	
+					main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+	
+					PageManager.setFooter(main);
+					PageManager.showFooter();
+	
+				</script>
 				<script type="module" src="./js/init.js" defer></script>
 				<script src="./js/running.js" defer></script>
 			</div>
@@ -52,7 +52,7 @@
 					</div>
 				</div>
 				<div class="bottom">
-					<input id="expert-mode" type="button" value="%bridge.expert_mode%" onclick="Essentials.leavePage('/debug')">
+					<input class="hidden" id="expert-mode" type="button" value="%bridge.expert_mode%" onclick="Essentials.leavePage('/debug')">
 					<input class="gradient-red" type="button" value="» %menu.settings% «" onclick="Essentials.leavePage('/settings')">
 				</div>
 			</div>

@@ -42,33 +42,171 @@ class Init
                 }
             }
 
-            this.renderGUI();
+            this.renderGUINew();
         
             window.Preloader.finish();
         });
+    }
+
+    renderGUINew()
+    {
+        const renderWidgets = () => {
+
+            document.getElementById('bridge-id').innerHTML = this.bridge.id || '-';
+            document.getElementById('bridge-ip').innerHTML = (this.bridge.ip.lan || '-') + '<br>' + (this.bridge.ip.wlan || '-');
+            document.getElementById('bridge-mac').innerHTML = (this.bridge.mac.lan || '-').toUpperCase() + '<br>' + (this.bridge.mac.wlan || '-').toUpperCase();
+        };
+
+        const renderPlugins = () => {
+
+            for(const id in this.plugins)
+            {
+                var type = id == 'npm' || id == 'homebridge' ? 'core-plugins' : 'plugins',
+                    name = this.plugins[id].name.replace('SynTex', 'SynTex ').trim();
+
+                var container = document.createElement('button'),
+                    head = document.createElement('div'),
+                    status = document.createElement('div'),
+                    content = document.createElement('div'),
+                    current = document.createElement('div'),
+                    latest = document.createElement('div');
+
+                if(document.getElementById(id) != null)
+                {
+                    container = document.getElementById(id);
+                    head = container.children[0];
+                    status = head.getElementsByClassName('update-status');
+                    content = container.children[1];
+                    current = content.children[0];
+                    latest = content.children[1];
+                }
+                else
+                {
+                    container.id = id;
+                    container.className = 'plugin';
+
+                    head.innerHTML = name;
+                    head.className = 'head';
+
+                    status.className = 'update-status';
+
+                    status.onclick = (e) => {
+
+                        if(e.target.classList.contains('available'))
+                        {
+                            if(!window.Running.updateQuery.includes(id + '@' + this.version.latest[id]))
+                            {
+                                window.Running.updateQuery.push(id + '@' + this.version.latest[id]);
+
+                                e.target.innerHTML = '%general.waiting%';
+
+                                e.target.style.backgroundColor = 'hsl(200, 85%, 55%)';
+                            }
+                            else
+                            {
+                                window.Running.updateQuery.splice(window.Running.updateQuery.indexOf(id + '@' + this.version.latest[id]), 1);
+
+                                e.target.innerHTML = '%bridge.update_available%';
+
+                                e.target.style.backgroundColor = 'hsl(280, 95%, 60%)';
+                            }
+                        }
+    
+                        document.getElementById('update-query').innerHTML = '(' + window.Running.updateQuery.length + ') %devices.update_all%';
+                    };
+
+                    current.id = id + '-current';
+                    current.className = 'loading-loop expandable-hidden';
+
+                    latest.id = id + '-latest';
+                    latest.className = 'loading-loop expandable-hidden';
+
+                    head.appendChild(status);
+
+                    content.appendChild(current);
+                    content.appendChild(latest);
+
+                    container.appendChild(head);
+                    container.appendChild(content);
+
+                    Expandable.createExpandableButton(container);
+                }
+
+                current.innerHTML = '%bridge.version%: </b>' + this.version.current[id];
+                latest.innerHTML = '%bridge.latest_version%: </b>' + this.version.latest[id];
+
+                if(this.version.current[id] != null 
+                && this.version.latest[id] != null)
+                {
+                    if(window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
+                    {
+                        renderInstaller();
+
+                        status.innerHTML = '%bridge.update_available%';
+
+                        status.style.backgroundColor = 'hsl(280, 95%, 60%)';
+
+                        status.classList.add('shine', 'available');
+                    }
+                    else
+                    {
+                        status.innerHTML = '%bridge.up_to_date%';
+
+                        status.style.backgroundColor = 'hsl(165, 85%, 50%)';
+
+                        status.classList.remove('shine');
+                    }
+                }
+                else
+                {
+                    status.innerHTML = '%bridge.update_error%';
+
+                    status.style.background = 'hsl(350, 95%, 60%)';
+
+                    status.classList.remove('shine');
+                }
+
+                document.getElementById(type).appendChild(container);
+            }
+        };
+
+        const renderInstaller = () => {
+
+            if(document.getElementById('update-query') == null)
+            {
+                var updateQuery = document.createElement('button');
+
+                updateQuery.id = 'update-query';
+                updateQuery.innerHTML = '(0) %devices.update_all%'; // TODO
+
+                updateQuery.style.marginBottom = '20px';
+
+                updateQuery.setAttribute('type', 'button');
+
+                updateQuery.onclick = () => window.Running.updatePlugins(updateQuery);
+
+                window.PageManager.addFooter(updateQuery);
+                window.PageManager.showFooter();
+            }
+        };
+
+        if(Storage.getItem('expertMode') == true)
+        {
+            document.getElementById('expert-mode').classList.remove('hidden');
+        }
+
+        renderWidgets();
+        renderPlugins();
     }
 
     renderGUI()
     {
         var removedUpdate = false, hasUpdate = false;
 
-        if(this.bridge.id != null)
-        {
-            document.getElementById('bridge-id').innerHTML = this.bridge.id;
-        }
-
-        document.getElementById('bridge-ip').innerHTML = (this.bridge.ip.lan || '-') + '<br>' + (this.bridge.ip.wlan || '-');
-        document.getElementById('bridge-mac').innerHTML = (this.bridge.mac.lan || '-').toUpperCase() + '<br>' + (this.bridge.mac.wlan || '-').toUpperCase();
-
-        if(Storage.getItem('expertMode') == true)
-        {
-            document.getElementById('expert-mode').style.display = 'initial';
-        }
-
         for(const id in this.plugins)
         {
             var title = this.plugins[id].name.replace('SynTex', 'SynTex ').trim();
-            
+            /*
             if(document.getElementById(id) == null)
             {
                 var container = document.createElement('div'),
@@ -115,7 +253,7 @@ class Init
                 document.getElementById('version-' + id).innerHTML = '<b>%bridge.version%: </b>' + this.version.current[id];
                 document.getElementById('latest-version-' + id).innerHTML = '<b>%bridge.latest_version%: </b>' + this.version.latest[id];
             }
-
+            */
             if(this.version.current[id] != null 
             && this.version.latest[id] != null
             && window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
@@ -151,11 +289,11 @@ class Init
                 {
                     document.getElementById('update-btn-' + id).value = title + ' %bridge.update% ( v' + this.version.latest[id] + ' )';
                 }
-
+                /*
                 document.getElementById('update-status-' + id).innerHTML = '%bridge.update_available%';
                 document.getElementById('update-status-' + id).style.background = 'hsl(280, 95%, 60%)';
                 document.getElementById('update-status-' + id).classList.add('shine');
-
+                */
                 hasUpdate = true;
             }
             else
@@ -166,7 +304,7 @@ class Init
 
                     removedUpdate = true;
                 }
-
+                /*
                 if(this.version.current[id] == null || this.version.latest[id] == null)
                 {
                     document.getElementById('update-status-' + id).innerHTML = '%bridge.update_error%';
@@ -179,6 +317,7 @@ class Init
                 }
 
                 document.getElementById('update-status-' + id).classList.remove('shine');
+                */
             }
         }
 
