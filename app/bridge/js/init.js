@@ -228,8 +228,10 @@ export class Init
         if(init)
         {
             renderFooter();
-
-            // TODO: Update updateQuery when not initial
+        }
+        else
+        {
+            document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
         }
     }
 }

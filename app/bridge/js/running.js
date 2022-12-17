@@ -98,6 +98,8 @@ export class Running
                     }
                 }
 
+                this.updateQuery = [];
+
                 window.Init.renderGUI();
             }
             catch(e)
