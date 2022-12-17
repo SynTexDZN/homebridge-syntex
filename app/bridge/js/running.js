@@ -159,7 +159,7 @@ export class Running
 
                                                 document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
                                                 document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
-                                                document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine');
+                                                document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine', 'available');
 
                                                 success = true;
                                             }
