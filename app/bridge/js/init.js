@@ -150,7 +150,7 @@ export class Init
 
 						status.style.backgroundColor = 'hsl(165, 85%, 50%)';
 
-						status.classList.remove('shine');
+						status.classList.remove('shine', 'available');
 					}
 				}
 				else
@@ -159,7 +159,7 @@ export class Init
 
 					status.style.background = 'hsl(350, 95%, 60%)';
 
-					status.classList.remove('shine');
+					status.classList.remove('shine', 'available');
 				}
 
 				document.getElementById(type).appendChild(container);
