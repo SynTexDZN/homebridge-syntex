@@ -2,6 +2,7 @@ export class Running
 {
 	constructor()
 	{
+		this.reloading = false;
 		this.restarting = false;
 		this.updating = false;
 
