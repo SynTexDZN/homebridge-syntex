@@ -42,13 +42,13 @@ export class Init
                 }
             }
 
-            this.renderGUI();
+            this.renderGUI(true);
         
             window.Preloader.finish();
         });
     }
 
-    renderGUI()
+    renderGUI(init)
     {
         const renderWidgets = () => {
 
@@ -224,7 +224,13 @@ export class Init
 
         renderWidgets();
         renderPlugins();
-        renderFooter();
+
+        if(init)
+        {
+            renderFooter();
+
+            // TODO: Update updateQuery when not initial
+        }
     }
     /*
     renderGUI()
