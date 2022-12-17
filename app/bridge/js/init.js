@@ -1,6 +1,6 @@
 import { Expandable } from '/js/expandable-button.js';
 
-class Init
+export class Init
 {
     constructor()
     {
@@ -347,5 +347,3 @@ class Init
     }
     */
 }
-
-window.Init = new Init();

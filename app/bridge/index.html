@@ -2,24 +2,26 @@
 	<body ontouchstart="">
 		<div id="content">
 			<title>%general.dashboard%: %menu.bridge%</title>
-			<div id="header">
-				<link rel="stylesheet" type="text/css" href="./style/main.css" media="screen">
-				<link rel="stylesheet" type="text/css" href="./style/mobile.css" media="screen">
-				<script type="module">
+			<link rel="stylesheet" type="text/css" href="./style/main.css" media="screen">
+			<link rel="stylesheet" type="text/css" href="./style/mobile.css" media="screen">
+			<script type="module">
 
-					PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
-	
-					var main = document.createElement('div');
-	
-					main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
-	
-					PageManager.setFooter(main);
-					PageManager.showFooter();
-	
-				</script>
-				<script type="module" src="./js/init.js" defer></script>
-				<script src="./js/running.js" defer></script>
-			</div>
+				import { Init } from './js/init.js';
+				import { Running } from './js/running.js';
+
+				window.Init = new Init();
+				window.Running = new Running();
+
+				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
+
+				var main = document.createElement('div');
+
+				main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
 			<div id="main-menu">
 				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
 				<button class="white" onclick="Essentials.leavePage('/app/bridge/')" disabled>%menu.bridge%</button>

@@ -1,4 +1,4 @@
-class Running
+export class Running
 {
     constructor()
     {
@@ -201,5 +201,3 @@ class Running
         }
     }
 }
-
-window.Running = new Running();
