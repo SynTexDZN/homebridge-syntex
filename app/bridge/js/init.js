@@ -168,24 +168,53 @@ export class Init
             }
         };
 
-        const renderInstaller = () => {
+        const renderFooter = () => {
 
-            if(document.getElementById('update-query') == null)
-            {
-                var updateQuery = document.createElement('button');
+            window.PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
 
-                updateQuery.id = 'update-query';
-                updateQuery.innerHTML = '(0) %general.install_updates%';
+            var first = document.createElement('div'),
+                restartContainer = document.createElement('div'),
+                restartButton = document.createElement('button'),
+                reloadContainer = document.createElement('div'),
+                reloadButton = document.createElement('button'),
+                updateButton = document.createElement('button');
 
-                updateQuery.style.marginBottom = '20px';
+            first.style.display = 'flex';
+            first.style.gap = '20px';
 
-                updateQuery.setAttribute('type', 'button');
+            restartContainer.style.width = '100%';
 
-                updateQuery.onclick = () => window.Running.updatePlugins(updateQuery);
+            restartButton.id = 'restart-btn';
+            restartButton.className = 'gradient-overlay overlay-orange';
+            restartButton.innerHTML = '%bridge.restart%';
 
-                window.PageManager.addFooter(updateQuery);
-                window.PageManager.showFooter();
-            }
+            restartButton.setAttribute('type', 'button');
+            restartButton.setAttribute('onclick', 'window.Running.restartBridge(this)');
+
+            reloadContainer.style.width = '100%';
+
+            reloadButton.className = 'icon-button right split separated';
+            reloadButton.innerHTML = '<div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div>';
+
+            reloadButton.setAttribute('onclick', 'window.Running.reloadVersions(this)');
+
+            updateButton.id = 'update-query';
+            updateButton.innerHTML = '(0) %general.install_updates%';
+
+            updateButton.style.marginBottom = '20px';
+
+            updateButton.setAttribute('type', 'button');
+            updateButton.setAttribute('onclick', 'window.Running.updatePlugins(this)');
+
+            restartContainer.appendChild(restartButton);
+            reloadContainer.appendChild(reloadButton);
+
+            first.appendChild(restartContainer);
+            first.appendChild(reloadContainer);
+
+            window.PageManager.setFooter(first);
+            window.PageManager.addFooter(updateButton);
+            window.PageManager.showFooter();
         };
 
         if(Storage.getItem('expertMode') == true)
@@ -195,8 +224,7 @@ export class Init
 
         renderWidgets();
         renderPlugins();
-
-        renderInstaller();
+        renderFooter();
     }
     /*
     renderGUI()

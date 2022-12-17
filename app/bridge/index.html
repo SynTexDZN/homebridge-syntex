@@ -12,15 +12,6 @@
 				window.Init = new Init();
 				window.Running = new Running();
 
-				PageManager.setHeader('%general.dashboard%', '%menu.bridge%');
-
-				var main = document.createElement('div');
-
-				main.innerHTML = '<div><button id="restart-btn" type="button" class="gradient-overlay overlay-orange" onclick="window.Running.restartBridge(this)">%bridge.restart%</button></div><div><button onclick="window.Running.reloadVersions(this)" class="icon-button right split separated"><div class="button-icon"><img class="icon-inverted" src="/img/reload.png"></div><div class="button-text">%general.reload%</div></button></div>';
-
-				PageManager.setFooter(main);
-				PageManager.showFooter();
-
 			</script>
 			<div id="main-menu">
 				<button class="white" onclick="Essentials.leavePage('/')">%menu.devices%</button>
