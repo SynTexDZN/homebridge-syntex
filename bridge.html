@@ -230,7 +230,7 @@
 										window.updateQuery.splice(window.updateQuery.indexOf(id + '@' + latestVersions[id]), 1);
 									}
 
-									document.getElementById('update-query-btn').innerHTML = window.updateQuery.length + ' %devices.update_all%';
+									document.getElementById('update-query-btn').innerHTML = window.updateQuery.length + ' %general.install_updates%';
 								};
 
 								PageManager.addFooter(updateButton);
@@ -275,7 +275,7 @@
 						var updateQuery = document.createElement('button');
 
 						updateQuery.id = 'update-query-btn';
-						updateQuery.innerHTML = '0 %devices.update_all%';
+						updateQuery.innerHTML = '0 %general.install_updates%';
 
 						updateQuery.style.marginBottom = '20px';
 
@@ -463,7 +463,7 @@
 											{
 												updateQuery = [];
 
-												document.getElementById('update-query-btn').innerHTML = '0 %devices.update_all%';
+												document.getElementById('update-query-btn').innerHTML = '0 %general.install_updates%';
 
 												document.getElementById('restart-btn').classList.add('activated');
 											}

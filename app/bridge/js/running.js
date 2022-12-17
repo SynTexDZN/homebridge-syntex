@@ -182,7 +182,7 @@ export class Running
                                 {
                                     this.updateQuery = [];
 
-                                    document.getElementById('update-query').innerHTML = '0 %devices.update_all%';
+                                    document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
 
                                     document.getElementById('restart-btn').classList.add('activated');
                                 }

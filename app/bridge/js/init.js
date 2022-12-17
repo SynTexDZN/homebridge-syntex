@@ -112,7 +112,7 @@ export class Init
                             }
                         }
     
-                        document.getElementById('update-query').innerHTML = '(' + window.Running.updateQuery.length + ') %devices.update_all%';
+                        document.getElementById('update-query').innerHTML = '(' + window.Running.updateQuery.length + ') ' + (window.Running.updateQuery.length == 1 ? '%general.install_update%' : '%general.install_updates%');
                     };
 
                     current.id = id + '-current';
@@ -175,7 +175,7 @@ export class Init
                 var updateQuery = document.createElement('button');
 
                 updateQuery.id = 'update-query';
-                updateQuery.innerHTML = '(0) %devices.update_all%'; // TODO
+                updateQuery.innerHTML = '(0) %general.install_updates%';
 
                 updateQuery.style.marginBottom = '20px';
 
@@ -280,7 +280,7 @@ export class Init
                             window.Running.updateQuery.splice(window.Running.updateQuery.indexOf(id + '@' + this.version.latest[id]), 1);
                         }
 
-                        document.getElementById('update-query-btn').innerHTML = window.Running.updateQuery.length + ' %devices.update_all%';
+                        document.getElementById('update-query-btn').innerHTML = window.Running.updateQuery.length + ' %general.install_updates%';
                     };
 
                     window.PageManager.addFooter(updateButton);
@@ -325,7 +325,7 @@ export class Init
             var updateQuery = document.createElement('button');
 
             updateQuery.id = 'update-query-btn';
-            updateQuery.innerHTML = '0 %devices.update_all%';
+            updateQuery.innerHTML = '0 %general.install_updates%';
 
             updateQuery.style.marginBottom = '20px';
 
