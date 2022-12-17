@@ -10,7 +10,7 @@ export class Running
 
 	restartBridge(btn)
 	{
-		if(!this.restarting && !this.updating)
+		if(!this.reloading && !this.restarting && !this.updating)
 		{
 			var overlays = {
 				root : btn,
@@ -54,70 +54,77 @@ export class Running
 
 	reloadVersions(btn)
 	{
-		var overlays = {
-			root : btn,
-			id : 'reload',
-			pending : { value : '%general.reloading% ..' },
-			connectionError : { value : '%general.bridge_connection_error%!' }
-		};
-
-		for(const id in window.Init.plugins)
+		if(!this.reloading && !this.restarting && !this.updating)
 		{
-			if(document.getElementById(id) != null)
+			var overlays = {
+				root : btn,
+				id : 'reload',
+				pending : { value : '%general.reloading% ..' },
+				connectionError : { value : '%general.bridge_connection_error%!' }
+			};
+
+			this.reloading = true;
+
+			for(const id in window.Init.plugins)
 			{
-				document.getElementById(id + '-current').innerHTML = '%bridge.version%: %general.loading% ..';
-				document.getElementById(id + '-latest').innerHTML = '%bridge.latest_version%: %general.loading% ..';
-			}
-		}
-
-		window.Query.complexFetch('/serverside/plugins?reload', 5000, 2, overlays, false).then((data) => {
-
-			try
-			{
-				window.Init.plugins = JSON.parse(data);
-
-				window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
-
-				for(const id in window.Init.plugins)
+				if(document.getElementById(id) != null)
 				{
-					var tag = window.Init.tag;
+					document.getElementById(id + '-current').innerHTML = '%bridge.version%: %general.loading% ..';
+					document.getElementById(id + '-latest').innerHTML = '%bridge.latest_version%: %general.loading% ..';
+				}
+			}
 
-					if(window.Init.plugins[id].versions[tag] == null)
+			window.Query.complexFetch('/serverside/plugins?reload', 5000, 2, overlays, false).then((data) => {
+
+				try
+				{
+					window.Init.plugins = JSON.parse(data);
+
+					window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
+
+					for(const id in window.Init.plugins)
 					{
-						tag = 'latest';
+						var tag = window.Init.tag;
+
+						if(window.Init.plugins[id].versions[tag] == null)
+						{
+							tag = 'latest';
+						}
+
+						if(window.Init.plugins[id].versions.current != null)
+						{
+							window.Init.version.current[id] = window.Init.plugins[id].versions.current;
+						}
+
+						if(window.Init.plugins[id].versions[tag] != null)
+						{
+							window.Init.version.latest[id] = window.Init.plugins[id].versions[tag];
+						}
 					}
 
-					if(window.Init.plugins[id].versions.current != null)
-					{
-						window.Init.version.current[id] = window.Init.plugins[id].versions.current;
-					}
+					this.updateQuery = [];
 
-					if(window.Init.plugins[id].versions[tag] != null)
-					{
-						window.Init.version.latest[id] = window.Init.plugins[id].versions[tag];
-					}
+					window.Init.renderGUI();
+				}
+				catch(e)
+				{
+					window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('reload', '%general.reload_failed%!'));
+
+					console.error(e);
 				}
 
-				this.updateQuery = [];
+				console.log('PLUGINS', window.Init.plugins);
 
-				window.Init.renderGUI();
-			}
-			catch(e)
-			{
-				window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('reload', '%general.reload_failed%!'));
+				this.reloading = false;
 
-				console.error(e);
-			}
-
-			console.log('PLUGINS', window.Init.plugins);
-
-			setTimeout(() => window.Essentials.removeOverlays(btn, true), 2000);
-		});
+				setTimeout(() => window.Essentials.removeOverlays(btn, true), 2000);
+			});
+		}
 	}
 
 	updatePlugins(btn)
 	{
-		if(this.updateQuery.length > 0 && !this.restarting && !this.updating)
+		if(this.updateQuery.length > 0 && !this.reloading && !this.restarting && !this.updating)
 		{
 			var overlays = {
 				root : btn,
@@ -176,20 +183,16 @@ export class Running
 								}
 							}
 
-							setTimeout(() => {
+							this.updating = false;
 
-								this.updating = false;
+							if(success)
+							{
+								this.updateQuery = [];
 
-								if(success)
-								{
-									this.updateQuery = [];
+								document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
 
-									document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
-
-									document.getElementById('restart-btn').classList.add('activated');
-								}
-								
-							}, 4000);
+								setTimeout(() => document.getElementById('restart-btn').classList.add('activated'), 4000);
+							}
 						}
 						else
 						{
