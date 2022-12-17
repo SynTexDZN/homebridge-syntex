@@ -74,9 +74,9 @@ export class Init
 				if(document.getElementById(id) != null)
 				{
 					container = document.getElementById(id);
-					status = head.getElementsByClassName('update-status')[0];
-					current = content.children[0];
-					latest = content.children[1];
+					status = container.getElementsByClassName('update-status')[0];
+					current = container.children[1].children[0];
+					latest = container.children[1].children[1];
 				}
 				else
 				{
