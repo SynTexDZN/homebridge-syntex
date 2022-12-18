@@ -42,13 +42,17 @@ export class Running
 								window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('restart-result', '%general.restart_failed%!'));
 							}
 
+							this.restarting = false;
+
 							setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
 						});
 
 					}, 3000);
 				}
-
-				this.restarting = false;
+				else
+				{
+					this.restarting = false;
+				}
 			});
 		}
 	}
@@ -125,85 +129,112 @@ export class Running
 
 	updatePlugins(btn)
 	{
-		if(this.updateQuery.length > 0 && !this.reloading && !this.restarting && !this.updating)
+		if(!this.reloading && !this.restarting && !this.updating)
 		{
-			var overlays = {
-				root : btn,
-				id : 'update',
-				pending : { value : '%general.updating% ..', color : 'purple' },
-				executeError : { value : '%general.update_failed%!' },
-				connectionError : { value : '%general.bridge_connection_error%!' }
-			};
-			
-			this.updating = true;
-
-			window.Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : this.updateQuery })).then(() => {
-
-				const checkUpdate = () => {
-
-					window.Query.fetchURL('/serverside/update').then((data) => {
-
-						if(data != 'Pending')
-						{
-							var success = false;
-
-							if(data != 'Error')
+			if(this.updateQuery.length > 0)
+			{
+				var overlays = {
+					root : btn,
+					id : 'update',
+					pending : { value : '%general.updating% ..', color : 'purple' },
+					executeError : { value : '%general.update_failed%!' },
+					connectionError : { value : '%general.bridge_connection_error%!' }
+				};
+				
+				this.updating = true;
+	
+				window.Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : this.updateQuery })).then(() => {
+	
+					const checkUpdate = () => {
+	
+						window.Query.fetchURL('/serverside/update').then((data) => {
+	
+							if(data != 'Pending')
 							{
-								data = JSON.parse(data);
-
-								for(const query of this.updateQuery)
+								var success = false;
+	
+								if(data != 'Error')
 								{
-									const id = query.split('@')[0], version = query.split('@')[1];
-
-									for(const plugin of data)
+									data = JSON.parse(data);
+	
+									for(const query of this.updateQuery)
 									{
-										if(plugin.id == id)
+										const id = query.split('@')[0], version = query.split('@')[1];
+	
+										for(const plugin of data)
 										{
-											if(plugin.version == version)
+											if(plugin.id == id)
 											{
-												window.Init.version.current[id] = version;
-
-												document.getElementById(id + '-current').innerHTML = '%bridge.version%: ' + version;
-
-												window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
-
-												document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
-												document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
-												document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine', 'available');
-
-												success = true;
+												if(plugin.version == version)
+												{
+													window.Init.version.current[id] = version;
+	
+													document.getElementById(id + '-current').innerHTML = '%bridge.version%: ' + version;
+	
+													window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
+	
+													document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
+													document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
+													document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine', 'available');
+	
+													success = true;
+												}
+												else
+												{
+													window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
+												}
+	
+												setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
 											}
-											else
-											{
-												window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
-											}
-
-											setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
 										}
 									}
 								}
+	
+								this.updating = false;
+	
+								if(success)
+								{
+									this.updateQuery = [];
+	
+									document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
+	
+									setTimeout(() => document.getElementById('restart-btn').classList.add('activated'), 4000);
+								}
 							}
-
-							this.updating = false;
-
-							if(success)
+							else
 							{
-								this.updateQuery = [];
+								setTimeout(() => checkUpdate(), 1000);
+							}
+						});
+					};
+	
+					setTimeout(() => checkUpdate(), 1000);
+				});
+			}
+			else
+			{
+				var dialogue = {
+					title : '%bridge.no_updates_chosen%',
+					subtitle : '%bridge.choose_update%',
+					buttons : [
+						{
+							text : '%general.ok%',
+							close : true,
+							action : () => {
 
-								document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
-
-								setTimeout(() => document.getElementById('restart-btn').classList.add('activated'), 4000);
+								var update = document.getElementById('plugin-container').getElementsByClassName('available')[0];
+								
+								if(update != null)
+								{
+									window.scrollTo({ top : update.offsetTop - 29, behavior : 'smooth' });
+								}
 							}
 						}
-						else
-						{
-							setTimeout(() => checkUpdate(), 1000);
-						}
-					});
+					]
 				};
 
-				setTimeout(() => checkUpdate(), 1000);
-			});
+				window.Essentials.openDialogue(dialogue);
+			}
 		}
 	}
 }
