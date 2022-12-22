@@ -501,6 +501,8 @@ class SynTexPlatform
 						if(error || (stderr && stderr.includes('ERR!')))
 						{
 							this.logger.log('error', 'bridge', 'Bridge', '%bridge_update_error%!', (error || stderr));
+						
+							this.updating = false;
 						}
 						else
 						{
@@ -508,9 +510,32 @@ class SynTexPlatform
 							{
 								this.logger.log('success', 'bridge', 'Bridge', '[' + plugin.split('@')[0] + '] %plugin_update_success[0]% [' + plugin.split('@')[1] + '] %plugin_update_success[1]%!');
 							}
-						}
 
-						this.updating = false;
+							exec('sudo npm list -g --json', (error, stdout, stderr) => {
+
+								if(!error && (!stderr || !stderr.includes('ERR!')))
+								{
+									try
+									{
+										var output = JSON.parse(stdout);
+		
+										if(output.dependencies != null)
+										{
+											for(const id in output.dependencies)
+											{
+												setVersion(id, output.dependencies[id].version);
+											}
+										}
+									}
+									catch(e)
+									{
+										this.logger.err(e);
+									}
+								}
+
+								this.updating = false;
+							});
+						}
 					});
 	
 					response.end('Success');
@@ -524,39 +549,7 @@ class SynTexPlatform
 			{
 				if(!this.updating)
 				{
-					exec('sudo npm list -g --json', (error, stdout, stderr) => {
-
-						if(error || (stderr && stderr.includes('ERR!')))
-						{
-							response.end('Error');
-						}
-						else
-						{
-							var plugins = [];
-
-							try
-							{
-								var output = JSON.parse(stdout);
-
-								if(output.dependencies != null)
-								{
-									for(const id in output.dependencies)
-									{
-										setVersion(id, output.dependencies[id].version);
-
-										plugins.push({ id, version : output.dependencies[id].version });
-									}
-								}
-
-							}
-							catch(e)
-							{
-								this.logger.err(e);
-							}
-
-							response.end(JSON.stringify(plugins));
-						}
-					});
+					response.end(JSON.stringify(PluginManager.getPlugins()));
 				}
 				else
 				{

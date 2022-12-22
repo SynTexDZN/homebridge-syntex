@@ -143,7 +143,7 @@ export class Running
 				
 				this.updating = true;
 	
-				window.Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : this.updateQuery })).then(() => {
+				window.Query.complexFetch('/serverside/update', 10000, 2, overlays, false, JSON.stringify({ plugins : this.updateQuery })).then((data) => {
 	
 					const checkUpdate = () => {
 	
@@ -155,37 +155,34 @@ export class Running
 	
 								if(data != 'Error')
 								{
-									data = JSON.parse(data);
+									window.Init.plugins = JSON.parse(data);
 	
 									for(const query of this.updateQuery)
 									{
 										const id = query.split('@')[0], version = query.split('@')[1];
 	
-										for(const plugin of data)
+										if(window.Init.plugins[id] != null)
 										{
-											if(plugin.id == id)
+											if(window.Init.plugins[id].versions.current == version)
 											{
-												if(plugin.version == version)
-												{
-													window.Init.version.current[id] = version;
-	
-													document.getElementById(id + '-current').innerHTML = '%bridge.version%: ' + version;
-	
-													window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
-	
-													document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
-													document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
-													document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine', 'available');
-	
-													success = true;
-												}
-												else
-												{
-													window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
-												}
-	
-												setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
+												window.Init.version.current[id] = version;
+
+												document.getElementById(id + '-current').innerHTML = '%bridge.version%: ' + version;
+
+												window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('update-result-' + id, '%general.update_success%!'));
+
+												document.getElementById(id).getElementsByClassName('update-status')[0].innerHTML = '%bridge.up_to_date%';
+												document.getElementById(id).getElementsByClassName('update-status')[0].style.background = 'hsl(165, 85%, 50%)';
+												document.getElementById(id).getElementsByClassName('update-status')[0].classList.remove('shine', 'available');
+
+												success = true;
 											}
+											else
+											{
+												window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('update-result-' + id, '%general.update_failed%!'));
+											}
+
+											setTimeout(() => window.Essentials.removeOverlays(btn, true), 4000);
 										}
 									}
 								}
@@ -208,7 +205,11 @@ export class Running
 						});
 					};
 	
-					setTimeout(() => checkUpdate(), 1000);
+
+					if(data == 'Success')
+					{
+						checkUpdate();
+					}
 				});
 			}
 			else
