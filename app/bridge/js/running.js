@@ -197,6 +197,10 @@ export class Running
 									this.updateQuery = [];
 	
 									document.getElementById('update-query').innerHTML = '(0) %general.install_updates%';
+
+									window.Init.counter.updates--;
+
+									document.getElementById('plugin-updates').innerHTML = window.Init.counter.updates;
 	
 									setTimeout(() => document.getElementById('restart-btn').classList.add('activated'), 4000);
 								}
