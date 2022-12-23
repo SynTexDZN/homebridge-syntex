@@ -7,13 +7,24 @@ export class Init
 		window.Expandable = Expandable;
 
 		this.plugins = {};
+		this.counter = { plugins : 0, updates : 0 };
 
 		this.bridge = { ip : {}, mac : {} };
 		this.version = { current : {}, latest : {} };
 
 		this.tag = Storage.getItem('betaPluginVersions') == true ? 'beta' : 'latest';
 
-		Promise.all([
+		this.loadData().then(() => {
+
+			this.renderGUI(true);
+		
+			window.Preloader.finish();
+		});
+	}
+
+	loadData()
+	{
+		return Promise.all([
 
 			window.Query.loadData({ url : '/serverside/bridge', key : 'bridge', reference : this }),
 			window.Query.loadData({ url : '/serverside/plugins', key : 'plugins', reference : this })
@@ -40,11 +51,14 @@ export class Init
 				{
 					this.version.latest[id] = this.plugins[id].versions[tag];
 				}
-			}
 
-			this.renderGUI(true);
-		
-			window.Preloader.finish();
+				if(window.Essentials.versionCount(this.version.latest[id]) > window.Essentials.versionCount(this.version.current[id]))
+				{
+					this.counter.updates++;
+				}
+
+				this.counter.plugins++;
+			}
 		});
 	}
 
@@ -52,6 +66,9 @@ export class Init
 	{
 		const renderWidgets = () => {
 
+			document.getElementById('plugin-counter').innerHTML = this.counter.plugins;
+			document.getElementById('plugin-updates').innerHTML = this.counter.updates;
+			
 			document.getElementById('bridge-id').innerHTML = this.bridge.id || '-';
 			document.getElementById('bridge-ip').innerHTML = (this.bridge.ip.lan || '-') + '<br>' + (this.bridge.ip.wlan || '-');
 			document.getElementById('bridge-mac').innerHTML = (this.bridge.mac.lan || '-').toUpperCase() + '<br>' + (this.bridge.mac.wlan || '-').toUpperCase();
