@@ -81,48 +81,51 @@ export class Running
 
 			window.Query.complexFetch('/serverside/plugins?reload', 5000, 2, overlays, false).then((data) => {
 
-				try
+				if(data != null)
 				{
-					window.Init.plugins = JSON.parse(data);
-
-					window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
-
-					for(const id in window.Init.plugins)
+					try
 					{
-						var tag = window.Init.tag;
+						window.Init.plugins = JSON.parse(data);
 
-						if(window.Init.plugins[id].versions[tag] == null)
+						window.Essentials.showOverlay(btn, window.Essentials.createSuccessOverlay('reload', '%general.reload_success%!'));
+
+						for(const id in window.Init.plugins)
 						{
-							tag = 'latest';
+							var tag = window.Init.tag;
+
+							if(window.Init.plugins[id].versions[tag] == null)
+							{
+								tag = 'latest';
+							}
+
+							if(window.Init.plugins[id].versions.current != null)
+							{
+								window.Init.version.current[id] = window.Init.plugins[id].versions.current;
+							}
+
+							if(window.Init.plugins[id].versions[tag] != null)
+							{
+								window.Init.version.latest[id] = window.Init.plugins[id].versions[tag];
+							}
 						}
 
-						if(window.Init.plugins[id].versions.current != null)
-						{
-							window.Init.version.current[id] = window.Init.plugins[id].versions.current;
-						}
+						this.updateQuery = [];
 
-						if(window.Init.plugins[id].versions[tag] != null)
-						{
-							window.Init.version.latest[id] = window.Init.plugins[id].versions[tag];
-						}
+						window.Init.renderGUI();
+					}
+					catch(e)
+					{
+						window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('reload', '%general.reload_failed%!'));
+
+						console.error(e);
 					}
 
-					this.updateQuery = [];
+					console.log('PLUGINS', window.Init.plugins);
 
-					window.Init.renderGUI();
+					setTimeout(() => window.Essentials.removeOverlays(btn, true), 2000);
 				}
-				catch(e)
-				{
-					window.Essentials.showOverlay(btn, window.Essentials.createErrorOverlay('reload', '%general.reload_failed%!'));
-
-					console.error(e);
-				}
-
-				console.log('PLUGINS', window.Init.plugins);
 
 				this.reloading = false;
-
-				setTimeout(() => window.Essentials.removeOverlays(btn, true), 2000);
 			});
 		}
 	}
