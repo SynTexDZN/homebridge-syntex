@@ -23,7 +23,6 @@ class SynTexPlatform
 			return;
 		}
 
-		this.options = {};
 		this.internalSockets = {};
 
 		this.restart = true;
@@ -38,19 +37,14 @@ class SynTexPlatform
 		this.pluginName = pluginName;
 		this.pluginVersion = pluginVersion;
 
-		if(config['options'] != null)
-		{
-			this.options = config['options'];
-		}
+		this.options = config['options'] || {};
 
 		this.port = this.options['port'] || 1711;
-		this.language = this.options['language'] || 'en';
-		this.debug = this.options['debug'] || false;
 		this.remote = this.options['remote'] || false;
 		this.password = this.options['password'] || '';
 		this.refresh = this.options['refresh'] || 0;
 
-		this.logger = new Logger(this);
+		this.logger = new Logger(this, { language : this.options['language'] || 'en', levels : this.config['log'] });
 
 		EventManager = new EventManager(this);
 
