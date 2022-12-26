@@ -17,7 +17,7 @@ class DataStorage
 			}
 		}
 
-		if(window.location.protocol == 'http:')
+		if(window.location.hostname != 'syntex.sytes.net')
 		{
 			this.setSession('local');
 
@@ -114,11 +114,6 @@ class DataStorage
 		catch(e)
 		{
 			console.error(e);
-		}
-
-		if(navigator.serviceWorker.controller != null)
-		{
-			navigator.serviceWorker.controller.postMessage({ resetRemote : true });
 		}
 	}
 

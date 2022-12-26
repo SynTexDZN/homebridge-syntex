@@ -45,7 +45,7 @@ class URLQuery
 			{
 				url = new URL(url);
 
-				if(this.isRemote && url.port != '')
+				if(this.isRemote && url.port != '' && url.port != '8000' && url.port != '8888')
 				{
 					port = url.port;
 
