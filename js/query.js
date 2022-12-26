@@ -61,6 +61,8 @@ class URLQuery
 
 			if(this.isRemote)
 			{
+				client.setRequestHeader('session', Storage.getRemote('session-id'));
+				
 				client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
 				client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
 
