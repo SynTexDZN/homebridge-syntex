@@ -262,7 +262,7 @@ class EssentialFeatures
 				subtitle = dialogue.getElementsByClassName('subtitle-container')[0],
 				buttonArea = dialogue.getElementsByClassName('button-area')[0];
 
-			if(title.innerHTML != data.title)
+			if(document.getElementById('connection-status') == null)
 			{
 				disableScroll();
 
