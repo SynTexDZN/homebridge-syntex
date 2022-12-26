@@ -176,7 +176,7 @@ class SynTexPlatform
 
 	connectBridge(bridgeID, initBridge)
 	{
-		var url = 'http://syntex.sytes.net:8800/init-bridge?id=' + bridgeID + '&plugin=' + pluginName + '&version=' + pluginVersion + '&name=' + this.bridgeName;
+		var url = 'http://syntex.sytes.net:8888/init-bridge?id=' + bridgeID + '&plugin=' + pluginName + '&version=' + pluginVersion + '&name=' + this.bridgeName;
 
 		if(initBridge)
 		{
