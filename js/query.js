@@ -45,7 +45,7 @@ class URLQuery
 			{
 				url = new URL(url);
 
-				if(this.isRemote && url.port != '' && url.port != '8000' && url.port != '8888')
+				if(this.isRemote && url.port != '' && url.port != '8000' && url.port != '8800' && url.port != '8888')
 				{
 					port = url.port;
 
@@ -254,8 +254,6 @@ class URLQuery
 
 			if(window.location.hostname == 'syntex.sytes.net')
 			{
-				request = new URL(request.href.replace('ws:', 'wss:'));
-
 				if(request.port != '')
 				{
 					var port = request.port;
