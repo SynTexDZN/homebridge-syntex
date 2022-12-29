@@ -45,7 +45,7 @@ class URLQuery
 			{
 				url = new URL(url);
 
-				if(this.isRemote && url.port != '' && url.port != '8000' && url.port != '8800' && url.port != '8888')
+				if(this.isRemote && url.port != '' && url.port != '8000' && url.port != '8888')
 				{
 					port = url.port;
 
@@ -62,7 +62,7 @@ class URLQuery
 			if(this.isRemote)
 			{
 				client.setRequestHeader('session', Storage.getRemote('session-id'));
-				
+
 				client.setRequestHeader('bridge', headers?.bridgeID || Storage.getRemote('bridge-id'));
 				client.setRequestHeader('password', headers?.bridgePassword || Storage.getRemote('bridge-password'));
 
