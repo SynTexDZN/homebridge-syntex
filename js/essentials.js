@@ -485,8 +485,6 @@ class EssentialFeatures
 				btn.style.borderTopWidth = 0;
 				btn.style.borderBottomWidth = 0;
 
-				console.log('MAIN BTN 2 SHRINK');
-
 			}, 300);
 		}
 
@@ -502,13 +500,9 @@ class EssentialFeatures
 				}
 			}
 
-			console.log('REMOVE OVERLAYS');
-
 			if(show == false)
 			{
 				btn.parentElement.removeChild(btn);
-
-				console.log('MAIN BTN 2 REMOVE');
 			}
 
 		}, (show == null || show == true) ? 300 : 600);
@@ -642,8 +636,6 @@ class EssentialFeatures
 
 				for(const i in style)
 				{
-					console.log(style[i]);
-					
 					if(typeof style[i] == 'string' && style[i].startsWith('overlay'))
 					{
 						button.classList.remove(style[i]);
@@ -665,8 +657,6 @@ class EssentialFeatures
 
 				for(const i in style)
 				{
-					console.log(style[i]);
-
 					if(typeof style[i] == 'string' && style[i].startsWith('underlay'))
 					{
 						button.classList.remove(style[i]);
