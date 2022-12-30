@@ -1135,18 +1135,6 @@ function onlySwitches(services)
 	return tmp;
 }
 
-function preventDefaultForScrollKeys(e)
-{
-	var keys = [37, 38, 39, 40];
-	
-	if(keys.includes(e.keyCode))
-	{
-		e.preventDefault();
-
-		return false;
-	}
-}
-
 function disableScroll()
 {
 	window.addEventListener('DOMMouseScroll', preventDefault, false);
@@ -1161,6 +1149,18 @@ function enableScroll()
 	window.removeEventListener(self.wheelEvent, preventDefault, self.wheelOpt); 
 	window.removeEventListener('touchmove', preventDefault, self.wheelOpt);
 	window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+
+function preventDefaultForScrollKeys(e)
+{
+	var keys = [37, 38, 39, 40];
+	
+	if(keys.includes(e.keyCode))
+	{
+		e.preventDefault();
+
+		return false;
+	}
 }
 
 function preventDefault(e)
