@@ -107,6 +107,8 @@ export class Init
 
 					status.onclick = (e) => {
 
+						e.stopPropagation();
+
 						if(e.target.classList.contains('available'))
 						{
 							if(!window.Running.updateQuery.includes(id + '@' + this.version.latest[id]))

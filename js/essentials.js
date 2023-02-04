@@ -189,14 +189,11 @@ class EssentialFeatures
 
 			disableScroll();
 
-			dialogue.onmousedown = dialogue.ontouchstart = (e) => {
+			dialogue.onclick = (e) => {
 
-				this.closingDialogue = e.target.id == 'dialogue';
-			};
+				e.stopPropagation();
 
-			dialogue.onmouseup = dialogue.ontouchend = (e) => {
-
-				if(e.target.id == 'dialogue' && this.closingDialogue)
+				if(e.target.id == 'dialogue')
 				{
 					this.closeDialogue();
 				}

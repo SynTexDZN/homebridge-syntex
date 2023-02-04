@@ -47,44 +47,41 @@ class ExpandableButton
 	{
 		btn.opened = false;
 
-		btn.onclick = (e) => {
+		btn.onclick = () => {
 			
-			if(e.target == btn || e.target.onclick == null)
+			var height = btn.scrollHeight;
+
+			if(height != btn.offsetHeight)
 			{
-				var height = btn.scrollHeight;
+				btn.style.height = height;
 
-				if(height != btn.offsetHeight)
+				btn.opened = true;
+
+				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
 				{
-					btn.style.height = height;
-
-					btn.opened = true;
-
-					for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
-					{
-						btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
-					}
+					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 1;
 				}
-				else
-				{
-					btn.style.removeProperty('height');
-
-					btn.opened = false;
-
-					for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
-					{
-						btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
-					}
-				}
-				/*
-				for(const i in this.buttons)
-				{
-					if(this.buttons[i] != this)
-					{
-						this.buttons[i].style.removeProperty('height');
-					}
-				}
-				*/
 			}
+			else
+			{
+				btn.style.removeProperty('height');
+
+				btn.opened = false;
+
+				for(let i = 0; i < btn.getElementsByClassName('expandable-hidden').length; i++)
+				{
+					btn.getElementsByClassName('expandable-hidden')[i].style.opacity = 0;
+				}
+			}
+			/*
+			for(const i in this.buttons)
+			{
+				if(this.buttons[i] != this)
+				{
+					this.buttons[i].style.removeProperty('height');
+				}
+			}
+			*/
 		};
 
 		this.buttons.push(btn);
