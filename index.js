@@ -204,9 +204,7 @@ class SynTexPlatform
 				setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
 			}
 
-		}).catch((e) => {
-
-			this.logger.err(e);
+		}).catch(() => {
 
 			setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
 		});

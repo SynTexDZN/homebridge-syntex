@@ -31,7 +31,12 @@ module.exports = class UpdateManager
 
 				resolve(true);
 
-			}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', '%device_versions_read_error%!', e); resolve(false) });
+			}).catch(() => {
+				
+				this.logger.log('error', 'bridge', 'Bridge', '%device_versions_read_error%!');
+				
+				resolve(false);
+			});
 		});
 	}
 
