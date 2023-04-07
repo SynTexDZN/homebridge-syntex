@@ -365,7 +365,7 @@ class SynTexPlatform
 					}
 					else
 					{
-						this.WebSocket.send(JSON.stringify({ path : message.path, status : 401, data : '' }));
+						sendResponse(message, { status : 401, data : '' });
 					}
 				}
 				catch(e)
