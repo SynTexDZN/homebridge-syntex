@@ -1354,7 +1354,7 @@
 				function setupController()
 				{
 					DeviceController = {
-						url : window.location.protocol == 'http:' ? 'ws' : 'wss' + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
 						callback : (data) => {
 						
 							if(data instanceof Object)
@@ -1382,7 +1382,7 @@
                                 const letters = Essentials.typeToLetter(type) + j;
 
                                 var ActivityViewer = {
-                                    url : window.location.protocol == 'http:' ? 'ws' : 'wss' + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+                                    url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
                                     message : {
                                         line : 'getActivity',
                                         params : {

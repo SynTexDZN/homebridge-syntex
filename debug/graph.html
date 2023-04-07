@@ -310,7 +310,7 @@
 				function setupViewer(graphID, port, id, letters)
 				{
 					var ActivityViewer = {
-						url : window.location.protocol == 'http:' ? 'ws' : 'wss' + '://' + window.location.hostname + ':' + port + '/devices',
+						url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + port + '/devices',
 						message : {
 							line : 'getActivity',
 							params : { id, letters }
