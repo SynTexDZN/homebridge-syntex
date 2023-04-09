@@ -18,7 +18,7 @@
 			</script>
 			<div class="main" style="display: flex; flex-direction: column; gap: 20px">
 				<button onclick="window.ServiceWorker.update()">SW Update</button>
-				<button onclick="window.ServiceWorker.push()">SW Subscribe</button>
+				<button onclick="switchSubscription()" id="sw-subscribe">SW Subscribe</button>
 				<button onclick="window.ServiceWorker.sendNotification('Demo Benachtichtigung', { body : 'Dies ist ein Test!' })">SW Push</button>
 				<button onclick="setBadge()">Badge Setzen</button>
 				<button onclick="clearBadge()">Badge Löschen</button>
@@ -27,8 +27,36 @@
 
 				Preloader.finish();
 
+				renderGUI();
+
 			</script>
 			<script>
+
+				function renderGUI()
+				{
+					if(window.pushEnabled)
+					{
+						document.getElementById('sw-subscribe').innerHTML = 'SW Unsubscribe';
+					}
+				}
+
+				function switchSubscription()
+				{
+					if(!window.pushEnabled)
+					{
+						window.ServiceWorker.subscribe();
+
+						document.getElementById('sw-subscribe').innerHTML = 'SW Unsubscribe';
+					}
+					else
+					{
+						window.ServiceWorker.unsubscribe();
+
+						document.getElementById('sw-subscribe').innerHTML = 'SW Subscribe';
+					}
+
+					window.pushEnabled = !window.pushEnabled;
+				}
 				/*
 				function requestPermission()
 				{
