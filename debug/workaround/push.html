@@ -1,0 +1,76 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>Benachrichtigungen</title>
+			<script type="module">
+
+				PageManager.setHeader('Web Push', 'Development');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="display: flex; flex-direction: column; gap: 20px">
+				<button onclick="window.ServiceWorker.update()">SW Update</button>
+				<button onclick="window.ServiceWorker.push()">SW Subscribe</button>
+				<button onclick="window.ServiceWorker.sendNotification('Demo Benachtichtigung', { body : 'Dies ist ein Test!' })">SW Push</button>
+				<button onclick="setBadge()">Badge Setzen</button>
+				<button onclick="clearBadge()">Badge Löschen</button>
+			</div>
+			<script type="module">
+
+				Preloader.finish();
+
+			</script>
+			<script>
+				/*
+				function requestPermission()
+				{
+					Notification.requestPermission().then((result) => {
+
+						console.log(result);
+					});
+				}
+
+				function sendNotification()
+				{
+					setTimeout(() => {
+
+						const randomItem = Math.floor(Math.random() * 1000);
+						const notifTitle = 'Title';
+						const notifBody = 'Body';
+						const notifImg = '/img/calendar.png';
+						const options = {
+							body : notifBody,
+							icon : notifImg,
+						};
+
+						new Notification(notifTitle, options);
+						/*
+						new Notification('Hello World', {
+							tag : "soManyNotification"
+						});
+						
+					}, 3000)
+				}
+				*/
+				function setBadge()
+				{
+					navigator.setAppBadge(2);
+				}
+
+				function clearBadge()
+				{
+					navigator.clearAppBadge();
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
