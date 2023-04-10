@@ -1692,7 +1692,7 @@
 
 				async function checkUpdates()
 				{
-					var newestVersion = await Query.complexFetch('http://syntex.sytes.net:8888/check-version?type=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
+					var newestVersion = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':8888/check-version?type=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
 
 					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
 					{

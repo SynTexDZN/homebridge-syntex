@@ -176,7 +176,7 @@ class SynTexPlatform
 
 	connectBridge(bridgeID, initBridge)
 	{
-		var url = 'http://syntex.sytes.net:8888/init-bridge?id=' + bridgeID + '&plugin=' + pluginName + '&version=' + pluginVersion + '&name=' + this.bridgeName;
+		var url = 'http://syntex-cloud.com:8888/init-bridge?id=' + bridgeID + '&plugin=' + pluginName + '&version=' + pluginVersion + '&name=' + this.bridgeName;
 
 		if(initBridge)
 		{
@@ -271,7 +271,7 @@ class SynTexPlatform
 		{
 			this.logger.debug('%remote_link_connecting% ..');
 
-			this.WebSocket = new WebSocket('ws://syntex.sytes.net:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
+			this.WebSocket = new WebSocket('ws://syntex-cloud.com:8080/?id=' + this.bridgeID, { handshakeTimeout : 30000 });
 
 			this.WebSocket.on('ping', () => isAlive());
 
