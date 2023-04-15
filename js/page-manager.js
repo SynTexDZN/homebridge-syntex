@@ -79,7 +79,7 @@ class PageManagerModule
 					this.headContent.children[1].classList.add('hidden');
 				}
 
-				if(this.topMenu != null && window.location.hostname == 'syntex.sytes.net' && (window.location.pathname == '/remote' || window.location.pathname == '/login'))
+				if(this.topMenu != null && window.location.hostname == 'syntex-cloud.com' && (window.location.pathname == '/remote' || window.location.pathname == '/login'))
 				{
 					this.topMenu.classList.add('hidden');
 				}
@@ -102,11 +102,11 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 
-					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.hostname == 'syntex.sytes.net' || Storage.getItem('topBar') == true))
+					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.hostname == 'syntex-cloud.com' || Storage.getItem('topBar') == true))
 					{
 						this.topMenu.classList.remove('hidden');
 
-						if(window.location.hostname == 'syntex.sytes.net')
+						if(window.location.hostname == 'syntex-cloud.com')
 						{
 							this.topMenu.children[0].style.display = '';
 						}
@@ -120,11 +120,11 @@ class PageManagerModule
 
 					this.headContent.classList.remove('hidden');
 
-					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.hostname == 'syntex.sytes.net' || Storage.getItem('topBar') == true))
+					if(this.topMenu != null && this.topMenu.children[0] != null && window.location.pathname != '/remote' && window.location.pathname != '/login' && (window.location.hostname == 'syntex-cloud.com' || Storage.getItem('topBar') == true))
 					{
 						this.topMenu.classList.remove('hidden');
 
-						if(window.location.hostname == 'syntex.sytes.net')
+						if(window.location.hostname == 'syntex-cloud.com')
 						{
 							this.topMenu.children[0].style.display = '';
 						}
@@ -149,7 +149,7 @@ class PageManagerModule
 				{
 					this.topMenu.classList.add('hidden');
 
-					if(window.location.hostname == 'syntex.sytes.net')
+					if(window.location.hostname == 'syntex-cloud.com')
 					{
 						this.topMenu.children[0].style.display = '';
 					}

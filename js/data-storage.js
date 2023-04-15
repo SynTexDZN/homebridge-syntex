@@ -17,7 +17,7 @@ class DataStorage
 			}
 		}
 
-		if(window.location.hostname != 'syntex.sytes.net')
+		if(window.location.hostname != 'syntex-cloud.com')
 		{
 			this.setSession('local');
 

@@ -2,7 +2,7 @@ class URLQuery
 {
 	constructor()
 	{
-		this.isRemote = window.location.hostname == 'syntex.sytes.net';
+		this.isRemote = window.location.hostname == 'syntex-cloud.com';
 
 		this.socketInterval = setInterval(() => {
 
@@ -254,7 +254,7 @@ class URLQuery
 		{
 			request = new URL(request);
 
-			if(window.location.hostname == 'syntex.sytes.net')
+			if(window.location.hostname == 'syntex-cloud.com')
 			{
 				if(request.port != '')
 				{
