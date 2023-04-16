@@ -56,6 +56,11 @@ class DataStorage
 			{
 				console.error(e);
 			}
+
+			if(window.ServiceWorker != null)
+			{
+				window.ServiceWorker.updateSession(sessionID);
+			}
 		}
 	}
 
@@ -71,6 +76,11 @@ class DataStorage
 		catch(e)
 		{
 			console.error(e);
+		}
+
+		if(window.ServiceWorker != null)
+		{
+			window.ServiceWorker.updateSession();
 		}
 	}
 
