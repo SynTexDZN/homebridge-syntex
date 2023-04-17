@@ -1211,6 +1211,19 @@ class SynTexPlatform
 			});
 		});
 	}
+
+	sendNotification(notification)
+	{
+		if(this.WebSocket != null)
+		{
+			if(notification.title == null)
+			{
+				notification.title = this.bridgeName;
+			}
+
+			this.WebSocket.send(JSON.stringify({ push : notification }));
+		}
+	}
 }
 
 function typeToLetter(type)
