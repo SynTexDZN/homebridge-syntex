@@ -1,0 +1,50 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>Fehlerbehebung</title>
+			<script type="module">
+
+				PageManager.setHeader('Debug', 'Fehlerbehebung');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="display: flex; flex-direction: column; gap: 20px">
+				<button onclick="resetSettings()">Einstellungen Zurücksetzen</button>
+                <button onclick="clearCache()">Cache Speicher Leeren</button>
+			</div>
+			<script type="module">
+
+				Preloader.finish();
+
+			</script>
+			<script>
+
+                function resetSettings()
+                {
+                    localStorage.clear();
+
+                    window.location.reload();
+                }
+
+                function clearCache()
+                {
+                    if(window.ServiceWorker != null)
+                    {
+                        window.ServiceWorker.clearCache();
+
+                        window.location.reload();
+                    }
+                }
+				
+			</script>
+		</div>
+	</body>
+</html>
