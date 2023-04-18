@@ -137,7 +137,7 @@ module.exports = class DeviceManager
 										port : this.webHooksPort || 1710
 									};
 
-									this.platform.sendNotification({ type : 'syntex-accessory-added', body : '[' + name + '] wurde dem System hinzugefügt!' });
+									this.platform.sendNotification({ type : 'push-syntex-accessory-added', body : '[' + name + '] wurde dem System hinzugefügt!' });
 
 									resolve(['Init', JSON.stringify(obj)]);
 								}
