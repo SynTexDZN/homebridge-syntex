@@ -1,4 +1,6 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), EventManager = require('./core/event-manager'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), EventManager = require('./core/event-manager');
+
+const Basic = require('syntex-basic'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
 const App = require('./app/server/index');
 
@@ -80,6 +82,10 @@ class SynTexPlatform
 
 			this.WebServer.setHead(__dirname + '/includes/head.html');
 			this.WebServer.setFooter(__dirname + '/includes/footer.html');
+
+			this.Basic = new Basic(this, { path : __dirname + '/server' });
+
+			this.ConnectionManager = this.Basic.getConnectionManager();
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
