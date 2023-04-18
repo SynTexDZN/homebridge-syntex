@@ -1101,6 +1101,20 @@ class SynTexPlatform
 				});
 			}
 		});
+
+		this.WebServer.addPage('/serverside/push', (request, response, params, content, post) => {
+
+			if(post != null && post.notification != null)
+			{
+				this.sendNotification(post.notification);
+
+				response.end('Success');
+			}
+			else
+			{
+				response.end('Error');
+			}
+		});
 	}
 
 	getPluginConfig(pluginName)
