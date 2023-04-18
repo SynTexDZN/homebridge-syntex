@@ -65,6 +65,10 @@ class SynTexPlatform
 				this.logger.log('error', 'bridge', 'Bridge', '%directory_permission_error% [' + config['baseDirectory'] + ']', '%visit_github_for_support%: https://github.com/SynTexDZN/homebridge-syntex#troubleshooting', e);
 			}
 		}
+		else
+		{
+			this.logger.log('error', 'bridge', 'Bridge', '%no_base_path%!');
+		}
 
 		if(this.logger != null && this.baseDirectory != null)
 		{
@@ -83,7 +87,7 @@ class SynTexPlatform
 			this.WebServer.setHead(__dirname + '/includes/head.html');
 			this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
-			this.Basic = new Basic(this, { path : __dirname + '/server' });
+			this.Basic = new Basic({ ...this, loggerSpecial : this.logger }, { path : __dirname });
 
 			this.ConnectionManager = this.Basic.getConnectionManager();
 
