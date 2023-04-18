@@ -20,8 +20,6 @@ class DataStorage
 		if(window.location.hostname != 'syntex-cloud.com')
 		{
 			this.setSession('local');
-
-			this.data['local'] = { settings : {} };
 		}
 
 		for(var i = 0; i < localStorage.length; i++)
@@ -40,6 +38,8 @@ class DataStorage
 				}
 			}
 		}
+
+		this.prepareStructure();
 	}
 
 	setSession(sessionID)
@@ -57,6 +57,8 @@ class DataStorage
 				console.error(e);
 			}
 
+			this.prepareStructure();
+
 			if(window.ServiceWorker != null)
 			{
 				window.ServiceWorker.updateSession(sessionID);
@@ -66,12 +68,11 @@ class DataStorage
 
 	resetSession()
 	{
-		delete this.remote['session-id'];
-		delete this.remote['last-bridge-id'];
+		this.remote = {};
 		
 		try
 		{
-			localStorage.setItem('remote', JSON.stringify(this.remote));
+			localStorage.removeItem('remote');
 		}
 		catch(e)
 		{
@@ -129,13 +130,13 @@ class DataStorage
 
 	getItem(key)
 	{
-		if(this.checkStructure() == 'local')
+		if(this.checkStructure() == 'local' && key != 'notifications')
 		{
-			return this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].settings[key];
+			return this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].data[key];
 		}
-		else if(this.checkStructure() == 'global')
+		else if(this.checkStructure() != null)
 		{
-			return this.data[this.remote['session-id']].settings[key];
+			return this.data[this.remote['session-id']].data[key];
 		}
 
 		return null;
@@ -143,13 +144,13 @@ class DataStorage
 
 	setItem(key, value)
 	{
-		if(this.checkStructure() == 'local')
+		if(this.checkStructure() == 'local' && key != 'notifications')
 		{
-			this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].settings[key] = value;
+			this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].data[key] = value;
 		}
-		else if(this.checkStructure() == 'global')
+		else if(this.checkStructure() != null)
 		{
-			this.data[this.remote['session-id']].settings[key] = value;
+			this.data[this.remote['session-id']].data[key] = value;
 		}
 
 		if(this.checkStructure() != null)
@@ -171,13 +172,13 @@ class DataStorage
 
 	removeItem(key)
 	{
-		if(this.checkStructure() == 'local')
+		if(this.checkStructure() == 'local' && key != 'notifications')
 		{
-			delete this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].settings[key];
+			delete this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].data[key];
 		}
-		else if(this.checkStructure() == 'global')
+		else if(this.checkStructure() != null)
 		{
-			delete this.data[this.remote['session-id']].settings[key];
+			delete this.data[this.remote['session-id']].data[key];
 		}
 
 		if(this.checkStructure() != null)
@@ -213,15 +214,15 @@ class DataStorage
 		{
 			for(const id in bridges)
 			{
-				if(bridges[id].settings == null)
+				if(bridges[id].data == null)
 				{
-					bridges[id].settings = {};
+					bridges[id].data = {};
 				}
 			}
 
 			if(this.data[this.remote['session-id']] == null)
 			{
-				this.data[this.remote['session-id']] = { settings : {} };
+				this.data[this.remote['session-id']] = { data : {} };
 			}
 
 			this.data[this.remote['session-id']].bridges = bridges;
@@ -245,11 +246,11 @@ class DataStorage
 	{
 		if(this.checkStructure() == 'local')
 		{
-			return this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].settings;
+			return this.data[this.remote['session-id']].bridges[this.remote['bridge-id']].data;
 		}
 		else if(this.checkStructure() == 'global')
 		{
-			return this.data[this.remote['session-id']].settings;
+			return this.data[this.remote['session-id']].data;
 		}
 
 		return null;
@@ -257,7 +258,7 @@ class DataStorage
 
 	checkSession()
 	{
-		return this.remote['session-id'] != null && this.data[this.remote['session-id']] != null;
+		return this.remote['session-id'] != null;
 	}
 
 	checkBridge()
@@ -273,18 +274,28 @@ class DataStorage
 
 			if(this.checkBridge())
 			{
-				if(sessionStorage.bridges instanceof Object && sessionStorage.bridges[this.remote['bridge-id']] instanceof Object && sessionStorage.bridges[this.remote['bridge-id']].settings instanceof Object)
+				if(sessionStorage.bridges instanceof Object && sessionStorage.bridges[this.remote['bridge-id']] instanceof Object && sessionStorage.bridges[this.remote['bridge-id']].data instanceof Object)
 				{
 					return 'local';
 				}
 			}
-			else if(sessionStorage.settings instanceof Object)
+			else if(sessionStorage.data instanceof Object)
 			{
 				return 'global';
 			}
 		}
 
 		return null;
+	}
+
+	prepareStructure()
+	{
+		if(this.checkSession() && this.data[this.remote['session-id']] == null)
+		{
+			this.data[this.remote['session-id']] = { data : {} };
+
+			localStorage.setItem(this.remote['session-id'], JSON.stringify(this.data[this.remote['session-id']]));
+		}
 	}
 }
 

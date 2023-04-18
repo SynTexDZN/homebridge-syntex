@@ -1106,6 +1106,29 @@ class EssentialFeatures
 
 		element.addEventListener('mousedown', mouseDownHandler);
 	}
+
+	switchNotifications(button)
+	{
+		if(window.ServiceWorker != null)
+		{
+			var key = button.getAttribute('name'), value = button.checked,
+				notificationSettings = Storage.getItem('notifications') || {};
+
+			if(button.getAttribute('type') == 'button')
+			{
+				value = (button.value == 'An');
+			}
+
+			if(key != '')
+			{
+				notificationSettings[key] = value;
+
+				Storage.setItem('notifications', notificationSettings);
+
+				window.ServiceWorker.setPushSettings(notificationSettings);
+			}
+		}
+	}
 }
 
 var idCounter = new Date().getTime();
