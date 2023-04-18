@@ -115,6 +115,7 @@
 							<p style="margin: 0" autofocus><b>%general.name%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/ ]+" title="%pattern.letters_numbers_spaces_special%: # / ( )" required name="name" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
 							<p style="margin: 0"><b>%general.group%: <input pattern="[a-zA-ZäÄöÖüÜß0-9-#()&/, ]+" title="%pattern.letters_numbers_spaces_special%: , - & # / ( )" name="group" type="text" style="max-width: 325px" oninput="hasChanged()"></b></p>
 							<p style="margin: 0"><b>%automation.active%: <input value="%characteristics.boolean.active%" name="active" type="button" class="white" onclick="Essentials.switchBooleanButton(this); hasChanged()" style="max-width: 150px; border-width: 3px"></b></p>
+							<p style="margin: 0" class="hidden"><b>%general.notifications%: <input value="%characteristics.boolean.active%" type="button" class="white" onclick="Essentials.switchBooleanButton(this); Essentials.switchNotifications(this)" style="max-width: 150px; border-width: 3px"></b></p>
 						</div>
 					</div>
 					<div class="panel">
@@ -702,6 +703,15 @@
 					document.getElementById('general').getElementsByTagName('input')[2].value = (Array.isArray(automation.group) ? automation.group.join(', ') : automation.group) || '';
 
 					Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[3], automation.active != false);
+
+					if(window.ServiceWorker != null)
+					{
+						document.getElementById('general').children[4].classList.remove('hidden');
+
+						document.getElementById('general').getElementsByTagName('input')[4].setAttribute('name', Storage.getRemote('bridge-id') + '#push-automation-' + (automation.id != null ? automation.id : getNextID()));
+
+						Essentials.switchBooleanButton(document.getElementById('general').getElementsByTagName('input')[4], (Storage.getItem('notifications') || {})[Storage.getRemote('bridge-id') + '#push-automation-' + (automation.id != null ? automation.id : getNextID())]);
+					}
 
 					if(automation.trigger == null || automation.trigger.logic == 'AND')
 					{

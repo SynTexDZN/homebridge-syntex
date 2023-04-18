@@ -1110,6 +1110,8 @@ class SynTexPlatform
 
 			if(post != null && post.notification != null)
 			{
+				post.notification.type = this.bridgeID + '#' + post.notification.type;
+
 				this.sendNotification(post.notification);
 
 				response.end('Success');
