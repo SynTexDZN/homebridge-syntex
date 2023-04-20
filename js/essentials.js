@@ -1109,24 +1109,25 @@ class EssentialFeatures
 
 	switchNotifications(button)
 	{
-		if(window.ServiceWorker != null)
+		var id = Storage.getRemote('client-id'),
+			key = button.getAttribute('name'),
+			value = button.checked || (button.value == 'An'),
+			notificationSettings = Storage.getItem('notifications') || {};
+			
+		if(window.ServiceWorker != null && id != null && key != null)
 		{
-			var key = button.getAttribute('name'), value = button.checked,
-				notificationSettings = Storage.getItem('notifications') || {};
+			var body = { id };
 
-			if(button.getAttribute('type') == 'button')
-			{
-				value = (button.value == 'An');
-			}
+			notificationSettings[key] = value;
 
-			if(key != '')
-			{
-				notificationSettings[key] = value;
+			body.settings = notificationSettings;
 
-				Storage.setItem('notifications', notificationSettings);
+			Storage.setItem('notifications', notificationSettings);
 
-				window.ServiceWorker.setPushSettings(notificationSettings);
-			}
+			window.Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':8888/serverside/subscribe', 3000, JSON.stringify(body)).then((data) => {
+
+				console.log(data);
+			});
 		}
 	}
 }

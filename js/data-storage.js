@@ -42,6 +42,28 @@ class DataStorage
 		this.prepareStructure();
 	}
 
+	setClient(clientID)
+	{
+		if(clientID != null)
+		{
+			this.remote['client-id'] = clientID;
+
+			try
+			{
+				localStorage.setItem('remote', JSON.stringify(this.remote));
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+
+			if(window.ServiceWorker != null)
+			{
+				window.ServiceWorker.sendMessage({ clientID });
+			}
+		}
+	}
+
 	setSession(sessionID)
 	{
 		if(sessionID != null)
@@ -61,7 +83,7 @@ class DataStorage
 
 			if(window.ServiceWorker != null)
 			{
-				window.ServiceWorker.updateSession(sessionID);
+				window.ServiceWorker.sendMessage({ sessionID });
 			}
 		}
 	}
@@ -81,7 +103,7 @@ class DataStorage
 
 		if(window.ServiceWorker != null)
 		{
-			window.ServiceWorker.updateSession();
+			window.ServiceWorker.sendMessage({ sessionID : 'RESET' });
 		}
 	}
 
