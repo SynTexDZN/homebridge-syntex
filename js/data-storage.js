@@ -17,11 +17,6 @@ class DataStorage
 			}
 		}
 
-		if(window.location.hostname != 'syntex-cloud.com')
-		{
-			this.setSession('local');
-		}
-
 		for(var i = 0; i < localStorage.length; i++)
 		{
 			var key = localStorage.key(i);
@@ -37,6 +32,11 @@ class DataStorage
 					this.data[key] = localStorage.getItem(key);
 				}
 			}
+		}
+
+		if(window.location.hostname != 'syntex-cloud.com')
+		{
+			this.setSession('local');
 		}
 
 		this.prepareStructure();
