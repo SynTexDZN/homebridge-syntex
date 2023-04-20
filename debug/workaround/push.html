@@ -20,7 +20,7 @@
 				<button onclick="window.ServiceWorker.update()">SW Update</button>
 				<button onclick="switchSubscription()" id="sw-subscribe">SW Subscribe</button>
 				<button onclick="window.ServiceWorker.sendNotification('Demo Benachtichtigung', { body : 'Dies ist ein Test!' })">SW Push</button>
-				<button onclick="window.ServiceWorker.clearAppBadge()">Badge Löschen</button>
+				<button onclick="window.ServiceWorker.sendMessage({ clearAppBadge : true })">Badge Löschen</button>
 			</div>
 			<script type="module">
 
