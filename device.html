@@ -291,6 +291,7 @@
 				}
 
 				settingsForm.getElementsByTagName('input')[2].setAttribute('value', device.options != null && device.options.status == false ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%');
+				settingsForm.getElementsByTagName('input')[2].setAttribute('orginal-value', device.options != null && device.options.status == false ? '%characteristics.boolean.inactive%' : '%characteristics.boolean.active%');
 				settingsForm.getElementsByTagName('input')[2].setAttribute('class', device.options != null && device.options.status == false ? 'outline' : 'white');
 
 				for(const i in settings)
