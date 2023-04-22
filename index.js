@@ -87,7 +87,7 @@ class SynTexPlatform
 			this.WebServer.setHead(__dirname + '/includes/head.html');
 			this.WebServer.setFooter(__dirname + '/includes/footer.html');
 
-			this.Basic = new Basic({ ...this, loggerSpecial : this.logger }, { path : __dirname });
+			this.Basic = new Basic({ ...this, loggerSpecial : this.logger });
 
 			this.ConnectionManager = this.Basic.getConnectionManager();
 
