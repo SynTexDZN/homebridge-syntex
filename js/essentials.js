@@ -1028,31 +1028,31 @@ class EssentialFeatures
 
 		if(timestamp < 60)
 		{
-			return Math.round(timestamp) + ' ' + '%devices.time.seconds%'[0];
+			return Math.round(timestamp) + ' ' + '%general.time.seconds%'[0];
 		}
 		else if(timestamp < 60 * 60)
 		{
-			return Math.round(timestamp / 60) + ' ' + '%devices.time.minutes%'[0];
+			return Math.round(timestamp / 60) + ' ' + '%general.time.minutes%'[0];
 		}
 		else if(timestamp < 60 * 60 * 24)
 		{
-			return Math.round(timestamp / 60 / 60) + ' ' + '%devices.time.hours%'[0];
+			return Math.round(timestamp / 60 / 60) + ' ' + '%general.time.hours%'[0];
 		}
 		else if(timestamp < 60 * 60 * 24 * 7)
 		{
-			return Math.round(timestamp / 60 / 60 / 24) + ' ' + '%devices.time.days%'[0];
+			return Math.round(timestamp / 60 / 60 / 24) + ' ' + '%general.time.days%'[0];
 		}
 		else if(timestamp < 60 * 60 * 24 * 30.5)
 		{
-			return Math.round(timestamp / 60 / 60 / 24 / 7) + ' ' + '%devices.time.weeks%'[0];
+			return Math.round(timestamp / 60 / 60 / 24 / 7) + ' ' + '%general.time.weeks%'[0];
 		}
 		else if(timestamp < 60 * 60 * 24 * 365)
 		{
-			return Math.round(timestamp / 60 / 60 / 24 / 30.5) + ' ' + '%devices.time.months%'[0];
+			return Math.round(timestamp / 60 / 60 / 24 / 30.5) + ' ' + '%general.time.months%'[0];
 		}
 		else
 		{
-			return '> 1 ' + '%devices.time.years%'[0];
+			return '> 1 ' + '%general.time.years%'[0];
 		}
 	}
 
