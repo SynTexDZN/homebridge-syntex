@@ -592,18 +592,25 @@ class EssentialFeatures
 	{
 		var submit = document.getElementById(id),
 			orginalValue = input.getAttribute('value'),
+			currentValue = input.value,
 			inputID = getID(input);
+
+		if(input.getAttribute('type') == 'checkbox')
+		{
+			orginalValue = input.getAttribute('checked') == 'true';
+			currentValue = input.checked;
+		}
 
 		if(input.hasAttribute('orginal-value'))
 		{
 			orginalValue = input.getAttribute('orginal-value');
 		}
 
-		if(input.value != orginalValue && !this.changeCounter.includes(inputID))
+		if(currentValue != orginalValue && !this.changeCounter.includes(inputID))
 		{
 			this.changeCounter.push(inputID);
 		}
-		else if(input.value == orginalValue)
+		else if(currentValue == orginalValue)
 		{
 			this.changeCounter.splice(this.changeCounter.indexOf(inputID), 1);
 		}
