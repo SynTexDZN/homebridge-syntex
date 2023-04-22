@@ -21,18 +21,18 @@
 
 				window.configTemplate = {
 					options : {
-						remote : { default : false, type : 'button', name : '%debug.settings.remote%' },
+						remote : { default : false, type : 'checkbox', name : '%debug.settings.remote%' },
 						password : { default : '', type : 'password', name : '%debug.settings.password%' },
-						refresh : { default : 60000, type : 'text', name : '%debug.settings.refresh%' }
+						refresh : { default : 60000, type : 'text', name : '(%general.time.milliseconds%) %debug.settings.refresh%' }
 					},
 					log : {
-						error : { default : true, type : 'button', name : '%log.error%' },
-						warn : { default : true, type : 'button', name : '%log.warn%' },
-						info : { default : true, type : 'button', name : '%log.info%' },
-						read : { default : true, type : 'button', name : '%log.read%' },
-						update : { default : true, type : 'button', name : '%log.update%' },
-						success : { default : true, type : 'button', name : '%log.success%' },
-						debug : { default : true, type : 'button', name : '%log.debug%' }
+						error : { default : true, type : 'checkbox', name : '%log.error%' },
+						warn : { default : true, type : 'checkbox', name : '%log.warn%' },
+						info : { default : true, type : 'checkbox', name : '%log.info%' },
+						read : { default : true, type : 'checkbox', name : '%log.read%' },
+						update : { default : true, type : 'checkbox', name : '%log.update%' },
+						success : { default : true, type : 'checkbox', name : '%log.success%' },
+						debug : { default : true, type : 'checkbox', name : '%log.debug%' }
 					}/*,
 					port : { default : 1711, type : 'text', name : 'Port' }, // TODO: Add Language Translation
 					language : { default : "us", type : 'text', name : 'Sprache' },
@@ -40,12 +40,12 @@
 				};
 
 				window.appSettingsTemplate = {
-					betaPluginVersions : { default : false, type : 'button', name : '%debug.settings.beta_access%' },
-					expertMode : { default : false, type : 'button', name : '%bridge.expert_mode%' },
-					topBar : { default : false, type : 'button', name : '%debug.settings.top_bar%', local : true }
+					betaPluginVersions : { default : false, type : 'checkbox', name : '%debug.settings.beta_access%' },
+					expertMode : { default : false, type : 'checkbox', name : '%bridge.expert_mode%' },
+					topBar : { default : false, type : 'checkbox', name : '%debug.settings.top_bar%', local : true }
 				};
 
-				loadBridgeConfig().then((config) => {
+				loadData().then((config) => {
 
 					renderGUI(config);
 
@@ -55,7 +55,7 @@
 			</script>
 			<script>
 
-				function loadBridgeConfig()
+				function loadData()
 				{
 					return new Promise((resolve) => {
 
@@ -81,6 +81,8 @@
 
 				function renderGUI(config)
 				{
+					document.getElementById('config-editor').innerHTML = '';
+
 					configJSON.options = createFormInputs('%debug.settings.bridge_settings%', configTemplate.options, config.options);
 					configJSON.log = createFormInputs('%debug.settings.log_settings%', configTemplate.log, config.log);
 
@@ -105,7 +107,7 @@
 
 					group.appendChild(groupName);
 
-					content.className = 'panel-content padding';
+					content.className = 'panel-content';
 
 					for(const i in template)
 					{
@@ -113,25 +115,46 @@
 						{
 							if(template[i].local == null || window.location.hostname != 'syntex-cloud.com')
 							{
-								var p = document.createElement('p'), html = '<b>' + template[i].name + ': <input name="' + i + '" type="' + template[i].type + '" ';
+								const container = document.createElement('label');
+								const input = document.createElement('input');
+								const suffix = document.createElement('div');
 
-								if(template[i].type == 'button')
+								container.className = 'panel-entry label-input';
+
+								input.name = i;
+								input.type = template[i].type;
+
+								suffix.innerHTML = template[i].name;
+								suffix.className = 'label-suffix';
+
+								if(template[i].type == 'checkbox')
 								{
-									html += 'value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" orginal-value="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? '%characteristics.boolean.active%' : '%characteristics.boolean.inactive%') + '" class="' + ((settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) == true ? 'white' : 'outline') + '" onclick="Essentials.switchBooleanButton(this); Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 150px; border-width: 3px">';
+									container.setAttribute('for', 'input-' + i);
+
+									input.id = 'input-' + i;
+
+									console.log(settings, i);
+
+									if((settings != null && (settings[i] == true || (settings.options != null && settings.options[i] == true))) || template[i].default == true)
+									{
+										input.setAttribute('checked', '');
+									}
+
+									input.onchange = () => Essentials.promoteSubmitButton(input, 'save-btn');
 								}
 								else
 								{
-									html += 'value="' + (settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default) + '" oninput="Essentials.promoteSubmitButton(this, ' + "'save-btn'" + ')" style="max-width: 325px">';
-								}
+									input.setAttribute('value', settings != null && settings[i] != null ? settings[i] : settings != null && settings.options != null && settings.options[i] != null ? settings.options[i] : template[i].default);
 
-								html += '</b>';
+									input.oninput = () => Essentials.promoteSubmitButton(input, 'save-btn');
+								}
 
 								formObject[i] = settings != null && settings[i] != null ? settings[i] : template[i].default;
 
-								p.innerHTML = html;
-								p.style.margin = '0px';
+								container.appendChild(input);
+								container.appendChild(suffix);
 
-								content.appendChild(p);
+								content.appendChild(container);
 							}
 						}
 					}
@@ -153,11 +176,9 @@
 
 					for(var i = 0; i < appSettingsForm.length; i++)
 					{
-						if(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						if(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'checkbox')
 						{
-							console.log(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
-
-							Storage.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%');
+							Storage.setItem(appSettingsForm[i].getElementsByTagName('input')[0].getAttribute('name'), appSettingsForm[i].getElementsByTagName('input')[0].checked);
 						}
 						else
 						{
@@ -171,9 +192,9 @@
 
 					for(var i = 0; i < bridgeOptionForm.length; i++)
 					{
-						if(bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						if(bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'checkbox')
 						{
-							configObject.options[bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+							configObject.options[bridgeOptionForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeOptionForm[i].getElementsByTagName('input')[0].checked;
 						}
 						else
 						{
@@ -185,9 +206,9 @@
 
 					for(var i = 0; i < bridgeLogForm.length; i++)
 					{
-						if(bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'button')
+						if(bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('type') == 'checkbox')
 						{
-							configObject.log[bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('value') == '%characteristics.boolean.active%';
+							configObject.log[bridgeLogForm[i].getElementsByTagName('input')[0].getAttribute('name')] = bridgeLogForm[i].getElementsByTagName('input')[0].checked;
 						}
 						else
 						{
@@ -213,6 +234,8 @@
 						{
 							Dialogues.showRestartPanel('Da du Einstellungen der Bridge geändert hast, muss sie manuell neugestartet werden!');
 						}
+
+						loadData().then((config) => renderGUI(config));
 					});
 				}
 
