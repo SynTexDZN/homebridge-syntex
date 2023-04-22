@@ -1116,24 +1116,23 @@ class EssentialFeatures
 
 	switchNotifications(button)
 	{
-		var id = Storage.getRemote('client-id'),
-			key = button.getAttribute('name'),
-			value = button.checked || (button.value == 'An'),
-			notificationSettings = Storage.getItem('notifications') || {};
+		var id = Storage.getRemote('client-id'), settings = Storage.getItem('notifications') || {},
+			key = button.getAttribute('name'), value = button.checked || (button.value == 'An');
 			
 		if(window.ServiceWorker != null && id != null && key != null)
 		{
-			var body = { id };
+			settings[key] = value;
 
-			notificationSettings[key] = value;
+			window.Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':8888/serverside/subscribe', 3000, JSON.stringify({ id, settings })).then((data) => {
 
-			body.settings = notificationSettings;
-
-			Storage.setItem('notifications', notificationSettings);
-
-			window.Query.fetchURL(window.location.protocol + '//' + window.location.hostname + ':8888/serverside/subscribe', 3000, JSON.stringify(body)).then((data) => {
-
-				console.log(data);
+				if(data != null && data != 'Error')
+				{
+					Storage.setItem('notifications', settings);
+				}
+				else
+				{
+					// TODO: Add Dialogues When Failed
+				}
 			});
 		}
 	}
