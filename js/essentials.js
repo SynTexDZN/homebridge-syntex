@@ -597,7 +597,7 @@ class EssentialFeatures
 
 		if(input.getAttribute('type') == 'checkbox')
 		{
-			orginalValue = input.getAttribute('checked') == 'true';
+			orginalValue = input.hasAttribute('checked');
 			currentValue = input.checked;
 		}
 
