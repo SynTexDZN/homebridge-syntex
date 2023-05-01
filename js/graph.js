@@ -838,14 +838,17 @@ function addValues(data, values)
 		}
 	}
 
-	if(data.last.value < data.min)
+	if(data.last != null)
 	{
-		data.min = data.last.value;
-	}
+		if(data.last.value < data.min)
+		{
+			data.min = data.last.value;
+		}
 
-	if(data.last.value > data.max)
-	{
-		data.max = data.last.value;
+		if(data.last.value > data.max)
+		{
+			data.max = data.last.value;
+		}
 	}
 	
 	return data;
