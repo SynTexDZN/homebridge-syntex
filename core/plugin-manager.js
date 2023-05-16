@@ -1,6 +1,6 @@
 let AliasManager = require('./alias-manager');
 
-const fs = require('fs'), axios = require('axios'), path = require('path');
+const fs = require('fs'), path = require('path');
 
 module.exports = class PluginManager
 {
@@ -12,6 +12,8 @@ module.exports = class PluginManager
 
 		this.logger = platform.logger;
 		this.files = platform.files;
+
+		this.RequestManager = platform.RequestManager;
 
 		this.nodePath = path.resolve(__dirname, '../..',);
 
@@ -190,8 +192,8 @@ module.exports = class PluginManager
 	fetchUpdate(pluginID, timeout)
 	{
 		return new Promise((resolve) => {
-
-			axios.get('http://registry.npmjs.org/-/package/' + pluginID + '/dist-tags', { timeout }).then((response) => {
+			
+			this.RequestManager.fetch('https://registry.npmjs.org/-/package/' + pluginID + '/dist-tags', { timeout }).then((response) => {
 
 				if(response.data instanceof Object)
 				{
@@ -200,10 +202,13 @@ module.exports = class PluginManager
 						this.plugins[pluginID].versions[tag] = response.data[tag];
 					}
 				}
+				else
+				{
+					this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%!', response.error || '');
+				}
 
 				resolve();
-
-			}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Plugin Update %read_error%!', e); resolve() });
+			});
 		});
 	}
 

@@ -6,7 +6,7 @@ const App = require('./app/server/index');
 
 const { Buffer } = require('buffer'), WebSocket = require('ws'), md5 = require('md5');
 
-const fs = require('fs'), axios = require('axios'), path = require('path');
+const fs = require('fs'), path = require('path');
 
 const pluginID = 'homebridge-syntex';
 const pluginName = 'SynTex';
@@ -74,12 +74,6 @@ class SynTexPlatform
 		{
 			this.files = new FileManager(this, { initDirectories : ['automation', 'log'] });
 
-			HTMLQuery = new HTMLQuery(this.logger);
-			Automation = new Automation(this.logger, this.files);
-			PluginManager = new PluginManager(this, 600);
-			DeviceManager = new DeviceManager(this, PluginManager);
-			UpdateManager = new UpdateManager(this.logger, 600);
-
 			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
 
 			this.App = new App(this);
@@ -90,6 +84,13 @@ class SynTexPlatform
 			this.Basic = new Basic({ ...this, loggerSpecial : this.logger });
 
 			this.ConnectionManager = this.Basic.getConnectionManager();
+			this.RequestManager = this.Basic.getRequestManager();
+
+			HTMLQuery = new HTMLQuery(this.logger);
+			Automation = new Automation(this.logger, this.files);
+			PluginManager = new PluginManager(this, 600);
+			UpdateManager = new UpdateManager(this, 600);
+			DeviceManager = new DeviceManager(this, PluginManager);
 
 			this.getPluginConfig('SynTexWebHooks').then((config) => {
 
@@ -193,16 +194,16 @@ class SynTexPlatform
 			url += '&init=true';
 		}
 
-		axios.get(url).then((data) => {
+		this.RequestManager.fetch(url).then((response) => {
 
-			if(data != null && data.data != null)
+			if(response.data != null)
 			{
-				this.bridgeID = data.data;
-
-				if(data.data != this.bridgeID)
+				if(response.data != this.bridgeID)
 				{
 					setTimeout(() => this.setBridgeID(this.bridgeID), 10000);
 				}
+
+				this.bridgeID = response.data;
 
 				if(this.remote)
 				{
@@ -213,10 +214,6 @@ class SynTexPlatform
 			{
 				setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
 			}
-
-		}).catch(() => {
-
-			setTimeout(() => this.connectBridge(bridgeID, initBridge), 30000);
 		});
 	}
 
@@ -328,14 +325,24 @@ class SynTexPlatform
 					{
 						if(message.protocol == 'http')
 						{
+							var options = {};
+
 							if(message.post != null)
 							{
-								axios.post('http://127.0.0.1:' + (message.port || this.port) + message.path, message.post).then((response) => sendResponse(message, response)).catch((error) => sendResponse(message, error.response));
+								options.data = message.post;
 							}
-							else
-							{
-								axios.get('http://127.0.0.1:' + (message.port || this.port) + message.path).then((response) => sendResponse(message, response)).catch((error) => sendResponse(message, error.response));
-							}
+
+							this.RequestManager.fetch('http://127.0.0.1:' + (message.port || this.port) + message.path, options).then((response) => {
+
+								if(response.error != null)
+								{
+									sendResponse(message, { status : 404, data : '' });
+								}
+								else
+								{
+									sendResponse(message, response);
+								}
+							});
 						}
 						else if(message.protocol == 'ws')
 						{
@@ -380,7 +387,7 @@ class SynTexPlatform
 				}
 				catch(e)
 				{
-					console.log(e);
+					console.error(e);
 				}
 			});
 
@@ -1032,12 +1039,12 @@ class SynTexPlatform
 
 						for(const j in services[i].iid)
 						{
-							const newPromise = new Promise((resolve) => axios.get('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + services[i].iid[j]).then(function (res) {
+							const newPromise = new Promise((resolve) => this.RequestManager.fetch('http://localhost:51826/characteristics?id=' + accessory.aid + '.' + services[i].iid[j], { verbose : true }).then(function (response) {
 
-								if(res.data != null
-								&& res.data.characteristics != null
-								&& res.data.characteristics[0] != null
-								&& res.data.characteristics[0].value != null)
+								if(response.data != null
+								&& response.data.characteristics != null
+								&& response.data.characteristics[0] != null
+								&& response.data.characteristics[0].value != null)
 								{
 									var key = this.j == 'state' ? 'value' : this.j;
 
@@ -1048,24 +1055,28 @@ class SynTexPlatform
 
 									if(services[i].format[j].includes('bool'))
 									{
-										if(res.data.characteristics[0].value == 1)
+										if(response.data.characteristics[0].value == 1)
 										{
 											states[this.letters][key] = true;
 										}
-										else if(res.data.characteristics[0].value == 0)
+										else if(response.data.characteristics[0].value == 0)
 										{
 											states[this.letters][key] = false;
 										}
 									}
 									else
 									{
-										states[this.letters][key] = res.data.characteristics[0].value;
+										states[this.letters][key] = response.data.characteristics[0].value;
 									}
+								}
+								else
+								{
+									this.logger.log('error', urlParams.id, letters, 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%!', response.error || '')
 								}
 
 								resolve();
 
-							}.bind({ letters, j })).catch((e) => this.logger.log('error', urlParams.id, letters, 'Characteristic %of% [' + (services[i].name || accessory.name) + '] %read_error%!', e.stack)));
+							}.bind({ letters, j })));
 
 							promiseArray.push(newPromise);
 						}

@@ -1,12 +1,12 @@
-const axios = require('axios');
-
 module.exports = class UpdateManager
 {
-	constructor(logger, interval)
+	constructor(platform, interval)
 	{
 		this.newestDeviceVersions = {};
 		
-		this.logger = logger;
+		this.logger = platform.logger;
+
+		this.RequestManager = platform.RequestManager;
 
 		this.fetchDeviceUpdates(interval * 1000);
 
@@ -17,25 +17,26 @@ module.exports = class UpdateManager
 	{
 		return new Promise((resolve) => {
 
-			axios.get('http://syntex-cloud.com:8888/check-version', { timeout }).then((response) => {
+			this.RequestManager.fetch('http://syntex-cloud.com:8888/check-version', { timeout }).then((response) => {
 
-				var updates = response.data;
-
-				for(const update in updates)
+				if(Array.isArray(response.data))
 				{
-					if(!updates[update].type.startsWith('SynTex'))
+					for(const update in response.data)
 					{
-						this.newestDeviceVersions[updates[update].type] = updates[update].version;
+						if(!response.data[update].type.startsWith('SynTex'))
+						{
+							this.newestDeviceVersions[response.data[update].type] = response.data[update].version;
+						}
 					}
+
+					resolve(true);
 				}
-
-				resolve(true);
-
-			}).catch(() => {
+				else
+				{
+					this.logger.log('error', 'bridge', 'Bridge', '%device_versions_read_error%!', response.error || '');
 				
-				this.logger.log('error', 'bridge', 'Bridge', '%device_versions_read_error%!');
-				
-				resolve(false);
+					resolve(false);
+				}
 			});
 		});
 	}

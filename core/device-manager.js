@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 var accessories = [];
 
 module.exports = class DeviceManager
@@ -12,6 +10,8 @@ module.exports = class DeviceManager
 
 		this.logger = platform.logger;
 		this.files = platform.files;
+
+		this.RequestManager = platform.RequestManager;
 
 		this.PluginManager = PluginManager;
 
@@ -680,100 +680,106 @@ module.exports = class DeviceManager
 				'20' : 'plugin'
 			};
 
-			axios.get('http://localhost:' + (this.getBridgePort() || '51826') + '/accessories').then((response) => {
+			this.RequestManager.fetch('http://localhost:' + (this.getBridgePort() || '51826') + '/accessories', { verbose : true }).then((response) => {
 
-				var accessoryArray = [], accessoryJSON = response.data.accessories;
-
-				for(const i in accessoryJSON)
+				if(response.data instanceof Object)
 				{
-					accessoryArray[i] = { aid : accessoryJSON[i].aid, services : [] };
+					var accessoryArray = [], accessoryJSON = response.data.accessories;
 
-					for(const j in accessoryJSON[i].services)
+					for(const i in accessoryJSON)
 					{
-						var type, service = { iid : {}, format : {}, state : {} };
-
-						if(characteristics[accessoryJSON[i].services[j].type] != null)
+						accessoryArray[i] = { aid : accessoryJSON[i].aid, services : [] };
+	
+						for(const j in accessoryJSON[i].services)
 						{
-							type = characteristics[accessoryJSON[i].services[j].type].name;
-						}
-
-						for(const k in accessoryJSON[i].services[j].characteristics)
-						{
-							var characteristic = accessoryJSON[i].services[j].characteristics[k];
-							var letters = characteristic.type;
-
-							if(accessoryJSON[i].services[j].type == '3E' && accessoryCharacteristics[letters] != null)
+							var type, service = { iid : {}, format : {}, state : {} };
+	
+							if(characteristics[accessoryJSON[i].services[j].type] != null)
 							{
-								if(accessoryCharacteristics[letters] == 'plugin')
-								{
-									accessoryArray[i].plugin = { alias : characteristic.value };
-								}
-								else
-								{
-									accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
-								}
+								type = characteristics[accessoryJSON[i].services[j].type].name;
 							}
-							else if(characteristic.type == '62')
+	
+							for(const k in accessoryJSON[i].services[j].characteristics)
 							{
-								service.online = characteristic.value != 0;
-							}
-							else if(characteristics[accessoryJSON[i].services[j].type] != null)
-							{
-								if(characteristics[accessoryJSON[i].services[j].type].name == 'led')
+								var characteristic = accessoryJSON[i].services[j].characteristics[k];
+								var letters = characteristic.type;
+	
+								if(accessoryJSON[i].services[j].type == '3E' && accessoryCharacteristics[letters] != null)
 								{
-									if(letters == '13' || letters == '2F')
+									if(accessoryCharacteristics[letters] == 'plugin')
 									{
-										type = 'rgb';
+										accessoryArray[i].plugin = { alias : characteristic.value };
 									}
-									else if(letters == '8' && type != 'rgb')
+									else
 									{
-										type = 'dimmer';
+										accessoryArray[i][accessoryCharacteristics[letters]] = characteristic.value;
 									}
 								}
-
-								for(const l in characteristics[accessoryJSON[i].services[j].type].type)
+								else if(characteristic.type == '62')
 								{
-									if(characteristics[accessoryJSON[i].services[j].type].type[l] == letters)
+									service.online = characteristic.value != 0;
+								}
+								else if(characteristics[accessoryJSON[i].services[j].type] != null)
+								{
+									if(characteristics[accessoryJSON[i].services[j].type].name == 'led')
 									{
-										service.iid[l] = characteristic.iid;
-										service.format[l] = characteristic.format;
-										service.state[l] = characteristic.value;
-
-										if(characteristic.minValue == 0 && characteristic.maxValue == 1)
+										if(letters == '13' || letters == '2F')
 										{
-											service.format[l] = 'bool';
+											type = 'rgb';
+										}
+										else if(letters == '8' && type != 'rgb')
+										{
+											type = 'dimmer';
+										}
+									}
+	
+									for(const l in characteristics[accessoryJSON[i].services[j].type].type)
+									{
+										if(characteristics[accessoryJSON[i].services[j].type].type[l] == letters)
+										{
+											service.iid[l] = characteristic.iid;
+											service.format[l] = characteristic.format;
+											service.state[l] = characteristic.value;
+	
+											if(characteristic.minValue == 0 && characteristic.maxValue == 1)
+											{
+												service.format[l] = 'bool';
+											}
 										}
 									}
 								}
+								else
+								{
+									type = 'unsupported';
+								}
+	
+								if(letters == '23')
+								{
+									service.name = characteristic.value;
+								}
 							}
-							else
+	
+							if(accessoryJSON[i].services[j].type != '3E')
 							{
-								type = 'unsupported';
-							}
-
-							if(letters == '23')
-							{
-								service.name = characteristic.value;
+								service.type = type;
+	
+								if(service.type != null)
+								{
+									accessoryArray[i].services.push(service);
+								}
 							}
 						}
-
-						if(accessoryJSON[i].services[j].type != '3E')
-						{
-							service.type = type;
-
-							if(service.type != null)
-							{
-								accessoryArray[i].services.push(service);
-							}
-						}
+	
+						accessoryArray[i].services = getLetters(accessoryArray[i].services);
 					}
-
-					accessoryArray[i].services = getLetters(accessoryArray[i].services);
+	
+					resolve(accessoryArray);
 				}
-
-				resolve(accessoryArray);
-
-			}).catch((e) => { this.logger.err(e); resolve(null) });
+				else
+				{
+					resolve(null);
+				}
+			});
 		});
 	}
 
