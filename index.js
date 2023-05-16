@@ -83,7 +83,6 @@ class SynTexPlatform
 
 			this.Basic = new Basic({ ...this, loggerSpecial : this.logger });
 
-			this.ConnectionManager = this.Basic.getConnectionManager();
 			this.RequestManager = this.Basic.getRequestManager();
 
 			HTMLQuery = new HTMLQuery(this);
