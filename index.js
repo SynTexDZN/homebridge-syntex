@@ -113,6 +113,11 @@ class SynTexPlatform
 						this.bridgeName = config.bridge.name;
 					}
 
+					if(config.bridge.pin != null)
+					{
+						this.bridgePin = config.bridge.pin;
+					}
+
 					if(config.bridge.username != null)
 					{
 						this.getSetupCode(config.bridge.username);
@@ -1001,13 +1006,15 @@ class SynTexPlatform
 						{
 							var aid = accessory.aid, iid = service.iid[i], value = states[i];
 
-							const newPromise = new Promise((resolve) => axios.put('http://localhost:51826/characteristics', { characteristics : [{ aid, iid, value }]}, { headers : { Authorization : '369-17-420' }}).then((res) => {
+							promiseArray.push(new Promise((resolve) => this.RequestManager.fetch('http://localhost:51826/characteristics', { headers : { Authorization : this.bridgePin }, method : 'PUT', data : { characteristics : [{ aid, iid, value }]}}).then((response) => {
 
-								resolve(res.data == '');
+								if(response.data != '')
+								{
+									this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + i + '] %update_error%!', response.error || '');
+								}
 
-							}).catch((e) => { this.logger.log('error', 'bridge', 'Bridge', 'Characteristic [' + i + '] %update_error%!', e); resolve(false) }));
-
-							promiseArray.push(newPromise);
+								resolve(response.data == '');
+							})));
 						}
 
 						Promise.all(promiseArray).then((result) => {
