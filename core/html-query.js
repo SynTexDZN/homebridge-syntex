@@ -1,8 +1,8 @@
 module.exports = class HTMLQuery
 {
-	constructor(logger)
+	constructor(platform)
 	{
-		this.logger = logger;
+		this.logger = platform.logger;
 	}
 
 	sendValue(html, param, value)

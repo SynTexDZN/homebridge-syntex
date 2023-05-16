@@ -86,8 +86,8 @@ class SynTexPlatform
 			this.ConnectionManager = this.Basic.getConnectionManager();
 			this.RequestManager = this.Basic.getRequestManager();
 
-			HTMLQuery = new HTMLQuery(this.logger);
-			Automation = new Automation(this.logger, this.files);
+			HTMLQuery = new HTMLQuery(this);
+			Automation = new Automation(this);
 			PluginManager = new PluginManager(this, 600);
 			UpdateManager = new UpdateManager(this, 600);
 			DeviceManager = new DeviceManager(this, PluginManager);

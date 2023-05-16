@@ -1,9 +1,9 @@
 module.exports = class Automation
 {
-	constructor(logger, files)
+	constructor(platform)
 	{
-		this.logger = logger;
-		this.files = files;
+		this.logger = platform.logger;
+		this.files = platform.files;
 	}
 
 	loadAutomation()
