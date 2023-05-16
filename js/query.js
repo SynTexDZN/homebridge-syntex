@@ -57,7 +57,7 @@ class URLQuery
 				//console.error(e);
 			}
 
-			client.open('POST', url);
+			client.open(post != null ? 'POST' : 'GET', url);
 
 			if(this.isRemote)
 			{
