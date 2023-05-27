@@ -1,4 +1,4 @@
-let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query'), EventManager = require('./core/event-manager');
+let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query');
 
 const Basic = require('syntex-basic'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
@@ -48,8 +48,6 @@ class SynTexPlatform
 
 		this.logger = new Logger(this, { language : this.options['language'] || 'en', levels : this.config['log'] });
 
-		EventManager = new EventManager(this);
-
 		if(config['baseDirectory'] != null)
 		{
 			try
@@ -83,6 +81,7 @@ class SynTexPlatform
 
 			this.Basic = new Basic({ ...this, loggerSpecial : this.logger });
 
+			this.EventManager = this.Basic.getEventManager();
 			this.RequestManager = this.Basic.getRequestManager();
 
 			HTMLQuery = new HTMLQuery(this);
@@ -707,7 +706,7 @@ class SynTexPlatform
 
 				if(success)
 				{
-					EventManager.setOutputStream('updateAutomation', { sender : this }, {});
+					this.EventManager.setOutputStream('updateAutomation', { sender : this }, {});
 				}
 				
 				response.end(success ? 'Success' : 'Error');
