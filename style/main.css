@@ -1407,7 +1407,6 @@ select:not([multiple]).same-as-selected
 .table .column
 {
 	display: flex;
-	background: rgb(60, 60, 80);
 	width: 100%;
 	overflow: hidden;
 	border-radius: 16px;
@@ -1435,11 +1434,30 @@ select:not([multiple]).same-as-selected
 .table .secondary
 {
 	display: grid;
-	gap: 13px;
-	padding: 13px;
+
+	width: 100%;
+
+	gap: 20px;
 }
 
-.table .secondary div
+.table .group
+{
+	display: flex;
+
+	flex-direction: column;
+	align-items: start;
+
+	width: 100%;
+	gap: 13px;
+	padding: 13px;
+	border-radius: 0 13px 13px 0;
+	
+	box-sizing: border-box;
+	
+	background: rgb(60, 60, 80);
+}
+
+.table .group div
 {
 	word-break: break-all;
 	word-break: break-word;

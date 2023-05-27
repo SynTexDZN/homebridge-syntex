@@ -497,10 +497,16 @@
 
 							for(const group of automation.trigger.groups)
 							{
+								var entry = document.createElement('div');
+
+								entry.className = 'group';
+
 								for(const block of group.blocks)
 								{
-									container.appendChild(createBlock(block));
+									entry.appendChild(createBlock(block));
 								}
+
+								container.appendChild(entry);
 							}
 
 							column.appendChild(category);
@@ -520,7 +526,7 @@
 							category.innerHTML = '%automation.result%';
 							category.className = 'primary';
 
-							container.className = 'secondary';
+							container.className = 'secondary group';
 
 							for(const block of automation.result)
 							{
