@@ -98,6 +98,7 @@ class SynTexPlatform
 				}
 
 				this.initWebServer();
+				this.initPushNetwork();
 
 				this.files.writeFile('info.json', { restart : new Date().getTime() });
 			});
@@ -1121,20 +1122,17 @@ class SynTexPlatform
 				});
 			}
 		});
+	}
 
-		this.WebServer.addPage('/serverside/push', (request, response, params, content, post) => {
+	initPushNetwork()
+	{
+		this.EventManager.setInputStream('sendNotification', { external : true }, (message) => {
 
-			if(post != null && post.notification != null)
+			if(message.notification != null)
 			{
-				post.notification.type = this.bridgeID + '#' + post.notification.type;
+				message.notification.type = this.bridgeID + '#' + message.notification.type;
 
-				this.sendNotification(post.notification);
-
-				response.end('Success');
-			}
-			else
-			{
-				response.end('Error');
+				this.sendNotification(message.notification);
 			}
 		});
 	}
