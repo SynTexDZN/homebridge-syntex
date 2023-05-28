@@ -8,7 +8,7 @@ module.exports = class Automation
 
 	loadAutomation()
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.files.readFile('automation/automation.json').then((data) => {
 
@@ -19,7 +19,7 @@ module.exports = class Automation
 
 	setAutomation(automation)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			if(this.isValid(automation))
 			{
@@ -75,7 +75,7 @@ module.exports = class Automation
 
 	removeAutomation(id)
 	{
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 
 			this.files.readFile('automation/automation.json').then((data) => {
 
