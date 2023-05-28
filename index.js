@@ -1135,6 +1135,19 @@ class SynTexPlatform
 				this.sendNotification(message.notification);
 			}
 		});
+
+		this.EventManager.setInputStream('automationSuccess', { external : true }, (message) => {
+
+			if(message.automation != null && message.trigger != null)
+			{
+				var notification = {
+					type : this.bridgeID + '#push-automation-' + message.automation.id,
+					body : '[' + message.trigger.name + '] hat die Automation [' + message.automation.name + '] ausgeführt!'
+				};
+
+				this.sendNotification(notification);
+			}
+		});
 	}
 
 	getPluginConfig(pluginName)
