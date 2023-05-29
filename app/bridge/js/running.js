@@ -93,7 +93,8 @@ export class Running
 						{
 							var tag = window.Init.tag;
 
-							if(window.Init.plugins[id].versions[tag] == null)
+							if(window.Init.plugins[id].versions[tag] == null
+							|| window.Essentials.versionCount(window.Init.plugins[id].versions[tag]) < window.Essentials.versionCount(window.Init.plugins[id].versions['latest']))
 							{
 								tag = 'latest';
 							}
