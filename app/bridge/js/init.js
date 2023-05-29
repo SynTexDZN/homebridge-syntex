@@ -37,7 +37,8 @@ export class Init
 			{
 				var tag = this.tag;
 
-				if(this.plugins[id].versions[tag] == null)
+				if(this.plugins[id].versions[tag] == null
+				|| window.Essentials.versionCount(this.plugins[id].versions[tag]) < window.Essentials.versionCount(this.plugins[id].versions['latest']))
 				{
 					tag = 'latest';
 				}
