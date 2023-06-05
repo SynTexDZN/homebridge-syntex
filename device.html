@@ -182,6 +182,7 @@
 					statelessswitch : '%accessories.statelessswitch%',
 					switch : '%accessories.switch%',
 					temperature : '%accessories.temperature%',
+					thermostat : '%accessories.thermostat%',
 					special : '%accessories.special%',
 					unsupported : '%accessories.unsupported%',
 					climate : '%accessories.climate%',
@@ -190,7 +191,7 @@
 
 				loadServices();
 
-				if(services.includes('contact') || services.includes('motion') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('humidity') || services.includes('light') || services.includes('rain'))
+				if(services.includes('contact') || services.includes('humidity') || services.includes('light') || services.includes('motion') || services.includes('rain') || services.includes('statelessswitch') || services.includes('temperature') || services.includes('thermostat'))
 				{
 					if(device.active != null)
 					{
@@ -212,7 +213,7 @@
 					}
 				}
 
-				if(services.includes('motion') || services.includes('light') || services.includes('temperature') || services.includes('humidity') || services.includes('lcd'))
+				if(services.includes('humidity') || services.includes('lcd') || services.includes('light') || services.includes('motion') || services.includes('temperature') || services.includes('thermostat'))
 				{
 					if(device.interval != null)
 					{

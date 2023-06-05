@@ -20,8 +20,8 @@ class EssentialFeatures
 		this.wheelOpt = supportsPassive ? { passive: false } : false;
 		this.wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
-		this.types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind'];
-		this.letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
+		this.types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat'];
+		this.letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 		this.overlays = [];
 		this.changeCounter = [];
@@ -771,7 +771,7 @@ class EssentialFeatures
 
 				result.text = service.state.value;
 
-				if(type == 'temperature')
+				if(type == 'temperature' || type == 'thermostat')
 				{
 					result.text = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + window.servicePresets[type].text;
 
@@ -870,7 +870,7 @@ class EssentialFeatures
 
 	getDataType(type)
 	{
-		if(type == 'temperature' || type == 'humidity' || type == 'light' || type == 'airquality' || type == 'blind' || type == 'statelessswitch')
+		if(type == 'airquality' || type == 'blind' || type == 'humidity' || type == 'light' || type == 'statelessswitch' || type == 'temperature' || type == 'thermostat')
 		{
 			return 'numeric';
 		}

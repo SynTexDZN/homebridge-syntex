@@ -124,6 +124,7 @@
 					statelessswitch : '%accessories.statelessswitch%',
 					switch : '%accessories.switch%',
 					temperature : '%accessories.temperature%',
+					thermostat : '%accessories.thermostat%',
 					special : '%accessories.special%',
 					unsupported : '%accessories.unsupported%',
 					climate : '%accessories.climate%',
@@ -616,6 +617,11 @@
 									if(type == 'dimmer' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
 									{
 										type = 'led';
+									}
+
+									if(type == 'thermostat')
+									{
+										type = 'temperature';
 									}
 
 									if(typeGroups[type] == null)

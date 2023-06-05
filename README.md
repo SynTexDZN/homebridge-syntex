@@ -128,3 +128,4 @@ https://github.com/SynTexDZN/homebridge-syntex-webhooks#readme
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
 - Window Coverings
+- Heating / Cooling Thermostate

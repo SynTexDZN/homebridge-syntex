@@ -657,17 +657,18 @@ module.exports = class DeviceManager
 				'43' : { name : 'led', type : { value : '25', hue : '13', saturation : '2F', brightness : '8' } },
 				'47' : { name : 'outlet', type : { value : '25' } },
 				'49' : { name : 'switch', type : { value : '25' } },
+				'4A' : { name : 'thermostat', type : { value : '11', target : '35', state : 'F', mode : '33' } },
 				'80' : { name : 'contact', type : { value : '6A' } },
 				'82' : { name : 'humidity', type : { value : '10' } },
 				'83' : { name : 'rain', type : { value : '70' } },
 				'84' : { name : 'light', type : { value : '6B' } },
 				'85' : { name : 'motion', type : { value : '22' } },
 				'86' : { name : 'occupancy', type : { value : '71' } },
+				'87' : { name : 'smoke', type: { value : '76' } },
 				'89' : { name : 'statelessswitch', type : { value : '73' } },
 				'8A' : { name : 'temperature', type : { value : '11' } },
 				'8C' : { name : 'blind', type: { value : '7C' } },
-				'8D' : { name : 'airquality', type: { value : '95' } },
-				'87' : { name : 'smoke', type: { value : '76' } }/*,
+				'8D' : { name : 'airquality', type: { value : '95' } }/*,
 				'7E' : { name : 'security', type: { value : '' } },
 				'41' : { name : 'garagedoor', type: { value : '' } },
 				'45' : { name : 'lock', type: { value : '' } }*/
@@ -1038,8 +1039,8 @@ function getLetters(services)
 
 function typeToLetter(type)
 {
-	var types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind'];
-	var letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
+	var types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat'];
+	var letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 	if(typeof type == 'string')
 	{
