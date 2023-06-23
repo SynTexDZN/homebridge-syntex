@@ -121,50 +121,53 @@
 				{
 					for(const type of serviceTypes)
 					{
-						var category = document.createElement('button');
+						if(Essentials.getDataType(type) == 'numeric' && type != 'blind' && type != 'statelessswitch')
+						{
+							var category = document.createElement('button');
 
-						category.innerHTML = type;
-						category.className = 'white';
+							category.innerHTML = type[0].toUpperCase() + type.slice(1);
+							category.className = 'white';
 
-						category.onclick = () => {
+							category.onclick = () => {
 
-							var entries = [];
+								var entries = [];
 
-							for(const device of window.data)
-							{
-								if(Array.isArray(device.services))
+								for(const device of window.data)
 								{
-									for(const service of device.services)
+									if(Array.isArray(device.services))
 									{
-										if(service instanceof Object && service.type == type)
+										for(const service of device.services)
 										{
-											entries.push({ id : device.id, letters : service.letters, name : service.name, port : device.plugin.port });
+											if(service instanceof Object && service.type == type)
+											{
+												entries.push({ id : device.id, letters : service.letters, name : service.name, port : device.plugin.port });
+											}
 										}
 									}
 								}
-							}
 
-							console.log(entries);
+								console.log(entries);
 
-							document.getElementById('activity').innerHTML = '';
-							document.getElementById('services').innerHTML = '';
+								document.getElementById('activity').innerHTML = '';
+								document.getElementById('services').innerHTML = '';
 
-							values = {};
+								values = {};
 
-                            for(const i in entries)
-                            {
-                                if(values[entries[i].id] == null)
-                                {
-                                    values[entries[i].id] = {};
-                                }
+								for(const i in entries)
+								{
+									if(values[entries[i].id] == null)
+									{
+										values[entries[i].id] = {};
+									}
 
-                                values[entries[i].id][entries[i].letters] = [];
+									values[entries[i].id][entries[i].letters] = [];
 
-                                setupViewer(entries[i].port, entries[i].id, entries[i].letters);
-                            }
-						};
+									setupViewer(entries[i].port, entries[i].id, entries[i].letters);
+								}
+							};
 
-						document.getElementById('groups').appendChild(category);
+							document.getElementById('groups').appendChild(category);
+						}
 					}
 				}
 
@@ -242,7 +245,7 @@
 
 				function createGraph(source)
 				{
-                    values = {};
+					values = {};
 
 					for(const i in source)
 					{
@@ -259,59 +262,59 @@
 
 				function repaintGraph(targetLetters)
 				{
-                    document.getElementById('activity').innerHTML = '';
+					document.getElementById('activity').innerHTML = '';
 
 					for(const id in values)
 					{
 						for(const letters in values[id])
 						{
-                            if(letters[0] == targetLetters[0] && values[id][letters].length >= 2)
-                            {
-                                var button = document.createElement('button');
+							if(letters[0] == targetLetters[0] && values[id][letters].length >= 2)
+							{
+								var button = document.createElement('button');
 
-                                button.innerHTML = getName(id) + ' | ';
+								button.innerHTML = getName(id) + ' | ';
 
-                                var current = values[id][letters][values[id][letters].length - 1].value;
+								var current = values[id][letters][values[id][letters].length - 1].value;
 
-                                if(values[id][letters][values[id][letters].length - 2].value > current)
-                                {
-                                    button.innerHTML += 'Sinkend';
-                                    button.classList.add('gradient-blue');
-                                }
-                                else if(values[id][letters][values[id][letters].length - 2].value < current)
-                                {
-                                    button.innerHTML += 'Steigend';
-                                    button.classList.add('gradient-red');
-                                }
-                                else
-                                {
-                                    button.innerHTML = 'Unverändert';
-                                }
-                                
-                                button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
+								if(values[id][letters][values[id][letters].length - 2].value > current)
+								{
+									button.innerHTML += 'Sinkend';
+									button.classList.add('gradient-blue');
+								}
+								else if(values[id][letters][values[id][letters].length - 2].value < current)
+								{
+									button.innerHTML += 'Steigend';
+									button.classList.add('gradient-red');
+								}
+								else
+								{
+									button.innerHTML = 'Unverändert';
+								}
+								
+								button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
 
-                                if(values[id][letters][values[id][letters].length - 3] != null)
-                                {
-                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 3].value) * 100) / 100;
-                                }
+								if(values[id][letters][values[id][letters].length - 3] != null)
+								{
+									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 3].value) * 100) / 100;
+								}
 
-                                if(values[id][letters][values[id][letters].length - 4] != null)
-                                {
-                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 4].value) * 100) / 100;
-                                }
+								if(values[id][letters][values[id][letters].length - 4] != null)
+								{
+									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 4].value) * 100) / 100;
+								}
 
-                                if(values[id][letters][values[id][letters].length - 5] != null)
-                                {
-                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 5].value) * 100) / 100;
-                                }
+								if(values[id][letters][values[id][letters].length - 5] != null)
+								{
+									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 5].value) * 100) / 100;
+								}
 
-                                if(values[id][letters][values[id][letters].length - 6] != null)
-                                {
-                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 6].value) * 100) / 100;
-                                }
+								if(values[id][letters][values[id][letters].length - 6] != null)
+								{
+									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 6].value) * 100) / 100;
+								}
 
-                                document.getElementById('activity').appendChild(button);
-                            }
+								document.getElementById('activity').appendChild(button);
+							}
 						}
 					}
 				}
@@ -326,7 +329,7 @@
 						},
 						callback : (data) => {
 
-                            console.log('DATA', data);
+							console.log('DATA', data);
 
 							if(Array.isArray(data.history))
 							{
@@ -377,15 +380,15 @@
 					return null;
 				}
 
-                function getName(id)
+				function getName(id)
 				{
 					for(const device of data)
-                    {
-                        if(device.id == id)
-                        {
-                            return device.name;
-                        }
-                    }
+					{
+						if(device.id == id)
+						{
+							return device.name;
+						}
+					}
 
 					return null;
 				}
