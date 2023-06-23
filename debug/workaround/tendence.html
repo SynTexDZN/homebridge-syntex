@@ -272,9 +272,11 @@
 							{
 								var button = document.createElement('button');
 
-								button.innerHTML = getName(id, letters);
-
 								var current = values[id][letters][values[id][letters].length - 1].value;
+
+								var type = Essentials.letterToType(letters);
+
+								button.innerHTML = getName(id, letters) + ' | ' + current + ' ' + window.servicePresets[type].text;
 
 								button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
 
