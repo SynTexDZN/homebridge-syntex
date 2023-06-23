@@ -1,0 +1,396 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>Debug: Graph</title>
+			<script type="module">
+
+				PageManager.setHeader('Debug', 'Graph');
+
+				var main = document.createElement('input');
+
+				main.setAttribute('type', 'button');
+				main.setAttribute('value', '%menu.back%');
+				main.setAttribute('onclick', 'Essentials.leavePage(' + "'/debug'" + ')');
+
+				PageManager.setFooter(main);
+				PageManager.showFooter();
+
+			</script>
+			<div class="main" style="margin-bottom: 100px">
+				<div id="toolbar" style="margin-top: 0; margin-bottom: 20px">
+					<div id="groups"></div>
+				</div>
+				<div id="activity"></div>
+				<div id="services"></div>
+			</div>
+			<style>
+
+				#category, #services
+				{
+					display: flex;
+
+					overflow: hidden;
+					overflow-x: auto;
+
+					gap: 20px;
+				}
+
+				#category > button, #services > button
+				{
+					white-space: nowrap;
+				}
+
+				.canvas.inactive
+				{
+					filter: saturate(0);
+					opacity: 0.5;
+				}
+
+			</style>
+			<script type="module">
+
+				import { Graph } from '/js/graph.js';
+
+				Graph.setPadding(80);
+
+				window.Graph = Graph;
+
+				window.serviceTypes = [];
+
+				//renderGUI();
+
+				loadData().then(() => {
+
+					convertData();
+
+					renderGUINew();
+				});
+
+				Preloader.finish();
+
+			</script>
+			<script>
+
+				function loadData()
+				{
+					return new Promise((resolve) => {
+
+						Query.fetchURL('/serverside/devices', 3000).then((data) => {
+
+							if(data != null && data != 'Error')
+							{
+								try
+								{
+									window.data = JSON.parse(data).devices;
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
+							}
+
+							resolve();
+						});
+					});
+				}
+
+				function convertData()
+				{
+					for(const device of window.data)
+					{
+						if(Array.isArray(device.services))
+						{
+							for(const service of device.services)
+							{
+								if(service instanceof Object && service.type != null)
+								{
+									if(service.type != 'unsupported' && service.type != 'lcd')
+									{
+										if(!window.serviceTypes.includes(service.type))
+										{
+											window.serviceTypes.push(service.type);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				function renderGUINew()
+				{
+					for(const type of serviceTypes)
+					{
+						var category = document.createElement('button');
+
+						category.innerHTML = type;
+						category.className = 'white';
+
+						category.onclick = () => {
+
+							var entries = [];
+
+							for(const device of window.data)
+							{
+								if(Array.isArray(device.services))
+								{
+									for(const service of device.services)
+									{
+										if(service instanceof Object && service.type == type)
+										{
+											entries.push({ id : device.id, letters : service.letters, name : service.name, port : device.plugin.port });
+										}
+									}
+								}
+							}
+
+							console.log(entries);
+
+							document.getElementById('activity').innerHTML = '';
+							document.getElementById('services').innerHTML = '';
+
+							values = {};
+
+                            for(const i in entries)
+                            {
+                                if(values[entries[i].id] == null)
+                                {
+                                    values[entries[i].id] = {};
+                                }
+
+                                values[entries[i].id][entries[i].letters] = [];
+
+                                setupViewer(entries[i].port, entries[i].id, entries[i].letters);
+                            }
+						};
+
+						document.getElementById('groups').appendChild(category);
+					}
+				}
+
+				function renderGUI()
+				{
+					createGraph([
+						{ port : 1710, id : 'CC:50:E3:E8:43:E6', letters : 'C0' },
+						{ port : 1710, id : 'EC:FA:BC:58:A0:DE', letters : 'C0' },
+						{ port : 1710, id : 'EC:FA:BC:58:AF:5B', letters : 'C0' },
+						{ port : 1714, id : 'knx59', letters : 'C0' },
+						{ port : 1714, id : 'knx59', letters : 'C1' },
+						{ port : 1714, id : 'knx59', letters : 'C2' },
+						{ port : 1714, id : 'knx49', letters : 'C0' },
+						{ port : 1714, id : 'knx49', letters : 'C1' },
+						{ port : 1714, id : 'knx71', letters : 'C0' },
+						{ port : 1714, id : 'knx72', letters : 'C0' },
+						{ port : 1714, id : 'knx73', letters : 'C0' },
+						{ port : 1714, id : 'knx74', letters : 'C0' },
+						{ port : 1714, id : 'knx75', letters : 'C0' },
+						{ port : 1714, id : 'knx76', letters : 'C0' },
+						{ port : 1714, id : 'knx77', letters : 'C0' },
+						{ port : 1714, id : 'knx78', letters : 'C0' }
+					]);
+
+					createGraph([
+						{ port : 1714, id : 'knx51', letters : 'C0' },
+						{ port : 1714, id : 'knx59', letters : 'C0' },
+						{ port : 1714, id : 'knx59', letters : 'C1' },
+						{ port : 1714, id : 'knx59', letters : 'C2' }
+					]);
+
+					createGraph([
+						{ port : 1714, id : 'knx51', letters : 'C0' },
+						{ port : 1714, id : 'knx49', letters : 'C0' },
+						{ port : 1714, id : 'knx49', letters : 'C1' }
+					]);
+
+					createGraph([
+						{ port : 1714, id : 'knx49', letters : 'C0' },
+						{ port : 1714, id : 'knx49', letters : 'C1' }
+					]);
+
+					createGraph([
+						{ port : 1714, id : 'knx6', letters : 'A1' },
+						{ port : 1714, id : 'knx49', letters : 'C0' }
+					]);
+
+					createGraph([
+						{ port : 1714, id : 'knx60', letters : 'G0' },
+						{ port : 1710, id : 'EC:FA:BC:58:AF:5B', letters : 'C0' }
+					]);
+					
+					createGraph([
+						{ port : 1710, id : 'CC:50:E3:E8:3C:52', letters : 'B0' },
+						{ port : 1714, id : 'knx30', letters : '80' }
+					]);
+
+					createGraph([
+						{ port : 1710, id : 'scenes1', letters : '40' },
+						{ port : 1710, id : 'scenes2', letters : '43' },
+						{ port : 1710, id : 'scenes3', letters : '43' },
+						{ port : 1710, id : 'scenes5', letters : '43' }
+					]);
+
+					createGraph([
+						{ port : 1710, id : 'scenes1', letters : '42' },
+						{ port : 1710, id : 'scenes2', letters : '41' },
+						{ port : 1710, id : 'scenes3', letters : '41' },
+						{ port : 1710, id : 'scenes5', letters : '41' }
+					]);
+				}
+
+				window.values = {};
+				window.graphs = [];
+
+				function createGraph(source)
+				{
+                    values = {};
+
+					for(const i in source)
+					{
+						if(values[source[i].id] == null)
+						{
+							values[source[i].id] = {};
+						}
+
+						values[source[i].id][source[i].letters] = [];
+
+						setupViewer(source[i].port, source[i].id, source[i].letters);
+					}
+				}
+
+				function repaintGraph(targetLetters)
+				{
+                    document.getElementById('activity').innerHTML = '';
+
+					for(const id in values)
+					{
+						for(const letters in values[id])
+						{
+                            if(letters[0] == targetLetters[0] && values[id][letters].length >= 2)
+                            {
+                                var button = document.createElement('button');
+
+                                button.innerHTML = getName(id) + ' | ';
+
+                                var current = values[id][letters][values[id][letters].length - 1].value;
+
+                                if(values[id][letters][values[id][letters].length - 2].value > current)
+                                {
+                                    button.innerHTML += 'Sinkend';
+                                    button.classList.add('gradient-blue');
+                                }
+                                else if(values[id][letters][values[id][letters].length - 2].value < current)
+                                {
+                                    button.innerHTML += 'Steigend';
+                                    button.classList.add('gradient-red');
+                                }
+                                else
+                                {
+                                    button.innerHTML = 'Unverändert';
+                                }
+                                
+                                button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
+
+                                if(values[id][letters][values[id][letters].length - 3] != null)
+                                {
+                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 3].value) * 100) / 100;
+                                }
+
+                                if(values[id][letters][values[id][letters].length - 4] != null)
+                                {
+                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 4].value) * 100) / 100;
+                                }
+
+                                if(values[id][letters][values[id][letters].length - 5] != null)
+                                {
+                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 5].value) * 100) / 100;
+                                }
+
+                                if(values[id][letters][values[id][letters].length - 6] != null)
+                                {
+                                    button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 6].value) * 100) / 100;
+                                }
+
+                                document.getElementById('activity').appendChild(button);
+                            }
+						}
+					}
+				}
+
+				function setupViewer(port, id, letters)
+				{
+					var ActivityViewer = {
+						url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + port + '/devices',
+						message : {
+							line : 'getActivity',
+							params : { id, letters }
+						},
+						callback : (data) => {
+
+                            console.log('DATA', data);
+
+							if(Array.isArray(data.history))
+							{
+								for(const u in data.history)
+								{
+									if(Essentials.letterToType(letters) == 'statelessswitch')
+									{
+										values[id][letters].push({ time : data.history[u].time, value : true });
+										values[id][letters].push({ time : data.history[u].time, value : false });
+									}
+									else
+									{
+										values[id][letters].push({ ...data.history[u].state, time : data.history[u].time });
+									}
+								}
+
+								repaintGraph(letters);
+							}
+						}
+					};
+
+					Query.connectSocket(ActivityViewer);
+				}
+
+				function getNextValue(values, start)
+				{
+					for(var i = start; i < values.length; i++)
+					{
+						if(values[i] != null)
+						{
+							return { i, value : values[i] };
+						}
+					}
+
+					return null;
+				}
+
+				function getLastValue(values, start)
+				{
+					for(var i = start; i >= 0; i--)
+					{
+						if(values[i] != null)
+						{
+							return { i, value : values[i] };
+						}
+					}
+
+					return null;
+				}
+
+                function getName(id)
+				{
+					for(const device of data)
+                    {
+                        if(device.id == id)
+                        {
+                            return device.name;
+                        }
+                    }
+
+					return null;
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
