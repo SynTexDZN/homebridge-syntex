@@ -99,7 +99,7 @@ export class Init
 				else
 				{
 					container.id = id;
-					container.className = 'plugin';
+					container.className = 'plugin expandable';
 
 					head.innerHTML = name;
 					head.className = 'head';
