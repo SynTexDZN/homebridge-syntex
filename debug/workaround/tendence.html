@@ -50,10 +50,12 @@
 			<script type="module">
 
 				import { Graph } from '/js/graph.js';
+				import { Expandable } from '/js/expandable-button.js';
 
 				Graph.setPadding(80);
 
 				window.Graph = Graph;
+				window.Expandable = Expandable;
 
 				window.serviceTypes = [];
 
@@ -295,18 +297,25 @@
 						{
 							if(letters[0] == targetLetters[0] && values[id][letters].length >= 2)
 							{
-								var container = document.createElement('button'),
+								var container = document.createElement('div'),
+									expandable = document.createElement('button'),
 									title = document.createElement('div'),
+									status = document.createElement('div'),
 									tendence = document.createElement('div');
 
 								var type = Essentials.letterToType(letters),
-									current = values[id][letters][values[id][letters].length - 1].value;
+									current = values[id][letters][values[id][letters].length - 1].value,
+									sum = parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
 
-								title.innerHTML = current + ' ' + window.servicePresets[type].text + ' | ' + getName(id, letters);
+								expandable.className = 'expandable';
 
+								title.className = 'head';
+								title.innerHTML = getName(id, letters) + ' | ' + current + ' ' + window.servicePresets[type].text;
+
+								status.className = 'update-status';
+
+								tendence.className = 'expandable-hidden';
 								tendence.innerHTML += parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
-
-								var sum = parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
 
 								if(values[id][letters][values[id][letters].length - 3] != null)
 								{
@@ -340,21 +349,28 @@
 
 								if(sum < 0)
 								{
-									title.innerHTML += ' | Sinkend';
-									container.classList.add('gradient-blue');
+									status.innerHTML = 'Sinkend';
+									status.style.backgroundColor = 'hsl(200, 85%, 55%)';
 								}
 								else if(sum > 0)
 								{
-									title.innerHTML += ' | Steigend';
-									container.classList.add('gradient-red');
+									status.innerHTML = 'Steigend';
+									status.style.backgroundColor = 'hsl(350, 95%, 60%)';
 								}
 								else
 								{
-									title.innerHTML = ' | Unverändert';
+									status.innerHTML = 'Unverändert';
+									status.style.backgroundColor = 'rgb(60, 60, 80)';
 								}
 
-								container.appendChild(title);
-								container.appendChild(tendence);
+								title.appendChild(status);
+
+								expandable.appendChild(title);
+								expandable.appendChild(tendence);
+
+								container.appendChild(expandable);
+
+								Expandable.createExpandableButton(container.children[0]);
 
 								document.getElementById('activity').appendChild(container);
 							}
