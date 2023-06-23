@@ -272,45 +272,57 @@
 							{
 								var button = document.createElement('button');
 
-								button.innerHTML = getName(id) + ' | ';
+								button.innerHTML = getName(id, letters);
 
 								var current = values[id][letters][values[id][letters].length - 1].value;
 
-								if(values[id][letters][values[id][letters].length - 2].value > current)
-								{
-									button.innerHTML += 'Sinkend';
-									button.classList.add('gradient-blue');
-								}
-								else if(values[id][letters][values[id][letters].length - 2].value < current)
-								{
-									button.innerHTML += 'Steigend';
-									button.classList.add('gradient-red');
-								}
-								else
-								{
-									button.innerHTML = 'Unverändert';
-								}
-								
 								button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
+
+								var sum = parseInt((current - values[id][letters][values[id][letters].length - 2].value) * 100) / 100;
 
 								if(values[id][letters][values[id][letters].length - 3] != null)
 								{
 									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 3].value) * 100) / 100;
+
+									sum += parseInt((current - values[id][letters][values[id][letters].length - 3].value) * 100) / 100;
 								}
 
 								if(values[id][letters][values[id][letters].length - 4] != null)
 								{
 									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 4].value) * 100) / 100;
+
+									sum += parseInt((current - values[id][letters][values[id][letters].length - 4].value) * 100) / 100;
 								}
 
 								if(values[id][letters][values[id][letters].length - 5] != null)
 								{
 									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 5].value) * 100) / 100;
+
+									sum += parseInt((current - values[id][letters][values[id][letters].length - 5].value) * 100) / 100;
 								}
 
 								if(values[id][letters][values[id][letters].length - 6] != null)
 								{
 									button.innerHTML += ' | ' + parseInt((current - values[id][letters][values[id][letters].length - 6].value) * 100) / 100;
+
+									sum += parseInt((current - values[id][letters][values[id][letters].length - 6].value) * 100) / 100;
+								}
+
+								sum /= Math.min(5, values[id][letters].length - 1);
+
+								if(sum < 0)
+								{
+									button.innerHTML += ' | Sinkend';
+									button.classList.add('gradient-blue');
+								}
+								else if(sum > 0)
+								{
+									button.innerHTML += ' | Steigend';
+									button.classList.add('gradient-red');
+								}
+								else
+								{
+									button.innerHTML = ' | Unverändert';
 								}
 
 								document.getElementById('activity').appendChild(button);
@@ -380,12 +392,20 @@
 					return null;
 				}
 
-				function getName(id)
+				function getName(id, letters)
 				{
 					for(const device of data)
 					{
 						if(device.id == id)
 						{
+							for(const service of device.services)
+							{
+								if(service.letters == letters)
+								{
+									return service.name;
+								}
+							}
+
 							return device.name;
 						}
 					}
