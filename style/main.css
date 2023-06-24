@@ -31,7 +31,7 @@
 	-webkit-touch-callout: none;
 }
 
-html, body, #content, #groups, .control-panel::before, .panel, .custom-select > .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
+html, body, #content, .group-bar, .control-panel::before, .panel, .custom-select > .select-items .select-item, .column, .log-message, .button-icon, h1, h2, p, a, label, img
 {
 	transition: var(--transition-color);
 }
@@ -387,7 +387,7 @@ h1, h2, p, a, label
 	white-space: normal;
 }
 
-#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, #groups button, .log-message, .log-title
+#devices.grid-view input[type='button'], #devices.grid-view button, h1, h2, p, a, label, .group-bar button, .log-message, .log-title
 {
 	word-break: break-all;
 	word-break: break-word;
@@ -975,7 +975,7 @@ textarea::-webkit-scrollbar-track, textarea::-webkit-scrollbar, .custom-select >
 	color: var(--dark-layer-two);
 }
 
-#devices button, #groups button, #status button
+#devices button, .group-bar button, #status button
 {
 	letter-spacing: 3px!important;
 }
@@ -1183,8 +1183,9 @@ canvas
 	background-origin: border-box;
 }
 
-#groups
+.group-bar
 {
+	display: flex;
 	overflow: hidden;
 	overflow-x: overlay;
 	background: var(--light-layer-two);
@@ -1194,12 +1195,12 @@ canvas
 	border: 2px solid var(--light-layer-two);
 }
 
-#groups::-webkit-scrollbar-track, #groups::-webkit-scrollbar
+.group-bar::-webkit-scrollbar-track, .group-bar::-webkit-scrollbar
 {
 	display: none;
 }
 
-#groups button
+.group-bar button
 {
 	appearance: none;
 	-webkit-appearance: none;
@@ -1215,25 +1216,25 @@ canvas
 	cursor: grab;
 }
 
-#groups button:last-child
+.group-bar button:last-child
 {
 	border-radius: 0 14px 14px 0;
 	border-right-width: 0;
 }
 
-#groups button:first-child
+.group-bar button:first-child
 {
 	border-radius: 14px 0 0 14px;
 	border-left-width: 0;
 }
 
-#groups .active
+.group-bar .active
 {
 	border-style: solid;
 	/*background: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0, 0, 0, .10) 0, rgba(0, 0, 0, .10) 10px)!important;*/
 }
 
-#groups .active, #trigger .locked, #result .locked
+.group-bar .active, #trigger .locked, #result .locked
 {
 	background: rgb(160, 160, 180)!important;
 }
@@ -2211,9 +2212,8 @@ select:not([multiple]).same-as-selected
 	margin-bottom: 0;
 }
 
-#toolbar #groups
+#toolbar .group-bar
 {
-	display: flex;
 	width: 100%;
 }
 
