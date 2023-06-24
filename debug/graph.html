@@ -110,7 +110,8 @@
 				{
 					var height = 400, graphID = graphs.length,
 						frame = document.createElement('div'),
-						grid = document.createElement('canvas');
+						grid = document.createElement('canvas'),
+						fill = document.createElement('canvas');
 
 					if(values[graphID] == null)
 					{
@@ -123,12 +124,16 @@
 					frame.style.order = graphID;
 
 					grid.className = 'canvas';
+					fill.className = 'canvas';
 
 					frame.appendChild(grid);
+					frame.appendChild(fill);
 
 					document.getElementById('activity').appendChild(frame);
 
 					Graph.clearCanvas(grid);
+					Graph.clearCanvas(fill);
+
 					Graph.drawGrid(grid, [], 10);
 
 					for(const i in source)
@@ -151,7 +156,7 @@
 
 				function repaintGraph(graphID)
 				{
-					var frame = document.getElementById(graphID), grid = frame.children[0];
+					var frame = document.getElementById(graphID), grid = frame.children[0], fill = frame.children[1];
 
 					var min = 100000, max = -100000;
 
@@ -296,11 +301,13 @@
 					}
 
 					Graph.clearCanvas(grid);
+					Graph.clearCanvas(fill);
+
 					Graph.drawGrid(grid, [], 10);
 
 					for(const type in fillMax)
 					{
-						Graph.drawFill(grid, fillMax[type], colorFill, false);
+						Graph.drawFill(fill, fillMax[type], colorFill, false);
 					}
 				}
 
