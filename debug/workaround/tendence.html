@@ -142,6 +142,8 @@
 							}
 						}
 					}
+
+					window.serviceTypes.sort((a, b) => (serviceNames[a] || a).toLowerCase() > (serviceNames[b] || b).toLowerCase() ? 1 : -1);
 				}
 
 				function renderGUINew()
@@ -152,8 +154,8 @@
 						{
 							var category = document.createElement('button');
 
-							category.innerHTML = serviceNames[type];
 							category.className = 'white';
+							category.innerHTML = serviceNames[type] || type.toUpperCase();
 
 							category.onclick = () => {
 
