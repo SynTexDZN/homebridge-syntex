@@ -256,8 +256,6 @@
 
 							Graph.clearCanvas(graph);
 
-							if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
-							{
 								for(const i in data.values)
 								{
 									if(fillMax[type] == null)
@@ -286,11 +284,6 @@
 											}
 										}
 									}
-								}
-							}
-							else
-							{
-								Graph.drawFill(graph, data.values, colorFill, false);
 							}
 
 							Graph.drawGraph(graph, data.values, colorGraph, 0);
