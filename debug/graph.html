@@ -108,10 +108,9 @@
 
 				function createGraph(source)
 				{
-					var height = 400,
+					var height = 400, graphID = graphs.length,
 						frame = document.createElement('div'),
-						grid = document.createElement('canvas'),
-						graphID = graphs.length;
+						grid = document.createElement('canvas');
 
 					if(values[graphID] == null)
 					{
@@ -163,7 +162,7 @@
 							var type = Essentials.letterToType(letters[0]);
 							var data = Graph.convertActivity({ id, letters, type, canvas : graph, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, values[graphID][id][letters], [], []);
 							
-							if(type != 'blind' && type != 'statelessswitch' && Essentials.getDataType(type) != 'boolean')
+							if(type != 'blind' && type != 'statelessswitch' && Essentials.getDataType(type) == 'numeric')
 							{
 								if(data.min < min)
 								{
@@ -184,18 +183,16 @@
 					{
 						for(const letters in values[graphID][id])
 						{
-							var graph = document.createElement('canvas');
+							var graph = document.getElementById(graphID + '-' + id + '-' + letters);
 
-							if(document.getElementById(graphID + '-' + id + '-' + letters) == null)
+							if(graph == null)
 							{
+								graph = document.createElement('canvas');
+
 								graph.id = graphID + '-' + id + '-' + letters;
 								graph.className = 'canvas';
 
 								frame.appendChild(graph);
-							}
-							else
-							{
-								graph = document.getElementById(graphID + '-' + id + '-' + letters);
 							}
 							
 							var type = Essentials.letterToType(letters[0]);
