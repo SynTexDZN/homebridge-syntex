@@ -143,7 +143,7 @@
 							values[graphID][source[i].id] = {};
 						}
 
-							values[graphID][source[i].id][source[i].letters] = [];
+						values[graphID][source[i].id][source[i].letters] = [];
 
 						setupViewer(graphID, source[i].port, source[i].id, source[i].letters);
 					}
@@ -256,34 +256,34 @@
 
 							Graph.clearCanvas(graph);
 
-								for(const i in data.values)
+							for(const i in data.values)
+							{
+								if(fillMax[type] == null)
 								{
-									if(fillMax[type] == null)
-									{
-										fillMax[type] = [];
-									}
+									fillMax[type] = [];
+								}
 
-									if(data.values[i] != null)
+								if(data.values[i] != null)
+								{
+									if(fillMax[type][parseInt(i)] == null || data.values[i] > fillMax[type][parseInt(i)])
 									{
-										if(fillMax[type][parseInt(i)] == null || data.values[i] > fillMax[type][parseInt(i)])
+										fillMax[type][parseInt(i)] = data.values[i];
+									}
+								}
+								else
+								{
+									var last = getLastValue(data.values, parseInt(i) - 1), next = getNextValue(data.values, parseInt(i) + 1);
+									
+									if(last != null && next != null)
+									{
+										var calc = (next.value - last.value) / (next.i - last.i) * (i - last.i) + last.value;
+
+										if(fillMax[type][parseInt(i)] == null || calc > fillMax[type][parseInt(i)])
 										{
-											fillMax[type][parseInt(i)] = data.values[i];
+											fillMax[type][parseInt(i)] = calc;
 										}
 									}
-									else
-									{
-										var last = getLastValue(data.values, parseInt(i) - 1), next = getNextValue(data.values, parseInt(i) + 1);
-										
-										if(last != null && next != null)
-										{
-											var calc = (next.value - last.value) / (next.i - last.i) * (i - last.i) + last.value;
-
-											if(fillMax[type][parseInt(i)] == null || calc > fillMax[type][parseInt(i)])
-											{
-												fillMax[type][parseInt(i)] = calc;
-											}
-										}
-									}
+								}
 							}
 
 							Graph.drawGraph(graph, data.values, colorGraph, 0);
