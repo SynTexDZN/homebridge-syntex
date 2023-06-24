@@ -113,11 +113,6 @@
 						grid = document.createElement('canvas'),
 						fill = document.createElement('canvas');
 
-					if(values[graphID] == null)
-					{
-						values[graphID] = {};
-					}
-
 					frame.id = graphID;
 					frame.className = 'graph';
 					frame.style.height = height + 'px';
@@ -138,15 +133,17 @@
 
 					for(const i in source)
 					{
+						if(values[graphID] == null)
+						{
+							values[graphID] = {};
+						}
+						
 						if(values[graphID][source[i].id] == null)
 						{
 							values[graphID][source[i].id] = {};
 						}
 
-						if(values[graphID][source[i].id][source[i].letters] == null)
-						{
 							values[graphID][source[i].id][source[i].letters] = [];
-						}
 
 						setupViewer(graphID, source[i].port, source[i].id, source[i].letters);
 					}
