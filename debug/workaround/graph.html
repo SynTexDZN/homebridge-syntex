@@ -119,14 +119,21 @@
 				{
 					for(const type of serviceTypes)
 					{
-						var category = document.createElement('button');
+						const category = document.createElement('button');
 
 						category.className = 'white';
 						category.innerHTML = serviceNames[type] || type.toUpperCase();
 
 						category.onclick = () => {
 
-							var entries = [];
+							var entries = [], categories = document.getElementById('category').children;
+
+							for(var i = 0; i < categories.length; i++)
+							{
+								categories[i].classList.remove('active');
+							}
+
+							category.classList.add('active');
 
 							for(const device of window.data)
 							{
