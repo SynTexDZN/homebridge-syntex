@@ -19,6 +19,7 @@
 			<div class="main" style="margin-bottom: 100px">
 				<div id="category" class="group-bar" style="margin-bottom: 20px"></div>
 				<div id="activity"></div>
+				<div id="services" class="group-bar" style="margin-top: 20px"></div>
 			</div>
 			<script type="module">
 
@@ -152,6 +153,47 @@
 							document.getElementById('activity').innerHTML = '';
 
 							createGraph(entries);
+
+							document.getElementById('services').innerHTML = '';
+
+							for(const entry of entries)
+							{
+								const service = document.createElement('button');
+
+								service.className = 'white';
+								service.innerHTML = entry.name;
+
+								service.onclick = () => {
+
+									var graphs = document.getElementById('activity').children[0].children,
+										services = document.getElementById('services').children,
+										isActive = service.classList.contains('active');
+
+									for(var i = 0; i < services.length; i++)
+									{
+										services[i].classList.remove('active');
+									}
+
+									if(!isActive)
+									{
+										service.classList.add('active');
+									}
+
+									for(var i = 1; i < graphs.length; i++)
+									{
+										if(graphs[i].id.includes(entry.id + '-' + entry.letters) || isActive)
+										{
+											graphs[i].classList.remove('inactive');
+										}
+										else
+										{
+											graphs[i].classList.add('inactive');
+										}
+									}
+								};
+
+								document.getElementById('services').appendChild(service);
+							}
 						};
 
 						document.getElementById('category').appendChild(category);
