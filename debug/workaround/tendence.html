@@ -17,34 +17,10 @@
 
 			</script>
 			<div class="main" style="margin-bottom: 100px">
-				<div id="groups" class="group-bar" style="margin-bottom: 20px"></div>
+				<div id="category" class="group-bar" style="margin-bottom: 20px"></div>
 				<div id="activity"></div>
 				<div id="services"></div>
 			</div>
-			<style>
-
-				#category, #services
-				{
-					display: flex;
-
-					overflow: hidden;
-					overflow-x: auto;
-
-					gap: 20px;
-				}
-
-				#category > button, #services > button
-				{
-					white-space: nowrap;
-				}
-
-				.canvas.inactive
-				{
-					filter: saturate(0);
-					opacity: 0.5;
-				}
-
-			</style>
 			<script type="module">
 
 				import { Graph } from '/js/graph.js';
@@ -150,14 +126,21 @@
 					{
 						if(Essentials.getDataType(type) == 'numeric' && type != 'blind' && type != 'statelessswitch')
 						{
-							var category = document.createElement('button');
+							const category = document.createElement('button');
 
 							category.className = 'white';
 							category.innerHTML = serviceNames[type] || type.toUpperCase();
 
 							category.onclick = () => {
 
-								var entries = [];
+								var entries = [], categories = document.getElementById('category').children;
+
+								for(var i = 0; i < categories.length; i++)
+								{
+									categories[i].classList.remove('active');
+								}
+
+								category.classList.add('active');
 
 								for(const device of window.data)
 								{
@@ -193,7 +176,7 @@
 								}
 							};
 
-							document.getElementById('groups').appendChild(category);
+							document.getElementById('category').appendChild(category);
 						}
 					}
 				}
