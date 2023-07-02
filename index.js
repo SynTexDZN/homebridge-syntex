@@ -669,7 +669,7 @@ class SynTexPlatform
 
 			var date = new Date();
 
-			response.end('' + (date.getTime() / 1000 + -(date.getTimezoneOffset()) * 60 + 1));
+			response.end('' + (parseInt(date.getTime() / 1000) + -(date.getTimezoneOffset()) * 60 + 1));
 		});
 
 		this.WebServer.addPage('/serverside/check-device', async (request, response, urlParams) => {
