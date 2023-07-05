@@ -654,6 +654,7 @@ module.exports = class DeviceManager
 
 			var characteristics = {
 				'A2' : { name : 'bridge', type : {} },
+				'40' : { name : 'fan', type : { value : '25', speed : '29', direction : '28' } },
 				'43' : { name : 'led', type : { value : '25', hue : '13', saturation : '2F', brightness : '8' } },
 				'47' : { name : 'outlet', type : { value : '25' } },
 				'49' : { name : 'switch', type : { value : '25' } },
@@ -1039,8 +1040,8 @@ function getLetters(services)
 
 function typeToLetter(type)
 {
-	var types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat'];
-	var letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+	var types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat', 'fan'];
+	var letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
 	if(typeof type == 'string')
 	{

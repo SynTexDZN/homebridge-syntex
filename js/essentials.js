@@ -20,8 +20,8 @@ class EssentialFeatures
 		this.wheelOpt = supportsPassive ? { passive: false } : false;
 		this.wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
-		this.types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat'];
-		this.letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+		this.types = ['occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer', 'contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'blind', 'thermostat', 'fan'];
+		this.letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
 		this.overlays = [];
 		this.changeCounter = [];
@@ -753,6 +753,24 @@ class EssentialFeatures
 						else if(type == 'dimmer')
 						{
 							result.color = 'hsl(40, ' + parseInt(service.state.brightness * 0.85) + '%, ' + (25 + parseInt(service.state.brightness) * 0.5) + '%)';
+						}
+					}
+				}
+				else if(type == 'fan')
+				{
+					if(service.state.value == false || service.state.speed == 0)
+					{
+						result.text = '%characteristics.boolean.inactive%';
+					}
+					else if(service.state.value == true)
+					{
+						result.text = Math.round(service.state.speed) + '%';
+						result.color = 'hsl(190, ' + ((service.state.speed - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 10) + '%, ' + ((service.state.speed - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 30) + '%)';
+
+						if(Math.round(service.state.speed) == 100)
+						{
+							result.text = '%characteristics.boolean.active%';
+							result.color = window.servicePresets[type].color;
 						}
 					}
 				}
