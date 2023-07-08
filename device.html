@@ -332,7 +332,7 @@
 
 					if(device.services[i].letters != null)
 					{
-						title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters[1];
+						title.innerHTML = Essentials.letterToType(device.services[i].letters[0]) + ' ' + device.services[i].letters.slice(1);
 					}
 					else
 					{
@@ -842,7 +842,7 @@
 
 				function setControlPanel(letters, state)
 				{
-					var type = Essentials.letterToType(letters[0]), c = letters[1], color = '', value = '–––', service = getService(letters);
+					var type = Essentials.letterToType(letters[0]), c = letters.slice(1), color = '', value = '–––', service = getService(letters);
 
 					if(service != null && service.iid != null)
 					{
@@ -989,7 +989,7 @@
 						{
 							graphData[letters].nextRefresh = Graph.getMinuteCycle(graphData[letters].interval) + 60000 * graphData[letters].interval;
 
-							calcValues(Essentials.letterToType(letters[0]), letters[1]);
+							calcValues(Essentials.letterToType(letters[0]), letters.slice(1));
 
 							console.warn(new Date(graphData[letters].nextRefresh));
 						}
@@ -1338,7 +1338,7 @@
 					{
 						if(device['services'][i].type == Essentials.letterToType(letters[0]))
 						{
-							if(c == letters[1])
+							if(c == letters.slice(1))
 							{
 								return device['services'][i];
 							}
@@ -1487,7 +1487,7 @@
 									{
 										if(device.plugin.alias.startsWith('SynTex'))
 										{
-											setTimeout(() => calcValues(type, letters[1]), 300);
+											setTimeout(() => calcValues(type, letters.slice(1)), 300);
 										}
 
 										setControlPanel(letters, state[letters].state);
@@ -1500,11 +1500,11 @@
 								{
 									if(state[letters].state.value)
 									{
-										document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = Essentials.hslToHEX(state[letters].state.hue, state[letters].state.saturation, state[letters].state.brightness / 2);
+										document.getElementsByClassName('color-picker')[parseInt(letters.slice(1))].value = Essentials.hslToHEX(state[letters].state.hue, state[letters].state.saturation, state[letters].state.brightness / 2);
 									}
 									else
 									{
-										document.getElementsByClassName('color-picker')[parseInt(letters[1])].value = '#000000';
+										document.getElementsByClassName('color-picker')[parseInt(letters.slice(1))].value = '#000000';
 									}
 
 									setTimeout(() => {
