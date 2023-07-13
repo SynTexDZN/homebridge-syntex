@@ -1579,32 +1579,67 @@
 						var service = Replacer.getSelect(serviceElement),
 							operation = Replacer.getSelect(operationElement),
 							comparison = Replacer.getSelect(comparisonElement),
-							selected = service.selected.option;
+							selected = service.selected.option, preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))] || {};
 
-						var preset = servicePresets[Essentials.letterToType(selected.getAttribute('letters'))] || {};
-
-						if(Essentials.letterToType(selected.getAttribute('letters')) == 'rgb'
-						|| Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer')
+						if(preset.active != null && preset.active.text != null && preset.inactive != null && preset.inactive.text != null)
 						{
 							comparison.updateOption(0, preset.inactive.text);
 							comparison.updateOption(1, preset.active.text);
 
 							comparison.updateSelected();
-							
-							if(entry != null && entry.state != null)
+						}
+
+						if(selected.getAttribute('type') == 'url')
+						{
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.link%');
+						}
+						else if(selected.getAttribute('type') == 'delay')
+						{
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.time% (%general.time.seconds%)');
+						}
+						else if(operation.selected.option.getAttribute('name') == 'dimming')
+						{
+							comparisonElement.children[1].setAttribute('placeholder', '%automation.brightness% (' + preset.text + ')');
+						}
+						else if(operation.selected.option.getAttribute('name') == 'speed')
+						{
+							comparisonElement.children[1].setAttribute('placeholder', '%characteristics.fan% (' + preset.text + ')');
+						}
+						else
+						{
+							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + (preset.text || '?') + ')');
+						}
+
+						if(entry != null)
+						{
+							if(entry.state != null)
 							{
-								if(entry.state.value == true)
+								if(entry.state.value != null)
 								{
-									comparison.updateSelected(1);
-								}
-								else
-								{
-									comparison.updateSelected(0);
+									if(selected.getAttribute('type') == 'boolean')
+									{
+										if(entry.state.value == true)
+										{
+											comparison.updateSelected(1);
+										}
+										else
+										{
+											comparison.updateSelected(0);
+										}
+									}
+									else if(selected.getAttribute('type') == 'numeric')
+									{
+										comparisonElement.children[1].value = entry.state.value;
+									}
 								}
 
 								if(entry.state.brightness != null)
 								{
 									comparisonElement.children[1].value = entry.state.brightness;
+								}
+								else if(entry.state.speed != null)
+								{
+									comparisonElement.children[1].value = entry.state.speed;
 								}
 
 								if(entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
@@ -1613,95 +1648,74 @@
 								}
 							}
 
-							if(operation.selected.option.getAttribute('name') == 'switch')
+							if(entry.url != null)
 							{
-								comparisonElement.children[0].classList.remove('hidden');
-								comparisonElement.children[1].classList.add('hidden');
-								comparisonElement.children[2].classList.add('hidden');
-								comparisonElement.children[3].classList.add('hidden');
-								comparisonElement.children[4].classList.add('hidden');
+								comparisonElement.children[1].value = entry.url;
 							}
-							else if(operation.selected.option.getAttribute('name') == 'dimming')
-							{
-								comparisonElement.children[1].setAttribute('placeholder', '%automation.brightness% (' + preset.text + ')');
 
-								comparisonElement.children[0].classList.add('hidden');
-								comparisonElement.children[1].classList.remove('hidden');
-								comparisonElement.children[2].classList.add('hidden');
-								comparisonElement.children[3].classList.add('hidden');
-								comparisonElement.children[4].classList.add('hidden');
-							}
-							else if(operation.selected.option.getAttribute('name') == 'color')
+							if(entry.delay != null)
 							{
-								comparisonElement.children[0].classList.add('hidden');
-								comparisonElement.children[1].classList.add('hidden');
-								comparisonElement.children[2].classList.remove('hidden');
-								comparisonElement.children[3].classList.add('hidden');
-								comparisonElement.children[4].classList.add('hidden');
+								comparisonElement.children[1].value = entry.delay / 1000;
+							}
+
+							if(entry.time != null)
+							{
+								comparisonElement.children[3].value = entry.time;
+							}
+
+							if(entry.days != null)
+							{
+								var days = Replacer.getSelect(comparisonElement.children[4]);
+
+								for(const day of entry.days)
+								{
+									days.updateSelected(day + 1);
+								}
 							}
 						}
-						else if(Essentials.letterToType(selected.getAttribute('letters')) == 'fan')
+
+						if(selected.getAttribute('type') == 'hidden' || operation.selected.option.getAttribute('name') == 'switch')
 						{
-							comparison.updateOption(0, preset.inactive.text);
-							comparison.updateOption(1, preset.active.text);
-
-							comparison.updateSelected();
-							
-							if(entry != null && entry.state != null)
-							{
-								if(entry.state.value == true)
-								{
-									comparison.updateSelected(1);
-								}
-								else
-								{
-									comparison.updateSelected(0);
-								}
-
-								if(entry.state.speed != null)
-								{
-									comparisonElement.children[1].value = entry.state.speed;
-								}
-							}
-
-							if(operation.selected.option.getAttribute('name') == 'switch')
-							{
-								comparisonElement.children[0].classList.remove('hidden');
-								comparisonElement.children[1].classList.add('hidden');
-								comparisonElement.children[2].classList.add('hidden');
-								comparisonElement.children[3].classList.add('hidden');
-								comparisonElement.children[4].classList.add('hidden');
-							}
-							else if(operation.selected.option.getAttribute('name') == 'speed')
-							{
-								comparisonElement.children[1].setAttribute('placeholder', '%characteristics.fan% (' + preset.text + ')');
-
-								comparisonElement.children[0].classList.add('hidden');
-								comparisonElement.children[1].classList.remove('hidden');
-								comparisonElement.children[2].classList.add('hidden');
-								comparisonElement.children[3].classList.add('hidden');
-								comparisonElement.children[4].classList.add('hidden');
-							}
+							comparisonElement.children[0].classList.remove('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'delay' || selected.getAttribute('type') == 'url' || operation.selected.option.getAttribute('name') == 'dimming' || operation.selected.option.getAttribute('name') == 'speed')
+						{
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.remove('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(operation.selected.option.getAttribute('name') == 'color')
+						{
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.remove('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'time')
+						{
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.remove('hidden');
+							comparisonElement.children[4].classList.add('hidden');
+						}
+						else if(selected.getAttribute('type') == 'days')
+						{
+							comparisonElement.children[0].classList.add('hidden');
+							comparisonElement.children[1].classList.add('hidden');
+							comparisonElement.children[2].classList.add('hidden');
+							comparisonElement.children[3].classList.add('hidden');
+							comparisonElement.children[4].classList.remove('hidden');
 						}
 						else if(selected.getAttribute('type') == 'boolean')
 						{
-							comparison.updateOption(0, preset.inactive.text);
-							comparison.updateOption(1, preset.active.text);
-
-							comparison.updateSelected();
-
-							if(entry != null && entry.state != null)
-							{
-								if(entry.state.value == true)
-								{
-									comparison.updateSelected(1);
-								}
-								else
-								{
-									comparison.updateSelected(0);
-								}
-							}
-
 							comparisonElement.children[0].classList.remove('hidden');
 							comparisonElement.children[1].classList.add('hidden');
 							comparisonElement.children[2].classList.add('hidden');
@@ -1710,84 +1724,8 @@
 						}
 						else if(selected.getAttribute('type') == 'numeric')
 						{
-							if(entry != null && entry.state != null && entry.state.value != null)
-							{
-								comparisonElement.children[1].value = entry.state.value;
-							}
-							
-							comparisonElement.children[1].setAttribute('placeholder', (preset.name || '%automation.number%') + ' (' + (preset.text || '?') + ')');
-
 							comparisonElement.children[0].classList.add('hidden');
 							comparisonElement.children[1].classList.remove('hidden');
-							comparisonElement.children[2].classList.add('hidden');
-							comparisonElement.children[3].classList.add('hidden');
-							comparisonElement.children[4].classList.add('hidden');
-						}
-						else if(selected.getAttribute('type') == 'days')
-						{
-							comparison = Replacer.getSelect(comparisonElement.getElementsByClassName('custom-select')[1]);
-
-							if(entry != null && entry.days != null)
-							{
-								for(const day of entry.days)
-								{
-									comparison.updateSelected(day + 1);
-								}
-							}
-							
-							comparisonElement.children[0].classList.add('hidden');
-							comparisonElement.children[1].classList.add('hidden');
-							comparisonElement.children[2].classList.add('hidden');
-							comparisonElement.children[3].classList.add('hidden');
-							comparisonElement.children[4].classList.remove('hidden');
-						}
-						else if(selected.getAttribute('type') == 'delay')
-						{
-							if(entry != null && entry.delay != null)
-							{
-								comparisonElement.children[1].value = entry.delay / 1000;
-							}
-							
-							comparisonElement.children[1].setAttribute('placeholder', '%automation.time% (%general.time.seconds%)');
-
-							comparisonElement.children[0].classList.add('hidden');
-							comparisonElement.children[1].classList.remove('hidden');
-							comparisonElement.children[2].classList.add('hidden');
-							comparisonElement.children[3].classList.add('hidden');
-							comparisonElement.children[4].classList.add('hidden');
-						}
-						else if(selected.getAttribute('type') == 'time')
-						{
-							if(entry != null && entry.time != null)
-							{
-								comparisonElement.children[3].value = entry.time;
-							}
-
-							comparisonElement.children[0].classList.add('hidden');
-							comparisonElement.children[1].classList.add('hidden');
-							comparisonElement.children[2].classList.add('hidden');
-							comparisonElement.children[3].classList.remove('hidden');
-							comparisonElement.children[4].classList.add('hidden');
-						}
-						else if(selected.getAttribute('type') == 'url')
-						{
-							if(entry != null && entry.url != null)
-							{
-								comparisonElement.children[1].value = entry.url;
-							}
-
-							comparisonElement.children[1].setAttribute('placeholder', '%automation.link%');
-
-							comparisonElement.children[0].classList.add('hidden');
-							comparisonElement.children[1].classList.remove('hidden');
-							comparisonElement.children[2].classList.add('hidden');
-							comparisonElement.children[3].classList.add('hidden');
-							comparisonElement.children[4].classList.add('hidden');
-						}
-						else if(selected.getAttribute('type') == 'hidden')
-						{
-							comparisonElement.children[0].classList.remove('hidden');
-							comparisonElement.children[1].classList.add('hidden');
 							comparisonElement.children[2].classList.add('hidden');
 							comparisonElement.children[3].classList.add('hidden');
 							comparisonElement.children[4].classList.add('hidden');
