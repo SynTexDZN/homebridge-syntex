@@ -121,83 +121,86 @@
 				{
 					for(const type of serviceTypes)
 					{
-						const category = document.createElement('button');
+						if(type != 'thermostat')
+						{
+							const category = document.createElement('button');
 
-						category.className = 'white';
-						category.innerHTML = serviceNames[type] || type.toUpperCase();
+							category.className = 'white';
+							category.innerHTML = serviceNames[type] || type.toUpperCase();
 
-						category.onclick = () => {
+							category.onclick = () => {
 
-							var entries = [], categories = document.getElementById('category').children;
+								var entries = [], categories = document.getElementById('category').children;
 
-							for(var i = 0; i < categories.length; i++)
-							{
-								categories[i].classList.remove('active');
-							}
-
-							category.classList.add('active');
-
-							for(const device of window.data)
-							{
-								if(Array.isArray(device.services))
+								for(var i = 0; i < categories.length; i++)
 								{
-									for(const service of device.services)
+									categories[i].classList.remove('active');
+								}
+
+								category.classList.add('active');
+
+								for(const device of window.data)
+								{
+									if(Array.isArray(device.services))
 									{
-										if(service instanceof Object && service.type == type)
+										for(const service of device.services)
 										{
-											entries.push({ id : device.id, letters : service.letters, name : service.name, port : device.plugin.port });
+											if(service instanceof Object && (service.type == type || (service.type == 'thermostat' && type == 'temperature')))
+											{
+												entries.push({ id : device.id, letters : service.letters, name : service.name, port : device.plugin.port });
+											}
 										}
 									}
 								}
-							}
 
-							document.getElementById('activity').innerHTML = '';
+								document.getElementById('activity').innerHTML = '';
 
-							createGraph(entries);
+								createGraph(entries);
 
-							document.getElementById('services').innerHTML = '';
+								document.getElementById('services').innerHTML = '';
 
-							for(const entry of entries)
-							{
-								const service = document.createElement('button');
+								for(const entry of entries)
+								{
+									const service = document.createElement('button');
 
-								service.className = 'white';
-								service.innerHTML = entry.name;
+									service.className = 'white';
+									service.innerHTML = entry.name;
 
-								service.onclick = () => {
+									service.onclick = () => {
 
-									var graphs = document.getElementById('activity').children[0].children,
-										services = document.getElementById('services').children,
-										isActive = service.classList.contains('active');
+										var graphs = document.getElementById('activity').children[0].children,
+											services = document.getElementById('services').children,
+											isActive = service.classList.contains('active');
 
-									for(var i = 0; i < services.length; i++)
-									{
-										services[i].classList.remove('active');
-									}
-
-									if(!isActive)
-									{
-										service.classList.add('active');
-									}
-
-									for(var i = 1; i < graphs.length; i++)
-									{
-										if(graphs[i].id.includes(entry.id + '-' + entry.letters) || isActive)
+										for(var i = 0; i < services.length; i++)
 										{
-											graphs[i].classList.remove('inactive');
+											services[i].classList.remove('active');
 										}
-										else
+
+										if(!isActive)
 										{
-											graphs[i].classList.add('inactive');
+											service.classList.add('active');
 										}
-									}
-								};
 
-								document.getElementById('services').appendChild(service);
-							}
-						};
+										for(var i = 1; i < graphs.length; i++)
+										{
+											if(graphs[i].id.includes(entry.id + '-' + entry.letters) || isActive)
+											{
+												graphs[i].classList.remove('inactive');
+											}
+											else
+											{
+												graphs[i].classList.add('inactive');
+											}
+										}
+									};
 
-						document.getElementById('category').appendChild(category);
+									document.getElementById('services').appendChild(service);
+								}
+							};
+
+							document.getElementById('category').appendChild(category);
+						}
 					}
 				}
 
