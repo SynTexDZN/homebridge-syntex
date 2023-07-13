@@ -30,6 +30,7 @@
 				window.Graph = Graph;
 
 				window.serviceTypes = [];
+				window.activeGraphs = 0;
 
 				window.serviceNames = {
 					airquality : '%accessories.airquality%',
@@ -168,29 +169,37 @@
 
 									service.onclick = () => {
 
-										var graphs = document.getElementById('activity').children[0].children,
-											services = document.getElementById('services').children,
-											isActive = service.classList.contains('active');
+										var graphs = document.getElementById('activity').children[0].children, isActive = false;
 
-										for(var i = 0; i < services.length; i++)
+										service.classList.toggle('active');
+
+										if(service.classList.contains('active'))
 										{
-											services[i].classList.remove('active');
+											isActive = true;
 										}
 
-										if(!isActive)
-										{
-											service.classList.add('active');
-										}
+										activeGraphs += (isActive ? 1 : -1);										
 
 										for(var i = 1; i < graphs.length; i++)
 										{
-											if(graphs[i].id.includes(entry.id + '-' + entry.letters) || isActive)
+											if(activeGraphs == 0)
 											{
 												graphs[i].classList.remove('inactive');
 											}
-											else
+											else if(activeGraphs == 1 && isActive)
 											{
-												graphs[i].classList.add('inactive');
+												if(graphs[i].id.includes(entry.id + '-' + entry.letters))
+												{
+													graphs[i].classList.remove('inactive');
+												}
+												else
+												{
+													graphs[i].classList.add('inactive');
+												}
+											}
+											else if(graphs[i].id.includes(entry.id + '-' + entry.letters))
+											{
+												graphs[i].classList.toggle('inactive');
 											}
 										}
 									};
