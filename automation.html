@@ -1366,7 +1366,8 @@
 							{ text : '=', value : '=', name : 'equal' },
 							{ text : '%automation.switch%', value : '=', name : 'switch' },
 							{ text : '%automation.dimming%', value : '=', name : 'dimming' },
-							{ text : '%automation.color%', value : '=', name : 'color' }
+							{ text : '%automation.color%', value : '=', name : 'color' },
+							{ text : '%automation.level%', value : '=', name : 'speed' }
 						];
 
 						if(type == 'trigger')
@@ -1501,6 +1502,10 @@
 						{
 							operations = ['%automation.switch%', '%automation.dimming%'];
 						}
+						else if(Essentials.letterToType(selected.getAttribute('letters')) == 'fan')
+						{
+							operations = ['%automation.switch%', '%automation.level%'];
+						}
 						else if(selected.getAttribute('type') == 'boolean' || selected.getAttribute('type') == 'days' || type == 'result')
 						{
 							operations = ['='];
@@ -1529,9 +1534,21 @@
 
 						if(entry != null && entry.operation != null)
 						{
-							if(entry.operation == '=')
+							if(entry.operation == '>')
 							{
-								if(entry.state != null && entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
+								operation.updateSelected(6);
+							}
+							else if(entry.operation == '<')
+							{
+								operation.updateSelected(5);
+							}
+							else if(entry.operation == '=')
+							{
+								if(entry.state != null && entry.state.speed != null)
+								{
+									operation.updateSelected(4);
+								}
+								else if(entry.state != null && entry.state.hue != null && entry.state.saturation != null && entry.state.brightness != null)
 								{
 									operation.updateSelected(3);
 								}
@@ -1540,7 +1557,8 @@
 									operation.updateSelected(2);
 								}
 								else if(Essentials.letterToType(selected.getAttribute('letters')) == 'dimmer'
-								|| Essentials.letterToType(selected.getAttribute('letters')) == 'rgb')
+								|| Essentials.letterToType(selected.getAttribute('letters')) == 'rgb'
+								|| Essentials.letterToType(selected.getAttribute('letters')) == 'fan')
 								{
 									operation.updateSelected(1);
 								}
@@ -1548,14 +1566,6 @@
 								{
 									operation.updateSelected(0);
 								}
-							}
-							else if(entry.operation == '<')
-							{
-								operation.updateSelected(4);
-							}
-							else if(entry.operation == '>')
-							{
-								operation.updateSelected(5);
 							}
 						}
 						else if(index != null && !operations.includes(operation.selected.text))
@@ -1626,6 +1636,49 @@
 								comparisonElement.children[0].classList.add('hidden');
 								comparisonElement.children[1].classList.add('hidden');
 								comparisonElement.children[2].classList.remove('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
+							}
+						}
+						else if(Essentials.letterToType(selected.getAttribute('letters')) == 'fan')
+						{
+							comparison.updateOption(0, preset.inactive.text);
+							comparison.updateOption(1, preset.active.text);
+
+							comparison.updateSelected();
+							
+							if(entry != null && entry.state != null)
+							{
+								if(entry.state.value == true)
+								{
+									comparison.updateSelected(1);
+								}
+								else
+								{
+									comparison.updateSelected(0);
+								}
+
+								if(entry.state.speed != null)
+								{
+									comparisonElement.children[1].value = entry.state.speed;
+								}
+							}
+
+							if(operation.selected.option.getAttribute('name') == 'switch')
+							{
+								comparisonElement.children[0].classList.remove('hidden');
+								comparisonElement.children[1].classList.add('hidden');
+								comparisonElement.children[2].classList.add('hidden');
+								comparisonElement.children[3].classList.add('hidden');
+								comparisonElement.children[4].classList.add('hidden');
+							}
+							else if(operation.selected.option.getAttribute('name') == 'speed')
+							{
+								comparisonElement.children[1].setAttribute('placeholder', '%characteristics.fan% (' + preset.text + ')');
+
+								comparisonElement.children[0].classList.add('hidden');
+								comparisonElement.children[1].classList.remove('hidden');
+								comparisonElement.children[2].classList.add('hidden');
 								comparisonElement.children[3].classList.add('hidden');
 								comparisonElement.children[4].classList.add('hidden');
 							}
@@ -1914,7 +1967,7 @@
 						triggerOperation = triggerBlock.getElementsByTagName('select')[1].selectedOptions[0],
 						triggerComparison = triggerBlock.getElementsByTagName('select')[2].selectedOptions[0];
 
-					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'delay' || triggerOperation.getAttribute('name') == 'dimming' || triggerService.getAttribute('type') == 'url')
+					if(triggerService.getAttribute('type') == 'numeric' || triggerService.getAttribute('type') == 'delay' || triggerOperation.getAttribute('name') == 'dimming' || triggerOperation.getAttribute('name') == 'speed' || triggerService.getAttribute('type') == 'url')
 					{
 						triggerComparison = triggerBlock.getElementsByClassName('comparison')[0].children[1];
 					}
@@ -1980,6 +2033,12 @@
 								block.state.hue = hsl.hue;
 								block.state.saturation = hsl.saturation;
 								block.state.brightness = hsl.brightness * 2;
+							}
+							else if(triggerOperation.getAttribute('name') == 'speed')
+							{
+								block.state.value = true;
+
+								block.state.speed = JSON.parse(triggerComparison.value);
 							}
 							else
 							{
