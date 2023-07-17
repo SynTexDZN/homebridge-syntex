@@ -774,6 +774,44 @@ class EssentialFeatures
 						}
 					}
 				}
+				else if(type == 'thermostat')
+				{
+					result.text = ((Math.round(service.state.value * 10.0)) / 10.0) + window.servicePresets[type].text;
+
+					if(service.state.target != null)
+					{
+						result.text += ' | ' + ((Math.round(service.state.target * 10.0)) / 10.0) + window.servicePresets[type].text;
+					}
+
+					if(service.state.state != null && service.state.mode != null)
+					{
+						if(service.state.state == 1 && (service.state.mode == 1 || (service.state.mode == 3 && service.state.value < service.state.target)))
+						{
+							result.text += ' | %characteristics.thermostat.heating%';
+						}
+						else if(service.state.state == 1 && (service.state.mode == 2 || (service.state.mode == 3 && service.state.value > service.state.target)))
+						{
+							result.text += ' | %characteristics.thermostat.cooling%';
+						}
+						else
+						{
+							result.text += ' | %characteristics.boolean.inactive%';
+						}
+					}
+	
+					if(service.state.value < vRange[0])
+					{
+						result.color = 'hsl(' + cRange[0] + ', 65%, 55%)';
+					}
+					else if(service.state.value > vRange[1])
+					{
+						result.color = 'hsl(' + cRange[1] + ', 65%, 55%)';
+					}
+					else
+					{
+						result.color = 'hsl(' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0]) + ', 65%, 55%)';
+					}
+				}
 				else if(service.format.value.includes('bool'))
 				{
 					if(service.state.value)
@@ -791,7 +829,7 @@ class EssentialFeatures
 				{
 					result.text = service.state.value;
 	
-					if(type == 'temperature' || type == 'thermostat')
+					if(type == 'temperature')
 					{
 						result.text = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + window.servicePresets[type].text;
 	
