@@ -86,7 +86,7 @@ module.exports = class DeviceManager
 
 			if(device != null)
 			{
-				var needToSave = this.setConfigAccessory(id, { version, ip });
+				var needToSave = this.setConfigAccessory(id, { version, ip, pingURL : 'http://' + ip + '/' });
 
 				if(needToSave)
 				{
@@ -119,7 +119,7 @@ module.exports = class DeviceManager
 								this.removeFromConfig(id);
 							}
 
-							this.addToConfig({ id, name, ip, services, active : 1, led : 1, interval : 10000 }, events.length);
+							this.addToConfig({ id, name, version, ip, pingURL : 'http://' + ip + '/', services, active : 1, led : 1, interval : 10000 }, events.length);
 
 							this.writeConfig().then((success) => {
 
