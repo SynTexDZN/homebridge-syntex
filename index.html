@@ -315,7 +315,7 @@
 							infoContaner.className = 'name-connection';
 
 							stateElement.className = 'connection';
-							stateElement.innerHTML = result.text;
+							stateElement.innerHTML = result.text.split(' | ')[0];
 
 							nameElement.className = 'device-name';
 							nameElement.innerHTML = data.devices[i].name;
@@ -337,7 +337,7 @@
 						{
 							document.getElementById(data.devices[i].aid).style.backgroundColor = result.color;
 
-							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text;
+							document.getElementById(data.devices[i].aid).getElementsByClassName('connection')[0].innerHTML = result.text.split(' | ')[0];
 						}
 					}
 				}
@@ -1091,7 +1091,7 @@
 									var result = getServiceState(device);
 
 									button.style.backgroundColor = result.color;
-									button.getElementsByClassName('connection')[0].innerHTML = result.text;
+									button.getElementsByClassName('connection')[0].innerHTML = result.text.split(' | ')[0];
 
 									updating.splice(updating.indexOf(device.ip), 1);
 
@@ -1107,7 +1107,7 @@
 									var result = getServiceState(device);
 
 									button.style.backgroundColor = result.color;
-									button.getElementsByClassName('connection')[0].innerHTML = result.text;
+									button.getElementsByClassName('connection')[0].innerHTML = result.text.split(' | ')[0];
 
 									updating.splice(updating.indexOf(device.ip), 1);
 
@@ -1153,7 +1153,7 @@
 
 										d.style.backgroundColor = result.color;
 
-										d.getElementsByClassName('connection')[0].innerHTML = result.text;
+										d.getElementsByClassName('connection')[0].innerHTML = result.text.split(' | ')[0];
 
 										if(switchCounter['success'] + switchCounter['error'] + switchCounter['idle'] >= realDeviceCount)
 										{
