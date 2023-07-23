@@ -457,17 +457,17 @@
 
 								if(block.state.hue != null)
 								{
-									text += ' | %automation.hue% = ' + block.state.hue;
+										text += ' | %characteristics.rgb.hue% = ' + block.state.hue;
 								}
 
 								if(block.state.saturation != null)
 								{
-									text += ' | %automation.saturation% = ' + block.state.saturation;
+										text += ' | %characteristics.rgb.saturation% = ' + block.state.saturation;
 								}
 
 								if(block.state.brightness != null)
 								{
-									text += ' | %automation.brightness% = ' + block.state.brightness;
+										text += ' | %characteristics.dimmer.brightness% = ' + block.state.brightness;
 								}
 							}
 
@@ -1599,11 +1599,11 @@
 						}
 						else if(operation.selected.option.getAttribute('name') == 'dimming')
 						{
-							comparisonElement.children[1].setAttribute('placeholder', '%automation.brightness% (' + preset.text + ')');
+							comparisonElement.children[1].setAttribute('placeholder', '%characteristics.dimmer.brightness% (' + preset.text + ')');
 						}
 						else if(operation.selected.option.getAttribute('name') == 'speed')
 						{
-							comparisonElement.children[1].setAttribute('placeholder', '%characteristics.fan% (' + preset.text + ')');
+							comparisonElement.children[1].setAttribute('placeholder', '%characteristics.fan.speed% (' + preset.text + ')');
 						}
 						else
 						{
