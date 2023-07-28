@@ -712,16 +712,16 @@
 									}
 								}
 								
-								if(servicePresets[type].active != null)
+								if(servicePresets[type] != null && servicePresets[type].value != null && servicePresets[type].value.active != null)
 								{
-									if(servicePresets[type].active.color != null)
+									if(servicePresets[type].value.active.color != null)
 									{
-										color = servicePresets[type].active.color;
+										color = servicePresets[type].value.active.color;
 									}
 									
-									if(servicePresets[type].active.text)
+									if(servicePresets[type].value.active.text != null)
 									{
-										text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].active.text;
+										text = active + ' / ' + typeGroups[type].length + ' ' + servicePresets[type].value.active.text;
 									}
 								}
 
@@ -755,11 +755,16 @@
 
 								if(min != max)
 								{
-									text = min + ' - ' + max + ' ' + servicePresets[type].text;
+									text = min + ' - ' + max;
 								}
 								else
 								{
-									text = max + ' ' + servicePresets[type].text;
+									text = max;
+								}
+
+								if(servicePresets[type] != null && servicePresets[type].value != null && servicePresets[type].value.text != null)
+								{
+									text += ' ' + servicePresets[type].value.text;
 								}
 
 								var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
@@ -1252,7 +1257,7 @@
 							text = '%devices.inactive%';
 							color = 'rgb(130, 130, 150)';
 						}
-						else if(preset != null && device.services != null && device.services[0] != null)
+						else if(preset != null && preset.value != null && device.services != null && device.services[0] != null)
 						{
 							var primaryState = Essentials.getServiceColor(device.services[0]),
 								type = device.services[0].type, format = 'boolean',
@@ -1336,7 +1341,12 @@
 							{
 								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : (min + max) / 2 } });
 
-								text = min + ' - ' + max + ' ' + preset.text;
+								text = min + ' - ' + max;
+
+								if(preset.value.text != null)
+								{
+									text += ' ' + preset.value.text;
+								}
 
 								if(serviceState != null && serviceState.color != null)
 								{
@@ -1345,19 +1355,45 @@
 							}
 							else if((format == 'boolean' || type == 'blind') && counter.active != counter.all && counter.active > 0)
 							{
-								text = counter.active + ' / ' + counter.all + ' ' + preset.active.text;
+								text = counter.active + ' / ' + counter.all;
 
-								color = preset.active.color;
+								if(preset.value.active != null)
+								{
+									if(preset.value.active.text != null)
+									{
+										text += ' ' + preset.value.active.text;
+									}
+
+									if(preset.value.active.color != null)
+									{
+										color = preset.value.active.color;
+									}
+								}
 							}
 							else if((type == 'dimmer' || type == 'rgb') && min != max)
 							{
 								var serviceState = Essentials.getServiceColor({ ...device.services[0], state : { ...device.services[0].state, value : max > 0, brightness : (min + max) / 2 } });
 
-								text = min + ' - ' + max + ' ' + preset.text;
+								text = min + ' - ' + max;
+
+								if(preset.brightness != null && preset.brightness.text != null)
+								{
+									text += ' ' + preset.brightness.text;
+								}
 
 								if(max == 100)
 								{
-									text = min + preset.text + ' - ' + preset.active.text;
+									text = min;
+
+									if(preset.brightness != null && preset.brightness.text != null)
+									{
+										text += ' ' + preset.brightness.text;
+									}
+									
+									if(preset.value.active != null && preset.value.active.text != null)
+									{
+										text += ' - ' + preset.value.active.text;
+									}
 								}
 
 								if(serviceState != null && serviceState.color != null)

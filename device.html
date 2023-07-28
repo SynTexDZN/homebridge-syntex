@@ -1112,37 +1112,51 @@
 						{
 							var min = null, max = null;
 
-							if(servicePresets[type].text != null)
+							if(servicePresets[type] != null)
 							{
-								min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
-								max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10 + ' ' + servicePresets[type].text.toUpperCase();
+								if(servicePresets[type].value != null)
+								{
+									var presetText = null;
 
-								if(graphData[letters].values.includes(graphData[letters].min) && servicePresets[type].inactive != null && servicePresets[type].inactive.text != null)
-								{
-									min = servicePresets[type].inactive.text.toUpperCase();
-								}
-								
-								if(graphData[letters].values.includes(graphData[letters].max) && servicePresets[type].active != null && servicePresets[type].active.text != null)
-								{
-									max = servicePresets[type].active.text.toUpperCase();
+									for(const x in preset)
+									{
+										if(preset[x].text != null && presetText == null)
+										{
+											presetText = preset[x].text;
+										}
+									}
+
+									min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10;
+									max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10;
+
+									if(presetText != null)
+									{
+										min += ' ' + presetText.toUpperCase();
+										max += ' ' + presetText.toUpperCase();
+									}
+
+									if(servicePresets[type].value.inactive != null && servicePresets[type].value.inactive.text != null && graphData[letters].values.includes(graphData[letters].min))
+									{
+										min = servicePresets[type].value.inactive.text.toUpperCase();
+									}
+									
+									if(servicePresets[type].value.active != null && servicePresets[type].value.active.text != null && graphData[letters].values.includes(graphData[letters].max))
+									{
+										max = servicePresets[type].value.active.text.toUpperCase();
+									}
 								}
 							}
-							else
-							{
-								if(servicePresets[type].inactive != null)
-								{
-									min = servicePresets[type].inactive.text.toUpperCase();
-								}
 
-								if(servicePresets[type].active != null)
-								{
-									max = servicePresets[type].active.text.toUpperCase();
-								}
+							if(min != null)
+							{
+								canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
 							}
 
-							canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
-							canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
-
+							if(max != null)
+							{
+								canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+							}
+							
 							if(state[letters].time != null)
 							{
 								canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';

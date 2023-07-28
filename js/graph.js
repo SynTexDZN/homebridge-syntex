@@ -497,10 +497,10 @@ class GraphManager
 					ctx.textAlign = 'center';
 
 					var valueLabel = {
-						text : (data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
+						text : (data[i].value.toString() + (window.servicePresets[type] != null && window.servicePresets[type].value != null && window.servicePresets[type].value.text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202)),
 						x : i * width / (data.length - 1),
 						y : this.getPoint(canvas, data[i].percent) - padding - 2,
-						width : ctx.measureText((data[i].value.toString() + (window.servicePresets[type].text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202))).width
+						width : ctx.measureText((data[i].value.toString() + (window.servicePresets[type] != null && window.servicePresets[type].value != null && window.servicePresets[type].value.text != null ? ' ' + window.servicePresets[type].text.toUpperCase() : '')).split('').join(String.fromCharCode(8202) + String.fromCharCode(8202) + String.fromCharCode(8202))).width
 					};
 
 					var timeLabel = {

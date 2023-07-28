@@ -225,84 +225,271 @@
 
 		window.servicePresets = {
 			motion : {
-				active : { text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)' },
-				inactive : { text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.motion.active%', color : 'hsl(280, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.motion.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			occupancy : {
-				active : { text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)' },
-				inactive : { text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.occupancy.active%', color : 'hsl(280, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.occupancy.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			smoke : {
-				active : { text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)' },
-				inactive : { text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.smoke.active%', color : 'hsl(280, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.smoke.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			contact : {
-				active : { text : '%characteristics.contact.active%', color : 'hsl(350, 95%, 60%)' },
-				inactive : { text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.contact.active%', color : 'hsl(350, 95%, 60%)'
+					},
+					inactive : {
+						text : '%characteristics.contact.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			outlet : {
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				}
 			},
 			relais : {
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(205, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				}
 			},
 			switch : {
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(18, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				}
 			},
 			rain : {
-				active : { text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)' },
-				inactive : { text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.rain.active%', color : 'hsl(220, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.rain.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			statelessswitch : {
-				active : { text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)' },
-				inactive : { text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)' }
+				value : {
+					active : {
+						text : '%characteristics.statelessswitch.active%', color : 'hsl(205, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.statelessswitch.inactive%', color : 'hsl(150, 75%, 55%)'
+					}
+				}
 			},
 			led : {
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				}
 			},
 			dimmer : {
-				text : '%',
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				brightness : {
+					name : '%characteristics.dimmer.brightness%',
+					text : '%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
 			},
 			rgb : {
-				text : '%',
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				hue : {
+					name : '%characteristics.rgb.hue%',
+					text : '°', colorRange : [0, 360], valueRange : [0, 360], color : 'rgb(60, 60, 80)'
+				},
+				saturation : {
+					name : '%characteristics.rgb.saturation%',
+					text : '%', colorRange : [0, 100], valueRange : [0, 100], color : 'rgb(60, 60, 80)'
+				},
+				brightness : {
+					name : '%characteristics.dimmer.brightness%',
+					text : '%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
 			},
 			rgbw : {
-				text : '%',
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				hue : {
+					name : '%characteristics.rgb.hue%',
+					text : '°', colorRange : [0, 360], valueRange : [0, 360], color : 'rgb(60, 60, 80)'
+				},
+				saturation : {
+					name : '%characteristics.rgb.saturation%',
+					text : '%', colorRange : [0, 100], valueRange : [0, 100], color : 'rgb(60, 60, 80)'
+				},
+				brightness : {
+					name : '%characteristics.dimmer.brightness%',
+					text : '%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
 			},
 			rgbww : {
-				text : '%',
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				hue : {
+					name : '%characteristics.rgb.hue%',
+					text : '°', colorRange : [0, 360], valueRange : [0, 360], color : 'rgb(60, 60, 80)'
+				},
+				saturation : {
+					name : '%characteristics.rgb.saturation%',
+					text : '%', colorRange : [0, 100], valueRange : [0, 100], color : 'rgb(60, 60, 80)'
+				},
+				brightness : {
+					name : '%characteristics.dimmer.brightness%',
+					text : '%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
 			},
 			rgbcw : {
-				text : '%',
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(40, 85%, 75%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				hue : {
+					name : '%characteristics.rgb.hue%',
+					text : '°', colorRange : [0, 360], valueRange : [0, 360], color : 'rgb(60, 60, 80)'
+				},
+				saturation : {
+					name : '%characteristics.rgb.saturation%',
+					text : '%', colorRange : [0, 100], valueRange : [0, 100], color : 'rgb(60, 60, 80)'
+				},
+				brightness : {
+					name : '%characteristics.dimmer.brightness%',
+					text : '%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
 			},
-			temperature : { text : '°C', name : '%characteristics.temperature%', colorRange : [220, 0], valueRange : [16, 28] },
-			humidity : { text : '%', name : '%characteristics.humidity%', color : 'hsl(140, 75%, 55%)', colorRange : [0, 260], valueRange : [10, 90] },
-			light : { text : 'Lux', name : '%characteristics.light%', color : 'hsl(40, 85%, 75%)', colorRange : [25, 75], valueRange : [0, 1000] },
-			airquality : { text : '%characteristics.airquality%', name : '%characteristics.airquality%', color : 'hsl(190, 75%, 55%)', colorRange : [190, 0], valueRange : [0, 5] },
+			temperature : {
+				value : {
+					name : '%characteristics.temperature%',
+					text : '°C', colorRange : [220, 0], valueRange : [16, 28], color : 'rgb(60, 60, 80)'
+				}
+			},
+			humidity : {
+				value : {
+					name : '%characteristics.humidity%',
+					text : '%', colorRange : [0, 260], valueRange : [10, 90], color : 'hsl(140, 75%, 55%)'
+				}
+			},
+			light : {
+				value : {
+					name : '%characteristics.light%',
+					text : 'Lux', colorRange : [25, 75], valueRange : [0, 1000], color : 'hsl(40, 85%, 75%)',
+				}
+			},
+			airquality : {
+				value : {
+					name : '%characteristics.light%',
+					text : '%characteristics.airquality%', colorRange : [190, 0], valueRange : [0, 5], color : 'hsl(190, 75%, 55%)'
+				}
+			},
 			blind : {
-				text : '%', name : '%characteristics.blind.opened%', color : 'hsl(190, 75%, 55%)', colorRange : [55, 85], valueRange : [0, 100],
-				active : { text : '%characteristics.blind.opened%', color : 'hsl(190, 75%, 55%)' },
-				inactive : { text : '%characteristics.blind.closed%', color : 'rgb(60, 60, 80)' }
+				value : {
+					name : '%characteristics.blind.opened%',
+					text : '%',  colorRange : [55, 85], valueRange : [0, 100], color : 'hsl(190, 75%, 55%)',
+					active : {
+						text : '%characteristics.blind.opened%', color : 'hsl(190, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.blind.closed%', color : 'rgb(60, 60, 80)'
+					}
+				}
 			},
-			thermostat : { text : '°C', name : '%characteristics.temperature%', colorRange : [220, 0], valueRange : [16, 28] },
+			thermostat : {
+				value : {
+					name : '%characteristics.temperature%',
+					text : '°C', colorRange : [220, 0], valueRange : [16, 28], color : 'rgb(60, 60, 80)'
+				}
+			},
 			fan : {
-				text : '%', name : '%characteristics.fan%', color : 'hsl(190, 75%, 55%)', colorRange : [55, 85], valueRange : [0, 100],
-				active : { text : '%characteristics.boolean.active%', color : 'hsl(190, 75%, 55%)' },
-				inactive : { text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)' }
+				value : {
+					active : {
+						text : '%characteristics.boolean.active%', color : 'hsl(190, 75%, 55%)'
+					},
+					inactive : {
+						text : '%characteristics.boolean.inactive%', color : 'rgb(60, 60, 80)'
+					}
+				},
+				speed : {
+					name : '%characteristics.fan.speed%',
+					text : '%', colorRange : [55, 85], valueRange : [0, 100], color : 'hsl(190, 75%, 55%)'
+				},
+				direction : {
+					name : '%characteristics.fan.direction%',
+					active : {
+						text : '%characteristics.fan.left%'
+					},
+					inactive : {
+						text : '%characteristics.fan.right%'
+					}
+				}
 			}
 		};
 	
