@@ -56,7 +56,52 @@
 			<title class="loading-loop">%general.loading% ..</title>
 			<script type="module">
 
+				window.restarting = false;
+				window.resetting = false;
+				window.updating = false;
+				window.saving = false;
+
+				window.settings = [];
+				window.activity = [];
+				window.services = [];
+				window.busy = [];
+
+				window.typeCounter = {};
+				window.automation = {};
+				window.graphData = {};
+				window.values = {};
+				window.state = {};
+				window.temp = {};
+
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					blind : '%accessories.blind%',
+					dimmer : '%accessories.dimmer%',
+					fan : '%accessories.fan%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					thermostat : '%accessories.thermostat%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
 				window.device = JSON.parse('<%device%>');
+
+				window.counter = device.services.length;
 
 				if(Essentials.getURLParams('settings') != null)
 				{
@@ -147,48 +192,6 @@
 
 				window.Presets = Presets;
 				window.Graph = Graph;
-
-				window.state = {};
-				window.values = {};
-                window.automation = {};
-				window.typeCounter = {};
-				window.counter = device.services.length;
-				window.busy = [];
-				window.restarting = false
-				window.resetting = false
-				window.updating = false
-				window.saving = false;
-				window.settings = [];
-				window.activity = [];
-				window.services = [];
-				window.temp = {};
-				window.graphData = {};
-
-				window.serviceNames = {
-					airquality : '%accessories.airquality%',
-					contact : '%accessories.contact%',
-					blind : '%accessories.blind%',
-					dimmer : '%accessories.dimmer%',
-					fan : '%accessories.fan%',
-					humidity : '%accessories.humidity%',
-					led : '%accessories.led%',
-					light : '%accessories.light%',
-					motion : '%accessories.motion%',
-					occupancy : '%accessories.occupancy%',
-					outlet : '%accessories.outlet%',
-					rain : '%accessories.rain%',
-					relais : '%accessories.relais%',
-					rgb : '%accessories.rgb%',
-					smoke : '%accessories.smoke%',
-					statelessswitch : '%accessories.statelessswitch%',
-					switch : '%accessories.switch%',
-					temperature : '%accessories.temperature%',
-					thermostat : '%accessories.thermostat%',
-					special : '%accessories.special%',
-					unsupported : '%accessories.unsupported%',
-					climate : '%accessories.climate%',
-					weather : '%accessories.weather%'
-				};
 
 				loadServices();
 
