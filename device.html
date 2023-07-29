@@ -147,7 +147,7 @@
 				}
 				else
 				{
-					PageManager.hideHeader();
+					PageManager.setHeader(device.name, '( ' + (serviceNames[Essentials.getType(device.services)] || Essentials.getType(device.services)) + ' )');
 
 					var main = document.createElement('div');
 
@@ -166,8 +166,7 @@
 			<div class="main page" id="infos">
 				<div id="head"></div>
 				<div class="control-container"></div>
-				<h1 class="loading-loop" style="margin-top: 70px">%general.loading% ..</h1>
-				<div id="info" class="main" style="margin-top: 50px; margin-bottom: 100px"></div>
+				<div id="info" class="main" style="margin: 100px auto"></div>
 				<div id="activity"></div>
 			</div>
 			<div id="settings" class="page hidden">
@@ -229,7 +228,6 @@
 				}
 
 				document.getElementsByTagName('title')[0].innerHTML = device.name;
-				document.getElementById('infos').getElementsByTagName('h1')[0].innerHTML = device.name;
 
 				var infos = document.getElementById('info');
 
@@ -241,8 +239,6 @@
 				}
 
 				infos.innerHTML += '<p><b>%general.plugin%: </b>' + device.plugin[device.plugin.name != null ? 'name' : 'alias'] + '</p>';
-				
-				infos.innerHTML += '<p><b>%device.type%: </b>' + (serviceNames[Essentials.getType(services)] || Essentials.getType(services)) + '</p>';
 
 				if(device.version != null && device.version != '0.0.0')
 				{
@@ -1312,7 +1308,7 @@
 				
 				async function closeSettings(previous)
 				{
-					PageManager.hideHeader(true);
+					PageManager.setHeader(device.name, '( ' + (serviceNames[Essentials.getType(device.services)] || Essentials.getType(device.services)) + ' )', true);
 
 					var main = document.createElement('div');
 
