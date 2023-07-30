@@ -412,172 +412,12 @@
 					{
 						for(var j = 0; j < typeCounter[type]; j++)
 						{
-							var letters = Essentials.typeToLetter(type) + j;
-							var statusField = document.createElement('button');
-						
-							statusField.setAttribute('id', 'status-' + letters);
-							statusField.setAttribute('class', 'control-panel loading-loop');
-							statusField.setAttribute('type', 'button');
+							var letters = Essentials.typeToLetter(type) + j,
+								serviceContainer = document.createElement('div');
 
-							statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
+							serviceContainer.className = 'service-container';
 
-							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer' || type == 'led' || type == 'blind' || type == 'fan')
-							{
-								statusField.style.cursor = 'pointer';
-							}
-							
-							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
-							{
-								statusField.setAttribute('onclick', 'controlSwitch(this)');
-							}
-
-							if(counter > 1)
-							{
-								statusField.style.height = '100px';
-							}
-
-							if(i == counter - 1) // UGLY: Handle Statusfield Margin
-							{
-								statusField.style.setProperty('margin-bottom', '0', 'important');
-							}
-
-							if(type == 'dimmer' || type == 'blind')
-							{
-								const mouseDownHandler = function(e)
-								{
-									controlActive = true;
-
-									if(!busy.includes(this.letters))
-									{
-										controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
-
-										document.addEventListener('mousemove', mouseMoveHandler);
-										document.addEventListener('mouseup', mouseUpHandler);
-									}
-
-								}.bind({ field : statusField, letters });
-
-								const mouseMoveHandler = function(e)
-								{
-									this.field.style.pointerEvents = 'none';
-									this.field.parentElement.style.cursor = 'w-resize';
-									this.field.style.setProperty('transition-property', 'none', 'important');
-
-									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
-
-								}.bind({ field : statusField, letters });
-
-								const mouseUpHandler = function(e)
-								{
-									this.field.style.pointerEvents = 'all';
-									this.field.parentElement.style.cursor = 'pointer';
-									this.field.style.removeProperty('transition-property');
-
-									controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()));
-
-									Promise.all(promiseArraySlide).then(() => {
-
-										setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = false }, 300);
-									});
-
-									document.removeEventListener('mousemove', mouseMoveHandler);
-									document.removeEventListener('mouseup', mouseUpHandler);
-
-								}.bind({ field : statusField, letters });
-
-								statusField.addEventListener('mousedown', mouseDownHandler);
-
-								statusField.addEventListener('touchstart', function(e)
-								{
-									controlActive = true;
-
-									if(!busy.includes(this.letters))
-									{
-										getTouchPosition(this.field, this.letters, e, true);
-									}
-
-								}.bind({ field : statusField, letters }));
-
-								statusField.addEventListener('touchmove', function(e)
-								{
-									if(!busy.includes(this.letters))
-									{
-										this.field.style.setProperty('transition-property', 'none', 'important');
-
-										getTouchPosition(this.field, this.letters, e, true);
-									}
-
-								}.bind({ field : statusField, letters }));
-
-								statusField.addEventListener('touchend', function(e)
-								{
-									if(!busy.includes(this.letters))
-									{
-										getTouchPosition(this.field, this.letters, e);
-
-										this.field.style.removeProperty('transition-property');
-
-										Promise.all(promiseArraySlide).then(() => {
-											
-											setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = true; }, 300);
-										});
-									}
-
-								}.bind({ field : statusField, letters }));
-							}
-
-							document.getElementsByClassName('control-container')[0].appendChild(statusField);
-
-							if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
-							{
-								var colorPicker = document.createElement('input');
-
-								colorPicker.className = 'color-picker';
-
-								colorPicker.setAttribute('type', 'color');
-
-								colorPicker.onchange = function()
-								{
-									var hsl = Essentials.hexToHSL(this.colorPicker.value);
-
-									setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
-								
-								}.bind({ colorPicker, letters });
-
-								colorPicker.oninput = function()
-								{
-									var hsl = Essentials.hexToHSL(this.colorPicker.value);
-
-									setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
-
-								}.bind({ colorPicker, letters });
-
-								setInterval(function()
-								{
-									var hsl = Essentials.hexToHSL(this.colorPicker.value);
-
-									if(this.colorPicker['hsl'] == null || this.colorPicker['hsl'].hue != hsl.hue || this.colorPicker['hsl'].saturation != hsl.saturation || this.colorPicker['hsl'].brightness != hsl.brightness)
-									{
-										controlActive = true;
-
-										if(this.colorPicker['hsl'] != null)
-										{
-											controlColor(this.letters, hsl.hue, hsl.saturation, Math.min(hsl.brightness * 2, 100));
-										}
-									
-										this.colorPicker['hsl'] = hsl;
-
-										setTimeout(() => {
-
-											controlActive = false;
-
-										}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
-									}
-
-								}.bind({ colorPicker, letters }), device.plugin.alias.startsWith('SynTex') ? 300 : 3000);
-
-								statusField.appendChild(colorPicker);
-							}
+							createStatePanel(serviceContainer, letters);
 
 							if(type != 'removed')
 							{
@@ -1949,6 +1789,178 @@
 					}
 
 					return null;
+				}
+
+				function createStatePanel(container, letters)
+				{
+					var statusField = document.createElement('button'),
+						type = Essentials.letterToType(letters);
+
+					statusField.setAttribute('id', 'status-' + letters);
+					statusField.setAttribute('class', 'control-panel loading-loop');
+					statusField.setAttribute('type', 'button');
+
+					statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
+
+					if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw' || type == 'dimmer' || type == 'led' || type == 'blind' || type == 'fan')
+					{
+						statusField.style.cursor = 'pointer';
+					}
+					
+					if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
+					{
+						statusField.setAttribute('onclick', 'controlSwitch(this)');
+					}
+
+					if(counter > 1)
+					{
+						statusField.style.height = '100px';
+					}
+
+					if(i == counter - 1) // UGLY: Handle Statusfield Margin
+					{
+						statusField.style.setProperty('margin-bottom', '0', 'important');
+					}
+
+					if(type == 'dimmer' || type == 'blind')
+					{
+						const mouseDownHandler = function(e)
+						{
+							controlActive = true;
+
+							if(!busy.includes(this.letters))
+							{
+								controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
+
+								document.addEventListener('mousemove', mouseMoveHandler);
+								document.addEventListener('mouseup', mouseUpHandler);
+							}
+
+						}.bind({ field : statusField, letters });
+
+						const mouseMoveHandler = function(e)
+						{
+							this.field.style.pointerEvents = 'none';
+							this.field.parentElement.style.cursor = 'w-resize';
+							this.field.style.setProperty('transition-property', 'none', 'important');
+
+							controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()), true);
+
+						}.bind({ field : statusField, letters });
+
+						const mouseUpHandler = function(e)
+						{
+							this.field.style.pointerEvents = 'all';
+							this.field.parentElement.style.cursor = 'pointer';
+							this.field.style.removeProperty('transition-property');
+
+							controlDimmer(this.letters, getPercent(this.field, e.x, this.field.getBoundingClientRect()));
+
+							Promise.all(promiseArraySlide).then(() => {
+
+								setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = false }, 300);
+							});
+
+							document.removeEventListener('mousemove', mouseMoveHandler);
+							document.removeEventListener('mouseup', mouseUpHandler);
+
+						}.bind({ field : statusField, letters });
+
+						statusField.addEventListener('mousedown', mouseDownHandler);
+
+						statusField.addEventListener('touchstart', function(e)
+						{
+							controlActive = true;
+
+							if(!busy.includes(this.letters))
+							{
+								getTouchPosition(this.field, this.letters, e, true);
+							}
+
+						}.bind({ field : statusField, letters }));
+
+						statusField.addEventListener('touchmove', function(e)
+						{
+							if(!busy.includes(this.letters))
+							{
+								this.field.style.setProperty('transition-property', 'none', 'important');
+
+								getTouchPosition(this.field, this.letters, e, true);
+							}
+
+						}.bind({ field : statusField, letters }));
+
+						statusField.addEventListener('touchend', function(e)
+						{
+							if(!busy.includes(this.letters))
+							{
+								getTouchPosition(this.field, this.letters, e);
+
+								this.field.style.removeProperty('transition-property');
+
+								Promise.all(promiseArraySlide).then(() => {
+									
+									setTimeout(() => { busy.splice(busy.indexOf(this.letters), 1); controlActive = true; }, 300);
+								});
+							}
+
+						}.bind({ field : statusField, letters }));
+					}
+
+					if(type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw')
+					{
+						var colorPicker = document.createElement('input');
+
+						colorPicker.className = 'color-picker';
+
+						colorPicker.setAttribute('type', 'color');
+
+						colorPicker.onchange = function()
+						{
+							var hsl = Essentials.hexToHSL(this.colorPicker.value);
+
+							setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
+						
+						}.bind({ colorPicker, letters });
+
+						colorPicker.oninput = function()
+						{
+							var hsl = Essentials.hexToHSL(this.colorPicker.value);
+
+							setControlPanel(this.letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
+
+						}.bind({ colorPicker, letters });
+
+						setInterval(function()
+						{
+							var hsl = Essentials.hexToHSL(this.colorPicker.value);
+
+							if(this.colorPicker['hsl'] == null || this.colorPicker['hsl'].hue != hsl.hue || this.colorPicker['hsl'].saturation != hsl.saturation || this.colorPicker['hsl'].brightness != hsl.brightness)
+							{
+								controlActive = true;
+
+								if(this.colorPicker['hsl'] != null)
+								{
+									controlColor(this.letters, hsl.hue, hsl.saturation, Math.min(hsl.brightness * 2, 100));
+								}
+							
+								this.colorPicker['hsl'] = hsl;
+
+								setTimeout(() => {
+
+									controlActive = false;
+
+								}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
+							}
+
+						}.bind({ colorPicker, letters }), device.plugin.alias.startsWith('SynTex') ? 300 : 3000);
+
+						statusField.appendChild(colorPicker);
+					}
+
+					container.appendChild(statusField);
+
+					document.getElementsByClassName('control-container')[0].appendChild(container);
 				}
 
 			</script>
