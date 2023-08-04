@@ -1,58 +1,6 @@
 <html>
 	<body ontouchstart="">
 		<div id="content">
-			<script>
-
-				var lastWidth = window.innerWidth, lastHeight = window.innerHeight, resizeTimer = null, windowResized = false;
-
-				setInterval(() => {
-
-					if(windowResized)
-					{
-						windowResized = false;
-
-						for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
-						{
-							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
-						}
-					}
-
-				}, 100);
-
-				window.addEventListener('resize', (e) => {
-
-					if(lastWidth < window.innerWidth || lastWidth > window.innerWidth)
-					{
-						lastWidth = window.innerWidth;
-
-						windowResized = true;
-					}
-
-					if(lastHeight < window.innerHeight || lastHeight > window.innerHeight)
-					{
-						lastHeight = window.innerHeight;
-						
-						windowResized = true;
-					}
-
-					clearTimeout(resizeTimer);
-
-					resizeTimer = setTimeout(() => {
-						
-						if(windowResized)
-						{
-							windowResized = false;
-
-							for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
-							{
-								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
-							}
-						}
-
-					}, 100);
-				});
-				
-			</script>
 			<title class="loading-loop">%general.loading% ..</title>
 			<script type="module">
 
@@ -725,33 +673,6 @@
 					{
 						document.getElementById('status-' + letters).style.setProperty('--box-shadow', color);
 					}
-
-					resizeFontSizeToFit(document.getElementById('status-' + letters).children[0]);
-				}
-
-			</script>
-			<script>
-
-				function resizeFontSizeToFit(element)
-				{
-					var steps = [{ fontSize : 46, letterSpacing : 20 }, { fontSize : 30, letterSpacing : 15 }, { fontSize : 22, letterSpacing : 10 }];
-					var padding = parseInt(getComputedStyle(element.parentElement).paddingLeft) + parseInt(getComputedStyle(element.parentElement).paddingRight);
-
-					element.style.setProperty('padding-left', steps[0].letterSpacing + 'px', 'important');
-
-					element.parentElement.style.setProperty('font-size', steps[0].fontSize + 'px', 'important');
-					element.parentElement.style.setProperty('letter-spacing', steps[0].letterSpacing + 'px', 'important');
-
-					for(const i in steps)
-					{
-						if(element.offsetHeight > element.parentElement.offsetHeight || element.offsetWidth > element.parentElement.offsetWidth - padding - steps[i].letterSpacing / 2)
-						{
-							element.style.setProperty('padding-left', steps[i].letterSpacing + 'px', 'important');
-
-							element.parentElement.style.setProperty('font-size', steps[i].fontSize + 'px', 'important');
-							element.parentElement.style.setProperty('letter-spacing', steps[i].letterSpacing + 'px', 'important');
-						}
-					}
 				}
 
 			</script>
@@ -1153,11 +1074,6 @@
 						window.history.pushState(null, null, '?id=' + device.id);
 					}
 
-					for(var i = 0; i < document.getElementsByClassName('control-panel').length; i++)
-					{
-						resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
-					}
-
 					Graph.repaintGraphs();
 				}
 
@@ -1433,15 +1349,11 @@
 							document.getElementsByClassName('control-panel')[0].style.setProperty('--box-shadow', 'hsl(350, 75%, 45%)');
 							document.getElementsByClassName('control-panel')[0].children[0].innerHTML = '%general.offline%';
 
-							resizeFontSizeToFit(document.getElementsByClassName('control-panel')[0].children[0]);
-
 							for(var i = 1; i < document.getElementsByClassName('control-panel').length; i++)
 							{
 								document.getElementsByClassName('control-panel')[i].style.removeProperty('--background-color');
 								document.getElementsByClassName('control-panel')[i].style.removeProperty('--box-shadow');
 								document.getElementsByClassName('control-panel')[i].children[0].innerHTML = '–––';
-
-								resizeFontSizeToFit(document.getElementsByClassName('control-panel')[i].children[0]);
 							}
 
 							updatedAfterOffline = false;
