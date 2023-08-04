@@ -424,10 +424,13 @@
 								var height = 360;
 								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
 
+								var infoName = document.createElement('div'),
+									infoData = document.createElement('div'),
+									infoMax = document.createElement('div'),
+									infoMin = document.createElement('div');
+								
 								frame.className = 'graph';
 								frame.setAttribute('style', 'height: ' + height + 'px');
-
-								document.getElementById('activity').appendChild(frame);
 
 								console.debug('SET HEIGHT', height, frame);
 
@@ -438,40 +441,26 @@
 								canvas.width = document.getElementById('infos').offsetWidth - 4;
 								canvas.height = height;
 
-								frame.appendChild(canvas);
-
 								grid.setAttribute('class', 'canvas');
 								grid.setAttribute('id', 'canvas-' + type + '-' + j);
 
 								grid.width = document.getElementById('infos').offsetWidth - 4;
 								grid.height = height;
 
-								frame.appendChild(grid);
+								infoName.setAttribute('style', 'top: 34.5px; left: 25px; opacity: 1');
+								infoName.setAttribute('class', 'name');
 
-								Graph.clearCanvas(grid);
-								Graph.drawGrid(grid, [], 10);
+								infoData.setAttribute('style', 'bottom: calc(-100% + 17px); left: 25px');
+								infoData.setAttribute('class', 'data');
 
-								var infoMin = document.createElement('div');
-
-								infoMin.setAttribute('style', 'bottom: calc(-100% + 17px); left: 25px');
-								infoMin.setAttribute('class', 'min');
-
-								frame.appendChild(infoMin);
-
-								var infoMax = document.createElement('div');
-
-								infoMax.setAttribute('style', 'top: 34.5px; left: 25px');
+								infoMax.setAttribute('style', 'top: 34.5px; left: -25px; text-align: right');
 								infoMax.setAttribute('class', 'max');
 
-								frame.appendChild(infoMax);
+								infoMin.setAttribute('style', 'bottom: calc(-100% + 17px); left: -25px; text-align: right');
+								infoMin.setAttribute('class', 'min');
 
 								if(services.length > 1)
 								{
-									var infoType = document.createElement('div');
-								
-									infoType.setAttribute('style', 'top: 34.5px; text-align: center');
-									infoType.setAttribute('class', 'name');
-
 									var typeName = type;
 
 									if(type == 'rgb' || type == 'rgbw' || type == 'rgbcw' || type == 'rgbww')
@@ -512,26 +501,8 @@
 										name = name.replace(device.name + ' ', '');
 									}
 
-									name = name.toUpperCase();
-									
-									infoType.innerHTML = name;
-
-									frame.appendChild(infoType);
+									infoName.innerHTML = name.toUpperCase();
 								}
-
-								var infoUpdates = document.createElement('div');
-
-								infoUpdates.setAttribute('style', 'top: 34.5px; left: -25px; text-align: right');
-								infoUpdates.setAttribute('class', 'updates');
-
-								frame.appendChild(infoUpdates);
-
-								var infoUpdate = document.createElement('div');
-
-								infoUpdate.setAttribute('style', 'bottom: calc(-100% + 17px); left: -25px; text-align: right');
-								infoUpdate.setAttribute('class', 'update');
-
-								frame.appendChild(infoUpdate);
 
 								if(!device.plugin.alias.startsWith('SynTex'))
 								{
@@ -548,6 +519,19 @@
 
 									}.bind({ notSupportedButton }), 0);
 								}
+
+								frame.appendChild(canvas);
+								frame.appendChild(grid);
+
+								frame.appendChild(infoName);
+								frame.appendChild(infoData);
+								frame.appendChild(infoMin);
+								frame.appendChild(infoMax);
+								
+								document.getElementById('activity').appendChild(frame);
+
+								Graph.clearCanvas(grid);
+								Graph.drawGrid(grid, [], 10);
 							}
 						}
 					}
@@ -989,24 +973,20 @@
 							if(min != null)
 							{
 								canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
+
+								canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
 							}
 
 							if(max != null)
 							{
 								canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+							
+								canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
 							}
 							
-							if(state[letters].time != null)
-							{
-								canvas.parentElement.getElementsByClassName('update')[0].innerHTML = ('0' + new Date(state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(state[letters].time).getMinutes()).slice(-2) + ' • %device.activity%';
-							}
-							
-							canvas.parentElement.getElementsByClassName('updates')[0].innerHTML = graphData[letters].counter + ' • %device.data%';
+							canvas.parentElement.getElementsByClassName('data')[0].innerHTML = graphData[letters].counter + ' • %device.data%';
 
-							canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
-							canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
-							canvas.parentElement.getElementsByClassName('update')[0].style.opacity = 1;
-							canvas.parentElement.getElementsByClassName('updates')[0].style.opacity = 1;
+							canvas.parentElement.getElementsByClassName('data')[0].style.opacity = 1;
 						}
 
 						// NOTE: Set Graph Colors
