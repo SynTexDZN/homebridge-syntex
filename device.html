@@ -412,10 +412,35 @@
 					{
 						for(var j = 0; j < typeCounter[type]; j++)
 						{
-							var letters = Essentials.typeToLetter(type) + j,
-								serviceContainer = document.createElement('div');
+							var letters = Essentials.typeToLetter(type) + j, service = getService(letters),
+								serviceContainer = document.createElement('div'),
+								serviceInformation = document.createElement('div'),
+								serviceName = document.createElement('div'),
+								serviceActivity = document.createElement('div');
 
 							serviceContainer.className = 'service-container';
+
+							serviceInformation.className = 'service-information';
+
+							serviceName.innerHTML = '%devices.unknown%';
+							serviceName.className = 'service-name';
+
+							serviceActivity.className = 'service-activity';
+
+							if(service != null && service.name != null)
+							{
+								serviceName.innerHTML = service.name;
+
+								if(service.name.startsWith(device.name + ' '))
+								{
+									serviceName.innerHTML = service.name.replace(device.name + ' ', '');
+								}
+							}
+
+							serviceInformation.appendChild(serviceName);
+							serviceInformation.appendChild(serviceActivity);
+
+							serviceContainer.appendChild(serviceInformation);
 
 							createStatePanel(serviceContainer, letters);
 
@@ -677,35 +702,12 @@
 						}
 					}
 
-					if(typeCounter[type] > 1)
+					if(window.state[letters].time != null)
 					{
-						var name = device.name + ' ' + type + ' ' + c;
-						var n = [];
-
-						for(var k = 0; k < device.services.length; k++)
-						{
-							if(device.services[k].type == type)
-							{
-								n.push(device.services[k].name);
-							}
+						document.getElementById('status-' + letters).parentElement.getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
 						}
 
-						if(n.length > 0 && n[c] != null)
-						{
-							name = n[c];
-						}
-
-						if(name.includes(device.name + ' '))
-						{
-							name = name.replace(device.name + ' ', '');
-						}
-
-						document.getElementById('status-' + letters).children[0].innerHTML = name.toUpperCase() + ' [' + value + ']';
-					}
-					else
-					{
 						document.getElementById('status-' + letters).children[0].innerHTML = value;
-					}
 
 					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
 					document.getElementById('status-' + letters).style.setProperty('--background-color', color);

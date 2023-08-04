@@ -487,10 +487,41 @@ h2
 */
 .control-container
 {
+	display: flex;
+	flex-wrap: wrap;
 	min-width: 60%;
 	width: 100%;
 	position: relative;
 	gap: 20px;
+}
+
+.service-container
+{
+	display: flex;
+	flex-grow: 1;
+    min-width: calc(50% - 10px);
+    box-sizing: border-box;
+
+	flex-direction: column;
+
+	background: rgb(40, 40, 55);
+
+	gap: 16px;
+	padding: 16px;
+	border-radius: 44px;
+}
+
+.service-information
+{
+	display: flex;
+	color: rgb(245, 245, 255);
+	font-weight: 300;
+	text-align: left;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	margin: 0 32px;
+	justify-content: space-between;
+	gap: 16px;
 }
 
 .control-panel
@@ -502,18 +533,20 @@ h2
 	color: var(--dark-layer-one);
 	transition: var(--transition-color), .3s background-color ease-in-out, .3s box-shadow ease-in-out;
 	border-width: 0;
-	height: 150px;
-	padding: 10px 80px;
+	height: 100px;
+	padding: 10px;
+	padding-left: 106px;
 	border-radius: 32px;
-	font-size: 46px;
+	font-size: 36px;
 	letter-spacing: 20px!important;
 	font-weight: 400!important;
 	-webkit-tap-highlight-color: rgba(125, 125, 135, 0)!important;
+	text-align: right;
 	text-transform: uppercase;
 	position: relative;
 	z-index: 1;
 	background-color: var(--background-color);
-	box-shadow: 0 4px 0 0 var(--box-shadow);
+	box-shadow: none;
 
 	will-change: background-color, box-shadow;
 }
@@ -521,7 +554,7 @@ h2
 .control-panel::before
 {
 	content: '';
-	background-image: var(--content), var(--content);
+	background-image: var(--content);
 
 	position: absolute;
 	top: 0;
@@ -530,7 +563,7 @@ h2
 	left: 0;
 	z-index: -1;
 
-	background-position: 30px center, calc(100% - 30px)!important;
+	background-position: 30px center!important;
 	background-blend-mode: overlay!important;
 	background-repeat: no-repeat!important;
 	background-size: 46px!important;
@@ -545,10 +578,9 @@ h2
 */
 .control-panel-text
 {
-	padding-left: 20px;
 	width: fit-content;
 	width: -moz-fit-content;
-	margin: 0 auto;
+	margin-left: auto;
 }
 
 input[type='submit']
