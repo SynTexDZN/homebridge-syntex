@@ -396,7 +396,7 @@
 							{
 								var height = 360;
 								var frame = document.createElement('div'), canvas = document.createElement('canvas'), grid = document.createElement('canvas');
-
+								
 								var infoName = document.createElement('div'),
 									infoData = document.createElement('div'),
 									infoMax = document.createElement('div'),
@@ -431,7 +431,7 @@
 
 								infoMin.setAttribute('style', 'bottom: calc(-100% + 17px); left: -25px; text-align: right');
 								infoMin.setAttribute('class', 'min');
-
+								
 								if(services.length > 1)
 								{
 									var typeName = type;
@@ -653,9 +653,9 @@
 					if(window.state[letters].time != null)
 					{
 						document.getElementById('status-' + letters).parentElement.getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
-						}
-
-						document.getElementById('status-' + letters).children[0].innerHTML = value;
+					}
+					
+					document.getElementById('status-' + letters).children[0].innerHTML = value;
 
 					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
 					document.getElementById('status-' + letters).style.setProperty('--background-color', color);
@@ -895,12 +895,12 @@
 							if(max != null)
 							{
 								canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
-							
+
 								canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
 							}
 							
 							canvas.parentElement.getElementsByClassName('data')[0].innerHTML = graphData[letters].counter + ' • %device.data%';
-
+							
 							canvas.parentElement.getElementsByClassName('data')[0].style.opacity = 1;
 						}
 
