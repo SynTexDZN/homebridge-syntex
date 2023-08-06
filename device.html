@@ -660,20 +660,28 @@
 					{
 						document.getElementById('service-' + letters).getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
 					}
-					
-					document.getElementById('status-' + letters).children[0].innerHTML = value;
 
-					document.getElementById('status-' + letters).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
-					document.getElementById('status-' + letters).style.setProperty('--background-color', color);
-					document.getElementById('status-' + letters).style.setProperty('--box-shadow', color);
+					for(const x in service.iid)
+					{
+						var id = 'status-' + letters + '-' + service.iid[x];
 
-					if(color.includes('rgb'))
-					{
-						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2]) - 20) + ')');
-					}
-					else if(color.includes('hsl'))
-					{
-						document.getElementById('status-' + letters).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+						if(document.getElementById(id) != null)
+						{
+							document.getElementById(id).children[0].innerHTML = value.split(' | ')[0];
+
+							document.getElementById(id).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
+							document.getElementById(id).style.setProperty('--background-color', color);
+							document.getElementById(id).style.setProperty('--box-shadow', color);
+
+							if(color.includes('rgb'))
+							{
+								document.getElementById(id).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2]) - 20) + ')');
+							}
+							else if(color.includes('hsl'))
+							{
+								document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+							}
+						}
 					}
 				}
 
