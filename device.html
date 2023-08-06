@@ -368,6 +368,7 @@
 								serviceName = document.createElement('div'),
 								serviceActivity = document.createElement('div');
 
+							serviceContainer.id = 'service-' + letters;
 							serviceContainer.className = 'service-container';
 
 							serviceInformation.className = 'service-information';
@@ -377,22 +378,25 @@
 
 							serviceActivity.className = 'service-activity';
 
-							if(service != null && service.name != null)
+							if(service != null)
 							{
-								serviceName.innerHTML = service.name;
-
-								if(service.name.startsWith(device.name + ' '))
+								if(service.name != null)
 								{
-									serviceName.innerHTML = service.name.replace(device.name + ' ', '');
+									serviceName.innerHTML = service.name;
+
+									if(service.name.startsWith(device.name + ' '))
+									{
+										serviceName.innerHTML = service.name.replace(device.name + ' ', '');
+									}
 								}
+
+								serviceInformation.appendChild(serviceName);
+								serviceInformation.appendChild(serviceActivity);
+
+								serviceContainer.appendChild(serviceInformation);
+
+								createStatePanel(serviceContainer, letters);
 							}
-
-							serviceInformation.appendChild(serviceName);
-							serviceInformation.appendChild(serviceActivity);
-
-							serviceContainer.appendChild(serviceInformation);
-
-							createStatePanel(serviceContainer, letters);
 
 							if(type != 'removed')
 							{
@@ -654,7 +658,7 @@
 
 					if(window.state[letters].time != null)
 					{
-						document.getElementById('status-' + letters).parentElement.getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
+						document.getElementById('service-' + letters).getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
 					}
 					
 					document.getElementById('status-' + letters).children[0].innerHTML = value;
@@ -1762,7 +1766,7 @@
 						statusField.addEventListener('touchmove', (e) => {
 
 							if(!busy.includes(letters))
-						{
+							{
 								statusField.style.setProperty('transition-property', 'none', 'important');
 
 								getTouchPosition(statusField, letters, e, true);
@@ -1772,7 +1776,7 @@
 						statusField.addEventListener('touchend', (e) => {
 
 							if(!busy.includes(letters))
-						{
+							{
 								getTouchPosition(statusField, letters, e);
 
 								statusField.style.removeProperty('transition-property');
@@ -1802,7 +1806,7 @@
 						colorPicker.onchange = () => {
 
 							var hsl = Essentials.hexToHSL(colorPicker.value);
-						
+
 							setControlPanel(letters, { value : hsl.brightness > 0, hue : hsl.hue, saturation : hsl.saturation, brightness : Math.min(hsl.brightness * 2, 100) });
 						};
 
