@@ -645,6 +645,18 @@
 				{
 					var type = Essentials.letterToType(letters[0]), c = letters.slice(1), color = '', value = '–––', service = getService(letters);
 
+					if(window.state != null
+					&& window.state[letters] != null
+					&& window.state[letters].time != null)
+					{
+						var serviceContainer = document.getElementById('service-' + letters);
+
+						if(serviceContainer != null)
+						{
+							serviceContainer.getElementsByClassName('service-activity')[0].innerHTML = ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
+						}
+					}
+
 					if(service != null && service.iid != null)
 					{
 						var serviceState = Essentials.getServiceColor({ ...service, state });
@@ -658,11 +670,6 @@
 						{
 							color = serviceState.color;
 						}
-					}
-
-					if(window.state[letters].time != null)
-					{
-						document.getElementById('service-' + letters).getElementsByClassName('service-activity')[0].innerHTML =  ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
 					}
 
 					for(const x in service.iid)
