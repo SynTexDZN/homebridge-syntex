@@ -396,6 +396,11 @@
 								serviceContainer.appendChild(serviceInformation);
 
 								createStatePanel(serviceContainer, letters, service.iid.value);
+
+								if(type == 'thermostat')
+								{
+									createStatePanel(serviceContainer, letters, service.iid.target);
+								}
 							}
 
 							if(type != 'removed')
@@ -679,6 +684,25 @@
 							else if(color.includes('hsl'))
 							{
 								document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+							}
+							
+							if(type == 'thermostat' && x == 'target')
+							{
+								var targetState = Essentials.getServiceColor({ ...service, state : { ...service.state, value : state.target } });
+
+								document.getElementById(id).children[0].innerHTML = value.split(' | ')[1] + ' | ' + value.split(' | ')[2];
+
+								document.getElementById(id).style.setProperty('--background-color', targetState.color);
+								document.getElementById(id).style.setProperty('--box-shadow', targetState.color);
+
+								if(targetState.color.includes('rgb'))
+								{
+									document.getElementById(id).style.setProperty('--box-shadow', 'rgb(' + (parseInt(targetState.color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[2]) - 20) + ')');
+								}
+								else if(targetState.color.includes('hsl'))
+								{
+									document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + targetState.color.split(', ')[0].split('(')[1] + ', ' + targetState.color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(targetState.color.split(', ')[2].split(')')[0]) - 10) + '%)');
+								}
 							}
 						}
 					}
