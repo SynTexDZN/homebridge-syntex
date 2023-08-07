@@ -769,7 +769,7 @@
 
 								var serviceState = Essentials.getServiceColor({ letters : Essentials.typeToLetter(type) + '0', format : { value : 'float' }, state : { value : (min + max) / 2 } });
 
-								if(serviceState != null && serviceState.color != null)
+								if(serviceState.color != null)
 								{
 									color = serviceState.color;
 								}
@@ -1269,9 +1269,9 @@
 								format = 'numeric';
 							}
 
-							if(primaryState.text != null)
+							if(primaryState.text.primary != null)
 							{
-								text = primaryState.text;
+								text = primaryState.text.primary;
 							}
 
 							if(primaryState.color != null && format == 'numeric')
@@ -1285,13 +1285,13 @@
 								{
 									var serviceState = Essentials.getServiceColor(device.services[i]);
 
-									if(serviceState != null && device.services[i].state != null && device.services[i].state.value != null)
+									if(device.services[i].state != null && device.services[i].state.value != null)
 									{
 										var state = device.services[i].state;
 
-										if(serviceState.text != null && state.value == true)
+										if(serviceState.text.primary != null && state.value == true)
 										{
-											text = serviceState.text;
+											text = serviceState.text.primary;
 										}
 
 										if(serviceState.color != null && state.value == true)
@@ -1348,7 +1348,7 @@
 									text += ' ' + preset.value.text;
 								}
 
-								if(serviceState != null && serviceState.color != null)
+								if(serviceState.color != null)
 								{
 									color = serviceState.color;
 								}
@@ -1396,7 +1396,7 @@
 									}
 								}
 
-								if(serviceState != null && serviceState.color != null)
+								if(serviceState.color != null)
 								{
 									color = serviceState.color;
 								}

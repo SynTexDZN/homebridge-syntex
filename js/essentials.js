@@ -720,7 +720,7 @@ class EssentialFeatures
 
 	getServiceColor(service)
 	{
-		var stateText = [], stateColor = null;
+		var stateText = {}, stateColor = null;
 
 		if(service.letters != null && service.state != null)
 		{
@@ -734,7 +734,7 @@ class EssentialFeatures
 					if(preset.value != null
 					&& preset.value.inactive != null)
 					{
-						stateText.push(preset.value.inactive.text);
+						stateText.primary = preset.value.inactive.text;
 					}
 				}
 
@@ -752,11 +752,11 @@ class EssentialFeatures
 						{
 							if(service.state.value == true)
 							{
-								stateText.push(preset.value.active.text);
+								stateText.primary = preset.value.active.text;
 							}
 							else if(service.state.value == false)
 							{
-								stateText.push(preset.value.inactive.text);
+								stateText.primary = preset.value.inactive.text;
 							}
 						}
 
@@ -780,11 +780,11 @@ class EssentialFeatures
 					{
 						if(preset.value != null && preset.value.text != null)
 						{
-							stateText.push(service.state.value + ' ' + preset.value.text);
+							stateText.primary = service.state.value + ' ' + preset.value.text;
 						}
 						else
 						{
-							stateText.push(service.state.value);
+							stateText.primary = service.state.value;
 						}
 					}
 
@@ -795,25 +795,25 @@ class EssentialFeatures
 						cRange = preset.value.colorRange;
 						vRange = preset.value.valueRange;
 					}
-
+					
 					if(type == 'rgb' || type == 'dimmer')
 					{
 						if(service.state.value == false || service.state.brightness == 0)
 						{
-							stateText[0] = preset.value.inactive.text;
+							stateText.primary = preset.value.inactive.text;
 
 							stateColor = preset.value.inactive.color;
 						}
 						else if(service.state.value == true && service.state.brightness == 100)
 						{
-							stateText[0] = preset.value.active.text;
+							stateText.primary = preset.value.active.text;
 
 							stateColor = preset.value.active.color;
 						}
 						else
 						{
-							stateText[0] = Math.round(service.state.brightness) + ' ' + preset.brightness.text;
-
+							stateText.primary = Math.round(service.state.brightness) + ' ' + preset.brightness.text;
+		
 							if(preset.brightness != null
 							&& preset.brightness.colorRange != null
 							&& preset.brightness.valueRange != null)
@@ -821,7 +821,7 @@ class EssentialFeatures
 								cRange = preset.brightness.colorRange;
 								vRange = preset.brightness.valueRange;
 							}
-		
+
 							if(type == 'rgb')
 							{
 								stateColor = 'hsl(' + parseInt(service.state.hue) + ', ' + parseInt(14 + service.state.saturation * service.state.brightness / 100 / 100 * (100 - 14)) + '%, ' + (27 + service.state.brightness / 100 * (65 - 27)) + '%)';
@@ -836,19 +836,19 @@ class EssentialFeatures
 					{
 						if(service.state.value == false || service.state.speed == 0)
 						{
-							stateText[0] = preset.value.inactive.text;
+							stateText.primary = preset.value.inactive.text;
 
 							stateColor = preset.value.inactive.color;
 						}
 						else if(service.state.value == true && service.state.speed == 100)
 						{
-							stateText[0] = preset.value.inactive.text;
+							stateText.primary = preset.value.inactive.text;
 
 							stateColor = preset.value.inactive.color;
 						}
 						else if(service.state.value == true)
 						{
-							stateText[0] = Math.round(service.state.speed) + ' ' + preset.brightness.text;
+							stateText.primary = Math.round(service.state.speed) + ' ' + preset.brightness.text;
 
 							if(preset.speed != null
 							&& preset.speed.colorRange != null
@@ -863,29 +863,29 @@ class EssentialFeatures
 					}
 					else if(type == 'thermostat')
 					{
-						stateText[0] = ((Math.round(service.state.value * 10.0)) / 10.0) + preset.value.text;
+						stateText.primary = ((Math.round(service.state.value * 10.0)) / 10.0) + preset.value.text;
 
 						if(service.state.target != null)
 						{
-							stateText[0] += ' | ' + ((Math.round(service.state.target * 10.0)) / 10.0) + preset.value.text;
+							stateText.primary += ' | ' + ((Math.round(service.state.target * 10.0)) / 10.0) + preset.target.text;
 						}
 
 						if(service.state.state != null && service.state.mode != null)
 						{
 							if(service.state.state == 1 && (service.state.mode == 1 || (service.state.mode == 3 && service.state.value < service.state.target)))
 							{
-								stateText[0] += ' | %characteristics.thermostat.heating%';
+								stateText.primary += ' | %characteristics.thermostat.heating%';
 							}
 							else if(service.state.state == 1 && (service.state.mode == 2 || (service.state.mode == 3 && service.state.value > service.state.target)))
 							{
-								stateText[0] += ' | %characteristics.thermostat.cooling%';
+								stateText.primary += ' | %characteristics.thermostat.cooling%';
 							}
 							else
 							{
-								stateText[0] += ' | %characteristics.boolean.inactive%';
+								stateText.primary += ' | %characteristics.boolean.inactive%';
 							}
 						}
-
+		
 						if(service.state.value < vRange[0])
 						{
 							stateColor = 'hsl(' + cRange[0] + ', 65%, 55%)';
@@ -901,7 +901,7 @@ class EssentialFeatures
 					}
 					else if(type == 'temperature')
 					{
-						stateText[0] = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + preset.value.text;
+						stateText.primary = ((Math.round(service.state.value * 10.0)) / 10.0) + ' ' + preset.value.text;
 	
 						if(service.state.value < vRange[0])
 						{
@@ -918,7 +918,7 @@ class EssentialFeatures
 					}
 					else if(type == 'humidity')
 					{
-						stateText[0] = Math.round(service.state.value) + ' ' + preset.value.text;
+						stateText.primary = Math.round(service.state.value) + ' ' + preset.value.text;
 	
 						if(service.state.value > 50)
 						{	
@@ -940,7 +940,7 @@ class EssentialFeatures
 					}
 					else if(type == 'light')
 					{
-						stateText[0] = Math.round(service.state.value) + ' ' + preset.value.text;
+						stateText.primary = Math.round(service.state.value) + ' ' + preset.value.text;
 	
 						if(service.state.value > 1000)
 						{
@@ -953,7 +953,7 @@ class EssentialFeatures
 					}
 					else if(type == 'airquality')
 					{
-						stateText[0] = Math.round(service.state.value) + ' ' + preset.value.text;
+						stateText.primary = Math.round(service.state.value) + ' ' + preset.value.text;
 	
 						if(service.state.value > 4)
 						{
@@ -968,24 +968,26 @@ class EssentialFeatures
 					{
 						if(service.state.state == 0)
 						{
-							stateText[0] = '%characteristics.blind.closing% ..';
+							stateText.primary = '%characteristics.blind.closing% ..';
 						}
 						else if(service.state.state == 1)
 						{
-							stateText[0] = '%characteristics.blind.opening% ..';
+							stateText.primary = '%characteristics.blind.opening% ..';
 						}
 						else if(service.state.value == 0)
 						{
-							stateText[0] = '%characteristics.blind.closed%';
+							stateText.primary = '%characteristics.blind.closed%';
 						}
 						else if(service.state.value == 100)
 						{
-							stateText[0] = '%characteristics.blind.opened%';
+							stateText.primary = '%characteristics.blind.opened%';
+
 							stateColor = preset.value.color;
 						}
 						else
 						{
-							stateText[0] = Math.round(service.state.value) + ' ' + preset.value.text.toUpperCase();
+							stateText.primary = Math.round(service.state.value) + ' ' + preset.value.text.toUpperCase();
+
 							stateColor = 'hsl(190, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 10) + '%, ' + ((service.state.value - vRange[0]) / (vRange[1] - vRange[0]) * (cRange[1] - cRange[0]) + cRange[0] - 30) + '%)';
 						}
 					}
@@ -993,7 +995,7 @@ class EssentialFeatures
 			}
 		}
 
-		return { text : stateText.length > 0 ? stateText.join(' | ') : null, color : stateColor };
+		return { text : stateText, color : stateColor };
 	}
 
 	getDataType(type)

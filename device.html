@@ -649,9 +649,9 @@
 					{
 						var serviceState = Essentials.getServiceColor({ ...service, state });
 
-						if(serviceState.text != null)
+						if(serviceState.text.primary != null)
 						{
-							value = serviceState.text;
+							value = serviceState.text.primary;
 						}
 
 						if(serviceState.color != null)
@@ -692,16 +692,19 @@
 
 								document.getElementById(id).children[0].innerHTML = value.split(' | ')[1] + ' | ' + value.split(' | ')[2];
 
-								document.getElementById(id).style.setProperty('--background-color', targetState.color);
-								document.getElementById(id).style.setProperty('--box-shadow', targetState.color);
+								if(targetState.color != null)
+								{
+									document.getElementById(id).style.setProperty('--background-color', targetState.color);
+									document.getElementById(id).style.setProperty('--box-shadow', targetState.color);
 
-								if(targetState.color.includes('rgb'))
-								{
-									document.getElementById(id).style.setProperty('--box-shadow', 'rgb(' + (parseInt(targetState.color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[2]) - 20) + ')');
-								}
-								else if(targetState.color.includes('hsl'))
-								{
-									document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + targetState.color.split(', ')[0].split('(')[1] + ', ' + targetState.color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(targetState.color.split(', ')[2].split(')')[0]) - 10) + '%)');
+									if(targetState.color.includes('rgb'))
+									{
+										document.getElementById(id).style.setProperty('--box-shadow', 'rgb(' + (parseInt(targetState.color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[1]) - 20) + ', ' + (parseInt(targetState.color.split(', ')[2]) - 20) + ')');
+									}
+									else if(targetState.color.includes('hsl'))
+									{
+										document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + targetState.color.split(', ')[0].split('(')[1] + ', ' + targetState.color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(targetState.color.split(', ')[2].split(')')[0]) - 10) + '%)');
+									}
 								}
 							}
 						}
@@ -953,31 +956,31 @@
 							var serviceState3 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max + graphData[letters].max) / 3 } });
 							var serviceState4 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].max } });
 							
-							if(serviceState4 != null && serviceState4.color != null)
+							if(serviceState4.color != null)
 							{
 								colorFill.push('hsla(' + serviceState4.color.split(')')[0].split('hsl(')[1] + ', .3)');
 								colorGraph.push(serviceState4.color);
 							}
 
-							if(serviceState3 != null && serviceState3.color != null)
+							if(serviceState3.color != null)
 							{
 								colorFill.push('hsla(' + serviceState3.color.split(')')[0].split('hsl(')[1] + ', .25)');
 								colorGraph.push(serviceState3.color);
 							}
 
-							if(serviceState2 != null && serviceState2.color != null)
+							if(serviceState2.color != null)
 							{
 								colorFill.push('hsla(' + serviceState2.color.split(')')[0].split('hsl(')[1] + ', .175)');
 								colorGraph.push(serviceState2.color);
 							}
 
-							if(serviceState1 != null && serviceState1.color != null)
+							if(serviceState1.color != null)
 							{
 								colorFill.push('hsla(' + serviceState1.color.split(')')[0].split('hsl(')[1] + ', .1)');
 								colorGraph.push(serviceState1.color);
 							}
 
-							if(serviceState0 != null && serviceState0.color != null)
+							if(serviceState0.color != null)
 							{
 								colorFill.push('hsla(' + serviceState0.color.split(')')[0].split('hsl(')[1] + ', .05)');
 								colorGraph.push(serviceState0.color);
@@ -999,7 +1002,7 @@
 
 							var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, ...additions } });
 
-							if(serviceState != null && serviceState.color != null)
+							if(serviceState.color != null)
 							{
 								colorFill.push('hsla(' + serviceState.color.split(')')[0].split('hsl(')[1] + ', .3)');
 								colorGraph.push(serviceState.color);
