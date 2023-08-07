@@ -395,7 +395,7 @@
 
 								serviceContainer.appendChild(serviceInformation);
 
-								createStatePanel(serviceContainer, letters + '-' + service.iid.value);
+								createStatePanel(serviceContainer, letters, service.iid.value);
 							}
 
 							if(type != 'removed')
@@ -558,7 +558,6 @@
 				{
 					var groupBar = field.getBoundingClientRect(),
 						padding = 50;
-
 
 					return Math.min(Math.max((x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
 				}
@@ -1691,12 +1690,12 @@
 					return null;
 				}
 
-				function createStatePanel(container, letters)
+				function createStatePanel(container, letters, iid)
 				{
 					var statusField = document.createElement('button'),
 						type = Essentials.letterToType(letters);
 
-					statusField.setAttribute('id', 'status-' + letters);
+					statusField.setAttribute('id', 'status-' + letters + '-' + iid);
 					statusField.setAttribute('class', 'control-panel loading-loop');
 					statusField.setAttribute('type', 'button');
 
