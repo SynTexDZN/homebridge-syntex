@@ -997,12 +997,12 @@
 						{
 							var additions = { value : true };
 							
-							if(service.state != null && service.state.brightness != null)
+							if(service.state != null && service.state.brightness != null && graphData[letters].max > 0)
 							{
 								additions.brightness = graphData[letters].max;
 							}
 
-							if(type == 'blind')
+							if(type == 'blind' && graphData[letters].max > 0)
 							{
 								additions.value = graphData[letters].max;
 							}
