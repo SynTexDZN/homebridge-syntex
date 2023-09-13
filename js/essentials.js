@@ -1266,6 +1266,14 @@ class EssentialFeatures
 			});
 		}
 	}
+
+	addColorTransparency(color, opacity)
+	{
+		var parameter = color.split('(')[1].split(')')[0],
+			prefix = color.split('(')[0];
+
+		return prefix + 'a(' + parameter + ', ' + opacity + ')';
+	}
 }
 
 var idCounter = new Date().getTime();
