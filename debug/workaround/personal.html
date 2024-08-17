@@ -1,0 +1,1016 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title class="loading-loop">%general.loading% ..</title>
+			<script type="module">
+
+				window.restarting = false;
+				window.resetting = false;
+				window.updating = false;
+				window.saving = false;
+
+				window.settings = [];
+				window.activity = [];
+				window.services = [];
+				window.busy = [];
+
+				window.typeCounter = {};
+				window.automation = {};
+				window.graphData = {};
+				window.values = {};
+				window.state = {};
+				window.temp = {};
+
+				window.serviceNames = {
+					airquality : '%accessories.airquality%',
+					contact : '%accessories.contact%',
+					blind : '%accessories.blind%',
+					dimmer : '%accessories.dimmer%',
+					fan : '%accessories.fan%',
+					humidity : '%accessories.humidity%',
+					led : '%accessories.led%',
+					light : '%accessories.light%',
+					motion : '%accessories.motion%',
+					occupancy : '%accessories.occupancy%',
+					outlet : '%accessories.outlet%',
+					rain : '%accessories.rain%',
+					relais : '%accessories.relais%',
+					rgb : '%accessories.rgb%',
+					smoke : '%accessories.smoke%',
+					statelessswitch : '%accessories.statelessswitch%',
+					switch : '%accessories.switch%',
+					temperature : '%accessories.temperature%',
+					thermostat : '%accessories.thermostat%',
+					special : '%accessories.special%',
+					unsupported : '%accessories.unsupported%',
+					climate : '%accessories.climate%',
+					weather : '%accessories.weather%'
+				};
+
+				window.device = {
+                    id : 'knx51',
+                    services : [
+                    {
+                            name : 'Außentemperatur',
+                            type : 'temperature',
+                            letters : 'C0',
+                            iid : {
+                                value : 10
+                            },
+                            format : {
+                                value : 'float'
+                            }
+                        }
+                    ],
+                    plugin : {
+                        alias : 'SynTexKNX',
+                        port : 1714
+                    }
+                };
+
+                window.device3 = {
+                    id : 'knx51',
+                    services : [
+                    {
+                            name : 'Außen',
+                            type : 'temperature',
+                            letters : 'C0',
+                            iid : {
+                                value : 10
+                            },
+                            format : {
+                                value : 'float'
+                            }
+                        }
+                    ],
+                    plugin : {
+                        alias : 'SynTexKNX',
+                        port : 1714
+                    }
+                };
+
+                window.device1 = {
+                    id : 'knx49',
+                    services : [
+                    {
+                            name : 'Wohnzimmer',
+                            type : 'temperature',
+                            letters : 'H0',
+                            iid : {
+                                value : 10
+                            },
+                            format : {
+                                value : 'float'
+                            }
+                        }
+                    ],
+                    plugin : {
+                        alias : 'SynTexKNX',
+                        port : 1714
+                    }
+                };
+
+				window.device2 = {
+                    id : 'knx49',
+                    services : [
+                    {
+                            name : 'Schlafzimmer',
+                            type : 'temperature',
+                            letters : 'H1',
+                            iid : {
+                                value : 10
+                            },
+                            format : {
+                                value : 'float'
+                            }
+                        }
+                    ],
+                    plugin : {
+                        alias : 'SynTexKNX',
+                        port : 1714
+                    }
+                };
+
+				window.counter = device.services.length;
+
+                PageManager.hideHeader();
+
+                var main = document.createElement('div');
+
+                main.innerHTML += '<input type="button" value="%menu.back%" onclick="Essentials.leavePage(' + "'/debug'" + ')">';
+
+                PageManager.setFooter(main);
+                PageManager.showFooter();
+
+			</script>
+			<div class="main page" id="infos">
+				<div id="head"></div>
+				<div class="control-container"></div>
+			</div>
+			<script type="module">
+
+				import { Presets } from '/js/presets.js';
+
+				window.Presets = Presets;
+
+				loadServices();
+
+				document.getElementsByTagName('title')[0].innerHTML = device.name;
+
+				document.getElementById('footer-content').setAttribute('type', Essentials.getType(services));
+				document.getElementById('footer-content').setAttribute('version', device.version);
+
+				for(var i = 0; i < counter; i++)
+				{
+					var service = device.services[i];
+
+					typeCounter[service.type] = typeCounter[service.type] ? typeCounter[service.type] + 1 : 1;
+				}
+
+				var c = counter;
+
+                var x = (deviceX) => {
+
+                    for(var i in deviceX.services)
+                    {
+                        var letters = deviceX.services[0].letters, service = deviceX.services[0],
+                            serviceContainer = document.createElement('div'),
+                            serviceInformation = document.createElement('div'),
+                            serviceName = document.createElement('div'),
+                            serviceActivity = document.createElement('div');
+
+                        serviceContainer.id = 'service-' + letters;
+                        serviceContainer.className = 'service-container';
+
+                        serviceInformation.className = 'service-information';
+
+                        serviceName.innerHTML = '%devices.unknown%';
+                        serviceName.className = 'service-name';
+
+                        serviceActivity.className = 'service-activity';
+
+                        if(service != null)
+                        {
+                            if(service.name != null)
+                            {
+                                serviceName.innerHTML = service.name;
+
+                                if(service.name.startsWith(device.name + ' '))
+                                {
+                                    serviceName.innerHTML = service.name.replace(device.name + ' ', '');
+                                }
+                            }
+
+                            serviceInformation.appendChild(serviceName);
+                            serviceInformation.appendChild(serviceActivity);
+
+                            serviceContainer.appendChild(serviceInformation);
+
+                            createStatePanel(serviceContainer, deviceX.id, letters, service.iid.value);
+                        }
+                    }
+                };
+
+                x(device1);
+                x(device2);
+				x(device3);
+
+				Preloader.finish();
+
+				if(device.plugin.alias.startsWith('SynTex'))
+				{
+					setupViewer(device1);
+                    setupViewer(device2);
+					setupViewer(device3);
+					setupController();
+				}
+				else
+				{
+					fetchState();
+
+					setInterval(() => {
+
+						if(!updating && !saving && !resetting && document.getElementById('settings').hasAttribute('style'))
+						{
+							fetchState();
+						}
+
+					}, 3000);
+				}
+
+			</script>
+			<script>
+
+				function getPercent(field, x, groupBar)
+				{
+					var groupBar = field.getBoundingClientRect(),
+						padding = 50;
+
+					return Math.min(Math.max((x - padding - groupBar.x) / (groupBar.width - padding * 2) * 100, 0), 100);
+				}
+
+				function getTouchPosition(statusField, letters, e, send)
+				{
+					controlDimmer(letters, getPercent(statusField, e.changedTouches[0].clientX, statusField.getBoundingClientRect()), send);
+
+					e.preventDefault();
+				}
+
+				window.promiseArraySlide = [];
+
+				window.controllerReady = false;
+
+				function setControlPanel(device, letters, state)
+				{
+					var type = Essentials.letterToType(letters[0]), c = letters.slice(1), color = '', value = '–––', service = device.services[0];
+
+                    console.log(letters, state, service);
+
+					if(window.state != null
+					&& window.state[letters] != null
+					&& window.state[letters].time != null)
+					{
+						var serviceContainer = document.getElementById('service-' + letters);
+
+						if(serviceContainer != null)
+						{
+							serviceContainer.getElementsByClassName('service-activity')[0].innerHTML = ('0' + new Date(window.state[letters].time).getHours()).slice(-2) + ':' + ('0' + new Date(window.state[letters].time).getMinutes()).slice(-2);
+						}
+					}
+
+					if(service != null && service.iid != null)
+					{
+						for(const x in service.iid)
+						{
+							var id = 'status-' + device.id + '-' + letters + '-' + service.iid[x],
+								serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, value : state[x] } });
+
+							if(serviceState.text.primary != null)
+							{
+								value = serviceState.text.primary;
+							}
+
+							if(serviceState.color != null)
+							{
+								color = serviceState.color;
+							}
+
+							if(document.getElementById(id) != null)
+							{
+								document.getElementById(id).children[0].innerHTML = value.split(' | ')[0];
+
+								document.getElementById(id).style.setProperty('--content', 'url("/img/accessory/' + type + '.png")');
+								document.getElementById(id).style.setProperty('--background-color', color);
+								document.getElementById(id).style.setProperty('--box-shadow', color);
+
+								if(color.includes('rgb'))
+								{
+									document.getElementById(id).style.setProperty('--box-shadow', 'rgb(' + (parseInt(color.split(', ')[0].split('(')[1]) - 20) + ', ' + (parseInt(color.split(', ')[1]) - 20) + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 20) + ')');
+								}
+								else if(color.includes('hsl'))
+								{
+									document.getElementById(id).style.setProperty('--box-shadow', 'hsl(' + color.split(', ')[0].split('(')[1] + ', ' + color.split(', ')[1].split(', ')[0] + ', ' + (parseInt(color.split(', ')[2].split(')')[0]) - 10) + '%)');
+								}
+
+								if(type == 'thermostat' && x == 'target')
+								{
+									document.getElementById(id).children[0].innerHTML = value.split(' | ')[1] + ' | ' + value.split(' | ')[2];
+								}
+							}
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				function loadServices()
+				{
+					for(const i in device.services)
+					{
+						services.push(device.services[i].type);
+					}
+
+					services.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0);
+
+					console.log('SERVICES', services);
+				}
+
+				async function controlSwitch(button)
+				{
+					var letters = button.getAttribute('id').split('-')[1];
+
+					if(!busy.includes(letters))
+					{
+						var value = 'true';
+
+						busy.push(letters);
+
+						if(temp[letters] != null)
+						{
+							value = temp[letters].value == true ? 'false' : 'true';
+						}
+
+						//setControlPanel(letters, { value : (value == 'true') });
+
+						if(device.plugin.alias.startsWith('SynTex'))
+						{
+							DeviceController.socket.send(JSON.stringify({ line : 'setState', params : { id : device.id, letters : letters, name : device.name, value  } }));
+						}
+						else if(getService(letters) != null && getService(letters).iid != null)
+						{
+							var url = '/serverside/characteristics?id=' + device.id + '&iid=' + getService(letters).iid['value'] + '&value=' + value;
+						
+							Query.complexFetch(url, 10000, 1, {}, false).then((result) => busy.splice(busy.indexOf(letters), 1));
+						}
+					}
+				}
+
+			</script>
+			<script>
+
+				window.repaintInterval = setInterval(() => {
+
+					for(const letters in graphData)
+					{
+						if(new Date().getTime() > graphData[letters].nextRefresh)
+						{
+							graphData[letters].nextRefresh = Graph.getMinuteCycle(graphData[letters].interval) + 60000 * graphData[letters].interval;
+
+							calcValues(Essentials.letterToType(letters[0]), letters.slice(1));
+
+							console.warn(new Date(graphData[letters].nextRefresh));
+						}
+					}
+
+				}, 1000);
+
+				function repaintGraphs(letters)
+				{
+					if(device.plugin.alias.startsWith('SynTex'))
+					{
+						for(const type in typeCounter)
+						{
+							if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								for(var c = 0; c < typeCounter[type]; c++)
+								{
+									if(letters == null || letters == Essentials.typeToLetter(type) + c)
+									{
+										calcValues(type, c);
+									}
+								}
+							}
+						}
+
+						console.debug('GRAPH DATA', graphData);
+					}
+					else
+					{
+						var graphs = document.getElementsByClassName('canvas');
+
+						for(var i = 0; i < graphs.length; i++)
+						{
+							graphs[i].width = document.getElementById('infos').offsetWidth - 4;
+
+							Graph.clearCanvas(graphs[i]);
+							Graph.drawGrid(graphs[i], [], 10);
+						}
+					}
+				}
+
+				function calcValues(type, c)
+				{
+					var convertedAutomation = [], automationTriggers = [];
+					var letters = Essentials.typeToLetter(type) + c;
+					var canvas = document.getElementById('canvas-' + letters),
+						grid = document.getElementById('canvas-' + type + '-' + c);
+
+					if(canvas != null && grid != null && values[letters] != null)
+					{
+						canvas.width = document.getElementById('infos').offsetWidth - 4;
+
+						var valuesClone = [ ...values[letters] ];
+
+						valuesClone.push({ ...state[letters].state, time : state[letters].time || new Date().getTime() });
+
+						graphData[letters] = Graph.convertActivity({ id : device.id, letters, type, canvas, format : (type != 'statelessswitch') ? Essentials.getDataType(type) : 'boolean', interval : (Essentials.getDataType(type) == 'boolean' || type == 'statelessswitch' || type == 'blind') ? 4 : 10 }, valuesClone, (Essentials.getDataType(type) != 'boolean' && type != 'statelessswitch' && type != 'blind') ? automation[letters] : []);
+
+						Graph.clearCanvas(grid);
+						Graph.drawGrid(grid, graphData[letters], 10);
+
+						// NOTE: Convert GraphData Values
+						
+						for(const i in graphData[letters].sectors)
+						{
+							var a = null;
+
+							for(const j in graphData[letters].sectors[i])
+							{
+								if(graphData[letters].sectors[i][j].automation != null)
+								{
+									for(const x in automation[letters])
+									{
+										if(automation[letters][x].time < graphData[letters].sectors[i][j].time && automation[letters][x].time > graphData[letters].sectors[i][j].time - graphData[letters].interval * 60000)
+										{
+											a = { time : automation[letters][x].time, percent : graphData[letters].sectors[i][j].percents, value : graphData[letters].sectors[i][j].automation };
+										}
+									}
+								}
+							}
+
+							convertedAutomation.push(a || null);
+						}
+
+						const includesTrigger = (time) => {
+
+							for(const i in automationTriggers)
+							{
+								if(parseInt(automationTriggers[i].time / (graphData[letters].interval * 60000)) == parseInt(time / (graphData[letters].interval * 60000)))
+								{
+									return true;
+								}
+							}
+
+							return false;
+						};
+
+						for(const i in automation[letters])
+						{
+							if(automation[letters][i].time > parseInt(Object.keys(graphData[letters].sectors)[0]) && !includesTrigger(automation[letters][i].time))
+							{
+								for(const j in automation[letters][i].trigger)
+								{
+									if(automation[letters][i].trigger[j].id == device.id
+									&& automation[letters][i].trigger[j].letters == letters
+									&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 < 100
+									&& (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100 > 0)
+									{
+										automationTriggers.push({ time : automation[letters][i].time, percent : (automation[letters][i].trigger[j].value - graphData[letters].min) / (graphData[letters].max - graphData[letters].min) * 100, value : automation[letters][i].trigger[j].value });
+									}
+								}
+							}
+						}
+
+						automationTriggers.sort((a, b) => { return (a.percent > b.percent) ? -1 : (a.percent < b.percent) ? 1 : 0 });
+
+						// NOTE: Draw Min, Max, Type, Update and Reload Labels
+
+						if(graphData[letters] != null && graphData[letters].counter > 0)
+						{
+							var min = null, max = null;
+
+							if(servicePresets[type] != null)
+							{
+								if(servicePresets[type].value != null)
+								{
+									var presetText = null;
+
+									for(const x in servicePresets[type])
+									{
+										if(servicePresets[type][x].text != null && presetText == null)
+										{
+											presetText = servicePresets[type][x].text;
+										}
+									}
+
+									min = '%device.min% • ' + Math.round(graphData[letters].min * 10) / 10;
+									max = '%device.max% • ' + Math.round(graphData[letters].max * 10) / 10;
+
+									if(presetText != null)
+									{
+										min += ' ' + presetText.toUpperCase();
+										max += ' ' + presetText.toUpperCase();
+									}
+
+									if(servicePresets[type].value.inactive != null && servicePresets[type].value.inactive.text != null && graphData[letters].values.includes(graphData[letters].min))
+									{
+										min = servicePresets[type].value.inactive.text.toUpperCase();
+									}
+									
+									if(servicePresets[type].value.active != null && servicePresets[type].value.active.text != null && graphData[letters].values.includes(graphData[letters].max))
+									{
+										max = servicePresets[type].value.active.text.toUpperCase();
+									}
+								}
+							}
+
+							if(min != null)
+							{
+								canvas.parentElement.getElementsByClassName('min')[0].innerHTML = min;
+
+								canvas.parentElement.getElementsByClassName('min')[0].style.opacity = 1;
+							}
+
+							if(max != null)
+							{
+								canvas.parentElement.getElementsByClassName('max')[0].innerHTML = max;
+
+								canvas.parentElement.getElementsByClassName('max')[0].style.opacity = 1;
+							}
+							
+							canvas.parentElement.getElementsByClassName('data')[0].innerHTML = graphData[letters].counter + ' • %device.data%';
+							
+							canvas.parentElement.getElementsByClassName('data')[0].style.opacity = 1;
+						}
+
+						// NOTE: Set Graph Colors
+
+						var service = getService(Essentials.typeToLetter(type) + c), colorFill = [], colorGraph = [];
+
+						if(Essentials.getDataType(type) == 'numeric' && type != 'blind')
+						{
+							var serviceState0 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].min } });
+							var serviceState1 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].min + graphData[letters].max) / 3 } });
+							var serviceState2 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max) / 2 } });
+							var serviceState3 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : (graphData[letters].min + graphData[letters].max + graphData[letters].max) / 3 } });
+							var serviceState4 = Essentials.getServiceColor({ ...service, state : { ...service.state, value : graphData[letters].max } });
+							
+							if(serviceState4.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState4.color, 0.3));
+								colorGraph.push(serviceState4.color);
+							}
+
+							if(serviceState3.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState3.color, 0.25));
+								colorGraph.push(serviceState3.color);
+							}
+
+							if(serviceState2.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState2.color, 0.175));
+								colorGraph.push(serviceState2.color);
+							}
+
+							if(serviceState1.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState1.color, 0.1));
+								colorGraph.push(serviceState1.color);
+							}
+
+							if(serviceState0.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState0.color, 0.05));
+								colorGraph.push(serviceState0.color);
+							}
+						}
+						else
+						{
+							var additions = { value : true };
+							
+							if(service.state != null && service.state.brightness != null && graphData[letters].max > 0)
+							{
+								additions.brightness = graphData[letters].max;
+							}
+
+							if(type == 'blind' && graphData[letters].max > 0)
+							{
+								additions.value = graphData[letters].max;
+							}
+
+							var serviceState = Essentials.getServiceColor({ ...service, state : { ...service.state, ...additions } });
+
+							if(serviceState.color != null)
+							{
+								colorFill.push(Essentials.addColorTransparency(serviceState.color, 0.3));
+								colorGraph.push(serviceState.color);
+							}
+							
+							colorFill.push('rgba(60, 60, 80, .1)');
+							colorGraph.push('rgb(60, 60, 80');
+						}
+
+						// NOTE: Draw Graph
+
+						Graph.clearCanvas(canvas);
+						Graph.drawAutomation(canvas, automationTriggers);
+						Graph.drawFill(canvas, graphData[letters].values, colorFill, 0);
+						Graph.drawGraph(canvas, graphData[letters].values, colorGraph, false);
+						Graph.drawEvents(canvas, convertedAutomation, colorGraph, type);
+
+						canvas.style.opacity = 1;
+					}
+				}
+
+			</script>
+			<script>
+
+				function getService(letters)
+				{
+					var c = 0;
+
+					for(const i in device['services'])
+					{
+						if(device['services'][i].type == Essentials.letterToType(letters[0]))
+						{
+							if(c == letters.slice(1))
+							{
+								return device['services'][i];
+							}
+							else
+							{
+								c++;
+							}
+						}
+					}
+
+					return null;
+				}
+
+				window.DeviceController = null;
+
+				function setupController()
+				{
+					DeviceController = {
+						url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+						callback : (data) => {
+						
+							if(data instanceof Object)
+							{
+								var letters = Object.keys(data)[0];
+
+								busy.splice(busy.indexOf(letters), 1);
+							}
+						}
+					};
+
+					Query.connectSocket(DeviceController);
+				}
+
+				function setupViewer(device)
+				{
+                    var service = device.services[0];
+
+                    const letters = service.letters;
+
+                    var ActivityViewer = {
+                        url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
+                        message : {
+                            line : 'getActivity',
+                            params : {
+                                id : device.id,
+                                letters
+                            }
+                        },
+                        callback : (data) => {
+
+                            if(data.state != null)
+                            {
+                                if(state[letters] == null)
+                                {
+                                    state[letters] = {};
+                                }
+
+                                if(data.time != null)
+                                {
+                                    state[letters].time = data.time;
+                                    state[letters].state = data.state;
+                                }
+                                else
+                                {
+                                    state[letters] = data.state;
+                                }
+
+                                renderNewData(device, state);
+                            }
+
+                            if(data.history != null)
+                            {
+                                if(Array.isArray(data.history))
+                                {
+                                    values[letters] = [];
+
+                                    for(const i in data.history)
+                                    {
+                                        values[letters].push({ ...data.history[i].state, time : data.history[i].time });
+                                    }
+                                }
+                                else
+                                {
+                                    values[letters].push({ ...data.history, time : data.time });
+                                }
+                            }
+
+                            if(data.automation != null)
+                            {
+                                if(Array.isArray(data.automation))
+                                {
+                                    automation[letters] = [];
+
+                                    for(const i in data.automation)
+                                    {
+                                        automation[letters].push({ ...data.automation[i].automation, time : data.automation[i].time });
+                                    }
+                                }
+                                else
+                                {
+                                    automation[letters].push({ ...data.automation, time : data.time });
+                                }
+                            }
+                        }
+                    };
+                    
+                    Query.connectSocket(ActivityViewer);
+				}
+				
+				function fetchState()
+				{
+					Query.fetchURL('/serverside/characteristics?id=knx51', 10000).then((state) => renderNewData(JSON.parse(state)));
+				}
+
+				window.controlActive = false;
+
+				function renderNewData(device)
+				{
+					if(!controlActive)
+					{
+						for(const letters in state)
+						{
+							var type = Essentials.letterToType(letters[0]);
+
+							if(temp[letters] == null)
+							{
+								temp[letters] = {};
+							}
+
+							if(state[letters] != null && state[letters].state != null)
+							{
+								for(const x in state[letters].state)
+								{
+									if(temp == null || temp[letters][x] != state[letters].state[x])
+									{
+										if(device.plugin.alias.startsWith('SynTex'))
+										{
+											setTimeout(() => calcValues(type, letters.slice(1)), 300);
+										}
+
+										setControlPanel(device, letters, state[letters].state);
+
+										temp[letters][x] = state[letters].state[x];
+									}
+								}
+
+								if(!controllerReady && (type == 'rgb' || type == 'rgbw' || type == 'rgbww' || type == 'rgbcw'))
+								{
+									if(state[letters].state.value)
+									{
+										document.getElementsByClassName('color-picker')[parseInt(letters.slice(1))].value = Essentials.hslToHEX(state[letters].state.hue, state[letters].state.saturation, state[letters].state.brightness / 2);
+									}
+									else
+									{
+										document.getElementsByClassName('color-picker')[parseInt(letters.slice(1))].value = '#000000';
+									}
+
+									setTimeout(() => {
+										
+										controllerReady = true;
+
+									}, device.plugin.alias.startsWith('SynTex') ? 200 : 2000);
+								}
+							}
+							else if(type != 'lcd' && type != 'removed' && type != 'unsupported' && (type != 'statelessswitch' || services.length == 1))
+							{
+								setControlPanel(device, letters, state[letters].state);
+							}
+						}
+					}
+				}
+
+				async function restartDevice(btn)
+				{
+					if(!restarting && !updating && !saving && !resetting)
+					{
+						var overlays = {
+							root : btn,
+							id : 'restart',
+							pending : { value : '%general.restarting% ..' },
+							connectionError : { value : '%device.device_connection_error%!' }
+						};
+
+						restarting = true;
+
+						if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getRestartURL(device), 20000, 1, overlays, false) == null)
+						{
+							Essentials.showOverlay(btn, Essentials.createErrorOverlay('restart-result', '%device.device_connection_error%!'));
+
+							await Essentials.newTimeout(4000);
+
+							Essentials.removeOverlays(btn, true);
+
+							await Essentials.newTimeout(300);
+						}
+					}
+				}
+
+				var updatedAfterOffline = true;
+
+				function updateDevice(btn)
+				{
+					return new Promise(async function(resolve) {
+
+						var response = false;
+
+						if(!updating && !restarting && !saving && !resetting)
+						{
+							var overlays = {
+								root : btn,
+								id : 'update',
+								pending : { value : '%general.please_wait% ..' },
+								success : { value : '%general.updating% ..', color : 'purple', remove : false },
+								executeError : { value : '%general.update_failed%!' },
+								connectionError : { value : '%device.device_connection_error%!' }
+							};
+
+							updating = true;
+
+							if(await Query.complexFetch(Presets.getPreset(device.plugin.alias).getUpdateURL(device, { type : Essentials.getType(services) }), 20000, 1, overlays, true) == 'Success')
+							{
+								await Essentials.newTimeout(3000);
+
+								var overlays = {
+									root : btn,
+									id : 'update-installation',
+									connectionError : { value : '%device.device_connection_error%!' }
+								};
+
+								var update = await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 20, overlays, false);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{  
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_success%!', 'green'));
+
+									response = true;
+								}
+								else
+								{
+									Essentials.showOverlay(btn, Essentials.createOverlay(3, 'update-installation-result', '%general.update_failed%!', 'red'));
+								}
+
+								document.getElementById('version-info').innerHTML = '<b>%device.version%: </b>' + await Query.complexFetch(Presets.getPreset(device.plugin.alias).getVersionURL(device), 3000, 3, {}, false);
+
+								await Essentials.newTimeout(4000);
+
+								if(update == btn.getAttribute('value').split('( v')[1].split(' )')[0])
+								{
+									Essentials.removeOverlays(btn, false);
+
+									PageManager.removeFooter('update-btn', true);
+								}
+								else
+								{
+									Essentials.removeOverlays(btn, true);
+								}
+							}
+
+							updating = false;
+						}
+
+						resolve(response);
+					});
+				}
+
+				async function checkUpdates()
+				{
+					var newestVersion = await Query.complexFetch(window.location.protocol + '//' + window.location.hostname + ':8888/check-version?type=' + document.getElementById('footer-content').getAttribute('type'), 10000, 2, {}, false);
+
+					if(newestVersion != null && Essentials.versionCount(newestVersion) > Essentials.versionCount(document.getElementById('footer-content').getAttribute('version')))
+					{
+						var update = document.createElement('input');
+
+						update.setAttribute('type', 'button');
+						update.setAttribute('value', '%device.install_update% ( v' + newestVersion + ' )');
+						update.setAttribute('style', 'margin-bottom: 20px;');
+						update.setAttribute('onclick', 'updateDevice(this)');
+						update.setAttribute('id', 'update-btn');
+
+						PageManager.addFooter(update);
+						PageManager.showFooter();
+					}
+				}
+
+				function resetDevice(btn)
+				{
+					var dialogue = {
+                        title : '%general.warning%',
+                        subtitle : '%device.reset_confirm_0% ' + "'" + device.name + "'" + ' %device.reset_confirm_1%?',
+                        buttons : [
+                            {
+                                text : '%general.cancel%',
+                                close : true
+                            },
+                            {
+                                text : '%device.reset%',
+                                color : 'red',
+                                close : true,
+                                action : () => resetConfirm(btn)
+                            }
+                        ]
+                    };
+
+                    Essentials.openDialogue(dialogue);
+				}
+				
+				function redirect()
+				{
+					if(Essentials.getURLParams('desktopApp') == true)
+					{
+						window.history.pushState(null, null, '?id=' + device.id + '&desktopApp=true');
+					}
+					else
+					{
+						window.history.pushState(null, null, '?id=' + device.id);
+					}
+					
+					Essentials.leavePage('/device?id=' + device.id)
+				}
+
+				// TODO: Need To Add Counter From Letters
+
+				function getConfigService(letters)
+				{
+					var typeCounter = {};
+
+					if(letters != null && device.config != null)
+					{
+						for(const i in device.config.services)
+						{
+							if(typeCounter[device.config.services[i].type] != null)
+							{
+								typeCounter[device.config.services[i].type]++;
+							}
+							else
+							{
+								typeCounter[device.config.services[i].type] = 0;
+							}
+
+							if(Essentials.typeToLetter(device.config.services[i].type) + '' + typeCounter[device.config.services[i].type] == letters)
+							{
+								return device.config.services[i];
+							}
+						}
+					}
+
+					return null;
+				}
+
+				function createStatePanel(container, id, letters, iid)
+				{
+					var statusField = document.createElement('button');
+
+					statusField.setAttribute('id', 'status-' + id + '-' + letters + '-' + iid);
+					statusField.setAttribute('class', 'control-panel loading-loop');
+					statusField.setAttribute('type', 'button');
+
+					statusField.innerHTML = '<div class="control-panel-text">%general.loading% ..</div>';
+
+					container.appendChild(statusField);
+
+					document.getElementsByClassName('control-container')[0].appendChild(container);
+				}
+
+			</script>
+		</div>
+	</body>
+</html>
