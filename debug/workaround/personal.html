@@ -131,6 +131,27 @@
                     }
                 };
 
+				window.device4 = {
+                    id : 'knx59',
+                    services : [
+                    {
+                            name : 'Dachboden',
+                            type : 'temperature',
+                            letters : 'C2',
+                            iid : {
+                                value : 10
+                            },
+                            format : {
+                                value : 'float'
+                            }
+                        }
+                    ],
+                    plugin : {
+                        alias : 'SynTexKNX',
+                        port : 1714
+                    }
+                };
+
 				window.counter = device.services.length;
 
                 PageManager.hideHeader();
@@ -214,6 +235,7 @@
                 x(device1);
                 x(device2);
 				x(device3);
+				x(device4);
 
 				Preloader.finish();
 
@@ -222,6 +244,7 @@
 					setupViewer(device1);
                     setupViewer(device2);
 					setupViewer(device3);
+					setupViewer(device4);
 					setupController();
 				}
 				else
