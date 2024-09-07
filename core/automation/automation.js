@@ -157,10 +157,7 @@ class AutomationSystem
 									{
 										promiseArray.push(this._checkLock(automation));
 										
-										if(!this._isLocked(automation))
-										{
-											this.checkTrigger(automation, { name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) });
-										}
+										this.checkTrigger(automation, { name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) });
 									}
 								}
 				
@@ -264,10 +261,7 @@ class AutomationSystem
 					{
 						promiseArray.push(this._checkLock(automation, service, state));
 
-						if(!this._isLocked(automation, service))
-						{
-							this.checkTrigger(automation, service, state);
-						}
+						this.checkTrigger(automation, service, state);
 					}
 				}
 
@@ -372,14 +366,17 @@ class AutomationSystem
 
 				if(automation.trigger.logic == 'AND' ? !triggers.includes(false) : automation.trigger.logic == 'OR' ? triggers.includes(true) : false)
 				{
-					if(automation.options == null
-					|| automation.options.timeLock == null
-					|| this.timeLock[automation.id] == null
-					|| new Date().getTime() >= this.timeLock[automation.id])
+					if(!this._isLocked(automation))
 					{
-						this.logger.debug('Automation [' + automation.name + '] %trigger_activated%');
+						if(automation.options == null
+						|| automation.options.timeLock == null
+						|| this.timeLock[automation.id] == null
+						|| new Date().getTime() >= this.timeLock[automation.id])
+						{
+							this.logger.debug('Automation [' + automation.name + '] %trigger_activated%');
 
-						this.executeResult(automation, service);
+							this.executeResult(automation, service);
+						}
 					}
 				}
 				else if(this.stateLock[automation.id] != null && this.stateLock[automation.id].result == true)
