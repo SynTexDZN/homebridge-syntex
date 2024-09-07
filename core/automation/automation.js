@@ -234,31 +234,6 @@ class AutomationSystem
 	{
 		if(this.EventManager != null)
 		{
-			this.EventManager.setInputStream('updateLock', { source : this, external : true }, (message) => {
-
-				if(message.id != null && message.lock != null)
-				{
-					if(this.stateLock[message.id] == null)
-					{
-						this.stateLock[message.id] = {};
-					}
-					
-					if(message.blockID != null)
-					{
-						if(this.stateLock[message.id].trigger == null)
-						{
-							this.stateLock[message.id].trigger = {};
-						}
-						
-						this.stateLock[message.id].trigger[message.blockID] = message.lock;
-					}
-					else
-					{
-						this.stateLock[message.id].result = message.lock;
-					}
-				}
-			});
-
 			this.EventManager.setInputStream('updateAutomation', { source : this, external : true }, () => {
 
 				this.loadAutomation().then((success) => {
@@ -407,8 +382,6 @@ class AutomationSystem
 				else if(this.stateLock[automation.id] != null && this.stateLock[automation.id].result == true)
 				{
 					this.stateLock[automation.id].result = false;
-
-					this._updateSockets(false, automation.id);
 
 					this.logger.debug('Automation [' + automation.name + '] %automation_different% ' + automation.id);
 				}
@@ -569,8 +542,6 @@ class AutomationSystem
 				{
 					this.stateLock[automation.id].result = true;
 
-					this._updateSockets(true, automation.id);
-
 					changed = true;
 				}
 			}
@@ -608,8 +579,6 @@ class AutomationSystem
 								}
 
 								this.stateLock[automation.id].trigger[i + '' + j] = true;
-
-								this._updateSockets(true, automation.id, i + '' + j);
 
 								changed = true;
 							}
@@ -850,21 +819,6 @@ class AutomationSystem
 		return false;
 	}
 
-	_updateSockets(lock, id, blockID)
-	{
-		if(this.EventManager != null)
-		{
-			var message = { id, lock };
-
-			if(blockID != null)
-			{
-				message.blockID = blockID;
-			}
-
-			this.EventManager.setOutputStream('updateLock', { sender : this }, message);
-		}
-	}
-
 	_includesBlock(blocks, service)
 	{
 		for(const block of blocks)
@@ -932,8 +886,6 @@ class AutomationSystem
 									{
 										this.logger.debug('Automation [' + automation.name + '] %automation_different% ' + automation.id + ' ' + block.blockID);
 									}
-
-									this._updateSockets(false, automation.id, block.blockID);
 
 									callback(true);
 								}
