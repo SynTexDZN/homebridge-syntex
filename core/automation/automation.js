@@ -103,7 +103,10 @@ module.exports = class StateManager
 					this.data[message.service.id][message.service.letters][x] = message.state[x];
 				}
 
-                this.dataSystem.runAutomation(message.service, this.data[message.service.id][message.service.letters]);
+				if(message.type == 'WRITE')
+				{
+					this.dataSystem.runAutomation(message.service, this.data[message.service.id][message.service.letters]);
+				}
 			}
 		});
     }
