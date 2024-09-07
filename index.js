@@ -1,6 +1,6 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query');
 
-const AutomationSystem = require('./automation/automation');
+const AutomationSystem = require('./core/automation/automation');
 
 const Basic = require('syntex-basic'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
@@ -722,7 +722,7 @@ class SynTexPlatform
 					automation : await Automation.loadAutomation(),
 					accessories : []
 				};
-	
+
 				var accessories = DeviceManager.getAccessories();
 	
 				for(const i in accessories)
