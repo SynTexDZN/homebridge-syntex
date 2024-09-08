@@ -1,4 +1,4 @@
-const AutomationSystem = require('./automation');
+const AutomationSystem = require('./automation-system');
 
 module.exports = class StateManager
 {
