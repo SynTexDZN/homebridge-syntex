@@ -722,7 +722,7 @@ class SynTexPlatform
 					automation : await Automation.loadAutomation(),
 					accessories : []
 				};
-
+	
 				var accessories = DeviceManager.getAccessories();
 	
 				for(const i in accessories)
