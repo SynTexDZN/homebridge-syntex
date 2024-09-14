@@ -1175,9 +1175,9 @@
                                 const letters = Essentials.typeToLetter(type) + j;
 
                                 var ActivityViewer = {
-                                    url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':1711/devices',
+                                    url : (window.location.protocol == 'http:' ? 'ws' : 'wss') + '://' + window.location.hostname + ':' + device.plugin.port + '/devices',
                                     message : {
-                                        line : 'getState',
+                                        line : 'getActivity',
                                         params : {
                                             id : device.id,
                                             letters
@@ -1195,11 +1195,11 @@
 											if(data.time != null)
 											{
 												state[letters].time = data.time;
-											}
-											
-											if(data.state != null)
-											{
 												state[letters].state = data.state;
+											}
+											else
+											{
+												state[letters] = data.state;
 											}
 
                                             renderNewData(state);
@@ -1213,28 +1213,13 @@
 
                                                 for(const i in data.history)
 												{
-													var s = {};
-
-													for(const x in data.history[i].state)
-													{
-														s[x] = (data.history[i].state[x].max + data.history[i].state[x].min) / 2;
-													}
-													console.log(s, data.history[i].state);
-
-													values[letters].push({ ...s, time : data.history[i].time });
+													values[letters].push({ ...data.history[i].state, time : data.history[i].time });
 												}
                                             }
-											else
-											{
-												var s = {};
-
-												for(const x in data.history[i].state)
-												{
-													s[x] = (data.history[i].state[x].max + data.history[i].state[x].min) / 2;
-												}
-												
-												values[letters].push({ ...s, time : data.time });
-											}
+                                            else
+                                            {
+                                                values[letters].push({ ...data.history, time : data.time });
+                                            }
                                         }
 
                                         if(data.automation != null)
