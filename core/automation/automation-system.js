@@ -23,7 +23,7 @@ module.exports = class AutomationSystem
 		this.ActivityManager = ActivityManager;
 		
 		this.TypeManager = new TypeManager(platform);
-        this.RouteManager = new RouteManager(platform.logger, platform.files, platform.api.user.storagePath());
+		this.RouteManager = new RouteManager(platform.logger, platform.files, platform.api.user.storagePath());
 		
 		if(this.files.checkFile('automation/automation.json'))
 		{

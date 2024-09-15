@@ -1,13 +1,13 @@
 module.exports = class SocketManager
 {
-    constructor(platform)
-    {
-        this.sockets = [];
-    }
+	constructor(platform)
+	{
+		this.sockets = [];
+	}
 
-    addSocket(socket, id, letters)
-    {
-        var found = false;
+	addSocket(socket, id, letters)
+	{
+		var found = false;
 
 		for(const client of this.sockets)
 		{
@@ -24,16 +24,16 @@ module.exports = class SocketManager
 		{
 			this.sockets.push({ socket, id, letters });
 		}
-    }
+	}
 
-    updateSockets(id, letters, message)
-    {
-        for(const client of this.sockets)
-        {
-            if(client.id == id && client.letters == letters)
-            {
-                client.socket.send(JSON.stringify(message));
-            }
-        }
-    }
+	updateSockets(id, letters, message)
+	{
+		for(const client of this.sockets)
+		{
+			if(client.id == id && client.letters == letters)
+			{
+				client.socket.send(JSON.stringify(message));
+			}
+		}
+	}
 }
