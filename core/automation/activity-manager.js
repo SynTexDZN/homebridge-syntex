@@ -1,6 +1,6 @@
 const AutomationSystem = require('./automation-system');
 
-module.exports = class StateManager
+module.exports = class ActivityManager
 {
 	constructor(platform)
 	{

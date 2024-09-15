@@ -1,6 +1,6 @@
 let DeviceManager = require('./core/device-manager'), PluginManager = require('./core/plugin-manager'), Automation = require('./core/automation'), UpdateManager = require('./core/update-manager'), HTMLQuery = require('./core/html-query');
 
-const AccessoryManager = require('./core/automation/state-manager');
+const ActivityManager = require('./core/automation/activity-manager');
 
 const Basic = require('syntex-basic'), Logger = require('syntex-logger'), WebServer = require('syntex-webserver'), FileManager = require('syntex-filesystem');
 
@@ -86,7 +86,7 @@ class SynTexPlatform
 			this.EventManager = this.Basic.getEventManager();
 			this.RequestManager = this.Basic.getRequestManager();
 
-			this.AccessoryManager = new AccessoryManager(this);
+			this.ActivityManager = new ActivityManager(this);
 
 			HTMLQuery = new HTMLQuery(this);
 			Automation = new Automation(this);

@@ -2,7 +2,7 @@ const TypeManager = require('./type-manager'), RouteManager = require('./route-m
 
 module.exports = class AutomationSystem
 {
-	constructor(platform, StateManager)
+	constructor(platform, ActivityManager)
 	{
 		this.ready = false;
 
@@ -20,7 +20,7 @@ module.exports = class AutomationSystem
 		this.EventManager = platform.EventManager;
 		this.RequestManager = platform.RequestManager;
 
-		this.StateManager = StateManager;
+		this.ActivityManager = ActivityManager;
 		
 		this.TypeManager = new TypeManager(platform);
         this.RouteManager = new RouteManager(platform.logger, platform.files, platform.api.user.storagePath());
@@ -389,7 +389,7 @@ module.exports = class AutomationSystem
 
 				this._automationLock(automation, { trigger });
 
-				this.StateManager.updateAutomation(trigger.id, trigger.letters, automation);
+				this.ActivityManager.updateAutomation(trigger.id, trigger.letters, automation);
 
 				if(this.EventManager != null)
 				{
