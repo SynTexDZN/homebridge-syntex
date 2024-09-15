@@ -1,15 +1,15 @@
 module.exports = class RouteManager
 {
-	constructor(logger, files, configPath)
+	constructor(platform)
 	{
 		this.plugins = [];
 
-		this.logger = logger;
-		this.files = files;
+		this.logger = platform.logger;
+		this.files = platform.files;
 
-		if(configPath != null)
+		if(platform.api.user.storagePath() != null)
 		{
-			this.files.readFile(configPath + '/config.json').then((data) => {
+			this.files.readFile(platform.api.user.storagePath() + '/config.json').then((data) => {
 
 				if(data != null && data.platforms != null)
 				{

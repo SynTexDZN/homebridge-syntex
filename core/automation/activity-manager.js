@@ -1,4 +1,4 @@
-const AutomationSystem = require('./automation-system');
+const AutomationSystem = require('./automation-system'), RouteManager = require('./route-manager');
 
 module.exports = class ActivityManager
 {
@@ -7,6 +7,7 @@ module.exports = class ActivityManager
 		this.EventManager = platform.EventManager;
 
 		this.AutomationSystem = new AutomationSystem(platform, this);
+		this.RouteManager = new RouteManager(platform);
 
 		this.initSocket();
 	}
