@@ -6,7 +6,7 @@ module.exports = class StateManager
 	{
         this.EventManager = platform.EventManager;
 
-        this.AutomationSystem = new AutomationSystem(platform);
+        this.AutomationSystem = new AutomationSystem(platform, this);
 
         this.initSocket();
     }
@@ -20,5 +20,10 @@ module.exports = class StateManager
                 this.AutomationSystem.runAutomation(message.service, message.state);
 			}
 		});
+    }
+
+    updateAutomation(id, letters, automation)
+    {
+
     }
 }
