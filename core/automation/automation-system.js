@@ -507,10 +507,6 @@ module.exports = class AutomationSystem
 					this.logger.log('error', 'automation', 'Automation', 'Request %json_parse_error%!', e);
 				}
 			}
-			else
-			{
-				state = this.platform.readAccessoryService(block.id, block.letters, true);	
-			}
 		}
 
 		return state;
