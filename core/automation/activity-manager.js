@@ -1,4 +1,4 @@
-const AutomationSystem = require('./automation-system'), RouteManager = require('./route-manager');
+const AutomationSystem = require('./automation-system'), RouteManager = require('./route-manager'), TypeManager = require('./type-manager');;
 
 module.exports = class ActivityManager
 {
@@ -6,6 +6,7 @@ module.exports = class ActivityManager
 	{
 		this.EventManager = platform.EventManager;
 
+		this.TypeManager = new TypeManager(platform);
 		this.RouteManager = new RouteManager(platform);
 		this.AutomationSystem = new AutomationSystem(platform, this);
 

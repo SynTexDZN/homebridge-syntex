@@ -1,5 +1,3 @@
-const TypeManager = require('./type-manager');
-
 module.exports = class AutomationSystem
 {
 	constructor(platform, ActivityManager)
@@ -23,8 +21,7 @@ module.exports = class AutomationSystem
 		this.ActivityManager = ActivityManager;
 
 		this.RouteManager = ActivityManager.RouteManager;
-		
-		this.TypeManager = new TypeManager(platform);
+		this.TypeManager = ActivityManager.TypeManager;
 		
 		if(this.files.checkFile('automation/automation.json'))
 		{
