@@ -482,31 +482,20 @@ module.exports = class AutomationSystem
 		}
 	}
 
-	async _getState(automation, block)
+	_getState(automation, block)
 	{
-		var state = null;
+		return new Promise((resolve) => {
 
-		if(block.id != null && block.letters != null)
-		{
-			if((block.bridge != null && block.port != null) || (block.plugin != null && this.RouteManager.getPort(block.plugin) != null))
-			{
-				var theRequest = {
-					url : 'http://' + (block.bridge || '127.0.0.1') + ':' + (block.port || this.RouteManager.getPort(block.plugin)) + '/devices?id=' + block.id + '&type=' + this.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1),
-					timeout : 10000
-				};
+			this.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin }).then((state) => {
 
-				try
+				if(state == null)
 				{
-					state = await this.fetchRequest(theRequest, automation.name, block);
+					this.logger.log('error', block.id, block.letters, '[' + automation.name + ']: %read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
 				}
-				catch(e)
-				{
-					this.logger.log('error', 'automation', 'Automation', 'Request %json_parse_error%!', e);
-				}
-			}
-		}
-
-		return state;
+	
+				resolve(state);
+			});
+		});
 	}
 
 	_getOutput(block, state = {})
