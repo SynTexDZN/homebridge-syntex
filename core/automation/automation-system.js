@@ -486,15 +486,22 @@ module.exports = class AutomationSystem
 	{
 		return new Promise((resolve) => {
 
-			this.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin }).then((state) => {
+			if(block.id != null && block.letters != null)
+			{
+				this.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin }).then((state) => {
 
-				if(state == null)
-				{
-					this.logger.log('error', block.id, block.letters, '[' + automation.name + ']: %read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
-				}
-	
-				resolve(state);
-			});
+					if(state == null)
+					{
+						this.logger.log('error', block.id, block.letters, '[' + automation.name + ']: %read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
+					}
+		
+					resolve(state);
+				});
+			}
+			else
+			{
+				resolve(null);
+			}
 		});
 	}
 

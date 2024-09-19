@@ -56,32 +56,25 @@ module.exports = class ActivityManager
 	{
 		return new Promise((resolve) => {
 
-			if(id != null && letters != null)
+			var state = this.getState(id, letters);
+
+			if(state != null && options.bridge == null)
 			{
-				var state = this.getState(id, letters);
+				resolve(state);
+			}
+			else if(options.port != null || options.plugin != null)
+			{
+				var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
 
-				if(state != null && options.bridge == null)
-				{
-					resolve(state);
-				}
-				else if(options.port != null || options.plugin != null)
-				{
-					var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
+				this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
 
-					this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
-
-						if(response.data instanceof Object)
-						{
-							this.updateState(id, letters, response.data);
-						}
-					
-						resolve(response.data);
-					});
-				}
-				else
-				{
-					resolve(null);
-				}
+					if(response.data instanceof Object)
+					{
+						this.updateState(id, letters, response.data);
+					}
+				
+					resolve(response.data);
+				});
 			}
 			else
 			{
