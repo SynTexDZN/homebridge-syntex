@@ -47,7 +47,9 @@ module.exports = class ActivityManager
 
 	updateAutomation(id, letters, automation)
 	{
+		this._prepareStructure(id, letters);
 
+		this.data[id][letters].automation.push({ time : new Date().getTime(), id : automation.id });
 	}
 
 	_getState(id, letters, options)
@@ -68,7 +70,10 @@ module.exports = class ActivityManager
 
 					this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
 
-						this.updateState(id, letters, response.data);
+						if(response.data instanceof Object)
+						{
+							this.updateState(id, letters, response.data);
+						}
 					
 						resolve(response.data);
 					});
