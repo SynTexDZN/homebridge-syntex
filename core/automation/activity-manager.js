@@ -54,14 +54,29 @@ module.exports = class ActivityManager
 	{
 		return new Promise((resolve) => {
 
-			if(id != null && letters != null && (options.port != null || options.plugin != null))
+			if(id != null && letters != null)
 			{
-				var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
+				var state = this.getState(id, letters);
 
-				this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+				if(state != null && options.bridge == null)
+				{
+					resolve(state);
+				}
+				else if(options.port != null || options.plugin != null)
+				{
+					var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
 
-					resolve(response.data);
-				});
+					this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+
+						this.updateState(id, letters, response.data);
+					
+						resolve(response.data);
+					});
+				}
+				else
+				{
+					resolve(null);
+				}
 			}
 			else
 			{
@@ -69,6 +84,17 @@ module.exports = class ActivityManager
 			}
 		});
 	}
+
+	getState(id, letters)
+	{
+		if(this.data[id] != null && this.data[id][letters] != null && this.data[id][letters].state != null)
+		{
+			return this.data[id][letters].state;
+		}
+
+		return null;
+	}
+
 	_prepareStructure(id, letters)
 	{
 		if(this.data[id] == null)
