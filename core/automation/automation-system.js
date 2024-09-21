@@ -254,7 +254,7 @@ module.exports = class AutomationSystem
 
 				if(automation.trigger.logic == 'AND' ? !triggers.includes(false) : automation.trigger.logic == 'OR' ? triggers.includes(true) : false)
 				{
-					if(!this._isLocked(automation))
+					if(!this._isLocked(automation, service))
 					{
 						if(automation.options == null
 						|| automation.options.timeLock == null
