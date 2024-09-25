@@ -329,24 +329,38 @@ function executeResult(automation, triggers)
         {
             promiseArray.push(new Promise((resolve) => setTimeout(() => {
 
-            if((block.options != null && block.options.stateLock == false) || !locked)
-            {
+                if((block.options != null && block.options.stateLock == false) || !locked)
+                {
                     if(block.url != null)
                     {
-                        resolve(true);
+                        fetchRequest(block.url).then((success) => resolve(success));
                     }
-                    else if(block.id != null && block.letters != null)
+                    else if(block.id != null && block.letters != null && block.state != null)
                     {
-                        var state = { ...block.state };
+                        if(block.bridge != null && block.port != null)
+                        {
+                            var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
 
-                        AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
-                    
-                resolve(true);
-            }
-            else
-            {
-                resolve(false);
-            }
+                            for(const x in block.state)
+                            {
+                                url += '&' + x + '=' + block.state[x];
+                            }
+
+                            fetchRequest(url).then((success) => resolve(success));
+                        }
+                        else
+                        {
+                            var state = { ...block.state };
+
+                            AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
+                        
+                            resolve(true);
+                        }
+                    }
+                    else
+                    {
+                        resolve(false);
+                    }
                 }
                 else
                 {
@@ -422,4 +436,20 @@ function unlockTrigger(block)
     {
         stateLock[block.automationID].trigger[block.blockID] = false;
     }
+}
+
+function fetchRequest(url)
+{
+    return new Promise((resolve) => {
+
+        AutomationSystem.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+			
+            if(response.data == null)
+            {
+                this.logger.log('error', '???ID???', '???LETTERS???', '[' + '???NAME???' + '] %request_result[0]% [' + url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
+            }
+
+            resolve(response.data != null);
+        });
+    });
 }
