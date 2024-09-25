@@ -295,21 +295,66 @@ class Automation
 
 function executeResult(automation, triggers)
 {
-    var locked = stateLock[automation.automationID] != null && stateLock[automation.automationID].result == true, promiseArray = [];
+    var groups = [], group = { blocks : [] }, delay = 0;
 
     for(const block of automation.result)
     {
-        promiseArray.push(new Promise((resolve) => {
+        if(block.delay != null)
+        {
+            if(group.blocks.length > 0)
+            {
+                groups.push(group);
+            }
+
+            delay += block.delay;
+
+            group = { delay, blocks : [] };
+        }
+        else
+        {
+            group.blocks.push(block);
+        }
+    }
+
+    if(group.blocks.length > 0)
+    {
+        groups.push(group);
+    }
+
+    var locked = stateLock[automation.automationID] != null && stateLock[automation.automationID].result == true, promiseArray = [];
+
+    for(const group of groups)
+    {
+        for(const block of group.blocks)
+        {
+            promiseArray.push(new Promise((resolve) => setTimeout(() => {
 
             if((block.options != null && block.options.stateLock == false) || !locked)
             {
+                    if(block.url != null)
+                    {
+                        resolve(true);
+                    }
+                    else if(block.id != null && block.letters != null)
+                    {
+                        var state = { ...block.state };
+
+                        AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
+                    
                 resolve(true);
             }
             else
             {
                 resolve(false);
             }
-        }));
+                }
+                else
+                {
+                    resolve(false);
+                }
+
+            }, group.delay || 0)));
+        }
     }
 
     Promise.all(promiseArray).then((result) => {
