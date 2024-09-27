@@ -70,7 +70,10 @@ module.exports = class Logic
 
                     if(output && !locked)
                     {
+                        if(!automation.isLocked())
+                    {
                         executeResult(automation, service, result);
+                        }
                     }
                     
                     if(output && locked)
@@ -301,6 +304,19 @@ class Automation
 
         return false;
     }
+
+    isLocked()
+    {
+        if(this.options != null
+        && this.options.timeLock != null
+        && AutomationSystem.timeLock[this.automationID] != null
+        && AutomationSystem.timeLock[this.automationID] > new Date().getTime())
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 function executeResult(automation, trigger, triggers)
@@ -402,6 +418,11 @@ function executeResult(automation, trigger, triggers)
 
 function lockAutomation(automation, triggers)
 {
+    if(automation.options != null && automation.options.timeLock != null)
+    {
+        AutomationSystem.timeLock[automation.automationID] = new Date().getTime() + automation.options.timeLock;
+    }
+    
     if(automation.options == null || automation.options.stateLock != false)
     {
         if(AutomationSystem.stateLock[automation.automationID] == null)
