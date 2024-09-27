@@ -7,6 +7,8 @@ module.exports = class Logic
         this.automation = [];
 
         AutomationSystem = automationSystem;
+
+        this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
     }
 
     createAutomation(config)
@@ -14,7 +16,7 @@ module.exports = class Logic
         this.automation.push(new Automation(config));
     }
 
-    checkAutomation(service, state)
+    checkAutomation(service, state = {})
     {
         for(const automation of this.automation)
         {
@@ -65,7 +67,7 @@ module.exports = class Logic
 
                     if(output && !locked)
                     {
-                        executeResult(automation, result);
+                        executeResult(automation, service, result);
                     }
                     
                     if(output && locked)
@@ -166,7 +168,7 @@ class Block
     {
         this.comparisons = [];
 
-        this.comparisons.push({ id : block.id, letters : block.letters });
+        this.comparisons.push(block);
 
         this.automationID = automation.automationID;
         this.groupID = group.groupID;
@@ -215,7 +217,12 @@ class Block
     {
         for(const comparison of this.comparisons)
         {
-            if(comparison.id == block.id && comparison.letters == block.letters)
+            if(block.id != null && block.letters != null && comparison.id == block.id && comparison.letters == block.letters)
+            {
+                return true;
+            }
+
+            if((block.time != null && comparison.time != null) || (block.date != null && comparison.date != null))
             {
                 return true;
             }
@@ -293,7 +300,7 @@ class Automation
     }
 }
 
-function executeResult(automation, triggers)
+function executeResult(automation, trigger, triggers)
 {
     var groups = [], group = { blocks : [] }, delay = 0;
 
@@ -380,6 +387,8 @@ function executeResult(automation, triggers)
             lockAutomation(automation, triggers);
 
             console.log('----------------> B', automation.name, automation.automationID, automation.logic, stateLock[automation.automationID]);
+        
+            AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + automation.name + '] %automation_executed[1]%! ( ' + automation.automationID + ' )');
         }
         else
         {
