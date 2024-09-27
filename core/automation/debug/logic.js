@@ -6,6 +6,8 @@ module.exports = class Logic
     {
         this.automation = [];
 
+        this.running = [];
+
         this.timeLock = {};
 		this.stateLock = {};
 
@@ -71,8 +73,8 @@ module.exports = class Logic
                     if(output && !locked)
                     {
                         if(!automation.isLocked())
-                    {
-                        executeResult(automation, service, result);
+                        {
+                            executeResult(automation, service, result);
                         }
                     }
                     
@@ -190,9 +192,9 @@ class Block
         if(this.options != null
         && this.options.stateLock == true)
         {
-            if(AutomationSystem.stateLock[this.automationID] != null
-            && AutomationSystem.stateLock[this.automationID].trigger != null
-            && AutomationSystem.stateLock[this.automationID].trigger[this.blockID] == true)
+            if(AutomationSystem.LogicManager.stateLock[this.automationID] != null
+            && AutomationSystem.LogicManager.stateLock[this.automationID].trigger != null
+            && AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
             {
                 return true;
             }
@@ -309,8 +311,8 @@ class Automation
     {
         if(this.options != null
         && this.options.timeLock != null
-        && AutomationSystem.timeLock[this.automationID] != null
-        && AutomationSystem.timeLock[this.automationID] > new Date().getTime())
+        && AutomationSystem.LogicManager.timeLock[this.automationID] != null
+        && AutomationSystem.LogicManager.timeLock[this.automationID] > new Date().getTime())
         {
             return true;
         }
@@ -323,114 +325,121 @@ function executeResult(automation, trigger, triggers)
 {
     var groups = [], group = { blocks : [] }, delay = 0;
 
-    for(const block of automation.result)
+    if(!AutomationSystem.LogicManager.running.includes(automation.automationID))
     {
-        if(block.delay != null)
+        AutomationSystem.LogicManager.running.push(automation.automationID);
+
+        for(const block of automation.result)
         {
-            if(group.blocks.length > 0)
+            if(block.delay != null)
             {
-                groups.push(group);
-            }
-
-            delay += block.delay;
-
-            group = { delay, blocks : [] };
-        }
-        else
-        {
-            group.blocks.push(block);
-        }
-    }
-
-    if(group.blocks.length > 0)
-    {
-        groups.push(group);
-    }
-
-    var locked = AutomationSystem.stateLock[automation.automationID] != null && AutomationSystem.stateLock[automation.automationID].result == true, promiseArray = [];
-
-    for(const group of groups)
-    {
-        for(const block of group.blocks)
-        {
-            promiseArray.push(new Promise((resolve) => setTimeout(() => {
-
-                if((block.options != null && block.options.stateLock == false) || !locked)
+                if(group.blocks.length > 0)
                 {
-                    if(block.url != null)
+                    groups.push(group);
+                }
+
+                delay += block.delay;
+
+                group = { delay, blocks : [] };
+            }
+            else
+            {
+                group.blocks.push(block);
+            }
+        }
+
+        if(group.blocks.length > 0)
+        {
+            groups.push(group);
+        }
+
+        var locked = AutomationSystem.LogicManager.stateLock[automation.automationID] != null && AutomationSystem.LogicManager.stateLock[automation.automationID].result == true, promiseArray = [];
+
+        for(const group of groups)
+        {
+            for(const block of group.blocks)
+            {
+                promiseArray.push(new Promise((resolve) => setTimeout(() => {
+
+                    if((block.options != null && block.options.stateLock == false) || !locked)
                     {
-                        fetchRequest(block.url).then((success) => resolve(success));
-                    }
-                    else if(block.id != null && block.letters != null && block.state != null)
-                    {
-                        if(block.bridge != null && block.port != null)
+                        if(block.url != null)
                         {
-                            var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
-
-                            for(const x in block.state)
+                            fetchRequest(block.url).then((success) => resolve(success));
+                        }
+                        else if(block.id != null && block.letters != null && block.state != null)
+                        {
+                            if(block.bridge != null && block.port != null)
                             {
-                                url += '&' + x + '=' + block.state[x];
-                            }
+                                var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
 
-                            fetchRequest(url).then((success) => resolve(success));
+                                for(const x in block.state)
+                                {
+                                    url += '&' + x + '=' + block.state[x];
+                                }
+
+                                fetchRequest(url).then((success) => resolve(success));
+                            }
+                            else
+                            {
+                                var state = { ...block.state };
+
+                                AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
+                            
+                                resolve(true);
+                            }
                         }
                         else
                         {
-                            var state = { ...block.state };
-
-                            AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
-                        
-                            resolve(true);
+                            resolve(false);
                         }
                     }
                     else
                     {
                         resolve(false);
                     }
-                }
-                else
-                {
-                    resolve(false);
-                }
 
-            }, group.delay || 0)));
+                }, group.delay || 0)));
+            }
         }
+
+        Promise.all(promiseArray).then((result) => {
+
+            if(result.includes(true))
+            {
+                console.log('----------------> A', automation.name, automation.automationID, automation.logic, AutomationSystem.LogicManager.stateLock[automation.automationID]);
+
+                lockAutomation(automation, triggers);
+
+                console.log('----------------> B', automation.name, automation.automationID, automation.logic, AutomationSystem.LogicManager.stateLock[automation.automationID]);
+            
+                AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + automation.name + '] %automation_executed[1]%! ( ' + automation.automationID + ' )');
+            }
+            else
+            {
+                console.log(automation.automationID, automation.logic, 'LOCKED RESULT');
+            }
+
+            AutomationSystem.LogicManager.running.splice(AutomationSystem.LogicManager.running.indexOf(automation.automationID), 1);
+        });
     }
-
-    Promise.all(promiseArray).then((result) => {
-
-        if(result.includes(true))
-        {
-            console.log('----------------> A', automation.name, automation.automationID, automation.logic, AutomationSystem.stateLock[automation.automationID]);
-
-            lockAutomation(automation, triggers);
-
-            console.log('----------------> B', automation.name, automation.automationID, automation.logic, AutomationSystem.stateLock[automation.automationID]);
-        
-            AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + automation.name + '] %automation_executed[1]%! ( ' + automation.automationID + ' )');
-        }
-        else
-        {
-            console.log(automation.automationID, automation.logic, 'LOCKED RESULT');
-        }
-    });
 }
 
 function lockAutomation(automation, triggers)
 {
     if(automation.options != null && automation.options.timeLock != null)
     {
-        AutomationSystem.timeLock[automation.automationID] = new Date().getTime() + automation.options.timeLock;
+        AutomationSystem.LogicManager.timeLock[automation.automationID] = new Date().getTime() + automation.options.timeLock;
     }
     
     if(automation.options == null || automation.options.stateLock != false)
     {
-        if(AutomationSystem.stateLock[automation.automationID] == null)
+        if(AutomationSystem.LogicManager.stateLock[automation.automationID] == null)
         {
-            AutomationSystem.stateLock[automation.automationID] = {};
+            AutomationSystem.LogicManager.stateLock[automation.automationID] = {};
         }
 
-        AutomationSystem.stateLock[automation.automationID].result = true;
+        AutomationSystem.LogicManager.stateLock[automation.automationID].result = true;
     }
 
     for(const trigger of triggers)
@@ -439,17 +448,17 @@ function lockAutomation(automation, triggers)
         {
             if(block.options != null && block.options.stateLock == true)
             {
-                if(AutomationSystem.stateLock[automation.automationID] == null)
+                if(AutomationSystem.LogicManager.stateLock[automation.automationID] == null)
                 {
-                    AutomationSystem.stateLock[automation.automationID] = {};
+                    AutomationSystem.LogicManager.stateLock[automation.automationID] = {};
                 }
                 
-                if(AutomationSystem.stateLock[automation.automationID].trigger == null)
+                if(AutomationSystem.LogicManager.stateLock[automation.automationID].trigger == null)
                 {
-                    AutomationSystem.stateLock[automation.automationID].trigger = {};
+                    AutomationSystem.LogicManager.stateLock[automation.automationID].trigger = {};
                 }
                 
-                AutomationSystem.stateLock[automation.automationID].trigger[block.blockID] = true;
+                AutomationSystem.LogicManager.stateLock[automation.automationID].trigger[block.blockID] = true;
             }
         }
     }
@@ -457,17 +466,17 @@ function lockAutomation(automation, triggers)
 
 function unlockAutomation(automation)
 {
-    if(AutomationSystem.stateLock[automation.automationID] != null && AutomationSystem.stateLock[automation.automationID].result == true)
+    if(AutomationSystem.LogicManager.stateLock[automation.automationID] != null && AutomationSystem.LogicManager.stateLock[automation.automationID].result == true)
     {
-        AutomationSystem.stateLock[automation.automationID].result = false;
+        AutomationSystem.LogicManager.stateLock[automation.automationID].result = false;
     }
 }
 
 function unlockTrigger(block)
 {
-    if(AutomationSystem.stateLock[block.automationID] != null && AutomationSystem.stateLock[block.automationID].trigger != null && AutomationSystem.stateLock[block.automationID].trigger[block.blockID] == true)
+    if(AutomationSystem.LogicManager.stateLock[block.automationID] != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] == true)
     {
-        AutomationSystem.stateLock[block.automationID].trigger[block.blockID] = false;
+        AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] = false;
     }
 }
 
