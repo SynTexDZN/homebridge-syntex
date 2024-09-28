@@ -11,16 +11,82 @@ module.exports = class Logic
         this.timeLock = {};
 		this.stateLock = {};
 
+        this.files = automationSystem.files;
+        this.logger = automationSystem.logger;
+
         AutomationSystem = automationSystem;
 
-        // SAVE LOCK
+        this.loadData().then((data) => {
 
-        this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
+            if(data != null)
+            {
+                for(const automation of data)
+                {
+                    this.automation.push(new Automation(automation));
+                }
+    
+                this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
+            
+                this.lockInterval = setInterval(() => {
+
+                    if(this.changed)
+                    {
+                        this.files.writeFile('automation/automation-lock.json', { timeLock : this.timeLock, stateLock : this.stateLock });
+                    }
+
+                }, 10000);
+
+                this.logger.log('success', 'automation', 'Automation', '%automation_load_success%!');
+            }
+        })
+
+        // SAVE LOCK
     }
 
-    createAutomation(config)
+    loadData()
     {
-        this.automation.push(new Automation(config));
+        return new Promise((resolve) => {
+
+            if(this.files.checkFile('automation/automation.json'))
+            {
+                this.files.readFile('automation/automation.json').then((automation) => {
+
+                    if(this.files.checkFile('automation/automation-lock.json'))
+                    {
+                        this.files.readFile('automation/automation-lock.json').then((lock) => {
+
+                            if(lock != null)
+                            {
+                                this.timeLock = lock.timeLock || {};
+                                this.stateLock = lock.stateLock || {};
+                            }
+
+                            resolve(automation);
+
+                        }).catch(() => {
+            
+                            this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
+            
+                            resolve(null);
+                        });
+                    }
+                    else
+                    {
+                        resolve(automation);
+                    }
+
+                }).catch(() => {
+				
+                    this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
+    
+                    resolve(null);
+                });
+            }
+            else
+            {
+                resolve(null);
+            }
+		});
     }
 
     checkAutomation(service, state = {})
@@ -464,6 +530,8 @@ function lockAutomation(automation, triggers)
             }
         }
     }
+
+    AutomationSystem.LogicManager.changed = true;
 }
 
 function unlockAutomation(automation)
@@ -471,6 +539,8 @@ function unlockAutomation(automation)
     if(AutomationSystem.LogicManager.stateLock[automation.automationID] != null && AutomationSystem.LogicManager.stateLock[automation.automationID].result == true)
     {
         AutomationSystem.LogicManager.stateLock[automation.automationID].result = false;
+
+        AutomationSystem.LogicManager.changed = true;
     }
 }
 
@@ -479,6 +549,8 @@ function unlockTrigger(block)
     if(AutomationSystem.LogicManager.stateLock[block.automationID] != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] == true)
     {
         AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] = false;
+
+        AutomationSystem.LogicManager.changed = true;
     }
 }
 
