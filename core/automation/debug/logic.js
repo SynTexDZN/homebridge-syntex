@@ -81,8 +81,8 @@ module.exports = class Logic
 
                     if(data instanceof Object)
                     {
-                        this.timeLock = lock.timeLock || {};
-                        this.stateLock = lock.stateLock || {};
+                        this.timeLock = data.timeLock || {};
+                        this.stateLock = data.stateLock || {};
                     }
                      
                     resolve(data instanceof Object);
@@ -291,7 +291,7 @@ class Block
 
                 var output = AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
                 
-                if(!output && !locked)
+                if(!output && locked)
                 {
                     unlockTrigger(this);
                 }
