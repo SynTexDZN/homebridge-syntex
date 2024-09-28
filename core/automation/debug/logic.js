@@ -138,13 +138,9 @@ module.exports = class Logic
 
                         if(automationLogic == 'OR')
                         {
-                            if(result[i].output)
+                            if(result[i].output && !result[i].locked)
                             {
                                 output = true;
-                            }
-                            
-                            if(!result[i].locked)
-                            {
                                 locked = false;
                             }
                         }
@@ -218,13 +214,9 @@ module.exports = class Logic
 
                     if(groupLogic == 'OR')
                     {
-                        if(result[i].output)
+                        if(result[i].output && !result[i].locked)
                         {
                             output = true;
-                        }
-                        
-                        if(!result[i].locked)
-                        {
                             locked = false;
                         }
                     }
