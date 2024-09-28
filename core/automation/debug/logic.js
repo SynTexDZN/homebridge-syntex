@@ -16,64 +16,46 @@ module.exports = class Logic
 
         AutomationSystem = automationSystem;
 
-        this.loadData().then((data) => {
+        this.loadAutomation().then((data) => {
 
             if(data != null && Array.isArray(data) && data.length > 0)
             {
-                for(const automation of data)
-                {
-                    this.automation.push(new Automation(automation));
-                }
-    
-                this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
-            
-                this.lockInterval = setInterval(() => {
+                this.loadLock().then((success) => {
 
-                    if(this.changed)
+                    if(success)
                     {
-                        this.files.writeFile('automation/automation-lock.json', { timeLock : this.timeLock, stateLock : this.stateLock });
+                        for(const automation of data)
+                        {
+                            this.automation.push(new Automation(automation));
+                        }
+            
+                        this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
+                    
+                        this.lockInterval = setInterval(() => {
+        
+                            if(this.changed)
+                            {
+                                this.files.writeFile('automation/automation-lock.json', { timeLock : this.timeLock, stateLock : this.stateLock });
+                            }
+        
+                        }, 10000);
+        
+                        this.logger.log('success', 'automation', 'Automation', '%automation_load_success%!');
                     }
-
-                }, 10000);
-
-                this.logger.log('success', 'automation', 'Automation', '%automation_load_success%!');
+                });
             }
-        })
-
-        // SAVE LOCK
+        });
     }
 
-    loadData()
+    loadAutomation()
     {
         return new Promise((resolve) => {
 
             if(this.files.checkFile('automation/automation.json'))
             {
-                this.files.readFile('automation/automation.json').then((automation) => {
+                this.files.readFile('automation/automation.json').then((data) => {
 
-                    if(this.files.checkFile('automation/automation-lock.json'))
-                    {
-                        this.files.readFile('automation/automation-lock.json').then((lock) => {
-
-                            if(lock instanceof Object)
-                            {
-                                this.timeLock = lock.timeLock || {};
-                                this.stateLock = lock.stateLock || {};
-                            }
-
-                            resolve(automation);
-
-                        }).catch(() => {
-            
-                            this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
-            
-                            resolve(null);
-                        });
-                    }
-                    else
-                    {
-                        resolve(automation);
-                    }
+                    resolve(data);
 
                 }).catch(() => {
 				
@@ -86,7 +68,37 @@ module.exports = class Logic
             {
                 resolve(null);
             }
-		});
+        });
+    }
+
+    loadLock()
+    {
+        return new Promise((resolve) => {
+
+            if(this.files.checkFile('automation/automation-lock.json'))
+            {
+                this.files.readFile('automation/automation-lock.json').then((data) => {
+
+                    if(data instanceof Object)
+                    {
+                        this.timeLock = lock.timeLock || {};
+                        this.stateLock = lock.stateLock || {};
+                    }
+                     
+                    resolve(data instanceof Object);
+
+                }).catch(() => {
+            
+                    this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
+    
+                    resolve(false);
+                });
+            }
+            else
+            {
+                resolve(true);
+            }
+        });
     }
 
     checkAutomation(service, state = {})
