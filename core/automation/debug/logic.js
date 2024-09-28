@@ -28,7 +28,7 @@ module.exports = class Logic
                         {
                             this.automation.push(new Automation(automation));
                         }
-            
+
                         this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
                     
                         this.lockInterval = setInterval(() => {
@@ -60,7 +60,7 @@ module.exports = class Logic
                 }).catch(() => {
 				
                     this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
-    
+
                     resolve(null);
                 });
             }
@@ -88,7 +88,7 @@ module.exports = class Logic
                     resolve(data instanceof Object);
 
                 }).catch(() => {
-            
+
                     this.logger.log('error', 'automation', 'Automation', '%automation_load_error%!');
     
                     resolve(false);
@@ -478,11 +478,11 @@ class Automation
 
                 if(result.includes(true))
                 {
-                    console.log('----------------> A', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID]);
+                    console.log('----------------> A', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
 
                     lockAutomation(this, triggers);
 
-                    console.log('----------------> B', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID]);
+                    console.log('----------------> B', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
                 
                     AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
                 }
