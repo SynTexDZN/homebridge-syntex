@@ -18,7 +18,7 @@ module.exports = class Logic
 
         this.loadData().then((data) => {
 
-            if(data != null)
+            if(data != null && Array.isArray(data) && data.length > 0)
             {
                 for(const automation of data)
                 {
@@ -55,7 +55,7 @@ module.exports = class Logic
                     {
                         this.files.readFile('automation/automation-lock.json').then((lock) => {
 
-                            if(lock != null)
+                            if(lock instanceof Object)
                             {
                                 this.timeLock = lock.timeLock || {};
                                 this.stateLock = lock.stateLock || {};
