@@ -1,5 +1,3 @@
-var AutomationSystem = null;
-
 module.exports = class Logic
 {
     constructor(automationSystem)
@@ -11,10 +9,10 @@ module.exports = class Logic
 
         this.automation = [];
 
+        this.AutomationSystem = automationSystem;
+
         this.files = automationSystem.files;
         this.logger = automationSystem.logger;
-
-        AutomationSystem = automationSystem;
 
         this.loadAutomation().then((data) => {
 
@@ -281,9 +279,9 @@ class Block
     {
         return new Promise((resolve) => {
 
-            AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
+            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
 
-                var output = AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
+                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
                 
                 if(!output && locked)
                 {
@@ -362,6 +360,8 @@ class Automation
         this.groups = [];
 
         this.LogicManager = LogicManager;
+
+        this.logger = LogicManager.logger;
 
         this.automationID = automation.id;
 
@@ -456,7 +456,7 @@ class Automation
                             {
                                 if(block.bridge != null && block.port != null)
                                 {
-                                    var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
+                                    var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + this.LogicManager.AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
 
                                     for(const x in block.state)
                                     {
@@ -469,7 +469,7 @@ class Automation
                                 {
                                     var state = { ...block.state };
 
-                                    AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
+                                    this.LogicManager.AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
                                 
                                     resolve(true);
                                 }
@@ -498,7 +498,7 @@ class Automation
 
                     console.log('----------------> B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
                 
-                    AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
+                    this.LogicManager.AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
                 }
                 else
                 {
@@ -565,7 +565,7 @@ class Automation
     {
         return new Promise((resolve) => {
 
-            AutomationSystem.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+            this.LogicManager.AutomationSystem.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
                 
                 if(response.data == null)
                 {
