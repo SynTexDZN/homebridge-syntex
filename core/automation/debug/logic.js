@@ -541,22 +541,22 @@ class Automation
                             }
                             else if(block.id != null && block.letters != null && block.state != null)
                             {
+                                var state = { ...block.state };
+
                                 if(block.bridge != null && block.port != null)
                                 {
                                     var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + this.LogicManager.AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
 
-                                    for(const x in block.state)
+                                    for(const x in state)
                                     {
-                                        url += '&' + x + '=' + block.state[x];
+                                        url += '&' + x + '=' + state[x];
                                     }
 
                                     this.fetchRequest(url).then((success) => resolve(success));
                                 }
                                 else
                                 {
-                                    var state = { ...block.state };
-
-                                    this.LogicManager.AutomationSystem.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
+                                    this.LogicManager.EventManager.setOutputStream('changeHandler', { receiver : { id : block.id, letters : block.letters } }, state);
                                 
                                     resolve(true);
                                 }
