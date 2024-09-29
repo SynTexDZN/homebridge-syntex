@@ -161,7 +161,7 @@ module.exports = class Logic
 
                     if(!output)
                     {
-                        unlockAutomation(automation);
+                        automation.unlockAutomation();
 
                         console.log(automation.automationID, automationLogic, output, 'FALSE');
                     }
@@ -285,7 +285,7 @@ class Block
                 
                 if(!output && locked)
                 {
-                    unlockTrigger(this);
+                    this.unlockTrigger();
                 }
 
                 resolve({ output, locked });
@@ -309,6 +309,16 @@ class Block
         }
 
         return false;
+    }
+
+    unlockTrigger()
+    {
+        if(AutomationSystem.LogicManager.stateLock[this.automationID] != null && AutomationSystem.LogicManager.stateLock[this.automationID].trigger != null && AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+        {
+            AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
+
+            AutomationSystem.LogicManager.changed = true;
+        }
     }
 }
 
@@ -436,7 +446,7 @@ class Automation
                         {
                             if(block.url != null)
                             {
-                                fetchRequest(block.url).then((success) => resolve(success));
+                                this.fetchRequest(block.url).then((success) => resolve(success));
                             }
                             else if(block.id != null && block.letters != null && block.state != null)
                             {
@@ -449,7 +459,7 @@ class Automation
                                         url += '&' + x + '=' + block.state[x];
                                     }
 
-                                    fetchRequest(url).then((success) => resolve(success));
+                                    this.fetchRequest(url).then((success) => resolve(success));
                                 }
                                 else
                                 {
@@ -480,7 +490,7 @@ class Automation
                 {
                     console.log('----------------> A', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
 
-                    lockAutomation(this, triggers);
+                    this.lockAutomation(triggers);
 
                     console.log('----------------> B', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
                 
@@ -495,81 +505,71 @@ class Automation
             });
         }
     }
-}
 
-function lockAutomation(automation, triggers)
-{
-    if(automation.options != null && automation.options.timeLock != null)
+    lockAutomation(triggers)
     {
-        AutomationSystem.LogicManager.timeLock[automation.automationID] = new Date().getTime() + automation.options.timeLock;
-    }
-    
-    if(automation.options == null || automation.options.stateLock != false)
-    {
-        if(AutomationSystem.LogicManager.stateLock[automation.automationID] == null)
+        if(this.options != null && this.options.timeLock != null)
         {
-            AutomationSystem.LogicManager.stateLock[automation.automationID] = {};
+            AutomationSystem.LogicManager.timeLock[this.automationID] = new Date().getTime() + this.options.timeLock;
+        }
+        
+        if(this.options == null || this.options.stateLock != false)
+        {
+            if(AutomationSystem.LogicManager.stateLock[this.automationID] == null)
+            {
+                AutomationSystem.LogicManager.stateLock[this.automationID] = {};
+            }
+
+            AutomationSystem.LogicManager.stateLock[this.automationID].result = true;
         }
 
-        AutomationSystem.LogicManager.stateLock[automation.automationID].result = true;
-    }
-
-    for(const trigger of triggers)
-    {
-        for(const block of trigger.blocks)
+        for(const trigger of triggers)
         {
-            if(block.options != null && block.options.stateLock == true)
+            for(const block of trigger.blocks)
             {
-                if(AutomationSystem.LogicManager.stateLock[automation.automationID] == null)
+                if(block.options != null && block.options.stateLock == true)
                 {
-                    AutomationSystem.LogicManager.stateLock[automation.automationID] = {};
+                    if(AutomationSystem.LogicManager.stateLock[this.automationID] == null)
+                    {
+                        AutomationSystem.LogicManager.stateLock[this.automationID] = {};
+                    }
+                    
+                    if(AutomationSystem.LogicManager.stateLock[this.automationID].trigger == null)
+                    {
+                        AutomationSystem.LogicManager.stateLock[this.automationID].trigger = {};
+                    }
+                    
+                    AutomationSystem.LogicManager.stateLock[this.automationID].trigger[block.blockID] = true;
                 }
-                
-                if(AutomationSystem.LogicManager.stateLock[automation.automationID].trigger == null)
-                {
-                    AutomationSystem.LogicManager.stateLock[automation.automationID].trigger = {};
-                }
-                
-                AutomationSystem.LogicManager.stateLock[automation.automationID].trigger[block.blockID] = true;
             }
         }
-    }
-
-    AutomationSystem.LogicManager.changed = true;
-}
-
-function unlockAutomation(automation)
-{
-    if(AutomationSystem.LogicManager.stateLock[automation.automationID] != null && AutomationSystem.LogicManager.stateLock[automation.automationID].result == true)
-    {
-        AutomationSystem.LogicManager.stateLock[automation.automationID].result = false;
 
         AutomationSystem.LogicManager.changed = true;
     }
-}
 
-function unlockTrigger(block)
-{
-    if(AutomationSystem.LogicManager.stateLock[block.automationID] != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger != null && AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] == true)
+    unlockAutomation()
     {
-        AutomationSystem.LogicManager.stateLock[block.automationID].trigger[block.blockID] = false;
+        if(AutomationSystem.LogicManager.stateLock[this.automationID] != null && AutomationSystem.LogicManager.stateLock[this.automationID].result == true)
+        {
+            AutomationSystem.LogicManager.stateLock[this.automationID].result = false;
 
-        AutomationSystem.LogicManager.changed = true;
+            AutomationSystem.LogicManager.changed = true;
+        }
     }
-}
 
-function fetchRequest(url)
-{
-    return new Promise((resolve) => {
+    fetchRequest(url)
+    {
+        return new Promise((resolve) => {
 
-        AutomationSystem.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
-			
-            if(response.data == null)
-            {
-                this.logger.log('error', '???ID???', '???LETTERS???', '[' + '???NAME???' + '] %request_result[0]% [' + url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
-            }
+            AutomationSystem.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+                
+                if(response.data == null)
+                {
+                    this.logger.log('error', 'automation', 'Automation', '[' + this.name + '] %request_result[0]% [' + url + '] %request_result[1]% [' + (response.status || -1) + '] %request_result[2]%: [' + (response.data || '') + ']', response.error || '');
+                }
 
-            resolve(response.data != null);
+                resolve(response.data != null);
+            });
         });
-    });
+    }
 }
