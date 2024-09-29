@@ -107,7 +107,7 @@ module.exports = class Logic
             {
                 const automationLogic = automation.logic, groups = [];
 
-                for(const group of automation.groups)
+                for(const group of automation.trigger)
                 {
                     if(automationLogic == 'AND' || group.includesBlock(service))
                     {
@@ -333,17 +333,17 @@ class Group
 
         this.logic = group.logic;
 
-        for(const id in group.blocks)
+        for(const blockID in group.blocks)
         {
-            this.blocks.push(new Block(automation, this, { ...group.blocks[id], blockID : this.groupID + '' + id }));
+            this.blocks.push(new Block(automation, this, { ...group.blocks[blockID], blockID : this.groupID + '' + blockID }));
         }
     }
 
     includesBlock(block)
     {
-        for(const i in this.blocks)
+        for(const trigger of this.blocks)
         {
-            if(this.blocks[i].includesBlock(block))
+            if(trigger.includesBlock(block))
             {
                 return true;
             }
@@ -357,7 +357,7 @@ class Automation
 {
     constructor(LogicManager, automation)
     {
-        this.groups = [];
+        this.trigger = [];
 
         this.LogicManager = LogicManager;
 
@@ -372,9 +372,9 @@ class Automation
 
         this.logic = automation.trigger.logic;
 
-        for(const id in automation.trigger.groups)
+        for(const groupID in automation.trigger.groups)
         {
-            this.groups.push(new Group(this, { ...automation.trigger.groups[id], groupID : id }));
+            this.trigger.push(new Group(this, { ...automation.trigger.groups[groupID], groupID }));
         }
 
         this.result = automation.result;
@@ -382,9 +382,9 @@ class Automation
 
     includesBlock(block)
     {
-        for(const i in this.groups)
+        for(const trigger of this.trigger)
         {
-            if(this.groups[i].includesBlock(block))
+            if(trigger.includesBlock(block))
             {
                 return true;
             }
