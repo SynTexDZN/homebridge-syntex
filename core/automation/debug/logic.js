@@ -14,6 +14,8 @@ module.exports = class Logic
         this.files = automationSystem.files;
         this.logger = automationSystem.logger;
 
+        this.EventManager = automationSystem.EventManager;
+
         this.loadAutomation().then((data) => {
 
             if(data != null && Array.isArray(data) && data.length > 0)
@@ -37,6 +39,24 @@ module.exports = class Logic
                             }
         
                         }, 10000);
+
+                        this.EventManager.setInputStream('updateAutomation', { source : this, external : true }, () => {
+
+                            this.loadAutomation().then((data) => {
+            
+                                if(data != null && Array.isArray(data) && data.length > 0)
+                                {
+                                    this.automation = [];
+
+                                    for(const automation of data)
+                                    {
+                                        this.automation.push(new Automation(this, automation));
+                                    }
+
+                                    this.logger.log('success', 'automation', 'Automation', '%automation_load_success%!');
+                                }
+                            });
+                        });
         
                         this.logger.log('success', 'automation', 'Automation', '%automation_load_success%!');
                     }
