@@ -4,12 +4,12 @@ module.exports = class Logic
 {
     constructor(automationSystem)
     {
-        this.automation = [];
-
         this.running = [];
 
         this.timeLock = {};
 		this.stateLock = {};
+
+        this.automation = [];
 
         this.files = automationSystem.files;
         this.logger = automationSystem.logger;
@@ -26,7 +26,7 @@ module.exports = class Logic
                     {
                         for(const automation of data)
                         {
-                            this.automation.push(new Automation(automation));
+                            this.automation.push(new Automation(this, automation));
                         }
 
                         this.timeInterval = setInterval(() => this.checkAutomation({ time : true, name : ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) }), 60000);
@@ -250,6 +250,8 @@ class Block
 
         this.comparisons.push(block);
 
+        this.LogicManager = automation.LogicManager;
+
         this.automationID = automation.automationID;
         this.groupID = group.groupID;
 
@@ -264,9 +266,9 @@ class Block
         if(this.options != null
         && this.options.stateLock == true)
         {
-            if(AutomationSystem.LogicManager.stateLock[this.automationID] != null
-            && AutomationSystem.LogicManager.stateLock[this.automationID].trigger != null
-            && AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+            if(this.LogicManager.stateLock[this.automationID] != null
+            && this.LogicManager.stateLock[this.automationID].trigger != null
+            && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
             {
                 return true;
             }
@@ -313,11 +315,11 @@ class Block
 
     unlockTrigger()
     {
-        if(AutomationSystem.LogicManager.stateLock[this.automationID] != null && AutomationSystem.LogicManager.stateLock[this.automationID].trigger != null && AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
         {
-            AutomationSystem.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
+            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
 
-            AutomationSystem.LogicManager.changed = true;
+            this.LogicManager.changed = true;
         }
     }
 }
@@ -355,9 +357,11 @@ class Group
 
 class Automation
 {
-    constructor(automation)
+    constructor(LogicManager, automation)
     {
         this.groups = [];
+
+        this.LogicManager = LogicManager;
 
         this.automationID = automation.id;
 
@@ -393,8 +397,8 @@ class Automation
     {
         if(this.options != null
         && this.options.timeLock != null
-        && AutomationSystem.LogicManager.timeLock[this.automationID] != null
-        && AutomationSystem.LogicManager.timeLock[this.automationID] > new Date().getTime())
+        && this.LogicManager.timeLock[this.automationID] != null
+        && this.LogicManager.timeLock[this.automationID] > new Date().getTime())
         {
             return true;
         }
@@ -406,9 +410,9 @@ class Automation
     {
         var groups = [], group = { blocks : [] }, delay = 0;
 
-        if(!AutomationSystem.LogicManager.running.includes(this.automationID))
+        if(!this.LogicManager.running.includes(this.automationID))
         {
-            AutomationSystem.LogicManager.running.push(this.automationID);
+            this.LogicManager.running.push(this.automationID);
 
             for(const block of this.result)
             {
@@ -434,7 +438,7 @@ class Automation
                 groups.push(group);
             }
 
-            var locked = AutomationSystem.LogicManager.stateLock[this.automationID] != null && AutomationSystem.LogicManager.stateLock[this.automationID].result == true, promiseArray = [];
+            var locked = this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].result == true, promiseArray = [];
 
             for(const group of groups)
             {
@@ -488,11 +492,11 @@ class Automation
 
                 if(result.includes(true))
                 {
-                    console.log('----------------> A', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
+                    console.log('----------------> A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
 
                     this.lockAutomation(triggers);
 
-                    console.log('----------------> B', this.name, this.automationID, this.logic, AutomationSystem.LogicManager.stateLock[this.automationID], result, triggers);
+                    console.log('----------------> B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
                 
                     AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
                 }
@@ -501,7 +505,7 @@ class Automation
                     console.log(this.automationID, this.logic, 'LOCKED RESULT');
                 }
 
-                AutomationSystem.LogicManager.running.splice(AutomationSystem.LogicManager.running.indexOf(this.automationID), 1);
+                this.LogicManager.running.splice(this.LogicManager.running.indexOf(this.automationID), 1);
             });
         }
     }
@@ -510,17 +514,17 @@ class Automation
     {
         if(this.options != null && this.options.timeLock != null)
         {
-            AutomationSystem.LogicManager.timeLock[this.automationID] = new Date().getTime() + this.options.timeLock;
+            this.LogicManager.timeLock[this.automationID] = new Date().getTime() + this.options.timeLock;
         }
         
         if(this.options == null || this.options.stateLock != false)
         {
-            if(AutomationSystem.LogicManager.stateLock[this.automationID] == null)
+            if(this.LogicManager.stateLock[this.automationID] == null)
             {
-                AutomationSystem.LogicManager.stateLock[this.automationID] = {};
+                this.LogicManager.stateLock[this.automationID] = {};
             }
 
-            AutomationSystem.LogicManager.stateLock[this.automationID].result = true;
+            this.LogicManager.stateLock[this.automationID].result = true;
         }
 
         for(const trigger of triggers)
@@ -529,31 +533,31 @@ class Automation
             {
                 if(block.options != null && block.options.stateLock == true)
                 {
-                    if(AutomationSystem.LogicManager.stateLock[this.automationID] == null)
+                    if(this.LogicManager.stateLock[this.automationID] == null)
                     {
-                        AutomationSystem.LogicManager.stateLock[this.automationID] = {};
+                        this.LogicManager.stateLock[this.automationID] = {};
                     }
                     
-                    if(AutomationSystem.LogicManager.stateLock[this.automationID].trigger == null)
+                    if(this.LogicManager.stateLock[this.automationID].trigger == null)
                     {
-                        AutomationSystem.LogicManager.stateLock[this.automationID].trigger = {};
+                        this.LogicManager.stateLock[this.automationID].trigger = {};
                     }
                     
-                    AutomationSystem.LogicManager.stateLock[this.automationID].trigger[block.blockID] = true;
+                    this.LogicManager.stateLock[this.automationID].trigger[block.blockID] = true;
                 }
             }
         }
 
-        AutomationSystem.LogicManager.changed = true;
+        this.LogicManager.changed = true;
     }
 
     unlockAutomation()
     {
-        if(AutomationSystem.LogicManager.stateLock[this.automationID] != null && AutomationSystem.LogicManager.stateLock[this.automationID].result == true)
+        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].result == true)
         {
-            AutomationSystem.LogicManager.stateLock[this.automationID].result = false;
+            this.LogicManager.stateLock[this.automationID].result = false;
 
-            AutomationSystem.LogicManager.changed = true;
+            this.LogicManager.changed = true;
         }
     }
 
