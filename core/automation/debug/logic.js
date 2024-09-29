@@ -259,40 +259,6 @@ class Block
         }
     }
 
-    isLocked()
-    {
-        if(this.options != null
-        && this.options.stateLock == true)
-        {
-            if(this.LogicManager.stateLock[this.automationID] != null
-            && this.LogicManager.stateLock[this.automationID].trigger != null
-            && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    getOutput(service, state)
-    {
-        return new Promise((resolve) => {
-
-            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
-
-                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
-                
-                if(!output && locked)
-                {
-                    this.unlockTrigger();
-                }
-
-                resolve({ output, locked });
-            });
-        });
-    }
-
     includesBlock(block)
     {
         for(const comparison of this.comparisons)
@@ -311,7 +277,41 @@ class Block
         return false;
     }
 
-    unlockTrigger()
+    isLocked()
+    {
+        if(this.options != null
+        && this.options.stateLock == true)
+        {
+            if(this.LogicManager.stateLock[this.automationID] != null
+            && this.LogicManager.stateLock[this.automationID].trigger != null
+            && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    lockBlock()
+    {
+        if(this.options != null && this.options.stateLock == true)
+        {
+            if(this.LogicManager.stateLock[this.automationID] == null)
+            {
+                this.LogicManager.stateLock[this.automationID] = {};
+            }
+            
+            if(this.LogicManager.stateLock[this.automationID].trigger == null)
+            {
+                this.LogicManager.stateLock[this.automationID].trigger = {};
+            }
+            
+            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = true;
+        }
+    }
+
+    unlockBlock()
     {
         if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
         {
@@ -319,6 +319,24 @@ class Block
 
             this.LogicManager.changed = true;
         }
+    }
+
+    getOutput(service, state)
+    {
+        return new Promise((resolve) => {
+
+            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
+
+                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
+                
+                if(!output && locked)
+                {
+                    this.unlockBlock();
+                }
+
+                resolve({ output, locked });
+            });
+        });
     }
 }
 
@@ -396,14 +414,44 @@ class Automation
     isLocked()
     {
         if(this.options != null
-        && this.options.timeLock != null
-        && this.LogicManager.timeLock[this.automationID] != null
-        && this.LogicManager.timeLock[this.automationID] > new Date().getTime())
+        && this.options.timeLock != null)
         {
-            return true;
+            if(this.LogicManager.timeLock[this.automationID] != null
+            && this.LogicManager.timeLock[this.automationID] > new Date().getTime())
+            {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    lockAutomation()
+    {
+        if(this.options != null && this.options.timeLock != null)
+        {
+            this.LogicManager.timeLock[this.automationID] = new Date().getTime() + this.options.timeLock;
+        }
+        
+        if(this.options == null || this.options.stateLock != false)
+        {
+            if(this.LogicManager.stateLock[this.automationID] == null)
+            {
+                this.LogicManager.stateLock[this.automationID] = {};
+            }
+
+            this.LogicManager.stateLock[this.automationID].result = true;
+        }
+    }
+
+    unlockAutomation()
+    {
+        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].result == true)
+        {
+            this.LogicManager.stateLock[this.automationID].result = false;
+
+            this.LogicManager.changed = true;
+        }
     }
 
     executeResult(trigger, triggers)
@@ -494,11 +542,21 @@ class Automation
                 {
                     console.log('----------------> A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
 
-                    this.lockAutomation(triggers);
+                    this.lockAutomation();
+
+                    for(const trigger of triggers)
+                    {
+                        for(const block of trigger.blocks)
+                        {
+                            block.lockBlock();
+                        }
+                    }
 
                     console.log('----------------> B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
                 
                     this.LogicManager.AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
+                
+                    this.LogicManager.changed = true;
                 }
                 else
                 {
@@ -507,57 +565,6 @@ class Automation
 
                 this.LogicManager.running.splice(this.LogicManager.running.indexOf(this.automationID), 1);
             });
-        }
-    }
-
-    lockAutomation(triggers)
-    {
-        if(this.options != null && this.options.timeLock != null)
-        {
-            this.LogicManager.timeLock[this.automationID] = new Date().getTime() + this.options.timeLock;
-        }
-        
-        if(this.options == null || this.options.stateLock != false)
-        {
-            if(this.LogicManager.stateLock[this.automationID] == null)
-            {
-                this.LogicManager.stateLock[this.automationID] = {};
-            }
-
-            this.LogicManager.stateLock[this.automationID].result = true;
-        }
-
-        for(const trigger of triggers)
-        {
-            for(const block of trigger.blocks)
-            {
-                if(block.options != null && block.options.stateLock == true)
-                {
-                    if(this.LogicManager.stateLock[this.automationID] == null)
-                    {
-                        this.LogicManager.stateLock[this.automationID] = {};
-                    }
-                    
-                    if(this.LogicManager.stateLock[this.automationID].trigger == null)
-                    {
-                        this.LogicManager.stateLock[this.automationID].trigger = {};
-                    }
-                    
-                    this.LogicManager.stateLock[this.automationID].trigger[block.blockID] = true;
-                }
-            }
-        }
-
-        this.LogicManager.changed = true;
-    }
-
-    unlockAutomation()
-    {
-        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].result == true)
-        {
-            this.LogicManager.stateLock[this.automationID].result = false;
-
-            this.LogicManager.changed = true;
         }
     }
 
