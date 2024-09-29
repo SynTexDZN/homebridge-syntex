@@ -248,7 +248,11 @@ class Block
 
         this.comparisons.push(block);
 
+        this.automation = automation;
+
         this.LogicManager = automation.LogicManager;
+
+        this.logger = automation.logger;
 
         this.automationID = automation.automationID;
         this.groupID = group.groupID;
@@ -316,6 +320,19 @@ class Block
         if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
         {
             this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
+
+            if(this.operation == '<')
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_greater% ' + this.automation.automationID + ' ' + this.blockID);
+            }
+            else if(this.operation == '>')
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_lower% ' + this.automation.automationID + ' ' + this.blockID);
+            }
+            else
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_different% ' + this.automation.automationID + ' ' + this.blockID);
+            }
 
             this.LogicManager.changed = true;
         }
@@ -450,6 +467,8 @@ class Automation
         {
             this.LogicManager.stateLock[this.automationID].result = false;
 
+            this.logger.debug('Automation [' + this.name + '] %automation_different% ' + this.automationID);
+
             this.LogicManager.changed = true;
         }
     }
@@ -540,7 +559,7 @@ class Automation
 
                 if(result.includes(true))
                 {
-                    console.log('----------------> A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
+                    console.log('A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
 
                     this.lockAutomation();
 
@@ -552,7 +571,7 @@ class Automation
                         }
                     }
 
-                    console.log('----------------> B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
+                    console.log('B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID]);
                 
                     this.LogicManager.AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
                 
