@@ -260,154 +260,6 @@ module.exports = class Logic
     }
 }
 
-class Block
-{
-    constructor(automation, group, block)
-    {
-        this.comparisons = [];
-
-        this.comparisons.push(block);
-
-        this.automation = automation;
-
-        this.LogicManager = automation.LogicManager;
-
-        this.logger = automation.logger;
-
-        this.automationID = automation.automationID;
-        this.groupID = group.groupID;
-
-        for(const x in block)
-        {
-            this[x] = block[x];
-        }
-    }
-
-    includesBlock(block)
-    {
-        for(const comparison of this.comparisons)
-        {
-            if(block.id != null && block.letters != null && comparison.id == block.id && comparison.letters == block.letters)
-            {
-                return true;
-            }
-
-            if((block.time != null && comparison.time != null) || (block.date != null && comparison.date != null))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    isLocked()
-    {
-        if(this.options != null
-        && this.options.stateLock == true)
-        {
-            if(this.LogicManager.stateLock[this.automationID] != null
-            && this.LogicManager.stateLock[this.automationID].trigger != null
-            && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    lockBlock()
-    {
-        if(this.options != null && this.options.stateLock == true)
-        {
-            if(this.LogicManager.stateLock[this.automationID] == null)
-            {
-                this.LogicManager.stateLock[this.automationID] = {};
-            }
-            
-            if(this.LogicManager.stateLock[this.automationID].trigger == null)
-            {
-                this.LogicManager.stateLock[this.automationID].trigger = {};
-            }
-            
-            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = true;
-        }
-    }
-
-    unlockBlock()
-    {
-        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
-        {
-            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
-
-            if(this.operation == '<')
-            {
-                this.logger.debug('Automation [' + this.automation.name + '] %automation_greater% ' + this.automation.automationID + ' ' + this.blockID);
-            }
-            else if(this.operation == '>')
-            {
-                this.logger.debug('Automation [' + this.automation.name + '] %automation_lower% ' + this.automation.automationID + ' ' + this.blockID);
-            }
-            else
-            {
-                this.logger.debug('Automation [' + this.automation.name + '] %automation_different% ' + this.automation.automationID + ' ' + this.blockID);
-            }
-
-            this.LogicManager.changed = true;
-        }
-    }
-
-    getOutput(service, state)
-    {
-        return new Promise((resolve) => {
-
-            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
-
-                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
-                
-                if(!output && locked)
-                {
-                    this.unlockBlock();
-                }
-
-                resolve({ output, locked });
-            });
-        });
-    }
-}
-
-class Group
-{
-    constructor(automation, group)
-    {
-        this.blocks = [];
-
-        this.automationID = automation.automationID;
-        this.groupID = group.groupID;
-
-        this.logic = group.logic;
-
-        for(const blockID in group.blocks)
-        {
-            this.blocks.push(new Block(automation, this, { ...group.blocks[blockID], blockID : this.groupID + '' + blockID }));
-        }
-    }
-
-    includesBlock(block)
-    {
-        for(const trigger of this.blocks)
-        {
-            if(trigger.includesBlock(block))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-}
-
 class Automation
 {
     constructor(LogicManager, automation)
@@ -625,6 +477,154 @@ class Automation
                 }
 
                 resolve(response.data != null);
+            });
+        });
+    }
+}
+
+class Group
+{
+    constructor(automation, group)
+    {
+        this.blocks = [];
+
+        this.automationID = automation.automationID;
+        this.groupID = group.groupID;
+
+        this.logic = group.logic;
+
+        for(const blockID in group.blocks)
+        {
+            this.blocks.push(new Block(automation, this, { ...group.blocks[blockID], blockID : this.groupID + '' + blockID }));
+        }
+    }
+
+    includesBlock(block)
+    {
+        for(const trigger of this.blocks)
+        {
+            if(trigger.includesBlock(block))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+class Block
+{
+    constructor(automation, group, block)
+    {
+        this.comparisons = [];
+
+        this.comparisons.push(block);
+
+        this.automation = automation;
+
+        this.LogicManager = automation.LogicManager;
+
+        this.logger = automation.logger;
+
+        this.automationID = automation.automationID;
+        this.groupID = group.groupID;
+
+        for(const x in block)
+        {
+            this[x] = block[x];
+        }
+    }
+
+    includesBlock(block)
+    {
+        for(const comparison of this.comparisons)
+        {
+            if(block.id != null && block.letters != null && comparison.id == block.id && comparison.letters == block.letters)
+            {
+                return true;
+            }
+
+            if((block.time != null && comparison.time != null) || (block.date != null && comparison.date != null))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isLocked()
+    {
+        if(this.options != null
+        && this.options.stateLock == true)
+        {
+            if(this.LogicManager.stateLock[this.automationID] != null
+            && this.LogicManager.stateLock[this.automationID].trigger != null
+            && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    lockBlock()
+    {
+        if(this.options != null && this.options.stateLock == true)
+        {
+            if(this.LogicManager.stateLock[this.automationID] == null)
+            {
+                this.LogicManager.stateLock[this.automationID] = {};
+            }
+            
+            if(this.LogicManager.stateLock[this.automationID].trigger == null)
+            {
+                this.LogicManager.stateLock[this.automationID].trigger = {};
+            }
+            
+            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = true;
+        }
+    }
+
+    unlockBlock()
+    {
+        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+        {
+            this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
+
+            if(this.operation == '<')
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_greater% ' + this.automation.automationID + ' ' + this.blockID);
+            }
+            else if(this.operation == '>')
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_lower% ' + this.automation.automationID + ' ' + this.blockID);
+            }
+            else
+            {
+                this.logger.debug('Automation [' + this.automation.name + '] %automation_different% ' + this.automation.automationID + ' ' + this.blockID);
+            }
+
+            this.LogicManager.changed = true;
+        }
+    }
+
+    getOutput(service, state)
+    {
+        return new Promise((resolve) => {
+
+            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
+
+                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
+                
+                if(!output && locked)
+                {
+                    this.unlockBlock();
+                }
+
+                resolve({ output, locked });
             });
         });
     }
