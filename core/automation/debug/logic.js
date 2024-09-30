@@ -543,6 +543,12 @@ class Automation
                             {
                                 var state = { ...block.state };
 
+                                if(this.LogicManager.AutomationSystem.TypeManager.letterToType(block.letters[0]) == 'statelessswitch')
+                                {
+                                    state.event = state.value;
+                                    state.value = 0;
+                                }
+
                                 if(block.bridge != null && block.port != null)
                                 {
                                     var url = 'http://' + block.bridge + ':' + block.port + '/devices?id=' + block.id + '&type=' + this.LogicManager.AutomationSystem.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
