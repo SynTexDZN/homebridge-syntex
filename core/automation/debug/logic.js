@@ -617,14 +617,16 @@ class Block
 
             this.getLogic().then((logic) => {
 
-                var output = this.solveLogic(logic), locked = this.isLocked();
+                this.solveLogic(logic);
+
+                logic.locked = this.isLocked();
                 
-                if(!output && locked)
+                if(!logic.output && logic.locked)
                 {
                     this.unlockBlock();
                 }
 
-                resolve({ output, locked });
+                resolve(logic);
             });
         });
     }
@@ -678,13 +680,13 @@ class Block
 
     solveLogic(logic)
     {
-        var operation = logic.operation;
+        logic.output = true;
 
         for(const x in logic.I2)
         {
             if(logic.I1[x] == null)
             {
-                return false;
+                logic.output = false;
             }
 
             if(logic.I1.time != null)
@@ -710,17 +712,13 @@ class Block
                 logic.I2.days = logic.I2.days.includes(logic.I1.days) ? logic.I1.days : null;
             }
 
-            console.log(logic);
-
-            if((logic.I1[x] <= logic.I2[x] && operation == '>')
-            || (logic.I1[x] >= logic.I2[x] && operation == '<')
-            || (logic.I1[x] != logic.I2[x] && operation == '='))
+            if((logic.I1[x] <= logic.I2[x] && logic.operation == '>')
+            || (logic.I1[x] >= logic.I2[x] && logic.operation == '<')
+            || (logic.I1[x] != logic.I2[x] && logic.operation == '='))
             {
-                return false;
+                logic.output = false;
             }
         }
-
-        return true;
     }
 
     getState(block)
