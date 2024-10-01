@@ -119,7 +119,7 @@ module.exports = class Logic
         });
     }
 
-    checkAutomation(service, state = {})
+    checkAutomation(service)
     {
         for(const automation of this.automation)
         {
@@ -135,7 +135,7 @@ module.exports = class Logic
                     }
                 }
 
-                this.checkGroup(groups, service, state).then((result) => {
+                this.checkGroup(groups, service).then((result) => {
 
                     var output = automationLogic == 'AND', locked = automationLogic == 'OR';
 
@@ -193,7 +193,7 @@ module.exports = class Logic
         }
     }
 
-    checkGroup(groups, service, state)
+    checkGroup(groups, service)
     {
         var promiseArray = [];
 
@@ -209,7 +209,7 @@ module.exports = class Logic
                 }
             }
 
-            promiseArray.push(new Promise((resolve) => this.checkBlock(blocks, service, state).then((result) => {
+            promiseArray.push(new Promise((resolve) => this.checkBlock(blocks).then((result) => {
 
                 //console.log('checkGroup', group.automationID, blocks.length, result.length, groupLogic, result);
 
@@ -247,13 +247,13 @@ module.exports = class Logic
         return Promise.all(promiseArray);
     }
 
-    checkBlock(blocks, service, state)
+    checkBlock(blocks)
     {
         var promiseArray = [];
 
         for(const block of blocks)
         {
-            promiseArray.push(block.getOutput(service, state));
+            promiseArray.push(block.getOutput());
         }
 
         return Promise.all(promiseArray);
@@ -517,9 +517,14 @@ class Block
 {
     constructor(automation, group, block)
     {
-        this.comparisons = [];
+        this.comparisons = [ block ];
 
-        this.comparisons.push(block);
+        if(block.comparison != null)
+        {
+            //this.comparisons[0].comparison = null;
+
+            this.comparisons.push(block.comparison);
+        }
 
         this.automation = automation;
 
@@ -545,7 +550,7 @@ class Block
                 return true;
             }
 
-            if((block.time != null && comparison.time != null) || (block.date != null && comparison.date != null))
+            if((block.time != null && comparison.time != null) || (block.days != null && comparison.days != null))
             {
                 return true;
             }
@@ -611,13 +616,13 @@ class Block
         }
     }
 
-    getOutput(service, state)
+    getOutput()
     {
         return new Promise((resolve) => {
 
-            this.LogicManager.AutomationSystem._getComparison({ name : '???' }, this, service, state).then((result) => {
+            this.getLogic().then((logic) => {
 
-                var output = this.LogicManager.AutomationSystem._getOutput(result.block, result.state), locked = this.isLocked();
+                var output = this.solveLogic(logic), locked = this.isLocked();
                 
                 if(!output && locked)
                 {
@@ -628,4 +633,121 @@ class Block
             });
         });
     }
+    // TODO: Add Characteristics Verschiebung
+    getLogic()
+	{
+		return new Promise((resolve) => {
+
+            var promiseArray = [], result = { I1 : {}, operation : this.operation, I2 : {} };
+            
+            if(this.id != null && this.letters != null)
+            {
+                promiseArray.push(new Promise((callback) => this.getState(this).then((state) => {
+                    
+                    result.I1 = state;
+    
+                    callback();
+                })));
+            }
+
+            if(this.comparison != null)
+            {
+                promiseArray.push(new Promise((callback) => this.getState(this.comparison).then((state) => {
+                    
+                    result.I2 = state;
+
+                    callback();
+                })));
+            }
+
+            if(this.state != null)
+            {
+                result.I2 = this.state;
+            }
+
+            if(this.time != null)
+            {
+                result.I1.time = ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2)
+                result.I2.time = this.time;
+            }
+
+            if(this.days != null)
+            {
+                result.I1.days = new Date().getDay();
+                result.I2.days = this.days;
+            }
+
+            Promise.all(promiseArray).then(() => resolve(result));
+		});
+	}
+
+    solveLogic(logic)
+    {
+        var operation = logic.operation;
+
+        for(const x in logic.I2)
+        {
+            if(logic.I1[x] == null)
+            {
+                return false;
+            }
+
+            if(logic.I1.time != null)
+            {
+                var I1 = new Date(), I2 = new Date();
+
+                I1.setHours(logic.I1.time.split(':')[0]);
+				I1.setMinutes(logic.I1.time.split(':')[1]);
+                I1.setSeconds(0);
+                I1.setMilliseconds(0);
+                
+                I2.setHours(logic.I2.time.split(':')[0]);
+				I2.setMinutes(logic.I2.time.split(':')[1]);
+                I2.setSeconds(0);
+                I2.setMilliseconds(0);
+
+                logic.I1.time = I1.getTime();
+                logic.I2.time = I2.getTime();
+            }
+
+            if(logic.I1.days != null)
+            {
+                logic.I2.days = logic.I2.days.includes(logic.I1.days) ? logic.I1.days : null;
+            }
+
+            console.log(logic);
+
+            if((logic.I1[x] <= logic.I2[x] && operation == '>')
+            || (logic.I1[x] >= logic.I2[x] && operation == '<')
+            || (logic.I1[x] != logic.I2[x] && operation == '='))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    getState(block)
+	{
+		return new Promise((resolve) => {
+
+			if(block.id != null && block.letters != null)
+			{
+				this.LogicManager.AutomationSystem.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin }).then((state) => {
+
+					if(state == null)
+					{
+						this.logger.log('error', block.id, block.letters, '[' + this.automation.name + ']: %read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
+					}
+		
+					resolve(state);
+				});
+			}
+			else
+			{
+				resolve(null);
+			}
+		});
+	}
 }
