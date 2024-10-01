@@ -517,20 +517,11 @@ class Block
 {
     constructor(automation, group, block)
     {
-        this.comparisons = [ block ];
-
-        if(block.comparison != null)
-        {
-            //this.comparisons[0].comparison = null;
-
-            this.comparisons.push(block.comparison);
-        }
-
         this.automation = automation;
 
-        this.LogicManager = automation.LogicManager;
-
         this.logger = automation.logger;
+
+        this.LogicManager = automation.LogicManager;
 
         this.automationID = automation.automationID;
         this.groupID = group.groupID;
@@ -543,17 +534,19 @@ class Block
 
     includesBlock(block)
     {
-        for(const comparison of this.comparisons)
+        if(this.id != null && this.letters != null && this.id == block.id && this.letters == block.letters)
         {
-            if(block.id != null && block.letters != null && comparison.id == block.id && comparison.letters == block.letters)
-            {
-                return true;
-            }
+            return true;
+        }
 
-            if((block.time != null && comparison.time != null) || (block.days != null && comparison.days != null))
-            {
-                return true;
-            }
+        if(this.comparison != null && this.comparison.id != null && this.comparison.letters != null && this.comparison.id == block.id && this.comparison.letters == block.letters)
+        {
+            return true;
+        }
+
+        if((this.time != null && block.time != null) || (this.days != null && block.days != null))
+        {
+            return true;
         }
 
         return false;
@@ -595,7 +588,9 @@ class Block
 
     unlockBlock()
     {
-        if(this.LogicManager.stateLock[this.automationID] != null && this.LogicManager.stateLock[this.automationID].trigger != null && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
+        if(this.LogicManager.stateLock[this.automationID] != null
+        && this.LogicManager.stateLock[this.automationID].trigger != null
+        && this.LogicManager.stateLock[this.automationID].trigger[this.blockID] == true)
         {
             this.LogicManager.stateLock[this.automationID].trigger[this.blockID] = false;
 
