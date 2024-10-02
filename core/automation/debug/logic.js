@@ -451,7 +451,7 @@ class Automation
 
 					console.log('B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID]);
 				
-					this.LogicManager.AutomationSystem.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
+					this.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
 				
 					this.LogicManager.changed = true;
 				}
