@@ -630,9 +630,29 @@ class Block
 			});
 		});
 	}
-	// TODO: Add Characteristics Verschiebung
+
 	getLogic()
 	{
+		const checkCharacteristics = (block, state) => {
+
+			if(block instanceof Object && block.characteristic instanceof Object && state instanceof Object)
+			{
+				for(const x in state)
+				{
+					if(block.characteristic[x] != null)
+					{
+						state[x] += block.characteristic[x];
+					}
+					else
+					{
+						delete state[x];
+					}
+				}
+			}
+
+			return state;
+		};
+
 		return new Promise((resolve) => {
 
 			var promiseArray = [], result = { I1 : {}, operation : this.operation, I2 : {} };
@@ -641,7 +661,7 @@ class Block
 			{
 				promiseArray.push(new Promise((callback) => this.getState(this).then((state) => {
 					
-					result.I1 = state;
+					result.I1 = checkCharacteristics(this, state);
 	
 					callback();
 				})));
@@ -651,7 +671,7 @@ class Block
 			{
 				promiseArray.push(new Promise((callback) => this.getState(this.comparison).then((state) => {
 					
-					result.I2 = state;
+					result.I2 = checkCharacteristics(this.comparison, state);
 
 					callback();
 				})));
