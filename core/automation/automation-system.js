@@ -122,11 +122,6 @@ module.exports = class AutomationSystem
 		});
 	}
 
-	runAutomation(service)
-	{
-		this.checkAutomation(service);
-	}
-
 	checkAutomation(service)
 	{
 		for(const automation of this.automation)

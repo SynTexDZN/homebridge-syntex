@@ -30,7 +30,7 @@ module.exports = class ActivityManager
 
 			if(message.service != null && message.state != null)
 			{
-				this.AutomationSystem.runAutomation(message.service, message.state);
+				this.AutomationSystem.checkAutomation(message.service, message.state);
 			}
 		});
 	}
