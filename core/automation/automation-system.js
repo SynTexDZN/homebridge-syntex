@@ -171,7 +171,7 @@ module.exports = class AutomationSystem
 					{
 						if(!automation.isLocked())
 						{
-							this.logger.debug('Automation [' + automation.name + '] %trigger_activated%');
+							this.logger.debug('Automation [' + automation.name + '] %trigger_activated% ' + automation.automationID);
 
 							automation.executeResult(service, result);
 						}
@@ -442,7 +442,7 @@ class Automation
 
 				if(result.includes(true))
 				{
-					console.log('A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
+					//console.log('A', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID], result, triggers);
 
 					this.lockAutomation();
 
@@ -454,7 +454,7 @@ class Automation
 						}
 					}
 
-					console.log('B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID]);
+					//console.log('B', this.name, this.automationID, this.logic, this.LogicManager.stateLock[this.automationID]);
 				
 					this.logger.log('success', trigger.id, trigger.letters, '[' + trigger.name + '] %automation_executed[0]% [' + this.name + '] %automation_executed[1]%! ( ' + this.automationID + ' )');
 				
