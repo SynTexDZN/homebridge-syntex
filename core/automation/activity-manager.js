@@ -18,7 +18,7 @@ module.exports = class ActivityManager
 
 	initSocket()
 	{
-		this.EventManager.setInputStream('stateUpdate', { source : this, external : true }, (message) => {
+		this.EventManager.setInputStream('stateUpdate', { source : this, external : true, verbose : false }, (message) => {
 
 			if(message.service != null && message.state != null)
 			{
@@ -26,7 +26,7 @@ module.exports = class ActivityManager
 			}
 		});
 
-		this.EventManager.setInputStream('runAutomation', { source : this, external : true }, (message) => {
+		this.EventManager.setInputStream('runAutomation', { source : this, external : true, verbose : false }, (message) => {
 
 			if(message.service != null && message.state != null)
 			{

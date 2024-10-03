@@ -171,6 +171,8 @@ module.exports = class AutomationSystem
 					{
 						if(!automation.isLocked())
 						{
+							this.logger.debug('Automation [' + automation.name + '] %trigger_activated%');
+
 							automation.executeResult(service, result);
 						}
 					}
@@ -184,7 +186,7 @@ module.exports = class AutomationSystem
 					{
 						automation.unlockAutomation();
 
-						console.log(automation.automationID, automationLogic, output, 'FALSE');
+						//console.log(automation.automationID, automationLogic, output, 'FALSE');
 					}
 
 					if(!output && locked)
