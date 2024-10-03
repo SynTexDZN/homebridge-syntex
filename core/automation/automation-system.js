@@ -667,7 +667,7 @@ class Block
 			
 			if(this.id != null && this.letters != null)
 			{
-				promiseArray.push(new Promise((callback) => this.getState(this).then((state) => {
+				promiseArray.push(new Promise((callback) => this.LogicManager.ActivityManager._getState(this).then((state) => {
 					
 					result.I1 = checkCharacteristics(this, state);
 	
@@ -677,7 +677,7 @@ class Block
 
 			if(this.comparison != null)
 			{
-				promiseArray.push(new Promise((callback) => this.getState(this.comparison).then((state) => {
+				promiseArray.push(new Promise((callback) => this.LogicManager.ActivityManager._getState(this.comparison).then((state) => {
 					
 					result.I2 = checkCharacteristics(this.comparison, state);
 
@@ -747,10 +747,5 @@ class Block
 				logic.output = false;
 			}
 		}
-	}
-
-	getState(block)
-	{
-		return this.LogicManager.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin });
 	}
 }

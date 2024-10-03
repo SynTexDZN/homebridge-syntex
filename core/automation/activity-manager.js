@@ -52,31 +52,31 @@ module.exports = class ActivityManager
 		this.data[id][letters].automation.push({ time : new Date().getTime(), id : automation.id });
 	}
 
-	_getState(id, letters, options = {})
+	_getState(block)
 	{
 		return new Promise((resolve) => {
 
-			if(id != null && letters != null)
+			if(block.id != null && block.letters != null)
 			{
-				var state = this.getState(id, letters);
+				var state = this.getState(block.id, block.letters);
 
-				if(state != null && options.bridge == null)
+				if(state != null && block.bridge == null)
 				{
 					resolve(state);
 				}
-				else if(options.port != null || options.plugin != null)
+				else if(block.port != null || block.plugin != null)
 				{
-					var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
+					var url = 'http://' + (block.bridge || '127.0.0.1') + ':' + (block.port || this.RouteManager.getPort(block.plugin)) + '/devices?id=' + block.id + '&type=' + this.TypeManager.letterToType(block.letters[0]) + '&counter=' + block.letters.slice(1);
 
 					this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
 
 						if(response.data instanceof Object)
 						{
-							this.updateState(id, letters, response.data);
+							this.updateState(block.id, block.letters, response.data);
 						}
 						else
 						{
-							this.logger.log('error', id, letters, '%read_state[0]% [' + id + ':' + letters + '] %read_error%!');
+							this.logger.log('error', block.id, block.letters, '%read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
 						}
 					
 						resolve(response.data);
