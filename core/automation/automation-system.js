@@ -751,24 +751,6 @@ class Block
 
 	getState(block)
 	{
-		return new Promise((resolve) => {
-
-			if(block.id != null && block.letters != null)
-			{
-				this.LogicManager.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin }).then((state) => {
-
-					if(state == null)
-					{
-						this.logger.log('error', block.id, block.letters, '[' + this.automation.name + ']: %read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
-					}
-		
-					resolve(state);
-				});
-			}
-			else
-			{
-				resolve(null);
-			}
-		});
+		return this.LogicManager.ActivityManager._getState(block.id, block.letters, { bridge : block.bridge, port : block.port, plugin : block.plugin });
 	}
 }

@@ -52,29 +52,40 @@ module.exports = class ActivityManager
 		this.data[id][letters].automation.push({ time : new Date().getTime(), id : automation.id });
 	}
 
-	_getState(id, letters, options)
+	_getState(id, letters, options = {})
 	{
 		return new Promise((resolve) => {
 
-			var state = this.getState(id, letters);
-
-			if(state != null && options.bridge == null)
+			if(id != null && letters != null)
 			{
-				resolve(state);
-			}
-			else if(options.port != null || options.plugin != null)
-			{
-				var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
+				var state = this.getState(id, letters);
 
-				this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+				if(state != null && options.bridge == null)
+				{
+					resolve(state);
+				}
+				else if(options.port != null || options.plugin != null)
+				{
+					var url = 'http://' + (options.bridge || '127.0.0.1') + ':' + (options.port || this.RouteManager.getPort(options.plugin)) + '/devices?id=' + id + '&type=' + this.TypeManager.letterToType(letters[0]) + '&counter=' + letters.slice(1);
 
-					if(response.data instanceof Object)
-					{
-						this.updateState(id, letters, response.data);
-					}
-				
-					resolve(response.data);
-				});
+					this.RequestManager.fetch(url, { timeout : 10000 }).then((response) => {
+
+						if(response.data instanceof Object)
+						{
+							this.updateState(id, letters, response.data);
+						}
+						else
+						{
+							this.logger.log('error', id, letters, '%read_state[0]% [' + id + ':' + letters + '] %read_error%!');
+						}
+					
+						resolve(response.data);
+					});
+				}
+				else
+				{
+					resolve(null);
+				}
 			}
 			else
 			{
