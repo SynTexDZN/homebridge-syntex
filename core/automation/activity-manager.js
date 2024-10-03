@@ -73,13 +73,15 @@ module.exports = class ActivityManager
 						if(response.data instanceof Object)
 						{
 							this.updateState(block.id, block.letters, response.data);
+
+							resolve(response.data);
 						}
 						else
 						{
-							this.logger.log('error', block.id, block.letters, '%read_state[0]% [' + block.id + ':' + block.letters + '] %read_error%!');
+							this.logger.log('error', block.id, block.letters, '%read_state[0]% [' + block.name + '] %read_error%! (' + block.id + ':' + block.letters + ')');
+						
+							resolve(null);
 						}
-					
-						resolve(response.data);
 					});
 				}
 				else

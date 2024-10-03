@@ -640,6 +640,14 @@ class Block
 
 			if(block instanceof Object && block.characteristic instanceof Object && state instanceof Object)
 			{
+				for(const x in block.characteristic)
+				{
+					if(state[x] == null)
+					{
+						state = {};
+					}
+				}
+
 				for(const x in state)
 				{
 					if(block.characteristic[x] != null)
@@ -664,7 +672,10 @@ class Block
 			{
 				promiseArray.push(new Promise((callback) => this.LogicManager.ActivityManager._getState(this).then((state) => {
 					
-					result.I1 = checkCharacteristics(this, state);
+					if(state != null)
+					{
+						result.I1 = checkCharacteristics(this, state);
+					}
 	
 					callback();
 				})));
@@ -674,7 +685,10 @@ class Block
 			{
 				promiseArray.push(new Promise((callback) => this.LogicManager.ActivityManager._getState(this.comparison).then((state) => {
 					
-					result.I2 = checkCharacteristics(this.comparison, state);
+					if(state != null)
+					{
+						result.I2 = checkCharacteristics(this.comparison, state);
+					}
 
 					callback();
 				})));
@@ -704,6 +718,11 @@ class Block
 	solveLogic(logic)
 	{
 		logic.output = true;
+
+		if(Object.keys(logic.I2).length == 0)
+		{
+			logic.output = false;
+		}
 
 		for(const x in logic.I2)
 		{
