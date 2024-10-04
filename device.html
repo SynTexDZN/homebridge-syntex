@@ -395,11 +395,14 @@
 
 								serviceContainer.appendChild(serviceInformation);
 
-								createStatePanel(serviceContainer, letters, service.iid.value);
-
-								if(type == 'thermostat')
+								if(service.iid != null)
 								{
-									createStatePanel(serviceContainer, letters, service.iid.target);
+									createStatePanel(serviceContainer, letters, service.iid.value);
+
+									if(type == 'thermostat')
+									{
+										createStatePanel(serviceContainer, letters, service.iid.target);
+									}
 								}
 							}
 
