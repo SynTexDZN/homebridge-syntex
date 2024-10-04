@@ -395,14 +395,11 @@
 
 								serviceContainer.appendChild(serviceInformation);
 
-								if(service.iid != null)
-								{
-									createStatePanel(serviceContainer, letters, service.iid.value);
+								createStatePanel(serviceContainer, letters, service.iid != null ? service.iid.value : 0);
 
-									if(type == 'thermostat')
-									{
-										createStatePanel(serviceContainer, letters, service.iid.target);
-									}
+								if(type == 'thermostat')
+								{
+									createStatePanel(serviceContainer, letters, service.iid != null ? service.iid.target : 0);
 								}
 							}
 
@@ -660,7 +657,12 @@
 						}
 					}
 
-					if(service != null && service.iid != null)
+					if(service.iid == null)
+					{
+						service.iid = { value : 0 };
+					}
+
+					if(service != null)
 					{
 						var serviceState = Essentials.getServiceColor({ ...service, state });
 
