@@ -527,6 +527,17 @@ module.exports = class DeviceManager
 
 				this.getBridgeAccessories().then((bridgeAccessories) => {
 
+					const addVirtual = (accessory, plugin) => {
+
+						accessory = JSON.parse(JSON.stringify(accessory));
+
+						accessory.services = getLetters(accessory.services);
+
+						accessory.plugin = { alias : plugin };
+
+						accessories.push(accessory);
+					};
+
 					accessories = bridgeAccessories || [];
 
 					var storageAccessories = this.getStorageAccessories();
@@ -588,6 +599,11 @@ module.exports = class DeviceManager
 
 											accessories[k].services = convertServices(accessories[k].services, this.config.platforms[i].accessories[j].services);
 										}
+									}
+
+									if(this.config.platforms[i].accessories[j].virtual && this.config.platforms[i].platform.startsWith('SynTex'))
+									{
+										addVirtual(this.config.platforms[i].accessories[j], this.config.platforms[i].platform);
 									}
 								}
 							}
