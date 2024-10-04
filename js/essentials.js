@@ -742,12 +742,11 @@ class EssentialFeatures
 				{
 					var cRange = null, vRange = null;
 
-					if(service.format.value.includes('bool'))
+					if(preset.value != null
+					&& preset.value.active != null
+					&& preset.value.inactive != null)
 					{
-						if(preset.value != null
-						&& preset.value.active != null
-						&& preset.value.active.text != null
-						&& preset.value.inactive != null
+						if(preset.value.active.text != null
 						&& preset.value.inactive.text != null)
 						{
 							if(service.state.value == true)
@@ -759,11 +758,8 @@ class EssentialFeatures
 								stateText.primary = preset.value.inactive.text;
 							}
 						}
-
-						if(preset.value != null
-						&& preset.value.active != null
-						&& preset.value.active.color != null
-						&& preset.value.inactive != null
+	
+						if(preset.value.active.color != null
 						&& preset.value.inactive.color != null)
 						{
 							if(service.state.value == true)
@@ -776,16 +772,13 @@ class EssentialFeatures
 							}
 						}
 					}
-					else if(service.format.value.includes('int') || service.format.value.includes('float'))
+					else if(preset.value != null && preset.value.text != null)
 					{
-						if(preset.value != null && preset.value.text != null)
-						{
-							stateText.primary = service.state.value + ' ' + preset.value.text;
-						}
-						else
-						{
-							stateText.primary = service.state.value;
-						}
+						stateText.primary = service.state.value + ' ' + preset.value.text;
+					}
+					else
+					{
+						stateText.primary = service.state.value;
 					}
 
 					if(preset.value != null
@@ -842,13 +835,13 @@ class EssentialFeatures
 						}
 						else if(service.state.value == true && service.state.speed == 100)
 						{
-							stateText.primary = preset.value.inactive.text;
+							stateText.primary = preset.value.active.text;
 
-							stateColor = preset.value.inactive.color;
+							stateColor = preset.value.active.color;
 						}
 						else if(service.state.value == true)
 						{
-							stateText.primary = Math.round(service.state.speed) + ' ' + preset.brightness.text;
+							stateText.primary = Math.round(service.state.speed) + ' ' + preset.speed.text;
 
 							if(preset.speed != null
 							&& preset.speed.colorRange != null
@@ -864,6 +857,8 @@ class EssentialFeatures
 					else if(type == 'thermostat')
 					{
 						stateText.primary = ((Math.round(service.state.value * 10.0)) / 10.0) + preset.value.text;
+
+						console.log(preset);
 
 						if(service.state.target != null)
 						{
