@@ -41,15 +41,17 @@ module.exports = class ActivityManager
 
 		for(const x in state)
 		{
-			this.data[id][letters].state[x] = state[x];
+			this.data[id][letters][x] = state[x];
 		}
 	}
 
 	updateAutomation(id, letters, automation)
 	{
+		/*
 		this._prepareStructure(id, letters);
 
 		this.data[id][letters].automation.push({ time : new Date().getTime(), id : automation.id });
+		*/
 	}
 
 	_getState(block)
@@ -98,9 +100,9 @@ module.exports = class ActivityManager
 
 	getState(id, letters)
 	{
-		if(this.data[id] != null && this.data[id][letters] != null && this.data[id][letters].state != null)
+		if(this.data[id] != null && this.data[id][letters] != null)
 		{
-			return this.data[id][letters].state;
+			return this.data[id][letters];
 		}
 
 		return null;
@@ -116,21 +118,6 @@ module.exports = class ActivityManager
 		if(this.data[id][letters] == null)
 		{
 			this.data[id][letters] = {};
-		}
-
-		if(this.data[id][letters].state == null)
-		{
-			this.data[id][letters].state = {};
-		}
-
-		if(this.data[id][letters].history == null)
-		{
-			this.data[id][letters].history = [];
-		}
-
-		if(this.data[id][letters].automation == null)
-		{
-			this.data[id][letters].automation = [];
 		}
 	}
 }
