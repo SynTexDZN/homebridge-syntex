@@ -1,4 +1,4 @@
-const AutomationSystem = require('./automation-system'), RouteManager = require('./route-manager'), TypeManager = require('./type-manager');
+const AutomationSystem = require('./automation-system'), RouteManager = require('./route-manager'), TypeManager = require('./type-manager'), SocketManager = require('./socket-manager');
 
 module.exports = class ActivityManager
 {
@@ -11,11 +11,13 @@ module.exports = class ActivityManager
 
 		this.EventManager = platform.EventManager;
 		this.RequestManager = platform.RequestManager;
+		this.WebServer = platform.WebServer;
 
 		this.TypeManager = new TypeManager(platform);
 		this.RouteManager = new RouteManager(platform);
 		this.AutomationSystem = new AutomationSystem(platform, this);
 		this.HistoryManager = new HistoryManager(platform, this);
+		this.SocketManager = new SocketManager(platform);
 
 		this.initSocket();
 	}
@@ -37,6 +39,26 @@ module.exports = class ActivityManager
 				this.AutomationSystem.checkAutomation(message.service, message.state);
 			}
 		});
+
+		this.WebServer.addSocket('/devices', 'getActivity', (ws, params) => {
+
+			var response = { state : {}, history : [], automation : [] };
+
+			if(this.data[params.id] != null && this.data[params.id][params.letters] != null)
+			{
+				response.state = this.data[params.id][params.letters];
+			}
+
+			if(this.history[params.id] != null && this.history[params.id][params.letters] != null)
+			{
+				response.time = this.history[params.id][params.letters].time;
+				response.history = this.history[params.id][params.letters].history;
+			}
+
+			this.SocketManager.addSocket(ws, params.id, params.letters);
+
+			ws.send(JSON.stringify(response));
+		});
 	}
 
 	updateState(id, letters, state, type)
@@ -54,6 +76,8 @@ module.exports = class ActivityManager
 			{
 				this.HistoryManager.updateCycle(id, letters, this.data[id][letters]);
 			}
+
+			this.SocketManager.updateSockets(id, letters, { state : this.data[id][letters] });
 		}
 	}
 
