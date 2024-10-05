@@ -6,6 +6,8 @@ module.exports = class ActivityManager
 	{
 		this.data = {};
 
+		this.logger = platform.logger;
+
 		this.EventManager = platform.EventManager;
 		this.RequestManager = platform.RequestManager;
 
