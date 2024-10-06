@@ -197,6 +197,8 @@ class HistoryManager
 
 			setInterval(() => {
 
+				this._removeExpired();
+
 				if(this.changed)
 				{
 					this.files.writeFile('cache/history.json', this.data);
@@ -296,6 +298,25 @@ class HistoryManager
 		}
 
 		return null;
+	}
+
+	_removeExpired()
+	{
+		for(const id in this.data)
+		{
+			for(const letters in this.data[id])
+			{
+				for(const i in this.data[id][letters].history)
+				{
+					if(new Date().getTime() - this.data[id][letters].history[i].time > 86400000 * 2)
+					{
+						this.data[id][letters].history.splice(i, 1);
+
+						this.changed = true;
+					}
+				}
+			}
+		}
 	}
 
 	_prepareStructure(id, letters)
