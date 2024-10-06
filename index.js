@@ -72,7 +72,7 @@ class SynTexPlatform
 
 		if(this.logger != null && this.baseDirectory != null)
 		{
-			this.files = new FileManager(this, { initDirectories : ['automation', 'log'] });
+			this.files = new FileManager(this, { initDirectories : ['automation', 'log', 'cache'] });
 
 			this.WebServer = new WebServer(this, { languageDirectory : __dirname + '/languages', filesystem :  true });
 
