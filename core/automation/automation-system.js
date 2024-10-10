@@ -204,11 +204,11 @@ module.exports = class AutomationSystem
 
 		for(const group of groups)
 		{
-			const groupLogic = group.logic, blocks = [];
+			const automationLogic = group.automation.logic, groupLogic = group.logic, blocks = [];
 
 			for(const block of group.blocks)
 			{
-				if(groupLogic == 'AND' || block.includesBlock(service))
+				if(automationLogic == 'AND' || groupLogic == 'AND' || block.includesBlock(service))
 				{
 					blocks.push(block);
 				}
@@ -492,6 +492,8 @@ class Group
 	constructor(automation, group)
 	{
 		this.blocks = [];
+
+		this.automation = automation;
 
 		this.automationID = automation.automationID;
 		this.groupID = group.groupID;
