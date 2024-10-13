@@ -573,15 +573,21 @@ module.exports = class DeviceManager
 
 				this.getBridgeAccessories().then((bridgeAccessories) => {
 
+					var virtualCounter = 0;
+
 					const addVirtual = (accessory, plugin) => {
 
 						accessory = JSON.parse(JSON.stringify(accessory));
+
+						accessory.aid = 'V' + virtualCounter;
 
 						accessory.services = getLetters(accessory.services);
 
 						accessory.plugin = { alias : plugin };
 
 						accessories.push(accessory);
+
+						virtualCounter++;
 					};
 
 					accessories = bridgeAccessories || [];
