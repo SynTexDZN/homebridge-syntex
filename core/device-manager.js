@@ -230,7 +230,53 @@ module.exports = class DeviceManager
 
 	getAccessories()
 	{
-		return accessories;
+		return new Promise((resolve) => {
+
+			var accessoryPromiseArray = [];
+
+			for(const i in accessories)
+			{
+				const accessory = JSON.parse(JSON.stringify(accessories[i]));
+
+				if(accessory.services[0] != null && accessory.services[0].type != 'bridge')
+				{
+					accessoryPromiseArray.push(new Promise((callbackAccessory) => {
+
+						var servicePromiseArray = [];
+
+						for(const j in accessory.services)
+						{
+							const service = accessory.services[j];
+
+							servicePromiseArray.push(new Promise((callbackService) => this.platform.ActivityManager._getState({ id : accessory.id, letters : service.letters }).then((state) => {
+
+								if(state != null)
+								{
+									if(service.state == null)
+									{
+										service.state = {};
+									}
+
+									for(const x in state)
+									{
+										service.state[x] = state[x];
+									}
+								}
+
+								callbackService(service);
+							})));
+						}
+
+						Promise.all(servicePromiseArray).then(() => {
+
+							callbackAccessory(accessory);
+						});
+					}));
+				}
+			}
+
+			Promise.all(accessoryPromiseArray).then((devices) => resolve(devices));
+		});
 	}
 
 	getService(id, iid)

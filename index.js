@@ -723,7 +723,7 @@ class SynTexPlatform
 					accessories : []
 				};
 	
-				var accessories = DeviceManager.getAccessories();
+				var accessories = await DeviceManager.getAccessories();
 	
 				for(const i in accessories)
 				{
@@ -798,6 +798,8 @@ class SynTexPlatform
 
 			if(!this.restart)
 			{
+				var bridgeData = await this.files.readFile('info.json'), obj = {};
+
 				if(new Date().getTime() - this.lastAccessoryRefresh > this.refresh)
 				{
 					this.lastAccessoryRefresh = new Date().getTime();
@@ -805,21 +807,8 @@ class SynTexPlatform
 					await DeviceManager.reloadAccessories();
 				}
 
-				var bridgeData = await this.files.readFile('info.json'),
-					accessories = DeviceManager.getAccessories(),
-					updates = UpdateManager.getLatestVersions();
-
-				var devices = [];
-
-				for(const i in accessories)
-				{
-					if(accessories[i].services[0] != null && accessories[i].services[0].type != 'bridge')
-					{
-						devices.push({ ...accessories[i] });
-					}
-				}
-				
-				var obj = { devices, updates };
+				obj.devices = await DeviceManager.getAccessories();
+				obj.updates = UpdateManager.getLatestVersions()
 
 				if(bridgeData != null && bridgeData.restart != null)
 				{
@@ -924,7 +913,7 @@ class SynTexPlatform
 
 		this.WebServer.addPage(['/debug/workaround/automation/', '/debug/workaround/automation/modify'], async (request, response, urlParams, content) => {
 
-			response.end(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(DeviceManager.getAccessories())));
+			response.end(HTMLQuery.sendValue(content, 'accessories', JSON.stringify(await DeviceManager.getAccessories())));
 		});
 
 		this.WebServer.addPage('/debug/', (request, response, urlParams, content) => {
