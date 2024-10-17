@@ -21,44 +21,59 @@ module.exports = class DeviceManager
 
 	loadAccessories()
 	{
-		this.files.readFile(this.platform.api.user.storagePath() + '/config.json').then((data) => {
+		const readConfig = () => {
 
-			if(data instanceof Object && data.platforms != null)
-			{
-				for(const platform of data.platforms)
-				{
-					if(platform.accessories != null)
+			return new Promise((resolve) => {
+
+				this.files.readFile(this.platform.api.user.storagePath() + '/config.json').then((data) => {
+
+					var accessories = [];
+
+					if(data instanceof Object && data.platforms != null)
 					{
-						for(const i in platform.accessories)
+						for(const platform of data.platforms)
 						{
-							var accessory = {};
-
-							accessory.id = platform.accessories[i].id;
-							accessory.name = platform.accessories[i].name;
-							
-							accessory.services = [];
-
-							for(const j in platform.accessories[i].services)
+							if(platform.accessories != null)
 							{
-								var service = {};
-
-								service.name = platform.accessories[i].services[j].name;
-								service.type = platform.accessories[i].services[j].type;
-
-								accessory.services.push(service);
+								for(const i in platform.accessories)
+								{
+									var accessory = {};
+		
+									accessory.id = platform.accessories[i].id;
+									accessory.name = platform.accessories[i].name;
+									
+									accessory.services = [];
+		
+									for(const j in platform.accessories[i].services)
+									{
+										var service = {};
+		
+										service.name = platform.accessories[i].services[j].name;
+										service.type = platform.accessories[i].services[j].type;
+		
+										accessory.services.push(service);
+									}
+		
+									accessory.services = this.addLetters(accessory.services);
+		
+									accessory.plugin = { alias : platform.platform };
+		
+									accessory.config = JSON.parse(JSON.stringify(platform.accessories[i]));
+		
+									accessories.push(accessory);
+								}
 							}
-
-							accessory.services = this.addLetters(accessory.services);
-
-							accessory.plugin = platform.platform;
-
-							accessory.config = JSON.parse(JSON.stringify(platform.accessories[i]));
-
-							this.data.push(accessory);
 						}
 					}
-				}
-			}
+
+					resolve(accessories);
+				});
+			});
+		};
+
+		readConfig().then((data) => {
+
+			this.data = data;
 		});
 	}
 
