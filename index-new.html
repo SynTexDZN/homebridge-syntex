@@ -1,0 +1,109 @@
+<html>
+	<body ontouchstart="">
+		<div id="content">
+			<title>%general.dashboard%: %menu.devices%</title>
+			<script type="module">
+
+				PageManager.setHeader('%general.dashboard%', '%menu.devices%');
+				PageManager.hideFooter();
+
+			</script>
+			<div id="main-menu">
+				<button class="white" onclick="Essentials.leavePage('/')" disabled>%menu.devices%</button>
+				<button class="white" onclick="Essentials.leavePage('/app/bridge/')">%menu.bridge%</button>
+				<button class="white" onclick="Essentials.leavePage('/automation')">%menu.automation%</button>
+				<button class="white" onclick="Essentials.leavePage('/log')">%menu.log%</button>
+			</div>
+			<div class="main" style="margin-bottom: 100px">
+				<div id="widgets" class="four">
+					<div class="widget">
+						<button class="widget-left">%devices.devices%</button>
+						<button class="widget-right gradient-blue" id="toolbar-devices">0</button>
+					</div>
+					<div class="widget">
+						<button class="widget-left">%general.updates%</button>
+						<button class="widget-right gradient-purple" id="toolbar-updates">0</button>
+					</div>
+					<div class="widget">
+						<button class="widget-left">%general.offline%</button>
+						<button class="widget-right gradient-red" id="toolbar-offline">0</button>
+					</div>
+					<div class="widget">
+						<button class="widget-left">%devices.online%</button>
+						<button class="widget-right gradient-green" id="toolbar-online">-</button>
+					</div>
+				</div>
+				<div id="device-controls">
+					<div>
+						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%devices.active%: %general.loading% ..</button>
+					</div>
+					<div>
+						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
+					</div>
+				</div>
+				<div id="toolbar">
+					<div id="status" style="transition: none"></div>
+					<div id="groups" class="group-bar">
+						<button class="white" onclick="activeGroup = null; switchGroup(false)">%devices.all_devices%</button>
+					</div>
+					<div style="display: flex; gap: 20px">
+						<button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
+						<div class="custom-select" style="width: 100%">
+							<select id="sort" onchange="sortDevices()">
+								<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
+								<option img="/img/sort-desc.png" value="alphabetical-desc">%sort.alphabetical%</option>
+								<option img="/img/sort-asc.png" value="type-asc">%sort.type%</option>
+								<option img="/img/sort-desc.png" value="type-desc">%sort.type%</option>
+								<option img="/img/sort-asc.png" value="activation-asc">%sort.activation%</option>
+								<option img="/img/sort-desc.png" value="activation-desc">%sort.activation%</option>
+							</select>
+							<script>
+
+								var sort = 'type-asc';
+
+								if(Storage.getItem('devices-sort') != null)
+								{
+									sort = Storage.getItem('devices-sort');
+								}
+
+								var select = document.getElementById('sort');
+
+								for(var i = 0; i < select.children.length; i++)
+								{
+									select.children[i].selected = select.children[i].getAttribute('value') == sort;
+								}
+
+							</script>
+						</div>
+						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
+					</div>
+				</div>
+				<div id="devices"></div>
+				<p id="no-accessories" style="display: none">%devices.no_accessories%</p>
+			</div>
+			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.multi_edit%" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
+				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="%devices.create_device%" onclick="Essentials.leavePage('/create')">
+				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.third_party_devices%" onclick="Essentials.leavePage('/crossover')">
+				<input class="gradient-blue-green webhooks-needed" type="button" value="+ %devices.connect_device%" onclick="Essentials.leavePage('/connect')">
+			</div>
+            <script type="module">
+
+                Replacer.SETUP();
+
+                renderGUI();
+
+                Preloader.finish();
+
+            </script>
+            <script>
+
+                function renderGUI()
+                {
+
+                }
+
+            </script>
+        </div>
+    </body>
+</html>
