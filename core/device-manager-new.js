@@ -216,7 +216,7 @@ module.exports = class DeviceManager
 
 						if(plugin.alias == accessory.plugin)
 						{
-							accessory.plugin = { id, name : plugin.name };
+							accessory.plugin = { id, alias : accessory.plugin, name : plugin.name };
 
 							if(plugin.config != null && plugin.config.options != null && plugin.config.options.port != null)
 							{
