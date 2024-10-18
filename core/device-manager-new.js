@@ -91,14 +91,7 @@ module.exports = class DeviceManager
 
 									if(serviceLetters == '3E' && accessoryCharacteristics[characteristicLetters] != null)
 									{
-										if(accessoryCharacteristics[characteristicLetters] == 'plugin')
-										{
-											accessory.plugin = { alias : characteristic.value };
-										}
-										else
-										{
-											accessory[accessoryCharacteristics[characteristicLetters]] = characteristic.value;
-										}
+										accessory[accessoryCharacteristics[characteristicLetters]] = characteristic.value;
 									}
 									else if(serviceCharacteristics[characteristicLetters] != null)
 									{
@@ -192,7 +185,7 @@ module.exports = class DeviceManager
 										});
 									}
 									
-									accessory.plugin = { alias : platform.platform };
+									accessory.plugin = platform.platform;
 		
 									accessory.config = JSON.parse(JSON.stringify(platform.accessories[i]));
 		
@@ -205,6 +198,41 @@ module.exports = class DeviceManager
 					resolve(accessories);
 				});
 			});
+		};
+
+		const addPluginData = () => {
+
+			var plugins = this.PluginManager.getPlugins();
+
+			for(const accessory of this.data)
+			{
+				if(accessory.plugin != null)
+				{
+					var found = false;
+
+					for(const id in plugins)
+					{
+						var plugin = plugins[id];
+
+						if(plugin.alias == accessory.plugin)
+						{
+							accessory.plugin = { id, name : plugin.name };
+
+							if(plugin.config != null && plugin.config.options != null && plugin.config.options.port != null)
+							{
+								accessory.plugin.port = plugin.config.options.port;
+							}
+
+							found = true;
+						}
+					}
+
+					if(!found)
+					{
+						accessory.plugin = { alias : accessory.plugin };
+					}
+				}
+			}
 		};
 
 		readBridge().then((bridgeAccessories) => readConfig().then((configAccessories) => {
@@ -237,6 +265,8 @@ module.exports = class DeviceManager
 			}
 
 			this.data = bridgeAccessories;
+
+			addPluginData();
 		}));
 	}
 
