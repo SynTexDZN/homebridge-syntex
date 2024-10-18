@@ -38,20 +38,103 @@ module.exports = class DeviceManager
 	
 							accessory.aid = response.data.accessories[i].aid;
 	
+							accessory.services = [];
+	
 							for(const j in response.data.accessories[i].services)
 							{
-								if(response.data.accessories[i].services[j].type == 'A2')
+								var service = {}, serviceLetters = response.data.accessories[i].services[j].type;
+
+								var stateCharacteristics = {
+									'A2' : { name : 'bridge', type : {} },
+									'40' : { name : 'fan', type : { value : '25', speed : '29', direction : '28' } },
+									'43' : { name : 'led', type : { value : '25', hue : '13', saturation : '2F', brightness : '8' } },
+									'47' : { name : 'outlet', type : { value : '25' } },
+									'49' : { name : 'switch', type : { value : '25' } },
+									'4A' : { name : 'thermostat', type : { value : '11', target : '35', state : 'F', mode : '33' } },
+									'80' : { name : 'contact', type : { value : '6A' } },
+									'82' : { name : 'humidity', type : { value : '10' } },
+									'83' : { name : 'rain', type : { value : '70' } },
+									'84' : { name : 'light', type : { value : '6B' } },
+									'85' : { name : 'motion', type : { value : '22' } },
+									'86' : { name : 'occupancy', type : { value : '71' } },
+									'87' : { name : 'smoke', type: { value : '76' } },
+									'89' : { name : 'statelessswitch', type : { value : '73' } },
+									'8A' : { name : 'temperature', type : { value : '11' } },
+									'8C' : { name : 'blind', type: { value : '7C' } },
+									'8D' : { name : 'airquality', type: { value : '95' } }
+								};
+
+								if(stateCharacteristics[serviceLetters] != null)
 								{
-									isBridge = true;
-								}
-								
-								for(const k in response.data.accessories[i].services[j].characteristics)
-								{
-									if(response.data.accessories[i].services[j].type == '3E' && response.data.accessories[i].services[j].characteristics[k].type == '30')
+									service.type = stateCharacteristics[serviceLetters].name;
+
+									if(service.type == 'bridge')
 									{
-										accessory.id = response.data.accessories[i].services[j].characteristics[k].value;
+										isBridge = true;
 									}
 								}
+
+								for(const k in response.data.accessories[i].services[j].characteristics)
+								{
+									var characteristic = response.data.accessories[i].services[j].characteristics[k], characteristicLetters = characteristic.type;
+
+									var accessoryCharacteristics = {
+										'30' : 'id',
+										'23' : 'name',
+										'52' : 'version',
+										'20' : 'plugin'
+									};
+
+									var serviceCharacteristics = {
+										'62' : 'online'
+									};
+
+									if(serviceLetters == '3E' && accessoryCharacteristics[characteristicLetters] != null)
+									{
+										if(accessoryCharacteristics[characteristicLetters] == 'plugin')
+										{
+											accessory.plugin = { alias : characteristic.value };
+										}
+										else
+										{
+											accessory[accessoryCharacteristics[characteristicLetters]] = characteristic.value;
+										}
+									}
+									else if(serviceCharacteristics[characteristicLetters] != null)
+									{
+										service[serviceCharacteristics[characteristicLetters]] = characteristic.value;
+									}
+									else if(stateCharacteristics[serviceLetters] != null)
+									{
+										if(stateCharacteristics[serviceLetters].name == 'led')
+										{
+											if(characteristicLetters == '8')
+											{
+												service.type = 'dimmer';
+											}
+											
+											if(characteristicLetters == '13' || characteristicLetters == '2F')
+											{
+												service.type = 'rgb';
+											}
+										}
+										
+										for(const l in stateCharacteristics[serviceLetters].type)
+										{
+											if(stateCharacteristics[serviceLetters].type[l] == characteristicLetters)
+											{
+												if(service.state == null)
+												{
+													service.state = {};
+												}
+
+												service.state[l] = characteristic.value;
+											}
+										}
+									}
+								}
+	
+								accessory.services.push(service);
 							}
 	
 							if(!isBridge)
@@ -100,7 +183,7 @@ module.exports = class DeviceManager
 									}
 		
 									accessory.services = this.addLetters(accessory.services);
-
+		
 									for(const service of accessory.services)
 									{
 										this.ActivityManager._getState({ id : accessory.id, letters : service.letters }).then((state) => {
@@ -108,7 +191,7 @@ module.exports = class DeviceManager
 											service.state = state;
 										});
 									}
-		
+									
 									accessory.plugin = { alias : platform.platform };
 		
 									accessory.config = JSON.parse(JSON.stringify(platform.accessories[i]));
@@ -134,7 +217,20 @@ module.exports = class DeviceManager
 					{
 						for(const x in configAccessory)
 						{
-							bridgeAccessory[x] = configAccessory[x];
+							if(x == 'services')
+							{
+								for(const y in configAccessory.services)
+								{
+									for(const z in configAccessory.services[y])
+									{
+										bridgeAccessory.services[y][z] = configAccessory.services[y][z];
+									}
+								}
+							}
+							else
+							{
+								bridgeAccessory[x] = configAccessory[x];
+							}
 						}
 					}
 				}
