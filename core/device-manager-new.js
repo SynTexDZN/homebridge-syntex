@@ -127,8 +127,13 @@ module.exports = class DeviceManager
 									}
 								}
 	
-								accessory.services.push(service);
+								if(service.type != null)
+								{
+									accessory.services.push(service);
+								}
 							}
+
+							accessory.services = this.addLetters(accessory.services);
 	
 							if(!isBridge)
 							{
@@ -174,7 +179,7 @@ module.exports = class DeviceManager
 		
 										accessory.services.push(service);
 									}
-		
+
 									accessory.services = this.addLetters(accessory.services);
 		
 									for(const service of accessory.services)
@@ -235,34 +240,50 @@ module.exports = class DeviceManager
 			}
 		};
 
-		readBridge().then((bridgeAccessories) => readConfig().then((configAccessories) => {
-			
-			for(const bridgeAccessory of bridgeAccessories)
+		const overwriteAccessories = (a, b) => {
+
+			for(const accessoryA of a)
 			{
-				for(const configAccessory of configAccessories)
+				for(const accessoryB of b)
 				{
-					if(bridgeAccessory.id == configAccessory.id)
+					if(accessoryA.id == accessoryB.id)
 					{
-						for(const x in configAccessory)
+						for(const x in accessoryB)
 						{
 							if(x == 'services')
 							{
-								for(const y in configAccessory.services)
-								{
-									for(const z in configAccessory.services[y])
-									{
-										bridgeAccessory.services[y][z] = configAccessory.services[y][z];
-									}
-								}
+								overwriteServices(accessoryA.services, accessoryB.services);
 							}
 							else
 							{
-								bridgeAccessory[x] = configAccessory[x];
+								accessoryA[x] = accessoryB[x];
 							}
 						}
 					}
 				}
 			}
+		};
+
+		const overwriteServices = (a, b) => {
+
+			for(const serviceA of a)
+			{
+				for(const serviceB of b)
+				{
+					if(serviceA.letters == serviceB.letters)
+					{
+						for(const x in serviceB)
+						{
+							serviceA[x] = serviceB[x];
+						}
+					}
+				}
+			}
+		};
+
+		readBridge().then((bridgeAccessories) => readConfig().then((configAccessories) => {
+
+			overwriteAccessories(bridgeAccessories, configAccessories);
 
 			this.data = bridgeAccessories;
 
