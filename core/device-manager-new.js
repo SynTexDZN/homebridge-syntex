@@ -93,9 +93,9 @@ module.exports = class DeviceManager
 									{
 										accessory[accessoryCharacteristics[characteristicLetters]] = characteristic.value;
 									}
-									else if(serviceCharacteristics[characteristicLetters] != null)
+									else if(characteristicLetters == '62')
 									{
-										service[serviceCharacteristics[characteristicLetters]] = characteristic.value;
+										service[serviceCharacteristics[characteristicLetters]] = characteristic.value != 0;
 									}
 									else if(stateCharacteristics[serviceLetters] != null)
 									{
