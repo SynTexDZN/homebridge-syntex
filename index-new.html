@@ -144,6 +144,11 @@
 								{
 									toolbar.offline++;
 								}
+
+								if(hasUpdate(accessory))
+								{
+									toolbar.updates++;
+								}
 							}
 
 							toolbar.devices = data.accessories.length;
@@ -232,6 +237,21 @@
 						{
 							return true;
 						}
+					}
+
+					return false;
+				}
+
+				function hasUpdate(accessory)
+				{
+					var currentVersion = accessory.version,
+						newestVersion = data.updates[Essentials.getType(accessory.services)];
+
+					if(accessory.plugin.alias == 'SynTexWebHooks'
+					&& currentVersion != null && newestVersion != null
+					&& Essentials.versionCount(newestVersion) > Essentials.versionCount(currentVersion))
+					{
+						return true;
 					}
 
 					return false;
