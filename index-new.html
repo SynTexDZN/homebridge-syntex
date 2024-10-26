@@ -97,12 +97,35 @@
 
                 Replacer.SETUP();
 
-                renderGUI();
+                loadData().then(() => renderGUI());
 
                 Preloader.finish();
 
             </script>
             <script>
+
+				function loadData()
+				{
+					return new Promise((resolve) => {
+
+						Query.fetchURL('/serverside/index-new', 3000).then((data) => {
+
+							if(data != null && data != 'Error')
+							{
+								try
+								{
+									window.data = JSON.parse(data);
+								}
+								catch(e)
+								{
+									console.error(e);
+								}
+							}
+
+							resolve();
+						});
+					});
+				}
 
                 function renderGUI()
                 {
@@ -115,7 +138,7 @@
 						document.getElementById('no-accessories').classList.add('hidden');
 					}
 					
-					if(data.plugins != null && data.plugins.includes('SynTexWebHooks'))
+					if(data.plugins != null && Object.keys(data.plugins).includes('homebridge-syntex-webhooks'))
 					{
 						var elements = document.getElementsByClassName('webhooks-needed');
 
