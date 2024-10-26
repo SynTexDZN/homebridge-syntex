@@ -97,9 +97,12 @@
 
                 Replacer.SETUP();
 
-                loadData().then(() => renderGUI());
+                loadData().then(() => {
+					
+					renderGUI();
 
                 Preloader.finish();
+				});
 
             </script>
             <script>
