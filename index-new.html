@@ -33,21 +33,25 @@
 						<button class="widget-right gradient-green" id="toolbar-online">-</button>
 					</div>
 				</div>
-				<div id="device-controls">
-					<div>
-						<button class="loading-loop" id="activate-all" onclick="switchAll(this)">%devices.active%: %general.loading% ..</button>
-					</div>
-					<div>
-						<button id="restart-all" onclick="restartAll(this)">%devices.restart_all%</button>
-					</div>
-				</div>
-				<div id="toolbar">
-					<div id="status" style="transition: none"></div>
+				<div id="toolbar" class="hidden">
+					<div id="status"></div>
 					<div id="groups" class="group-bar">
 						<button class="white" onclick="activeGroup = null; switchGroup(false)">%devices.all_devices%</button>
 					</div>
 					<div style="display: flex; gap: 20px">
-						<button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/list.png"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg); display: none" src="/img/grid.png"></button>
+						<button class="image-button" id="view-button" onclick="switchView(this)" view="list"><img class="icon" src="/img/list.png"><img class="icon hidden" src="/img/grid.png"></button>
+						<script>
+
+							if(Storage.getItem('devices-view') == 'grid-view')
+							{
+								document.getElementById('view-button').children[0].classList.add('hidden');
+								document.getElementById('view-button').children[1].classList.remove('hidden');
+								document.getElementById('view-button').setAttribute('view', 'grid');
+
+								document.getElementById('devices').className = 'grid-view';
+							}
+
+						</script>
 						<div class="custom-select" style="width: 100%">
 							<select id="sort" onchange="sortDevices()">
 								<option img="/img/sort-asc.png" value="alphabetical-asc">%sort.alphabetical%</option>
@@ -59,14 +63,12 @@
 							</select>
 							<script>
 
-								var sort = 'type-asc';
+								var sort = 'type-asc', select = document.getElementById('sort');
 
 								if(Storage.getItem('devices-sort') != null)
 								{
 									sort = Storage.getItem('devices-sort');
 								}
-
-								var select = document.getElementById('sort');
 
 								for(var i = 0; i < select.children.length; i++)
 								{
@@ -75,19 +77,23 @@
 
 							</script>
 						</div>
-						<button class="image-button webhooks-needed" onclick="Essentials.leavePage('/connect')"><img style="height: 100%; filter: invert(95%) sepia(10%) hue-rotate(200deg)" src="/img/add.png"></button>
+						<button class="image-button webhooks-needed hidden" onclick="Essentials.leavePage('/connect')"><img class="icon" src="/img/add.png"></button>
 					</div>
 				</div>
-				<div id="devices"></div>
-				<p id="no-accessories" style="display: none">%devices.no_accessories%</p>
+				<div id="devices" class="hidden"></div>
+				<p id="no-accessories">%devices.no_accessories%</p>
 			</div>
-			<div class="bottom" style="margin: 0 auto; margin-bottom: 50px; width: 100%; max-width: 400px">
-				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.multi_edit%" onclick="Essentials.leavePage(window.location.protocol + '//' + window.location.hostname + ':8000/settings.php')">
-				<input class="webhooks-needed" style="margin-bottom: 20px" type="button" value="%devices.create_device%" onclick="Essentials.leavePage('/create')">
-				<input style="margin-bottom: 20px; display: none" type="button" value="%devices.third_party_devices%" onclick="Essentials.leavePage('/crossover')">
-				<input class="gradient-blue-green webhooks-needed" type="button" value="+ %devices.connect_device%" onclick="Essentials.leavePage('/connect')">
+			<div class="bottom webhooks-needed hidden">
+				<button onclick="Essentials.leavePage('/create')">%devices.create_device%</button>
+				<button class="gradient-blue-green" onclick="Essentials.leavePage('/connect')">+ %devices.connect_device%</button>
 			</div>
             <script type="module">
+
+				window.data = {
+					accessories : [{}],
+					plugins : ['SynTexWebHooks'],
+					restart : 1729265751674
+				};
 
                 Replacer.SETUP();
 
@@ -100,7 +106,37 @@
 
                 function renderGUI()
                 {
+					if(data.accessories != null && data.accessories.length > 0)
+					{
+						document.getElementById('toolbar-devices').innerHTML = data.accessories.length;
 
+						document.getElementById('toolbar').classList.remove('hidden');
+						document.getElementById('devices').classList.remove('hidden');
+						document.getElementById('no-accessories').classList.add('hidden');
+					}
+					
+					if(data.plugins != null && data.plugins.includes('SynTexWebHooks'))
+					{
+						var elements = document.getElementsByClassName('webhooks-needed');
+
+						for(var i = 0; i < elements.length; i++)
+						{
+							elements[i].classList.remove('hidden');	
+						}
+					}
+
+					if(data.restart != null)
+					{
+						var timeDifference = new Date() - new Date(data.restart);
+
+						document.getElementById('toolbar-online').innerHTML = Essentials.formatTimestamp(timeDifference);
+
+						window.timeInterval = setInterval(() => {
+
+							document.getElementById('toolbar-online').innerHTML = Essentials.formatTimestamp(timeDifference);
+						
+						}, timeDifference > 60000 ? 60000 : 1000);
+					}
                 }
 
             </script>
