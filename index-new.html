@@ -138,6 +138,14 @@
 
 						if(data.accessories != null && data.accessories.length > 0)
 						{
+							for(const accessory of data.accessories)
+							{
+								if(hasOfflineService(accessory))
+								{
+									toolbar.offline++;
+								}
+							}
+
 							toolbar.devices = data.accessories.length;
 						}
 
@@ -216,6 +224,18 @@
 					}
                 }
 
+				function hasOfflineService(accessory)
+				{
+					for(const service of accessory.services)
+					{
+						if(service.online == false)
+						{
+							return true;
+						}
+					}
+
+					return false;
+				}
 
             </script>
         </div>
