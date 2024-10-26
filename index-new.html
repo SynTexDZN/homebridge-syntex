@@ -101,7 +101,7 @@
 					
 					renderGUI();
 
-                Preloader.finish();
+					Preloader.finish();
 				});
 
             </script>
@@ -132,15 +132,67 @@
 
                 function renderGUI()
                 {
-					if(data.accessories != null && data.accessories.length > 0)
-					{
-						document.getElementById('toolbar-devices').innerHTML = data.accessories.length;
+					const renderToolbar = () => {
 
-						document.getElementById('toolbar').classList.remove('hidden');
-						document.getElementById('devices').classList.remove('hidden');
-						document.getElementById('no-accessories').classList.add('hidden');
-					}
-					
+						var toolbar = { devices : 0, updates : 0, offline : 0, online : '-' };
+
+						if(data.accessories != null && data.accessories.length > 0)
+						{
+							toolbar.devices = data.accessories.length;
+						}
+
+						if(data.restart != null)
+						{
+							var timeDifference = new Date() - new Date(data.restart);
+
+							toolbar.online = Essentials.formatTimestamp(timeDifference);
+
+							window.timeInterval = setInterval(() => {
+
+								toolbar.online = Essentials.formatTimestamp(timeDifference);
+
+								document.getElementById('toolbar-online').innerHTML = toolbar.online;
+							
+							}, timeDifference > 60000 ? 60000 : 1000);
+						}
+
+						document.getElementById('toolbar-devices').innerHTML = toolbar.devices;
+						document.getElementById('toolbar-updates').innerHTML = toolbar.updates;
+						document.getElementById('toolbar-offline').innerHTML = toolbar.offline;
+						document.getElementById('toolbar-online').innerHTML = toolbar.online;
+					};
+
+					const addAccessory = (accessory) => {
+
+						var element = document.createElement('button'),
+							nameConnection = document.createElement('div'),
+							name = document.createElement('div'),
+							state = document.createElement('div'),
+							image = document.createElement('img');
+
+						element.className = 'device';
+
+						nameConnection.className = 'name-connection';
+
+						name.className = 'device-name';
+						name.innerHTML = accessory.name;
+
+						state.className = 'connection';
+
+						image.className = 'accessory-img';
+						image.src = '/img/accessory/' + Essentials.getType(accessory.services) + '.png';
+
+						nameConnection.appendChild(name);
+						nameConnection.appendChild(state);
+
+						element.appendChild(image);
+						element.appendChild(nameConnection);
+
+						document.getElementById('devices').appendChild(element);
+					};
+
+					renderToolbar();
+
 					if(data.plugins != null && Object.keys(data.plugins).includes('homebridge-syntex-webhooks'))
 					{
 						var elements = document.getElementsByClassName('webhooks-needed');
@@ -151,19 +203,19 @@
 						}
 					}
 
-					if(data.restart != null)
+					if(data.accessories != null && data.accessories.length > 0)
 					{
-						var timeDifference = new Date() - new Date(data.restart);
+						for(const accessory of data.accessories)
+						{
+							addAccessory(accessory);
+						}
 
-						document.getElementById('toolbar-online').innerHTML = Essentials.formatTimestamp(timeDifference);
-
-						window.timeInterval = setInterval(() => {
-
-							document.getElementById('toolbar-online').innerHTML = Essentials.formatTimestamp(timeDifference);
-						
-						}, timeDifference > 60000 ? 60000 : 1000);
+						document.getElementById('toolbar').classList.remove('hidden');
+						document.getElementById('devices').classList.remove('hidden');
+						document.getElementById('no-accessories').classList.add('hidden');
 					}
                 }
+
 
             </script>
         </div>
