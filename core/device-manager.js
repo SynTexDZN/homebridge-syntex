@@ -109,6 +109,8 @@ module.exports = class DeviceManager
 				{
 					try
 					{
+						this.logger.debug(id);
+
 						services = JSON.parse(services) || [];
 						events = JSON.parse(events) || [];
 
