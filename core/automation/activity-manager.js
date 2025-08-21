@@ -112,7 +112,7 @@ module.exports = class ActivityManager
 
 				if(state != null && block.bridge == null)
 				{
-					resolve(state);
+					resolve({ ...state });
 				}
 				else if(block.port != null || block.plugin != null)
 				{
